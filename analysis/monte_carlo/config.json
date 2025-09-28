@@ -1,0 +1,95 @@
+{
+  "iterations": 10000,
+  "random_seed": 1729,
+  "output_directory": "output",
+  "revenue_streams": [
+    {
+      "name": "subscription_platform",
+      "distribution": {
+        "type": "lognormal",
+        "mean": 42000,
+        "stddev": 9000
+      },
+      "market_key": "recurring_demand",
+      "market_sensitivity": 0.35,
+      "notes": "Recurring Blaze Intelligence platform subscriptions"
+    },
+    {
+      "name": "custom_analytics_projects",
+      "distribution": {
+        "type": "triangular",
+        "low": 18000,
+        "mode": 32000,
+        "high": 52000
+      },
+      "market_key": "custom_pipeline",
+      "market_sensitivity": 0.6,
+      "notes": "High-touch project revenue"
+    },
+    {
+      "name": "api_data_licensing",
+      "distribution": {
+        "type": "lognormal",
+        "mean": 15500,
+        "stddev": 6500
+      },
+      "market_key": "recurring_demand",
+      "market_sensitivity": 0.25,
+      "notes": "Revenue from Blaze Intelligence APIs"
+    },
+    {
+      "name": "training_and_workshops",
+      "distribution": {
+        "type": "normal",
+        "mean": 8500,
+        "stddev": 4200
+      },
+      "market_key": "enterprise_enablement",
+      "market_sensitivity": 0.4,
+      "notes": "Education and enablement services"
+    }
+  ],
+  "cost_streams": [
+    {
+      "name": "data_acquisition",
+      "distribution": {
+        "type": "normal",
+        "mean": 2100,
+        "stddev": 600
+      }
+    },
+    {
+      "name": "engineering_delivery",
+      "distribution": {
+        "type": "normal",
+        "mean": 2400,
+        "stddev": 900
+      },
+      "market_key": "custom_pipeline",
+      "market_sensitivity": 0.3
+    },
+    {
+      "name": "customer_success",
+      "distribution": {
+        "type": "triangular",
+        "low": 1100,
+        "mode": 1550,
+        "high": 2200
+      }
+    },
+    {
+      "name": "go_to_market",
+      "distribution": {
+        "type": "normal",
+        "mean": 1400,
+        "stddev": 500
+      },
+      "market_key": "recurring_demand",
+      "market_sensitivity": 0.2
+    }
+  ],
+  "target_thresholds": {
+    "monthly_profit_goal": 20000,
+    "roi_goal": 4.0
+  }
+}

@@ -2,3 +2,8 @@ node_modules/
 dist/
 .DS_Store
 .env
+.venv/
+analysis/monte_carlo/.venv-monte-carlo/
+analysis/monte_carlo/output/
+**/__pycache__/
+**/*.pyc
