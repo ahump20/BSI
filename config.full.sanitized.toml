@@ -1,0 +1,66 @@
+[client]
+model = "gpt-5-codex"
+model_reasoning_effort = "high"
+
+[[mcp_servers]]
+id = "context7"
+command = "npx"
+args = ["-y", "@context7/mcp-server"]
+transport = "stdio"
+env = {
+  CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}",
+  CONTEXT7_API_URL = "${CONTEXT7_API_URL}",
+  CONTEXT7_MCP_URL = "${CONTEXT7_MCP_URL}"
+}
+
+[[mcp_servers]]
+id = "github"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+transport = "stdio"
+env = {
+  GITHUB_TOKEN = "${GITHUB_TOKEN}",
+  GITHUB_REPOSITORY = "${GITHUB_REPOSITORY}",
+  GITHUB_BASE_URL = "${GITHUB_BASE_URL}"
+}
+
+[[mcp_servers]]
+id = "openai"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-openai"]
+transport = "stdio"
+env = {
+  OPENAI_API_KEY = "${OPENAI_API_KEY}",
+  OPENAI_BASE_URL = "${OPENAI_BASE_URL}",
+  OPENAI_ORGANIZATION = "${OPENAI_ORGANIZATION}"
+}
+
+[[mcp_servers]]
+id = "anthropic"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-anthropic"]
+transport = "stdio"
+env = {
+  ANTHROPIC_API_KEY = "${ANTHROPIC_API_KEY}"
+}
+
+[[mcp_servers]]
+id = "cloudflare"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-cloudflare"]
+transport = "stdio"
+env = {
+  CLOUDFLARE_ACCOUNT_ID = "${CLOUDFLARE_ACCOUNT_ID}",
+  CLOUDFLARE_API_TOKEN = "${CLOUDFLARE_API_TOKEN}",
+  CLOUDFLARE_API_BASE_URL = "${CLOUDFLARE_API_BASE_URL}"
+}
+
+[[mcp_servers]]
+id = "slack"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-slack"]
+transport = "stdio"
+env = {
+  SLACK_BOT_TOKEN = "${SLACK_BOT_TOKEN}",
+  SLACK_SIGNING_SECRET = "${SLACK_SIGNING_SECRET}"
+}
