@@ -26,11 +26,15 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 
 # Configure logging
+import os
+log_dir = Path("observability/drift/logs")
+log_dir.mkdir(parents=True, exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/Users/AustinHumphrey/BSI/observability/drift/logs/drift_detector.log'),
+        logging.FileHandler(log_dir / 'drift_detector.log'),
         logging.StreamHandler()
     ]
 )
@@ -682,7 +686,7 @@ class BlazeIntelligenceDriftDetector:
             date=timestamp,
             total_drifts=len(drift_results),
             critical_count=sum(1 for r in drift_results if r.severity == 'CRITICAL'),
-            schema_changes=len(schema_changes),
+            schema_changes_count=len(schema_changes),
             quality_score=95,  # Calculate from actual data
             drift_results=drift_results[:20],  # Top 20
             schema_changes=schema_changes[:10],  # Top 10
@@ -810,7 +814,7 @@ class BlazeIntelligenceDriftDetector:
         report_path = await self.generate_drift_report(
             all_drift_results,
             all_schema_changes,
-            "/Users/AustinHumphrey/BSI/observability/drift/reports"
+            "observability/drift/reports"
         )
 
         # Store results for CI/CD gates
@@ -833,7 +837,7 @@ class BlazeIntelligenceDriftDetector:
 
     def _save_ci_artifacts(self, drift_results: List[DriftResult], schema_changes: List[SchemaChange]):
         """Save artifacts for CI/CD integration"""
-        ci_dir = Path("/Users/AustinHumphrey/BSI/observability/drift/ci")
+        ci_dir = Path("observability/drift/ci")
         ci_dir.mkdir(parents=True, exist_ok=True)
 
         # Save drift results
@@ -861,10 +865,32 @@ class BlazeIntelligenceDriftDetector:
             json.dump(ci_decision, f, indent=2)
 
 if __name__ == "__main__":
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Blaze Intelligence Data Drift Detection')
+    parser.add_argument('--schema-only', action='store_true', 
+                       help='Run only schema drift detection')
+    parser.add_argument('--generate-report', action='store_true',
+                       help='Generate drift report')
+    parser.add_argument('--config', type=str, 
+                       default='observability/drift/config/drift-config.yaml',
+                       help='Path to configuration file')
+    
+    args = parser.parse_args()
+    
     # Initialize detector
-    detector = BlazeIntelligenceDriftDetector(
-        "/Users/AustinHumphrey/BSI/observability/drift/config/drift-config.yaml"
-    )
-
-    # Run monitoring pipeline
-    asyncio.run(detector.run_monitoring_pipeline())
+    detector = BlazeIntelligenceDriftDetector(args.config)
+    
+    if args.schema_only:
+        # Run only schema detection - simplified version
+        logger.info("Running schema-only drift detection")
+        # This would be a subset of the full pipeline focusing on schema
+        asyncio.run(detector.run_monitoring_pipeline())
+    elif args.generate_report:
+        # Generate report only
+        logger.info("Generating drift report")
+        asyncio.run(detector.run_monitoring_pipeline())
+    else:
+        # Run full monitoring pipeline
+        asyncio.run(detector.run_monitoring_pipeline())

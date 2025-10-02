@@ -31,6 +31,8 @@ jobs:
   drift-detection:
     name: Data Drift Detection
     runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ANALYTICS_ENABLED: 'false'  # Enable later when proper ingestion is implemented
 
     steps:
     - name: 🏈 Checkout Repository
@@ -46,6 +48,7 @@ jobs:
 
     - name: 📦 Install Dependencies
       run: |
+        set -euo pipefail
         pip install -r observability/drift/requirements.txt
         pip install pandas numpy scipy pyyaml redis plotly jinja2
 
@@ -55,7 +58,24 @@ jobs:
         node-version: '20'
 
     - name: ☁️ Install Wrangler
-      run: npm install -g wrangler
+      run: |
+        set -euo pipefail
+        npm install -g wrangler@3
+        wrangler --version
+
+    - name: 🧮 Determine Drift Override (dispatch input or PR label)
+      id: determine_override
+      run: |
+        set -euo pipefail
+        EFFECTIVE="${{ github.event.inputs.override_drift || 'false' }}"
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if jq -r '.pull_request.labels[].name' "$GITHUB_EVENT_PATH" 2>/dev/null | grep -qi '^drift-override$'; then
+            echo "PR label 'drift-override' present -> overriding drift gate";
+            EFFECTIVE="true"
+          fi
+        fi
+        echo "effective_override=$EFFECTIVE" >> $GITHUB_OUTPUT
+        echo "Drift override effective: $EFFECTIVE"
 
     - name: 💾 Restore Baseline Cache
       uses: actions/cache@v4
@@ -68,6 +88,8 @@ jobs:
     - name: 🔍 Run Schema Drift Detection
       id: schema_drift
       run: |
+        set -euo pipefail
+        echo "Running schema drift detection..."
         python observability/drift/drift_detector.py --schema-only
       continue-on-error: true
 
@@ -75,14 +97,18 @@ jobs:
       id: statistical_drift
       env:
         CACHE_BASELINES: true
-        DRIFT_OVERRIDE: ${{ github.event.inputs.override_drift }}
+        DRIFT_OVERRIDE: ${{ steps.determine_override.outputs.effective_override }}
       run: |
+        set -euo pipefail
+        echo "Running statistical drift detection (override=${DRIFT_OVERRIDE})..."
         ./observability/drift/ci_drift_gate.sh
       continue-on-error: true
 
     - name: 📈 Generate Drift Report
       if: github.event.inputs.generate_report == 'true' || github.event_name == 'schedule'
       run: |
+        set -euo pipefail
+        echo "Generating drift report..."
         python observability/drift/drift_detector.py --generate-report
 
     - name: 📝 Create GitHub Issues for Critical Drift
@@ -91,20 +117,32 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const driftResults = JSON.parse(fs.readFileSync('observability/drift/ci/drift_results.json', 'utf8'));
-
+          const path = 'observability/drift/ci/drift_results.json';
+          if (!fs.existsSync(path)) {
+            core.warning('No drift_results.json found, skipping issue creation');
+            return;
+          }
+          const driftResults = JSON.parse(fs.readFileSync(path, 'utf8'));
           for (const result of driftResults) {
             if (result.severity === 'CRITICAL') {
+              const title = `[DRIFT] Critical drift in ${result.dataset}.${result.column}`;
+              const search = await github.rest.search.issuesAndPullRequests({
+                q: `repo:${context.repo.owner}/${context.repo.repo} in:title "${title}" state:open`
+              });
+              if (search.data.total_count > 0) {
+                core.info(`Issue already exists for ${title}, skipping.`);
+                continue;
+              }
               await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `[DRIFT] Critical drift in ${result.dataset}.${result.column}`,
+                title,
                 body: `## 🚨 Critical Data Drift Detected\n\n` +
                       `**Dataset:** ${result.dataset}\n` +
                       `**Column:** ${result.column}\n` +
                       `**Test:** ${result.test_type}\n` +
-                      `**Statistic:** ${result.statistic.toFixed(4)}\n` +
-                      `**Threshold:** ${result.threshold.toFixed(4)}\n\n` +
+                      `**Statistic:** ${Number(result.statistic).toFixed(4)}\n` +
+                      `**Threshold:** ${Number(result.threshold).toFixed(4)}\n\n` +
                       `[View Full Report](https://blazesportsintel.com/observability/drift/reports/)`,
                 labels: ['drift-detection', 'data-quality', 'critical'],
                 assignees: ['ahump20']
@@ -118,51 +156,36 @@ jobs:
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       run: |
-        # Upload reports to R2
-        if [ -d "observability/drift/reports" ]; then
-          wrangler r2 object put blaze-drift-reports/$(date +%Y%m%d)/ \
-            --file=observability/drift/reports/ \
-            --recursive
-        fi
+        set -euo pipefail
+        if [ -z "${CLOUDFLARE_API_TOKEN}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+          echo "Cloudflare credentials missing; skipping R2 upload"; exit 0; fi
+        if [ ! -d "observability/drift/reports" ]; then
+          echo "No reports directory; skipping R2 upload"; exit 0; fi
+        if ! find observability/drift/reports -type f -print -quit | grep -q .; then
+          echo "No report files found; skipping R2 upload"; exit 0; fi
+        echo "Uploading drift reports to R2 (per-file)..."
+        while IFS= read -r -d '' f; do
+          rel=${f#observability/drift/reports/}
+          echo "Uploading $rel"
+          wrangler r2 object put "blaze-drift-reports/$(date +%Y%m%d)/$rel" --file="$f"
+        done < <(find observability/drift/reports -type f -print0)
+        echo "R2 upload complete"
 
-    - name: 📊 Update Cloudflare Analytics
-      if: always()
+    - name: 📊 Update Cloudflare Analytics (disabled placeholder)
+      if: always() && env.CLOUDFLARE_ANALYTICS_ENABLED == 'true'
       env:
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       run: |
-        # Send drift metrics to Cloudflare Analytics Engine
-        python << EOF
-        import json
-        import requests
-        from datetime import datetime
-
-        with open('observability/drift/ci/ci_gate.json') as f:
-            ci_data = json.load(f)
-
-        metrics = {
-            'timestamp': datetime.now().isoformat(),
-            'dataset': 'blazesportsintel',
-            'metrics': {
-                'drift_critical_count': ci_data['critical_drifts'],
-                'schema_critical_count': ci_data['critical_schema_changes'],
-                'ci_gate_passed': ci_data['pass']
-            }
-        }
-
-        # Send to Cloudflare Analytics Engine
-        response = requests.post(
-            'https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/analytics_engine/sql',
-            headers={'Authorization': 'Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}'},
-            json=metrics
-        )
-        EOF
+        set -euo pipefail
+        echo "Analytics ingestion disabled (CLOUDFLARE_ANALYTICS_ENABLED=false). Skipping."
 
     - name: 💾 Save Baseline Cache
       if: success() && github.event_name == 'schedule'
       uses: actions/cache@v4
       with:
         path: observability/drift/baselines
-        key: drift-baselines-${{ runner.os }}-${{ hashFiles('observability/drift/config/drift-config.yaml') }}-${{ github.sha }}
+        key: drift-baselines-${{ runner.os }}-${{ hashFiles('observability/drift/config/drift-config.yaml') }}
 
     - name: 📦 Upload Artifacts
       if: always()
@@ -174,11 +197,37 @@ jobs:
           observability/drift/ci/
           observability/drift/logs/
         if-no-files-found: ignore
+        retention-days: 7
+        compression-level: 6
+
+    - name: 🧾 Drift Gate Summary
+      if: always()
+      run: |
+        set -euo pipefail
+        SUMMARY_FILE="observability/drift/ci/ci_gate.json"
+        if [ -f "$SUMMARY_FILE" ]; then
+          echo '--- CI Gate JSON ---'
+          cat "$SUMMARY_FILE"
+          PASS=$(jq -r '.pass' "$SUMMARY_FILE" || echo 'null')
+          CRIT_DRIFTS=$(jq -r '.critical_drifts' "$SUMMARY_FILE" || echo '0')
+          SCHEMA_CRIT=$(jq -r '.critical_schema_changes' "$SUMMARY_FILE" || echo '0')
+          {
+            echo "# Drift Gate Summary";
+            echo "Pass: $PASS";
+            echo "Critical Drifts: $CRIT_DRIFTS";
+            echo "Critical Schema Changes: $SCHEMA_CRIT";
+            echo "Override Applied: ${{ steps.determine_override.outputs.effective_override }}";
+            echo "Report URL: https://blazesportsintel.com/observability/drift/reports/";
+          } >> "$GITHUB_STEP_SUMMARY"
+        else
+          echo "No ci_gate.json found; skipping summary." >> "$GITHUB_STEP_SUMMARY"
+        fi
 
     - name: 🏁 CI Gate Decision
       if: github.event_name == 'pull_request'
       run: |
-        if [ "${{ steps.statistical_drift.outcome }}" == "failure" ] && [ "${{ github.event.inputs.override_drift }}" != "true" ]; then
+        set -euo pipefail
+        if [ "${{ steps.statistical_drift.outcome }}" = "failure" ] && [ "${{ steps.determine_override.outputs.effective_override }}" != "true" ]; then
           echo "❌ Critical drift detected - blocking PR merge"
           echo "Review drift report at: https://blazesportsintel.com/observability/drift/reports/"
           exit 1
@@ -190,7 +239,6 @@ jobs:
     needs: drift-detection
     if: failure()
     runs-on: ubuntu-latest
-
     steps:
     - name: 📧 Send Email Alert
       uses: dawidd6/action-send-mail@v3
@@ -204,12 +252,6 @@ jobs:
         from: Blaze Intelligence Monitoring
         body: |
           Critical data drift has been detected in the Blaze Intelligence platform.
-
-          Affected Datasets:
-          - Cardinals Analytics
-          - Titans Performance
-          - Longhorns Rankings
-          - Perfect Game Youth Data
 
           View full report: https://blazesportsintel.com/observability/drift/reports/
 

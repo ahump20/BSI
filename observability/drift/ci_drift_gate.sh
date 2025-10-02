@@ -2,7 +2,7 @@
 # Blaze Intelligence CI/CD Drift Gate
 # Enforces data quality standards for championship-caliber analytics
 
-set -e
+set -euo pipefail
 
 echo "🔥 Blaze Intelligence Data Drift CI Gate"
 echo "========================================="
@@ -11,9 +11,9 @@ echo "Date: $(date +'%Y-%m-%d %H:%M:%S %Z')"
 echo ""
 
 # Configuration
-DRIFT_CONFIG="/Users/AustinHumphrey/BSI/observability/drift/config/drift-config.yaml"
-CI_DIR="/Users/AustinHumphrey/BSI/observability/drift/ci"
-PYTHON_SCRIPT="/Users/AustinHumphrey/BSI/observability/drift/drift_detector.py"
+DRIFT_CONFIG="observability/drift/config/drift-config.yaml"
+CI_DIR="observability/drift/ci"
+PYTHON_SCRIPT="observability/drift/drift_detector.py"
 
 # Colors for output
 RED='\033[0;31m'
@@ -75,7 +75,7 @@ generate_report() {
     python3 << EOF
 import asyncio
 import sys
-sys.path.append('/Users/AustinHumphrey/BSI/observability/drift')
+sys.path.append('observability/drift')
 from drift_detector import BlazeIntelligenceDriftDetector
 
 async def generate():
