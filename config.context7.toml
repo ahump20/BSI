@@ -1,0 +1,14 @@
+[client]
+model = "gpt-5-codex"
+model_reasoning_effort = "high"
+
+[[mcp_servers]]
+id = "context7"
+command = "npx"
+args = ["-y", "@context7/mcp-server"]
+transport = "stdio"
+env = {
+  CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}",
+  CONTEXT7_API_URL = "${CONTEXT7_API_URL}",
+  CONTEXT7_MCP_URL = "${CONTEXT7_MCP_URL}"
+}
