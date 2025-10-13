@@ -103,7 +103,7 @@ export const DATA_CONFIG = {
       data_sources: [
         'NCAA Statistics API',
         'Conference Databases',
-        'Boyd\'s World RPI/ISR',
+        "Boyd's World RPI/ISR",
         'D1Baseball',
         'Perfect Game Collegiate',
         'Baseball America'
