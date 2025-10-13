@@ -11,7 +11,7 @@
 
 **Mission**: Safe, staged transition from multi-sport platform to college baseball-first intelligence hub with live game tracking, pitch-by-pitch analytics, and auto-generated content.
 
-**Status**: Phase 1 Complete | Phase 2 In Progress - IA & Redirects
+**Status**: Phase 1 Complete | Phase 2 Core API + Ingest Complete | Phase 3 Ready to Start
 
 ---
 
@@ -263,11 +263,11 @@ enum FeedPrecision { EVENT | PITCH }
 - [x] Create validation scripts (`check-301-consistency.sh`, `check-404s.sh`)
 
 ### Week 2-6: Database & API
-- [ ] Implement Prisma schema
-- [ ] Build API endpoints
-- [ ] Create ingest worker
-- [ ] Test provider failover
-- [ ] Integrate NLG content generation
+- [x] Implement Prisma schema (6.17.1 + PostgreSQL)
+- [x] Build API endpoints (5 handlers: games, teams, conferences, players, rankings)
+- [x] Create ingest worker (Cloudflare Workers with cron schedule)
+- [ ] Test provider failover (Deploy + simulate failures)
+- [ ] Integrate NLG content generation (auto-recap/preview)
 
 ### Week 6-14: Frontend MVP
 - [ ] Next.js project setup (monorepo)
@@ -355,12 +355,88 @@ enum FeedPrecision { EVENT | PITCH }
 - 301/410 redirect strategy with 100% legacy route coverage
 - Automated validation tooling for post-deployment verification
 
-### [Phase 2: Next Steps]
-- Implement Next.js middleware for redirect handling
-- Build Prisma schema for PostgreSQL
-- Create API endpoints (`/api/v1/*`)
-- Implement ingest worker (Cloudflare)
-- ...
+### 2025-10-13 (Phase 2 Core API - In Progress)
+- ✅ Prisma ORM integration (v6.17.1 + @prisma/client)
+- ✅ PostgreSQL connection configured (DATABASE_URL)
+- ✅ Prisma Client singleton created (`lib/db/prisma.ts`)
+- ✅ API v1 handlers implemented:
+  - `lib/api/v1/games.ts` - List games + game detail with events & box scores (365 lines)
+  - `lib/api/v1/teams.ts` - List teams + team detail with roster/stats/recent games (350 lines)
+  - `lib/api/v1/conferences.ts` - List conferences + standings with games back (373 lines)
+  - `lib/api/v1/players.ts` - Player profiles with current/career stats (483 lines)
+  - `lib/api/v1/rankings.ts` - Poll rankings + history + composite (374 lines)
+  - `lib/api/v1/index.ts` - Barrel exports for clean imports (92 lines)
+- ✅ Prisma npm scripts added (db:generate, db:migrate, db:push, db:studio, db:seed, db:reset)
+- ✅ Phase 2 commit: `5d86705` (9 files changed, +2,537 lines)
+
+**Key Features**:
+- Type-safe TypeScript interfaces for all API handlers
+- Query parameter validation with pagination support (limit, offset, hasMore)
+- Nested Prisma includes for related data (conferences, teams, players, stats)
+- Comprehensive response structures with metadata
+- Conference standings with games back calculation
+- Player career stats aggregation across seasons
+- Poll rankings with movement tracking (up/down/new/same)
+- Composite rankings aggregation across multiple polls
+
+**Next Steps**:
+- ~~Implement Cloudflare Workers ingest layer with cron schedule~~ ✅ COMPLETE
+- Test provider failover (SportsDataIO → NCAA API → ESPN)
+- Integrate NLG content generation (auto-recap/preview)
+
+### 2025-10-13 (Phase 2 Ingest Worker - Complete)
+- ✅ Cloudflare Workers ingest layer implemented (`workers/ingest/`)
+- ✅ Scheduled cron triggers configured:
+  - Live games: `*/5 * * * *` (every 5 minutes)
+  - Team stats refresh: `0 * * * *` (hourly)
+  - Historical aggregations: `0 2 * * *` (daily at 2am CST)
+- ✅ Provider failover system with circuit breaker pattern:
+  - SportsDataIO adapter (primary) - `lib/adapters/sports-data-io.ts` (146 lines)
+  - NCAA API adapter (backup) - `lib/adapters/ncaa-api.ts` (130 lines)
+  - ESPN API adapter (tertiary) - `lib/adapters/espn-api.ts` (167 lines)
+  - Provider manager with circuit breaker - `lib/adapters/provider-manager.ts` (189 lines)
+- ✅ Circuit breaker configuration:
+  - Failure threshold: 3 failures before opening
+  - Reset timeout: 60 seconds auto-recovery
+  - Per-provider state tracking with monitoring support
+- ✅ Data processing features:
+  - Batch upserts with Prisma ORM
+  - Rate limiting: 10 concurrent requests with 1s pause between batches
+  - KV caching: 60s TTL for live games, 4hr TTL for standings
+  - R2 archival for immutable historical game data
+- ✅ Advanced baseball analytics calculations:
+  - RPI (Rating Percentage Index): (WP*0.25) + (OWP*0.50) + (OOWP*0.25)
+  - Strength of Schedule: Average opponent win percentage
+  - Pythagorean Win Expectation: Baseball exponent 1.83
+- ✅ Monitoring & observability:
+  - Analytics Engine integration for success/failure tracking
+  - Structured logging for all ingest operations
+  - Circuit breaker status endpoint for operational visibility
+- ✅ Cloudflare bindings configured:
+  - KV Namespace: `CACHE` (id: a53c3726fc3044be82e79d2d1e371d26)
+  - R2 Bucket: `blazesports-archives`
+  - Analytics Engine: `bsi_ingest_analytics`
+- ✅ Phase 2 ingest commit: `bf756cd` (7 files changed, +1,412 lines)
+
+**Key Features**:
+- Production-ready scheduled ingest worker with HTTP manual trigger endpoints
+- Automatic provider failover with intelligent circuit breaking
+- Comprehensive error handling and recovery mechanisms
+- Real-time monitoring via Analytics Engine
+- Health check endpoint at `/health`
+- Secret-based authentication for manual triggers
+
+**Total Phase 2 Implementation**:
+- 16 files created/modified
+- +3,949 lines of production TypeScript code
+- Complete data ingestion pipeline from provider APIs to database
+- Type-safe interfaces and error handling throughout
+
+**Next Steps**:
+- Deploy ingest worker to Cloudflare: `wrangler deploy` from `workers/ingest/`
+- Test provider failover logic with simulated failures
+- Monitor circuit breaker behavior in production
+- Integrate NLG content generation (auto-recap/preview)
 
 ---
 
