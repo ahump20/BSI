@@ -379,15 +379,20 @@
     </div>
 
     <script>
-      // Test API endpoint
-      fetch('/api/college-baseball/teams?conference=SEC')
-        .then(response => response.json())
-        .then(data => {
-          console.log('College Baseball API:', data);
-        })
-        .catch(error => {
-          console.log('API endpoint will be available soon');
-        });
+      // Test API endpoint (development only)
+      if (
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1'
+      ) {
+        fetch('/api/college-baseball/teams?conference=SEC')
+          .then(response => response.json())
+          .then(data => {
+            console.log('College Baseball API:', data);
+          })
+          .catch(error => {
+            console.log('API endpoint will be available soon');
+          });
+      }
     </script>
   </body>
 </html>
