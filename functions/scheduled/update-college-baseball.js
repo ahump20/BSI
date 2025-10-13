@@ -16,7 +16,7 @@ export default {
     const month = now.getMonth(); // 0-indexed: 0=Jan, 1=Feb, etc.
     const season = now.getFullYear();
 
-    // College baseball season: February (1) through June (5)
+    // College baseball season: February (1) through June (5) [0-indexed: 0=Jan, 1=Feb, ..., 5=June]
     const isBaseballSeason = month >= 1 && month <= 5;
 
     console.log(`[COLLEGE BASEBALL CRON] Starting data update for ${season} season`);
