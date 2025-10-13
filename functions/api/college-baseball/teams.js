@@ -82,7 +82,7 @@ export async function onRequest(context) {
         stadium_name: 'Florida Ballpark',
         capacity: 5500,
         colors: ['orange', 'blue'],
-        coach_name: 'Kevin O\'Sullivan',
+        coach_name: "Kevin O'Sullivan",
         conference_titles: 15,
         cws_appearances: 13,
         national_championships: 1
