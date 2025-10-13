@@ -1,0 +1,278 @@
+/**
+ * MLB Standings API with Full Observability
+ * Example implementation showing complete observability integration
+ *
+ * GET /api/mlb-standings-observable
+ */
+
+import { withObservability } from '../../../observability/helpers/index.js';
+import {
+  startExternalApiSpan,
+  startCacheSpan,
+  setSpanHttpStatus,
+  addSpanEvent,
+} from '../../../observability/helpers/otel-tracer.js';
+
+/**
+ * Core handler with observability context
+ */
+async function handler(request, env, ctx, observability) {
+  const { logger, metrics, errorTracker } = observability;
+  const url = new URL(request.url);
+  const season = url.searchParams.get('season') || '2025';
+
+  logger.info('MLB standings request received', { season });
+
+  // Cache key
+  const cacheKey = `mlb:standings:${season}`;
+
+  try {
+    // Step 1: Check cache
+    const cacheSpan = startCacheSpan('get', cacheKey);
+    addSpanEvent(cacheSpan, 'cache.lookup.start');
+
+    const cachedData = await env.KV_CACHE?.get(cacheKey, 'json');
+    const cacheDuration = Date.now() - cacheSpan.startTime;
+
+    if (cachedData) {
+      addSpanEvent(cacheSpan, 'cache.hit');
+      setSpanHttpStatus(cacheSpan, 200);
+      cacheSpan.end();
+
+      metrics.recordCacheOperation({
+        operation: 'get',
+        key: cacheKey,
+        hit: true,
+        duration: cacheDuration,
+      });
+
+      logger.logCacheOperation('hit', cacheKey, cacheDuration);
+      logger.info('MLB standings served from cache', {
+        season,
+        ageSeconds: Math.floor((Date.now() - cachedData.timestamp) / 1000),
+      });
+
+      // Record data freshness
+      const dataAge = Math.floor((Date.now() - cachedData.timestamp) / 1000);
+      metrics.recordDataFreshness('mlb_standings', dataAge, { season });
+
+      return new Response(JSON.stringify(cachedData.data), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=300',
+          'X-Cache': 'HIT',
+          'X-Data-Age': `${dataAge}s`,
+          'X-Correlation-ID': logger.correlationId,
+        },
+      });
+    }
+
+    // Cache miss
+    addSpanEvent(cacheSpan, 'cache.miss');
+    setSpanHttpStatus(cacheSpan, 404);
+    cacheSpan.end();
+
+    metrics.recordCacheOperation({
+      operation: 'get',
+      key: cacheKey,
+      hit: false,
+      duration: cacheDuration,
+    });
+
+    logger.logCacheOperation('miss', cacheKey, cacheDuration);
+
+    // Step 2: Fetch from MLB API
+    logger.info('Fetching MLB standings from API', { season });
+
+    const apiSpan = startExternalApiSpan(
+      'MLB Stats API',
+      'getStandings',
+      `https://statsapi.mlb.com/api/v1/standings?season=${season}`
+    );
+
+    const apiStartTime = Date.now();
+    const apiResponse = await fetch(
+      `https://statsapi.mlb.com/api/v1/standings?season=${season}`,
+      {
+        headers: {
+          'User-Agent': 'BlazeSportsIntel/2.1.0',
+          'Accept': 'application/json',
+        },
+        signal: AbortSignal.timeout(5000), // 5 second timeout
+      }
+    );
+
+    const apiDuration = Date.now() - apiStartTime;
+
+    setSpanHttpStatus(apiSpan, apiResponse.status, apiResponse.statusText);
+    apiSpan.setAttribute('http.response_size', apiResponse.headers.get('content-length') || '0');
+    apiSpan.end();
+
+    // Record external API metrics
+    metrics.recordExternalApiCall({
+      service: 'MLB Stats API',
+      operation: 'getStandings',
+      statusCode: apiResponse.status,
+      duration: apiDuration,
+      success: apiResponse.ok,
+    });
+
+    logger.logExternalApiCall('MLB Stats API', 'getStandings', apiResponse.status, apiDuration, {
+      season,
+    });
+
+    if (!apiResponse.ok) {
+      // API error - track and throw
+      const error = new Error(`MLB API returned ${apiResponse.status}`);
+      errorTracker.trackExternalApiError('MLB Stats API', 'getStandings', error, {
+        statusCode: apiResponse.status,
+        season,
+      });
+
+      // Check if we should use stale cache
+      const staleData = await env.KV_CACHE?.get(`${cacheKey}:stale`, 'json');
+      if (staleData) {
+        logger.warn('MLB API failed, serving stale cache', {
+          statusCode: apiResponse.status,
+          staleAgeSeconds: Math.floor((Date.now() - staleData.timestamp) / 1000),
+        });
+
+        return new Response(JSON.stringify(staleData.data), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'public, max-age=60',
+            'X-Cache': 'STALE',
+            'Warning': '110 - "Response is Stale"',
+            'X-Correlation-ID': logger.correlationId,
+          },
+        });
+      }
+
+      throw error;
+    }
+
+    // Step 3: Parse and transform data
+    const rawData = await apiResponse.json();
+
+    logger.debug('MLB API response received', {
+      recordCount: rawData.records?.length || 0,
+    });
+
+    // Transform data to normalized format
+    const standings = {
+      season: parseInt(season),
+      lastUpdated: new Date().toISOString(),
+      divisions: rawData.records?.map(record => ({
+        division: {
+          id: record.division?.id,
+          name: record.division?.name,
+          abbreviation: record.division?.abbreviation,
+        },
+        teams: record.teamRecords?.map(team => ({
+          team: {
+            id: team.team?.id,
+            name: team.team?.name,
+          },
+          wins: team.wins,
+          losses: team.losses,
+          winningPercentage: team.leagueRecord?.pct,
+          gamesBack: team.gamesBack,
+          wildCardGamesBack: team.wildCardGamesBack,
+          streak: team.streak?.streakCode,
+          runDifferential: team.runDifferential,
+          homeRecord: team.records?.splitRecords?.find(r => r.type === 'home')?.wins + '-' +
+            team.records?.splitRecords?.find(r => r.type === 'home')?.losses,
+          awayRecord: team.records?.splitRecords?.find(r => r.type === 'away')?.wins + '-' +
+            team.records?.splitRecords?.find(r => r.type === 'away')?.losses,
+        })) || [],
+      })) || [],
+      meta: {
+        source: 'MLB Stats API',
+        retrievedAt: new Date().toISOString(),
+        timezone: 'America/Chicago',
+      },
+    };
+
+    // Step 4: Cache the results
+    const cacheSetSpan = startCacheSpan('set', cacheKey);
+
+    const cachePayload = {
+      data: standings,
+      timestamp: Date.now(),
+    };
+
+    const cacheSetStart = Date.now();
+
+    await Promise.all([
+      // Fresh cache (5 minute TTL)
+      env.KV_CACHE?.put(cacheKey, JSON.stringify(cachePayload), {
+        expirationTtl: 300,
+      }),
+      // Stale cache (24 hour TTL) for fallback
+      env.KV_CACHE?.put(`${cacheKey}:stale`, JSON.stringify(cachePayload), {
+        expirationTtl: 86400,
+      }),
+    ]);
+
+    const cacheSetDuration = Date.now() - cacheSetStart;
+
+    setSpanHttpStatus(cacheSetSpan, 200);
+    cacheSetSpan.end();
+
+    metrics.recordCacheOperation({
+      operation: 'set',
+      key: cacheKey,
+      duration: cacheSetDuration,
+    });
+
+    logger.logCacheOperation('set', cacheKey, cacheSetDuration);
+    logger.info('MLB standings cached successfully', {
+      season,
+      teamCount: standings.divisions.reduce((sum, d) => sum + d.teams.length, 0),
+      ttl: 300,
+    });
+
+    // Record data freshness (0 seconds - just fetched)
+    metrics.recordDataFreshness('mlb_standings', 0, { season });
+
+    // Step 5: Return response
+    return new Response(JSON.stringify(standings), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        'X-Cache': 'MISS',
+        'X-Data-Age': '0s',
+        'X-Correlation-ID': logger.correlationId,
+      },
+    });
+  } catch (error) {
+    // Error already tracked by withObservability middleware
+    // Just add additional context
+    logger.error('MLB standings request failed', error, {
+      season,
+      cacheKey,
+    });
+
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch MLB standings',
+        message: error.message,
+        season,
+        correlationId: logger.correlationId,
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Correlation-ID': logger.correlationId,
+        },
+      }
+    );
+  }
+}
+
+// Export wrapped handler with full observability
+export const onRequest = withObservability(handler);

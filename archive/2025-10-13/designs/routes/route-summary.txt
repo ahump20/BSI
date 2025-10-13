@@ -1,0 +1,151 @@
+BlazeSportsIntel Route Inventory
+Generated: 2025-10-13T12:02:57.690Z
+Total Routes: 130
+
+By Type:
+  static: 68
+  api: 62
+
+By Classification:
+  KEEP: 10
+  REFACTOR: 106
+  PORT: 7
+  DELETE: 7
+
+KEEP (10):
+  /
+  /about
+  /legal/accessibility
+  /legal/ai-disclosure
+  /legal/ai-transparency
+  /legal/coppa
+  /legal/copyright
+  /legal/data-attribution
+  /legal/privacy
+  /legal/terms
+
+PORT (7):
+  /analytics
+  /analytics-api-integrated
+  /analytics-hardcoded-backup
+  /analytics-original
+  /analytics-test
+  /copilot
+  /copilot-original-backup
+
+REFACTOR (106):
+  /about-original
+  /api-docs
+  /api-status
+  /api/api
+  /api/api
+  /api/api-gateway
+  /api/api/analytics
+  /api/api/cbb/*
+  /api/api/cbb/standings
+  /api/api/cfb/*
+  /api/api/cfb/standings
+  /api/api/championship
+  /api/api/chat
+  /api/api/college-baseball/games/[[gameId]]/boxscore
+  /api/api/college-baseball/games/[[gameId]]/preview
+  /api/api/college-baseball/games/[[gameId]]/recap
+  /api/api/college-baseball/scores
+  /api/api/college-baseball/teams
+  /api/api/copilot/admin/generate-embeddings
+  /api/api/copilot/enhanced-insights
+  /api/api/copilot/enhanced-search
+  /api/api/copilot/featured-games
+  /api/api/copilot/trending-searches
+  /api/api/health
+  /api/api/live-scores
+  /api/api/mcp/championship-dashboard
+  /api/api/metrics
+  /api/api/mlb
+  /api/api/mlb-standings
+  /api/api/mlb/*
+  /api/api/mlb/*
+  /api/api/mlb/3d-data
+  /api/api/mlb/scores
+  /api/api/mlb/standings
+  /api/api/monte-carlo
+  /api/api/ncaa-standings
+  /api/api/ncaa/scores
+  /api/api/ncaa/standings
+  /api/api/ncaa/teams
+  /api/api/nfl
+  /api/api/nfl-standings
+  /api/api/nfl/*
+  /api/api/nfl/*
+  /api/api/nfl/scores
+  /api/api/nfl/standings
+  /api/api/particle/influence
+  /api/api/sports-analytics
+  /api/api/sports-data
+  /api/api/sports-data-real
+  /api/api/sports-data-real-mlb
+  /api/api/sports-data-real-nba
+  /api/api/sports-data-real-nfl
+  /api/api/youth/rankings
+  /api/scheduled/backup-d1
+  /api/scheduled/generate-embeddings
+  /api/scheduled/update-cbb
+  /api/scheduled/update-cfb
+  /api/scheduled/update-mlb
+  /api/scheduled/update-nfl
+  /apps/mobile/public/offline
+  /blaze-v5-demo
+  /BSI-archive/demo-visualizations/blaze_monte_carlo_threejs
+  /BSI-archive/demo-visualizations/blaze-3d-sports-dashboard
+  /BSI-archive/demo-visualizations/blaze-authentic-platform
+  /BSI-archive/demo-visualizations/blaze-championship-intelligence-platform
+  /BSI-archive/demo-visualizations/blaze-professional-3d-platform
+  /BSI-archive/demo-visualizations/blaze-ultimate-sports-dashboard
+  /BSI-archive/demo-visualizations/blaze-ultimate-sports-dashboard-v2
+  /BSI-archive/demo-visualizations/blaze-youth-sports-authority
+  /BSI-archive/demo-visualizations/championship_platform_demo
+  /BSI-archive/demo-visualizations/dashboard
+  /BSI-archive/demo-visualizations/index-old-backup
+  /BSI-archive/demo-visualizations/index-redesigned
+  /BSI-archive/demo-visualizations/nil-valuation-dashboard
+  /BSI-archive/demo-visualizations/youth-sports-platform
+  /cbb
+  /cbb/index-original
+  /cfb
+  /cfb/index-original
+  /components/3d/Baseball3DDiamond-example
+  /contact
+  /cookies
+  /data-transparency
+  /docs/charts/architecture-diagrams
+  /historicalcomparisons
+  /index-babylon-backup
+  /index-enhanced
+  /lib/cookie-consent
+  /methodology
+  /mlb
+  /mlb/index-original
+  /nfl
+  /nfl-analytics-dashboard
+  /nfl/index-original
+  /performance-benchmark
+  /performance-metrics
+  /privacy
+  /privacy-comprehensive
+  /public/components/demo-badge-example
+  /public/demo/neural-substrate
+  /scoutingintelcopilotwidget
+  /sports-analytics-dashboard
+  /sports-analytics-dashboard-enhanced
+  /terms
+  /terms-comprehensive
+  /webgpu-prototype
+
+DELETE (7):
+  /api/api/nba
+  /api/api/nba-standings
+  /api/api/nba/*
+  /api/api/nba/scores
+  /api/api/nba/standings
+  /api/api/nba/standings-FIXED
+  /features
