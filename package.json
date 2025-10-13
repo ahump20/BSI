@@ -1,7 +1,7 @@
 {
   "name": "blaze-sports-intel-bsi",
   "version": "2.1.0",
-  "description": "\ud83d\udd25 Blaze Sports Intel - Biomechanics Vision System & Championship Intelligence Platform",
+  "description": "🔥 Blaze Sports Intel - Biomechanics Vision System & Championship Intelligence Platform",
   "main": "index-enhanced-full.html",
   "type": "module",
   "scripts": {
@@ -44,6 +44,12 @@
     "health": "node scripts/health-check.js",
     "migrate": "node scripts/run-migrations.js",
     "seed": "node scripts/seed-data.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset",
     "generate:charts": "node lib/mermaid-charts.js",
     "generate:stackoverflow": "node lib/stackoverflow-integration.js",
     "setup:neon": "node lib/neon-database.js",
@@ -74,15 +80,17 @@
     "python": ">=3.9.0"
   },
   "devDependencies": {
+    "@types/node": "^20.8.0",
+    "concurrently": "^8.2.2",
     "eslint": "^8.0.0",
     "prettier": "^3.0.0",
-    "wrangler": "^4.40.2",
-    "typescript": "^5.2.2",
-    "@types/node": "^20.8.0",
+    "prisma": "^6.17.1",
     "ts-node": "^10.9.1",
-    "concurrently": "^8.2.2"
+    "typescript": "^5.2.2",
+    "wrangler": "^4.40.2"
   },
   "dependencies": {
+    "@prisma/client": "^6.17.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
