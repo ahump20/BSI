@@ -370,8 +370,31 @@ class RealTimeServer {
   }
 
   async getGameEvents(gameId) {
-    // In a real implementation, this would fetch play-by-play data
-    return [];
+    const result = await this.db.query(`
+      SELECT
+        sequence,
+        event_ts,
+        inning,
+        half_inning,
+        outs,
+        balls,
+        strikes,
+        event_type,
+        description,
+        runners,
+        metrics,
+        source
+      FROM game_events
+      WHERE game_id = $1
+      ORDER BY sequence ASC
+      LIMIT 300
+    `, [gameId]);
+
+    return result.rows.map(row => ({
+      ...row,
+      runners: row.runners || [],
+      metrics: row.metrics || {}
+    }));
   }
 
   async getGamePlayerStats(gameId) {

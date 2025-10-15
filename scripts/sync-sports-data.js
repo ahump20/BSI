@@ -16,6 +16,8 @@ import fetch from 'node-fetch';
 import { EventEmitter } from 'events';
 import dotenv from 'dotenv';
 
+import DatabaseConnectionService from '../api/database/connection-service.js';
+
 dotenv.config();
 
 const { Pool } = pg;
@@ -24,6 +26,8 @@ class SportsSyncService extends EventEmitter {
   constructor() {
     super();
 
+    this.logger = this.createLogger();
+
     this.db = new Pool({
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 5432,
@@ -31,6 +35,20 @@ class SportsSyncService extends EventEmitter {
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres'
     });
+
+    this.dbService = new DatabaseConnectionService({
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      database: process.env.DB_NAME || 'blazesportsintel',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      ssl: process.env.DB_SSL === 'true',
+      maxConnections: 8,
+      minConnections: 1,
+      connectionTimeout: 15000
+    }, this.logger);
+
+    this.dbServiceReady = null;
 
     // Rate limiting configuration
     this.rateLimits = {
@@ -53,6 +71,57 @@ class SportsSyncService extends EventEmitter {
     };
 
     this.isRunning = false;
+  }
+
+  createLogger() {
+    const levelWeight = { error: 0, warn: 1, info: 2, debug: 3 };
+    const configured = (process.env.LOG_LEVEL || 'info').toLowerCase();
+    const threshold = levelWeight[configured] ?? levelWeight.info;
+
+    const write = (level, message, meta = {}, error) => {
+      const weight = levelWeight[level];
+      if (weight > threshold) return;
+
+      const payload = { ...meta };
+      if (error instanceof Error) {
+        payload.error = error.message;
+      } else if (typeof error === 'string' && error.length > 0) {
+        payload.error = error;
+      }
+
+      const metaString = Object.keys(payload).length ? ` ${JSON.stringify(payload)}` : '';
+      const prefix = level === 'error' ? '❌' : level === 'warn' ? '⚠️' : level === 'debug' ? '🐞' : 'ℹ️';
+      const consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log';
+
+      console[consoleMethod](`${prefix} [sync-service] ${message}${metaString}`);
+
+      if (error instanceof Error && configured === 'debug') {
+        console.error(error.stack);
+      }
+    };
+
+    return {
+      info: (message, meta = {}, error) => write('info', message, meta, error),
+      debug: (message, meta = {}, error) => write('debug', message, meta, error),
+      warn: (message, meta = {}, error) => write('warn', message, meta, error),
+      error: (message, meta = {}, error) => write('error', message, meta, error)
+    };
+  }
+
+  async ensureConnectionService() {
+    if (!this.dbService) {
+      throw new Error('Database connection service is not initialized');
+    }
+
+    if (!this.dbServiceReady) {
+      this.dbServiceReady = this.dbService.testConnection().catch((error) => {
+        this.logger.error('Database connectivity check for event ingestion failed', {}, error);
+        this.dbServiceReady = null;
+        throw error;
+      });
+    }
+
+    return this.dbServiceReady;
   }
 
   // Rate limiter with exponential backoff
@@ -367,9 +436,15 @@ class SportsSyncService extends EventEmitter {
             parseInt(awayCompetitor.score) || 0
           ]);
 
+          const dbGameId = gameResult.rows[0]?.id;
+
+          if (dbGameId && competition.status?.type?.state && competition.status.type.state !== 'pre') {
+            await this.persistGameEvents(dbGameId, path, event.id, sportName, competition.status.type.state);
+          }
+
           // If game is in progress, update live scores
-          if (competition.status.type.state === 'in') {
-            await this.updateLiveScore(gameResult.rows[0].id, competition);
+          if (competition.status.type.state === 'in' && dbGameId) {
+            await this.updateLiveScore(dbGameId, competition);
           }
         }
       }
@@ -405,6 +480,197 @@ class SportsSyncService extends EventEmitter {
       period: competition.status.period,
       timeRemaining: competition.status.displayClock
     });
+  }
+
+  async persistGameEvents(gameId, espnPath, eventId, sportName, competitionState) {
+    try {
+      await this.ensureConnectionService();
+
+      const pbpData = await this.fetchPlayByPlay(espnPath, eventId);
+      if (!pbpData) {
+        return;
+      }
+
+      const normalizedEvents = this.normalizePlayByPlay(gameId, pbpData, sportName);
+      if (normalizedEvents.length === 0) {
+        this.logger.debug('No play-by-play events to ingest', { eventId, sport: sportName });
+        return;
+      }
+
+      await this.dbService.transaction(async (client) => {
+        await this.dbService.insertGameEvents(normalizedEvents, { client });
+      });
+
+      this.logger.info('Play-by-play events ingested', {
+        eventId,
+        sport: sportName,
+        state: competitionState,
+        count: normalizedEvents.length
+      });
+    } catch (error) {
+      this.logger.warn('Failed to persist play-by-play events', {
+        eventId,
+        sport: sportName
+      }, error);
+    }
+  }
+
+  async fetchPlayByPlay(espnPath, eventId) {
+    const headers = {
+      'User-Agent': 'BSI Sync Service',
+      'Accept': 'application/json',
+      'Referer': 'https://www.espn.com/'
+    };
+
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${espnPath}/playbyplay?event=${eventId}`;
+
+    try {
+      const response = await this.fetchWithRetry(url, { headers }, 3);
+      if (!response.ok) {
+        this.logger.warn('Play-by-play endpoint returned non-OK status', {
+          eventId,
+          status: response.status
+        });
+        return null;
+      }
+
+      return await response.json();
+    } catch (error) {
+      this.logger.warn('Play-by-play request failed', { eventId }, error);
+      return null;
+    }
+  }
+
+  normalizePlayByPlay(gameId, pbpData, sportName) {
+    if (!pbpData) return [];
+
+    const plays = [];
+    const addPlays = (list) => {
+      if (!Array.isArray(list)) return;
+      for (const play of list) {
+        if (play) {
+          plays.push(play);
+        }
+      }
+    };
+
+    if (pbpData.drives?.current?.plays) {
+      addPlays(pbpData.drives.current.plays);
+    }
+    if (Array.isArray(pbpData.drives?.previous)) {
+      pbpData.drives.previous.forEach((drive) => addPlays(drive.plays));
+    }
+    if (Array.isArray(pbpData.periods)) {
+      pbpData.periods.forEach((period) => addPlays(period.plays));
+    }
+    if (Array.isArray(pbpData.plays)) {
+      addPlays(pbpData.plays);
+    }
+    if (Array.isArray(pbpData.items)) {
+      addPlays(pbpData.items);
+    }
+
+    const normalized = [];
+    const seen = new Set();
+    let fallbackSequence = 1;
+
+    for (const play of plays) {
+      const rawSequence = Number(play?.sequenceNumber ?? play?.id ?? play?.sequence ?? fallbackSequence);
+      const sequence = Number.isFinite(rawSequence) ? rawSequence : fallbackSequence++;
+      if (seen.has(sequence)) continue;
+      seen.add(sequence);
+
+      const eventTs = this.parseEventTimestamp(play, pbpData);
+
+      const runners = Array.isArray(play?.participants)
+        ? play.participants
+            .filter(Boolean)
+            .map((participant) => ({
+              id: participant.athlete?.id || null,
+              name: participant.athlete?.displayName || null,
+              role: participant.type || participant.participantType || null
+            }))
+        : null;
+
+      const metrics = {};
+      if (Array.isArray(play?.statistics) && play.statistics.length > 0) {
+        metrics.statistics = play.statistics;
+      }
+      if (play?.winProbability) {
+        metrics.winProbability = play.winProbability;
+      }
+      if (play?.situation) {
+        metrics.situation = play.situation;
+      }
+      if (Array.isArray(play?.participants) && play.participants.length > 0) {
+        metrics.participants = play.participants;
+      }
+
+      const metricsValue = Object.keys(metrics).length > 0 ? metrics : null;
+
+      normalized.push({
+        gameId,
+        sequence,
+        eventTs,
+        inning: this.safeNumber(play?.period?.number),
+        halfInning: this.normalizeHalfInning(play?.period?.displayValue, sportName),
+        outs: this.safeNumber(play?.count?.outs ?? play?.count?.outsBeforePlay),
+        balls: this.safeNumber(play?.count?.balls),
+        strikes: this.safeNumber(play?.count?.strikes),
+        batterId: null,
+        pitcherId: null,
+        eventType: play?.type?.text || play?.type?.description || play?.type?.id || 'play',
+        description: play?.text || play?.shortText || play?.description || null,
+        runners: runners && runners.length > 0 ? runners : null,
+        metrics: metricsValue,
+        rawPayload: play,
+        source: 'espn'
+      });
+    }
+
+    return normalized;
+  }
+
+  parseEventTimestamp(play, pbpData) {
+    const competition = pbpData?.header?.competitions?.[0];
+    const candidates = [
+      play?.wallclock,
+      play?.start?.wallclock,
+      play?.end?.wallclock,
+      competition?.startDate,
+      competition?.date
+    ];
+
+    for (const candidate of candidates) {
+      if (!candidate) continue;
+      const ts = new Date(candidate);
+      if (!Number.isNaN(ts.getTime())) {
+        return ts.toISOString();
+      }
+    }
+
+    return new Date().toISOString();
+  }
+
+  normalizeHalfInning(displayValue, sportName) {
+    if (!displayValue) return null;
+    const sport = (sportName || '').toUpperCase();
+    if (!['MLB', 'BASEBALL', 'NCAA_BASEBALL'].includes(sport)) {
+      return null;
+    }
+
+    const normalized = displayValue.toLowerCase();
+    if (normalized.includes('top')) return 'top';
+    if (normalized.includes('bottom')) return 'bottom';
+    if (normalized.includes('mid')) return 'mid';
+    if (normalized.includes('end')) return 'end';
+    return null;
+  }
+
+  safeNumber(value) {
+    if (value === null || value === undefined) return null;
+    const num = Number(value);
+    return Number.isFinite(num) ? num : null;
   }
 
   // Helper functions
@@ -583,6 +849,9 @@ class SportsSyncService extends EventEmitter {
   async stopSync() {
     this.isRunning = false;
     await this.db.end();
+    if (this.dbService) {
+      await this.dbService.close();
+    }
     console.log('🛑 Sync service stopped');
   }
 }

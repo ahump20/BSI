@@ -11,7 +11,11 @@
  */
 
 import pkg from 'pg';
+import copyStreams from 'pg-copy-streams';
+import { Readable } from 'stream';
+
 const { Pool } = pkg;
+const { from: copyFrom } = copyStreams;
 
 class DatabaseConnectionService {
     constructor(config, logger) {
@@ -50,6 +54,25 @@ class DatabaseConnectionService {
 
         this.queryTimes = [];
         this.maxQueryTimeHistory = 1000;
+
+        this.defaultEventColumnMap = {
+            game_id: 'gameId',
+            sequence: 'sequence',
+            event_ts: 'eventTs',
+            inning: 'inning',
+            half_inning: 'halfInning',
+            outs: 'outs',
+            balls: 'balls',
+            strikes: 'strikes',
+            batter_id: 'batterId',
+            pitcher_id: 'pitcherId',
+            event_type: 'eventType',
+            description: 'description',
+            runners: 'runners',
+            metrics: 'metrics',
+            raw_payload: 'rawPayload',
+            source: 'source'
+        };
 
         this.initialize();
     }
@@ -224,6 +247,206 @@ class DatabaseConnectionService {
         }
 
         return { insertedCount: totalInserted };
+    }
+
+    /**
+     * Bulk insert normalized play-by-play events with COPY + upsert fallback
+     */
+    async insertGameEvents(events, options = {}) {
+        if (!Array.isArray(events) || events.length === 0) {
+            return { insertedCount: 0, processedCount: 0 };
+        }
+
+        const columns = options.columns || [
+            'game_id',
+            'sequence',
+            'event_ts',
+            'inning',
+            'half_inning',
+            'outs',
+            'balls',
+            'strikes',
+            'batter_id',
+            'pitcher_id',
+            'event_type',
+            'description',
+            'runners',
+            'metrics',
+            'raw_payload',
+            'source'
+        ];
+
+        const columnMap = { ...this.defaultEventColumnMap, ...(options.columnMap || {}) };
+        const onConflictClause = options.onConflict || `
+            (game_id, sequence) DO UPDATE SET
+                event_ts = COALESCE(EXCLUDED.event_ts, game_events.event_ts),
+                inning = COALESCE(EXCLUDED.inning, game_events.inning),
+                half_inning = COALESCE(EXCLUDED.half_inning, game_events.half_inning),
+                outs = COALESCE(EXCLUDED.outs, game_events.outs),
+                balls = COALESCE(EXCLUDED.balls, game_events.balls),
+                strikes = COALESCE(EXCLUDED.strikes, game_events.strikes),
+                batter_id = COALESCE(EXCLUDED.batter_id, game_events.batter_id),
+                pitcher_id = COALESCE(EXCLUDED.pitcher_id, game_events.pitcher_id),
+                event_type = COALESCE(EXCLUDED.event_type, game_events.event_type),
+                description = COALESCE(EXCLUDED.description, game_events.description),
+                runners = COALESCE(EXCLUDED.runners, game_events.runners),
+                metrics = COALESCE(EXCLUDED.metrics, game_events.metrics),
+                raw_payload = COALESCE(EXCLUDED.raw_payload, game_events.raw_payload),
+                source = COALESCE(EXCLUDED.source, game_events.source),
+                updated_at = NOW()
+        `;
+
+        const processedCount = events.length;
+        const client = options.client ? options.client : await this.pool.connect();
+        const manageTransaction = !options.client;
+        let insertedCount = 0;
+
+        try {
+            if (manageTransaction) {
+                await client.query('BEGIN');
+            }
+
+            await client.query(`
+                CREATE TEMP TABLE temp_game_events (
+                    LIKE game_events INCLUDING DEFAULTS INCLUDING GENERATED
+                ) ON COMMIT DROP
+            `);
+
+            await this._copyEventsIntoTempTable(client, events, columns, columnMap);
+
+            const insertQuery = `
+                INSERT INTO game_events (${columns.join(', ')})
+                SELECT ${columns.join(', ')}
+                FROM temp_game_events
+                ON CONFLICT ${onConflictClause}
+            `;
+            const insertResult = await client.query(insertQuery);
+            insertedCount = insertResult.rowCount;
+
+            if (manageTransaction) {
+                await client.query('COMMIT');
+            }
+
+            this.logger.debug('Game events ingested via COPY', {
+                processed: processedCount,
+                affected: insertedCount
+            });
+
+            return { insertedCount, processedCount };
+        } catch (error) {
+            if (manageTransaction) {
+                await client.query('ROLLBACK');
+            }
+
+            this.logger.warn('COPY ingest for game_events failed, falling back to batch insert', {
+                error: error.message,
+                processed: processedCount
+            });
+
+            const rows = events.map(event =>
+                columns.map(column => this._mapEventValue(event, column, columnMap, false))
+            );
+
+            const batchResult = await this.batchInsert('game_events', columns, rows, {
+                onConflict: onConflictClause,
+                batchSize: options.batchSize || 1000
+            });
+
+            return { insertedCount: batchResult.insertedCount, processedCount };
+        } finally {
+            if (manageTransaction) {
+                client.release();
+            }
+        }
+    }
+
+    _mapEventValue(event, column, columnMap, forCopy) {
+        const property = columnMap[column] || column;
+        let value = event?.[property];
+
+        if (value === undefined || value === null) {
+            if (column === 'source') {
+                return forCopy ? 'unknown' : 'unknown';
+            }
+            return null;
+        }
+
+        if (column === 'event_ts') {
+            const ts = this._normalizeEventTimestamp(value);
+            return forCopy ? (ts ? ts.toISOString() : null) : ts;
+        }
+
+        if (['runners', 'metrics', 'raw_payload'].includes(column)) {
+            const jsonValue = value ?? (column === 'runners' ? [] : {});
+            return forCopy ? JSON.stringify(jsonValue) : jsonValue;
+        }
+
+        if (['sequence', 'inning', 'outs', 'balls', 'strikes'].includes(column)) {
+            const numericValue = Number(value);
+            return Number.isFinite(numericValue) ? numericValue : null;
+        }
+
+        if (value instanceof Date) {
+            return forCopy ? value.toISOString() : value;
+        }
+
+        return value;
+    }
+
+    _normalizeEventTimestamp(value) {
+        if (!value) return null;
+        if (value instanceof Date) return value;
+
+        const ts = new Date(value);
+        return Number.isNaN(ts.getTime()) ? null : ts;
+    }
+
+    _copyEventsIntoTempTable(client, events, columns, columnMap) {
+        const copySql = `COPY temp_game_events (${columns.join(', ')}) FROM STDIN WITH (FORMAT csv, NULL '\\N', DELIMITER ',', QUOTE '"', ESCAPE '"')`;
+        const copyStream = client.query(copyFrom(copySql));
+        const rows = events.map(event => this._serializeEventRow(event, columns, columnMap));
+        const readable = Readable.from(rows.map(row => `${row}\n`));
+
+        return new Promise((resolve, reject) => {
+            readable.pipe(copyStream);
+            copyStream.on('finish', resolve);
+            copyStream.on('error', reject);
+        });
+    }
+
+    _serializeEventRow(event, columns, columnMap) {
+        const serialized = columns.map(column => {
+            const value = this._mapEventValue(event, column, columnMap, true);
+            return this._serializeCopyValue(value);
+        });
+
+        return serialized.join(',');
+    }
+
+    _serializeCopyValue(value) {
+        if (value === null || value === undefined) {
+            return '\\N';
+        }
+
+        let normalizedValue = value;
+        if (normalizedValue instanceof Date) {
+            normalizedValue = normalizedValue.toISOString();
+        }
+
+        if (typeof normalizedValue === 'boolean') {
+            normalizedValue = normalizedValue ? 'true' : 'false';
+        }
+
+        const stringValue = String(normalizedValue);
+        if (stringValue === '') {
+            return '""';
+        }
+
+        if (/[",\n\r]/.test(stringValue)) {
+            return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+
+        return stringValue;
     }
 
     /**

@@ -12,6 +12,7 @@ Blaze Sports Intel uses a comprehensive data model architecture designed for hig
 erDiagram
     TEAMS ||--o{ PLAYERS : has
     TEAMS ||--o{ GAMES : "home/away"
+    GAMES ||--o{ GAME_EVENTS : logs
     PLAYERS ||--o{ POSE_DATA : generates
     PLAYERS ||--o{ BIOMECH_ANALYSIS : analyzed
     GAMES ||--o{ GAME_STATS : contains
@@ -216,6 +217,82 @@ CREATE INDEX idx_games_season ON games(season);
 CREATE INDEX idx_games_status ON games(status);
 CREATE INDEX idx_games_external_id ON games(external_id);
 ```
+
+### Game Events Model
+
+**Table:** `game_events`
+
+Persists normalized play-by-play events for every tracked game. Each row
+represents a discrete pitch, snap, or whistle with the contextual metadata
+required for downstream analytics.
+
+```sql
+CREATE TABLE game_events (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+    sequence INTEGER NOT NULL,
+    event_ts TIMESTAMPTZ NOT NULL,
+    inning SMALLINT,
+    half_inning VARCHAR(6) CHECK (half_inning IN ('top', 'bottom', 'mid', 'end')),
+    outs SMALLINT,
+    balls SMALLINT,
+    strikes SMALLINT,
+    batter_id UUID REFERENCES players(id),
+    pitcher_id UUID REFERENCES players(id),
+    event_type VARCHAR(50) NOT NULL,
+    description TEXT,
+    runners JSONB DEFAULT '[]',
+    metrics JSONB DEFAULT '{}',
+    raw_payload JSONB DEFAULT '{}',
+    source VARCHAR(50) DEFAULT 'unknown',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (game_id, sequence)
+);
+
+CREATE INDEX idx_game_events_game_sequence ON game_events (game_id, sequence);
+CREATE INDEX idx_game_events_batter ON game_events (batter_id);
+CREATE INDEX idx_game_events_pitcher ON game_events (pitcher_id);
+CREATE INDEX idx_game_events_event_ts_desc ON game_events (event_ts DESC);
+```
+
+> **Partitioning note:** when event volumes warrant it, promote `game_events`
+> to a TimescaleDB hypertable on `event_ts` (or hash partition on `game_id`)
+> to simplify long-term retention policies.
+
+#### Normalized Event Contract
+
+The ingestion pipeline calls `DatabaseConnectionService.insertGameEvents`
+with normalized payloads that satisfy the following contract:
+
+```typescript
+interface NormalizedGameEvent {
+  gameId: string;              // UUID reference to games.id
+  sequence: number;            // Monotonic per game, used for de-duplication
+  eventTs: string | Date;      // ISO-8601 or Date instance
+  inning?: number | null;
+  halfInning?: 'top' | 'bottom' | 'mid' | 'end' | null;
+  outs?: number | null;
+  balls?: number | null;
+  strikes?: number | null;
+  eventType: string;
+  description?: string | null;
+  runners?: Array<{
+    id: string | null;
+    name?: string | null;
+    role?: string | null;
+  }>;
+  metrics?: Record<string, unknown> | null;
+  rawPayload?: Record<string, unknown> | null;
+  source?: string;             // Defaults to 'unknown' when omitted
+}
+```
+
+`insertGameEvents` wraps inserts inside a transaction, uses PostgreSQL `COPY`
+for high-throughput loading, and falls back to parameterized batch inserts
+when COPY is unavailable. The `(game_id, sequence)` unique constraint
+guarantees idempotent ingestion even when upstream providers resend the same
+plays.
 
 ### Pose Data Model
 
