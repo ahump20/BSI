@@ -563,7 +563,7 @@ class SportsDataService {
     /**
      * Get real NCAA football data (replacing hardcoded Longhorns data)
      */
-    async getNCAA FootballData(teamKey = 'TEX') {
+    async getNCAAFootballData(teamKey = 'TEX') {
         try {
             const response = await fetch(
                 `${this.baseUrls.espn}/football/college-football/standings`
@@ -595,11 +595,11 @@ class SportsDataService {
                 }
             }
 
-            return this.getNCAA FallbackData(teamKey);
+            return this.getNCAAFallbackData(teamKey);
 
         } catch (error) {
             console.error('Error fetching NCAA data:', error);
-            return this.getNCAA FallbackData(teamKey);
+            return this.getNCAAFallbackData(teamKey);
         }
     }
 
@@ -611,14 +611,14 @@ class SportsDataService {
             this.getMLBTeamData('STL'),
             this.getNFLTeamData('TEN'),
             this.getNBATeamData('MEM'),
-            this.getNCAA FootballData('TEX')
+            this.getNCAAFootballData('TEX')
         ]);
 
         return {
             cardinals: cardinals.status === 'fulfilled' ? cardinals.value : this.getMLBFallbackData('STL'),
             titans: titans.status === 'fulfilled' ? titans.value : this.getNFLFallbackData('TEN'),
             grizzlies: grizzlies.status === 'fulfilled' ? grizzlies.value : this.getNBAFallbackData('MEM'),
-            longhorns: longhorns.status === 'fulfilled' ? longhorns.value : this.getNCAA FallbackData('TEX')
+            longhorns: longhorns.status === 'fulfilled' ? longhorns.value : this.getNCAAFallbackData('TEX')
         };
     }
 
@@ -666,7 +666,7 @@ class SportsDataService {
         };
     }
 
-    getNCAA FallbackData(teamKey) {
+    getNCAAFallbackData(teamKey) {
         return {
             name: "Data Unavailable",
             sport: "ncaa-football",
