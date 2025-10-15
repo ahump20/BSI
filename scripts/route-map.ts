@@ -50,7 +50,11 @@ function parseArgs(argv: string[]): CliOptions {
     } else if (arg === '--format') {
       throw new Error('Use --format=<tree|json|paths>');
     } else if (arg.startsWith('--check=')) {
-      const check = arg.split('=')[1] as CliOptions['check'];
+      const parts = arg.split('=');
+      if (parts.length < 2 || !parts[1]) {
+        throw new Error('--check requires a value');
+      }
+      const check = parts[1] as CliOptions['check'];
       if (!['none', 'redirects', 'specs', 'all'].includes(check)) {
         throw new Error(`Unsupported check flag: ${check}`);
       }
