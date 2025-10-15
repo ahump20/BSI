@@ -62,7 +62,7 @@ fi
 echo "🚦 Phase 0/1 Smoke Check"
 
 echo "➡️  Step 1: Validating route map + specs"
-if ! output="$(npx tsx --tsconfig tsconfig.json scripts/route-map.ts --check=all --format=paths >/dev/null 2>&1)"; then
+if ! output="$(npx tsx --tsconfig tsconfig.json scripts/route-map.ts --check=all --format=paths)"; then
   echo "$output"
   exit 1
 fi
