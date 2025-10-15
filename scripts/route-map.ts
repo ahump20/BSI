@@ -58,7 +58,11 @@ function parseArgs(argv: string[]): CliOptions {
     } else if (arg === '--check') {
       options.check = 'all';
     } else if (arg.startsWith('--output=')) {
-      options.output = arg.split('=')[1];
+      const parts = arg.split('=');
+      if (parts.length < 2 || !parts[1]) {
+        throw new Error('--output requires a file path');
+      }
+      options.output = parts[1];
     } else if (arg === '--help' || arg === '-h') {
       printHelp();
       process.exit(0);
