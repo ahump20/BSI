@@ -33,9 +33,10 @@ function parseArgs(argv: string[]): ScreenshotCliOptions {
     if (arg.startsWith('--dir=')) {
       options.directory = path.resolve(PROJECT_ROOT, arg.split('=')[1]);
     } else if (arg.startsWith('--ext=')) {
-      options.extension = arg.split('=')[1].startsWith('.')
-        ? arg.split('=')[1]
-        : `.${arg.split('=')[1]}`;
+      {
+        const ext = arg.split('=')[1];
+        options.extension = ext.startsWith('.') ? ext : `.${ext}`;
+      }
     } else if (arg.startsWith('--format=')) {
       const format = arg.split('=')[1];
       if (format !== 'table' && format !== 'json') {
