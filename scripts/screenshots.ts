@@ -38,7 +38,11 @@ function parseArgs(argv: string[]): ScreenshotCliOptions {
         options.extension = ext.startsWith('.') ? ext : `.${ext}`;
       }
     } else if (arg.startsWith('--format=')) {
-      const format = arg.split('=')[1];
+      const parts = arg.split('=');
+      if (parts.length < 2 || !parts[1]) {
+        throw new Error('--format requires a value');
+      }
+      const format = parts[1];
       if (format !== 'table' && format !== 'json') {
         throw new Error('Unsupported format. Use table or json.');
       }
