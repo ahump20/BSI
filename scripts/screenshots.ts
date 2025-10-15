@@ -52,7 +52,11 @@ function parseArgs(argv: string[]): ScreenshotCliOptions {
     } else if (arg === '--static-only') {
       options.includeDynamic = false;
     } else if (arg.startsWith('--manifest=')) {
-      options.manifest = path.resolve(PROJECT_ROOT, arg.split('=')[1]);
+      const parts = arg.split('=');
+      if (parts.length < 2 || !parts[1]) {
+        throw new Error('--manifest requires a file path');
+      }
+      options.manifest = path.resolve(PROJECT_ROOT, parts[1]);
     } else if (arg === '--help' || arg === '-h') {
       printHelp();
       process.exit(0);
