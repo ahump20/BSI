@@ -11,7 +11,7 @@ fi
 
 echo "🔍 Validating 301 redirect map against product/ux/IA.md"
 
-if ! output="$(npx tsx --tsconfig tsconfig.json scripts/route-map.ts --check=redirects --format=paths >/dev/null 2>&1)"; then
+if ! output="$(npx tsx --tsconfig tsconfig.json scripts/route-map.ts --check=redirects --format=paths)"; then
   echo "$output"
   exit 1
 fi
