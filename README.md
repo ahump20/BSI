@@ -24,6 +24,25 @@ docker-compose up -d
 # API Docs: http://localhost:8000/docs
 ```
 
+## Database & Prisma Configuration
+
+This workspace now uses **Prisma ORM** with PostgreSQL for all college baseball data services. Configure the following environment variables before running any Prisma commands or deployment jobs:
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `DATABASE_URL` | ✅ | PostgreSQL connection string used by the application, Cloudflare Workers, and CI jobs. Example: `postgresql://user:password@host:5432/blaze_baseball`. |
+| `DIRECT_URL` | ⛔ Optional | Connection pool or read replica URL used for long-lived migrations or analytics workers. When set, deployment scripts surface it for observability. |
+| `PRISMA_LOG_LEVEL` | ⛔ Optional | Overrides Prisma Client logging (`info`, `query`, `warn`, `error`) during debugging. |
+
+Regenerate the Prisma Client whenever the schema changes or new environments are provisioned:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm prisma generate
+```
+
+CI/CD systems should run the same commands (the `deploy.sh` helper now enforces this) so the generated client in `node_modules/.prisma` stays in sync with the committed schema and migrations.
+
 ## Architecture
 
 ### Core Pipeline

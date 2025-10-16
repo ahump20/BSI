@@ -220,7 +220,7 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
           conference: {
             select: { name: true },
           },
-          stats: {
+          teamStats: {
             where: { season: new Date().getFullYear() },
             take: 1,
           },
@@ -231,7 +231,7 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
           conference: {
             select: { name: true },
           },
-          stats: {
+          teamStats: {
             where: { season: new Date().getFullYear() },
             take: 1,
           },
@@ -260,8 +260,8 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
     throw new Error(`Game ${gameId} not found`);
   }
 
-  const homeTeamStats = game.homeTeam.stats[0];
-  const awayTeamStats = game.awayTeam.stats[0];
+  const homeTeamStats = game.homeTeam.teamStats[0];
+  const awayTeamStats = game.awayTeam.teamStats[0];
 
   // Build context
   const context: GameContext = {
@@ -299,7 +299,7 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
     context.boxScore = {
       homeStats: {
         runs: game.homeScore || 0,
-        hits: homeBoxLines.reduce((sum, bl) => sum + bl.hits, 0),
+        hits: homeBoxLines.reduce((sum, bl) => sum + bl.h, 0),
         errors: 0, // Would need separate tracking
         leftOnBase: 0, // Would need separate tracking
         battingAvg: homeTeamStats?.battingAvg || 0,
@@ -307,7 +307,7 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
       },
       awayStats: {
         runs: game.awayScore || 0,
-        hits: awayBoxLines.reduce((sum, bl) => sum + bl.hits, 0),
+        hits: awayBoxLines.reduce((sum, bl) => sum + bl.h, 0),
         errors: 0,
         leftOnBase: 0,
         battingAvg: awayTeamStats?.battingAvg || 0,
@@ -318,14 +318,14 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
     // Top performers
     context.topPerformers = {
       hitting: game.boxLines
-        .filter(bl => bl.atBats > 0)
+        .filter(bl => bl.ab > 0)
         .slice(0, 5)
         .map(bl => ({
           playerId: bl.player.id,
           playerName: `${bl.player.firstName} ${bl.player.lastName}`,
           position: bl.player.position || 'UNKNOWN',
-          stats: `${bl.hits}-${bl.atBats}, ${bl.homeRuns} HR, ${bl.rbi} RBI`,
-          impact: bl.homeRuns > 0 || bl.rbi > 2 ? 'high' : bl.hits >= 2 ? 'medium' : 'low',
+          stats: `${bl.h}-${bl.ab}, ${bl.homeRuns} HR, ${bl.rbi} RBI`,
+          impact: bl.homeRuns > 0 || bl.rbi > 2 ? 'high' : bl.h >= 2 ? 'medium' : 'low',
         })),
     };
   }
