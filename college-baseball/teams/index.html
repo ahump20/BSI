@@ -24,6 +24,11 @@
     <!-- AOS Animation Library -->
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
+    <!-- Blaze Design System -->
+    <link rel="stylesheet" href="/public/css/blaze-design-system.css" />
+    <link rel="stylesheet" href="/public/css/blaze-components.css" />
+    <link rel="stylesheet" href="/public/css/blaze-detail-maximizer.css" />
+
     <style>
       * {
         margin: 0;
@@ -557,6 +562,13 @@
     <!-- AOS Animation Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Blaze Particle System & Charts -->
+    <script src="/public/js/blaze-particles.js"></script>
+    <script src="/public/js/blaze-charts.js"></script>
+
     <script>
       // Initialize AOS
       AOS.init({
@@ -565,6 +577,14 @@
         once: true,
         offset: 100
       });
+
+      // Initialize Blaze Particle System (respects prefers-reduced-motion)
+      if (typeof BlazeParticles !== 'undefined') {
+        BlazeParticles.init({
+          particleCount: 150000,
+          quality: 'auto' // auto-scales based on device performance
+        });
+      }
 
       // Power 5 conferences
       const POWER_5 = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
