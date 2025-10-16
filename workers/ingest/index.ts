@@ -35,7 +35,7 @@ async function executeWithConstraintGuard<T>(
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
       const target = Array.isArray(error.meta?.target)
         ? error.meta?.target.join(', ')
-        : (error.meta?.target as string | undefined);
+        : error.meta?.target;
       const diagnostic = target ? ` (${target})` : '';
       const message = `[Ingest] Unique constraint violation${diagnostic} while processing ${context}`;
       console.error(message, error);
