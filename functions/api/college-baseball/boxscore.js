@@ -1,9 +1,12 @@
 /**
  * College Baseball Box Score API
  * Returns detailed box scores with batting/pitching stats
- * 
+ *
  * Caching: 15s for live games, 1 hour for final games
+ * Data sources: ESPN API → D1Baseball → NCAA Stats (with fallback)
  */
+
+import { fetchBoxScore as fetchNCAABoxScore } from './_ncaa-adapter.js';
 
 const CACHE_KEY_PREFIX = 'college-baseball:boxscore';
 
@@ -58,8 +61,8 @@ export async function onRequest(context) {
       }
     }
 
-    // Fetch box score
-    const boxscore = await fetchBoxScore(gameId);
+    // Fetch box score from NCAA data sources
+    const boxscore = await fetchNCAABoxScore(gameId);
     
     // Cache with appropriate TTL
     const cacheTTL = boxscore.status === 'final' ? 3600 : 15;
@@ -102,110 +105,3 @@ export async function onRequest(context) {
   }
 }
 
-async function fetchBoxScore(gameId) {
-  // Sample box score data - will be replaced with actual scraper/API
-  return {
-    gameId,
-    status: 'live',
-    inning: 5,
-    inningHalf: 'bottom',
-    lastUpdate: new Date().toISOString(),
-    homeTeam: {
-      team: {
-        id: 'lsu',
-        name: 'LSU Tigers',
-        shortName: 'LSU',
-        conference: 'SEC'
-      },
-      score: 4,
-      hits: 8,
-      errors: 1,
-      lineScore: [0, 2, 0, 1, 1, 0, 0, 0, 0],
-      batting: [
-        {
-          playerId: 'player-1',
-          playerName: 'Dylan Crews',
-          position: 'CF',
-          battingOrder: 1,
-          atBats: 3,
-          runs: 2,
-          hits: 2,
-          rbi: 1,
-          walks: 0,
-          strikeouts: 0,
-          avg: 0.345
-        },
-        {
-          playerId: 'player-2',
-          playerName: 'Tommy White',
-          position: '3B',
-          battingOrder: 2,
-          atBats: 3,
-          runs: 1,
-          hits: 2,
-          rbi: 2,
-          walks: 0,
-          strikeouts: 1,
-          avg: 0.328
-        }
-      ],
-      pitching: [
-        {
-          playerId: 'pitcher-1',
-          playerName: 'Paul Skenes',
-          innings: 5.0,
-          hits: 4,
-          runs: 2,
-          earnedRuns: 1,
-          walks: 1,
-          strikeouts: 8,
-          pitches: 72,
-          era: 1.69,
-          decision: 'W'
-        }
-      ]
-    },
-    awayTeam: {
-      team: {
-        id: 'tennessee',
-        name: 'Tennessee Volunteers',
-        shortName: 'TENN',
-        conference: 'SEC'
-      },
-      score: 2,
-      hits: 5,
-      errors: 0,
-      lineScore: [1, 0, 1, 0, 0, 0, 0, 0, 0],
-      batting: [
-        {
-          playerId: 'player-3',
-          playerName: 'Blake Burke',
-          position: 'RF',
-          battingOrder: 1,
-          atBats: 3,
-          runs: 1,
-          hits: 1,
-          rbi: 0,
-          walks: 0,
-          strikeouts: 2,
-          avg: 0.312
-        }
-      ],
-      pitching: [
-        {
-          playerId: 'pitcher-2',
-          playerName: 'Drew Beam',
-          innings: 4.0,
-          hits: 6,
-          runs: 4,
-          earnedRuns: 3,
-          walks: 2,
-          strikeouts: 5,
-          pitches: 68,
-          era: 3.42,
-          decision: 'L'
-        }
-      ]
-    }
-  };
-}
