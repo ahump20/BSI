@@ -228,6 +228,271 @@ function setupFilters() {
 }
 
 /**
+ * Render box score modal with full game details
+ */
+function renderBoxScore(boxScoreData) {
+    const { gameId, status, teams, lineScore, battingStats, pitchingStats } = boxScoreData;
+
+    // Create unique ID for this box score
+    const boxScoreId = `box-score-${gameId}`;
+
+    // Check if box score already exists
+    let boxScoreSection = document.getElementById(boxScoreId);
+
+    if (!boxScoreSection) {
+        // Create new box score section
+        boxScoreSection = document.createElement('section');
+        boxScoreSection.className = 'box-score-expanded';
+        boxScoreSection.id = boxScoreId;
+        boxScoreSection.setAttribute('data-aos', 'fade-up');
+
+        // Insert after games grid
+        const gamesGrid = document.querySelector('.games-grid');
+        if (gamesGrid) {
+            gamesGrid.insertAdjacentElement('afterend', boxScoreSection);
+        }
+    }
+
+    // Build line score table
+    const lineScoreHTML = renderLineScore(teams, lineScore);
+
+    // Build batting stats tables
+    const awayBattingHTML = renderBattingStats(teams.away, battingStats.away);
+    const homeBattingHTML = renderBattingStats(teams.home, battingStats.home);
+
+    // Build pitching stats table
+    const pitchingHTML = renderPitchingStats(teams, pitchingStats);
+
+    // Assemble complete box score HTML
+    const statusText = status?.type?.detail || (status?.type?.completed ? 'Final' : 'In Progress');
+    boxScoreSection.innerHTML = `
+        <div class="box-score-header">
+            <h2 class="box-score-title">${teams.away.name} at ${teams.home.name} - ${statusText}</h2>
+            <button class="close-btn" aria-label="Close box score" onclick="closeBoxScore('${boxScoreId}')">Close ✕</button>
+        </div>
+
+        ${lineScoreHTML}
+        ${awayBattingHTML}
+        ${homeBattingHTML}
+        ${pitchingHTML}
+    `;
+
+    // Show the box score
+    boxScoreSection.style.display = 'block';
+
+    // Smooth scroll to box score
+    boxScoreSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/**
+ * Render line score table
+ */
+function renderLineScore(teams, lineScore) {
+    if (!lineScore || !lineScore.away || !lineScore.home) {
+        return '<p class="note">Line score data not available</p>';
+    }
+
+    // Get maximum innings (usually 9, but could be extra innings)
+    const maxInnings = Math.max(lineScore.away.runs?.length || 9, lineScore.home.runs?.length || 9, 9);
+    const innings = Array.from({ length: maxInnings }, (_, i) => i + 1);
+
+    return `
+        <div class="line-score-table">
+            <table>
+                <caption>Line Score</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Team</th>
+                        ${innings.map(i => `<th scope="col">${i}</th>`).join('')}
+                        <th scope="col" class="runs-col">R</th>
+                        <th scope="col">H</th>
+                        <th scope="col">E</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">${teams.away.name}</th>
+                        ${innings.map(i => `<td>${lineScore.away.runs?.[i-1] ?? '—'}</td>`).join('')}
+                        <td class="runs-col">${lineScore.away.R ?? '—'}</td>
+                        <td>${lineScore.away.H ?? '—'}</td>
+                        <td>${lineScore.away.E ?? '—'}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">${teams.home.name}</th>
+                        ${innings.map(i => `<td>${lineScore.home.runs?.[i-1] ?? '—'}</td>`).join('')}
+                        <td class="runs-col">${lineScore.home.R ?? '—'}</td>
+                        <td>${lineScore.home.H ?? '—'}</td>
+                        <td>${lineScore.home.E ?? '—'}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+/**
+ * Render batting statistics table
+ */
+function renderBattingStats(team, battingStats) {
+    if (!battingStats || battingStats.length === 0) {
+        return `
+            <table class="stats-table">
+                <caption>${team.name} Batting</caption>
+                <tbody>
+                    <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">Batting statistics not available</td></tr>
+                </tbody>
+            </table>
+        `;
+    }
+
+    return `
+        <table class="stats-table">
+            <caption>${team.name} Batting</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Player</th>
+                    <th scope="col">AB</th>
+                    <th scope="col">R</th>
+                    <th scope="col">H</th>
+                    <th scope="col">RBI</th>
+                    <th scope="col">BB</th>
+                    <th scope="col">SO</th>
+                    <th scope="col">AVG</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${battingStats.map(player => renderBattingRow(player)).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Render a single batting statistics row
+ */
+function renderBattingRow(player) {
+    const name = player.name || 'Unknown Player';
+    const position = player.position ? `<span class="player-position">${player.position}</span>` : '';
+    const ab = player.atBats ?? player.AB ?? '—';
+    const r = player.runs ?? player.R ?? '—';
+    const h = player.hits ?? player.H ?? '—';
+    const rbi = player.RBI ?? player.rbi ?? '—';
+    const bb = player.walks ?? player.BB ?? '—';
+    const so = player.strikeouts ?? player.SO ?? '—';
+    const avg = player.avg ?? player.battingAverage ?? '—';
+
+    // Highlight standout performances
+    const hitsClass = (h >= 3) ? 'highlight-stat' : '';
+    const rbiClass = (rbi >= 3) ? 'highlight-stat' : '';
+
+    return `
+        <tr>
+            <td>${name} ${position}</td>
+            <td>${ab}</td>
+            <td>${r}</td>
+            <td class="${hitsClass}">${h}</td>
+            <td class="${rbiClass}">${rbi}</td>
+            <td>${bb}</td>
+            <td>${so}</td>
+            <td>${avg}</td>
+        </tr>
+    `;
+}
+
+/**
+ * Render pitching statistics table
+ */
+function renderPitchingStats(teams, pitchingStats) {
+    if (!pitchingStats || (!pitchingStats.away?.length && !pitchingStats.home?.length)) {
+        return `
+            <table class="stats-table">
+                <caption>Pitching Summary</caption>
+                <tbody>
+                    <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">Pitching statistics not available</td></tr>
+                </tbody>
+            </table>
+        `;
+    }
+
+    return `
+        <table class="stats-table">
+            <caption>Pitching Summary</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Pitcher</th>
+                    <th scope="col">IP</th>
+                    <th scope="col">H</th>
+                    <th scope="col">R</th>
+                    <th scope="col">ER</th>
+                    <th scope="col">BB</th>
+                    <th scope="col">SO</th>
+                    <th scope="col">ERA</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${pitchingStats.away?.length ? `
+                    <tr><td colspan="8" style="background: rgba(191, 87, 0, 0.1); font-weight: 800; padding: 0.5rem 1rem;">${teams.away.name}</td></tr>
+                    ${pitchingStats.away.map(pitcher => renderPitchingRow(pitcher)).join('')}
+                ` : ''}
+                ${pitchingStats.home?.length ? `
+                    <tr><td colspan="8" style="background: rgba(191, 87, 0, 0.1); font-weight: 800; padding: 0.5rem 1rem;">${teams.home.name}</td></tr>
+                    ${pitchingStats.home.map(pitcher => renderPitchingRow(pitcher)).join('')}
+                ` : ''}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Render a single pitching statistics row
+ */
+function renderPitchingRow(pitcher) {
+    const name = pitcher.name || 'Unknown Pitcher';
+    const record = pitcher.winLossRecord || pitcher.decision || '';
+    const displayName = record ? `${name} (${record})` : name;
+
+    const ip = pitcher.inningsPitched ?? pitcher.IP ?? '—';
+    const h = pitcher.hits ?? pitcher.H ?? '—';
+    const r = pitcher.runs ?? pitcher.R ?? '—';
+    const er = pitcher.earnedRuns ?? pitcher.ER ?? '—';
+    const bb = pitcher.walks ?? pitcher.BB ?? '—';
+    const so = pitcher.strikeouts ?? pitcher.SO ?? '—';
+    const era = pitcher.ERA ?? pitcher.era ?? '—';
+
+    // Highlight excellent strikeout performances
+    const soClass = (so >= 10) ? 'highlight-stat' : '';
+
+    return `
+        <tr>
+            <td>${displayName}</td>
+            <td>${ip}</td>
+            <td>${h}</td>
+            <td>${r}</td>
+            <td>${er}</td>
+            <td>${bb}</td>
+            <td class="${soClass}">${so}</td>
+            <td>${era}</td>
+        </tr>
+    `;
+}
+
+/**
+ * Close box score modal (global function)
+ */
+window.closeBoxScore = function(boxScoreId) {
+    const boxScore = document.getElementById(boxScoreId);
+    if (boxScore) {
+        boxScore.style.display = 'none';
+
+        // Scroll back to game cards
+        const gamesGrid = document.querySelector('.games-grid');
+        if (gamesGrid) {
+            gamesGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+};
+
+/**
  * Attach event listeners to game cards
  */
 function attachGameCardListeners() {
@@ -240,19 +505,28 @@ function attachGameCardListeners() {
 
             console.log('[Games API] Loading box score for game:', gameId);
 
+            // Show loading state on button
+            const originalText = this.textContent;
+            this.textContent = 'Loading...';
+            this.disabled = true;
+
             try {
                 const response = await fetch(`${API_BASE}/boxscore?gameId=${gameId}`);
                 const result = await response.json();
 
                 if (result.success && result.data) {
-                    // Box score rendering will be implemented in Phase 2
-                    alert('Box Score Feature: Coming soon!\n\nWe\'re implementing detailed box scores with batting/pitching stats, play-by-play, and everything ESPN won\'t show you for college baseball.');
+                    console.log('[Games API] Box score data received:', result.data);
+                    renderBoxScore(result.data);
                 } else {
                     alert('Box score data temporarily unavailable. Please try again later.');
                 }
             } catch (error) {
                 console.error('[Games API] Box score error:', error);
                 alert('Unable to load box score. Please try again later.');
+            } finally {
+                // Restore button state
+                this.textContent = originalText;
+                this.disabled = false;
             }
         });
     });
