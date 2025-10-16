@@ -91,7 +91,7 @@ export async function onRequest(context) {
         team_id: 'texas',
         school_name: 'Texas Longhorns',
         conference: 'SEC',
-        division: null,
+        division: 'West',
         city: 'Austin',
         state: 'Texas',
         stadium_name: 'UFCU Disch-Falk Field',
