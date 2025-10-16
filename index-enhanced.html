@@ -19,7 +19,7 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://blazesportsintel.com/">
     <meta property="twitter:title" content="🔥 Blaze Sports Intel | Championship Intelligence">
-    <meta property="twitter:description" content="Where Southern grit meets Silicon Valley analytics. Elite sports intelligence platform.">
+    <meta property="twitter:description" content="Practice to Play. Blaze Data Wins the Day. Championship intelligence platform delivering elite analytics for professional and collegiate sports.">
     <meta property="twitter:image" content="https://blazesportsintel.com/assets/twitter-card.jpg">
     <meta property="twitter:creator" content="@BlazeIntel">
     
@@ -40,7 +40,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     
     <!-- External Libraries -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Three.js & Dependencies -->
@@ -69,7 +69,17 @@
     <style>
         /* ==================== CSS VARIABLES & THEME ==================== */
         :root {
-            /* Primary Brand Colors - Blaze Orange Palette */
+            /* Primary Brand Colors - 8-Color Burnt Orange System */
+            --blaze-burnt-orange: #BF5700;   /* Deep burnt orange - primary brand */
+            --blaze-ember: #CC6600;          /* Rich ember glow - warmth & energy */
+            --blaze-copper: #D97B38;         /* Copper accent - sophistication */
+            --blaze-sunset: #E69551;         /* Sunset warmth - approachability */
+            --blaze-bronze: #A0522D;         /* Bronze depth - stability */
+            --blaze-amber: #FFBF00;          /* Amber highlight - excellence */
+            --blaze-rust: #8B4513;           /* Rust undertone - heritage */
+            --blaze-terracotta: #E2725B;     /* Terracotta accent - earth connection */
+
+            /* Legacy Aliases for Compatibility */
             --blaze-primary: #BF5700;
             --blaze-primary-light: #FF8C42;
             --blaze-primary-dark: #8B3D00;
@@ -137,10 +147,10 @@
             --spacing-2xl: 3rem;
             --spacing-3xl: 4rem;
             
-            /* Typography */
+            /* Typography - Championship Standard */
             --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
-            --font-display: 'Bebas Neue', 'Oswald', sans-serif;
-            --font-mono: 'Roboto Mono', 'Courier New', monospace;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Roboto Mono', 'Courier New', monospace;
             
             /* Transitions */
             --transition-fast: 150ms ease;
@@ -2217,9 +2227,9 @@
         <div class="hero-container">
             <div class="hero-content">
                 <div class="hero-text" data-aos="fade-right">
-                    <div class="hero-badge">🔥 Championship Intelligence Platform</div>
-                    <h1 class="hero-title">Where Southern Grit Meets Silicon Valley Analytics</h1>
-                    <p class="hero-subtitle">Elite sports intelligence delivering championship-level insights for MLB, NFL, NBA, and NCAA programs.</p>
+                    <div class="hero-badge">Built from Deep South observation</div>
+                    <h1 class="hero-title">Practice to Play.<br>Blaze Data Wins the Day.</h1>
+                    <p class="hero-subtitle">Most tools count what's convenient. Blaze captures what swings outcomes—situation, momentum, and adjustments under pressure—so coaches decide faster.</p>
                     <p class="hero-description">From Texas high school Friday nights to MLB dugouts, we transform raw athletic data into championship decisions. Powered by deep learning, delivered with Deep South authority.</p>
                     
                     <div class="hero-stats">
@@ -3186,8 +3196,8 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setClearColor(0x000000, 0);
 
-            // Particle system
-            const particleCount = 2000;
+            // Particle system - Championship 150K particles
+            const particleCount = 150000;
             const particles = new THREE.BufferGeometry();
             const positions = new Float32Array(particleCount * 3);
             const colors = new Float32Array(particleCount * 3);
