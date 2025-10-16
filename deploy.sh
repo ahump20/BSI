@@ -9,10 +9,16 @@ echo "🏈 College Baseball Tracker Deployment"
 echo "======================================"
 echo ""
 
+# Ensure pnpm is available
+if ! command -v pnpm &> /dev/null; then
+    echo "⚙️  pnpm not found. Enabling via corepack..."
+    corepack enable pnpm
+fi
+
 # Check if wrangler is installed
 if ! command -v wrangler &> /dev/null; then
     echo "❌ Wrangler CLI not found. Installing..."
-    npm install -g wrangler
+    pnpm add -g wrangler
 fi
 
 # Check if logged in to Cloudflare
@@ -20,6 +26,17 @@ echo "📋 Checking Cloudflare authentication..."
 if ! wrangler whoami &> /dev/null; then
     echo "🔐 Please log in to Cloudflare:"
     wrangler login
+fi
+
+# Ensure database configuration is present for Prisma
+if [ -z "$DATABASE_URL" ]; then
+    echo "❌ DATABASE_URL is not set. Export your PostgreSQL connection string before deploying."
+    echo "   Example: export DATABASE_URL=postgresql://user:password@host:5432/db"
+    exit 1
+fi
+
+if [ -n "$DIRECT_URL" ]; then
+    echo "🔁 Using connection pool at DIRECT_URL for Prisma migrations"
 fi
 
 # Create KV namespace if it doesn't exist
@@ -62,9 +79,16 @@ cd ..
 
 # Build the frontend
 echo ""
+echo "🔨 Installing frontend dependencies..."
+pnpm install --frozen-lockfile
+
+echo ""
+echo "🧬 Generating Prisma client..."
+pnpm prisma generate
+
+echo ""
 echo "🔨 Building frontend..."
-npm install
-npm run build
+pnpm run build
 
 # Deploy to Cloudflare Pages
 echo ""
