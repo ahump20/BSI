@@ -1,0 +1,249 @@
+.box-score {
+  width: 100%;
+}
+
+.box-score-header {
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.game-info h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.game-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.line-score {
+  overflow-x: auto;
+  margin-bottom: 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.line-score table {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: collapse;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.line-score th,
+.line-score td {
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.line-score th {
+  background-color: var(--secondary-color);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.line-score .team-header,
+.line-score .team-name {
+  text-align: left;
+  padding-left: 12px;
+  min-width: 120px;
+}
+
+.line-score .team-name {
+  font-weight: 500;
+}
+
+.line-score .total-header {
+  background-color: var(--primary-color);
+  font-weight: 700;
+}
+
+.line-score .inning-score {
+  font-size: 14px;
+}
+
+.line-score .total-score {
+  font-weight: 700;
+  font-size: 16px;
+  background-color: rgba(0, 168, 107, 0.1);
+}
+
+.stats-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stats-tabs button {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stats-tabs button.active {
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
+}
+
+.stats-content {
+  margin-top: 20px;
+}
+
+.team-stats {
+  margin-bottom: 32px;
+}
+
+.team-stats h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.stats-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.stats-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.stats-table th {
+  background-color: var(--secondary-color);
+  padding: 10px 8px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stats-table td {
+  padding: 12px 8px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stats-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.stats-table .player-col {
+  min-width: 140px;
+  max-width: 180px;
+}
+
+.player-name {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.player-pos {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.stats-table .avg,
+.stats-table .era {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.decision-pitcher {
+  background-color: rgba(0, 168, 107, 0.05);
+}
+
+.decision {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .game-info h2 {
+    font-size: 22px;
+  }
+
+  .stats-tabs button {
+    font-size: 16px;
+    padding: 14px;
+  }
+
+  .team-stats h3 {
+    font-size: 18px;
+  }
+
+  .stats-table {
+    min-width: 700px;
+  }
+
+  .stats-table th {
+    font-size: 12px;
+    padding: 12px 10px;
+  }
+
+  .stats-table td {
+    font-size: 14px;
+    padding: 14px 10px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .batting-stats,
+  .pitching-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .stats-table {
+    min-width: auto;
+  }
+
+  .back-button:hover {
+    text-decoration: underline;
+  }
+}

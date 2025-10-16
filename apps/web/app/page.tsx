@@ -1,349 +1,139 @@
-'use client';
-
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
 
-const COOKIE_NAME = 'cookie_consent';
-const COOKIE_MAX_AGE_DAYS = 365;
-
-type ConsentState = 'accepted' | 'unknown';
-
-const features = [
+const navigationLinks = [
   {
-    title: 'Real-Time Scores',
-    description:
-      'Live scoring updates for MLB, NFL, NCAA Division I, and Texas high school sports with minimal delay.'
+    href: '/baseball/ncaab/hub',
+    title: 'College Baseball Hub',
+    description: 'Centralize live games, scouting intel, and portal updates in one command center.'
   },
   {
-    title: 'Historical Analytics',
-    description: 'Comprehensive historical statistics and trend analysis across multiple seasons and leagues.'
+    href: '/baseball/ncaab/games',
+    title: 'Live Games',
+    description: 'Mobile-first scoreboard with leverage alerts and inning-by-inning context.'
   },
   {
-    title: 'Power Rankings',
-    description: 'Data-driven rankings using validated metrics and peer-reviewed methodologies.'
+    href: '/baseball/ncaab/teams',
+    title: 'Programs',
+    description: 'Deep dives on SEC, ACC, Big 12, and national programs with advanced splits.'
   },
   {
-    title: 'API Integration',
-    description: 'RESTful API access with rate limiting, authentication, and comprehensive documentation.'
+    href: '/baseball/ncaab/players',
+    title: 'Player Intel',
+    description: 'Biomechanics, velocity trends, and recruiting signals tied to every roster.'
+  },
+  {
+    href: '/baseball/ncaab/standings',
+    title: 'Standings',
+    description: 'Real-time RPI, ISR, and bid probability dashboards for Selection Monday readiness.'
+  },
+  {
+    href: '/baseball/ncaab/rankings',
+    title: 'Rankings',
+    description: 'Data-backed Diamond Index and curated polls with movement tracking.'
+  },
+  {
+    href: '/baseball/ncaab/news',
+    title: 'Newsroom',
+    description: 'Verified recaps, portal updates, and strategic briefings for staffs and fans.'
   }
 ];
 
-const dataSources = [
-  'MLB Stats API',
-  'NFL Official Stats',
-  'NCAA Statistics',
-  'MaxPreps (HS Sports)',
-  'Sports Reference LLC',
-  'Conference Databases'
+const featureHighlights = [
+  {
+    title: 'Live Diamond Engine',
+    body: 'Edge-ready ingestion keeps live games, standings, and recruiting intel refreshed with sub-minute latency.'
+  },
+  {
+    title: 'Mobile-First Craftsmanship',
+    body: 'Thumb-first navigation, high-contrast typography, and performant theming tuned for late-night scoreboard checks.'
+  },
+  {
+    title: 'Diamond Pro Workflow',
+    body: 'Subscription tier powering staff collaboration, scouting packet exports, and alert routing built for the Deep South.'
+  }
 ];
 
-function getCookieValue(name: string): string | undefined {
-  if (typeof document === 'undefined') {
-    return undefined;
-  }
-
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    return parts.pop()?.split(';').shift();
-  }
-
-  return undefined;
-}
-
-function setCookie(name: string, value: string, days: number) {
-  if (typeof document === 'undefined') {
-    return;
-  }
-
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Strict; Secure`;
-}
-
-export default function HoldingPage() {
-  const [consent, setConsent] = useState<ConsentState>('unknown');
-  const bannerRef = useRef<HTMLDivElement | null>(null);
-  const isBannerVisible = consent !== 'accepted';
-
-  useEffect(() => {
-    const existing = getCookieValue(COOKIE_NAME);
-    if (existing === 'accepted') {
-      setConsent('accepted');
-    }
-  }, []);
-
-  const initializeAnalytics = useCallback(() => {
-    if (getCookieValue(COOKIE_NAME) === 'accepted') {
-      // Placeholder for analytics bootstrap
-      console.info('Analytics initialized with consent');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (consent === 'accepted') {
-      initializeAnalytics();
-    }
-  }, [consent, initializeAnalytics]);
-
-  const handleAccept = useCallback(() => {
-    setCookie(COOKIE_NAME, 'accepted', COOKIE_MAX_AGE_DAYS);
-    setConsent('accepted');
-  }, []);
-
-  const handleOpenSettings = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/cookies#settings';
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isBannerVisible) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Tab') {
-        return;
-      }
-
-      const focusable = bannerRef.current?.querySelectorAll<HTMLElement>('button, a');
-      if (!focusable || focusable.length === 0) {
-        return;
-      }
-
-      const firstElement = focusable[0];
-      const lastElement = focusable[focusable.length - 1];
-
-      if (event.shiftKey) {
-        if (document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement.focus();
-        }
-      } else if (document.activeElement === lastElement) {
-        event.preventDefault();
-        firstElement.focus();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isBannerVisible]);
-
-  const structuredData = useMemo(
-    () => ({
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: 'Blaze Sports Intel',
-      url: 'https://blazesportsintel.com',
-      description: 'Professional sports data analytics and intelligence platform',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://blazesportsintel.com/search?q={search_term_string}',
-        'query-input': 'required name=search_term_string'
-      }
-    }),
-    []
-  );
-
+export default function HomePage() {
   return (
-    <>
-      <a href="#main-content" className="skip-to-main">
-        Skip to main content
-      </a>
-
-      <div
-        id="cookie-banner"
-        ref={bannerRef}
-        className={isBannerVisible ? 'show' : ''}
-        role="region"
-        aria-label="Cookie consent"
-      >
-        <div className="cookie-content">
-          <p>
-            We use cookies to enhance your experience and analyze site usage. See our{' '}
-            <Link href="/privacy">Privacy Policy</Link> for details.
+    <div className="di-shell">
+      <main className="di-container">
+        <section className="di-hero" aria-labelledby="diamond-insights-hero">
+          <span className="di-pill">Diamond Insights</span>
+          <h1 id="diamond-insights-hero" className="di-title">
+            College Baseball Intelligence for the Deep South
+          </h1>
+          <p className="di-subtitle">
+            BlazeSportsIntel is pivoting into the definitive NCAA Division I baseball platform—live telemetry, scouting intel,
+            and recruiting context built mobile-first and dark-mode native.
           </p>
-          <div className="cookie-buttons">
-            <button className="cookie-btn settings" onClick={handleOpenSettings} aria-label="Cookie settings">
-              Settings
-            </button>
-            <button className="cookie-btn accept" onClick={handleAccept} aria-label="Accept all cookies">
-              Accept All
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <header role="banner">
-        <div className="header-container">
-          <Link href="/" className="logo" aria-label="Blaze Sports Intel Home">
-            Blaze <span>Sports Intel</span>™
-          </Link>
-          <nav role="navigation" aria-label="Main navigation">
-            <ul>
-              <li>
-                <Link href="/privacy">Privacy Policy</Link>
-              </li>
-              <li>
-                <Link href="/terms">Terms of Service</Link>
-              </li>
-              <li>
-                <Link href="/cookies">Cookie Policy</Link>
-              </li>
-              <li>
-                <Link href="/accessibility">Accessibility</Link>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
-
-      <main id="main-content" role="main">
-        <section className="hero">
-          <h1>Blaze Sports Intel</h1>
-          <p className="tagline">Professional Sports Data Analytics &amp; Intelligence Platform</p>
-          <div className="status-badge" role="status" aria-live="polite">
-            Platform Launching Soon
+          <div className="di-actions">
+            <Link className="di-action" href="/baseball/ncaab/hub">
+              Enter the Baseball Hub
+            </Link>
+            <Link className="di-action di-action--secondary" href="/auth/sign-up">
+              Join Diamond Pro Beta
+            </Link>
           </div>
         </section>
 
-        <div className="legal-notice" role="alert">
-          <h3>Important Legal Notice</h3>
-          <p>
-            This platform is currently in development. By accessing this site, you agree to our Terms of Service and Privacy
-            Policy. All sports data will be obtained through official licensed sources. Team names and logos are property of
-            their respective owners.
-          </p>
-        </div>
+        <nav className="di-nav" aria-labelledby="diamond-insights-navigation">
+          <div className="di-nav-heading">
+            <h2 id="diamond-insights-navigation" className="di-page-title">
+              Navigate the College Baseball Stack
+            </h2>
+            <p className="di-page-subtitle">
+              Every route is mobile-optimized and ready for data hookups—start in the hub or jump straight to live surfaces.
+            </p>
+          </div>
+          <ul className="di-nav-list">
+            {navigationLinks.map((link) => (
+              <li key={link.href}>
+                <Link className="di-nav-card" href={link.href}>
+                  <span>{link.title}</span>
+                  <p>{link.description}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-        <section className="features" aria-labelledby="features-heading">
-          <h2 id="features-heading" className="sr-only">
-            Platform Features
+        <section className="di-section" aria-labelledby="diamond-insights-highlights">
+          <h2 id="diamond-insights-highlights" className="di-page-title">
+            Diamond Insights Operating Principles
           </h2>
-          {features.map((feature) => (
-            <article key={feature.title} className="feature-card">
-              <h2>{feature.title}</h2>
-              <p>{feature.description}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="data-sources" aria-labelledby="sources-heading">
-          <h2 id="sources-heading">Authorized Data Sources</h2>
-          <p>All data obtained through official licensing agreements:</p>
-          <div className="source-list">
-            {dataSources.map((source) => (
-              <div key={source} className="source-item">
-                {source}
-              </div>
+          <div className="di-card-grid">
+            {featureHighlights.map((feature) => (
+              <article key={feature.title} className="di-card">
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </article>
             ))}
           </div>
         </section>
 
-        <section className="compliance" aria-labelledby="compliance-heading">
-          <h2 id="compliance-heading" className="sr-only">
-            Compliance Information
+        <section className="di-section" aria-labelledby="diamond-insights-status">
+          <h2 id="diamond-insights-status" className="di-page-title">
+            Platform Status
           </h2>
-          <p style={{ textAlign: 'center', color: 'var(--text-light)', margin: '2rem 0' }}>
-            GDPR Compliant • CCPA Compliant • WCAG AA Accessible • SSL Secured
-          </p>
+          <div className="di-card-grid">
+            <article className="di-card">
+              <h3>Foundation Build</h3>
+              <p>
+                Phase 2 (MVP) scaffolding is underway. Routing is locked, theming is stabilized, and data ingestion hooks are
+                staged for Highlightly, TrackMan, and NCAA stat endpoints.
+              </p>
+              <p className="di-microcopy">Updated: {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+            </article>
+            <article className="di-card">
+              <h3>Need Early Access?</h3>
+              <p>Reach out for Diamond Pro onboarding or operations partnerships across the Deep South footprint.</p>
+              <Link className="di-inline-link" href="/account">
+                Manage your Diamond Insights profile
+              </Link>
+            </article>
+          </div>
         </section>
       </main>
-
-      <footer role="contentinfo">
-        <div className="footer-container">
-          <div className="footer-grid">
-            <section className="footer-section">
-              <h3>Legal</h3>
-              <ul>
-                <li>
-                  <Link href="/privacy">Privacy Policy</Link>
-                </li>
-                <li>
-                  <Link href="/terms">Terms of Service</Link>
-                </li>
-                <li>
-                  <Link href="/cookies">Cookie Policy</Link>
-                </li>
-                <li>
-                  <Link href="/dpa">Data Processing Addendum</Link>
-                </li>
-                <li>
-                  <Link href="/dmca">DMCA Policy</Link>
-                </li>
-              </ul>
-            </section>
-            <section className="footer-section">
-              <h3>Data Rights</h3>
-              <ul>
-                <li>
-                  <Link href="/gdpr">GDPR Rights (EU)</Link>
-                </li>
-                <li>
-                  <Link href="/ccpa">CCPA Rights (California)</Link>
-                </li>
-                <li>
-                  <Link href="/data-request">Request Your Data</Link>
-                </li>
-                <li>
-                  <Link href="/delete-account">Delete Account</Link>
-                </li>
-                <li>
-                  <Link href="/opt-out">Opt-Out Preferences</Link>
-                </li>
-              </ul>
-            </section>
-            <section className="footer-section">
-              <h3>Support</h3>
-              <ul>
-                <li>
-                  <a href="mailto:support@blazesportsintel.com">support@blazesportsintel.com</a>
-                </li>
-                <li>
-                  <a href="mailto:privacy@blazesportsintel.com">privacy@blazesportsintel.com</a>
-                </li>
-                <li>
-                  <a href="mailto:legal@blazesportsintel.com">legal@blazesportsintel.com</a>
-                </li>
-                <li>
-                  <a href="mailto:dmca@blazesportsintel.com">dmca@blazesportsintel.com</a>
-                </li>
-                <li>
-                  <Link href="/accessibility">Accessibility Support</Link>
-                </li>
-              </ul>
-            </section>
-            <section className="footer-section">
-              <h3>Company</h3>
-              <ul>
-                <li>Blaze Sports Intel</li>
-                <li>Austin, Texas</li>
-                <li>
-                  <Link href="/about">About Us</Link>
-                </li>
-                <li>
-                  <Link href="/attribution">Data Attribution</Link>
-                </li>
-                <li>
-                  <Link href="/api-docs">API Documentation</Link>
-                </li>
-              </ul>
-            </section>
-          </div>
-          <div className="copyright">
-            <p>© 2025 Blaze Sports Intel. All rights reserved. Blaze Sports Intel™ is a trademark of Blaze Sports Intel.</p>
-            <p>Team names, logos, and insignia are property of their respective owners. No endorsement implied.</p>
-            <p>MLB data © MLB Advanced Media, LP. NFL data © NFL Enterprises LLC. NCAA data used under license.</p>
-          </div>
-        </div>
-      </footer>
-
-      <Script id="structured-data" type="application/ld+json">
-        {JSON.stringify(structuredData)}
-      </Script>
-    </>
+    </div>
   );
 }

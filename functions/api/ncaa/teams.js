@@ -3,7 +3,15 @@ import { cache, createTimeoutSignal, err, ok, preflight } from '../_utils.js';
 const DEFAULT_TEAM_ID = '251';
 const DEFAULT_SEASON = new Date().getUTCFullYear().toString();
 const FETCH_TIMEOUT_MS = 8000;
-const BASE_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
+
+const SPORT_PATHS = {
+  football: {
+    base: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football',
+  },
+  baseball: {
+    base: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball',
+  },
+};
 
 const defaultHeaders = {
   'User-Agent': 'BlazeSportsIntel/1.0 (+https://blazesportsintel.com)',
@@ -22,13 +30,20 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const teamId = sanitizeTeamId(url.searchParams.get('teamId'));
   const season = sanitizeSeason(url.searchParams.get('season'));
+  const sportResult = resolveSport(url.searchParams.get('sport'));
+
+  if (sportResult.error) {
+    return err(new Error(sportResult.error), 400);
+  }
+
+  const { sport, baseUrl } = sportResult;
 
   try {
     const ttl = env?.NODE_ENV === 'production' ? 300 : 60;
     const data = await cache(
       env,
-      `ncaa:team:${teamId}:${season}`,
-      async () => fetchTeamData(teamId, season),
+      `ncaa:team:${sport}:${teamId}:${season}`,
+      async () => fetchTeamData(baseUrl, teamId, season, sport),
       ttl,
     );
 
@@ -43,13 +58,13 @@ export async function onRequest(context) {
   }
 }
 
-async function fetchTeamData(teamId, season) {
+async function fetchTeamData(baseUrl, teamId, season, sport) {
   const signal = createTimeoutSignal(FETCH_TIMEOUT_MS);
 
   const [team, roster, schedule] = await Promise.all([
-    fetchJson(`${BASE_URL}/teams/${teamId}`, signal, 'team'),
-    fetchJson(`${BASE_URL}/teams/${teamId}/roster`, signal, 'roster'),
-    fetchJson(`${BASE_URL}/teams/${teamId}/schedule?season=${season}`, signal, 'schedule'),
+    fetchJson(`${baseUrl}/teams/${teamId}`, signal, 'team'),
+    fetchJson(`${baseUrl}/teams/${teamId}/roster`, signal, 'roster'),
+    fetchJson(`${baseUrl}/teams/${teamId}/schedule?season=${season}`, signal, 'schedule'),
   ]);
 
   const stats = Array.isArray(team?.team?.statistics)
@@ -82,17 +97,21 @@ async function fetchTeamData(teamId, season) {
       logos: sanitizeLogos(team?.team?.logos),
       venue: sanitizeVenue(team?.team?.venue),
       conference,
-      record: buildRecord(recordItem),
+      record: buildRecord(recordItem, sport),
     },
-    roster: buildRoster(roster),
-    schedule: scheduleEvents.map((event) => buildScheduleEvent(event, teamId)),
+    roster: buildRoster(roster, sport),
+    schedule: scheduleEvents.map((event) => buildScheduleEvent(event, teamId, sport)),
     analytics: {
-      pythagoreanWins: calculatePythagorean(stats),
+      pythagoreanWins: calculatePythagorean(stats, sport),
       strengthOfSchedule: calculateSOS(scheduleEvents, teamId),
-      efficiency: calculateEfficiency(stats),
+      efficiency: calculateEfficiency(stats, sport),
     },
     meta: {
-      dataSource: 'ESPN College Football API',
+      sport,
+      dataSource:
+        sport === 'baseball'
+          ? 'ESPN College Baseball API'
+          : 'ESPN College Football API',
       lastUpdated: new Date().toISOString(),
       season: schedule?.season?.year?.toString() || season,
     },
@@ -180,13 +199,14 @@ function sanitizeVenue(venue) {
   };
 }
 
-function buildRecord(record) {
+function buildRecord(record, sport) {
   if (!record || typeof record !== 'object') {
     return {
       overall: '0-0',
       conference: '0-0',
       home: '0-0',
       away: '0-0',
+      neutral: '0-0',
     };
   }
 
@@ -194,18 +214,30 @@ function buildRecord(record) {
 
   return {
     overall: record.summary ?? '0-0',
-    conference: getDisplayValue(stats, 'vsConf'),
-    home: getDisplayValue(stats, 'home'),
-    away: getDisplayValue(stats, 'away'),
+    conference: getDisplayValue(stats, sport === 'baseball' ? ['vsConf', 'vs. Conf.'] : ['vsConf', 'vs. Conf.']),
+    home: getDisplayValue(stats, ['home']),
+    away: getDisplayValue(stats, ['away', 'road']),
+    neutral: getDisplayValue(stats, ['neutral', 'vsNeutral']),
   };
 }
 
-function getDisplayValue(stats, name) {
-  const stat = stats.find((item) => item?.name === name);
-  return stat?.displayValue ?? '0-0';
+function getDisplayValue(stats, names) {
+  if (!Array.isArray(stats)) {
+    return '0-0';
+  }
+
+  const nameList = Array.isArray(names) ? names : [names];
+  for (const name of nameList) {
+    const stat = stats.find((item) => item?.name === name);
+    if (stat?.displayValue) {
+      return stat.displayValue;
+    }
+  }
+
+  return '0-0';
 }
 
-function buildRoster(roster) {
+function buildRoster(roster, sport) {
   const athletes = roster?.athletes;
   if (!Array.isArray(athletes)) {
     return [];
@@ -217,14 +249,21 @@ function buildRoster(roster) {
       id: athlete.id ?? null,
       name: athlete.fullName ?? null,
       jersey: athlete.jersey ?? null,
-      position: athlete.position?.abbreviation ?? null,
+      position: normalizePosition(athlete, sport),
       height: athlete.displayHeight ?? null,
       weight: athlete.displayWeight ?? null,
       year: athlete.experience?.displayValue ?? null,
+      ...(sport === 'baseball'
+        ? {
+            bats: athlete.bats ?? athlete.hand?.bats ?? null,
+            throws: athlete.throws ?? athlete.hand?.throws ?? null,
+            primaryPosition: athlete.position?.displayName ?? null,
+          }
+        : {}),
     }));
 }
 
-function buildScheduleEvent(event, teamId) {
+function buildScheduleEvent(event, teamId, sport) {
   const competition = Array.isArray(event?.competitions) ? event.competitions[0] : null;
   const opponents = Array.isArray(competition?.competitors) ? competition.competitors : [];
   const opponent = opponents.find((entry) => entry && entry.id !== teamId) ?? null;
@@ -244,10 +283,11 @@ function buildScheduleEvent(event, teamId) {
           record: Array.isArray(opponent.records) ? opponent.records : [],
         }
       : null,
-    result: competition?.status ?? null,
+    result: normalizeStatus(competition?.status ?? event?.status, sport),
     broadcast: Array.isArray(competition?.broadcasts)
       ? sanitizeBroadcast(competition.broadcasts[0])
       : null,
+    notes: sport === 'baseball' ? sanitizeSeriesInfo(event) : null,
   };
 }
 
@@ -263,18 +303,24 @@ function sanitizeBroadcast(broadcast) {
   };
 }
 
-function calculatePythagorean(stats) {
-  const pointsFor = getNumericStat(stats, 'pointsFor');
-  const pointsAgainst = getNumericStat(stats, 'pointsAgainst');
+function calculatePythagorean(stats, sport) {
+  const offense =
+    sport === 'baseball'
+      ? getNumericStat(stats, 'runsFor', 'runsScored', 'runs')
+      : getNumericStat(stats, 'pointsFor');
+  const defense =
+    sport === 'baseball'
+      ? getNumericStat(stats, 'runsAgainst', 'runsAllowed')
+      : getNumericStat(stats, 'pointsAgainst');
   const games = getNumericStat(stats, 'gamesPlayed');
 
-  if (pointsFor === 0 && pointsAgainst === 0) {
+  if (offense === 0 && defense === 0) {
     return 0;
   }
 
-  const exponent = 2.37;
-  const numerator = Math.pow(pointsFor, exponent);
-  const denominator = numerator + Math.pow(pointsAgainst, exponent);
+  const exponent = sport === 'baseball' ? 1.83 : 2.37;
+  const numerator = Math.pow(offense, exponent);
+  const denominator = numerator + Math.pow(defense, exponent);
 
   if (denominator === 0) {
     return 0;
@@ -311,7 +357,15 @@ function calculateSOS(scheduleEvents, teamId) {
   return Number((winPctSum / completedGames.length).toFixed(3));
 }
 
-function calculateEfficiency(stats) {
+function calculateEfficiency(stats, sport) {
+  if (sport === 'baseball') {
+    const runsFor = getNumericStat(stats, 'runsFor', 'runsScored');
+    const runsAgainst = getNumericStat(stats, 'runsAgainst', 'runsAllowed');
+    const games = Math.max(getNumericStat(stats, 'gamesPlayed'), 1);
+    const differential = (runsFor - runsAgainst) / games;
+    return Number(differential.toFixed(1));
+  }
+
   const yardsPerPlay = getNumericStat(stats, 'yardsPerPlay');
   const turnovers = getNumericStat(stats, 'turnovers');
   const games = Math.max(getNumericStat(stats, 'gamesPlayed'), 1);
@@ -320,12 +374,93 @@ function calculateEfficiency(stats) {
   return Number(efficiency.toFixed(1));
 }
 
-function getNumericStat(stats, name) {
+function getNumericStat(stats, ...names) {
   if (!Array.isArray(stats)) {
     return 0;
   }
 
-  const match = stats.find((stat) => stat?.name === name);
-  const value = typeof match?.value === 'number' ? match.value : Number(match?.value);
-  return Number.isFinite(value) ? value : 0;
+  for (const name of names) {
+    const match = stats.find((stat) => stat?.name === name);
+    if (!match) {
+      continue;
+    }
+    const value = typeof match?.value === 'number' ? match.value : Number(match?.value);
+    if (Number.isFinite(value)) {
+      return value;
+    }
+  }
+
+  return 0;
+}
+
+function resolveSport(rawSport) {
+  const normalized = (rawSport || 'football').toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(SPORT_PATHS, normalized)) {
+    return { sport: normalized, baseUrl: SPORT_PATHS[normalized].base };
+  }
+
+  return {
+    error: 'Unsupported sport parameter. Supported values are football and baseball.',
+  };
+}
+
+function normalizePosition(athlete, sport) {
+  const abbreviation = athlete?.position?.abbreviation ?? null;
+  if (sport !== 'baseball') {
+    return abbreviation;
+  }
+
+  if (abbreviation) {
+    return abbreviation;
+  }
+
+  const display = athlete?.position?.displayName;
+  return display ?? null;
+}
+
+function normalizeStatus(status, sport) {
+  if (!status || typeof status !== 'object') {
+    return null;
+  }
+
+  const base = {
+    type: status.type?.name ?? null,
+    description: status.type?.detail ?? status.type?.description ?? null,
+    shortDetail: status.type?.shortDetail ?? null,
+    completed: Boolean(status.type?.completed),
+  };
+
+  if (sport === 'baseball') {
+    return {
+      ...base,
+      inning: status.period ?? null,
+      inningState: status.type?.state ?? null,
+      balls: status.balls ?? null,
+      strikes: status.strikes ?? null,
+      outs: status.outs ?? null,
+    };
+  }
+
+  return {
+    ...base,
+    clock: status.displayClock ?? null,
+    period: status.period ?? null,
+  };
+}
+
+function sanitizeSeriesInfo(event) {
+  if (!event || typeof event !== 'object') {
+    return null;
+  }
+
+  const series = event.series ?? event.seasonType;
+  if (!series) {
+    return null;
+  }
+
+  return {
+    summary: series.summary ?? null,
+    description: series.description ?? null,
+    type: series.type ?? null,
+  };
 }

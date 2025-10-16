@@ -87,6 +87,41 @@ export const DATA_CONFIG = {
       }
     },
 
+    college_baseball: {
+      enabled: true,
+      mobile_first: true,
+      divisions: ['D1', 'D2', 'D3', 'JUCO'],
+      featured_conferences: ['SEC', 'ACC', 'Big 12', 'Pac-12', 'Big Ten'],
+      data_sources: ['D1Baseball', 'NCAA Stats API'],
+      update_interval: 30, // 30 seconds for live games
+      features: {
+        live_scoring: true,
+        pitch_by_pitch: false, // Post-MVP
+        advanced_metrics: false, // Post-MVP
+        push_notifications: true,
+        offline_caching: true,
+        nlg_recaps: true,
+        nlg_previews: true,
+        video_highlights: false, // Post-MVP
+        player_career_logs: false // Post-MVP
+      },
+      caching: {
+        live_game: 30, // seconds
+        boxscore_live: 15,
+        boxscore_final: 3600,
+        standings: 300,
+        team_pages: 3600,
+        player_pages: 3600
+      },
+      endpoints: {
+        games: '/college-baseball/games',
+        boxscore: '/college-baseball/boxscore',
+        standings: '/college-baseball/standings',
+        teams: '/college-baseball/teams',
+        players: '/college-baseball/players'
+      }
+    },
+
     perfect_game: {
       enabled: true,
       coverage: {

@@ -1,7 +1,16 @@
 import { cache, createTimeoutSignal, err, ok, preflight } from '../_utils.js';
 
-const BASE_URL = 'https://site.api.espn.com/apis/v2/sports/football/college-football/standings';
-const RANKINGS_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings';
+const SPORT_PATHS = {
+  football: {
+    standings: 'https://site.api.espn.com/apis/v2/sports/football/college-football/standings',
+    rankings: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings',
+  },
+  baseball: {
+    standings: 'https://site.api.espn.com/apis/v2/sports/baseball/college-baseball/standings',
+    rankings: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings',
+  },
+};
+
 const FETCH_TIMEOUT_MS = 8000;
 
 const defaultHeaders = {
@@ -21,12 +30,19 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const conference = sanitizeConference(url.searchParams.get('conference'));
   const division = sanitizeDivision(url.searchParams.get('division'));
+  const sportResult = resolveSport(url.searchParams.get('sport'));
+
+  if (sportResult.error) {
+    return err(new Error(sportResult.error), 400);
+  }
+
+  const { sport, endpoints } = sportResult;
 
   try {
     const data = await cache(
       env,
-      `ncaa:standings:${conference}:${division}`,
-      async () => fetchStandings(conference, division),
+      `ncaa:standings:${sport}:${conference}:${division}`,
+      async () => fetchStandings(conference, division, sport, endpoints),
       300,
     );
 
@@ -41,9 +57,10 @@ export async function onRequest(context) {
   }
 }
 
-async function fetchStandings(conference, division) {
+async function fetchStandings(conference, division, sport, endpoints) {
   const signal = createTimeoutSignal(FETCH_TIMEOUT_MS);
-  const standingsUrl = conference === 'all' ? BASE_URL : `${BASE_URL}?group=${conference}`;
+  const standingsBase = endpoints.standings;
+  const standingsUrl = conference === 'all' ? standingsBase : `${standingsBase}?group=${conference}`;
   const standings = await fetchJson(standingsUrl, signal, 'standings');
 
   const conferences = Array.isArray(standings?.children) ? standings.children : [];
@@ -55,11 +72,18 @@ async function fetchStandings(conference, division) {
   return {
     standings: standingsPayload,
     rankings: {
-      apTop25: await fetchRankings(`${RANKINGS_URL}`, signal),
-      cfpRankings: await fetchRankings(`${RANKINGS_URL}?type=cfp`, signal),
+      apTop25: await fetchRankings(endpoints.rankings, signal),
+      cfpRankings:
+        sport === 'football'
+          ? await fetchRankings(`${endpoints.rankings}?type=cfp`, signal)
+          : [],
     },
     meta: {
-      dataSource: 'ESPN College Football API',
+      sport,
+      dataSource:
+        sport === 'baseball'
+          ? 'ESPN College Baseball API'
+          : 'ESPN College Football API',
       lastUpdated: new Date().toISOString(),
     },
   };
@@ -128,33 +152,45 @@ function buildTeams(entries) {
         logo: entry.team?.logos?.[0]?.href ?? null,
       },
       record: {
-        overall: getDisplayStat(entry, 'overall'),
-        conference: getDisplayStat(entry, 'vs. Conf.'),
-        home: getDisplayStat(entry, 'home'),
-        away: getDisplayStat(entry, 'road'),
+        overall: getDisplayStat(entry, ['overall']),
+        conference: getDisplayStat(entry, ['vs. Conf.', 'vsConf']),
+        home: getDisplayStat(entry, ['home']),
+        away: getDisplayStat(entry, ['road', 'away']),
+        neutral: getDisplayStat(entry, ['neutral', 'vsNeutral']),
       },
       stats: {
         wins: getStat(entry, 'wins'),
         losses: getStat(entry, 'losses'),
         winPercent: getStat(entry, 'winPercent'),
-        gamesBack: getDisplayStat(entry, 'gamesBehind'),
-        streak: getDisplayStat(entry, 'streak'),
-        pointsFor: getStat(entry, 'pointsFor'),
-        pointsAgainst: getStat(entry, 'pointsAgainst'),
+        gamesBack: getDisplayStat(entry, ['gamesBehind', 'gamesBack']),
+        streak: getDisplayStat(entry, ['streak']),
+        pointsFor: getStat(entry, 'pointsFor', 'runsFor', 'runsScored'),
+        pointsAgainst: getStat(entry, 'pointsAgainst', 'runsAgainst', 'runsAllowed'),
       },
     }));
 }
 
-function getStat(entry, name) {
+function getStat(entry, ...names) {
   const stats = Array.isArray(entry?.stats) ? entry.stats : [];
-  const stat = stats.find((item) => item?.name === name);
-  return stat?.value ?? null;
+  for (const name of names) {
+    const stat = stats.find((item) => item?.name === name);
+    if (stat && stat.value !== undefined) {
+      return stat.value;
+    }
+  }
+  return null;
 }
 
-function getDisplayStat(entry, name) {
+function getDisplayStat(entry, names) {
   const stats = Array.isArray(entry?.stats) ? entry.stats : [];
-  const stat = stats.find((item) => item?.name === name);
-  return stat?.displayValue ?? null;
+  const nameList = Array.isArray(names) ? names : [names];
+  for (const name of nameList) {
+    const stat = stats.find((item) => item?.name === name);
+    if (stat?.displayValue) {
+      return stat.displayValue;
+    }
+  }
+  return null;
 }
 
 function sanitizeConference(value) {
@@ -181,4 +217,15 @@ function matchesDivision(division, filter) {
 
   const name = (division?.name || '').toLowerCase();
   return name.includes(filter);
+}
+
+function resolveSport(rawSport) {
+  const normalized = (rawSport || 'football').toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(SPORT_PATHS, normalized)) {
+    return { sport: normalized, endpoints: SPORT_PATHS[normalized] };
+  }
+
+  return {
+    error: 'Unsupported sport parameter. Supported values are football and baseball.',
+  };
 }

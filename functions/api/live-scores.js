@@ -6,6 +6,14 @@
  * Deep South Sports Authority
  */
 
+const SUPPORTED_SPORTS = new Set(['all', 'mlb', 'nfl', 'nba', 'ncaa', 'ncaa-baseball']);
+const FETCH_TIMEOUT_MS = 8000;
+
+const espnHeaders = {
+  'User-Agent': 'BlazeSportsIntel/1.0 (+https://blazesportsintel.com)',
+  Accept: 'application/json',
+};
+
 export async function onRequestGet({ request, env, ctx }) {
   const url = new URL(request.url);
   const sport = url.searchParams.get('sport') || 'all';
@@ -18,6 +26,15 @@ export async function onRequestGet({ request, env, ctx }) {
     'Cache-Control': 'public, max-age=60', // 1 minute cache for live data
     'Content-Type': 'application/json',
   };
+
+  if (!SUPPORTED_SPORTS.has(sport)) {
+    return new Response(
+      JSON.stringify({
+        error: 'Unsupported sport parameter. Supported values: all, mlb, nfl, nba, ncaa, ncaa-baseball',
+      }),
+      { status: 400, headers },
+    );
+  }
 
   try {
     const scores = await getLiveScores(sport, date, env);
@@ -149,20 +166,24 @@ async function getLiveScores(sport, date, env) {
             broadcast: 'CBS'
           }
         ]
-      },
-      baseball: {
-        tournament: 'SEC Tournament',
-        games: [
-          {
-            game_id: 'LSU_TENN_2025_05_28',
-            status: 'Championship',
-            inning: 'Final',
-            home: { team: 'Tennessee', score: 7 },
-            away: { team: 'LSU', score: 5 }
-          }
-        ]
       }
     };
+  }
+
+  if (sport === 'all' || sport === 'ncaa-baseball') {
+    try {
+      scores.sports.ncaaBaseball = await fetchCollegeBaseballScoreboard(date);
+    } catch (error) {
+      scores.sports.ncaaBaseball = {
+        games: [],
+        meta: {
+          sport: 'baseball',
+          dataSource: 'ESPN College Baseball API',
+          lastUpdated: new Date().toISOString(),
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+      };
+    }
   }
 
   // Cache the results
@@ -183,4 +204,81 @@ export async function onRequestOptions() {
       'Access-Control-Allow-Headers': 'Content-Type',
     },
   });
+}
+
+async function fetchCollegeBaseballScoreboard(date) {
+  const sanitizedDate = date ? date.replace(/-/g, '') : '';
+  const url = sanitizedDate
+    ? `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard?dates=${sanitizedDate}`
+    : 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard';
+
+  const signal = getTimeoutSignal(FETCH_TIMEOUT_MS);
+  const response = await fetch(url, { headers: espnHeaders, signal });
+
+  if (!response.ok) {
+    throw new Error(`ESPN college baseball scoreboard failed with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  const events = Array.isArray(data?.events) ? data.events : [];
+
+  return {
+    games: events.map(mapBaseballEvent),
+    meta: {
+      sport: 'baseball',
+      dataSource: 'ESPN College Baseball API',
+      lastUpdated: new Date().toISOString(),
+      date: date || null,
+    },
+  };
+}
+
+function mapBaseballEvent(event) {
+  const competition = Array.isArray(event?.competitions) ? event.competitions[0] : null;
+  const competitors = Array.isArray(competition?.competitors) ? competition.competitors : [];
+  const status = competition?.status ?? event?.status ?? {};
+
+  return {
+    id: event?.id ?? null,
+    name: event?.name ?? null,
+    startTime: event?.date ?? null,
+    status: {
+      type: status?.type?.name ?? null,
+      description: status?.type?.detail ?? status?.type?.description ?? null,
+      shortDetail: status?.type?.shortDetail ?? null,
+      completed: Boolean(status?.type?.completed),
+      inning: status?.period ?? null,
+      inningState: status?.type?.state ?? null,
+      balls: status?.balls ?? null,
+      strikes: status?.strikes ?? null,
+      outs: status?.outs ?? null,
+    },
+    competitors: competitors.map((team) => ({
+      id: team?.id ?? null,
+      order: team?.order ?? null,
+      homeAway: team?.homeAway ?? null,
+      score: team?.score ?? null,
+      winner: Boolean(team?.winner),
+      team: {
+        id: team?.team?.id ?? null,
+        name: team?.team?.displayName ?? null,
+        abbreviation: team?.team?.abbreviation ?? null,
+        logo: team?.team?.logos?.[0]?.href ?? null,
+      },
+      records: team?.records ?? [],
+    })),
+    venue: competition?.venue ?? null,
+    broadcasts: competition?.broadcasts ?? [],
+    links: event?.links ?? [],
+  };
+}
+
+function getTimeoutSignal(timeoutMs) {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return AbortSignal.timeout(timeoutMs);
+  }
+
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), timeoutMs).unref?.();
+  return controller.signal;
 }

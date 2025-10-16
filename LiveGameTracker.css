@@ -1,0 +1,193 @@
+.live-game-tracker {
+  width: 100%;
+}
+
+.games-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.games-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.live-indicator {
+  color: var(--live-indicator);
+  font-size: 12px;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.game-card:active {
+  transform: scale(0.98);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.game-card.status-live {
+  border-left: 3px solid var(--live-indicator);
+}
+
+.game-card.status-final {
+  opacity: 0.7;
+}
+
+.game-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-color);
+  text-transform: uppercase;
+}
+
+.situation {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.game-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.team {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.team.leading .team-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-name {
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.team-record {
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.team-score {
+  font-size: 24px;
+  font-weight: 700;
+  min-width: 32px;
+  text-align: right;
+}
+
+.pitcher-info,
+.batter-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.pitcher-info {
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+
+.label {
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 20px;
+}
+
+.pitcher-name,
+.batter-name {
+  font-weight: 500;
+  flex: 1;
+}
+
+.pitcher-stats,
+.batter-stats {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.game-venue {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .games-header h2 {
+    font-size: 22px;
+  }
+
+  .games-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .game-card {
+    padding: 20px;
+  }
+
+  .team-name {
+    font-size: 16px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .games-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .game-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
