@@ -16,7 +16,9 @@ export default {
     const month = now.getMonth(); // 0-indexed: 0=Jan, 1=Feb, etc.
     const season = now.getFullYear();
 
-    // College baseball season: February (1) through June (5) [0-indexed: 0=Jan, 1=Feb, ..., 5=June]
+    // College baseball season: February through June.
+    // Note: The cron schedule uses 1-indexed months (2-6) for Feb-Jun: `cron: "*/15 * * 2-6 *"`.
+    // JavaScript Date.getMonth() is 0-indexed (0=Jan, 1=Feb, ..., 5=June), so we check for month >= 1 && month <= 5.
     const isBaseballSeason = month >= 1 && month <= 5;
 
     console.log(`[COLLEGE BASEBALL CRON] Starting data update for ${season} season`);
