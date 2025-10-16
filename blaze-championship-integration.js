@@ -14,7 +14,6 @@ class BlazeChampionshipPlatform {
   }
 
   async init() {
-    console.log('🔥 Blaze Sports Intel - Championship Platform Initializing...');
     await this.loadChampionshipData();
     this.startRealTimeUpdates();
     this.initializeUIComponents();
@@ -25,7 +24,6 @@ class BlazeChampionshipPlatform {
       const response = await fetch(`${this.apiBase}/championship`);
       const data = await response.json();
 
-      console.log('Championship data loaded:', data);
       this.updateDashboard(data);
       return data;
     } catch (error) {
@@ -252,7 +250,6 @@ class BlazeChampionshipPlatform {
       this.loadLiveScores();
     }, this.updateInterval);
 
-    console.log('🔥 Real-time updates started - updating every 60 seconds');
   }
 
   initializeUIComponents() {

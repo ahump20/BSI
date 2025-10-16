@@ -30,9 +30,13 @@
     <!-- Postprocessing Library (pmndrs/postprocessing) -->
     <script src="https://cdn.jsdelivr.net/npm/postprocessing@6.35.3/build/postprocessing.umd.min.js"></script>
 
-    <!-- Blaze Graphics Modules V4 - WebGL2 Rendering Engine -->
-    <script src="/lib/graphics/blaze-particle-engine-v4.js"></script>
-    <script src="/lib/graphics/blaze-postprocessing.js"></script>
+    <!-- Blaze Graphics Modules Ultra V5 - Championship Edition -->
+    <script type="module" src="/lib/graphics/blaze-particle-engine-ultra-v5.js"></script>
+    <script type="module" src="/lib/graphics/blaze-postprocessing-ultra-v5.js"></script>
+    <script type="module" src="/lib/graphics/blaze-card-interactions.js"></script>
+
+    <!-- Ultra Interactions CSS -->
+    <link rel="stylesheet" href="/css/blaze-ultra-interactions.css" />
 
     <style>
       * {
@@ -682,64 +686,137 @@
       ReactDOM.render(<CBBDashboard />, document.getElementById('root'));
     </script>
 
-    <!-- Blaze Advanced Graphics System V4 -->
-    <script>
-      // Global references for graphics engines
+    <!-- Blaze Ultra Graphics System V5 - Championship Edition -->
+    <script type="module">
+      import { BlazeParticleEngineUltraV5 } from '/lib/graphics/blaze-particle-engine-ultra-v5.js';
+      import { BlazePostprocessingUltraV5 } from '/lib/graphics/blaze-postprocessing-ultra-v5.js';
+      import { BlazeCardInteractions } from '/lib/graphics/blaze-card-interactions.js';
+
+      // Global references
       let blazeParticles = null;
       let blazePostprocessing = null;
+      let cardInteractions = null;
 
-      async function initAdvancedGraphics() {
-        const canvas = document.getElementById('particle-field');
-        if (!canvas || typeof THREE === 'undefined') {
-          console.warn('Three.js or canvas not available');
-          return;
-        }
-
+      async function initChampionshipGraphics() {
         try {
-          console.log('🏀 Initializing CBB V4 Graphics System...');
+          console.log('🏆 Initializing CBB Ultra V5 Championship Graphics System...');
 
-          // Initialize Premium V4 Particle Engine with 120K particles (optimized for CBB page)
-          blazeParticles = new BlazeParticleEngineV4('particle-field', {
-            particleCount: 120000,
-            particleSize: 2.5,
-            dataNodeCount: 80,
-            connectionCount: 150,
+          // Initialize Ultra V5 Particle Engine (500K particles max, device-adaptive)
+          blazeParticles = new BlazeParticleEngineUltraV5('particle-field', {
+            // Let engine auto-detect optimal count (500K/250K/50K based on device)
             enableMouseInteraction: true,
             enableParallax: true,
-            enableFog: true,
-            // CBB-specific: Burnt orange primary
-            accentColor: '#BF5700',
+            enableDataReactivity: true,
+            accentColor: '#BF5700', // Burnt orange
+            secondaryColor: '#A9D5DB', // Powder blue
+            tertiaryColor: '#E6382F', // Red
+            quaternaryColor: '#FFD700' // Gold
           });
 
-          await blazeParticles.init();
-          console.log(`✅ CBB Particle Engine initialized with ${blazeParticles.useWebGPU ? 'WebGPU' : 'WebGL2'}`);
+          const particlesInitialized = await blazeParticles.init();
+          if (!particlesInitialized) {
+            console.warn('⚠️ Particle engine failed to initialize');
+            return;
+          }
 
-          // Initialize Postprocessing Effects
-          if (typeof blazeParticles.renderer !== 'undefined') {
+          console.log(`✅ Ultra V5 Particle Engine initialized`);
+          console.log(`   Device Tier: ${blazeParticles.deviceTier}`);
+          console.log(`   Particle Count: ${blazeParticles.config.particleCount.toLocaleString()}`);
+          console.log(`   Renderer: ${blazeParticles.useWebGPU ? 'WebGPU' : 'WebGL2'}`);
+
+          // Initialize 10-Stage Postprocessing Pipeline
+          if (blazeParticles.renderer) {
             try {
-              blazePostprocessing = new BlazePostprocessing(
+              blazePostprocessing = new BlazePostprocessingUltraV5(
                 blazeParticles.scene,
                 blazeParticles.camera,
                 blazeParticles.renderer
               );
 
-              const postprocessingInitialized = await blazePostprocessing.init();
-              if (postprocessingInitialized) {
-                console.log('✅ CBB Postprocessing pipeline initialized');
+              const postInitialized = await blazePostprocessing.init();
+              if (postInitialized) {
+                console.log('✅ Ultra V5 Postprocessing initialized');
+                console.log(`   Pipeline: ${blazePostprocessing.config.enabledStages.join(', ')}`);
 
-                // Replace render method to use postprocessing
-                const originalRender = blazeParticles.render.bind(blazeParticles);
-                blazeParticles.render = function (deltaTime) {
-                  this.update(deltaTime);
+                // Override particle render method to use postprocessing
+                const originalAnimate = blazeParticles.animate.bind(blazeParticles);
+                blazeParticles.animate = function() {
+                  requestAnimationFrame(() => this.animate());
+
+                  const time = performance.now() * 0.001;
+                  this.frameCount++;
+
+                  // Update particle positions (keep existing logic)
+                  if (this.particleSystem) {
+                    const positions = this.particleSystem.geometry.attributes.position.array;
+                    const count = this.config.particleCount;
+
+                    for (let i = 0; i < count; i++) {
+                      const i3 = i * 3;
+                      positions[i3] += this.particleVelocities[i3];
+                      positions[i3 + 1] += this.particleVelocities[i3 + 1];
+                      positions[i3 + 2] += this.particleVelocities[i3 + 2];
+
+                      if (this.config.enableTurbulence) {
+                        const phase = this.particlePhases[i];
+                        const turbulence = Math.sin(time + phase) * 0.5;
+                        positions[i3 + 1] += turbulence;
+                      }
+
+                      const dist = Math.sqrt(
+                        positions[i3] ** 2 +
+                        positions[i3 + 1] ** 2 +
+                        positions[i3 + 2] ** 2
+                      );
+                      if (dist > 180) {
+                        const scale = 160 / dist;
+                        positions[i3] *= scale;
+                        positions[i3 + 1] *= scale;
+                        positions[i3 + 2] *= scale;
+                      }
+                    }
+
+                    this.particleSystem.geometry.attributes.position.needsUpdate = true;
+
+                    if (this.particleSystem.material.uniforms) {
+                      this.particleSystem.material.uniforms.time.value = time;
+                      this.particleSystem.material.uniforms.cameraPosition.value.copy(this.camera.position);
+                    }
+
+                    this.particleSystem.rotation.y += 0.0002;
+                  }
+
+                  // Update data nodes
+                  if (this.dataNodes) {
+                    this.dataNodes.forEach(node => {
+                      node.mesh.rotation.x += node.rotationSpeed.x;
+                      node.mesh.rotation.y += node.rotationSpeed.y;
+                      node.mesh.rotation.z += node.rotationSpeed.z;
+
+                      if (node.mesh.material.emissiveIntensity !== undefined) {
+                        node.mesh.material.emissiveIntensity = 0.2 + Math.sin(time * 2 + node.mesh.position.x) * 0.1;
+                      }
+                    });
+                  }
+
+                  // Mouse parallax
+                  if (this.mouse && this.config.enableMouseInteraction) {
+                    this.camera.position.x += (this.mouse.x * 10 - this.camera.position.x) * 0.05;
+                    this.camera.position.y += (this.mouse.y * 10 - this.camera.position.y) * 0.05;
+                  }
+
+                  // Render with postprocessing
                   if (blazePostprocessing && blazePostprocessing.initialized) {
+                    const deltaTime = time - (this.lastTime || time);
                     blazePostprocessing.render(deltaTime);
+                    this.lastTime = time;
                   } else {
-                    originalRender(deltaTime);
+                    this.renderer.render(this.scene, this.camera);
                   }
                 };
               }
             } catch (postError) {
-              console.warn('Postprocessing initialization failed, using basic renderer:', postError);
+              console.warn('⚠️ Postprocessing initialization failed, using basic renderer:', postError);
             }
           }
 
@@ -756,33 +833,58 @@
                 lastScrollProgress = scrollProgress;
               }
             }
-          });
+          }, { passive: true });
 
-          // Setup hover effects for cards
-          document.querySelectorAll('.card, .tab, .standings-table tr').forEach((card) => {
-            card.addEventListener('mouseenter', () => {
-              if (blazePostprocessing && blazePostprocessing.initialized) {
-                blazePostprocessing.onCardHover(true);
-              }
+          // Setup hover effects for cards (postprocessing boost)
+          setTimeout(() => {
+            document.querySelectorAll('.card, .tab, .standings-table tr').forEach((card) => {
+              card.addEventListener('mouseenter', () => {
+                if (blazePostprocessing && blazePostprocessing.initialized) {
+                  blazePostprocessing.onCardHover(true);
+                }
+              });
+              card.addEventListener('mouseleave', () => {
+                if (blazePostprocessing && blazePostprocessing.initialized) {
+                  blazePostprocessing.onCardHover(false);
+                }
+              });
             });
-            card.addEventListener('mouseleave', () => {
-              if (blazePostprocessing && blazePostprocessing.initialized) {
-                blazePostprocessing.onCardHover(false);
-              }
-            });
-          });
+          }, 1000); // Wait for React to render cards
 
-          console.log('🎉 CBB V4 Graphics System Ready!');
-          console.log(`   • Particles: 120,000 (burnt orange accent)`);
-          console.log(`   • Data Nodes: 80 (varied geometries with PBR)`);
-          console.log(`   • Renderer: ${blazeParticles.useWebGPU ? 'WebGPU' : 'WebGL2'} with ACES tone mapping`);
+          // Initialize 3D card tilt interactions
+          setTimeout(() => {
+            cardInteractions = new BlazeCardInteractions('.card, .tab');
+          }, 1000);
+
+          console.log('🎉 CBB Ultra V5 Championship Graphics System Ready!');
+          console.log(`   🔥 Particles: ${blazeParticles.config.particleCount.toLocaleString()} (holographic)`);
+          console.log(`   🎬 Postprocessing: ${blazePostprocessing ? blazePostprocessing.config.enabledStages.length : 0} stages`);
+          console.log(`   🎮 Performance: Adaptive quality scaling enabled`);
+          console.log(`   ⚡ FPS: Monitoring with auto-adjustment`);
+
         } catch (error) {
-          console.error('❌ Error initializing CBB advanced graphics:', error);
+          console.error('❌ Error initializing CBB Ultra V5 championship graphics:', error);
         }
       }
 
       // Initialize on load
-      window.addEventListener('load', initAdvancedGraphics);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initChampionshipGraphics);
+      } else {
+        initChampionshipGraphics();
+      }
+
+      // Export for global access (debugging)
+      window.blazeGraphics = {
+        get particles() { return blazeParticles; },
+        get postprocessing() { return blazePostprocessing; },
+        get cardInteractions() { return cardInteractions; },
+        updateGameData: (data) => {
+          if (blazeParticles && blazeParticles.config.enableDataReactivity) {
+            blazeParticles.updateWithGameData(data);
+          }
+        }
+      };
     </script>
     <!-- Cookie Consent Banner -->
     <script src="/components/CookieConsent.js"></script>

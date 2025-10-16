@@ -21,7 +21,6 @@ export default {
         const month = now.getMonth();
         const season = month >= 9 ? now.getFullYear() + 1 : now.getFullYear(); // Oct-Sep → next year
 
-        console.log(`[CBB CRON] Starting CBB data update for ${season} season (SEC focus)`);
 
         try {
             // Update standings
@@ -32,7 +31,6 @@ export default {
                 const standings = secStandings.map(s => adaptCBBStanding(s, season));
                 await upsertStandings(env.DB, standings);
                 await client.logSync('CBB', 'standings', season, 'SUCCESS', standings.length, null, standingsResult.duration, standingsResult.retries);
-                console.log(`[CBB CRON] Updated ${standings.length} SEC team standings`);
             }
 
             // Update games (for live scores)
@@ -45,7 +43,6 @@ export default {
                 const games = secGames.map(g => adaptCBBGame(g, season));
                 await upsertGames(env.DB, games);
                 await client.logSync('CBB', 'games', season, 'SUCCESS', games.length);
-                console.log(`[CBB CRON] Updated ${games.length} SEC games`);
             }
 
             // Update team season stats
@@ -54,17 +51,14 @@ export default {
                 const secStats = client.filterSECTeams(statsResult.data);
                 const stats = secStats.map(s => adaptCBBTeamSeasonStats(s, season));
                 await client.logSync('CBB', 'team-stats', season, 'SUCCESS', stats.length);
-                console.log(`[CBB CRON] Updated team stats for ${stats.length} SEC teams`);
             }
 
             // Update today's rankings
             const rankingsResult = await client.getCBBRankings(season.toString());
             if (rankingsResult.success) {
                 await client.logSync('CBB', 'rankings', season, 'SUCCESS', rankingsResult.data.length);
-                console.log(`[CBB CRON] Updated ${rankingsResult.data.length} rankings`);
             }
 
-            console.log('[CBB CRON] CBB data update completed successfully');
 
         } catch (error) {
             console.error('[CBB CRON] CBB data update failed:', error);

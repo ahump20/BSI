@@ -165,7 +165,6 @@ class LoggerService {
       this.prettyPrint(logEntry);
     } else {
       // JSON format for production
-      console.log(JSON.stringify(logEntry));
     }
 
     // Add to buffer for batch processing
@@ -188,7 +187,6 @@ class LoggerService {
     const color = colors[logEntry.level] || reset;
     const timestamp = new Date(logEntry.timestamp).toLocaleTimeString();
 
-    console.log(
       `${color}[${timestamp}] ${logEntry.level}${reset} ${logEntry.message}`,
       logEntry.error ? logEntry.error : ''
     );
@@ -196,7 +194,6 @@ class LoggerService {
     // Show metadata if present
     const { timestamp: _, level: __, message: ___, error: ____, ...metadata } = logEntry;
     if (Object.keys(metadata).length > 0) {
-      console.log(`${color}  └─${reset}`, metadata);
     }
   }
 
@@ -248,7 +245,6 @@ class LoggerService {
       // In production, integrate with Sentry, DataDog, etc.
       if (typeof globalThis.SENTRY_DSN !== 'undefined') {
         // Send to Sentry
-        console.log('Sending to monitoring:', logEntry.message);
       }
     } catch (error) {
       console.error('Failed to send to monitoring:', error);
@@ -261,7 +257,6 @@ class LoggerService {
   async sendToLogAggregator(logs) {
     try {
       // In production, send to CloudWatch, LogDNA, etc.
-      console.log(`Flushing ${logs.length} logs to aggregator`);
     } catch (error) {
       console.error('Failed to send to log aggregator:', error);
     }

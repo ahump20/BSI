@@ -51,7 +51,6 @@ function executeSQL(sql) {
  * Query all games with descriptions
  */
 function queryGames() {
-  console.log(`${colors.blue}📊 Querying all games from database...${colors.reset}`);
 
   const sql = `
     SELECT
@@ -85,7 +84,6 @@ function queryGames() {
     // Extract results array from D1 response format
     const games = Array.isArray(parsed) ? parsed : (parsed.results || []);
 
-    console.log(`${colors.green}✅ Found ${games.length} games with descriptions${colors.reset}`);
     return games;
   } catch (error) {
     console.error(`${colors.red}❌ Failed to query games:${colors.reset}`, error.message);
@@ -120,7 +118,6 @@ async function generateEmbedding(text) {
  * Insert embeddings into Vectorize index using wrangler
  */
 async function insertEmbeddings(games) {
-  console.log(`${colors.blue}🔢 Generating and inserting embeddings...${colors.reset}`);
 
   let successCount = 0;
   let errorCount = 0;
@@ -128,7 +125,6 @@ async function insertEmbeddings(games) {
   // Process in batches
   for (let i = 0; i < games.length; i += BATCH_SIZE) {
     const batch = games.slice(i, i + BATCH_SIZE);
-    console.log(`${colors.cyan}Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} games)...${colors.reset}`);
 
     for (const game of batch) {
       try {
@@ -179,7 +175,6 @@ async function insertEmbeddings(games) {
       }
     }
 
-    console.log(`\n${colors.cyan}Batch complete. Progress: ${successCount}/${games.length} successful${colors.reset}`);
   }
 
   return { successCount, errorCount };
@@ -189,13 +184,10 @@ async function insertEmbeddings(games) {
  * Verify embeddings in Vectorize index
  */
 function verifyEmbeddings() {
-  console.log(`${colors.blue}🔍 Verifying embeddings in Vectorize index...${colors.reset}`);
 
   try {
     // Query the index to get vector count
     // Note: This is a simplified check - full verification would query actual vectors
-    console.log(`${colors.green}✅ Embeddings verification complete${colors.reset}`);
-    console.log(`${colors.cyan}Note: Use 'wrangler vectorize query ${VECTORIZE_INDEX}' to test search${colors.reset}`);
   } catch (error) {
     console.error(`${colors.red}❌ Verification failed:${colors.reset}`, error.message);
   }
@@ -205,7 +197,6 @@ function verifyEmbeddings() {
  * Main execution
  */
 async function generateAllEmbeddings() {
-  console.log(`${colors.bright}${colors.cyan}
 ╔════════════════════════════════════════════════════════════════╗
 ║  🔥 Blaze Sports Intel - Embedding Generation                 ║
 ║  Powered by Cloudflare Workers AI + Vectorize                 ║
@@ -217,19 +208,16 @@ ${colors.reset}`);
     const games = queryGames();
 
     if (games.length === 0) {
-      console.log(`${colors.yellow}⚠️  No games found to process${colors.reset}`);
       return;
     }
 
     // Step 2: Generate and insert embeddings
-    console.log(`${colors.blue}🚀 Starting embedding generation for ${games.length} games...${colors.reset}`);
     const { successCount, errorCount } = await insertEmbeddings(games);
 
     // Step 3: Verify
     verifyEmbeddings();
 
     // Summary
-    console.log(`
 ${colors.bright}${colors.green}✅ Embedding generation complete!${colors.reset}
 
 ${colors.cyan}📈 Summary:${colors.reset}
@@ -251,9 +239,6 @@ ${colors.cyan}💡 Search Query Examples:${colors.reset}
    - "one-possession college football games"
 `);
 
-    console.log(`${colors.yellow}⚠️  Note: This script currently uses placeholder embeddings.${colors.reset}`);
-    console.log(`${colors.yellow}   For production, deploy a Cloudflare Worker with Workers AI binding.${colors.reset}`);
-    console.log(`${colors.yellow}   See: https://developers.cloudflare.com/workers-ai/${colors.reset}`);
 
   } catch (error) {
     console.error(`${colors.red}❌ Embedding generation failed:${colors.reset}`, error);

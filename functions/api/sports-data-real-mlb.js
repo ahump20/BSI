@@ -7,6 +7,11 @@ export async function onRequest({ request }) {
   const url = new URL(request.url);
   const teamId = url.searchParams.get('teamId') || '138'; // Cardinals default
 
+  // Dynamic year detection - defaults to current MLB season
+  // Allows historical queries with explicit ?season=2024 parameter
+  const currentYear = new Date().getFullYear();
+  const season = url.searchParams.get('season') || currentYear.toString();
+
   // CORS headers
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -45,19 +50,19 @@ async function fetchRealMLB(teamId) {
     const teamResponse = await fetch(`${baseUrl}/teams/${teamId}`);
     const teamData = await teamResponse.json();
 
-    // Fetch real standings
-    const standingsResponse = await fetch(`${baseUrl}/standings?leagueId=104&season=2024`);
+    // Fetch real standings (dynamic season)
+    const standingsResponse = await fetch(`${baseUrl}/standings?leagueId=104&season=${season}`);
     const standingsData = await standingsResponse.json();
 
     // Fetch real roster
     const rosterResponse = await fetch(`${baseUrl}/teams/${teamId}/roster`);
     const rosterData = await rosterResponse.json();
 
-    // Fetch hitting and pitching stats for Pythagorean calculation
-    const hittingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=2024`);
+    // Fetch hitting and pitching stats for Pythagorean calculation (dynamic season)
+    const hittingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=${season}`);
     const hittingData = await hittingResponse.json();
 
-    const pitchingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=2024`);
+    const pitchingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`);
     const pitchingData = await pitchingResponse.json();
 
     // Extract runs scored and allowed from real data - NO FALLBACKS!
@@ -83,6 +88,12 @@ async function fetchRealMLB(teamId) {
       (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
     );
 
+    // Truth labeling: distinguish current season from historical queries
+    const isCurrent = season === currentYear.toString();
+    const dataSourceLabel = isCurrent
+      ? `MLB Stats API (${season} Season - Live)`
+      : `MLB Stats API (Historical: ${season} Season)`;
+
     return {
       success: true,
       teamId: teamId,
@@ -97,8 +108,14 @@ async function fetchRealMLB(teamId) {
           runsAllowed: runsAllowed,
           formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)'
         },
-        dataSource: 'MLB Stats API (Real-time)',
+        dataSource: dataSourceLabel,
         lastUpdated: new Date().toISOString()
+      },
+      meta: {
+        season: parseInt(season),
+        seasonStatus: isCurrent ? 'active' : 'completed',
+        isCurrent: isCurrent,
+        warning: isCurrent ? null : 'This is historical data. For current season, omit the season parameter.'
       }
     };
   } catch (error) {

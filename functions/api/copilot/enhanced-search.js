@@ -185,7 +185,6 @@ export async function onRequest(context) {
 
     // Step 1: Enhance query with Gemini (fast)
     const queryVariations = await enhanceQuery(query, env);
-    console.log(`Query variations: ${JSON.stringify(queryVariations)}`);
 
     // Step 2: Semantic search with all variations
     const matches = await performSemanticSearch(queryVariations, sport, env);

@@ -17,7 +17,6 @@ export default {
         const client = new SportsDataIOClient(env.SPORTSDATA_API_KEY, env);
         const season = new Date().getFullYear(); // Current season
 
-        console.log(`[NFL CRON] Starting NFL data update for ${season} season`);
 
         try {
             // Update standings
@@ -26,7 +25,6 @@ export default {
                 const standings = standingsResult.data.map(s => adaptNFLStanding(s, season));
                 await upsertStandings(env.DB, standings);
                 await client.logSync('NFL', 'standings', season, 'SUCCESS', standings.length, null, standingsResult.duration, standingsResult.retries);
-                console.log(`[NFL CRON] Updated ${standings.length} team standings`);
             }
 
             // Update games (for live scores)
@@ -35,7 +33,6 @@ export default {
                 const games = gamesResult.data.map(g => adaptNFLGame(g, season));
                 await upsertGames(env.DB, games);
                 await client.logSync('NFL', 'games', season, 'SUCCESS', games.length);
-                console.log(`[NFL CRON] Updated ${games.length} games`);
             }
 
             // Update team season stats
@@ -44,10 +41,8 @@ export default {
                 const stats = statsResult.data.map(s => adaptNFLTeamSeasonStats(s, season));
                 // Store stats in D1 (simplified - could add upsertTeamStats function)
                 await client.logSync('NFL', 'team-stats', season, 'SUCCESS', stats.length);
-                console.log(`[NFL CRON] Updated team stats for ${stats.length} teams`);
             }
 
-            console.log('[NFL CRON] NFL data update completed successfully');
 
         } catch (error) {
             console.error('[NFL CRON] NFL data update failed:', error);

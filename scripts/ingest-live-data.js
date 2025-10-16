@@ -73,7 +73,6 @@ function mapSeasonType(seasonType) {
  */
 async function fetchAPI(sport, endpoint) {
   const url = `${API_BASE}${endpoint}?key=${SPORTSDATA_API_KEY}`;
-  console.log(`Fetching: ${sport} - ${endpoint}`);
 
   const response = await fetch(url);
 
@@ -319,7 +318,6 @@ async function insertGames(games) {
       ) VALUES ${values};
     `;
 
-    console.log(`Inserting batch ${i / BATCH_SIZE + 1} (${batch.length} games)...`);
     await executeSQL(sql);
   }
 }
@@ -328,37 +326,30 @@ async function insertGames(games) {
  * Main ingestion workflow
  */
 async function ingestLiveData() {
-  console.log('🔥 Blaze Sports Intel - Live Data Ingestion\n');
 
   const allGames = [];
 
   try {
     // 1. Note: Skipping delete since table is already empty
-    console.log('📊 Starting fresh data ingestion...\n');
 
     // 2. Fetch and normalize NFL data (Week 5 games)
-    console.log('🏈 Fetching NFL data...');
     const nflGames = await fetchAPI('NFL', API_ENDPOINTS.NFL.scores);
     const normalizedNFL = nflGames
       .filter(game => game.Status === 'Final' || game.Status === 'InProgress')
       .map(normalizeNFLGame);
 
-    console.log(`✅ Found ${normalizedNFL.length} NFL games\n`);
     allGames.push(...normalizedNFL);
 
     // 3. Fetch and normalize MLB data (recent games)
-    console.log('⚾ Fetching MLB data...');
     const mlbGames = await fetchAPI('MLB', API_ENDPOINTS.MLB.games);
     const normalizedMLB = mlbGames
       .filter(game => game.Status === 'Final' && game.Day >= '2024-09-01') // September games
       .slice(0, 100) // Limit to 100 most recent
       .map(normalizeMLBGame);
 
-    console.log(`✅ Found ${normalizedMLB.length} MLB games\n`);
     allGames.push(...normalizedMLB);
 
     // 4. Fetch and normalize CFB data
-    console.log('🏈 Fetching CFB data...');
     try {
       const cfbGames = await fetchAPI('CFB', API_ENDPOINTS.CFB.games);
       const normalizedCFB = cfbGames
@@ -366,14 +357,12 @@ async function ingestLiveData() {
         .slice(0, 50) // Limit to 50 games
         .map(normalizeCFBGame);
 
-      console.log(`✅ Found ${normalizedCFB.length} CFB games\n`);
       allGames.push(...normalizedCFB);
     } catch (error) {
       console.warn('⚠️  CFB data unavailable:', error.message);
     }
 
     // 5. Fetch and normalize CBB data
-    console.log('🏀 Fetching CBB data...');
     try {
       const cbbGames = await fetchAPI('CBB', API_ENDPOINTS.CBB.games);
       const normalizedCBB = cbbGames
@@ -381,27 +370,15 @@ async function ingestLiveData() {
         .slice(0, 50) // Limit to 50 games
         .map(normalizeCBBGame);
 
-      console.log(`✅ Found ${normalizedCBB.length} CBB games\n`);
       allGames.push(...normalizedCBB);
     } catch (error) {
       console.warn('⚠️  CBB data unavailable (season hasn\'t started):', error.message);
     }
 
     // 6. Insert all games into database
-    console.log(`📊 Inserting ${allGames.length} total games into database...`);
     await insertGames(allGames);
 
-    console.log('\n✅ Live data ingestion complete!');
-    console.log(`\n📈 Summary:`);
-    console.log(`   - NFL: ${normalizedNFL.length} games`);
-    console.log(`   - MLB: ${normalizedMLB.length} games`);
-    console.log(`   - CFB: ${allGames.filter(g => g.sport === 'CFB').length} games`);
-    console.log(`   - CBB: ${allGames.filter(g => g.sport === 'CBB').length} games`);
-    console.log(`   - Total: ${allGames.length} games`);
 
-    console.log('\n🔄 Next steps:');
-    console.log('   1. Run embedding generation: node scripts/generate-embeddings.js');
-    console.log('   2. Test search: curl -X POST .../api/copilot/search -d \'{"query":"close nfl games"}\'');
 
   } catch (error) {
     console.error('❌ Ingestion failed:', error);

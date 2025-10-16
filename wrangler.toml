@@ -63,10 +63,10 @@ binding = "AI"
 #   - Per-sport API usage patterns
 #
 # Middleware location: functions/api/_middleware.js
-# Query with: wrangler analytics query bsi-analytics --start-date YYYY-MM-DD
+# Query with: wrangler analytics query bsi_analytics --start-date YYYY-MM-DD
 [[analytics_engine_datasets]]
 binding = "ANALYTICS"
-dataset = "bsi-analytics"
+dataset = "bsi_analytics"
 
 # ============================================================================
 # ENVIRONMENT VARIABLES (Secrets)

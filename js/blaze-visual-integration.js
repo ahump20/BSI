@@ -12,7 +12,6 @@ class BlazeVisualIntegration {
         this.visualEffects = new Set();
         this.dataVisualizations = new Map();
 
-        console.log('🎨 Blaze Visual Integration - Initializing Championship Aesthetics...');
     }
 
     async initialize() {
@@ -42,7 +41,6 @@ class BlazeVisualIntegration {
             this.startVisualUpdateLoop();
 
             this.isInitialized = true;
-            console.log('✨ Blaze Visual Integration - Championship Aesthetics Ready');
 
         } catch (error) {
             console.error('❌ Visual Integration Failed:', error);
@@ -541,7 +539,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.blazeVisualIntegration = new BlazeVisualIntegration();
         await window.blazeVisualIntegration.initialize();
 
-        console.log('🏆 Blaze Visual Integration - Championship Aesthetics Active');
     } catch (error) {
         console.error('❌ Visual Integration Initialization Failed:', error);
     }
@@ -550,4 +547,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Export for global access
 window.BlazeVisualIntegration = BlazeVisualIntegration;
 
-console.log('🎨 Blaze Visual Integration System - Loaded and Ready');

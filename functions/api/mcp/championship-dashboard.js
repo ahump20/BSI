@@ -40,7 +40,6 @@ export async function onRequest(context) {
         if (env.BLAZE_CACHE) {
             const cached = await env.BLAZE_CACHE.get(cacheKey, 'json');
             if (cached && cached.expires > Date.now()) {
-                console.log('✅ Cache hit for', cacheKey);
                 return new Response(JSON.stringify(cached.data), {
                     status: 200,
                     headers: {

@@ -280,7 +280,6 @@ export async function onRequest(context) {
 
     // Step 2: Select AI provider (or use requested)
     const provider = requestedProvider || selectProvider(query, context);
-    console.log(`Using provider: ${provider} for query: ${query}`);
 
     // Step 3: Call selected AI provider
     let result;

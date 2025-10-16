@@ -92,7 +92,6 @@ class Championship3DVisualizer {
     }
 
     async initialize() {
-        console.log('🏆 Initializing Championship 3D Visualizer');
 
         try {
             await this.setupRenderer();
@@ -106,7 +105,6 @@ class Championship3DVisualizer {
             // Start render loop
             this.startRenderLoop();
 
-            console.log('✅ Championship 3D Visualizer Ready');
             return true;
         } catch (error) {
             console.error('❌ 3D Visualizer Initialization Failed:', error);
@@ -335,7 +333,6 @@ class Championship3DVisualizer {
     // ========================= SPORTS VISUALIZATIONS =========================
 
     async createBaseballVisualization(data) {
-        console.log('⚾ Creating Baseball Visualization');
 
         const group = new THREE.Group();
         group.name = 'baseball_visualization';
@@ -370,7 +367,6 @@ class Championship3DVisualizer {
     }
 
     async createFootballVisualization(data) {
-        console.log('🏈 Creating Football Visualization');
 
         const group = new THREE.Group();
         group.name = 'football_visualization';
@@ -405,7 +401,6 @@ class Championship3DVisualizer {
     }
 
     async createBasketballVisualization(data) {
-        console.log('🏀 Creating Basketball Visualization');
 
         const group = new THREE.Group();
         group.name = 'basketball_visualization';
@@ -921,7 +916,6 @@ class Championship3DVisualizer {
         });
 
         this.container.removeChild(this.renderer.domElement);
-        console.log('🏆 Championship 3D Visualizer Destroyed');
     }
 }
 
@@ -989,4 +983,3 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = { Championship3DVisualizer, PerformanceMonitor };
 }
 
-console.log('🏆 Championship 3D Visualizer Loaded - Elite WebGL Performance');

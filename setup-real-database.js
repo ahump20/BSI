@@ -32,7 +32,6 @@ class RealDatabaseSetup {
 
     try {
       await client.connect();
-      console.log('✅ Connected to PostgreSQL');
 
       // Check if database exists
       const result = await client.query(
@@ -42,9 +41,7 @@ class RealDatabaseSetup {
 
       if (result.rows.length === 0) {
         await client.query(`CREATE DATABASE ${this.config.database}`);
-        console.log(`✅ Created database: ${this.config.database}`);
       } else {
-        console.log(`ℹ️  Database ${this.config.database} already exists`);
       }
     } catch (error) {
       console.error('❌ Error creating database:', error.message);
@@ -59,7 +56,6 @@ class RealDatabaseSetup {
 
     try {
       await client.connect();
-      console.log(`✅ Connected to ${this.config.database} database`);
 
       // Create teams table
       await client.query(`
@@ -82,7 +78,6 @@ class RealDatabaseSetup {
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);
-      console.log('✅ Created teams table');
 
       // Create games table
       await client.query(`
@@ -103,7 +98,6 @@ class RealDatabaseSetup {
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);
-      console.log('✅ Created games table');
 
       // Create analytics table for calculations
       await client.query(`
@@ -119,7 +113,6 @@ class RealDatabaseSetup {
           UNIQUE(team_id, season, metric_type)
         )
       `);
-      console.log('✅ Created analytics table');
 
       // Create api_cache table for caching external API responses
       await client.query(`
@@ -133,7 +126,6 @@ class RealDatabaseSetup {
           hit_count INTEGER DEFAULT 0
         )
       `);
-      console.log('✅ Created api_cache table');
 
       // Create indexes for performance
       await client.query(`
@@ -144,7 +136,6 @@ class RealDatabaseSetup {
         CREATE INDEX IF NOT EXISTS idx_analytics_team_season ON analytics(team_id, season);
         CREATE INDEX IF NOT EXISTS idx_api_cache_expires ON api_cache(expires_at);
       `);
-      console.log('✅ Created performance indexes');
 
     } catch (error) {
       console.error('❌ Error creating tables:', error.message);
@@ -159,7 +150,6 @@ class RealDatabaseSetup {
 
     try {
       await client.connect();
-      console.log('ℹ️  Inserting sample data...');
 
       // Insert Cardinals
       await client.query(`
@@ -189,7 +179,6 @@ class RealDatabaseSetup {
         ON CONFLICT (external_id) DO NOTHING
       `, ['251', 'Texas Longhorns', 'TEX', 'NCAA Football', 'FBS', 'Big 12', 'Darrell K Royal Stadium', 'Austin', 'TX', '#BF5700']);
 
-      console.log('✅ Inserted sample teams');
 
       // Insert initial analytics records
       const teams = await client.query('SELECT id, name FROM teams');
@@ -200,7 +189,6 @@ class RealDatabaseSetup {
           ON CONFLICT (team_id, season, metric_type) DO NOTHING
         `, [team.id, 2024, 'elo_rating', 1500, 'Initial Setup']);
       }
-      console.log('✅ Inserted initial analytics records');
 
     } catch (error) {
       console.error('❌ Error inserting sample data:', error.message);
@@ -220,8 +208,6 @@ class RealDatabaseSetup {
         SELECT COUNT(*) as count FROM teams
       `);
 
-      console.log(`\n✅ Database test successful!`);
-      console.log(`   Teams in database: ${result.rows[0].count}`);
 
     } catch (error) {
       console.error('❌ Database verification failed:', error.message);
@@ -232,8 +218,6 @@ class RealDatabaseSetup {
   }
 
   async run() {
-    console.log('🚀 Setting up REAL PostgreSQL database for Blaze Sports Intel');
-    console.log('================================================\n');
 
     try {
       await this.createDatabase();
@@ -241,17 +225,7 @@ class RealDatabaseSetup {
       await this.insertSampleData();
       await this.verifyDatabase();
 
-      console.log('\n📊 Database Connection Info:');
-      console.log(`   Host: ${this.config.host}`);
-      console.log(`   Port: ${this.config.port}`);
-      console.log(`   Database: ${this.config.database}`);
-      console.log(`   User: ${this.config.user}`);
 
-      console.log('\n🎉 Database setup complete!');
-      console.log('\nNext steps:');
-      console.log('1. Update .env with your database credentials');
-      console.log('2. Run: npm run api:start');
-      console.log('3. Test: curl http://localhost:3000/api/teams');
 
     } catch (error) {
       console.error('\n❌ Setup failed:', error.message);

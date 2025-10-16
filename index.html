@@ -6,11 +6,11 @@
     <title>Blaze Sports Intel | Championship Analytics Platform</title>
     <meta
       name="description"
-      content="Practice to Play. Blaze Data Wins the Day. Elite championship analytics platform delivering real-time data-driven intelligence for Baseball, Football, and Basketball. Professional scouting, performance metrics, and strategic insights from the Deep South Sports Authority powered by SportsDataIO."
+      content="College Baseball Intelligence ESPN Won't Provide. Elite championship analytics platform delivering real-time data-driven intelligence for Baseball, Football, and Basketball. Professional scouting, performance metrics, and strategic insights from the Deep South Sports Authority powered by SportsDataIO."
     />
     <meta
       name="keywords"
-      content="sports analytics, championship intelligence, Deep South sports, Texas athletics, baseball analytics, football analytics, basketball analytics, MLB scouting, NFL strategy, NBA metrics, NCAA recruiting, Austin Humphrey, Blaze Sports Intel, AI sports analysis, SportsDataIO"
+      content="sports analytics, championship intelligence, Deep South sports, Texas athletics, baseball analytics, football analytics, basketball analytics, MLB scouting, NFL strategy, NCAA recruiting, Austin Humphrey, Blaze Sports Intel, AI sports analysis, SportsDataIO"
     />
 
     <!-- Open Graph / Social Media -->
@@ -19,7 +19,7 @@
     <meta property="og:title" content="Blaze Sports Intel | Deep South Sports Authority" />
     <meta
       property="og:description"
-      content="Practice to Play. Blaze Data Wins the Day. Championship intelligence platform delivering elite analytics for professional and collegiate sports organizations."
+      content="College Baseball Intelligence ESPN Won't Provide. Championship intelligence platform delivering elite analytics for professional and collegiate sports organizations."
     />
     <meta property="og:site_name" content="Blaze Sports Intel" />
 
@@ -29,7 +29,7 @@
     <meta property="twitter:title" content="Blaze Sports Intel | Championship Intelligence" />
     <meta
       property="twitter:description"
-      content="Practice to Play. Blaze Data Wins the Day. Elite sports intelligence platform delivering championship-caliber analytics."
+      content="College Baseball Intelligence ESPN Won't Provide. Elite sports intelligence platform delivering championship-caliber analytics."
     />
     <meta property="twitter:creator" content="@BISportsIntel" />
 
@@ -62,10 +62,8 @@
     <!-- Postprocessing Library (pmndrs/postprocessing) -->
     <script src="https://cdn.jsdelivr.net/npm/postprocessing@6.35.3/build/postprocessing.umd.min.js"></script>
 
-    <!-- Blaze Graphics Modules V4 - WebGL2 Rendering Engine -->
-    <script src="/lib/graphics/blaze-particle-engine-v4.js"></script>
-    <script src="/lib/graphics/blaze-postprocessing.js"></script>
-    <script src="/lib/graphics/blaze-cursor-interactions.js"></script>
+    <!-- Blaze Graphics Modules - Minimal Particle System -->
+    <script src="/public/js/blaze-particle-minimal.js"></script>
 
     <!-- Chart.js for visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1465,9 +1463,120 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* Skip to Content Link - Accessibility */
+      .skip-to-content {
+        position: absolute;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100000;
+        padding: 1rem 2rem;
+        background: var(--color-brand-orange, #BF5700);
+        color: white;
+        font-weight: 700;
+        text-decoration: none;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 12px rgba(191, 87, 0, 0.5);
+        transition: top 0.3s ease;
+      }
+
+      .skip-to-content:focus {
+        top: 0;
+        outline: 3px solid white;
+        outline-offset: 2px;
+      }
     </style>
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://blazesportsintel.com/#organization",
+          "name": "Blaze Sports Intel",
+          "alternateName": "Blaze Intelligence",
+          "url": "https://blazesportsintel.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://blazesportsintel.com/logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "description": "Championship Analytics Platform delivering real-time sports intelligence, advanced analytics, and AI-powered insights for MLB, NFL, NBA, NCAA, and youth sports.",
+          "foundingDate": "2024",
+          "founder": {
+            "@type": "Person",
+            "name": "Austin Humphrey",
+            "email": "austin@blazesportsintel.com"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Boerne",
+            "addressRegion": "TX",
+            "addressCountry": "US"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "austin@blazesportsintel.com",
+            "contactType": "Customer Service",
+            "areaServed": "US"
+          },
+          "sameAs": [
+            "https://github.com/ahump20/BSI"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://blazesportsintel.com/#website",
+          "url": "https://blazesportsintel.com",
+          "name": "Blaze Sports Intel",
+          "description": "College Baseball Intelligence ESPN Won't Provide. Professional sports analytics platform with real-time data, AI-powered insights, and championship-grade intelligence.",
+          "publisher": {
+            "@id": "https://blazesportsintel.com/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://blazesportsintel.com/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          },
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://blazesportsintel.com/#webpage",
+          "url": "https://blazesportsintel.com",
+          "name": "Blaze Sports Intel | Championship Analytics Platform",
+          "description": "College Baseball Intelligence ESPN Won't Provide. Comprehensive sports analytics for MLB, NFL, NBA, NCAA covering Baseball → Football → Basketball → Track & Field with real-time data, Monte Carlo simulations, and AI-powered insights.",
+          "isPartOf": {
+            "@id": "https://blazesportsintel.com/#website"
+          },
+          "about": {
+            "@id": "https://blazesportsintel.com/#organization"
+          },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "https://blazesportsintel.com/og-image.png",
+            "width": 1200,
+            "height": 630
+          },
+          "datePublished": "2024-01-01T00:00:00-06:00",
+          "dateModified": "2025-10-12T00:00:00-06:00",
+          "inLanguage": "en-US"
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
+    <!-- Skip to Content Link for Accessibility -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
     <!-- Three.js Particle Background -->
     <canvas id="particle-field"></canvas>
 
@@ -1476,9 +1585,9 @@
       <div class="nav-container">
         <a href="/" class="logo" style="text-decoration: none">
           <img
-            src="/icons/blaze-logo.svg"
-            alt="Blaze"
-            style="width: 24px; height: 24px; display: inline-block; margin-right: 0.25rem"
+            src="/icons/blaze-logo.png"
+            alt="Blaze Sports Intel"
+            style="width: 32px; height: 32px; display: inline-block; margin-right: 0.5rem; border-radius: 4px"
           />
           BLAZE SPORTS INTEL
         </a>
@@ -1488,16 +1597,16 @@
           <li><a href="/data-transparency" class="nav-link">Data</a></li>
           <li><a href="#sports" class="nav-link">Sports</a></li>
           <li>
-            <a href="/copilot" class="nav-link">
+            <a href="/college-baseball/games" class="nav-link">
               <img
                 src="/icons/robot.svg"
                 alt=""
                 style="width: 1rem; height: 1rem; display: inline-block; margin-right: 0.35rem; vertical-align: middle"
-              />AI Copilot
+              />Live Games & Box Scores
             </a>
           </li>
           <li><a href="/about" class="nav-link">About</a></li>
-          <li><a href="/analytics" class="nav-btn nav-btn-primary">Launch Analytics</a></li>
+          <li><a href="/college-baseball/standings" class="nav-btn nav-btn-primary">Launch Analytics</a></li>
         </ul>
         <div class="mobile-toggle" id="mobileToggle">
           <span></span>
@@ -1508,7 +1617,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="main-content">
       <!-- Live Data Visualization Overlay -->
       <div class="hero-data-viz" data-aos="fade-in" data-aos-delay="200">
         <canvas id="live-data-canvas"></canvas>
@@ -1528,14 +1637,13 @@
       </div>
 
       <div class="hero-content" data-aos="fade-up">
-        <div class="hero-badge">Built from Deep South observation</div>
-        <h1 class="hero-title">Practice to Play.<br />Blaze Data Wins the Day.</h1>
+        <div class="hero-badge">⚾ College Baseball • ESPN's Biggest Gap</div>
+        <h1 class="hero-title">ESPN Won't Show You Box Scores.<br />We Will.</h1>
         <p class="hero-subtitle">
-          Most tools count what's convenient. Blaze captures what swings outcomes—situation, momentum, and adjustments
-          under pressure—so coaches decide faster.
+          Complete college baseball coverage with full box scores, batting/pitching lines, conference standings, and player stats. The comprehensive NCAA baseball intelligence platform ESPN refuses to build.
         </p>
         <div class="hero-cta">
-          <a href="/analytics" class="cta-btn cta-btn-primary">
+          <a href="/college-baseball/standings" class="cta-btn cta-btn-primary">
             <img src="/icons/chart-line.svg" alt="" style="width: 1.25rem; height: 1.25rem; display: inline-block" />
             View Analytics
           </a>
@@ -1567,23 +1675,22 @@
     <section class="platform-access" id="access">
       <div class="section-container">
         <div class="section-header" data-aos="fade-up">
-          <div class="section-badge">Quick Access</div>
-          <h2 class="section-title">Platform Navigation</h2>
-          <p class="section-subtitle">Access all platform features and sports-specific analytics</p>
+          <div class="section-badge">ESPN's Biggest Gap</div>
+          <h2 class="section-title">College Baseball Intelligence</h2>
+          <p class="section-subtitle">The coverage ESPN refuses to provide. Full box scores, player stats, conference standings.</p>
         </div>
 
         <div class="access-grid">
-          <a href="/copilot" class="access-card" data-aos="fade-up" data-aos-delay="100">
+          <a href="/college-baseball/games" class="access-card" data-aos="fade-up" data-aos-delay="100">
             <div class="access-icon">
-              <img src="/icons/robot.svg" alt="AI Copilot" style="width: 2.2rem; height: 2.2rem" />
+              <img src="/icons/baseball.svg" alt="College Baseball Games" style="width: 2.2rem; height: 2.2rem" />
             </div>
-            <h3 class="access-title">AI Copilot</h3>
+            <h3 class="access-title">⚾ Live College Baseball Games</h3>
             <p class="access-description">
-              Natural language sports intelligence. Ask questions, get data-driven insights with semantic search and RAG
-              technology.
+              Full box scores with complete batting and pitching lines. Player-level statistics ESPN won't show you. Live game updates for all NCAA Division I games.
             </p>
             <span class="access-link">
-              Launch Copilot
+              View Live Games
               <img
                 src="/icons/arrow-right.svg"
                 alt=""
@@ -1592,72 +1699,70 @@
             </span>
           </a>
 
-          <a href="/analytics" class="access-card" data-aos="fade-up" data-aos-delay="200">
+          <a href="/college-baseball/standings" class="access-card" data-aos="fade-up" data-aos-delay="200">
             <div class="access-icon">
               <i class="fas fa-chart-bar"></i>
             </div>
-            <h3 class="access-title">Analytics Dashboard</h3>
+            <h3 class="access-title">Conference Standings & RPI</h3>
             <p class="access-description">
-              Real-time standings, advanced analytics, 3D visualizations, and data-driven insights.
+              Complete NCAA conference standings with RPI rankings, strength of schedule, and College World Series tournament implications. All conferences tracked.
             </p>
-            <span class="access-link"> View Analytics <i class="fas fa-arrow-right"></i> </span>
+            <span class="access-link"> View Standings <i class="fas fa-arrow-right"></i> </span>
+          </a>
+
+          <a href="/college-baseball/teams" class="access-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="access-icon">
+              <img src="/icons/baseball.svg" alt="Team Pages" style="width: 2.2rem; height: 2.2rem" />
+            </div>
+            <h3 class="access-title">NCAA Baseball Team Pages</h3>
+            <p class="access-description">
+              Team rosters, season schedules, game results, and statistical breakdowns. From SEC powerhouses to mid-major contenders—every D1 team covered.
+            </p>
+            <span class="access-link"> Browse Teams <i class="fas fa-arrow-right"></i> </span>
+          </a>
+
+          <a href="/college-baseball/players" class="access-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="access-icon">
+              <i class="fas fa-user-graduate"></i>
+            </div>
+            <h3 class="access-title">Player Statistics & Draft Tracking</h3>
+            <p class="access-description">
+              Individual player stats, batting averages, ERA, fielding percentages. MLB Draft prospect tracking with Perfect Game integration for complete player profiles.
+            </p>
+            <span class="access-link"> View Players <i class="fas fa-arrow-right"></i> </span>
+          </a>
+
+          <a href="/copilot" class="access-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="access-icon">
+              <img src="/icons/robot.svg" alt="AI Copilot" style="width: 2.2rem; height: 2.2rem" />
+            </div>
+            <h3 class="access-title">AI Sports Intelligence Copilot</h3>
+            <p class="access-description">
+              Natural language sports search powered by semantic AI. Ask questions about games, teams, and players—get instant data-driven insights with source citations.
+            </p>
+            <span class="access-link"> Launch Copilot <i class="fas fa-arrow-right"></i> </span>
           </a>
 
           <a href="/mlb" class="access-card" data-aos="fade-up" data-aos-delay="300">
             <div class="access-icon">
-              <img src="/icons/baseball.svg" alt="Baseball" style="width: 2.2rem; height: 2.2rem" />
+              <img src="/icons/baseball.svg" alt="MLB" style="width: 2.2rem; height: 2.2rem" />
             </div>
-            <h3 class="access-title">MLB Baseball</h3>
+            <h3 class="access-title">MLB Analytics Hub</h3>
             <p class="access-description">
-              Complete Major League Baseball coverage with live scores, team stats, player analytics, and Perfect Game
-              data.
+              Professional baseball coverage with live scores, team stats, player analytics, playoff projections, and historical comparisons.
             </p>
             <span class="access-link"> View MLB Hub <i class="fas fa-arrow-right"></i> </span>
           </a>
 
           <a href="/nfl" class="access-card" data-aos="fade-up" data-aos-delay="100">
             <div class="access-icon">
-              <img src="/icons/football.svg" alt="Football" style="width: 2.2rem; height: 2.2rem" />
+              <img src="/icons/football.svg" alt="NFL" style="width: 2.2rem; height: 2.2rem" />
             </div>
-            <h3 class="access-title">NFL Football</h3>
+            <h3 class="access-title">NFL Analytics Hub</h3>
             <p class="access-description">
-              Professional football analytics with real-time game data, team performance metrics, and playoff
-              projections.
+              Professional football analytics with real-time game data, team performance metrics, playoff projections, and championship analysis.
             </p>
             <span class="access-link"> View NFL Hub <i class="fas fa-arrow-right"></i> </span>
-          </a>
-
-          <a href="/cfb" class="access-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="access-icon">
-              <img src="/icons/football.svg" alt="Football" style="width: 2.2rem; height: 2.2rem" />
-            </div>
-            <h3 class="access-title">College Football</h3>
-            <p class="access-description">
-              NCAA Football including Texas HS, conference standings, recruiting data, and championship scenarios.
-            </p>
-            <span class="access-link"> View CFB Hub <i class="fas fa-arrow-right"></i> </span>
-          </a>
-
-          <a href="/cbb" class="access-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="access-icon">
-              <img src="/icons/basketball.svg" alt="Basketball" style="width: 2.2rem; height: 2.2rem" />
-            </div>
-            <h3 class="access-title">College Basketball</h3>
-            <p class="access-description">
-              NCAA Men's Basketball analytics, tournament projections, conference tracking, and player statistics.
-            </p>
-            <span class="access-link"> View CBB Hub <i class="fas fa-arrow-right"></i> </span>
-          </a>
-
-          <a href="/contact" class="access-card" data-aos="fade-up" data-aos-delay="100">
-            <div class="access-icon">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <h3 class="access-title">Contact Us</h3>
-            <p class="access-description">
-              Get in touch for partnerships, enterprise solutions, or platform support. We're here to help.
-            </p>
-            <span class="access-link"> Contact Form <i class="fas fa-arrow-right"></i> </span>
           </a>
 
           <a href="/about" class="access-card" data-aos="fade-up" data-aos-delay="200">
@@ -1666,20 +1771,9 @@
             </div>
             <h3 class="access-title">About the Founder</h3>
             <p class="access-description">
-              Learn about Austin Humphrey and the mission behind Blaze Sports Intel—from Memphis to Texas.
+              Learn about Austin Humphrey and the mission behind Blaze Sports Intel—built from frustration with ESPN's college baseball neglect.
             </p>
             <span class="access-link"> Read Story <i class="fas fa-arrow-right"></i> </span>
-          </a>
-
-          <a href="/legal/privacy" class="access-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="access-icon">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <h3 class="access-title">Legal & Privacy</h3>
-            <p class="access-description">
-              Our commitment to data privacy, security, and transparency. View our privacy policy and terms.
-            </p>
-            <span class="access-link"> Legal Info <i class="fas fa-arrow-right"></i> </span>
           </a>
         </div>
       </div>
@@ -1747,7 +1841,7 @@
           <div class="section-badge">Platform</div>
           <h2 class="section-title">What exists</h2>
           <p class="section-subtitle">
-            Multi-sport data aggregation and analytics powered by SportsDataIO. MLB, NFL, NBA, NCAA Football, and NCAA
+            Multi-sport data aggregation and analytics powered by SportsDataIO. MLB, NFL, NCAA Football, and NCAA
             Basketball.
           </p>
         </div>
@@ -1765,7 +1859,7 @@
                 >Sources: MLB Stats API, ESPN API · Method: Bill James Pythagorean formula (1.83 exponent)</small
               >
             </p>
-            <a href="/analytics" class="feature-link">
+            <a href="/college-baseball/standings" class="feature-link">
               View Projections
               <img
                 src="/icons/arrow-right.svg"
@@ -1787,7 +1881,7 @@
                 >Update frequency: 30-60 seconds during live games</small
               >
             </p>
-            <a href="/analytics" class="feature-link">
+            <a href="/college-baseball/standings" class="feature-link">
               See Live Data
               <img
                 src="/icons/arrow-right.svg"
@@ -1803,10 +1897,10 @@
             </div>
             <h3 class="feature-title">Unified League Tables</h3>
             <p class="feature-description">
-              Standings, schedules, box scores across MLB, NFL, NBA, NCAA in one interface. Same data structure whether
+              Standings, schedules, box scores across MLB, NFL, NCAA in one interface. Same data structure whether
               you're looking at the Cardinals or the Longhorns.
             </p>
-            <a href="/analytics" class="feature-link"> Browse Leagues <i class="fas fa-arrow-right"></i> </a>
+            <a href="/college-baseball/standings" class="feature-link"> Browse Leagues <i class="fas fa-arrow-right"></i> </a>
           </div>
 
           <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
@@ -1818,7 +1912,7 @@
               Team performance over time, player stat trends, season-over-season changes. Pulled from official league
               databases. Useful for spotting patterns before they become obvious.
             </p>
-            <a href="/analytics" class="feature-link"> View Archives <i class="fas fa-arrow-right"></i> </a>
+            <a href="/college-baseball/standings" class="feature-link"> View Archives <i class="fas fa-arrow-right"></i> </a>
           </div>
 
           <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
@@ -1845,702 +1939,10 @@
                 >Sources: Perfect Game, MaxPreps, NCAA.org · Texas & Deep South focus</small
               >
             </p>
-            <a href="/analytics" class="feature-link"> Browse Youth Data <i class="fas fa-arrow-right"></i> </a>
+            <a href="/college-baseball/standings" class="feature-link"> Browse Youth Data <i class="fas fa-arrow-right"></i> </a>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Sports Hubs Section -->
-    <section class="sports-section" id="sports">
-      <div class="section-container">
-        <div class="section-header" data-aos="fade-up">
-          <div class="section-badge">Coverage</div>
-          <h2 class="section-title">Three sports</h2>
-          <p class="section-subtitle">Baseball → Football → Basketball. Youth through professional levels.</p>
-        </div>
-
-        <div class="sports-grid">
-          <a href="/mlb" class="sport-card" data-aos="zoom-in" data-aos-delay="100">
-            <div class="sport-icon">
-              <img src="/icons/baseball.svg" alt="Baseball" style="width: 4rem; height: 4rem" />
-            </div>
-            <h3 class="sport-name">BASEBALL</h3>
-            <p class="sport-status">MLB • NCAA D1 • Perfect Game</p>
-          </a>
-
-          <a href="/nfl" class="sport-card" data-aos="zoom-in" data-aos-delay="200">
-            <div class="sport-icon">
-              <img src="/icons/football.svg" alt="Football" style="width: 4rem; height: 4rem" />
-            </div>
-            <h3 class="sport-name">FOOTBALL</h3>
-            <p class="sport-status live pulse"><i class="fas fa-circle"></i> NFL • NCAA • Texas HS</p>
-          </a>
-
-          <a href="/cbb" class="sport-card" data-aos="zoom-in" data-aos-delay="300">
-            <div class="sport-icon">
-              <img src="/icons/basketball.svg" alt="Basketball" style="width: 4rem; height: 4rem" />
-            </div>
-            <h3 class="sport-name">BASKETBALL</h3>
-            <p class="sport-status">NBA • NCAA D1</p>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- About the Founder Section -->
-    <section class="about-section" id="about">
-      <div class="section-container">
-        <div class="about-grid">
-          <div class="about-content" data-aos="fade-right">
-            <div class="section-badge">Who We Are</div>
-            <h2 class="section-title">Built by Someone Who Gets It</h2>
-            <p class="about-text">
-              <strong>Austin Humphrey</strong> grew up in Memphis, moved to Texas, and spent years watching coaches
-              struggle with outdated tools and scattered data. As a University of Texas graduate who loves the
-              Cardinals, Titans, Longhorns, and Grizzlies, he knew there had to be a better way.
-            </p>
-            <p class="about-text">
-              So he built Blaze Sports Intel—the platform he always wished existed. No BS. No fluff. Just the
-              intelligence you need to prepare your team, evaluate talent, and make the right call when it matters most.
-              From Boerne, Texas to programs across the Deep South, Blaze is helping teams win more games.
-            </p>
-            <div class="about-credentials">
-              <div class="credential-item">
-                <i class="fas fa-graduation-cap"></i>
-                <span>University of Texas at Austin</span>
-              </div>
-              <div class="credential-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Boerne, Texas</span>
-              </div>
-              <div class="credential-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Born August 17, 1995</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="about-teams" data-aos="fade-left">
-            <div class="section-badge" style="margin-bottom: 1.5rem">Championship Focus</div>
-            <h3 style="font-size: 1.75rem; margin-bottom: 1.5rem; color: var(--text-primary)">Our Core Teams</h3>
-            <div class="team-cards">
-              <div class="team-card">
-                <div class="team-icon">
-                  <img src="/icons/baseball.svg" alt="Baseball" style="width: 2rem; height: 2rem" />
-                </div>
-                <div class="team-info">
-                  <h4>St. Louis Cardinals</h4>
-                  <p>MLB • 11x World Series Champions</p>
-                </div>
-              </div>
-              <div class="team-card">
-                <div class="team-icon">
-                  <img src="/icons/longhorns.svg" alt="Texas Longhorns" style="width: 2rem; height: 2rem" />
-                </div>
-                <div class="team-info">
-                  <h4>Texas Longhorns</h4>
-                  <p>NCAA • All Sports Coverage</p>
-                </div>
-              </div>
-              <div class="team-card">
-                <div class="team-icon">
-                  <img src="/icons/basketball.svg" alt="Basketball" style="width: 2rem; height: 2rem" />
-                </div>
-                <div class="team-info">
-                  <h4>Memphis Grizzlies</h4>
-                  <p>NBA • Grit & Grind</p>
-                </div>
-              </div>
-              <div class="team-card">
-                <div class="team-icon">
-                  <img src="/icons/football.svg" alt="Football" style="width: 2rem; height: 2rem" />
-                </div>
-                <div class="team-info">
-                  <h4>Tennessee Titans</h4>
-                  <p>NFL • Titan Up</p>
-                </div>
-              </div>
-            </div>
-            <div
-              class="about-contact"
-              style="
-                margin-top: 2rem;
-                padding: 1.5rem;
-                background: var(--glass-light);
-                border-radius: var(--radius-lg);
-                border: 1px solid var(--glass-border);
-              "
-            >
-              <p style="color: var(--text-secondary); margin-bottom: 0.75rem; font-size: 0.95rem">
-                <i class="fas fa-envelope"></i>
-                <a href="mailto:austin@blazesportsintel.com" style="color: var(--blaze-copper); text-decoration: none"
-                  >austin@blazesportsintel.com</a
-                >
-              </p>
-              <p style="color: var(--text-secondary); font-size: 0.95rem">
-                <i class="fas fa-phone"></i> (210) 273-5538
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="heritage-banner"
-          data-aos="fade-up"
-          style="
-            margin-top: 4rem;
-            padding: 2.5rem;
-            background: linear-gradient(
-              135deg,
-              rgba(191, 87, 0, 0.12),
-              rgba(204, 102, 0, 0.08),
-              rgba(217, 123, 56, 0.06)
-            );
-            border-radius: var(--radius-xl);
-            border: 2px solid rgba(217, 123, 56, 0.3);
-            text-align: center;
-            box-shadow: var(--glow-soft);
-          "
-        >
-          <p style="font-size: 1.15rem; color: var(--text-primary); line-height: 1.8; max-width: 900px; margin: 0 auto">
-            <strong style="color: var(--blaze-copper); text-shadow: 0 0 20px rgba(217, 123, 56, 0.5)"
-              >Where Southern Grit Meets Silicon Valley Analytics.</strong
-            ><br />
-            From Memphis roots to Texas soil, Blaze Sports Intel honors Deep South sports tradition with
-            championship-caliber technology. Born on the same day as Davy Crockett, built for champions who refuse to
-            settle for second place.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-grid">
-          <div class="footer-section">
-            <h3>Blaze Sports Intel</h3>
-            <p style="color: var(--text-tertiary); line-height: 1.7">
-              Elite championship analytics platform delivering data-driven intelligence for professional and collegiate
-              sports organizations.
-            </p>
-            <div class="social-links" style="justify-content: flex-start; margin-top: 1.5rem">
-              <a href="https://x.com/BISportsIntel" class="social-link" target="_blank" rel="noopener">
-                <i class="fab fa-x-twitter"></i>
-              </a>
-              <a href="https://github.com/ahump20" class="social-link" target="_blank" rel="noopener">
-                <i class="fab fa-github"></i>
-              </a>
-              <a href="https://linkedin.com/in/austinhumphrey20" class="social-link" target="_blank" rel="noopener">
-                <i class="fab fa-linkedin"></i>
-              </a>
-            </div>
-          </div>
-
-          <div class="footer-section">
-            <h3>Platform</h3>
-            <ul class="footer-links">
-              <li>
-                <a href="/copilot" class="footer-link">
-                  <i class="fas fa-robot" style="margin-right: 0.5rem"></i>AI Copilot
-                </a>
-              </li>
-              <li><a href="/analytics" class="footer-link">Analytics Dashboard</a></li>
-              <li><a href="/mlb" class="footer-link">MLB Hub</a></li>
-              <li><a href="/nfl" class="footer-link">NFL Hub</a></li>
-              <li><a href="/cfb" class="footer-link">College Football Hub</a></li>
-              <li><a href="/cbb" class="footer-link">College Basketball Hub</a></li>
-              <li><a href="/historicalcomparisons" class="footer-link">Historical Comparisons</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-section">
-            <h3>Resources</h3>
-            <ul class="footer-links">
-              <li><a href="#features" class="footer-link">Features</a></li>
-              <li><a href="#sports" class="footer-link">Sports Coverage</a></li>
-              <li><a href="/about" class="footer-link">About the Founder</a></li>
-              <li><a href="/contact" class="footer-link">Contact</a></li>
-              <li><a href="/legal/privacy" class="footer-link">Privacy Policy</a></li>
-              <li><a href="/legal/terms" class="footer-link">Terms of Service</a></li>
-              <li><a href="/cookies" class="footer-link">Cookie Policy</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <p>
-            &copy; 2025 Blaze Sports Intel. Built with
-            <img
-              src="/icons/blaze-logo.svg"
-              alt="Blaze"
-              style="width: 1rem; height: 1rem; display: inline-block; vertical-align: middle"
-            />
-            in Boerne, Texas.
-          </p>
-          <p style="margin-top: 0.5rem; font-size: 0.85rem">
-            Deep South Sports Authority • Championship Analytics Platform
-          </p>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script>
-      // ==================== INITIALIZE AOS ====================
-      document.addEventListener('DOMContentLoaded', () => {
-        AOS.init({
-          duration: 1000,
-          once: true,
-          offset: 100,
-          easing: 'ease-out',
-        });
-      });
-
-      // ==================== NAVIGATION SCROLL EFFECT ====================
-      const nav = document.getElementById('nav');
-      let lastScroll = 0;
-
-      window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-
-        if (currentScroll > 100) {
-          nav.classList.add('scrolled');
-        } else {
-          nav.classList.remove('scrolled');
-        }
-
-        lastScroll = currentScroll;
-      });
-
-      // ==================== MOBILE MENU TOGGLE ====================
-      const mobileToggle = document.getElementById('mobileToggle');
-      const navMenu = document.getElementById('navMenu');
-
-      mobileToggle.addEventListener('click', () => {
-        mobileToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
-      });
-
-      // Close mobile menu when clicking a link
-      document.querySelectorAll('.nav-link').forEach((link) => {
-        link.addEventListener('click', () => {
-          mobileToggle.classList.remove('active');
-          navMenu.classList.remove('active');
-        });
-      });
-
-      // ==================== SMOOTH SCROLL ====================
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            });
-          }
-        });
-      });
-
-      // ==================== BLAZE ADVANCED GRAPHICS SYSTEM ====================
-      // Global references for graphics engines
-      let blazeParticles = null;
-      let blazePostprocessing = null;
-      let blazeCursorInteractions = null;
-
-      async function initAdvancedGraphics() {
-        const canvas = document.getElementById('particle-field');
-        if (!canvas || typeof THREE === 'undefined') {
-          console.warn('Three.js or canvas not available');
-          return;
-        }
-
-        try {
-          console.log('🔥 Initializing Blaze Advanced Graphics System...');
-
-          // Initialize V4 Particle Engine with automatic mobile detection
-          // Engine will auto-configure: 25K particles (mobile) vs 150K (desktop)
-          blazeParticles = new BlazeParticleEngineV4('particle-field');
-
-          await blazeParticles.init();
-          console.log(`✅ Particle Engine initialized with ${blazeParticles.useWebGPU ? 'WebGPU' : 'WebGL2'}`);
-
-          // Initialize Cursor Interactions (click ripples, velocity-based force, particle trails)
-          if (typeof BlazeCursorInteractions !== 'undefined') {
-            blazeCursorInteractions = new BlazeCursorInteractions(blazeParticles, {
-              enableRipples: true,
-              enableVelocityForce: true,
-              enableTrails: true,
-              rippleRadius: 300,
-              rippleForce: 2.0,
-              rippleDuration: 1000,
-              trailLength: 20,
-              velocityMultiplier: 3.0,
-            });
-            console.log('✅ Cursor interactions initialized (ripples, velocity force, trails)');
-          } else {
-            console.warn('⚠️ BlazeCursorInteractions not available');
-          }
-
-          // Initialize Postprocessing Effects
-          // Check if postprocessing library is available
-          if (typeof blazeParticles.renderer !== 'undefined') {
-            try {
-              blazePostprocessing = new BlazePostprocessing(
-                blazeParticles.scene,
-                blazeParticles.camera,
-                blazeParticles.renderer
-              );
-
-              const postprocessingInitialized = await blazePostprocessing.init();
-              if (postprocessingInitialized) {
-                console.log(
-                  '✅ Postprocessing pipeline initialized (bloom, DOF, chromatic aberration, grain, vignette, color grading)'
-                );
-
-                // Replace render method to use postprocessing + cursor interactions
-                const originalRender = blazeParticles.render.bind(blazeParticles);
-                blazeParticles.render = function (deltaTime) {
-                  // Update particles
-                  this.update(deltaTime);
-
-                  // Update cursor interactions (ripples, velocity force, trails)
-                  if (blazeCursorInteractions) {
-                    blazeCursorInteractions.updateParticles(deltaTime, performance.now() / 1000);
-                  }
-
-                  // Render with postprocessing
-                  if (blazePostprocessing && blazePostprocessing.initialized) {
-                    blazePostprocessing.render(deltaTime);
-                  } else {
-                    originalRender(deltaTime);
-                  }
-                };
-              } else {
-                console.log('⚠️ Postprocessing library not available, using basic renderer');
-              }
-            } catch (postError) {
-              console.warn('Postprocessing initialization failed, using basic renderer:', postError);
-            }
-          }
-
-          // Setup scroll-driven effects
-          let lastScrollProgress = 0;
-          window.addEventListener('scroll', () => {
-            if (blazePostprocessing && blazePostprocessing.initialized) {
-              const scrollProgress = Math.min(
-                window.scrollY / (document.documentElement.scrollHeight - window.innerHeight),
-                1
-              );
-
-              // Only update if scroll changed significantly (performance optimization)
-              if (Math.abs(scrollProgress - lastScrollProgress) > 0.01) {
-                blazePostprocessing.updateOnScroll(scrollProgress);
-                lastScrollProgress = scrollProgress;
-              }
-            }
-          });
-
-          // Setup hover effects for cards
-          document.querySelectorAll('.access-card, .feature-card, .sport-card').forEach((card) => {
-            card.addEventListener('mouseenter', () => {
-              if (blazePostprocessing && blazePostprocessing.initialized) {
-                blazePostprocessing.onCardHover(true);
-              }
-            });
-
-            card.addEventListener('mouseleave', () => {
-              if (blazePostprocessing && blazePostprocessing.initialized) {
-                blazePostprocessing.onCardHover(false);
-              }
-            });
-          });
-
-          console.log('🎉 Blaze Advanced Graphics System V4 Ready - WebGL2 Rendering!');
-          console.log(`   • Particles: 150,000 (gradient color palette)`);
-          console.log(`   • Data Nodes: 80 (varied geometries with PBR materials)`);
-          console.log(`   • Dynamic Connections: 150 (pulsing animations)`);
-          console.log(`   • Lighting System: 5-point cinematic lighting`);
-          console.log(`   • Renderer: ${blazeParticles.useWebGPU ? 'WebGPU' : 'WebGL2'} with ACES tone mapping`);
-          console.log(
-            `   • Postprocessing: ${blazePostprocessing && blazePostprocessing.initialized ? 'Bloom, DOF, Chromatic Aberration, Grain, Vignette, Color Grading' : 'Disabled'}`
-          );
-          console.log(`   • Interactive: Mouse parallax + particle repulsion + fog`);
-        } catch (error) {
-          console.error('❌ Error initializing advanced graphics:', error);
-          // Fallback to basic Three.js if advanced features fail
-          console.log('⚠️ Falling back to basic particle system...');
-          initBasicParticleSystem();
-        }
-      }
-
-      // Fallback basic particle system (for compatibility)
-      function initBasicParticleSystem() {
-        const canvas = document.getElementById('particle-field');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 0);
-        camera.position.z = 500;
-
-        const particleCount = 50000;
-        const particles = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const colors = new Float32Array(particleCount * 3);
-
-        const blazeColors = [new THREE.Color(0xbf5700), new THREE.Color(0xcc6600), new THREE.Color(0xd97b38)];
-
-        for (let i = 0; i < particleCount; i++) {
-          const i3 = i * 3;
-          positions[i3] = (Math.random() - 0.5) * 2000;
-          positions[i3 + 1] = (Math.random() - 0.5) * 2000;
-          positions[i3 + 2] = (Math.random() - 0.5) * 1000;
-
-          const color = blazeColors[Math.floor(Math.random() * blazeColors.length)];
-          colors[i3] = color.r;
-          colors[i3 + 1] = color.g;
-          colors[i3 + 2] = color.b;
-        }
-
-        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const particleMaterial = new THREE.PointsMaterial({
-          size: 2,
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.7,
-          blending: THREE.AdditiveBlending,
-        });
-
-        const particleSystem = new THREE.Points(particles, particleMaterial);
-        scene.add(particleSystem);
-
-        function animate() {
-          requestAnimationFrame(animate);
-          particleSystem.rotation.y += 0.0005;
-          particleSystem.rotation.x += 0.0002;
-          renderer.render(scene, camera);
-        }
-
-        animate();
-
-        window.addEventListener('resize', () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        console.log('✅ Basic particle system initialized (fallback mode)');
-      }
-
-      // Initialize on load
-      window.addEventListener('load', initAdvancedGraphics);
-
-      // ==================== HERO LIVE DATA VISUALIZATION ====================
-      function initHeroDataVisualization() {
-        const canvas = document.getElementById('live-data-canvas');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-
-        // Data structure for live standings visualization
-        const dataPoints = [];
-        const numPoints = 30;
-
-        // Initialize with sample data (will be replaced with real API data)
-        for (let i = 0; i < numPoints; i++) {
-          dataPoints.push({
-            x: (canvas.width / numPoints) * i,
-            y: canvas.height / 2 + Math.random() * 100 - 50,
-            targetY: canvas.height / 2,
-            velocity: 0,
-            value: 0.5 + Math.random() * 0.5,
-          });
-        }
-
-        // Animate data visualization
-        function animateDataViz() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          // Draw gradient background
-          const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-          gradient.addColorStop(0, 'rgba(191, 87, 0, 0.1)');
-          gradient.addColorStop(0.5, 'rgba(204, 102, 0, 0.2)');
-          gradient.addColorStop(1, 'rgba(217, 123, 56, 0.1)');
-          ctx.fillStyle = gradient;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-          // Draw connecting lines
-          ctx.strokeStyle = 'rgba(191, 87, 0, 0.4)';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          dataPoints.forEach((point, i) => {
-            if (i === 0) ctx.moveTo(point.x, point.y);
-            else ctx.lineTo(point.x, point.y);
-          });
-          ctx.stroke();
-
-          // Draw area under curve
-          ctx.fillStyle = 'rgba(191, 87, 0, 0.15)';
-          ctx.beginPath();
-          dataPoints.forEach((point, i) => {
-            if (i === 0) ctx.moveTo(point.x, point.y);
-            else ctx.lineTo(point.x, point.y);
-          });
-          ctx.lineTo(canvas.width, canvas.height);
-          ctx.lineTo(0, canvas.height);
-          ctx.closePath();
-          ctx.fill();
-
-          // Draw data points
-          dataPoints.forEach((point, i) => {
-            // Update physics
-            const spring = (point.targetY - point.y) * 0.05;
-            point.velocity = (point.velocity + spring) * 0.95;
-            point.y += point.velocity;
-
-            // Add subtle wave motion
-            point.targetY = canvas.height / 2 + Math.sin(Date.now() / 1000 + i * 0.5) * 30;
-
-            // Draw point
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(204, 102, 0, 0.8)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(255, 191, 28, 0.6)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-          });
-
-          requestAnimationFrame(animateDataViz);
-        }
-
-        animateDataViz();
-
-        // Handle resize
-        window.addEventListener('resize', () => {
-          canvas.width = canvas.offsetWidth;
-          canvas.height = canvas.offsetHeight;
-          dataPoints.forEach((point, i) => {
-            point.x = (canvas.width / numPoints) * i;
-          });
-        });
-      }
-
-      // ==================== HERO LIVE STATS TICKER ====================
-      async function initHeroStatsTicker() {
-        try {
-          // Fetch real-time standings data
-          const [mlbResponse, nflResponse] = await Promise.allSettled([
-            fetch('/api/mlb/standings').then((r) => (r.ok ? r.json() : null)),
-            fetch('/api/nfl/standings').then((r) => (r.ok ? r.json() : null)),
-          ]);
-
-          // MLB stat
-          if (mlbResponse.status === 'fulfilled' && mlbResponse.value) {
-            const mlbData = mlbResponse.value;
-            const topTeam = mlbData.standings?.[0]?.teams?.[0];
-            if (topTeam) {
-              document.getElementById('live-stat-1').innerHTML = `
-                            <span class="stat-label">MLB</span>
-                            <span class="stat-value">${topTeam.name} ${topTeam.wins}-${topTeam.losses}</span>
-                        `;
-            }
-          } else {
-            document.getElementById('live-stat-1').innerHTML = `
-                        <span class="stat-label">MLB</span>
-                        <span class="stat-value">162 games</span>
-                    `;
-          }
-
-          // NFL stat
-          if (nflResponse.status === 'fulfilled' && nflResponse.value) {
-            const nflData = nflResponse.value;
-            const topTeam = nflData.standings?.[0]?.teams?.[0];
-            if (topTeam) {
-              document.getElementById('live-stat-2').innerHTML = `
-                            <span class="stat-label">NFL</span>
-                            <span class="stat-value">${topTeam.name} ${topTeam.wins}-${topTeam.losses}</span>
-                        `;
-            }
-          } else {
-            document.getElementById('live-stat-2').innerHTML = `
-                        <span class="stat-label">NFL</span>
-                        <span class="stat-value">17 games</span>
-                    `;
-          }
-
-          // NCAA stat (static for now)
-          document.getElementById('live-stat-3').innerHTML = `
-                    <span class="stat-label">NCAA</span>
-                    <span class="stat-value">350+ teams</span>
-                `;
-        } catch (error) {
-          console.error('Error fetching hero stats:', error);
-          // Fallback to generic stats
-          document.getElementById('live-stat-1').innerHTML = `
-                    <span class="stat-label">MLB</span>
-                    <span class="stat-value">30 teams</span>
-                `;
-          document.getElementById('live-stat-2').innerHTML = `
-                    <span class="stat-label">NFL</span>
-                    <span class="stat-value">32 teams</span>
-                `;
-          document.getElementById('live-stat-3').innerHTML = `
-                    <span class="stat-label">NCAA</span>
-                    <span class="stat-value">350+ teams</span>
-                `;
-        }
-      }
-
-      // Initialize hero visualizations
-      window.addEventListener('load', () => {
-        initHeroDataVisualization();
-        initHeroStatsTicker();
-      });
-
-      // ==================== CONSOLE BRANDING ====================
-      console.log(
-        `
-%c🔥 BLAZE SPORTS INTEL V4 %c
-%cChampionship Analytics Platform - WebGL2 Rendering
-%cBuilt with WebGPU, Three.js, Babylon.js, React, and Cloudflare Workers
-%cPremium Graphics System V4:
-%c• 150,000 particles with gradient color palette (powder blue, red, orange, navy)
-%c• 80 premium data nodes (varied geometries: sphere, octahedron, icosahedron, tetrahedron)
-%c• PBR materials (metalness 0.8, roughness 0.2) for photorealistic rendering
-%c• 5-point cinematic lighting system (key, fill, rim, ambient, accent)
-%c• 150 dynamic connections with pulsing animations
-%c• Postprocessing: Bloom, DOF, Chromatic Aberration, Film Grain, Vignette, Color Grading
-%c• Mouse parallax, particle repulsion, fog effects
-%c• ACES Filmic tone mapping with exposure 1.2
-%c• Adaptive performance monitoring with auto-scaling
-%c
-Deep South Sports Authority • Est. 2025
-        `,
-        'font-size: 24px; font-weight: bold; color: #BF5700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);',
-        '',
-        'font-size: 14px; color: #FFB81C;',
-        'font-size: 12px; color: #999;',
-        'font-size: 11px; color: #E69551; font-weight: bold;',
-        'font-size: 10px; color: #D97B38;',
-        'font-size: 10px; color: #D97B38;',
-        'font-size: 10px; color: #D97B38;',
-        'font-size: 10px; color: #D97B38;',
-        'font-size: 10px; color: #D97B38;',
-        'font-size: 11px; color: #666; font-style: italic;'
-      );
-    </script>
-
-    <!-- Blaze Chat Assistant -->
-    <script src="/lib/chat-widget.js"></script>
-  </body>
-</html>

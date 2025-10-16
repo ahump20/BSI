@@ -17,7 +17,6 @@ export default {
         const client = new SportsDataIOClient(env.SPORTSDATA_API_KEY, env);
         const season = new Date().getFullYear(); // Current season
 
-        console.log(`[MLB CRON] Starting MLB data update for ${season} season`);
 
         try {
             // Update standings
@@ -26,7 +25,6 @@ export default {
                 const standings = standingsResult.data.map(s => adaptMLBStanding(s, season));
                 await upsertStandings(env.DB, standings);
                 await client.logSync('MLB', 'standings', season, 'SUCCESS', standings.length, null, standingsResult.duration, standingsResult.retries);
-                console.log(`[MLB CRON] Updated ${standings.length} team standings`);
             }
 
             // Update games (for live scores)
@@ -35,7 +33,6 @@ export default {
                 const games = gamesResult.data.map(g => adaptMLBGame(g, season));
                 await upsertGames(env.DB, games);
                 await client.logSync('MLB', 'games', season, 'SUCCESS', games.length);
-                console.log(`[MLB CRON] Updated ${games.length} games`);
             }
 
             // Update team season stats
@@ -43,7 +40,6 @@ export default {
             if (statsResult.success && env.DB) {
                 const stats = statsResult.data.map(s => adaptMLBTeamSeasonStats(s, season));
                 await client.logSync('MLB', 'team-stats', season, 'SUCCESS', stats.length);
-                console.log(`[MLB CRON] Updated team stats for ${stats.length} teams`);
             }
 
             // Update today's game stats (for box scores)
@@ -51,10 +47,8 @@ export default {
             const todayGamesResult = await client.getMLBTeamGameStatsByDate(today);
             if (todayGamesResult.success) {
                 await client.logSync('MLB', 'today-games', season, 'SUCCESS', todayGamesResult.data.length);
-                console.log(`[MLB CRON] Updated ${todayGamesResult.data.length} games for ${today}`);
             }
 
-            console.log('[MLB CRON] MLB data update completed successfully');
 
         } catch (error) {
             console.error('[MLB CRON] MLB data update failed:', error);

@@ -121,12 +121,6 @@ async function trackMetrics(data) {
 
   // Skip if Analytics Engine is not configured (local development)
   if (!env.ANALYTICS) {
-    console.log('[ANALYTICS] Not configured, skipping metrics:', {
-      endpoint,
-      statusCode,
-      duration: `${duration}ms`,
-      cacheStatus,
-    });
     return;
   }
 
@@ -160,16 +154,6 @@ async function trackMetrics(data) {
       indexes: [sport, endpoint],
     });
 
-    // Log successful metric write (debug only)
-    if (env.DEBUG) {
-      console.log('[ANALYTICS] ✅ Metrics tracked:', {
-        endpoint,
-        sport,
-        statusCode,
-        duration: `${duration}ms`,
-        cacheStatus,
-      });
-    }
   } catch (e) {
     // Don't let analytics failures affect the API response
     console.error('[ANALYTICS] ❌ Failed to write metrics:', e);

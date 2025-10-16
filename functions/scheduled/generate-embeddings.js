@@ -22,7 +22,6 @@ export async function onRequest(context) {
   // }
 
   try {
-    console.log('🔥 Starting embedding generation...');
 
     // Step 1: Query all games with descriptions from D1
     const gamesQuery = await env.DB.prepare(`
@@ -44,7 +43,6 @@ export async function onRequest(context) {
     `).all();
 
     const games = gamesQuery.results || [];
-    console.log(`Found ${games.length} games to process`);
 
     if (games.length === 0) {
       return Response.json({
@@ -111,7 +109,6 @@ export async function onRequest(context) {
             ]);
 
             results.success++;
-            console.log(`✅ Generated embedding for ${vectorId}`);
 
           } catch (error) {
             results.failed++;
@@ -126,7 +123,6 @@ export async function onRequest(context) {
       );
 
       // Log progress
-      console.log(`Progress: ${Math.min(i + BATCH_SIZE, games.length)}/${games.length} games processed`);
     }
 
     // Return summary

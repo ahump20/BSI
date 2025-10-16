@@ -11,7 +11,6 @@ class MonteCarloVisualizer {
     }
 
     async initialize() {
-        console.log('📊 Initializing Monte Carlo Visualizer for Deep South Authority');
         this.initialized = true;
         return true;
     }

@@ -10,8 +10,6 @@ class BlazeRevolutionaryCommandCenter {
         this.modules = new Map();
         this.updateInterval = 5000; // 5 seconds
 
-        console.log('🔥 Initializing Blaze Revolutionary Command Center');
-        console.log('📊 Deep South Sports Authority - Command Center Loading...');
     }
 
     async initialize() {
@@ -28,7 +26,6 @@ class BlazeRevolutionaryCommandCenter {
             this.initializeUI();
 
             this.initialized = true;
-            console.log('✅ Blaze Revolutionary Command Center initialized');
 
             // Display initialization message
             this.showInitializationMessage();
@@ -51,7 +48,6 @@ class BlazeRevolutionaryCommandCenter {
                 if (window[module.class]) {
                     this.modules.set(module.name, new window[module.class]());
                     await this.modules.get(module.name).initialize?.();
-                    console.log(`✅ Module loaded: ${module.name}`);
                 }
             } catch (error) {
                 console.warn(`⚠️ Module failed to load: ${module.name}`, error);
@@ -184,7 +180,6 @@ class BlazeRevolutionaryCommandCenter {
     }
 
     focusOnSport(sport) {
-        console.log(`🎯 Focusing on ${sport} athletics`);
 
         // Highlight selected sport
         document.querySelectorAll('.sport-level').forEach(level => {
@@ -275,7 +270,6 @@ class BlazeRevolutionaryCommandCenter {
             this.updateAllModules();
         }, this.updateInterval);
 
-        console.log(`🔄 Real-time updates started (${this.updateInterval}ms interval)`);
     }
 
     async updateAllModules() {
@@ -369,11 +363,6 @@ class BlazeRevolutionaryCommandCenter {
 
     // Expose debugging methods
     debug() {
-        console.log('🔧 Blaze Revolutionary Command Center - Debug Info');
-        console.log('Initialized:', this.initialized);
-        console.log('Modules:', Array.from(this.modules.keys()));
-        console.log('Update Interval:', this.updateInterval);
-        console.log('Authority:', this.modules.get('DeepSouthAuthority'));
     }
 }
 

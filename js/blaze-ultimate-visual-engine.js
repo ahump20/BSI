@@ -23,7 +23,6 @@ class BlazeUltimateVisualEngine {
             materials: new SophisticatedMaterialSystem()
         };
 
-        console.log('🎨 Blaze Ultimate Visual Engine - Initializing...');
     }
 
     async initialize() {
@@ -46,7 +45,6 @@ class BlazeUltimateVisualEngine {
             this.startInteractiveEffects();
 
             this.isInitialized = true;
-            console.log('✨ Blaze Ultimate Visual Engine - Ready for Championship Aesthetics');
         } catch (error) {
             console.error('❌ Visual Engine Initialization Failed:', error);
         }
@@ -205,7 +203,6 @@ class BlazeUltimateVisualEngine {
             }
         });
 
-        console.log('✨ Advanced Shaders Initialized - Championship Visuals Ready');
     }
 
     // ========================= PARTICLE SYSTEM MANAGER =========================
@@ -220,7 +217,6 @@ class BlazeUltimateVisualEngine {
         // Interactive connection particles
         this.createConnectionParticles();
 
-        console.log('🎆 Advanced Particle Systems Ready');
     }
 
     createDataParticleSystem() {
@@ -311,7 +307,6 @@ class BlazeUltimateVisualEngine {
         const filmPass = new THREE.FilmPass(0.35, 0.025, 648, false);
         this.composer.addPass(filmPass);
 
-        console.log('✨ Post-Processing Pipeline Ready');
     }
 
     // ========================= MICRO-INTERACTION ENGINE =========================
@@ -326,7 +321,6 @@ class BlazeUltimateVisualEngine {
         // Smooth transition animations
         this.setupFluidTransitions();
 
-        console.log('🎯 Micro-Interaction Engine Ready');
     }
 
     setupAdvancedHoverEffects() {
@@ -366,7 +360,6 @@ class BlazeUltimateVisualEngine {
         // Real-time visual updates
         this.setupRealTimeVisualUpdates();
 
-        console.log('🌊 Dynamic Visual System Ready');
     }
 
     // ========================= ANIMATION AND UPDATE LOOPS =========================
@@ -510,4 +503,3 @@ class SophisticatedMaterialSystem {
 // Export for global use
 window.BlazeUltimateVisualEngine = BlazeUltimateVisualEngine;
 
-console.log('🎨 Blaze Ultimate Visual Engine - Loaded and Ready for Championship Aesthetics');

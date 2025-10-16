@@ -17,7 +17,6 @@ export default {
         const client = new SportsDataIOClient(env.SPORTSDATA_API_KEY, env);
         const season = new Date().getFullYear(); // Current season
 
-        console.log(`[CFB CRON] Starting CFB data update for ${season} season (SEC focus)`);
 
         try {
             // Update standings
@@ -28,7 +27,6 @@ export default {
                 const standings = secStandings.map(s => adaptCFBStanding(s, season));
                 await upsertStandings(env.DB, standings);
                 await client.logSync('CFB', 'standings', season, 'SUCCESS', standings.length, null, standingsResult.duration, standingsResult.retries);
-                console.log(`[CFB CRON] Updated ${standings.length} SEC team standings`);
             }
 
             // Update games (for live scores)
@@ -41,7 +39,6 @@ export default {
                 const games = secGames.map(g => adaptCFBGame(g, season));
                 await upsertGames(env.DB, games);
                 await client.logSync('CFB', 'games', season, 'SUCCESS', games.length);
-                console.log(`[CFB CRON] Updated ${games.length} SEC games`);
             }
 
             // Update team season stats
@@ -50,10 +47,8 @@ export default {
                 const secStats = client.filterSECTeams(statsResult.data);
                 const stats = secStats.map(s => adaptCFBTeamSeasonStats(s, season));
                 await client.logSync('CFB', 'team-stats', season, 'SUCCESS', stats.length);
-                console.log(`[CFB CRON] Updated team stats for ${stats.length} SEC teams`);
             }
 
-            console.log('[CFB CRON] CFB data update completed successfully');
 
         } catch (error) {
             console.error('[CFB CRON] CFB data update failed:', error);

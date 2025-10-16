@@ -57,8 +57,6 @@ export async function onRequest(context) {
                 coverage: 'Texas • SEC • Every Player • Every Level',
                 sports: sportsData,
                 analytics: {
-                    totalDataPoints: '150M+',
-                    accuracy: '98.7%',
                     realTimeMetrics: true,
                     biomechanicsAnalysis: true
                 },

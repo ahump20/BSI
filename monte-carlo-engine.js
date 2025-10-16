@@ -55,7 +55,6 @@ class MonteCarloEngine {
     }
 
     async initialize() {
-        console.log('🎲 Initializing Advanced Monte Carlo Engine for Championship Predictions');
 
         try {
             // Initialize Web Workers for parallel processing
@@ -73,7 +72,6 @@ class MonteCarloEngine {
             this.setupPerformanceMonitoring();
 
             this.initialized = true;
-            console.log('✅ Monte Carlo Engine Initialized - Elite Championship Predictions Ready');
             return true;
         } catch (error) {
             console.error('❌ Monte Carlo Engine Initialization Failed:', error);
@@ -89,8 +87,6 @@ class MonteCarloEngine {
         }
 
         const startTime = performance.now();
-        console.log(`🏆 Running ${sport.toUpperCase()} Championship Simulation`);
-        console.log(`📊 Teams: ${teams.length}, Simulations: ${this.config.simulations}`);
 
         try {
             // Get sport-specific model
@@ -115,7 +111,6 @@ class MonteCarloEngine {
             // Store simulation for history
             this.storeSimulationResult(analysis, sport, teams.length, executionTime);
 
-            console.log(`✅ Championship Simulation Complete - ${executionTime.toFixed(2)}ms`);
             return analysis;
 
         } catch (error) {
@@ -155,7 +150,6 @@ class MonteCarloEngine {
             if (i > 0 && i % convergenceCheck === 0) {
                 const currentResults = this.aggregateResults(results);
                 if (previousResults && this.checkConvergence(currentResults, previousResults)) {
-                    console.log(`🎯 Convergence achieved at ${i} simulations`);
                     break;
                 }
                 previousResults = currentResults;
@@ -163,7 +157,6 @@ class MonteCarloEngine {
 
             // Progress reporting for long simulations
             if (i % 10000 === 0 && i > 0) {
-                console.log(`📈 Progress: ${i}/${this.config.simulations} simulations (${((i/this.config.simulations)*100).toFixed(1)}%)`);
             }
         }
 
@@ -650,7 +643,6 @@ class MonteCarloEngine {
         }
 
         URL.revokeObjectURL(workerUrl);
-        console.log(`👥 Initialized ${this.workers.length} workers for parallel simulation`);
     }
 
     generateWorkerCode() {
@@ -698,7 +690,6 @@ class MonteCarloEngine {
         const { id, results, success, error } = event.data;
 
         if (success) {
-            console.log(`✅ Worker ${id} completed with ${results.length} results`);
             // Handle worker results
         } else {
             console.error(`❌ Worker ${id} error:`, error);
@@ -740,7 +731,6 @@ class MonteCarloEngine {
         this.simulationHistory = [];
         this.currentSimulation = null;
 
-        console.log('🎲 Monte Carlo Engine Destroyed');
     }
 }
 
@@ -1201,4 +1191,3 @@ if (typeof module !== 'undefined' && module.exports) {
     };
 }
 
-console.log('🎲 Advanced Monte Carlo Championship Engine Loaded - Elite Statistical Modeling Ready');

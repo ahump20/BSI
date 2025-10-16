@@ -54,7 +54,6 @@ class PerformanceOptimizer {
       navigator.serviceWorker.register('/sw.js', {
         scope: '/'
       }).then(registration => {
-        console.log('🔥 Service Worker registered for championship caching');
 
         // Update service worker when new version available
         registration.addEventListener('updatefound', () => {
@@ -313,7 +312,6 @@ class PerformanceOptimizer {
         for (const entry of list.getEntries()) {
           if (entry.name === 'first-contentful-paint') {
             this.metrics.fcp = entry.startTime;
-            console.log(`🎯 FCP: ${entry.startTime.toFixed(2)}ms`);
           }
         }
       });
@@ -324,7 +322,6 @@ class PerformanceOptimizer {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
         this.metrics.lcp = lastEntry.startTime;
-        console.log(`🎯 LCP: ${lastEntry.startTime.toFixed(2)}ms`);
       });
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
 
@@ -461,7 +458,6 @@ class PerformanceOptimizer {
 
       criticalFonts.forEach(fontFamily => {
         document.fonts.load(`1em ${fontFamily}`).then(() => {
-          console.log(`🔤 Font loaded: ${fontFamily}`);
         });
       });
     }
@@ -554,7 +550,6 @@ class PerformanceOptimizer {
       navigator.sendBeacon('/api/analytics/performance', JSON.stringify(report));
     }
 
-    console.log('📊 Performance Report:', report);
   }
 
   // Show update notification
