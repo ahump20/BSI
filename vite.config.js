@@ -20,7 +20,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        football: resolve(__dirname, 'football.html')
+        football: resolve(__dirname, 'football.html'),
+        basketball: resolve(__dirname, 'basketball.html')
       },
       output: {
         manualChunks: {

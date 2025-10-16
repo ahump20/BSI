@@ -1,6 +1,7 @@
 {
   "name": "college-baseball-tracker",
   "version": "1.0.0",
+  "type": "module",
   "description": "Mobile-first college baseball live tracker with full box scores",
   "scripts": {
     "dev": "vite",
