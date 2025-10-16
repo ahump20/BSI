@@ -41,14 +41,12 @@ class DeepSouthAnalyticsBridge {
     }
 
     async initialize() {
-        console.log('🔥 Initializing Deep South Sports Analytics Bridge');
 
         try {
             await this.setupWebSocketConnection();
             await this.initializeAnalyticsEndpoints();
             await this.startRealTimeFeeds();
 
-            console.log('✅ Analytics Bridge Initialized Successfully');
             return true;
         } catch (error) {
             console.error('❌ Analytics Bridge Initialization Failed:', error);
@@ -65,7 +63,6 @@ class DeepSouthAnalyticsBridge {
         this.wsConnection = new WebSocket(wsUrl);
 
         this.wsConnection.onopen = () => {
-            console.log('🔗 WebSocket Analytics Connection Established');
             this.sendMessage({
                 type: 'subscribe',
                 sports: Object.keys(this.sportsConfig),
@@ -82,7 +79,6 @@ class DeepSouthAnalyticsBridge {
         };
 
         this.wsConnection.onclose = () => {
-            console.log('🔌 WebSocket Connection Closed - Attempting Reconnect');
             setTimeout(() => this.setupWebSocketConnection(), 5000);
         };
     }
@@ -281,7 +277,6 @@ class DeepSouthAnalyticsBridge {
     // ========================= REAL-TIME FEEDS MANAGEMENT =========================
 
     async startRealTimeFeeds() {
-        console.log('📡 Starting Real-Time Sports Data Feeds');
 
         // Subscribe to live data for each sport
         for (const sport of Object.keys(this.sportsConfig)) {
@@ -304,7 +299,6 @@ class DeepSouthAnalyticsBridge {
             timestamp: new Date().toISOString()
         });
 
-        console.log(`📊 Subscribed to ${sport} real-time feed`);
     }
 
     // ========================= CACHING & PERFORMANCE =========================
@@ -440,7 +434,6 @@ class DeepSouthAnalyticsBridge {
             );
 
             await Promise.all(initPromises);
-            console.log('🏆 All Sports Analytics Endpoints Initialized');
 
         } catch (error) {
             console.error('❌ Analytics Endpoints Initialization Failed:', error);
@@ -463,7 +456,6 @@ class DeepSouthAnalyticsBridge {
             });
 
             if (response.ok) {
-                console.log(`✅ ${sport.toUpperCase()} analytics endpoint ready`);
             } else {
                 console.warn(`⚠️ ${sport.toUpperCase()} endpoint initialization warning`);
             }
@@ -508,7 +500,6 @@ class DeepSouthAnalyticsBridge {
         }
         this.analyticsCache.clear();
         this.realTimeFeeds.clear();
-        console.log('🔥 Deep South Analytics Bridge Destroyed');
     }
 }
 
@@ -545,5 +536,3 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = { DeepSouthAnalyticsBridge, initializeDeepSouthAnalytics };
 }
 
-console.log('🔥 Deep South Sports Analytics Bridge Loaded');
-console.log('From Friday Night Lights to Sunday in the Show');

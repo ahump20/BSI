@@ -188,9 +188,7 @@ async function main() {
     const envPath = await writeEnvFile(envValues);
     const wranglerPath = await writeWranglerLocal(envValues);
 
-    console.log(`✅ MCP environment values written to ${envPath}`);
     if (wranglerPath) {
-      console.log(`✅ Local Wrangler config generated at ${wranglerPath}`);
     } else {
       console.warn('⚠️ wrangler-championship.toml not found; skipped local config generation.');
     }
@@ -198,7 +196,6 @@ async function main() {
     const maskedSummary = Object.entries(envValues)
       .map(([key, value]) => `${key}=${maskValue(value)}`)
       .join(', ');
-    console.log(`🔐 Synced keys: ${maskedSummary}`);
   } catch (error) {
     console.error('❌ Failed to apply MCP keys:', error.message);
     process.exitCode = 1;

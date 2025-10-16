@@ -897,7 +897,3 @@ function getHistoricalAccuracy() {
     };
 }
 
-console.log('🚀 Championship Intelligence API Gateway - Loaded and Ready');
-console.log('📊 Real-time sports data integration active');
-console.log('🔗 MCP server connectivity established');
-console.log('⚡ Production-grade error handling enabled');

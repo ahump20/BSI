@@ -38,28 +38,22 @@ class IntegrationTestRunner {
   async assert(condition, message, level = 'error') {
     if (condition) {
       this.results.passed++;
-      console.log(`✅ ${message}`);
       return true;
     } else {
       if (level === 'warning') {
         this.results.warnings++;
-        console.log(`⚠️  ${message}`);
       } else {
         this.results.failed++;
         this.results.errors.push(message);
-        console.log(`❌ ${message}`);
       }
       return false;
     }
   }
 
   async testMlbIntegration() {
-    console.log('\n🔵 MLB INTEGRATION TEST SUITE');
-    console.log('-'.repeat(40));
 
     try {
       // Test API layer
-      console.log('\n1. MLB API Layer Tests');
       const teamData = await getMlbTeam(TEST_CONFIGS.MLB.teamId);
 
       await this.assert(
@@ -79,7 +73,6 @@ class IntegrationTestRunner {
       );
 
       // Test adapter layer
-      console.log('\n2. MLB Adapter Layer Tests');
       const teamViewModel = mlbTeamView(teamData);
 
       await this.assert(
@@ -98,21 +91,16 @@ class IntegrationTestRunner {
         'MLB standings view model has division data'
       );
 
-      console.log('✅ MLB Integration: PASSED');
 
     } catch (error) {
       await this.assert(false, `MLB Integration failed: ${error.message}`);
-      console.log('❌ MLB Integration: FAILED');
     }
   }
 
   async testNflIntegration() {
-    console.log('\n🟠 NFL INTEGRATION TEST SUITE');
-    console.log('-'.repeat(40));
 
     try {
       // Test API layer
-      console.log('\n1. NFL API Layer Tests');
       const teamData = await getNflTeam(TEST_CONFIGS.NFL.teamId);
 
       await this.assert(
@@ -132,7 +120,6 @@ class IntegrationTestRunner {
       );
 
       // Test adapter layer
-      console.log('\n2. NFL Adapter Layer Tests');
       const teamViewModel = nflTeamView(teamData);
 
       await this.assert(
@@ -151,17 +138,13 @@ class IntegrationTestRunner {
         'NFL standings view model has conference data'
       );
 
-      console.log('✅ NFL Integration: PASSED');
 
     } catch (error) {
       await this.assert(false, `NFL Integration failed: ${error.message}`);
-      console.log('❌ NFL Integration: FAILED');
     }
   }
 
   async testTypeScriptCompilation() {
-    console.log('\n🔧 TYPESCRIPT COMPILATION TEST SUITE');
-    console.log('-'.repeat(40));
 
     // Test that imports resolve correctly
     await this.assert(
@@ -184,12 +167,9 @@ class IntegrationTestRunner {
       'NFL adapter functions imported correctly'
     );
 
-    console.log('✅ TypeScript Compilation: PASSED');
   }
 
   async testErrorHandling() {
-    console.log('\n🛡️  ERROR HANDLING TEST SUITE');
-    console.log('-'.repeat(40));
 
     try {
       // Test invalid team ID
@@ -207,7 +187,6 @@ class IntegrationTestRunner {
         'Adapter handles null input gracefully'
       );
 
-      console.log('✅ Error Handling: PASSED');
 
     } catch (error) {
       await this.assert(false, `Error handling test failed: ${error.message}`);
@@ -215,9 +194,6 @@ class IntegrationTestRunner {
   }
 
   async runAll() {
-    console.log('🚀 BLAZE INTEGRATION TEST SUITE');
-    console.log('=' .repeat(60));
-    console.log(`Started: ${new Date().toISOString()}`);
 
     await this.testTypeScriptCompilation();
     await this.testMlbIntegration();
@@ -226,27 +202,11 @@ class IntegrationTestRunner {
 
     // Summary
     const duration = Date.now() - this.startTime;
-    console.log('\n' + '=' .repeat(60));
-    console.log('📊 TEST RESULTS SUMMARY:');
-    console.log(`✅ Passed: ${this.results.passed}`);
-    console.log(`❌ Failed: ${this.results.failed}`);
-    console.log(`⚠️  Warnings: ${this.results.warnings}`);
-    console.log(`⏱️  Duration: ${duration}ms`);
 
     if (this.results.failed > 0) {
-      console.log('\n❌ FAILED TESTS:');
-      this.results.errors.forEach(error => console.log(`   • ${error}`));
-      console.log('\n🚨 INTEGRATION TESTS FAILED');
       process.exit(1);
     }
 
-    console.log('\n🎯 ALL INTEGRATION TESTS PASSED');
-    console.log('✅ TypeScript compilation working correctly');
-    console.log('✅ Import paths resolving correctly');
-    console.log('✅ API layers functioning properly');
-    console.log('✅ Adapter layers transforming data correctly');
-    console.log('✅ Error handling working as expected');
-    console.log('✅ System ready for deployment');
   }
 }
 

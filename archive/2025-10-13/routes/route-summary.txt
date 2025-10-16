@@ -1,0 +1,127 @@
+BlazeSportsIntel Route Inventory
+============================================================
+
+Generated: 10/13/2025, 6:53:43 AM CDT
+Total Routes: 108
+
+Classification Summary:
+  KEEP:     14 routes
+  PORT:     13 routes
+  REFACTOR: 38 routes
+  DELETE:   43 routes
+
+--- Static Routes ---
+
+REFACTOR   /                                        Blaze Sports Intel | Championship Analytics Platform
+PORT       /about                                   About the Founder | Blaze Sports Intel
+PORT       /about-original                          About the Founder | Blaze Sports Intel
+DELETE     /analytics                               🔥 Blaze Sports Analytics - Multi-Sport Intelligence Platform
+DELETE     /analytics-api-integrated                BlazeS Analytics - Live Sports Data with Monte Carlo Projections
+DELETE     /analytics-hardcoded-backup              BlazeS Analytics - Monte Carlo Sports Projections
+DELETE     /analytics-original                      🔥 Blaze Sports Analytics - Multi-Sport Intelligence Platform
+DELETE     /analytics-test                          Analytics Debug Test
+REFACTOR   /api-docs/                               API Documentation | Blaze Sports Intel
+REFACTOR   /api-status/                             API Status | Blaze Sports Intel
+REFACTOR   /blaze-v5-demo                           Blaze V5 Ultra - Graphics Demo | Blaze Sports Intel
+DELETE     /cbb/                                    🏀 CBB Analytics | Blaze Sports Intel
+DELETE     /cbb/index-original                      🏀 CBB Analytics | Blaze Sports Intel
+DELETE     /cfb/                                    🎓 CFB Analytics | Blaze Sports Intel
+DELETE     /cfb/index-original                      🎓 CFB Analytics | Blaze Sports Intel
+REFACTOR   /components/3d/Baseball3DDiamond-example 3D Baseball Diamond - Blaze Sports Intel
+PORT       /contact                                 Contact | Blaze Sports Intel
+REFACTOR   /cookies                                 Cookie Policy | Blaze Sports Intel™
+DELETE     /copilot                                 🔥 Scouting Intel Copilot | Blaze Sports Intel
+DELETE     /copilot-original-backup                 🔥 Scouting Intel Copilot | Blaze Sports Intel
+REFACTOR   /data-transparency                       Data Transparency | 212 Real Games | Blaze Sports Intel
+REFACTOR   /docs/charts/architecture-diagrams       Blaze Sports Intel - System Architecture
+REFACTOR   /features/                               Features | Championship Analytics Platform | Blaze Sports Intel
+REFACTOR   /historicalcomparisons                   Historical Comparisons | Blaze Sports Intel
+REFACTOR   /index-babylon-backup                    Blaze Sports Intel - Next-Generation 3D Sports Intelligence Platform
+REFACTOR   /index-enhanced                          🔥 Blaze Sports Intel | Deep South Sports Authority - Championship Intelligence Platform
+KEEP       /legal/accessibility/                    Accessibility Statement | Blaze Sports Intel™
+KEEP       /legal/ai-disclosure/                    AI Disclosure & Transparency | Blaze Sports Intel™
+KEEP       /legal/ai-transparency/                  AI Transparency Statement | Blaze Sports Intel™
+KEEP       /legal/coppa/                            COPPA Compliance & Youth Privacy | Blaze Sports Intel™
+KEEP       /legal/copyright/                        Copyright & DMCA Policy | Blaze Sports Intel™
+KEEP       /legal/data-attribution/                 Data Attribution & Sources | Blaze Sports Intel™
+KEEP       /legal/privacy/                          Privacy Policy | Blaze Sports Intel™
+KEEP       /legal/terms/                            Terms of Service | Blaze Sports Intel™
+REFACTOR   /lib/cookie-consent                      
+PORT       /methodology/                            Analytics Methodology | Blaze Sports Intel
+DELETE     /mlb/                                    ⚾ MLB Analytics | Blaze Sports Intel
+DELETE     /mlb/index-original                      ⚾ MLB Analytics | Blaze Sports Intel
+DELETE     /nfl-analytics-dashboard                 🔥 NFL Analytics Dashboard | Blaze Sports Intel
+DELETE     /nfl/                                    🏈 NFL Analytics | Blaze Sports Intel
+DELETE     /nfl/index-original                      🏈 NFL Analytics | Blaze Sports Intel
+REFACTOR   /performance-benchmark                   🔥 Blaze Graphics Performance Benchmark Suite
+REFACTOR   /performance-metrics/                    Performance Metrics Dashboard - Blaze Sports Intel
+KEEP       /privacy                                 Privacy Policy | Blaze Sports Intel™
+KEEP       /privacy-comprehensive                   Privacy Policy | Blaze Sports Intel™
+REFACTOR   /public/components/demo-badge-example    DEMO Badge Component Examples - Blaze Sports Intel
+REFACTOR   /public/demo/neural-substrate            Neural Substrate Graphics Demo - Blaze Sports Intel
+DELETE     /scoutingintelcopilotwidget/             ⚡ Quick Access Widget | Blaze Sports Intel
+DELETE     /sports-analytics-dashboard              🔥 Multi-Sport Analytics Dashboard | Blaze Sports Intel
+DELETE     /sports-analytics-dashboard-enhanced     🔥 Multi-Sport Analytics Dashboard | Blaze Sports Intel
+KEEP       /terms                                   Terms of Service | Blaze Sports Intel™
+KEEP       /terms-comprehensive                     Terms of Service | Blaze Sports Intel™
+REFACTOR   /webgpu-prototype                        WebGPU Particle Physics Prototype - Blaze Sports Intel
+
+--- API Routes ---
+
+REFACTOR   /api/_middleware                         functions/api/_middleware.js
+REFACTOR   /api/_utils                              functions/api/_utils.js
+REFACTOR   /api/analytics                           functions/api/analytics.js
+REFACTOR   /api/cbb/cbb/:route                      functions/api/cbb/[[route]].js
+REFACTOR   /api/cbb/cbb/standings                   functions/api/cbb/standings.js
+REFACTOR   /api/cfb/cfb/:route                      functions/api/cfb/[[route]].js
+REFACTOR   /api/cfb/cfb/standings                   functions/api/cfb/standings.js
+REFACTOR   /api/championship                        functions/api/championship.js
+REFACTOR   /api/chat                                functions/api/chat.js
+PORT       /api/college-baseball/college-baseball/scores functions/api/college-baseball/scores.js
+PORT       /api/college-baseball/college-baseball/teams functions/api/college-baseball/teams.js
+PORT       /api/college-baseball/games/:gameId/college-baseball/games/:gameId/boxscore functions/api/college-baseball/games/[[gameId]]/boxscore.js
+PORT       /api/college-baseball/games/:gameId/college-baseball/games/:gameId/preview functions/api/college-baseball/games/[[gameId]]/preview.js
+PORT       /api/college-baseball/games/:gameId/college-baseball/games/:gameId/recap functions/api/college-baseball/games/[[gameId]]/recap.js
+DELETE     /api/copilot/admin/copilot/admin/generate-embeddings functions/api/copilot/admin/generate-embeddings.js
+DELETE     /api/copilot/copilot/enhanced-insights   functions/api/copilot/enhanced-insights.js
+DELETE     /api/copilot/copilot/enhanced-search     functions/api/copilot/enhanced-search.js
+DELETE     /api/copilot/copilot/featured-games      functions/api/copilot/featured-games.js
+DELETE     /api/copilot/copilot/trending-searches   functions/api/copilot/trending-searches.js
+KEEP       /api/health                              functions/api/health.js
+REFACTOR   /api/live-scores                         functions/api/live-scores.js
+REFACTOR   /api/mcp/mcp/championship-dashboard      functions/api/mcp/championship-dashboard.js
+KEEP       /api/metrics                             functions/api/metrics.js
+DELETE     /api/mlb                                 functions/api/mlb.js
+DELETE     /api/mlb-standings                       functions/api/mlb-standings.js
+DELETE     /api/mlb/mlb/:route                      functions/api/mlb/[[route]].js
+DELETE     /api/mlb/mlb/:teamId                     functions/api/mlb/[[teamId]].js
+DELETE     /api/mlb/mlb/3d-data                     functions/api/mlb/3d-data.js
+DELETE     /api/mlb/mlb/scores                      functions/api/mlb/scores.js
+DELETE     /api/mlb/mlb/standings                   functions/api/mlb/standings.js
+REFACTOR   /api/monte-carlo                         functions/api/monte-carlo.js
+DELETE     /api/nba                                 functions/api/nba.js
+DELETE     /api/nba-standings                       functions/api/nba-standings.js
+DELETE     /api/nba/nba/:teamId                     functions/api/nba/[[teamId]].js
+DELETE     /api/nba/nba/scores                      functions/api/nba/scores.js
+DELETE     /api/nba/nba/standings                   functions/api/nba/standings.js
+DELETE     /api/nba/nba/standings-FIXED             functions/api/nba/standings-FIXED.js
+PORT       /api/ncaa-standings                      functions/api/ncaa-standings.js
+PORT       /api/ncaa/ncaa/scores                    functions/api/ncaa/scores.js
+PORT       /api/ncaa/ncaa/standings                 functions/api/ncaa/standings.js
+PORT       /api/ncaa/ncaa/teams                     functions/api/ncaa/teams.js
+DELETE     /api/nfl                                 functions/api/nfl.js
+DELETE     /api/nfl-standings                       functions/api/nfl-standings.js
+DELETE     /api/nfl/nfl/:route                      functions/api/nfl/[[route]].js
+DELETE     /api/nfl/nfl/:teamId                     functions/api/nfl/[[teamId]].js
+DELETE     /api/nfl/nfl/scores                      functions/api/nfl/scores.js
+DELETE     /api/nfl/nfl/standings                   functions/api/nfl/standings.js
+REFACTOR   /api/particle/particle/influence         functions/api/particle/influence.js
+REFACTOR   /api/sports-analytics                    functions/api/sports-analytics.js
+REFACTOR   /api/sports-data                         functions/api/sports-data.js
+REFACTOR   /api/sports-data-real                    functions/api/sports-data-real.js
+REFACTOR   /api/sports-data-real-mlb                functions/api/sports-data-real-mlb.js
+REFACTOR   /api/sports-data-real-nba                functions/api/sports-data-real-nba.js
+REFACTOR   /api/sports-data-real-nfl                functions/api/sports-data-real-nfl.js
+REFACTOR   /api/youth/youth/rankings                functions/api/youth/rankings.js
+
+============================================================

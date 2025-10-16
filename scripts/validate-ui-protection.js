@@ -43,7 +43,6 @@ class UIProtectionValidator {
   }
 
   validateContext7Tools() {
-    console.log('🔍 Validating Context7 tools...');
     
     if (!fs.existsSync(CONTEXT7_TOOLS_DIR)) {
       this.errors.push('Context7 tools directory not found');
@@ -115,7 +114,6 @@ class UIProtectionValidator {
   }
 
   validateUIFiles() {
-    console.log('🎨 Validating UI files...');
 
     for (const uiFile of PROTECTED_UI_FILES) {
       const filePath = path.join(projectRoot, uiFile);
@@ -136,7 +134,6 @@ class UIProtectionValidator {
     if (fileName.endsWith('.css') || fileName.endsWith('.html')) {
       for (const color of PROTECTED_COLORS) {
         if (content.includes(color)) {
-          console.log(`✅ ${fileName}: Contains brand color ${color}`);
         }
       }
     }
@@ -162,7 +159,6 @@ class UIProtectionValidator {
   }
 
   validateContext7Integration() {
-    console.log('🔗 Validating Context7 integration...');
 
     const context7JsonPath = path.join(projectRoot, 'context7.json');
     if (!fs.existsSync(context7JsonPath)) {
@@ -187,7 +183,6 @@ class UIProtectionValidator {
   }
 
   validateBrandConsistency() {
-    console.log('🎨 Validating brand consistency...');
 
     let brandColorCounts = {};
     
@@ -220,7 +215,6 @@ class UIProtectionValidator {
     // Report brand color usage
     for (const [color, count] of Object.entries(brandColorCounts)) {
       if (count > 0) {
-        console.log(`🎨 Brand color ${color}: ${count} occurrences`);
       } else {
         this.warnings.push(`Brand color ${color} not found in project`);
       }
@@ -250,32 +244,22 @@ class UIProtectionValidator {
   }
 
   run() {
-    console.log('🛡️ Starting UI Protection Validation...\n');
 
     this.validateContext7Tools();
     this.validateUIFiles();
     this.validateContext7Integration();
     this.validateBrandConsistency();
 
-    console.log('\n📊 Validation Results:');
-    console.log(`❌ Errors: ${this.errors.length}`);
-    console.log(`⚠️  Warnings: ${this.warnings.length}`);
 
     if (this.errors.length > 0) {
-      console.log('\n❌ ERRORS:');
-      this.errors.forEach(error => console.log(`  - ${error}`));
     }
 
     if (this.warnings.length > 0) {
-      console.log('\n⚠️  WARNINGS:');
-      this.warnings.forEach(warning => console.log(`  - ${warning}`));
     }
 
     if (this.errors.length === 0) {
-      console.log('\n✅ UI Protection validation passed!');
       process.exit(0);
     } else {
-      console.log('\n❌ UI Protection validation failed!');
       process.exit(1);
     }
   }

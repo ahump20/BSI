@@ -484,7 +484,6 @@ class EnhancedAPIServer {
             timestamp: new Date().toISOString()
           };
         } catch (apiError) {
-          console.log('MLB API failed, using database fallback:', apiError.message);
           result = await this.getMLBFallbackData(teamId);
         }
 
@@ -529,7 +528,6 @@ class EnhancedAPIServer {
             timestamp: new Date().toISOString()
           };
         } catch (apiError) {
-          console.log('NFL API failed, using database fallback:', apiError.message);
           result = await this.getNFLFallbackData(teamId);
         }
 
@@ -736,17 +734,8 @@ class EnhancedAPIServer {
     try {
       // Test database connection
       await this.db.query('SELECT 1');
-      console.log('✅ Database connected');
 
       this.app.listen(this.port, () => {
-        console.log(`🚀 Enhanced API Server running on http://localhost:${this.port}`);
-        console.log(`📚 Documentation: http://localhost:${this.port}/api/docs`);
-        console.log('\nNew endpoints available:');
-        console.log('  • /api/players - Player management');
-        console.log('  • /api/games - Game data and results');
-        console.log('  • /api/standings/:sport - League standings');
-        console.log('  • /api/analytics/team/:id - Advanced team metrics');
-        console.log('  • All endpoints support filtering and search');
       });
     } catch (error) {
       console.error('❌ Failed to start server:', error.message);
