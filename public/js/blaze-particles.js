@@ -212,17 +212,15 @@ class BlazeParticleSystem {
   /* ======================================================================== */
 
   initCanvas2D() {
-    const rect = this.container.getBoundingClientRect();
-
-    // Create particles
+    // Create particles (use stored dimensions from resizeCanvas)
     this.particles = [];
 
     for (let i = 0; i < this.particleCount; i++) {
       const color = this.colors[Math.floor(Math.random() * this.colors.length)];
 
       this.particles.push({
-        x: Math.random() * rect.width,
-        y: Math.random() * rect.height,
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
         size: Math.random() * 2 + 0.5,
@@ -349,7 +347,6 @@ class BlazeParticleSystem {
   /* ======================================================================== */
 
   updateParticles(deltaTime) {
-    const rect = this.container.getBoundingClientRect();
     const mouseX = this.mouse.x;
     const mouseY = this.mouse.y;
     const repulsionRadiusSq = this.repulsionRadius * this.repulsionRadius;
@@ -386,11 +383,11 @@ class BlazeParticleSystem {
       p.vx *= 0.99;
       p.vy *= 0.99;
 
-      // Boundary wrapping
-      if (p.x < -10) p.x = rect.width + 10;
-      if (p.x > rect.width + 10) p.x = -10;
-      if (p.y < -10) p.y = rect.height + 10;
-      if (p.y > rect.height + 10) p.y = -10;
+      // Boundary wrapping (use stored dimensions)
+      if (p.x < -10) p.x = this.width + 10;
+      if (p.x > this.width + 10) p.x = -10;
+      if (p.y < -10) p.y = this.height + 10;
+      if (p.y > this.height + 10) p.y = -10;
     }
   }
 
@@ -399,10 +396,8 @@ class BlazeParticleSystem {
   /* ======================================================================== */
 
   render() {
-    const rect = this.container.getBoundingClientRect();
-
-    // Clear canvas
-    this.ctx.clearRect(0, 0, rect.width, rect.height);
+    // Clear canvas (use stored dimensions)
+    this.ctx.clearRect(0, 0, this.width, this.height);
 
     // Draw particles
     for (let i = 0; i < this.particles.length; i++) {
@@ -456,16 +451,15 @@ class BlazeParticleSystem {
 
         console.log(`[Blaze Particles] FPS high (${this.fps}) - increasing to ${tier.name} quality`);
 
-        // Add more particles
+        // Add more particles (use stored dimensions)
         const newCount = tier.particles;
-        const rect = this.container.getBoundingClientRect();
 
         for (let i = this.particles.length; i < newCount; i++) {
           const color = this.colors[Math.floor(Math.random() * this.colors.length)];
 
           const p = {
-            x: Math.random() * rect.width,
-            y: Math.random() * rect.height,
+            x: Math.random() * this.width,
+            y: Math.random() * this.height,
             vx: (Math.random() - 0.5) * 0.5,
             vy: (Math.random() - 0.5) * 0.5,
             size: Math.random() * 2 + 0.5,
