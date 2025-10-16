@@ -108,7 +108,7 @@ function buildGameInsertSQL(gameData, seasonId) {
         attendance, broadcast_network
       )
       SELECT
-        ?, ?, ?, ?, ?,
+        ?, (SELECT season_id FROM seasons WHERE year = ?), ?, ?, ?,
         (SELECT team_id FROM teams WHERE espn_id = ?),
         (SELECT team_id FROM teams WHERE espn_id = ?),
         ?, ?, ?, ?, ?, ?, ?, ?, ?
@@ -125,7 +125,7 @@ function buildGameInsertSQL(gameData, seasonId) {
       homeTeam.score?.value ? parseInt(homeTeam.score.value) : null,
       awayTeam.score?.value ? parseInt(awayTeam.score.value) : null,
       competition.status?.period || 9,
-      competition.status?.type?.name?.toLowerCase(),
+      competition.status?.type?.name?.toLowerCase().replace('status_', ''),
       competition.venue?.fullName,
       competition.venue?.city,
       competition.venue?.state,
