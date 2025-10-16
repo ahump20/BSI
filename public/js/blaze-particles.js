@@ -156,15 +156,20 @@ class BlazeParticleSystem {
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
 
+    // Use setTransform instead of scale to avoid cumulative scaling
     if (this.ctx) {
-      this.ctx.scale(dpr, dpr);
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
+
+    // Store dimensions for rendering
+    this.width = rect.width;
+    this.height = rect.height;
 
     // Redistribute particles on resize
     if (this.particles.length > 0) {
       this.particles.forEach(p => {
-        p.x = Math.random() * rect.width;
-        p.y = Math.random() * rect.height;
+        p.x = Math.random() * this.width;
+        p.y = Math.random() * this.height;
       });
     }
   }
