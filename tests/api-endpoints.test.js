@@ -18,8 +18,6 @@ class APITester {
   }
 
   async runAllTests() {
-    console.log('🧪 Starting BSI API Endpoint Tests');
-    console.log('=' .repeat(50));
 
     await this.testHealthEndpoint();
     await this.testTeamsEndpoints();
@@ -37,16 +35,13 @@ class APITester {
     try {
       const result = await testFunction();
       if (result) {
-        console.log(`✅ ${name}`);
         this.passedTests++;
         TEST_RESULTS.push({ name, status: 'PASS', error: null });
       } else {
-        console.log(`❌ ${name} - Test returned false`);
         this.failedTests++;
         TEST_RESULTS.push({ name, status: 'FAIL', error: 'Test returned false' });
       }
     } catch (error) {
-      console.log(`❌ ${name} - ${error.message}`);
       this.failedTests++;
       TEST_RESULTS.push({ name, status: 'FAIL', error: error.message });
     }
@@ -61,7 +56,6 @@ class APITester {
   }
 
   async testHealthEndpoint() {
-    console.log('\n🏥 Testing Health Endpoint');
     
     await this.test('Health endpoint responds', async () => {
       const health = await this.apiCall('/health');
@@ -70,7 +64,6 @@ class APITester {
   }
 
   async testTeamsEndpoints() {
-    console.log('\n👥 Testing Teams Endpoints');
     
     await this.test('Teams list endpoint', async () => {
       const teams = await this.apiCall('/api/teams');
@@ -94,7 +87,6 @@ class APITester {
   }
 
   async testPlayersEndpoints() {
-    console.log('\n⚾ Testing Players Endpoints');
     
     await this.test('Players list endpoint', async () => {
       const players = await this.apiCall('/api/players');
@@ -119,7 +111,6 @@ class APITester {
   }
 
   async testGamesEndpoints() {
-    console.log('\n🏈 Testing Games Endpoints');
     
     await this.test('Games list endpoint', async () => {
       const games = await this.apiCall('/api/games');
@@ -141,7 +132,6 @@ class APITester {
   }
 
   async testStandingsEndpoints() {
-    console.log('\n📊 Testing Standings Endpoints');
     
     await this.test('MLB standings endpoint', async () => {
       const standings = await this.apiCall('/api/standings/MLB');
@@ -162,7 +152,6 @@ class APITester {
   }
 
   async testAnalyticsEndpoints() {
-    console.log('\n📈 Testing Analytics Endpoints');
     
     await this.test('Team analytics by ID', async () => {
       const analytics = await this.apiCall('/api/analytics/team/1');
@@ -177,7 +166,6 @@ class APITester {
   }
 
   async testFallbackLogic() {
-    console.log('\n🔄 Testing Fallback Logic');
     
     await this.test('MLB endpoint handles external API failure', async () => {
       const mlb = await this.apiCall('/api/mlb/138');
@@ -198,25 +186,15 @@ class APITester {
   }
 
   printSummary() {
-    console.log('\n' + '=' .repeat(50));
-    console.log('🧪 TEST RESULTS SUMMARY');
-    console.log('=' .repeat(50));
     
-    console.log(`Total Tests: ${this.totalTests}`);
-    console.log(`✅ Passed: ${this.passedTests}`);
-    console.log(`❌ Failed: ${this.failedTests}`);
-    console.log(`Success Rate: ${((this.passedTests / this.totalTests) * 100).toFixed(1)}%`);
 
     if (this.failedTests > 0) {
-      console.log('\n❌ FAILED TESTS:');
       TEST_RESULTS
         .filter(result => result.status === 'FAIL')
         .forEach(result => {
-          console.log(`  • ${result.name}: ${result.error}`);
         });
     }
 
-    console.log('\n' + (this.failedTests === 0 ? '🎉 All tests passed!' : '⚠️  Some tests failed'));
     
     // Exit with appropriate code
     process.exit(this.failedTests === 0 ? 0 : 1);
@@ -230,7 +208,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // Check if server is running
   fetch(`${API_BASE}/health`)
     .then(() => {
-      console.log('✅ API server is running, starting tests...\n');
       tester.runAllTests();
     })
     .catch(error => {

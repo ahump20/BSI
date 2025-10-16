@@ -54,14 +54,12 @@ class BiomechanicsVisionSystem {
     }
 
     async initialize() {
-        console.log('🔬 Initializing Biomechanics Vision System');
 
         try {
             await this.loadMediaPipeModels();
             await this.setupVideoProcessing();
             this.setupEventListeners();
 
-            console.log('✅ Biomechanics Vision System Ready');
             return true;
         } catch (error) {
             console.error('❌ Biomechanics Vision System Initialization Failed:', error);
@@ -72,7 +70,6 @@ class BiomechanicsVisionSystem {
     // ========================= MEDIAPIPE INITIALIZATION =========================
 
     async loadMediaPipeModels() {
-        console.log('📡 Loading MediaPipe Models...');
 
         // Check if MediaPipe is available
         if (typeof window.Pose === 'undefined') {
@@ -120,7 +117,6 @@ class BiomechanicsVisionSystem {
             });
         }
 
-        console.log('✅ MediaPipe Models Loaded');
     }
 
     async setupVideoProcessing() {
@@ -154,7 +150,6 @@ class BiomechanicsVisionSystem {
             this.videoElement.addEventListener('loadedmetadata', () => {
                 this.canvasElement.width = this.videoElement.videoWidth;
                 this.canvasElement.height = this.videoElement.videoHeight;
-                console.log('📷 Camera initialized:',
                     this.videoElement.videoWidth, 'x', this.videoElement.videoHeight);
             });
 
@@ -662,18 +657,15 @@ class BiomechanicsVisionSystem {
         };
 
         analyzeFrame();
-        console.log('🔬 Biomechanics analysis started');
     }
 
     stopAnalysis() {
         this.isProcessing = false;
-        console.log('⏹️ Biomechanics analysis stopped');
     }
 
     setSport(sport) {
         if (this.sportAnalyzers[sport]) {
             this.currentSport = sport;
-            console.log(`🏃 Sport changed to: ${sport}`);
         }
     }
 
@@ -751,7 +743,6 @@ class BiomechanicsVisionSystem {
         this.movementMetrics.clear();
         this.characterAssessment.clear();
 
-        console.log('🔬 Biomechanics Vision System Destroyed');
     }
 }
 
@@ -916,4 +907,3 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = { BiomechanicsVisionSystem };
 }
 
-console.log('🔬 Biomechanics Vision System Loaded - Elite Performance Analysis Ready');

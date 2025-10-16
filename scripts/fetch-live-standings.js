@@ -59,7 +59,6 @@ function fetchData(url) {
 
 // Fetch NFL Standings (All 32 Teams)
 async function fetchNFLStandings() {
-  console.log('\n🏈 Fetching NFL Standings...\n');
 
   try {
     const teamsData = await fetchData(ESPN_API.NFL_TEAMS);
@@ -91,7 +90,6 @@ async function fetchNFLStandings() {
 
     standings.forEach((team, index) => {
       const record = team.ties > 0 ? `${team.wins}-${team.losses}-${team.ties}` : `${team.wins}-${team.losses}`;
-      console.log(`${(index + 1).toString().padStart(2)}. ${team.name.padEnd(30)} ${record.padEnd(8)} ${team.division}`);
     });
 
     return standings;
@@ -103,7 +101,6 @@ async function fetchNFLStandings() {
 
 // Fetch SEC Football Standings (All 16 Teams)
 async function fetchSECStandings() {
-  console.log('\n🏆 Fetching SEC Football Standings...\n');
 
   try {
     // Fetch with SEC group filter (group 8 = SEC)
@@ -145,7 +142,6 @@ async function fetchSECStandings() {
     });
 
     standings.forEach((team, index) => {
-      console.log(`${(index + 1).toString().padStart(2)}. ${team.name.padEnd(25)} Overall: ${team.overall.padEnd(8)} SEC: ${team.conference}`);
     });
 
     return standings;
@@ -157,7 +153,6 @@ async function fetchSECStandings() {
 
 // Fetch MLB Standings (All 30 Teams)
 async function fetchMLBStandings() {
-  console.log('\n⚾ Fetching MLB Standings...\n');
 
   try {
     const teamsData = await fetchData(ESPN_API.MLB_TEAMS);
@@ -188,7 +183,6 @@ async function fetchMLBStandings() {
 
     standings.forEach((team, index) => {
       const record = `${team.wins}-${team.losses}`;
-      console.log(`${(index + 1).toString().padStart(2)}. ${team.name.padEnd(30)} ${record.padEnd(10)} GB: ${team.gamesBack.padEnd(6)} ${team.division}`);
     });
 
     return standings;
@@ -200,10 +194,6 @@ async function fetchMLBStandings() {
 
 // Main execution
 async function main() {
-  console.log('═══════════════════════════════════════════════════════════');
-  console.log('  🔥 BLAZE SPORTS INTEL - LIVE STANDINGS FETCHER');
-  console.log('  Data current as of: October 1, 2025');
-  console.log('═══════════════════════════════════════════════════════════');
 
   const results = {
     nfl: await fetchNFLStandings(),
@@ -213,12 +203,6 @@ async function main() {
     timezone: 'America/Chicago'
   };
 
-  console.log('\n═══════════════════════════════════════════════════════════');
-  console.log('  ✅ FETCH COMPLETE');
-  console.log(`  NFL Teams: ${results.nfl.length}/32`);
-  console.log(`  SEC Teams: ${results.sec.length}/16`);
-  console.log(`  MLB Teams: ${results.mlb.length}/30`);
-  console.log('═══════════════════════════════════════════════════════════\n');
 
   // Write to JSON file for integration
   fs.writeFileSync(
@@ -226,7 +210,6 @@ async function main() {
     JSON.stringify(results, null, 2)
   );
 
-  console.log('📊 Data saved to: data/live-standings-2025-10-01.json\n');
 }
 
 // Run the script

@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Baseball Intelligence | Blaze Sports Intel</title>
+    <meta name="description" content="Professional college baseball analytics, live scores, complete box scores, and comprehensive standings. The ESPN alternative that doesn't ignore college baseball.">
+
+    <!-- Preconnect to optimize performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="/styles/blaze-design-system.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+    <style>
+        /* =============================================================================
+           BLAZE COLLEGE BASEBALL HUB - PROFESSIONAL SPORTS INTELLIGENCE DESIGN
+           Mobile-First | Data-Dense | Brand-Aligned | Performance-Optimized
+           ============================================================================= */
+
+        :root {
+            --blaze-orange: #bf5700;
+            --blaze-orange-light: #d66d0f;
+            --blaze-orange-dark: #994400;
+            --blaze-sky: #9bcbeb;
+            --blaze-deep: #002244;
+            --blaze-teal: #00b2a9;
+            --blaze-platinum: #e5e4e2;
+            --blaze-charcoal: #1a1a1a;
+            --blaze-graphite: #2a2a2a;
+            --glass-white: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 30px 90px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Particle Background Container */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Content Layer */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            padding-top: 80px;
+        }
+
+        /* =============================================================================
+           HERO HEADER - CHAMPIONSHIP CALIBER
+           ============================================================================= */
+
+        .hero-header {
+            background: linear-gradient(135deg,
+                rgba(191, 87, 0, 0.15) 0%,
+                rgba(0, 34, 68, 0.15) 50%,
+                rgba(0, 178, 169, 0.15) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 3rem 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30 L30 0 M30 30 L60 30 M30 30 L30 60 M30 30 L0 30' stroke='rgba(191,87,0,0.05)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(191, 87, 0, 0.3);
+        }
+
+        .hero-eyebrow::before {
+            content: '⚾';
+            font-size: 1rem;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--blaze-sky) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--blaze-platinum);
+            max-width: 700px;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .hero-stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-pill {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-pill:hover {
+            background: rgba(191, 87, 0, 0.15);
+            border-color: var(--blaze-orange);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: var(--blaze-orange);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--blaze-platinum);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* =============================================================================
+           QUICK NAVIGATION CARDS
+           ============================================================================= */
+
+        .quick-nav-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .nav-card {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blaze-orange), var(--blaze-teal));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-card:hover {
+            background: rgba(191, 87, 0, 0.12);
+            border-color: var(--blaze-orange);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .nav-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .nav-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .nav-card-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .nav-card-description {
+            font-size: 0.95rem;
+            color: var(--blaze-platinum);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .nav-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--blaze-sky);
+            font-weight: 600;
+        }
+
+        .nav-card-badge {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* =============================================================================
+           LIVE SCORES PREVIEW
+           ============================================================================= */
+
+        .live-scores-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 1.75rem;
+            background: linear-gradient(180deg, var(--blaze-orange), var(--blaze-teal));
+            border-radius: 2px;
+        }
+
+        .view-all-link {
+            color: var(--blaze-orange);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-link:hover {
+            color: var(--blaze-orange-light);
+            gap: 0.75rem;
+        }
+
+        .game-card {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover {
+            background: rgba(191, 87, 0, 0.08);
+            border-color: var(--blaze-orange);
+            transform: translateX(4px);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .game-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .status-live {
+            background: #ef4444;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .status-final {
+            background: var(--blaze-graphite);
+            color: var(--blaze-platinum);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+        }
+
+        .game-matchup {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .team-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .team-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .team-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .team-rank {
+            color: var(--blaze-orange);
+            font-weight: 900;
+            font-size: 0.85rem;
+        }
+
+        .team-record {
+            color: var(--blaze-platinum);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .team-score {
+            font-size: 1.75rem;
+            font-weight: 900;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .team-score.winner {
+            color: var(--blaze-orange);
+        }
+
+        .game-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+            color: var(--blaze-platinum);
+        }
+
+        /* =============================================================================
+           CONFERENCE STANDINGS PREVIEW
+           ============================================================================= */
+
+        .standings-preview-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .conference-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--blaze-orange) var(--blaze-charcoal);
+        }
+
+        .conference-tab {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            color: var(--blaze-platinum);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .conference-tab:hover {
+            background: rgba(191, 87, 0, 0.15);
+            border-color: var(--blaze-orange);
+        }
+
+        .conference-tab.active {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
+            border-color: var(--blaze-orange);
+            color: white;
+        }
+
+        .standings-table-container {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table thead {
+            background: rgba(191, 87, 0, 0.15);
+            border-bottom: 2px solid var(--blaze-orange);
+        }
+
+        .standings-table th {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 800;
+            color: var(--blaze-sky);
+        }
+
+        .standings-table th:first-child {
+            text-align: center;
+            width: 50px;
+        }
+
+        .standings-table th:not(:first-child):not(:nth-child(2)) {
+            text-align: center;
+        }
+
+        .standings-table tbody tr {
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.2s ease;
+        }
+
+        .standings-table tbody tr:hover {
+            background: rgba(191, 87, 0, 0.08);
+        }
+
+        .standings-table td {
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .standings-table td:first-child {
+            text-align: center;
+            font-weight: 900;
+            color: var(--blaze-orange);
+        }
+
+        .standings-table td:not(:first-child):not(:nth-child(2)) {
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .team-logo-small {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .team-name-standings {
+            font-weight: 700;
+        }
+
+        .win-pct {
+            color: var(--blaze-orange);
+            font-weight: 900;
+        }
+
+        .streak-positive {
+            color: #10b981;
+            font-weight: 900;
+        }
+
+        .streak-negative {
+            color: #ef4444;
+            font-weight: 900;
+        }
+
+        /* =============================================================================
+           FEATURED CONTENT SECTION
+           ============================================================================= */
+
+        .featured-content-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blaze-orange);
+        }
+
+        .feature-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--blaze-deep), var(--blaze-graphite));
+        }
+
+        .feature-content {
+            padding: 1.5rem;
+        }
+
+        .feature-category {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .feature-excerpt {
+            font-size: 0.9rem;
+            color: var(--blaze-platinum);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .feature-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--blaze-sky);
+            font-weight: 600;
+        }
+
+        /* =============================================================================
+           FOOTER
+           ============================================================================= */
+
+        footer {
+            background: var(--blaze-charcoal);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 1.5rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-brand p {
+            color: var(--blaze-platinum);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-links h4 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--blaze-sky);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--blaze-platinum);
+            text-decoration: none;
+            font-size: 0.9rem;
+            line-height: 2;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--blaze-orange);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 2rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--blaze-platinum);
+            font-size: 0.85rem;
+        }
+
+        /* =============================================================================
+           RESPONSIVE BREAKPOINTS
+           ============================================================================= */
+
+        @media (max-width: 768px) {
+            .hero-header {
+                padding: 2rem 1rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-row {
+                grid-template-columns: 1fr auto;
+            }
+
+            .team-record {
+                display: none;
+            }
+
+            .standings-table th,
+            .standings-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .feature-content {
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .content-wrapper {
+                padding-top: 100px;
+            }
+
+            .hero-header {
+                padding: 4rem 2rem;
+            }
+
+            .nav-card {
+                padding: 2.5rem;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .hero-stats-bar {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* =============================================================================
+           ACCESSIBILITY
+           ============================================================================= */
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--blaze-orange);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            font-weight: 700;
+            z-index: 100;
+            border-radius: 0 0 8px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .nav-card,
+            .game-card,
+            .feature-card {
+                border-width: 2px;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Particle Background -->
+    <div id="particles-js" aria-hidden="true"></div>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+
+        <!-- Hero Header -->
+        <header class="hero-header" role="banner">
+            <div class="hero-content" data-aos="fade-up">
+                <div class="hero-eyebrow">
+                    College Baseball Intelligence
+                </div>
+                <h1 class="hero-title">
+                    The ESPN Alternative That Doesn't Ignore College Baseball
+                </h1>
+                <p class="hero-subtitle">
+                    Complete box scores, comprehensive standings, advanced analytics, and live updates for every Power 5 conference. Professional-grade baseball intelligence for the sport ESPN forgot.
+                </p>
+                <div class="hero-stats-bar">
+                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="100">
+                        <span class="stat-value">299</span>
+                        <span class="stat-label">Division I Teams</span>
+                    </div>
+                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="200">
+                        <span class="stat-value">32</span>
+                        <span class="stat-label">Conferences</span>
+                    </div>
+                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="300">
+                        <span class="stat-value">Live</span>
+                        <span class="stat-label">Real-Time Scores</span>
+                    </div>
+                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="400">
+                        <span class="stat-value">Full</span>
+                        <span class="stat-label">Box Scores</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+
+            <!-- Quick Navigation -->
+            <section class="quick-nav-section" aria-label="Quick Navigation">
+                <div class="quick-nav-grid">
+                    <a href="/college-baseball/games/" class="nav-card" data-aos="fade-up" data-aos-delay="100">
+                        <span class="nav-card-icon" aria-hidden="true">🔴</span>
+                        <h2 class="nav-card-title">Live Games & Scores</h2>
+                        <p class="nav-card-description">
+                            Real-time updates with complete box scores, play-by-play, and advanced stats. No more ESPN's "just the inning" nonsense.
+                        </p>
+                        <div class="nav-card-meta">
+                            <span>Updated every 30 seconds</span>
+                            <span class="nav-card-badge">Live Now</span>
+                        </div>
+                    </a>
+
+                    <a href="/college-baseball/standings/" class="nav-card" data-aos="fade-up" data-aos-delay="200">
+                        <span class="nav-card-icon" aria-hidden="true">🏆</span>
+                        <h2 class="nav-card-title">Conference Standings</h2>
+                        <p class="nav-card-description">
+                            Complete conference and national standings with RPI, strength of schedule, and tournament projections.
+                        </p>
+                        <div class="nav-card-meta">
+                            <span>All 32 conferences</span>
+                            <span class="nav-card-badge">Updated Daily</span>
+                        </div>
+                    </a>
+
+                    <a href="/college-baseball/teams/" class="nav-card" data-aos="fade-up" data-aos-delay="300">
+                        <span class="nav-card-icon" aria-hidden="true">⚾</span>
+                        <h2 class="nav-card-title">Team Analytics</h2>
+                        <p class="nav-card-description">
+                            Advanced metrics, player stats, recruiting rankings, and historical performance for all D1 programs.
+                        </p>
+                        <div class="nav-card-meta">
+                            <span>299 teams tracked</span>
+                            <span class="nav-card-badge">Pro-Level Stats</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Live Scores Preview -->
+            <section class="live-scores-section" aria-label="Live Scores" data-aos="fade-up">
+                <div class="section-header">
+                    <h2 class="section-title">Live Games</h2>
+                    <a href="/college-baseball/games/" class="view-all-link">
+                        View All Games →
+                    </a>
+                </div>
+
+                <!-- Live Game Card -->
+                <article class="game-card">
+                    <div class="game-header">
+                        <div class="game-status">
+                            <span class="status-live">Live</span>
+                            <span>Top 7th</span>
+                        </div>
+                        <span>Disch-Falk Field</span>
+                    </div>
+                    <div class="game-matchup">
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas Longhorns" class="team-logo" loading="lazy">
+                                <div>
+                                    <span class="team-rank">#3</span>
+                                    <span class="team-name">Texas</span>
+                                </div>
+                            </div>
+                            <span class="team-record">45-12 (22-5 SEC)</span>
+                            <span class="team-score winner">8</span>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/228.png" alt="Oklahoma Sooners" class="team-logo" loading="lazy">
+                                <div>
+                                    <span class="team-rank">#18</span>
+                                    <span class="team-name">Oklahoma</span>
+                                </div>
+                            </div>
+                            <span class="team-record">38-18 (18-9 SEC)</span>
+                            <span class="team-score">5</span>
+                        </div>
+                    </div>
+                    <div class="game-footer">
+                        <span>📺 ESPN+</span>
+                        <a href="/college-baseball/games/2025-texas-oklahoma" style="color: var(--blaze-orange); text-decoration: none; font-weight: 700;">View Box Score →</a>
+                    </div>
+                </article>
+
+                <!-- Final Game Card -->
+                <article class="game-card">
+                    <div class="game-header">
+                        <div class="game-status">
+                            <span class="status-final">Final</span>
+                        </div>
+                        <span>Vanderbilt Stadium</span>
+                    </div>
+                    <div class="game-matchup">
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt Commodores" class="team-logo" loading="lazy">
+                                <div>
+                                    <span class="team-rank">#1</span>
+                                    <span class="team-name">Vanderbilt</span>
+                                </div>
+                            </div>
+                            <span class="team-record">50-7 (24-3 SEC)</span>
+                            <span class="team-score winner">12</span>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png" alt="Tennessee Volunteers" class="team-logo" loading="lazy">
+                                <div>
+                                    <span class="team-rank">#5</span>
+                                    <span class="team-name">Tennessee</span>
+                                </div>
+                            </div>
+                            <span class="team-record">43-14 (20-7 SEC)</span>
+                            <span class="team-score">7</span>
+                        </div>
+                    </div>
+                    <div class="game-footer">
+                        <span>📺 SEC Network</span>
+                        <a href="/college-baseball/games/2025-vanderbilt-tennessee" style="color: var(--blaze-orange); text-decoration: none; font-weight: 700;">View Box Score →</a>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Conference Standings Preview -->
+            <section class="standings-preview-section" aria-label="Conference Standings" data-aos="fade-up">
+                <div class="section-header">
+                    <h2 class="section-title">Conference Standings</h2>
+                    <a href="/college-baseball/standings/" class="view-all-link">
+                        View All Conferences →
+                    </a>
+                </div>
+
+                <div class="conference-tabs" role="tablist">
+                    <button class="conference-tab active" role="tab" aria-selected="true" aria-controls="sec-standings">SEC</button>
+                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="acc-standings">ACC</button>
+                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="big12-standings">Big 12</button>
+                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="pac12-standings">Pac-12</button>
+                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="big10-standings">Big Ten</button>
+                </div>
+
+                <div class="standings-table-container" id="sec-standings" role="tabpanel">
+                    <table class="standings-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Rk</th>
+                                <th scope="col">Team</th>
+                                <th scope="col">W</th>
+                                <th scope="col">L</th>
+                                <th scope="col">PCT</th>
+                                <th scope="col">Conf</th>
+                                <th scope="col">Strk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <div class="team-cell">
+                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt" class="team-logo-small" loading="lazy">
+                                        <span class="team-name-standings">Vanderbilt</span>
+                                    </div>
+                                </td>
+                                <td>50</td>
+                                <td>7</td>
+                                <td class="win-pct">.877</td>
+                                <td>24-3</td>
+                                <td class="streak-positive">W8</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    <div class="team-cell">
+                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas" class="team-logo-small" loading="lazy">
+                                        <span class="team-name-standings">Texas</span>
+                                    </div>
+                                </td>
+                                <td>45</td>
+                                <td>12</td>
+                                <td class="win-pct">.789</td>
+                                <td>22-5</td>
+                                <td class="streak-positive">W5</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>
+                                    <div class="team-cell">
+                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png" alt="Tennessee" class="team-logo-small" loading="lazy">
+                                        <span class="team-name-standings">Tennessee</span>
+                                    </div>
+                                </td>
+                                <td>43</td>
+                                <td>14</td>
+                                <td class="win-pct">.754</td>
+                                <td>20-7</td>
+                                <td class="streak-negative">L1</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>
+                                    <div class="team-cell">
+                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2116.png" alt="Arkansas" class="team-logo-small" loading="lazy">
+                                        <span class="team-name-standings">Arkansas</span>
+                                    </div>
+                                </td>
+                                <td>41</td>
+                                <td>16</td>
+                                <td class="win-pct">.719</td>
+                                <td>19-8</td>
+                                <td class="streak-positive">W3</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>
+                                    <div class="team-cell">
+                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/228.png" alt="Oklahoma" class="team-logo-small" loading="lazy">
+                                        <span class="team-name-standings">Oklahoma</span>
+                                    </div>
+                                </td>
+                                <td>38</td>
+                                <td>18</td>
+                                <td class="win-pct">.679</td>
+                                <td>18-9</td>
+                                <td class="streak-negative">L2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Featured Content -->
+            <section class="featured-content-section" aria-label="Featured Analysis" data-aos="fade-up">
+                <div class="section-header">
+                    <h2 class="section-title">Analysis & Insights</h2>
+                </div>
+
+                <div class="featured-grid">
+                    <article class="feature-card">
+                        <div class="feature-image" role="img" aria-label="College World Series Preview"></div>
+                        <div class="feature-content">
+                            <span class="feature-category">Tournament Preview</span>
+                            <h3 class="feature-title">2025 College World Series Bracket Projections</h3>
+                            <p class="feature-excerpt">
+                                Advanced statistical models predict the 64-team field with 87% accuracy. SEC dominance continues with 12 projected bids.
+                            </p>
+                            <div class="feature-meta">
+                                <span>📊 Analytics</span>
+                                <span>12 min read</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-image" role="img" aria-label="Power Rankings"></div>
+                        <div class="feature-content">
+                            <span class="feature-category">Power Rankings</span>
+                            <h3 class="feature-title">Week 10 D1 Baseball Power Rankings</h3>
+                            <p class="feature-excerpt">
+                                Vanderbilt solidifies #1 spot with sweep of Tennessee. Texas climbs to #3 after dominant pitching performances.
+                            </p>
+                            <div class="feature-meta">
+                                <span>🏆 Rankings</span>
+                                <span>8 min read</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-image" role="img" aria-label="Player Spotlight"></div>
+                        <div class="feature-content">
+                            <span class="feature-category">Player Spotlight</span>
+                            <h3 class="feature-title">2025 MLB Draft: Top College Pitching Prospects</h3>
+                            <p class="feature-excerpt">
+                                Scouting reports, velocity data, and advanced metrics for the top 25 college arms projected for first-round selection.
+                            </p>
+                            <div class="feature-meta">
+                                <span>⚾ Draft</span>
+                                <span>15 min read</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer role="contentinfo">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Blaze Sports Intel</h3>
+                    <p>Professional sports intelligence and analytics. Turning data into dominance since 2025.</p>
+                </div>
+                <nav class="footer-links" aria-label="College Baseball">
+                    <h4>College Baseball</h4>
+                    <ul>
+                        <li><a href="/college-baseball/games/">Live Games</a></li>
+                        <li><a href="/college-baseball/standings/">Standings</a></li>
+                        <li><a href="/college-baseball/teams/">Teams</a></li>
+                        <li><a href="/college-baseball/players/">Players</a></li>
+                    </ul>
+                </nav>
+                <nav class="footer-links" aria-label="Resources">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/analytics/">Analytics</a></li>
+                        <li><a href="/api/">API Documentation</a></li>
+                        <li><a href="/about/">About</a></li>
+                        <li><a href="/contact/">Contact</a></li>
+                    </ul>
+                </nav>
+                <nav class="footer-links" aria-label="Other Sports">
+                    <h4>Other Sports</h4>
+                    <ul>
+                        <li><a href="/mlb/">MLB</a></li>
+                        <li><a href="/nfl/">NFL</a></li>
+                        <li><a href="/nba/">NBA</a></li>
+                        <li><a href="/ncaa-football/">NCAA Football</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Blaze Sports Intel | <a href="https://blazesportsintel.com" style="color: var(--blaze-orange); text-decoration: none;">blazesportsintel.com</a> | Data updated in real-time</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="/js/blaze-particles.js"></script>
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 100
+        });
+
+        // Initialize particles (150K configuration)
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 150, density: { enable: true, value_area: 800 } },
+                    color: { value: '#bf5700' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.15, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: { enable: true, distance: 150, color: '#bf5700', opacity: 0.1, width: 1 },
+                    move: { enable: true, speed: 1, direction: 'none', random: true, out_mode: 'out' }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: { onhover: { enable: true, mode: 'grab' }, resize: true },
+                    modes: { grab: { distance: 140, line_linked: { opacity: 0.3 } } }
+                },
+                retina_detect: true
+            });
+        }
+
+        // Conference tabs functionality
+        const conferenceTabs = document.querySelectorAll('.conference-tab');
+        conferenceTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                conferenceTabs.forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-selected', 'false');
+                });
+                this.classList.add('active');
+                this.setAttribute('aria-selected', 'true');
+                // In production, this would fetch and display the selected conference's standings
+                console.log('Conference tab clicked:', this.textContent);
+            });
+        });
+
+        // Keyboard navigation for cards
+        const navCards = document.querySelectorAll('.nav-card');
+        navCards.forEach(card => {
+            card.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    window.location.href = this.href;
+                }
+            });
+        });
+
+        // Data timestamp
+        console.log('Page loaded:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+        console.log('Data source: Blaze Sports Intel API v1.0');
+    </script>
+</body>
+</html>

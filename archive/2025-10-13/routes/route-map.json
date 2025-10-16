@@ -1,0 +1,822 @@
+{
+  "generated": "2025-10-13T11:53:43.414Z",
+  "totalRoutes": 108,
+  "staticRoutes": [
+    {
+      "path": "/",
+      "type": "static",
+      "file": "index.html",
+      "title": "Blaze Sports Intel | Championship Analytics Platform",
+      "classification": "REFACTOR",
+      "reason": "Home page - rebuild as college baseball hub"
+    },
+    {
+      "path": "/about",
+      "type": "static",
+      "file": "about.html",
+      "title": "About the Founder | Blaze Sports Intel",
+      "classification": "PORT",
+      "reason": "Core informational pages - port to Next.js"
+    },
+    {
+      "path": "/about-original",
+      "type": "static",
+      "file": "about-original.html",
+      "title": "About the Founder | Blaze Sports Intel",
+      "classification": "PORT",
+      "reason": "Core informational pages - port to Next.js"
+    },
+    {
+      "path": "/analytics",
+      "type": "static",
+      "file": "analytics.html",
+      "title": "🔥 Blaze Sports Analytics - Multi-Sport Intelligence Platform",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/analytics-api-integrated",
+      "type": "static",
+      "file": "analytics-api-integrated.html",
+      "title": "BlazeS Analytics - Live Sports Data with Monte Carlo Projections",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/analytics-hardcoded-backup",
+      "type": "static",
+      "file": "analytics-hardcoded-backup.html",
+      "title": "BlazeS Analytics - Monte Carlo Sports Projections",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/analytics-original",
+      "type": "static",
+      "file": "analytics-original.html",
+      "title": "🔥 Blaze Sports Analytics - Multi-Sport Intelligence Platform",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/analytics-test",
+      "type": "static",
+      "file": "analytics-test.html",
+      "title": "Analytics Debug Test",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/api-docs/",
+      "type": "static",
+      "file": "api-docs/index.html",
+      "title": "API Documentation | Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api-status/",
+      "type": "static",
+      "file": "api-status/index.html",
+      "title": "API Status | Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/blaze-v5-demo",
+      "type": "static",
+      "file": "blaze-v5-demo.html",
+      "title": "Blaze V5 Ultra - Graphics Demo | Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/cbb/",
+      "type": "static",
+      "file": "cbb/index.html",
+      "title": "🏀 CBB Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/cbb/index-original",
+      "type": "static",
+      "file": "cbb/index-original.html",
+      "title": "🏀 CBB Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/cfb/",
+      "type": "static",
+      "file": "cfb/index.html",
+      "title": "🎓 CFB Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/cfb/index-original",
+      "type": "static",
+      "file": "cfb/index-original.html",
+      "title": "🎓 CFB Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/components/3d/Baseball3DDiamond-example",
+      "type": "static",
+      "file": "components/3d/Baseball3DDiamond-example.html",
+      "title": "3D Baseball Diamond - Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/contact",
+      "type": "static",
+      "file": "contact.html",
+      "title": "Contact | Blaze Sports Intel",
+      "classification": "PORT",
+      "reason": "Core informational pages - port to Next.js"
+    },
+    {
+      "path": "/cookies",
+      "type": "static",
+      "file": "cookies.html",
+      "title": "Cookie Policy | Blaze Sports Intel™",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/copilot",
+      "type": "static",
+      "file": "copilot.html",
+      "title": "🔥 Scouting Intel Copilot | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/copilot-original-backup",
+      "type": "static",
+      "file": "copilot-original-backup.html",
+      "title": "🔥 Scouting Intel Copilot | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/data-transparency",
+      "type": "static",
+      "file": "data-transparency.html",
+      "title": "Data Transparency | 212 Real Games | Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/docs/charts/architecture-diagrams",
+      "type": "static",
+      "file": "docs/charts/architecture-diagrams.html",
+      "title": "Blaze Sports Intel - System Architecture",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/features/",
+      "type": "static",
+      "file": "features/index.html",
+      "title": "Features | Championship Analytics Platform | Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/historicalcomparisons",
+      "type": "static",
+      "file": "historicalcomparisons.html",
+      "title": "Historical Comparisons | Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/index-babylon-backup",
+      "type": "static",
+      "file": "index-babylon-backup.html",
+      "title": "Blaze Sports Intel - Next-Generation 3D Sports Intelligence Platform",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/index-enhanced",
+      "type": "static",
+      "file": "index-enhanced.html",
+      "title": "🔥 Blaze Sports Intel | Deep South Sports Authority - Championship Intelligence Platform",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/legal/accessibility/",
+      "type": "static",
+      "file": "legal/accessibility/index.html",
+      "title": "Accessibility Statement | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/legal/ai-disclosure/",
+      "type": "static",
+      "file": "legal/ai-disclosure/index.html",
+      "title": "AI Disclosure & Transparency | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/legal/ai-transparency/",
+      "type": "static",
+      "file": "legal/ai-transparency/index.html",
+      "title": "AI Transparency Statement | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/legal/coppa/",
+      "type": "static",
+      "file": "legal/coppa/index.html",
+      "title": "COPPA Compliance & Youth Privacy | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/legal/copyright/",
+      "type": "static",
+      "file": "legal/copyright/index.html",
+      "title": "Copyright & DMCA Policy | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/legal/data-attribution/",
+      "type": "static",
+      "file": "legal/data-attribution/index.html",
+      "title": "Data Attribution & Sources | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/legal/privacy/",
+      "type": "static",
+      "file": "legal/privacy/index.html",
+      "title": "Privacy Policy | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/legal/terms/",
+      "type": "static",
+      "file": "legal/terms/index.html",
+      "title": "Terms of Service | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/lib/cookie-consent",
+      "type": "static",
+      "file": "lib/cookie-consent.html",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/methodology/",
+      "type": "static",
+      "file": "methodology/index.html",
+      "title": "Analytics Methodology | Blaze Sports Intel",
+      "classification": "PORT",
+      "reason": "Core informational pages - port to Next.js"
+    },
+    {
+      "path": "/mlb/",
+      "type": "static",
+      "file": "mlb/index.html",
+      "title": "⚾ MLB Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/mlb/index-original",
+      "type": "static",
+      "file": "mlb/index-original.html",
+      "title": "⚾ MLB Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/nfl-analytics-dashboard",
+      "type": "static",
+      "file": "nfl-analytics-dashboard.html",
+      "title": "🔥 NFL Analytics Dashboard | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/nfl/",
+      "type": "static",
+      "file": "nfl/index.html",
+      "title": "🏈 NFL Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/nfl/index-original",
+      "type": "static",
+      "file": "nfl/index-original.html",
+      "title": "🏈 NFL Analytics | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Multi-sport pages - focus shift to college baseball only"
+    },
+    {
+      "path": "/performance-benchmark",
+      "type": "static",
+      "file": "performance-benchmark.html",
+      "title": "🔥 Blaze Graphics Performance Benchmark Suite",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/performance-metrics/",
+      "type": "static",
+      "file": "performance-metrics/index.html",
+      "title": "Performance Metrics Dashboard - Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/privacy",
+      "type": "static",
+      "file": "privacy.html",
+      "title": "Privacy Policy | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/privacy-comprehensive",
+      "type": "static",
+      "file": "privacy-comprehensive.html",
+      "title": "Privacy Policy | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/public/components/demo-badge-example",
+      "type": "static",
+      "file": "public/components/demo-badge-example.html",
+      "title": "DEMO Badge Component Examples - Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/public/demo/neural-substrate",
+      "type": "static",
+      "file": "public/demo/neural-substrate.html",
+      "title": "Neural Substrate Graphics Demo - Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/scoutingintelcopilotwidget/",
+      "type": "static",
+      "file": "scoutingintelcopilotwidget/index.html",
+      "title": "⚡ Quick Access Widget | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/sports-analytics-dashboard",
+      "type": "static",
+      "file": "sports-analytics-dashboard.html",
+      "title": "🔥 Multi-Sport Analytics Dashboard | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/sports-analytics-dashboard-enhanced",
+      "type": "static",
+      "file": "sports-analytics-dashboard-enhanced.html",
+      "title": "🔥 Multi-Sport Analytics Dashboard | Blaze Sports Intel",
+      "classification": "DELETE",
+      "reason": "Legacy analytics - features integrated into new platform"
+    },
+    {
+      "path": "/terms",
+      "type": "static",
+      "file": "terms.html",
+      "title": "Terms of Service | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/terms-comprehensive",
+      "type": "static",
+      "file": "terms-comprehensive.html",
+      "title": "Terms of Service | Blaze Sports Intel™",
+      "classification": "KEEP",
+      "reason": "Legal compliance pages must be preserved"
+    },
+    {
+      "path": "/webgpu-prototype",
+      "type": "static",
+      "file": "webgpu-prototype.html",
+      "title": "WebGPU Particle Physics Prototype - Blaze Sports Intel",
+      "classification": "REFACTOR",
+      "reason": ""
+    }
+  ],
+  "apiRoutes": [
+    {
+      "path": "/api/_middleware",
+      "type": "api",
+      "file": "functions/api/_middleware.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/_utils",
+      "type": "api",
+      "file": "functions/api/_utils.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/analytics",
+      "type": "api",
+      "file": "functions/api/analytics.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/cbb/cbb/:route",
+      "type": "api",
+      "file": "functions/api/cbb/[[route]].js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/cbb/cbb/standings",
+      "type": "api",
+      "file": "functions/api/cbb/standings.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/cfb/cfb/:route",
+      "type": "api",
+      "file": "functions/api/cfb/[[route]].js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/cfb/cfb/standings",
+      "type": "api",
+      "file": "functions/api/cfb/standings.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/championship",
+      "type": "api",
+      "file": "functions/api/championship.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/chat",
+      "type": "api",
+      "file": "functions/api/chat.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/college-baseball/college-baseball/scores",
+      "type": "api",
+      "file": "functions/api/college-baseball/scores.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/college-baseball/college-baseball/teams",
+      "type": "api",
+      "file": "functions/api/college-baseball/teams.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/college-baseball/games/:gameId/college-baseball/games/:gameId/boxscore",
+      "type": "api",
+      "file": "functions/api/college-baseball/games/[[gameId]]/boxscore.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/college-baseball/games/:gameId/college-baseball/games/:gameId/preview",
+      "type": "api",
+      "file": "functions/api/college-baseball/games/[[gameId]]/preview.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/college-baseball/games/:gameId/college-baseball/games/:gameId/recap",
+      "type": "api",
+      "file": "functions/api/college-baseball/games/[[gameId]]/recap.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/copilot/admin/copilot/admin/generate-embeddings",
+      "type": "api",
+      "file": "functions/api/copilot/admin/generate-embeddings.js",
+      "classification": "DELETE",
+      "reason": "AI Copilot retired - excessive complexity"
+    },
+    {
+      "path": "/api/copilot/copilot/enhanced-insights",
+      "type": "api",
+      "file": "functions/api/copilot/enhanced-insights.js",
+      "classification": "DELETE",
+      "reason": "AI Copilot retired - excessive complexity"
+    },
+    {
+      "path": "/api/copilot/copilot/enhanced-search",
+      "type": "api",
+      "file": "functions/api/copilot/enhanced-search.js",
+      "classification": "DELETE",
+      "reason": "AI Copilot retired - excessive complexity"
+    },
+    {
+      "path": "/api/copilot/copilot/featured-games",
+      "type": "api",
+      "file": "functions/api/copilot/featured-games.js",
+      "classification": "DELETE",
+      "reason": "AI Copilot retired - excessive complexity"
+    },
+    {
+      "path": "/api/copilot/copilot/trending-searches",
+      "type": "api",
+      "file": "functions/api/copilot/trending-searches.js",
+      "classification": "DELETE",
+      "reason": "AI Copilot retired - excessive complexity"
+    },
+    {
+      "path": "/api/health",
+      "type": "api",
+      "file": "functions/api/health.js",
+      "classification": "KEEP",
+      "reason": "Core monitoring endpoints"
+    },
+    {
+      "path": "/api/live-scores",
+      "type": "api",
+      "file": "functions/api/live-scores.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/mcp/mcp/championship-dashboard",
+      "type": "api",
+      "file": "functions/api/mcp/championship-dashboard.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/metrics",
+      "type": "api",
+      "file": "functions/api/metrics.js",
+      "classification": "KEEP",
+      "reason": "Core monitoring endpoints"
+    },
+    {
+      "path": "/api/mlb",
+      "type": "api",
+      "file": "functions/api/mlb.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/mlb-standings",
+      "type": "api",
+      "file": "functions/api/mlb-standings.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/mlb/mlb/:route",
+      "type": "api",
+      "file": "functions/api/mlb/[[route]].js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/mlb/mlb/:teamId",
+      "type": "api",
+      "file": "functions/api/mlb/[[teamId]].js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/mlb/mlb/3d-data",
+      "type": "api",
+      "file": "functions/api/mlb/3d-data.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/mlb/mlb/scores",
+      "type": "api",
+      "file": "functions/api/mlb/scores.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/mlb/mlb/standings",
+      "type": "api",
+      "file": "functions/api/mlb/standings.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/monte-carlo",
+      "type": "api",
+      "file": "functions/api/monte-carlo.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/nba",
+      "type": "api",
+      "file": "functions/api/nba.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nba-standings",
+      "type": "api",
+      "file": "functions/api/nba-standings.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nba/nba/:teamId",
+      "type": "api",
+      "file": "functions/api/nba/[[teamId]].js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nba/nba/scores",
+      "type": "api",
+      "file": "functions/api/nba/scores.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nba/nba/standings",
+      "type": "api",
+      "file": "functions/api/nba/standings.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nba/nba/standings-FIXED",
+      "type": "api",
+      "file": "functions/api/nba/standings-FIXED.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/ncaa-standings",
+      "type": "api",
+      "file": "functions/api/ncaa-standings.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/ncaa/ncaa/scores",
+      "type": "api",
+      "file": "functions/api/ncaa/scores.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/ncaa/ncaa/standings",
+      "type": "api",
+      "file": "functions/api/ncaa/standings.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/ncaa/ncaa/teams",
+      "type": "api",
+      "file": "functions/api/ncaa/teams.js",
+      "classification": "PORT",
+      "reason": "College baseball API - port to /api/v1/baseball/ncaab"
+    },
+    {
+      "path": "/api/nfl",
+      "type": "api",
+      "file": "functions/api/nfl.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nfl-standings",
+      "type": "api",
+      "file": "functions/api/nfl-standings.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nfl/nfl/:route",
+      "type": "api",
+      "file": "functions/api/nfl/[[route]].js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nfl/nfl/:teamId",
+      "type": "api",
+      "file": "functions/api/nfl/[[teamId]].js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nfl/nfl/scores",
+      "type": "api",
+      "file": "functions/api/nfl/scores.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/nfl/nfl/standings",
+      "type": "api",
+      "file": "functions/api/nfl/standings.js",
+      "classification": "DELETE",
+      "reason": "Multi-sport API - focus shift to college baseball"
+    },
+    {
+      "path": "/api/particle/particle/influence",
+      "type": "api",
+      "file": "functions/api/particle/influence.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/sports-analytics",
+      "type": "api",
+      "file": "functions/api/sports-analytics.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/sports-data",
+      "type": "api",
+      "file": "functions/api/sports-data.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/sports-data-real",
+      "type": "api",
+      "file": "functions/api/sports-data-real.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/sports-data-real-mlb",
+      "type": "api",
+      "file": "functions/api/sports-data-real-mlb.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/sports-data-real-nba",
+      "type": "api",
+      "file": "functions/api/sports-data-real-nba.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/sports-data-real-nfl",
+      "type": "api",
+      "file": "functions/api/sports-data-real-nfl.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    },
+    {
+      "path": "/api/youth/youth/rankings",
+      "type": "api",
+      "file": "functions/api/youth/rankings.js",
+      "classification": "REFACTOR",
+      "reason": ""
+    }
+  ],
+  "summary": {
+    "keep": 14,
+    "port": 13,
+    "refactor": 38,
+    "delete": 43
+  }
+}

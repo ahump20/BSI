@@ -11,7 +11,6 @@ class UnrealEngineModule {
     }
 
     async initialize() {
-        console.log('🎮 Initializing Unreal Engine Module for Deep South Sports Authority');
         this.initialized = true;
         return true;
     }

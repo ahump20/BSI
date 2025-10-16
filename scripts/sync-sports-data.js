@@ -66,7 +66,6 @@ class SportsSyncService extends EventEmitter {
 
     if (limit.calls >= limit.maxCalls) {
       const waitTime = limit.resetTime - Date.now();
-      console.log(`⏳ Rate limit reached for ${api}, waiting ${waitTime}ms`);
       await this.sleep(waitTime);
       limit.calls = 0;
       limit.resetTime = Date.now() + 60000;
@@ -104,7 +103,6 @@ class SportsSyncService extends EventEmitter {
     if (breaker.failures >= 5) {
       breaker.state = 'open';
       breaker.nextAttempt = Date.now() + (60000 * Math.pow(2, Math.min(breaker.failures - 5, 5)));
-      console.log(`🔒 Circuit breaker opened for ${api}, retry at ${new Date(breaker.nextAttempt)}`);
     }
   }
 
@@ -137,7 +135,6 @@ class SportsSyncService extends EventEmitter {
 
   // Sync MLB data
   async syncMLBData() {
-    console.log('⚾ Syncing MLB data...');
 
     try {
       await this.checkCircuitBreaker('mlb');
@@ -176,7 +173,6 @@ class SportsSyncService extends EventEmitter {
       await this.syncMLBStandings();
 
       this.handleApiSuccess('mlb');
-      console.log('✅ MLB data synced successfully');
 
       // Cache in database
       await this.cacheApiResponse('mlb_teams', data, 3600);
@@ -267,7 +263,6 @@ class SportsSyncService extends EventEmitter {
 
   // Sync ESPN data (NFL, NBA, NCAA)
   async syncESPNData(sport) {
-    console.log(`🏈 Syncing ${sport} data from ESPN...`);
 
     const sportConfig = {
       nfl: { path: 'football/nfl', sportName: 'NFL' },
@@ -315,7 +310,6 @@ class SportsSyncService extends EventEmitter {
       await this.syncESPNScores(config.path, config.sportName);
 
       this.handleApiSuccess('espn');
-      console.log(`✅ ${sport} data synced successfully`);
 
     } catch (error) {
       this.handleApiFailure('espn', error);
@@ -457,7 +451,6 @@ class SportsSyncService extends EventEmitter {
       const cache = result.rows[0];
       const isStale = new Date(cache.expires_at) < new Date();
 
-      console.log(`📦 Loading from cache: ${key} ${isStale ? '(STALE DATA)' : ''}`);
       return {
         data: cache.response_data,
         isStale,
@@ -475,13 +468,10 @@ class SportsSyncService extends EventEmitter {
   // Main sync loop
   async startSync() {
     if (this.isRunning) {
-      console.log('⚠️  Sync service already running');
       return;
     }
 
     this.isRunning = true;
-    console.log('🚀 Starting BSI Data Sync Service');
-    console.log('================================');
 
     // Initial sync
     await this.syncMLBData();
@@ -495,15 +485,9 @@ class SportsSyncService extends EventEmitter {
     setInterval(() => this.syncStandings(), this.syncIntervals.standings * 60000);
     setInterval(() => this.syncPlayers(), this.syncIntervals.players * 60000);
 
-    console.log('\n📊 Sync Schedule:');
-    console.log(`  • Live games: Every ${this.syncIntervals.liveGames} minutes`);
-    console.log(`  • Scores: Every ${this.syncIntervals.scores} minutes`);
-    console.log(`  • Standings: Every ${this.syncIntervals.standings} minutes`);
-    console.log(`  • Players: Every ${this.syncIntervals.players} minutes`);
   }
 
   async syncLiveGames() {
-    console.log('🔴 Checking for live games...');
 
     const liveGames = await this.db.query(`
       SELECT * FROM games
@@ -559,31 +543,26 @@ class SportsSyncService extends EventEmitter {
 
   async syncESPNLiveGame(gameId, sport) {
     // Similar implementation for ESPN live games
-    console.log(`Syncing live ${sport} game: ${gameId}`);
   }
 
   async syncRecentScores() {
-    console.log('📊 Syncing recent scores...');
     await this.syncMLBGames();
     await this.syncESPNScores('football/nfl', 'NFL');
     await this.syncESPNScores('basketball/nba', 'NBA');
   }
 
   async syncStandings() {
-    console.log('📈 Syncing standings...');
     await this.syncMLBStandings();
     // Add ESPN standings sync
   }
 
   async syncPlayers() {
-    console.log('👥 Syncing player rosters...');
     // Implementation for player sync
   }
 
   async stopSync() {
     this.isRunning = false;
     await this.db.end();
-    console.log('🛑 Sync service stopped');
   }
 }
 
@@ -596,7 +575,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n⏹️  Shutting down sync service...');
     await syncService.stopSync();
     process.exit(0);
   });

@@ -361,25 +361,12 @@ class RealAPIServer {
     try {
       // Test database connection
       await this.db.query('SELECT 1');
-      console.log('✅ Database connected');
 
       this.app.listen(this.port, () => {
-        console.log(`\n🚀 REAL API Server running on http://localhost:${this.port}`);
-        console.log(`📚 Documentation: http://localhost:${this.port}/api/docs`);
-        console.log(`\nThis server uses:`);
-        console.log('  • Real PostgreSQL database');
-        console.log('  • Real MLB Stats API');
-        console.log('  • Real ESPN API');
-        console.log('  • Real calculations (no Math.random())');
-        console.log('  • Real caching (no hardcoded data)\n');
       });
 
     } catch (error) {
       console.error('❌ Server startup failed:', error.message);
-      console.log('\nMake sure:');
-      console.log('1. PostgreSQL is running');
-      console.log('2. Database is set up (run: node setup-real-database.js)');
-      console.log('3. Environment variables are configured');
       process.exit(1);
     }
   }

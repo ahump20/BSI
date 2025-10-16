@@ -36,11 +36,6 @@ class DatabaseSetup {
     }
 
     async run() {
-        console.log('🔥 BLAZE SPORTS INTEL - Database Setup');
-        console.log('=====================================');
-        console.log(`Setting up database: ${this.config.database}`);
-        console.log(`Host: ${this.config.host}:${this.config.port}`);
-        console.log('');
 
         try {
             // Step 1: Create database if it doesn't exist
@@ -58,12 +53,6 @@ class DatabaseSetup {
             // Step 5: Verify setup
             await this.verifySetup();
 
-            console.log('✅ Database setup completed successfully!');
-            console.log('');
-            console.log('Next steps:');
-            console.log('1. Start the application: npm start');
-            console.log('2. Train ML models: npm run train-models');
-            console.log('3. Verify with health check: npm run health-check');
 
         } catch (error) {
             console.error('❌ Database setup failed:', error.message);
@@ -77,7 +66,6 @@ class DatabaseSetup {
     }
 
     async createDatabase() {
-        console.log('📦 Creating database...');
 
         const client = new Client(this.adminConfig);
 
@@ -93,9 +81,7 @@ class DatabaseSetup {
             if (result.rows.length === 0) {
                 // Create database
                 await client.query(`CREATE DATABASE "${this.config.database}"`);
-                console.log(`   ✓ Database '${this.config.database}' created`);
             } else {
-                console.log(`   ✓ Database '${this.config.database}' already exists`);
             }
 
         } finally {
@@ -104,7 +90,6 @@ class DatabaseSetup {
     }
 
     async runSchema() {
-        console.log('📋 Running schema migrations...');
 
         const client = new Client(this.config);
 
@@ -131,7 +116,6 @@ class DatabaseSetup {
                 }
             }
 
-            console.log(`   ✓ Schema applied (${statements.length} statements)`);
 
         } finally {
             await client.end();
@@ -139,7 +123,6 @@ class DatabaseSetup {
     }
 
     async createAdditionalIndexes() {
-        console.log('🚀 Creating performance indexes...');
 
         const client = new Client(this.config);
 
@@ -162,10 +145,8 @@ class DatabaseSetup {
                 try {
                     await client.query(indexSQL);
                     const indexName = indexSQL.match(/idx_\w+/)?.[0] || 'unknown';
-                    console.log(`   ✓ Index created: ${indexName}`);
                 } catch (error) {
                     if (!error.message.includes('already exists')) {
-                        console.log(`   ⚠ Index creation failed: ${error.message}`);
                     }
                 }
             }
@@ -176,7 +157,6 @@ class DatabaseSetup {
     }
 
     async insertSeedData() {
-        console.log('🌱 Inserting seed data...');
 
         const client = new Client(this.config);
 
@@ -202,7 +182,6 @@ class DatabaseSetup {
                 `, [team.id, team.name, team.city, team.sport, team.league, team.division || null, team.conference || null]);
             }
 
-            console.log(`   ✓ Inserted ${teams.length} example teams`);
 
             // Insert data quality check records
             await client.query(`
@@ -213,7 +192,6 @@ class DatabaseSetup {
                 ('ml_predictions', 'schema_validation', 'Prediction storage schema ready', 'pass', 'low')
             `);
 
-            console.log('   ✓ Inserted data quality baseline checks');
 
         } finally {
             await client.end();
@@ -221,7 +199,6 @@ class DatabaseSetup {
     }
 
     async verifySetup() {
-        console.log('🔍 Verifying database setup...');
 
         const client = new Client(this.config);
 
@@ -237,11 +214,9 @@ class DatabaseSetup {
             `);
 
             const tables = tablesResult.rows.map(row => row.table_name);
-            console.log(`   ✓ Created ${tables.length} tables`);
 
             // Check team data
             const teamsResult = await client.query('SELECT COUNT(*) as count FROM teams');
-            console.log(`   ✓ Sample data: ${teamsResult.rows[0].count} teams`);
 
             // Check indexes
             const indexesResult = await client.query(`
@@ -249,7 +224,6 @@ class DatabaseSetup {
                 FROM pg_indexes
                 WHERE schemaname = 'public'
             `);
-            console.log(`   ✓ Performance indexes: ${indexesResult.rows[0].count} created`);
 
             // Check extensions
             const extensionsResult = await client.query(`
@@ -257,7 +231,6 @@ class DatabaseSetup {
                 FROM pg_extension
                 WHERE extname IN ('uuid-ossp', 'pg_stat_statements', 'pg_trgm')
             `);
-            console.log(`   ✓ PostgreSQL extensions: ${extensionsResult.rows.length} enabled`);
 
         } finally {
             await client.end();

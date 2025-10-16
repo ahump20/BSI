@@ -23,14 +23,11 @@ class DatabaseMigrator {
   }
 
   async run() {
-    console.log('🚀 Running database migrations for Phase 2 expansion');
-    console.log('================================================\n');
 
     const client = new Client(this.config);
 
     try {
       await client.connect();
-      console.log('✅ Connected to database');
 
       // Migration 1: Add players table
       await this.addPlayersTable(client);
@@ -47,7 +44,6 @@ class DatabaseMigrator {
       // Migration 5: Seed sample data
       await this.seedSampleData(client);
 
-      console.log('\n🎉 All migrations completed successfully!');
 
     } catch (error) {
       console.error('❌ Migration failed:', error.message);
@@ -58,7 +54,6 @@ class DatabaseMigrator {
   }
 
   async addPlayersTable(client) {
-    console.log('📝 Adding players table...');
     
     await client.query(`
       CREATE TABLE IF NOT EXISTS players (
@@ -79,11 +74,9 @@ class DatabaseMigrator {
       )
     `);
     
-    console.log('✅ Players table created');
   }
 
   async addGameStatsTable(client) {
-    console.log('📝 Adding game_stats table...');
     
     await client.query(`
       CREATE TABLE IF NOT EXISTS game_stats (
@@ -99,11 +92,9 @@ class DatabaseMigrator {
       )
     `);
     
-    console.log('✅ Game stats table created');
   }
 
   async enhanceExistingTables(client) {
-    console.log('📝 Enhancing existing tables...');
     
     // Add columns to games table if they don't exist
     try {
@@ -114,9 +105,7 @@ class DatabaseMigrator {
         ADD COLUMN IF NOT EXISTS weather JSONB,
         ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'
       `);
-      console.log('✅ Enhanced games table');
     } catch (error) {
-      console.log('ℹ️  Games table already enhanced or error:', error.message);
     }
 
     // Add columns to analytics table for advanced metrics
@@ -128,14 +117,11 @@ class DatabaseMigrator {
         ADD COLUMN IF NOT EXISTS predicted_wins DECIMAL(5,2),
         ADD COLUMN IF NOT EXISTS playoff_probability DECIMAL(5,4)
       `);
-      console.log('✅ Enhanced analytics table');
     } catch (error) {
-      console.log('ℹ️  Analytics table already enhanced or error:', error.message);
     }
   }
 
   async addIndexes(client) {
-    console.log('📝 Adding performance indexes...');
     
     const indexes = [
       'CREATE INDEX IF NOT EXISTS idx_players_team_sport ON players(team_id, sport)',
@@ -150,15 +136,12 @@ class DatabaseMigrator {
       try {
         await client.query(indexQuery);
       } catch (error) {
-        console.log(`ℹ️  Index creation issue: ${error.message}`);
       }
     }
     
-    console.log('✅ Performance indexes added');
   }
 
   async seedSampleData(client) {
-    console.log('📝 Seeding sample players and game data...');
 
     // Add sample players for each team
     const teamsResult = await client.query('SELECT id, external_id, name, sport FROM teams');
@@ -178,7 +161,6 @@ class DatabaseMigrator {
     // Add sample games
     await this.addSampleGames(client, teams);
 
-    console.log('✅ Sample data seeded');
   }
 
   async addMLBPlayers(client, team) {

@@ -50,7 +50,6 @@ class RealTimeServer {
       this.subscriptions.set(clientId, []);
       this.clientChannels.set(clientId, new Set());
 
-      console.log(`✅ Client connected: ${clientId} (Total: ${this.clients.size})`);
 
       // Send welcome message
       ws.send(JSON.stringify({
@@ -553,7 +552,6 @@ class RealTimeServer {
     });
 
     if (broadcastCount > 0) {
-      console.log(`📡 Broadcast to ${broadcastCount} clients for game ${gameId}`);
     }
   }
 
@@ -591,9 +589,6 @@ class RealTimeServer {
 
   async start(port = 3001) {
     this.server.listen(port, () => {
-      console.log(`🚀 WebSocket Server running on ws://localhost:${port}`);
-      console.log(`📡 SSE endpoint: http://localhost:${port}/events`);
-      console.log(`💚 Health check: http://localhost:${port}/ws-health`);
     });
 
     // Start the sync service
@@ -617,7 +612,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n⏹️  Shutting down WebSocket server...');
     await server.stop();
     process.exit(0);
   });

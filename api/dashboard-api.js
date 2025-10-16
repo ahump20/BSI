@@ -286,7 +286,6 @@ app.get('/api/health', (req, res) => {
 
 // WebSocket handling
 wss.on('connection', (ws) => {
-    console.log('New WebSocket client connected');
 
     ws.on('message', (message) => {
         try {
@@ -306,7 +305,6 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
-        console.log('WebSocket client disconnected');
     });
 });
 
@@ -342,7 +340,4 @@ const PORT = process.env.PORT || 3000;
 const WS_PORT = process.env.WS_PORT || 3001;
 
 server.listen(PORT, () => {
-    console.log(`🚀 Dashboard API Server running on port ${PORT}`);
-    console.log(`🔌 WebSocket server running on ws://localhost:${PORT}/ws`);
-    console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
 });
