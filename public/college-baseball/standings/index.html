@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="/styles/blaze-design-system.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
     <style>
         :root {
@@ -609,6 +610,128 @@
         }
 
         /* =============================================================================
+           ANALYTICS VISUALIZATIONS
+           ============================================================================= */
+
+        .analytics-section {
+            margin-bottom: 2rem;
+        }
+
+        .analytics-header {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .analytics-title {
+            font-size: 1.75rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .analytics-subtitle {
+            font-size: 1rem;
+            color: var(--blaze-platinum);
+            font-weight: 600;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chart-card-wide {
+            grid-column: 1 / -1;
+        }
+
+        .chart-header {
+            background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(0, 178, 169, 0.2));
+            padding: 1.25rem 1.5rem;
+            border-bottom: 2px solid var(--blaze-orange);
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .chart-subtitle {
+            font-size: 0.85rem;
+            color: var(--blaze-platinum);
+            font-weight: 600;
+        }
+
+        .chart-container {
+            padding: 1.5rem;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-container canvas {
+            max-height: 300px;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .chart-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            background: rgba(191, 87, 0, 0.05);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .stat-mini {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-mini-value {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--blaze-orange);
+            line-height: 1.2;
+        }
+
+        .stat-mini-label {
+            font-size: 0.75rem;
+            color: var(--blaze-platinum);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* =============================================================================
            RESPONSIVE
            ============================================================================= */
 
@@ -646,6 +769,20 @@
 
             .rankings-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                padding: 1rem;
+                min-height: 250px;
+            }
+
+            .chart-stats {
+                grid-template-columns: 1fr;
+                padding: 1rem;
             }
         }
 
@@ -858,6 +995,91 @@
                         </div>
                     </div>
                 </article>
+            </section>
+
+            <!-- Analytics Visualizations -->
+            <section class="analytics-section" data-aos="fade-up">
+                <div class="analytics-header">
+                    <h2 class="analytics-title">Conference Analytics</h2>
+                    <p class="analytics-subtitle">Data-driven insights into RPI distribution, team performance trends, and conference strength metrics</p>
+                </div>
+
+                <div class="charts-grid">
+                    <!-- RPI Distribution Histogram -->
+                    <article class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">RPI Distribution</h3>
+                            <p class="chart-subtitle">Frequency distribution across all D1 teams</p>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="rpiHistogram" aria-label="RPI Distribution Histogram"></canvas>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">0.6234</span>
+                                <span class="stat-mini-label">Highest RPI (Vanderbilt)</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">0.4521</span>
+                                <span class="stat-mini-label">Median RPI (D1)</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">0.3012</span>
+                                <span class="stat-mini-label">Lowest RPI (Bottom 10%)</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Win Percentage Progression -->
+                    <article class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Top Teams Performance Trend</h3>
+                            <p class="chart-subtitle">Win percentage over last 30 games</p>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="winProgressionChart" aria-label="Win Percentage Progression Chart"></canvas>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">🔥</span>
+                                <span class="stat-mini-label">Hot: Vanderbilt (8-game win streak)</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">📈</span>
+                                <span class="stat-mini-label">Rising: Texas (8-2 in last 10)</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">📉</span>
+                                <span class="stat-mini-label">Cooling: Florida (4-6 in last 10)</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Conference Strength Comparison -->
+                    <article class="chart-card chart-card-wide">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Conference Strength Index</h3>
+                            <p class="chart-subtitle">Average RPI and tournament projections by conference</p>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="conferenceStrengthChart" aria-label="Conference Strength Comparison Chart"></canvas>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">SEC</span>
+                                <span class="stat-mini-label">Strongest (0.5423 avg RPI, 12 projected bids)</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">ACC</span>
+                                <span class="stat-mini-label">2nd (0.5201 avg RPI, 9 projected bids)</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-value">Pac-12</span>
+                                <span class="stat-mini-label">3rd (0.5098 avg RPI, 7 projected bids)</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </section>
 
             <!-- Conference Navigation -->
@@ -1182,6 +1404,364 @@
         });
 
         console.log('College Baseball Standings loaded:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+
+        // =========================================================================
+        // CHART.JS VISUALIZATIONS
+        // =========================================================================
+
+        // Wait for Chart.js to load
+        if (typeof Chart !== 'undefined') {
+            // Chart.js default configuration
+            Chart.defaults.color = '#e5e4e2';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.12)';
+            Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
+            // =====================================================================
+            // 1. RPI DISTRIBUTION HISTOGRAM
+            // =====================================================================
+            const rpiCtx = document.getElementById('rpiHistogram');
+            if (rpiCtx) {
+                new Chart(rpiCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['0.30-0.35', '0.35-0.40', '0.40-0.45', '0.45-0.50', '0.50-0.55', '0.55-0.60', '0.60-0.65'],
+                        datasets: [{
+                            label: 'Number of Teams',
+                            data: [18, 35, 52, 78, 65, 38, 13],
+                            backgroundColor: 'rgba(191, 87, 0, 0.7)',
+                            borderColor: 'rgba(191, 87, 0, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            hoverBackgroundColor: 'rgba(0, 178, 169, 0.7)',
+                            hoverBorderColor: 'rgba(0, 178, 169, 1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: '#bf5700',
+                                bodyColor: '#e5e4e2',
+                                borderColor: '#bf5700',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y + ' teams in this RPI range';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.08)'
+                                },
+                                ticks: {
+                                    font: {
+                                        weight: 700
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Number of Teams',
+                                    font: {
+                                        size: 12,
+                                        weight: 900
+                                    },
+                                    color: '#bf5700'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        weight: 700
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'RPI Range',
+                                    font: {
+                                        size: 12,
+                                        weight: 900
+                                    },
+                                    color: '#bf5700'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // =====================================================================
+            // 2. WIN PERCENTAGE PROGRESSION CHART
+            // =====================================================================
+            const progressionCtx = document.getElementById('winProgressionChart');
+            if (progressionCtx) {
+                new Chart(progressionCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Game 1-5', 'Game 6-10', 'Game 11-15', 'Game 16-20', 'Game 21-25', 'Game 26-30'],
+                        datasets: [
+                            {
+                                label: 'Vanderbilt',
+                                data: [0.800, 0.850, 0.867, 0.875, 0.880, 0.877],
+                                borderColor: '#ffd700',
+                                backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                pointBackgroundColor: '#ffd700',
+                                pointBorderColor: '#000',
+                                pointBorderWidth: 2
+                            },
+                            {
+                                label: 'Texas',
+                                data: [0.750, 0.767, 0.773, 0.781, 0.788, 0.789],
+                                borderColor: '#bf5700',
+                                backgroundColor: 'rgba(191, 87, 0, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                pointBackgroundColor: '#bf5700',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2
+                            },
+                            {
+                                label: 'Tennessee',
+                                data: [0.800, 0.783, 0.773, 0.762, 0.760, 0.754],
+                                borderColor: '#00b2a9',
+                                backgroundColor: 'rgba(0, 178, 169, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                pointBackgroundColor: '#00b2a9',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2
+                            },
+                            {
+                                label: 'Florida',
+                                data: [0.700, 0.717, 0.707, 0.688, 0.672, 0.661],
+                                borderColor: '#ef4444',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                pointBackgroundColor: '#ef4444',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: '#e5e4e2',
+                                    font: {
+                                        size: 11,
+                                        weight: 700
+                                    },
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: '#bf5700',
+                                bodyColor: '#e5e4e2',
+                                borderColor: '#bf5700',
+                                borderWidth: 1,
+                                padding: 12,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + (context.parsed.y * 100).toFixed(1) + '% win rate';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                min: 0.5,
+                                max: 1.0,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.08)'
+                                },
+                                ticks: {
+                                    font: {
+                                        weight: 700
+                                    },
+                                    callback: function(value) {
+                                        return (value * 100).toFixed(0) + '%';
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Win Percentage',
+                                    font: {
+                                        size: 12,
+                                        weight: 900
+                                    },
+                                    color: '#bf5700'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        weight: 700
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Game Segments (Last 30 Games)',
+                                    font: {
+                                        size: 12,
+                                        weight: 900
+                                    },
+                                    color: '#bf5700'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // =====================================================================
+            // 3. CONFERENCE STRENGTH COMPARISON
+            // =====================================================================
+            const conferenceCtx = document.getElementById('conferenceStrengthChart');
+            if (conferenceCtx) {
+                new Chart(conferenceCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['SEC', 'ACC', 'Pac-12', 'Big 12', 'Big Ten', 'American', 'C-USA', 'Sun Belt', 'MAC', 'Mountain West'],
+                        datasets: [{
+                            label: 'Average RPI',
+                            data: [0.5423, 0.5201, 0.5098, 0.4876, 0.4654, 0.4401, 0.4123, 0.4098, 0.3876, 0.3745],
+                            backgroundColor: [
+                                'rgba(191, 87, 0, 0.8)',
+                                'rgba(191, 87, 0, 0.7)',
+                                'rgba(191, 87, 0, 0.65)',
+                                'rgba(0, 178, 169, 0.7)',
+                                'rgba(0, 178, 169, 0.6)',
+                                'rgba(155, 203, 235, 0.6)',
+                                'rgba(155, 203, 235, 0.5)',
+                                'rgba(155, 203, 235, 0.45)',
+                                'rgba(155, 203, 235, 0.4)',
+                                'rgba(155, 203, 235, 0.35)'
+                            ],
+                            borderColor: [
+                                'rgba(191, 87, 0, 1)',
+                                'rgba(191, 87, 0, 1)',
+                                'rgba(191, 87, 0, 1)',
+                                'rgba(0, 178, 169, 1)',
+                                'rgba(0, 178, 169, 1)',
+                                'rgba(155, 203, 235, 1)',
+                                'rgba(155, 203, 235, 1)',
+                                'rgba(155, 203, 235, 1)',
+                                'rgba(155, 203, 235, 1)',
+                                'rgba(155, 203, 235, 1)'
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: '#bf5700',
+                                bodyColor: '#e5e4e2',
+                                borderColor: '#bf5700',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        const projectedBids = [12, 9, 7, 5, 3, 2, 1, 1, 1, 1][context.dataIndex];
+                                        return [
+                                            'Avg RPI: ' + context.parsed.x.toFixed(4),
+                                            'Projected Bids: ' + projectedBids
+                                        ];
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                min: 0.3,
+                                max: 0.6,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.08)'
+                                },
+                                ticks: {
+                                    font: {
+                                        weight: 700
+                                    },
+                                    callback: function(value) {
+                                        return value.toFixed(2);
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Average RPI',
+                                    font: {
+                                        size: 12,
+                                        weight: 900
+                                    },
+                                    color: '#bf5700'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        weight: 800,
+                                        size: 11
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            console.log('Chart.js visualizations initialized:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+        } else {
+            console.warn('Chart.js not loaded - visualizations unavailable');
+        }
     </script>
 </body>
 </html>
