@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import LiveGameTracker from './components/LiveGameTracker';
-import BoxScore from './components/BoxScore';
-import Standings from './components/Standings';
+import LiveGameTracker from './LiveGameTracker';
+import BoxScore from './BoxScore';
+import Standings from './Standings';
 import './App.css';
 
 function App() {
