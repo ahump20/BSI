@@ -20,7 +20,7 @@ function SportSwitcher({ currentSport = 'baseball' }) {
     {
       name: 'Football',
       icon: '🏈',
-      path: '/football.html',
+      path: '/football',
       color: '#ff6b00'
     }
   ]
@@ -36,7 +36,7 @@ function SportSwitcher({ currentSport = 'baseball' }) {
         <div className="sport-menu">
           {sports.map((sport) => {
             const isCurrent = (currentSport === 'baseball' && sport.path === '/') ||
-                              (currentSport === 'football' && sport.path === '/football.html')
+                              (currentSport === 'football' && sport.path === '/football')
 
             return (
               <button

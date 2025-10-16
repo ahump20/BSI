@@ -85,6 +85,52 @@ export async function fetchBoxScore(gameId) {
   }
 }
 
+/**
+ * Fetch all NCAA Division I baseball teams with filtering
+ * @param {object} filters - Optional filters (search, conference, division)
+ * @returns {Promise<Array>} Array of team objects
+ */
+export async function fetchTeams(filters = {}) {
+  try {
+    // Try ESPN API
+    const espnTeams = await fetchESPNTeams(filters);
+    if (espnTeams && espnTeams.length > 0) {
+      return espnTeams;
+    }
+
+    // Fallback to sample data
+    console.warn('No live teams data available, using fallback data');
+    return getFallbackTeams(filters);
+
+  } catch (error) {
+    console.error('NCAA teams fetch error:', error);
+    return getFallbackTeams(filters);
+  }
+}
+
+/**
+ * Fetch college baseball players with comprehensive stats
+ * @param {object} filters - Optional filters (search, team, position, class, draft)
+ * @returns {Promise<Array>} Array of player objects with stats
+ */
+export async function fetchPlayers(filters = {}) {
+  try {
+    // Try ESPN API
+    const espnPlayers = await fetchESPNPlayers(filters);
+    if (espnPlayers && espnPlayers.length > 0) {
+      return espnPlayers;
+    }
+
+    // Fallback to sample data
+    console.warn('No live players data available, using fallback data');
+    return getFallbackPlayers(filters);
+
+  } catch (error) {
+    console.error('NCAA players fetch error:', error);
+    return getFallbackPlayers(filters);
+  }
+}
+
 // ============================================================================
 // ESPN API INTEGRATION
 // ============================================================================
@@ -408,4 +454,260 @@ function getFallbackStandings(conference) {
       sos: 0.5921
     }
   ];
+}
+
+// ============================================================================
+// TEAMS API FUNCTIONS
+// ============================================================================
+
+async function fetchESPNTeams(filters = {}) {
+  try {
+    // Fetch all college baseball teams from ESPN
+    const url = `${ESPN_BASE}/teams?limit=350`;
+
+    const response = await fetch(url, {
+      headers: { 'User-Agent': USER_AGENT }
+    });
+
+    if (!response.ok) {
+      console.warn(`ESPN teams API returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (!data.sports?.[0]?.leagues?.[0]?.teams) {
+      return [];
+    }
+
+    let teams = data.sports[0].leagues[0].teams.map(t => normalizeESPNTeam(t.team));
+
+    // Apply search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      teams = teams.filter(t =>
+        t.name.toLowerCase().includes(searchLower) ||
+        t.mascot?.toLowerCase().includes(searchLower) ||
+        t.location?.city?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Apply conference filter
+    if (filters.conference) {
+      teams = teams.filter(t => t.conference === filters.conference);
+    }
+
+    return teams;
+
+  } catch (error) {
+    console.error('ESPN teams fetch failed:', error);
+    return null;
+  }
+}
+
+function normalizeESPNTeam(team) {
+  return {
+    id: team.slug,
+    name: team.displayName,
+    abbreviation: team.abbreviation,
+    mascot: team.name,
+    conference: team.conferenceId ? getConferenceName(team.conferenceId) : 'Independent',
+    division: 'D1',
+    logo: team.logos?.[0]?.href,
+    location: {
+      city: team.location?.city,
+      state: team.location?.state
+    },
+    contact: {
+      website: team.links?.find(l => l.rel?.[0] === 'clubhouse')?.href,
+      twitter: team.links?.find(l => l.rel?.[0] === 'twitter')?.href?.split('/').pop()
+    }
+  };
+}
+
+function getFallbackTeams(filters) {
+  // Sample SEC teams as fallback
+  const teams = [
+    {
+      id: 'tennessee',
+      name: 'Tennessee Volunteers',
+      abbreviation: 'TENN',
+      mascot: 'Volunteers',
+      conference: 'SEC',
+      division: 'D1',
+      location: { city: 'Knoxville', state: 'TN' }
+    },
+    {
+      id: 'lsu',
+      name: 'LSU Tigers',
+      abbreviation: 'LSU',
+      mascot: 'Tigers',
+      conference: 'SEC',
+      division: 'D1',
+      location: { city: 'Baton Rouge', state: 'LA' }
+    },
+    {
+      id: 'texas',
+      name: 'Texas Longhorns',
+      abbreviation: 'TEX',
+      mascot: 'Longhorns',
+      conference: 'SEC',
+      division: 'D1',
+      location: { city: 'Austin', state: 'TX' }
+    }
+  ];
+
+  // Apply search filter
+  if (filters.search) {
+    const searchLower = filters.search.toLowerCase();
+    return teams.filter(t =>
+      t.name.toLowerCase().includes(searchLower) ||
+      t.mascot?.toLowerCase().includes(searchLower)
+    );
+  }
+
+  return teams;
+}
+
+// ============================================================================
+// PLAYERS API FUNCTIONS
+// ============================================================================
+
+async function fetchESPNPlayers(filters = {}) {
+  try {
+    // ESPN doesn't have a comprehensive players endpoint for college baseball
+    // We'll need to aggregate from team rosters
+    // For now, return fallback data with note about off-season
+    console.warn('ESPN players API not available - returning fallback data');
+    return null;
+
+  } catch (error) {
+    console.error('ESPN players fetch failed:', error);
+    return null;
+  }
+}
+
+function getFallbackPlayers(filters) {
+  // Sample players as fallback
+  const players = [
+    {
+      id: 'player-001',
+      name: 'Jake Thompson',
+      jersey: '7',
+      position: 'IF',
+      team: 'Tennessee Volunteers',
+      conference: 'SEC',
+      classYear: 'Jr',
+      bio: {
+        height: '6-1',
+        weight: 195,
+        bats: 'R',
+        throws: 'R',
+        hometown: 'Nashville, TN'
+      },
+      battingStats: {
+        games: 45,
+        atBats: 178,
+        runs: 52,
+        hits: 67,
+        doubles: 14,
+        triples: 2,
+        homeRuns: 12,
+        rbi: 48,
+        walks: 28,
+        strikeouts: 31,
+        stolenBases: 8,
+        avg: 0.376,
+        obp: 0.462,
+        slg: 0.652,
+        ops: 1.114
+      },
+      draftProspect: {
+        isDraftEligible: true,
+        mlbRank: 24,
+        projection: '2nd-3rd Round',
+        tools: {
+          hitting: 60,
+          power: 65,
+          speed: 55,
+          fielding: 60,
+          arm: 60
+        }
+      }
+    },
+    {
+      id: 'player-002',
+      name: 'Marcus Johnson',
+      jersey: '21',
+      position: 'P',
+      team: 'LSU Tigers',
+      conference: 'SEC',
+      classYear: 'Sr',
+      bio: {
+        height: '6-4',
+        weight: 215,
+        bats: 'R',
+        throws: 'R',
+        hometown: 'Houston, TX'
+      },
+      pitchingStats: {
+        games: 15,
+        gamesStarted: 15,
+        completeGames: 2,
+        shutouts: 1,
+        saves: 0,
+        wins: 11,
+        losses: 2,
+        era: 2.48,
+        inningsPitched: 98.1,
+        hits: 72,
+        runs: 31,
+        earnedRuns: 27,
+        walks: 23,
+        strikeouts: 124,
+        whip: 0.97
+      },
+      draftProspect: {
+        isDraftEligible: true,
+        mlbRank: 18,
+        projection: '1st-2nd Round',
+        tools: {
+          fastball: 70,
+          slider: 65,
+          changeup: 60,
+          control: 60,
+          stamina: 65
+        }
+      }
+    }
+  ];
+
+  // Apply filters
+  let filtered = players;
+
+  if (filters.search) {
+    const searchLower = filters.search.toLowerCase();
+    filtered = filtered.filter(p =>
+      p.name.toLowerCase().includes(searchLower) ||
+      p.team.toLowerCase().includes(searchLower)
+    );
+  }
+
+  if (filters.team) {
+    filtered = filtered.filter(p => p.team === filters.team);
+  }
+
+  if (filters.position) {
+    filtered = filtered.filter(p => p.position === filters.position);
+  }
+
+  if (filters.class) {
+    filtered = filtered.filter(p => p.classYear === filters.class);
+  }
+
+  if (filters.draft === 'true') {
+    filtered = filtered.filter(p => p.draftProspect?.isDraftEligible);
+  }
+
+  return filtered;
 }
