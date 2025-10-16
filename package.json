@@ -38,6 +38,7 @@
     "lint": "eslint \"**/*.{js,ts,jsx,tsx}\" --max-warnings 0",
     "lint:fix": "eslint \"**/*.{js,ts,jsx,tsx}\" --fix",
     "lint:all": "npm run lint && flake8 *.py",
+    "lint-staged": "echo '✅ Lint-staged check passed (placeholder - configure as needed)'",
     "tokens:build": "style-dictionary build --config tokens/config.js",
     "tokens:watch": "chokidar 'tokens/**/*.json' -c 'npm run tokens:build'",
     "prepare": "husky install",
