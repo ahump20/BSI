@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     await prisma.stripeEvent.create({
       data: {
         eventId: event.id,
-        type: event.type ?? 'unknown',
+        type: event.type,
         payload: toJsonPayload(event),
       },
     });
