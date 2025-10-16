@@ -379,11 +379,6 @@ class BlazeIntelligenceAPIServer {
                     ]
                 });
 
-                console.log(`🔥 Blaze Intelligence API Server`);
-                console.log(`📡 Running on http://localhost:${this.port}`);
-                console.log(`📚 Documentation: http://localhost:${this.port}/api/docs`);
-                console.log(`❤️  Health: http://localhost:${this.port}/health`);
-                console.log(`\n✅ Ready to serve real sports analytics!`);
             });
 
         } catch (error) {

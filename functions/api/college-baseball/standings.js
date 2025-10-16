@@ -1,9 +1,12 @@
 /**
  * College Baseball Standings API
  * Returns conference standings with RPI, SOS data
- * 
+ *
  * Caching: 5 minutes
+ * Data sources: ESPN API → D1Baseball → NCAA Stats (with fallback)
  */
+
+import { fetchStandings as fetchNCAAStandings } from './_ncaa-adapter.js';
 
 const CACHE_KEY_PREFIX = 'college-baseball:standings';
 
@@ -49,8 +52,8 @@ export async function onRequest(context) {
       }
     }
 
-    // Fetch standings
-    const standings = await fetchStandings(conference, division);
+    // Fetch standings from NCAA data sources
+    const standings = await fetchNCAAStandings(conference, division);
     
     const cacheData = {
       standings,
@@ -95,88 +98,3 @@ export async function onRequest(context) {
   }
 }
 
-async function fetchStandings(conference, division) {
-  // Sample standings data for SEC
-  return [
-    {
-      rank: 1,
-      team: {
-        id: 'tennessee',
-        name: 'Tennessee Volunteers',
-        shortName: 'TENN',
-        conference: 'SEC'
-      },
-      overallRecord: { wins: 18, losses: 2 },
-      conferenceRecord: { wins: 6, losses: 0 },
-      streakType: 'W',
-      streakCount: 7,
-      last10: '9-1',
-      rpi: 0.6842,
-      sos: 0.5921
-    },
-    {
-      rank: 2,
-      team: {
-        id: 'vanderbilt',
-        name: 'Vanderbilt Commodores',
-        shortName: 'VANDY',
-        conference: 'SEC'
-      },
-      overallRecord: { wins: 17, losses: 3 },
-      conferenceRecord: { wins: 5, losses: 1 },
-      streakType: 'W',
-      streakCount: 4,
-      last10: '8-2',
-      rpi: 0.6701,
-      sos: 0.5734
-    },
-    {
-      rank: 3,
-      team: {
-        id: 'texas',
-        name: 'Texas Longhorns',
-        shortName: 'TEX',
-        conference: 'SEC'
-      },
-      overallRecord: { wins: 16, losses: 4 },
-      conferenceRecord: { wins: 5, losses: 1 },
-      streakType: 'L',
-      streakCount: 1,
-      last10: '7-3',
-      rpi: 0.6523,
-      sos: 0.5612
-    },
-    {
-      rank: 4,
-      team: {
-        id: 'lsu',
-        name: 'LSU Tigers',
-        shortName: 'LSU',
-        conference: 'SEC'
-      },
-      overallRecord: { wins: 15, losses: 3 },
-      conferenceRecord: { wins: 4, losses: 2 },
-      streakType: 'W',
-      streakCount: 2,
-      last10: '8-2',
-      rpi: 0.6412,
-      sos: 0.5501
-    },
-    {
-      rank: 5,
-      team: {
-        id: 'arkansas',
-        name: 'Arkansas Razorbacks',
-        shortName: 'ARK',
-        conference: 'SEC'
-      },
-      overallRecord: { wins: 14, losses: 5 },
-      conferenceRecord: { wins: 4, losses: 2 },
-      streakType: 'W',
-      streakCount: 3,
-      last10: '7-3',
-      rpi: 0.6289,
-      sos: 0.5445
-    }
-  ];
-}

@@ -15,7 +15,6 @@ const db = new Pool({
 });
 
 async function populateAnalytics() {
-  console.log('📊 Populating sample analytics data...');
   
   const teams = await db.query('SELECT * FROM teams');
   
@@ -74,11 +73,9 @@ async function populateAnalytics() {
       DO UPDATE SET elo_rating = $4, strength_of_schedule = $5, calculation_date = CURRENT_TIMESTAMP
     `, [team.id, 2024, winPct, eloRating, 0.500, 'sample_data']);
     
-    console.log(`✅ ${team.name}: ${wins}-${losses} (${pythagoreanWins} Pyth), Elo: ${eloRating}`);
   }
   
   await db.end();
-  console.log('🎉 Analytics populated successfully!');
 }
 
 populateAnalytics().catch(console.error);

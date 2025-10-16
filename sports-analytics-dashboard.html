@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔥 Multi-Sport Analytics Dashboard | Blaze Sports Intel</title>
-    <meta name="description" content="Comprehensive sports analytics for NFL, MLB, NBA, and NCAA. Real-time data, championship intelligence, and AI-powered insights.">
+    <meta name="description" content="Comprehensive sports analytics for NFL, MLB, and NCAA. Real-time data, championship intelligence, and AI-powered insights.">
 
     <!-- External Libraries -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -511,17 +511,6 @@
                         onBasePercentage: 0.325, sluggingPercentage: 0.419
                     }
                 },
-                nba: {
-                    MEM: {
-                        name: "Memphis Grizzlies",
-                        sport: "NBA",
-                        wins: 27, losses: 55,
-                        pointsPerGame: 107.4, pointsAllowed: 114.1,
-                        fieldGoalPct: 45.2, threePointPct: 34.8,
-                        reboundsPerGame: 43.5, assistsPerGame: 24.3,
-                        stealsPerGame: 7.8, blocksPerGame: 4.6
-                    }
-                },
                 ncaa: {
                     TEX: {
                         name: "Texas Longhorns",
@@ -780,12 +769,6 @@
                             ⚾ MLB
                         </button>
                         <button
-                            className={activeSport === 'nba' ? 'sport-btn active' : 'sport-btn'}
-                            onClick={() => { setActiveSport('nba'); setSelectedTeam('MEM'); }}
-                        >
-                            🏀 NBA
-                        </button>
-                        <button
                             className={activeSport === 'ncaa' ? 'sport-btn active' : 'sport-btn'}
                             onClick={() => { setActiveSport('ncaa'); setSelectedTeam('TEX'); }}
                         >
@@ -833,13 +816,6 @@
                                     <option value="NYY">New York Yankees</option>
                                 </>
                             )}
-                            {activeSport === 'nba' && (
-                                <>
-                                    <option value="MEM">Memphis Grizzlies</option>
-                                    <option value="BOS">Boston Celtics</option>
-                                    <option value="LAL">Los Angeles Lakers</option>
-                                </>
-                            )}
                             {activeSport === 'ncaa' && (
                                 <>
                                     <option value="TEX">Texas Longhorns</option>
@@ -864,14 +840,13 @@
                                 <ul>
                                     <li>NFL - All 32 Teams</li>
                                     <li>MLB - All 30 Teams</li>
-                                    <li>NBA - All 30 Teams</li>
                                     <li>NCAA Football - Top Programs</li>
                                 </ul>
                             </div>
                             <div className="footer-section">
                                 <h4>Data Sources</h4>
                                 <ul>
-                                    <li>ESPN NFL/NBA API</li>
+                                    <li>ESPN NFL API</li>
                                     <li>MLB Stats API</li>
                                     <li>NCAA Official Stats</li>
                                     <li>Real-time Updates</li>

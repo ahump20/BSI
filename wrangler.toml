@@ -1,31 +1,18 @@
-name = "college-baseball-api"
-main = "index.js"
+name = "college-baseball-tracker"
+pages_build_output_dir = "dist"
 compatibility_date = "2025-01-01"
 
-# KV namespace for caching
+# KV namespace for caching (existing CACHE namespace from blazesportsintel)
 kv_namespaces = [
-  { binding = "KV", id = "your_kv_namespace_id" }
+  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" }
 ]
 
 # Environment variables
 [vars]
 ENVIRONMENT = "production"
 
-# Routes - will serve API requests
-routes = [
-  { pattern = "api.collegebaseball.yourdomain.com/*", zone_name = "yourdomain.com" }
-]
-
-# D1 database for storing historical stats (optional)
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "college-baseball-stats"
-# database_id = "your_d1_database_id"
-
-# Build configuration
-[build]
-command = ""
-
-# Dev configuration
-[dev]
-port = 8787
+# D1 database for storing historical sports data
+[[d1_databases]]
+binding = "DB"
+database_name = "blazesports-historical"
+database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"

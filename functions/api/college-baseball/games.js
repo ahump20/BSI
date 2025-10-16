@@ -1,10 +1,12 @@
 /**
  * College Baseball Games API
  * Returns live and scheduled games with real-time updates
- * 
+ *
  * Caching: 30s for live games, 5m for scheduled games
- * Data sources: D1Baseball, NCAA Stats (with fallback)
+ * Data sources: ESPN API → D1Baseball → NCAA Stats (with fallback)
  */
+
+import { fetchGames as fetchNCAAGames } from './_ncaa-adapter.js';
 
 const CACHE_KEY_PREFIX = 'college-baseball:games';
 
@@ -55,8 +57,8 @@ export async function onRequest(context) {
       }
     }
 
-    // Fetch games from data sources
-    const games = await fetchGames(date, { conference, status, team });
+    // Fetch games from NCAA data sources
+    const games = await fetchNCAAGames(date, { conference, status, team });
     
     // Store in cache
     const cacheData = {
@@ -110,135 +112,11 @@ export async function onRequest(context) {
 }
 
 /**
- * Fetch games from available data sources
- * Implements fallback strategy and data reconciliation
- */
-async function fetchGames(date, filters = {}) {
-  // Sample data for MVP - will be replaced with actual scraper/API
-  const sampleGames = [
-    {
-      id: 'game-001',
-      date: date,
-      time: '7:00 PM ET',
-      status: 'live',
-      inning: 5,
-      homeTeam: {
-        id: 'lsu',
-        name: 'LSU Tigers',
-        shortName: 'LSU',
-        conference: 'SEC',
-        score: 4,
-        record: { wins: 15, losses: 3 }
-      },
-      awayTeam: {
-        id: 'tennessee',
-        name: 'Tennessee Volunteers',
-        shortName: 'TENN',
-        conference: 'SEC',
-        score: 2,
-        record: { wins: 18, losses: 2 }
-      },
-      venue: 'Alex Box Stadium',
-      tv: 'SEC Network'
-    },
-    {
-      id: 'game-002',
-      date: date,
-      time: '6:30 PM ET',
-      status: 'scheduled',
-      homeTeam: {
-        id: 'texas',
-        name: 'Texas Longhorns',
-        shortName: 'TEX',
-        conference: 'SEC',
-        record: { wins: 16, losses: 4 }
-      },
-      awayTeam: {
-        id: 'arkansas',
-        name: 'Arkansas Razorbacks',
-        shortName: 'ARK',
-        conference: 'SEC',
-        record: { wins: 14, losses: 5 }
-      },
-      venue: 'Disch-Falk Field',
-      tv: 'ESPN+'
-    },
-    {
-      id: 'game-003',
-      date: date,
-      time: '7:00 PM ET',
-      status: 'scheduled',
-      homeTeam: {
-        id: 'vanderbilt',
-        name: 'Vanderbilt Commodores',
-        shortName: 'VANDY',
-        conference: 'SEC',
-        record: { wins: 17, losses: 3 }
-      },
-      awayTeam: {
-        id: 'florida',
-        name: 'Florida Gators',
-        shortName: 'FLA',
-        conference: 'SEC',
-        record: { wins: 13, losses: 6 }
-      },
-      venue: 'Hawkins Field',
-      tv: 'SEC Network+'
-    },
-    {
-      id: 'game-004',
-      date: date,
-      time: '2:00 PM ET',
-      status: 'final',
-      homeTeam: {
-        id: 'stanford',
-        name: 'Stanford Cardinal',
-        shortName: 'STAN',
-        conference: 'Pac-12',
-        score: 8,
-        record: { wins: 12, losses: 5 }
-      },
-      awayTeam: {
-        id: 'oregon-st',
-        name: 'Oregon State Beavers',
-        shortName: 'ORE ST',
-        conference: 'Pac-12',
-        score: 5,
-        record: { wins: 14, losses: 4 }
-      },
-      venue: 'Klein Field at Sunken Diamond',
-      tv: 'Pac-12 Network'
-    }
-  ];
-  
-  // Apply filters
-  let filteredGames = sampleGames;
-  
-  if (filters.conference) {
-    filteredGames = filteredGames.filter(g => 
-      g.homeTeam.conference === filters.conference || 
-      g.awayTeam.conference === filters.conference
-    );
-  }
-  
-  if (filters.status) {
-    filteredGames = filteredGames.filter(g => g.status === filters.status);
-  }
-  
-  if (filters.team) {
-    filteredGames = filteredGames.filter(g => 
-      g.homeTeam.id === filters.team || 
-      g.awayTeam.id === filters.team
-    );
-  }
-  
-  return filteredGames;
-}
-
-/**
- * Get today's date in YYYY-MM-DD format
+ * Get today's date in YYYY-MM-DD format (America/Chicago timezone)
  */
 function getTodayDate() {
   const today = new Date();
-  return today.toISOString().split('T')[0];
+  // Convert to Chicago timezone
+  const chicagoDate = new Date(today.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+  return chicagoDate.toISOString().split('T')[0];
 }

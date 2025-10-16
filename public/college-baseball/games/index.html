@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live College Baseball Games & Box Scores | Blaze Sports Intel</title>
+    <meta name="description" content="Complete box scores, play-by-play, and live updates for college baseball. The comprehensive coverage ESPN refuses to provide.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <link rel="stylesheet" href="/styles/blaze-design-system.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+    <style>
+        :root {
+            --blaze-orange: #bf5700;
+            --blaze-orange-light: #d66d0f;
+            --blaze-orange-dark: #994400;
+            --blaze-sky: #9bcbeb;
+            --blaze-deep: #002244;
+            --blaze-teal: #00b2a9;
+            --blaze-platinum: #e5e4e2;
+            --blaze-charcoal: #1a1a1a;
+            --blaze-graphite: #2a2a2a;
+            --glass-white: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            padding: 2rem 1rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* =============================================================================
+           PAGE HEADER
+           ============================================================================= */
+
+        .page-header {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--blaze-platinum);
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: var(--blaze-orange);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--blaze-orange-light);
+        }
+
+        .page-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff, var(--blaze-sky));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: var(--blaze-platinum);
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .live-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* =============================================================================
+           FILTERS & CONTROLS
+           ============================================================================= */
+
+        .controls-bar {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: var(--blaze-sky);
+        }
+
+        .filter-select {
+            background: var(--blaze-graphite);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .filter-select:hover {
+            border-color: var(--blaze-orange);
+            background: var(--blaze-charcoal);
+        }
+
+        .filter-select:focus {
+            outline: 2px solid var(--blaze-orange);
+            outline-offset: 2px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .toggle-btn {
+            background: var(--blaze-graphite);
+            border: 1px solid var(--glass-border);
+            color: var(--blaze-platinum);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
+            border-color: var(--blaze-orange);
+            color: white;
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: rgba(191, 87, 0, 0.15);
+            border-color: var(--blaze-orange);
+        }
+
+        /* =============================================================================
+           GAME CARDS - COMPACT VIEW
+           ============================================================================= */
+
+        .games-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .game-card {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover {
+            border-color: var(--blaze-orange);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .game-card-header {
+            background: rgba(191, 87, 0, 0.1);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 800;
+        }
+
+        .status-live {
+            background: #ef4444;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .status-final {
+            background: var(--blaze-graphite);
+            color: var(--blaze-platinum);
+        }
+
+        .status-scheduled {
+            background: rgba(156, 203, 235, 0.2);
+            color: var(--blaze-sky);
+        }
+
+        .game-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--blaze-platinum);
+        }
+
+        .game-matchup {
+            padding: 1.5rem;
+        }
+
+        .team-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .team-row:last-child {
+            border-bottom: none;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .team-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .team-rank {
+            color: var(--blaze-orange);
+            font-weight: 900;
+            margin-right: 0.5rem;
+        }
+
+        .team-record {
+            font-size: 0.85rem;
+            color: var(--blaze-platinum);
+            font-weight: 600;
+        }
+
+        .team-pitcher {
+            font-size: 0.8rem;
+            color: var(--blaze-sky);
+            margin-top: 0.25rem;
+        }
+
+        .team-score {
+            font-size: 2.25rem;
+            font-weight: 900;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .team-score.winner {
+            color: var(--blaze-orange);
+        }
+
+        .team-hits-errors {
+            font-size: 0.9rem;
+            color: var(--blaze-platinum);
+            text-align: right;
+            min-width: 60px;
+        }
+
+        .game-card-footer {
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .box-score-btn {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
+            color: white;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .box-score-btn:hover {
+            background: linear-gradient(135deg, var(--blaze-orange-light), var(--blaze-orange));
+            transform: translateX(4px);
+        }
+
+        /* =============================================================================
+           EXPANDED BOX SCORE VIEW
+           ============================================================================= */
+
+        .box-score-expanded {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .box-score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--blaze-orange);
+        }
+
+        .box-score-title {
+            font-size: 1.75rem;
+            font-weight: 900;
+        }
+
+        .close-btn {
+            background: var(--blaze-graphite);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--blaze-charcoal);
+            border-color: var(--blaze-orange);
+        }
+
+        .line-score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .line-score-table table {
+            width: 100%;
+            min-width: 600px;
+        }
+
+        .line-score-table th,
+        .line-score-table td {
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .line-score-table thead {
+            background: rgba(191, 87, 0, 0.15);
+        }
+
+        .line-score-table th {
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--blaze-sky);
+        }
+
+        .line-score-table tbody td:first-child {
+            text-align: left;
+            font-weight: 700;
+            padding-left: 1rem;
+        }
+
+        .line-score-table .runs-col {
+            background: rgba(191, 87, 0, 0.1);
+            font-weight: 900;
+            color: var(--blaze-orange);
+            font-size: 1.1rem;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .stats-table caption {
+            text-align: left;
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--blaze-orange);
+        }
+
+        .stats-table thead {
+            background: rgba(191, 87, 0, 0.15);
+            border-bottom: 2px solid var(--blaze-orange);
+        }
+
+        .stats-table th {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 800;
+            color: var(--blaze-sky);
+        }
+
+        .stats-table th:not(:first-child) {
+            text-align: center;
+        }
+
+        .stats-table tbody tr {
+            border-bottom: 1px solid var(--glass-border);
+            transition: background 0.2s ease;
+        }
+
+        .stats-table tbody tr:hover {
+            background: rgba(191, 87, 0, 0.08);
+        }
+
+        .stats-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .stats-table td:first-child {
+            font-weight: 700;
+            padding-left: 1rem;
+        }
+
+        .stats-table td:not(:first-child) {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .player-position {
+            color: var(--blaze-platinum);
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            font-weight: 600;
+        }
+
+        .highlight-stat {
+            color: var(--blaze-orange);
+            font-weight: 900;
+        }
+
+        /* =============================================================================
+           RESPONSIVE
+           ============================================================================= */
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 1rem 0.5rem;
+            }
+
+            .page-header {
+                padding: 1.5rem 1rem;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .view-toggle {
+                margin-left: 0;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .team-row {
+                grid-template-columns: 1fr auto;
+                gap: 0.75rem;
+            }
+
+            .team-hits-errors {
+                display: none;
+            }
+
+            .team-logo {
+                width: 32px;
+                height: 32px;
+            }
+
+            .team-score {
+                font-size: 1.75rem;
+            }
+
+            .game-card-footer {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .box-score-expanded {
+                padding: 1rem;
+            }
+
+            .stats-table th,
+            .stats-table td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .team-pitcher {
+                display: block;
+            }
+        }
+
+        /* =============================================================================
+           ACCESSIBILITY
+           ============================================================================= */
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--blaze-orange);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            font-weight: 700;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div id="particles-js" aria-hidden="true"></div>
+
+    <div class="content-wrapper">
+        <!-- Page Header -->
+        <header class="page-header" data-aos="fade-down">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/college-baseball/">College Baseball</a>
+                <span>/</span>
+                <span>Live Games</span>
+            </nav>
+            <h1 class="page-title">Live College Baseball Games</h1>
+            <p class="page-subtitle">Complete box scores, real-time updates, and comprehensive stats. Everything ESPN won't show you.</p>
+            <div class="live-indicator">
+                12 Games Live Now
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+
+            <!-- Controls Bar -->
+            <section class="controls-bar" data-aos="fade-up">
+                <div class="filter-group">
+                    <label for="conference-filter" class="filter-label">Conference</label>
+                    <select id="conference-filter" class="filter-select">
+                        <option value="all">All Conferences</option>
+                        <option value="sec">SEC</option>
+                        <option value="acc">ACC</option>
+                        <option value="big12">Big 12</option>
+                        <option value="pac12">Pac-12</option>
+                        <option value="big10">Big Ten</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="status-filter" class="filter-label">Status</label>
+                    <select id="status-filter" class="filter-select">
+                        <option value="all">All Games</option>
+                        <option value="live">Live Now</option>
+                        <option value="final">Final</option>
+                        <option value="scheduled">Upcoming</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="date-filter" class="filter-label">Date</label>
+                    <select id="date-filter" class="filter-select">
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="week">This Week</option>
+                    </select>
+                </div>
+
+                <div class="view-toggle">
+                    <button class="toggle-btn active" data-view="compact">Compact</button>
+                    <button class="toggle-btn" data-view="detailed">Detailed</button>
+                </div>
+            </section>
+
+            <!-- Games Grid -->
+            <section class="games-grid" aria-label="Live Games">
+
+                <!-- Live Game 1 -->
+                <article class="game-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="game-card-header">
+                        <div class="game-status-badge">
+                            <span class="status-badge status-live">Live</span>
+                            <span>Top 7th • 2 outs</span>
+                        </div>
+                        <div class="game-meta">
+                            <span>📺 ESPN+</span>
+                            <span>Disch-Falk Field</span>
+                        </div>
+                    </div>
+                    <div class="game-matchup">
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/228.png" alt="Oklahoma" class="team-logo" loading="lazy">
+                                <div class="team-details">
+                                    <div class="team-name">
+                                        <span class="team-rank">#18</span>Oklahoma
+                                    </div>
+                                    <div class="team-record">38-18 (18-9 SEC)</div>
+                                    <div class="team-pitcher">P: Jackson, R (8-3, 3.45 ERA)</div>
+                                </div>
+                            </div>
+                            <div class="team-hits-errors">R: 5 • H: 8 • E: 1</div>
+                            <div class="team-score">5</div>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas" class="team-logo" loading="lazy">
+                                <div class="team-details">
+                                    <div class="team-name">
+                                        <span class="team-rank">#3</span>Texas
+                                    </div>
+                                    <div class="team-record">45-12 (22-5 SEC)</div>
+                                    <div class="team-pitcher">P: Martinez, L (12-2, 2.18 ERA)</div>
+                                </div>
+                            </div>
+                            <div class="team-hits-errors">R: 8 • H: 12 • E: 0</div>
+                            <div class="team-score winner">8</div>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <div class="game-meta">
+                            <span>Last Update: 8:42 PM CT</span>
+                        </div>
+                        <a href="#box-score-texas-oklahoma" class="box-score-btn">Full Box Score →</a>
+                    </div>
+                </article>
+
+                <!-- Final Game 1 -->
+                <article class="game-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="game-card-header">
+                        <div class="game-status-badge">
+                            <span class="status-badge status-final">Final</span>
+                        </div>
+                        <div class="game-meta">
+                            <span>📺 SEC Network</span>
+                            <span>Vanderbilt Stadium</span>
+                        </div>
+                    </div>
+                    <div class="game-matchup">
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png" alt="Tennessee" class="team-logo" loading="lazy">
+                                <div class="team-details">
+                                    <div class="team-name">
+                                        <span class="team-rank">#5</span>Tennessee
+                                    </div>
+                                    <div class="team-record">43-14 (20-7 SEC)</div>
+                                </div>
+                            </div>
+                            <div class="team-hits-errors">R: 7 • H: 11 • E: 2</div>
+                            <div class="team-score">7</div>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt" class="team-logo" loading="lazy">
+                                <div class="team-details">
+                                    <div class="team-name">
+                                        <span class="team-rank">#1</span>Vanderbilt
+                                    </div>
+                                    <div class="team-record">50-7 (24-3 SEC)</div>
+                                </div>
+                            </div>
+                            <div class="team-hits-errors">R: 12 • H: 15 • E: 0</div>
+                            <div class="team-score winner">12</div>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <div class="game-meta">
+                            <span>Duration: 3:24 • Attendance: 4,289</span>
+                        </div>
+                        <a href="#box-score-vandy-tenn" class="box-score-btn">Full Box Score →</a>
+                    </div>
+                </article>
+
+                <!-- Scheduled Game -->
+                <article class="game-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="game-card-header">
+                        <div class="game-status-badge">
+                            <span class="status-badge status-scheduled">7:00 PM CT</span>
+                        </div>
+                        <div class="game-meta">
+                            <span>📺 ESPN+</span>
+                            <span>Alex Box Stadium</span>
+                        </div>
+                    </div>
+                    <div class="game-matchup">
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/333.png" alt="LSU" class="team-logo" loading="lazy">
+                                <div class="team-details">
+                                    <div class="team-name">
+                                        <span class="team-rank">#7</span>LSU
+                                    </div>
+                                    <div class="team-record">42-15 (19-8 SEC)</div>
+                                    <div class="team-pitcher">P: Peterson, J (10-4, 3.12 ERA)</div>
+                                </div>
+                            </div>
+                            <div class="team-hits-errors">—</div>
+                            <div class="team-score">—</div>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-info">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2117.png" alt="Ole Miss" class="team-logo" loading="lazy">
+                                <div class="team-details">
+                                    <div class="team-name">
+                                        <span class="team-rank">#12</span>Ole Miss
+                                    </div>
+                                    <div class="team-record">40-17 (17-10 SEC)</div>
+                                    <div class="team-pitcher">P: Williams, T (9-3, 2.87 ERA)</div>
+                                </div>
+                            </div>
+                            <div class="team-hits-errors">—</div>
+                            <div class="team-score">—</div>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <div class="game-meta">
+                            <span>Series Game 2 • Best of 3</span>
+                        </div>
+                        <button class="box-score-btn" disabled style="opacity: 0.5; cursor: not-allowed;">Preview Available</button>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- Expanded Box Score Example -->
+            <section class="box-score-expanded" id="box-score-vandy-tenn" data-aos="fade-up" style="display: none;">
+                <div class="box-score-header">
+                    <h2 class="box-score-title">#5 Tennessee at #1 Vanderbilt - Final</h2>
+                    <button class="close-btn" aria-label="Close box score">Close ✕</button>
+                </div>
+
+                <!-- Line Score -->
+                <div class="line-score-table">
+                    <table>
+                        <caption>Line Score</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Team</th>
+                                <th scope="col">1</th>
+                                <th scope="col">2</th>
+                                <th scope="col">3</th>
+                                <th scope="col">4</th>
+                                <th scope="col">5</th>
+                                <th scope="col">6</th>
+                                <th scope="col">7</th>
+                                <th scope="col">8</th>
+                                <th scope="col">9</th>
+                                <th scope="col" class="runs-col">R</th>
+                                <th scope="col">H</th>
+                                <th scope="col">E</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Tennessee</th>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td class="runs-col">7</td>
+                                <td>11</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Vanderbilt</th>
+                                <td>3</td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td>4</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td>—</td>
+                                <td class="runs-col">12</td>
+                                <td>15</td>
+                                <td>0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tennessee Batting Stats -->
+                <table class="stats-table">
+                    <caption>Tennessee Batting</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Player</th>
+                            <th scope="col">AB</th>
+                            <th scope="col">R</th>
+                            <th scope="col">H</th>
+                            <th scope="col">RBI</th>
+                            <th scope="col">BB</th>
+                            <th scope="col">SO</th>
+                            <th scope="col">AVG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Moore, B <span class="player-position">CF</span></td>
+                            <td>5</td>
+                            <td>2</td>
+                            <td class="highlight-stat">3</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>.342</td>
+                        </tr>
+                        <tr>
+                            <td>Stephenson, J <span class="player-position">2B</span></td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>.318</td>
+                        </tr>
+                        <tr>
+                            <td>Tears, C <span class="player-position">LF</span></td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td class="highlight-stat">3</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>.301</td>
+                        </tr>
+                        <tr>
+                            <td>Anderson, M <span class="player-position">1B</span></td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>2</td>
+                            <td>.289</td>
+                        </tr>
+                        <tr>
+                            <td>Burke, D <span class="player-position">DH</span></td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>.267</td>
+                        </tr>
+                        <tr>
+                            <td>Dreiling, H <span class="player-position">C</span></td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>.278</td>
+                        </tr>
+                        <tr>
+                            <td>Denton, K <span class="player-position">RF</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>.256</td>
+                        </tr>
+                        <tr>
+                            <td>Denton, A <span class="player-position">3B</span></td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>.245</td>
+                        </tr>
+                        <tr>
+                            <td>Ensley, L <span class="player-position">SS</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>.234</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Vanderbilt Batting Stats -->
+                <table class="stats-table">
+                    <caption>Vanderbilt Batting</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Player</th>
+                            <th scope="col">AB</th>
+                            <th scope="col">R</th>
+                            <th scope="col">H</th>
+                            <th scope="col">RBI</th>
+                            <th scope="col">BB</th>
+                            <th scope="col">SO</th>
+                            <th scope="col">AVG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bradfield, E <span class="player-position">CF</span></td>
+                            <td>5</td>
+                            <td class="highlight-stat">3</td>
+                            <td class="highlight-stat">4</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>.387</td>
+                        </tr>
+                        <tr>
+                            <td>Bulger, D <span class="player-position">2B</span></td>
+                            <td>4</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>.356</td>
+                        </tr>
+                        <tr>
+                            <td>Noland, C <span class="player-position">3B</span></td>
+                            <td>4</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td class="highlight-stat">4</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>.334</td>
+                        </tr>
+                        <tr>
+                            <td>Keegan, P <span class="player-position">DH</span></td>
+                            <td>5</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>.312</td>
+                        </tr>
+                        <tr>
+                            <td>Young, J <span class="player-position">1B</span></td>
+                            <td>4</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>.298</td>
+                        </tr>
+                        <tr>
+                            <td>Keegan, T <span class="player-position">C</span></td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>.289</td>
+                        </tr>
+                        <tr>
+                            <td>Jones, R <span class="player-position">RF</span></td>
+                            <td>4</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>2</td>
+                            <td>.267</td>
+                        </tr>
+                        <tr>
+                            <td>Diaz, E <span class="player-position">SS</span></td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>.256</td>
+                        </tr>
+                        <tr>
+                            <td>McKenzie, R <span class="player-position">LF</span></td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>.234</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pitching Stats -->
+                <table class="stats-table">
+                    <caption>Pitching Summary</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Pitcher</th>
+                            <th scope="col">IP</th>
+                            <th scope="col">H</th>
+                            <th scope="col">R</th>
+                            <th scope="col">ER</th>
+                            <th scope="col">BB</th>
+                            <th scope="col">SO</th>
+                            <th scope="col">ERA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="8" style="background: rgba(191, 87, 0, 0.1); font-weight: 800; padding: 0.5rem 1rem;">Tennessee</td>
+                        </tr>
+                        <tr>
+                            <td>Burns, C (L, 8-3)</td>
+                            <td>3.2</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>8</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>3.86</td>
+                        </tr>
+                        <tr>
+                            <td>Joyce, A</td>
+                            <td>2.1</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>4.12</td>
+                        </tr>
+                        <tr>
+                            <td>Lindsey, K</td>
+                            <td>2.0</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>5.23</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" style="background: rgba(191, 87, 0, 0.1); font-weight: 800; padding: 0.5rem 1rem;">Vanderbilt</td>
+                        </tr>
+                        <tr>
+                            <td>Leiter, J (W, 11-1)</td>
+                            <td>7.0</td>
+                            <td>8</td>
+                            <td>5</td>
+                            <td>4</td>
+                            <td>2</td>
+                            <td class="highlight-stat">12</td>
+                            <td>2.12</td>
+                        </tr>
+                        <tr>
+                            <td>McElvain, T</td>
+                            <td>2.0</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>3</td>
+                            <td>3.45</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true });
+
+        // Initialize particles
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 120, density: { enable: true, value_area: 800 } },
+                    color: { value: '#bf5700' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.12, random: true },
+                    size: { value: 2.5, random: true },
+                    line_linked: { enable: true, distance: 150, color: '#bf5700', opacity: 0.08, width: 1 },
+                    move: { enable: true, speed: 0.8, direction: 'none', random: true, out_mode: 'out' }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: { onhover: { enable: true, mode: 'grab' }, resize: true },
+                    modes: { grab: { distance: 140, line_linked: { opacity: 0.25 } } }
+                },
+                retina_detect: true
+            });
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function() {
+                console.log('Filter changed:', this.id, this.value);
+                // In production, this would trigger API call to fetch filtered games
+            });
+        });
+
+        // View toggle
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                console.log('View changed to:', this.dataset.view);
+            });
+        });
+
+        // Box score buttons
+        document.querySelectorAll('.box-score-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (this.disabled) return;
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const boxScore = document.querySelector(targetId);
+                if (boxScore) {
+                    boxScore.style.display = 'block';
+                    boxScore.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Close button
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.box-score-expanded').style.display = 'none';
+            });
+        });
+
+        console.log('College Baseball Games loaded:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+    </script>
+
+    <!-- Real NCAA API Integration -->
+    <script src="/college-baseball/games/api-integration.js"></script>
+</body>
+</html>

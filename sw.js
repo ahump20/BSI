@@ -49,16 +49,13 @@ const PRECACHE_URLS = [
 
 // Install event - cache critical resources
 self.addEventListener('install', event => {
-  console.log('🔥 Service Worker: Installing Blaze Championship Cache');
 
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then(cache => {
-        console.log('🏆 Service Worker: Precaching critical resources');
         return cache.addAll(PRECACHE_URLS);
       })
       .then(() => {
-        console.log('✅ Service Worker: Installation complete');
         return self.skipWaiting();
       })
       .catch(error => {
@@ -69,7 +66,6 @@ self.addEventListener('install', event => {
 
 // Activate event - cleanup old caches
 self.addEventListener('activate', event => {
-  console.log('🔥 Service Worker: Activating Blaze Championship Cache');
 
   event.waitUntil(
     caches.keys()
@@ -79,14 +75,12 @@ self.addEventListener('activate', event => {
             return cacheName.startsWith('blaze-') && !cacheName.includes(CACHE_VERSION);
           })
           .map(cacheName => {
-            console.log(`🧹 Service Worker: Deleting old cache: ${cacheName}`);
             return caches.delete(cacheName);
           });
 
         return Promise.all(deletePromises);
       })
       .then(() => {
-        console.log('✅ Service Worker: Activation complete');
         return self.clients.claim();
       })
   );
@@ -135,13 +129,11 @@ async function cacheFirst(request, strategy) {
       const age = Date.now() - cacheDate.getTime();
 
       if (age < strategy.ttl) {
-        console.log(`🎯 Cache HIT: ${request.url}`);
         return cachedResponse;
       }
     }
 
     // Fetch from network
-    console.log(`🌐 Network fetch: ${request.url}`);
     const networkResponse = await fetch(request);
 
     // Cache successful responses
@@ -164,7 +156,6 @@ async function cacheFirst(request, strategy) {
 // Network First Strategy - for API calls
 async function networkFirst(request, strategy) {
   try {
-    console.log(`🌐 Network first: ${request.url}`);
     const networkResponse = await fetch(request, {
       ...request,
       headers: {
@@ -205,7 +196,6 @@ async function networkFirst(request, strategy) {
       const age = Date.now() - parseInt(cacheTimestamp || '0');
 
       if (age < strategy.ttl) {
-        console.log(`🎯 API Cache fallback: ${request.url}`);
         return cachedResponse;
       }
     }
@@ -236,7 +226,6 @@ async function staleWhileRevalidate(request, strategy) {
 
   // Return cached response immediately if available
   if (cachedResponse) {
-    console.log(`🎯 Stale cache served: ${request.url}`);
 
     // Update in background
     networkPromise.catch(() => {}); // Ignore errors
@@ -245,14 +234,12 @@ async function staleWhileRevalidate(request, strategy) {
   }
 
   // Wait for network if no cache
-  console.log(`🌐 Network wait: ${request.url}`);
   return networkPromise || createErrorResponse();
 }
 
 // Network Only Strategy - for live data
 async function networkOnly(request) {
   try {
-    console.log(`🌐 Network only: ${request.url}`);
     return await fetch(request, {
       cache: 'no-cache'
     });
@@ -305,7 +292,6 @@ function createErrorResponse(message = 'Service unavailable') {
 // Background sync for failed requests
 self.addEventListener('sync', event => {
   if (event.tag === 'blaze-background-sync') {
-    console.log('🔄 Background sync: Retrying failed requests');
     event.waitUntil(syncFailedRequests());
   }
 });
@@ -314,14 +300,12 @@ self.addEventListener('sync', event => {
 async function syncFailedRequests() {
   // Implementation for retrying failed API calls
   // This would be used for analytics or other non-critical data
-  console.log('🔄 Syncing failed requests...');
 }
 
 // Push notifications
 self.addEventListener('push', event => {
   if (event.data) {
     const data = event.data.json();
-    console.log('📱 Push notification received:', data);
 
     const options = {
       body: data.body || 'New championship update available!',
@@ -351,7 +335,6 @@ self.addEventListener('push', event => {
 
 // Notification click handling
 self.addEventListener('notificationclick', event => {
-  console.log('📱 Notification clicked:', event.notification);
 
   event.notification.close();
 
@@ -387,7 +370,6 @@ self.addEventListener('message', event => {
       break;
 
     default:
-      console.log('📨 Unknown message type:', type);
   }
 });
 
@@ -399,7 +381,6 @@ async function clearAllCaches() {
     .map(name => caches.delete(name));
 
   await Promise.all(deletePromises);
-  console.log('🧹 All caches cleared');
 }
 
 // Get cache statistics
@@ -440,4 +421,3 @@ async function forceUpdate() {
   });
 }
 
-console.log('🔥 Blaze Sports Intel Service Worker: Ready for championship performance!');

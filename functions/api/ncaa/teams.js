@@ -84,9 +84,6 @@ async function fetchTeamData(baseUrl, teamId, season, sport) {
   const scheduleEvents = Array.isArray(schedule?.events) ? schedule.events : [];
 
   // Debug logging for troubleshooting
-  console.log('[NCAA] Schedule response keys:', schedule ? Object.keys(schedule) : 'null');
-  console.log('[NCAA] Events array exists:', Array.isArray(schedule?.events));
-  console.log('[NCAA] Events count:', scheduleEvents.length);
 
   return {
     team: {

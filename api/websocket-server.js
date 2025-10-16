@@ -33,6 +33,8 @@ class RealTimeServer {
 
     this.clients = new Set();
     this.subscriptions = new Map(); // client -> [gameIds]
+    this.channelSubscriptions = new Map(); // channel -> Set(clientId)
+    this.clientChannels = new Map(); // clientId -> Set(channel)
 
     this.setupWebSocket();
     this.setupEventListeners();
@@ -46,8 +48,8 @@ class RealTimeServer {
 
       this.clients.add(client);
       this.subscriptions.set(clientId, []);
+      this.clientChannels.set(clientId, new Set());
 
-      console.log(`✅ Client connected: ${clientId} (Total: ${this.clients.size})`);
 
       // Send welcome message
       ws.send(JSON.stringify({
@@ -71,6 +73,19 @@ class RealTimeServer {
       ws.on('close', () => {
         this.clients.delete(client);
         this.subscriptions.delete(clientId);
+        const channels = this.clientChannels.get(clientId);
+        if (channels) {
+          channels.forEach((channel) => {
+            const channelSet = this.channelSubscriptions.get(channel);
+            if (channelSet) {
+              channelSet.delete(clientId);
+              if (channelSet.size === 0) {
+                this.channelSubscriptions.delete(channel);
+              }
+            }
+          });
+        }
+        this.clientChannels.delete(clientId);
         console.log(`❌ Client disconnected: ${clientId} (Total: ${this.clients.size})`);
       });
 
@@ -109,6 +124,15 @@ class RealTimeServer {
     this.syncService.on('liveGameUpdate', (data) => {
       this.broadcastToSubscribers(data.gameId, {
         type: 'gameUpdate',
+        ...data
+      });
+    });
+
+    this.syncService.on('ncaaBaseballLiveFrame', (data = {}) => {
+      this.broadcastChannel('ncaa-baseball', {
+        type: 'ncaaBaseballUpdate',
+        channel: 'ncaa-baseball',
+        timestamp: data.timestamp || new Date().toISOString(),
         ...data
       });
     });
@@ -168,6 +192,14 @@ class RealTimeServer {
 
         case 'unsubscribe':
           await this.handleUnsubscribe(client, data);
+          break;
+
+        case 'subscribeChannel':
+          await this.handleChannelSubscribe(client, data);
+          break;
+
+        case 'unsubscribeChannel':
+          await this.handleChannelUnsubscribe(client, data);
           break;
 
         case 'getLiveGames':
@@ -275,6 +307,70 @@ class RealTimeServer {
         }));
       }
     }
+  }
+
+  async handleChannelSubscribe(client, data) {
+    const rawChannel = data?.channel || data?.name;
+
+    if (!rawChannel || typeof rawChannel !== 'string') {
+      client.ws.send(JSON.stringify({
+        type: 'error',
+        message: 'channel is required to subscribe to a feed'
+      }));
+      return;
+    }
+
+    const channel = rawChannel.toLowerCase();
+    if (!this.channelSubscriptions.has(channel)) {
+      this.channelSubscriptions.set(channel, new Set());
+    }
+
+    this.channelSubscriptions.get(channel).add(client.id);
+
+    if (!this.clientChannels.has(client.id)) {
+      this.clientChannels.set(client.id, new Set());
+    }
+
+    this.clientChannels.get(client.id).add(channel);
+
+    client.ws.send(JSON.stringify({
+      type: 'channelSubscribed',
+      channel,
+      message: `Subscribed to channel ${channel}`
+    }));
+  }
+
+  async handleChannelUnsubscribe(client, data) {
+    const rawChannel = data?.channel || data?.name;
+
+    if (!rawChannel || typeof rawChannel !== 'string') {
+      client.ws.send(JSON.stringify({
+        type: 'error',
+        message: 'channel is required to unsubscribe from a feed'
+      }));
+      return;
+    }
+
+    const channel = rawChannel.toLowerCase();
+    const channelSet = this.channelSubscriptions.get(channel);
+
+    if (channelSet) {
+      channelSet.delete(client.id);
+      if (channelSet.size === 0) {
+        this.channelSubscriptions.delete(channel);
+      }
+    }
+
+    const clientChannels = this.clientChannels.get(client.id);
+    if (clientChannels) {
+      clientChannels.delete(channel);
+    }
+
+    client.ws.send(JSON.stringify({
+      type: 'channelUnsubscribed',
+      channel,
+      message: `Unsubscribed from channel ${channel}`
+    }));
   }
 
   async sendLiveGames(client) {
@@ -456,7 +552,6 @@ class RealTimeServer {
     });
 
     if (broadcastCount > 0) {
-      console.log(`📡 Broadcast to ${broadcastCount} clients for game ${gameId}`);
     }
   }
 
@@ -468,15 +563,32 @@ class RealTimeServer {
     });
   }
 
+  broadcastChannel(channel, data) {
+    const subscribers = this.channelSubscriptions.get(channel);
+    if (!subscribers || subscribers.size === 0) {
+      return;
+    }
+
+    let broadcastCount = 0;
+    subscribers.forEach((clientId) => {
+      const client = Array.from(this.clients).find(c => c.id === clientId);
+      if (client && client.ws.readyState === 1) {
+        client.ws.send(JSON.stringify(data));
+        broadcastCount++;
+      }
+    });
+
+    if (broadcastCount > 0) {
+      console.log(`📡 Channel broadcast to ${broadcastCount} clients (${channel})`);
+    }
+  }
+
   generateClientId() {
-    return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `client_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   async start(port = 3001) {
     this.server.listen(port, () => {
-      console.log(`🚀 WebSocket Server running on ws://localhost:${port}`);
-      console.log(`📡 SSE endpoint: http://localhost:${port}/events`);
-      console.log(`💚 Health check: http://localhost:${port}/ws-health`);
     });
 
     // Start the sync service
@@ -500,7 +612,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
-    console.log('\n⏹️  Shutting down WebSocket server...');
     await server.stop();
     process.exit(0);
   });
