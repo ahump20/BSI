@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>College Baseball Live Games & Box Scores | Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="Live NCAA Division I baseball games with complete box scores, batting lines, and pitching lines. Practice to Play. Blaze Data Wins the Day."
+    />
+
+    <!-- Design Tokens -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-WP8puImHqpZUMpDs0I6SqAcMZcOXFJQEqGj5xmzO6KOqSqYLJvswPEbOu/6AJQO7" crossorigin="anonymous" />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Brand Colors */
+        --burnt-orange: #bf5700;
+        --burnt-orange-dark: #9c4500;
+        --burnt-orange-light: #d66d1a;
+
+        /* Neutrals */
+        --charcoal: #1a1a1a;
+        --slate: #2d2d2d;
+        --silver: #6b7280;
+        --white: #ffffff;
+        --off-white: #f9fafb;
+
+        /* Glassmorphism */
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --glass-blur: 12px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+        /* Typography */
+        --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'Courier New', monospace;
+
+        /* Spacing */
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+
+        /* Border Radius */
+        --radius-sm: 0.5rem;
+        --radius-md: 1rem;
+        --radius-lg: 1.5rem;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        color: var(--white);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Navigation */
+      .nav {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border-bottom: 1px solid var(--glass-border);
+        padding: var(--spacing-sm) 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--burnt-orange);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: var(--spacing-md);
+        list-style: none;
+      }
+
+      .nav-link {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--burnt-orange);
+      }
+
+      .nav-link:focus {
+        outline: 2px solid var(--burnt-orange);
+        outline-offset: 2px;
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: var(--spacing-xl) var(--spacing-md);
+        text-align: center;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .hero-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
+        color: var(--white);
+        padding: 0.5rem 1.25rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: var(--spacing-md);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .hero-title {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: var(--spacing-md);
+        background: linear-gradient(135deg, var(--white) 0%, var(--silver) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: 1.125rem;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 700px;
+        margin: 0 auto var(--spacing-lg);
+        line-height: 1.7;
+      }
+
+      /* Filters Section */
+      .filters {
+        max-width: 1400px;
+        margin: 0 auto var(--spacing-xl);
+        padding: 0 var(--spacing-md);
+      }
+
+      .filters-container {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .filter-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .filter-select,
+      .filter-input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-sm);
+        padding: 0.75rem 1rem;
+        color: var(--white);
+        font-size: 1rem;
+        font-family: var(--font-sans);
+        transition: all 0.3s ease;
+      }
+
+      .filter-select:focus,
+      .filter-input:focus {
+        outline: 2px solid var(--burnt-orange);
+        outline-offset: 2px;
+        border-color: var(--burnt-orange);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .filter-select option {
+        background: var(--charcoal);
+        color: var(--white);
+      }
+
+      /* Games Grid */
+      .games-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md) var(--spacing-xl);
+      }
+
+      .games-grid {
+        display: grid;
+        gap: var(--spacing-lg);
+      }
+
+      /* Loading State */
+      .loading {
+        text-align: center;
+        padding: var(--spacing-xl);
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .loading i {
+        font-size: 2rem;
+        color: var(--burnt-orange);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-xl);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        color: var(--burnt-orange);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .empty-state p {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* Game Card */
+      .game-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-md);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .game-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--burnt-orange);
+      }
+
+      .game-card.live {
+        border-color: #ef4444;
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+      }
+
+      /* Game Header */
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .game-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.875rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .game-status.live {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: var(--white);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .game-status.final {
+        background: rgba(75, 85, 99, 0.5);
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .game-status.scheduled {
+        background: rgba(59, 130, 246, 0.3);
+        color: #60a5fa;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .game-info {
+        display: flex;
+        gap: var(--spacing-sm);
+        align-items: center;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* Game Matchup */
+      .game-matchup {
+        display: grid;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .team {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-sm);
+        transition: background 0.3s ease;
+      }
+
+      .team:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .team.winner {
+        background: rgba(191, 87, 0, 0.1);
+      }
+
+      .team-name {
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      .team-conference {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .team-record {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-family: var(--font-mono);
+      }
+
+      .team-score {
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: var(--font-mono);
+        min-width: 3rem;
+        text-align: center;
+        color: var(--burnt-orange);
+      }
+
+      .team.winner .team-score {
+        color: var(--burnt-orange-light);
+      }
+
+      /* Box Score Toggle */
+      .box-score-toggle {
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        border-top: 1px solid var(--glass-border);
+      }
+
+      .toggle-btn {
+        background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 auto;
+      }
+
+      .toggle-btn:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .toggle-btn:focus {
+        outline: 2px solid var(--burnt-orange);
+        outline-offset: 2px;
+      }
+
+      /* Skip to content link */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: var(--burnt-orange);
+        color: white;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        z-index: 100;
+      }
+
+      .skip-link:focus {
+        top: 0;
+      }
+
+      /* Box Score Content */
+      .box-score-content {
+        display: none;
+        margin-top: var(--spacing-md);
+        padding: var(--spacing-md);
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--radius-md);
+      }
+
+      .box-score-content.active {
+        display: block;
+      }
+
+      .box-score-section {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .box-score-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .box-score-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-md);
+        color: var(--burnt-orange);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Stats Table */
+      .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+        overflow-x: auto;
+        display: block;
+      }
+
+      .stats-table thead {
+        background: rgba(191, 87, 0, 0.2);
+      }
+
+      .stats-table th {
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: nowrap;
+      }
+
+      .stats-table th:first-child {
+        position: sticky;
+        left: 0;
+        background: rgba(191, 87, 0, 0.2);
+        z-index: 10;
+      }
+
+      .stats-table td {
+        padding: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-family: var(--font-mono);
+      }
+
+      .stats-table td:first-child {
+        position: sticky;
+        left: 0;
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        z-index: 10;
+        font-family: var(--font-sans);
+        font-weight: 500;
+      }
+
+      .stats-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .stats-table tbody tr:hover td:first-child {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* Line Score */
+      .line-score {
+        overflow-x: auto;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .line-score table {
+        width: 100%;
+        min-width: 600px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .filters-container {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-title {
+          font-size: 2rem;
+        }
+
+        .team {
+          grid-template-columns: 1fr auto;
+        }
+
+        .team-record {
+          grid-column: 1 / -1;
+          padding-left: var(--spacing-sm);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="/" class="nav-brand" aria-label="Blaze Sports Intel Home">
+          <i class="fas fa-fire" aria-hidden="true"></i>
+          Blaze Sports Intel
+        </a>
+        <ul class="nav-links">
+          <li><a href="/college-baseball/" class="nav-link">College Baseball Hub</a></li>
+          <li><a href="/college-baseball/standings/" class="nav-link">Standings</a></li>
+          <li><a href="/college-baseball/teams/" class="nav-link">Teams</a></li>
+          <li><a href="/college-baseball/players/" class="nav-link">Players</a></li>
+          <li><a href="/copilot/" class="nav-link">AI Copilot</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content" data-aos="fade-up">
+        <div class="hero-badge">⚾ Live Games & Box Scores</div>
+        <h1 class="hero-title">Live Games & Complete Box Scores</h1>
+        <p class="hero-subtitle">
+          Full batting lines (AB, R, H, RBI, BB, SO, AVG) and pitching lines (IP, H, R, ER, BB, SO, ERA) for every
+          NCAA Division I baseball game. Live updates, detailed statistics, and player-level performance data.
+        </p>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters" id="main-content">
+      <div class="filters-container" data-aos="fade-up">
+        <div class="filter-group">
+          <label class="filter-label" for="date-filter">Date</label>
+          <input type="date" id="date-filter" class="filter-input" aria-label="Select game date" />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="conference-filter">Conference</label>
+          <select id="conference-filter" class="filter-select" aria-label="Filter by conference">
+            <option value="">All Conferences</option>
+            <option value="SEC">SEC</option>
+            <option value="ACC">ACC</option>
+            <option value="Big 12">Big 12</option>
+            <option value="Pac-12">Pac-12</option>
+            <option value="Big Ten">Big Ten</option>
+            <option value="Conference USA">Conference USA</option>
+            <option value="American">American Athletic</option>
+            <option value="Mountain West">Mountain West</option>
+            <option value="Sun Belt">Sun Belt</option>
+            <option value="WAC">WAC</option>
+            <option value="Big West">Big West</option>
+            <option value="Atlantic 10">Atlantic 10</option>
+            <option value="Colonial">Colonial</option>
+            <option value="Horizon">Horizon League</option>
+            <option value="Ivy">Ivy League</option>
+            <option value="MAAC">MAAC</option>
+            <option value="MAC">MAC</option>
+            <option value="MEAC">MEAC</option>
+            <option value="Missouri Valley">Missouri Valley</option>
+            <option value="Northeast">Northeast</option>
+            <option value="Ohio Valley">Ohio Valley</option>
+            <option value="Patriot">Patriot League</option>
+            <option value="Southern">Southern</option>
+            <option value="Southland">Southland</option>
+            <option value="SWAC">SWAC</option>
+            <option value="Summit">Summit League</option>
+            <option value="WCC">West Coast</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="status-filter">Status</label>
+          <select id="status-filter" class="filter-select" aria-label="Filter by game status">
+            <option value="">All Games</option>
+            <option value="live">Live Games</option>
+            <option value="final">Final Scores</option>
+            <option value="scheduled">Scheduled</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Games Grid -->
+    <section class="games-container">
+      <div id="games-grid" class="games-grid">
+        <!-- Loading State -->
+        <div class="loading" role="status" aria-live="polite" aria-label="Loading games">
+          <i class="fas fa-circle-notch" aria-hidden="true"></i>
+          <p>Loading games...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-DDqlMEcNYfzPKTZ7Qf+lSJFRqMZhYdCIvQHR6qcFyOLKtME3P3K5S0m0dQ5kaE6n" crossorigin="anonymous"></script>
+
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true,
+        offset: 100
+      });
+
+      // Set default date to today
+      const dateInput = document.getElementById('date-filter');
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
+
+      // State
+      let currentFilters = {
+        date: today,
+        conference: '',
+        status: ''
+      };
+
+      // Event Listeners
+      dateInput.addEventListener('change', e => {
+        currentFilters.date = e.target.value;
+        loadGames();
+      });
+
+      document.getElementById('conference-filter').addEventListener('change', e => {
+        currentFilters.conference = e.target.value;
+        loadGames();
+      });
+
+      document.getElementById('status-filter').addEventListener('change', e => {
+        currentFilters.status = e.target.value;
+        loadGames();
+      });
+
+      // Load games function
+      async function loadGames() {
+        const gamesGrid = document.getElementById('games-grid');
+        gamesGrid.innerHTML = `
+          <div class="loading" role="status" aria-live="polite" aria-label="Loading games">
+            <i class="fas fa-circle-notch" aria-hidden="true"></i>
+            <p>Loading games...</p>
+          </div>
+        `;
+
+        try {
+          const params = new URLSearchParams();
+          if (currentFilters.date) params.append('date', currentFilters.date);
+          if (currentFilters.conference) params.append('conference', currentFilters.conference);
+          if (currentFilters.status) params.append('status', currentFilters.status);
+
+          const response = await fetch(`/api/college-baseball/scoreboard?${params}`);
+          const data = await response.json();
+
+          if (!data.games || data.games.length === 0) {
+            // Check if current date is in off-season (outside Feb-June)
+            const selectedDate = new Date(currentFilters.date);
+            const month = selectedDate.getMonth() + 1; // 1-12
+            const isOffSeason = month < 2 || month > 6;
+
+            const message = isOffSeason
+              ? 'The college baseball season typically runs February-June. No games are scheduled for this date.'
+              : 'No games scheduled for the selected filters. Try a different date or conference.';
+
+            gamesGrid.innerHTML = `
+              <div class="empty-state" data-aos="fade-up" role="status">
+                <i class="fas fa-baseball-ball" aria-hidden="true"></i>
+                <h3>${isOffSeason ? 'Off-Season Period' : 'No Games Found'}</h3>
+                <p>${message}</p>
+                ${isOffSeason ? '<p style="margin-top: 1rem; color: rgba(255, 255, 255, 0.5); font-size: 0.875rem;"><i class="fas fa-info-circle" aria-hidden="true"></i> Check back in February for the next season\'s schedule.</p>' : ''}
+              </div>
+            `;
+            return;
+          }
+
+          gamesGrid.innerHTML = data.games.map(game => createGameCard(game)).join('');
+
+          // Reinitialize AOS for new elements
+          AOS.refresh();
+        } catch (error) {
+          console.error('Error loading games:', error);
+          gamesGrid.innerHTML = `
+            <div class="empty-state" data-aos="fade-up" role="alert">
+              <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+              <h3>Error Loading Games</h3>
+              <p>Unable to load game data. Please try again later.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Create game card HTML
+      function createGameCard(game) {
+        const isLive = game.status === 'live';
+        const isFinal = game.status === 'final';
+        const isScheduled = game.status === 'scheduled';
+
+        const statusClass = isLive ? 'live' : isFinal ? 'final' : 'scheduled';
+        const statusText = isLive
+          ? `${game.inningHalf === 'top' ? 'Top' : game.inningHalf === 'bottom' ? 'Bottom' : ''} ${game.inning || ''}`
+          : isFinal
+            ? 'Final'
+            : game.gameTime || 'TBD';
+
+        const awayWinner = isFinal && game.awayTeam.winner;
+        const homeWinner = isFinal && game.homeTeam.winner;
+
+        const gameDate = new Date(game.gameDate).toLocaleDateString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric'
+        });
+
+        return `
+          <div class="game-card ${statusClass}" data-aos="fade-up">
+            <div class="game-header">
+              <div class="game-status ${statusClass}">
+                ${isLive ? '<i class="fas fa-circle"></i>' : ''}
+                ${statusText}
+              </div>
+              <div class="game-info">
+                <i class="fas fa-calendar-alt"></i> ${gameDate}
+                ${game.venue ? `<i class="fas fa-map-marker-alt"></i> ${game.venue}` : ''}
+              </div>
+            </div>
+
+            <div class="game-matchup">
+              <div class="team ${awayWinner ? 'winner' : ''}">
+                <div>
+                  <div class="team-name">${game.awayTeam.name}</div>
+                  <div class="team-conference">${game.awayTeam.conference || ''}</div>
+                </div>
+                <div class="team-score">${game.awayTeam.score}</div>
+              </div>
+
+              <div class="team ${homeWinner ? 'winner' : ''}">
+                <div>
+                  <div class="team-name">${game.homeTeam.name}</div>
+                  <div class="team-conference">${game.homeTeam.conference || ''}</div>
+                </div>
+                <div class="team-score">${game.homeTeam.score}</div>
+              </div>
+            </div>
+
+            <div class="box-score-toggle">
+              <button class="toggle-btn" onclick="toggleBoxScore(${game.id})" aria-label="Toggle box score for game ${game.id}" aria-expanded="false" aria-controls="box-score-${game.id}">
+                <i class="fas fa-table" aria-hidden="true"></i>
+                View Full Box Score
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+              </button>
+              <div id="box-score-${game.id}" class="box-score-content" aria-hidden="true">
+                ${createBoxScore(game)}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Create box score HTML (placeholder for detailed stats)
+      function createBoxScore(game) {
+        return `
+          <div class="box-score-section">
+            <div class="box-score-title">
+              <i class="fas fa-chart-line" aria-hidden="true"></i>
+              Line Score
+            </div>
+            <div class="line-score">
+              <table class="stats-table">
+                <thead>
+                  <tr>
+                    <th scope="col" abbr="Team">Team</th>
+                    <th scope="col" abbr="Inning 1">1</th>
+                    <th scope="col" abbr="Inning 2">2</th>
+                    <th scope="col" abbr="Inning 3">3</th>
+                    <th scope="col" abbr="Inning 4">4</th>
+                    <th scope="col" abbr="Inning 5">5</th>
+                    <th scope="col" abbr="Inning 6">6</th>
+                    <th scope="col" abbr="Inning 7">7</th>
+                    <th scope="col" abbr="Inning 8">8</th>
+                    <th scope="col" abbr="Inning 9">9</th>
+                    <th scope="col" abbr="Runs">R</th>
+                    <th scope="col" abbr="Hits">H</th>
+                    <th scope="col" abbr="Errors">E</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>${game.awayTeam.name}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><strong>${game.awayTeam.score}</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>${game.homeTeam.name}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><strong>${game.homeTeam.score}</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="box-score-section">
+            <div class="box-score-title">
+              <i class="fas fa-baseball-ball"></i>
+              ${game.awayTeam.name} Batting
+            </div>
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>AB</th>
+                  <th>R</th>
+                  <th>H</th>
+                  <th>RBI</th>
+                  <th>BB</th>
+                  <th>SO</th>
+                  <th>AVG</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                    <i class="fas fa-info-circle"></i> Detailed box scores available during/after game
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box-score-section">
+            <div class="box-score-title">
+              <i class="fas fa-baseball-ball"></i>
+              ${game.homeTeam.name} Batting
+            </div>
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>AB</th>
+                  <th>R</th>
+                  <th>H</th>
+                  <th>RBI</th>
+                  <th>BB</th>
+                  <th>SO</th>
+                  <th>AVG</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                    <i class="fas fa-info-circle"></i> Detailed box scores available during/after game
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box-score-section">
+            <div class="box-score-title">
+              <i class="fas fa-chart-bar"></i>
+              ${game.awayTeam.name} Pitching
+            </div>
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>IP</th>
+                  <th>H</th>
+                  <th>R</th>
+                  <th>ER</th>
+                  <th>BB</th>
+                  <th>SO</th>
+                  <th>ERA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                    <i class="fas fa-info-circle"></i> Detailed pitching stats available during/after game
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box-score-section">
+            <div class="box-score-title">
+              <i class="fas fa-chart-bar"></i>
+              ${game.homeTeam.name} Pitching
+            </div>
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>IP</th>
+                  <th>H</th>
+                  <th>R</th>
+                  <th>ER</th>
+                  <th>BB</th>
+                  <th>SO</th>
+                  <th>ERA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                    <i class="fas fa-info-circle"></i> Detailed pitching stats available during/after game
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      // Toggle box score visibility
+      function toggleBoxScore(gameId) {
+        const content = document.getElementById(`box-score-${gameId}`);
+        const isActive = content.classList.contains('active');
+
+        // Close all other box scores
+        document.querySelectorAll('.box-score-content.active').forEach(el => {
+          el.classList.remove('active');
+        });
+
+        // Toggle current box score
+        if (!isActive) {
+          content.classList.add('active');
+        }
+      }
+
+      // Initial load
+      loadGames();
+
+      // Auto-refresh for live games every 30 seconds
+      setInterval(() => {
+        if (currentFilters.status === 'live' || currentFilters.status === '') {
+          loadGames();
+        }
+      }, 30000);
+    </script>
+  </body>
+</html>

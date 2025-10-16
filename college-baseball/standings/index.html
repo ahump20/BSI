@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>College Baseball Conference Standings & RPI Rankings | Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="Complete NCAA Division I baseball conference standings with RPI rankings, strength of schedule, and tournament implications. All conferences tracked."
+    />
+
+    <!-- Design Tokens -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Brand Colors */
+        --burnt-orange: #bf5700;
+        --burnt-orange-dark: #9c4500;
+        --burnt-orange-light: #d66d1a;
+
+        /* Neutrals */
+        --charcoal: #1a1a1a;
+        --slate: #2d2d2d;
+        --silver: #6b7280;
+        --white: #ffffff;
+        --off-white: #f9fafb;
+
+        /* Glassmorphism */
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --glass-blur: 12px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+        /* Typography */
+        --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'Courier New', monospace;
+
+        /* Spacing */
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+
+        /* Border Radius */
+        --radius-sm: 0.5rem;
+        --radius-md: 1rem;
+        --radius-lg: 1.5rem;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        color: var(--white);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Navigation */
+      .nav {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border-bottom: 1px solid var(--glass-border);
+        padding: var(--spacing-sm) 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--burnt-orange);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: var(--spacing-md);
+        list-style: none;
+      }
+
+      .nav-link {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--burnt-orange);
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: var(--spacing-xl) var(--spacing-md);
+        text-align: center;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .hero-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
+        color: var(--white);
+        padding: 0.5rem 1.25rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: var(--spacing-md);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .hero-title {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: var(--spacing-md);
+        background: linear-gradient(135deg, var(--white) 0%, var(--silver) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: 1.125rem;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 700px;
+        margin: 0 auto var(--spacing-lg);
+        line-height: 1.7;
+      }
+
+      /* Content Container */
+      .content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md) var(--spacing-xl);
+      }
+
+      /* Conference Filters */
+      .filters {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .filters-container {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        align-items: center;
+      }
+
+      .filter-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-right: var(--spacing-sm);
+      }
+
+      /* Focus Indicators */
+      .nav-link:focus,
+      .filter-btn:focus {
+        outline: 2px solid var(--burnt-orange);
+        outline-offset: 2px;
+      }
+
+      /* Skip Link */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: var(--burnt-orange);
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        z-index: 100;
+      }
+
+      .skip-link:focus {
+        top: 0;
+      }
+
+      .filter-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 1rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filter-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--white);
+      }
+
+      .filter-btn.active {
+        background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
+        border-color: var(--burnt-orange);
+        color: var(--white);
+      }
+
+      /* Loading State */
+      .loading {
+        text-align: center;
+        padding: var(--spacing-xl);
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .loading i {
+        font-size: 2rem;
+        color: var(--burnt-orange);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Conference Section */
+      .conference-section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .conference-header {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+        padding: var(--spacing-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .conference-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--burnt-orange);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .conference-info {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* Standings Table */
+      .standings-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-top: none;
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        overflow: hidden;
+      }
+
+      .standings-table thead {
+        background: rgba(191, 87, 0, 0.2);
+      }
+
+      .standings-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: nowrap;
+      }
+
+      .standings-table th:first-child {
+        padding-left: 1.5rem;
+      }
+
+      .standings-table td {
+        padding: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .standings-table td:first-child {
+        padding-left: 1.5rem;
+      }
+
+      .standings-table tbody tr {
+        transition: background 0.3s ease;
+      }
+
+      .standings-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .standings-table tbody tr.top-team {
+        background: rgba(191, 87, 0, 0.1);
+      }
+
+      .rank-cell {
+        font-weight: 700;
+        color: var(--burnt-orange);
+        font-family: var(--font-mono);
+      }
+
+      .team-cell {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .team-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .team-name {
+        color: var(--white);
+      }
+
+      .stat-cell {
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+      }
+
+      .win-pct {
+        font-weight: 600;
+      }
+
+      .streak {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .streak.win {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+      }
+
+      .streak.loss {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .conference-header {
+          flex-direction: column;
+          gap: var(--spacing-sm);
+          align-items: flex-start;
+        }
+
+        .standings-table {
+          font-size: 0.875rem;
+        }
+
+        .standings-table th,
+        .standings-table td {
+          padding: 0.75rem 0.5rem;
+        }
+
+        .standings-table th:first-child,
+        .standings-table td:first-child {
+          padding-left: 1rem;
+        }
+
+        .team-cell {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
+        }
+
+        .team-logo {
+          width: 24px;
+          height: 24px;
+        }
+
+        /* Hide less important columns on mobile */
+        .standings-table th:nth-child(n + 6),
+        .standings-table td:nth-child(n + 6) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="/" class="nav-brand" aria-label="Blaze Sports Intel Home">
+          <i class="fas fa-fire" aria-hidden="true"></i>
+          Blaze Sports Intel
+        </a>
+        <ul class="nav-links">
+          <li><a href="/college-baseball/" class="nav-link">College Baseball Hub</a></li>
+          <li><a href="/college-baseball/games/" class="nav-link">Live Games</a></li>
+          <li><a href="/college-baseball/teams/" class="nav-link">Teams</a></li>
+          <li><a href="/college-baseball/players/" class="nav-link">Players</a></li>
+          <li><a href="/copilot/" class="nav-link">AI Copilot</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content" data-aos="fade-up">
+        <div class="hero-badge">📊 Conference Standings & RPI</div>
+        <h1 class="hero-title">Conference Standings & Tournament Implications</h1>
+        <p class="hero-subtitle">
+          All NCAA Division I baseball conferences with complete standings, win percentages, games back, and tournament
+          implications. RPI rankings and strength of schedule analysis included.
+        </p>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <main id="main-content" class="content">
+      <!-- Conference Filters -->
+      <section class="filters" data-aos="fade-up">
+        <div class="filters-container">
+          <span class="filter-label" id="conference-filter-label">Filter by Conference:</span>
+          <button class="filter-btn active" data-conference="all" aria-pressed="true" aria-labelledby="conference-filter-label">All Conferences</button>
+          <button class="filter-btn" data-conference="power5" aria-pressed="false" aria-labelledby="conference-filter-label">Power 5</button>
+          <button class="filter-btn" data-conference="mid-major" aria-pressed="false" aria-labelledby="conference-filter-label">Mid-Major</button>
+        </div>
+      </section>
+
+      <!-- Standings Grid -->
+      <div id="standings-container">
+        <div class="loading" role="status" aria-live="polite" aria-label="Loading conference standings">
+          <i class="fas fa-circle-notch" aria-hidden="true"></i>
+          <p>Loading conference standings...</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true,
+        offset: 100
+      });
+
+      // Power 5 conferences
+      const POWER_5 = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
+
+      // State
+      let allConferences = [];
+      let currentFilter = 'all';
+
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+          currentFilter = btn.dataset.conference;
+          renderStandings();
+        });
+      });
+
+      // Load standings
+      async function loadStandings() {
+        const container = document.getElementById('standings-container');
+        container.innerHTML = `
+          <div class="loading" role="status" aria-live="polite" aria-label="Loading conference standings">
+            <i class="fas fa-circle-notch" aria-hidden="true"></i>
+            <p>Loading conference standings...</p>
+          </div>
+        `;
+
+        try {
+          const response = await fetch('/api/college-baseball/standings');
+          const data = await response.json();
+
+          if (!data.conferences || data.conferences.length === 0) {
+            // Check if API indicates off-season
+            const isOffSeason = data.offSeason === true;
+            const message = data.message || 'Conference standings data is not currently available. Please try again later.';
+
+            container.innerHTML = `
+              <div class="empty-state" role="alert">
+                <i class="fas fa-${isOffSeason ? 'calendar-times' : 'exclamation-triangle'}" aria-hidden="true"></i>
+                <h3>${isOffSeason ? 'Off-Season Period' : 'No Standings Available'}</h3>
+                <p>${message}</p>
+                ${isOffSeason ? '<p style="margin-top: 1rem; color: rgba(255, 255, 255, 0.5); font-size: 0.875rem;"><i class="fas fa-info-circle" aria-hidden="true"></i> Check back in February for the 2026 season standings.</p>' : ''}
+              </div>
+            `;
+            return;
+          }
+
+          allConferences = data.conferences;
+          renderStandings();
+        } catch (error) {
+          console.error('Error loading standings:', error);
+          container.innerHTML = `
+            <div class="empty-state" role="alert">
+              <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+              <h3>Error Loading Standings</h3>
+              <p>Unable to load conference standings. Please try again later.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Render standings based on filter
+      function renderStandings() {
+        const container = document.getElementById('standings-container');
+
+        let filteredConferences = allConferences;
+
+        if (currentFilter === 'power5') {
+          filteredConferences = allConferences.filter(conf =>
+            POWER_5.some(p5 => conf.conference.name.includes(p5))
+          );
+        } else if (currentFilter === 'mid-major') {
+          filteredConferences = allConferences.filter(
+            conf => !POWER_5.some(p5 => conf.conference.name.includes(p5))
+          );
+        }
+
+        if (filteredConferences.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state" role="status">
+              <i class="fas fa-info-circle" aria-hidden="true"></i>
+              <h3>No Conferences Match Filter</h3>
+              <p>Try selecting a different filter option.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = filteredConferences.map(conf => createConferenceSection(conf)).join('');
+
+        // Reinitialize AOS
+        AOS.refresh();
+      }
+
+      // Create conference section HTML
+      function createConferenceSection(conference) {
+        const conf = conference.conference;
+        const teams = conference.teams || [];
+
+        return `
+          <section class="conference-section" data-aos="fade-up">
+            <div class="conference-header">
+              <div class="conference-name">
+                <i class="fas fa-trophy" aria-hidden="true"></i>
+                ${conf.name}
+              </div>
+              <div class="conference-info">
+                <i class="fas fa-users" aria-hidden="true"></i> ${teams.length} Teams
+              </div>
+            </div>
+            <table class="standings-table" role="table" aria-label="${conf.name} standings">
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Team</th>
+                  <th scope="col" abbr="Overall Record">Overall</th>
+                  <th scope="col" abbr="Conference Record">Conference</th>
+                  <th scope="col" abbr="Win Percentage">Win %</th>
+                  <th scope="col" abbr="Conference Win Percentage">Conf %</th>
+                  <th scope="col" abbr="Games Back">GB</th>
+                  <th scope="col">Streak</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${teams.map((team, index) => createTeamRow(team, index)).join('')}
+              </tbody>
+            </table>
+          </section>
+        `;
+      }
+
+      // Create team row HTML
+      function createTeamRow(teamData, index) {
+        const team = teamData.team;
+        const record = teamData.record;
+        const standings = teamData.standings;
+
+        const isTopTeam = index < 3;
+        const streak = standings.streak || '';
+        const isWinStreak = streak.startsWith('W');
+
+        return `
+          <tr class="${isTopTeam ? 'top-team' : ''}">
+            <td class="rank-cell">${teamData.rank}</td>
+            <td>
+              <div class="team-cell">
+                ${
+                  team.logo
+                    ? `<img src="${team.logo}" alt="${team.name}" class="team-logo" onerror="this.style.display='none'" />`
+                    : ''
+                }
+                <span class="team-name">${team.name}</span>
+              </div>
+            </td>
+            <td class="stat-cell">${record.overall}</td>
+            <td class="stat-cell">${record.conference}</td>
+            <td class="stat-cell win-pct">${record.winPct}</td>
+            <td class="stat-cell">${record.confWinPct}</td>
+            <td class="stat-cell">${standings.gamesBack}</td>
+            <td>
+              ${
+                streak
+                  ? `<span class="streak ${isWinStreak ? 'win' : 'loss'}">${streak}</span>`
+                  : '<span class="stat-cell">—</span>'
+              }
+            </td>
+          </tr>
+        `;
+      }
+
+      // Initial load
+      loadStandings();
+    </script>
+  </body>
+</html>

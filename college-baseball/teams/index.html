@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NCAA Baseball Team Pages - Rosters & Schedules | Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="Complete NCAA Division I baseball team directory with rosters, season schedules, and game results. From SEC powerhouses to mid-major contenders."
+    />
+
+    <!-- Design Tokens -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Brand Colors */
+        --burnt-orange: #bf5700;
+        --burnt-orange-dark: #9c4500;
+        --burnt-orange-light: #d66d1a;
+
+        /* Neutrals */
+        --charcoal: #1a1a1a;
+        --slate: #2d2d2d;
+        --silver: #6b7280;
+        --white: #ffffff;
+        --off-white: #f9fafb;
+
+        /* Glassmorphism */
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --glass-blur: 12px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+        /* Typography */
+        --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'Courier New', monospace;
+
+        /* Spacing */
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+
+        /* Border Radius */
+        --radius-sm: 0.5rem;
+        --radius-md: 1rem;
+        --radius-lg: 1.5rem;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        color: var(--white);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Navigation */
+      .nav {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border-bottom: 1px solid var(--glass-border);
+        padding: var(--spacing-sm) 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--burnt-orange);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: var(--spacing-md);
+        list-style: none;
+      }
+
+      .nav-link {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--burnt-orange);
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: var(--spacing-xl) var(--spacing-md);
+        text-align: center;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .hero-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
+        color: var(--white);
+        padding: 0.5rem 1.25rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: var(--spacing-md);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .hero-title {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: var(--spacing-md);
+        background: linear-gradient(135deg, var(--white) 0%, var(--silver) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: 1.125rem;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 700px;
+        margin: 0 auto var(--spacing-lg);
+        line-height: 1.7;
+      }
+
+      /* Search & Filters */
+      .search-section {
+        max-width: 1400px;
+        margin: 0 auto var(--spacing-xl);
+        padding: 0 var(--spacing-md);
+      }
+
+      .search-container {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--spacing-md);
+        align-items: end;
+      }
+
+      .search-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .search-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Focus Indicators */
+      .nav-link:focus,
+      .search-input:focus,
+      .search-btn:focus {
+        outline: 2px solid var(--burnt-orange);
+        outline-offset: 2px;
+      }
+
+      /* Skip Link */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: var(--burnt-orange);
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        z-index: 100;
+      }
+
+      .skip-link:focus {
+        top: 0;
+      }
+
+      .search-input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-sm);
+        padding: 0.875rem 1.25rem;
+        color: var(--white);
+        font-size: 1rem;
+        font-family: var(--font-sans);
+        transition: all 0.3s ease;
+      }
+
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--burnt-orange);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .search-btn {
+        background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
+        color: var(--white);
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .search-btn:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-lg);
+      }
+
+      /* Content Container */
+      .content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md) var(--spacing-xl);
+      }
+
+      /* Stats Bar */
+      .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .stat-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--burnt-orange);
+        font-family: var(--font-mono);
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Teams Grid */
+      .teams-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+      }
+
+      /* Team Card */
+      .team-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-md);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .team-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--burnt-orange);
+      }
+
+      .team-header {
+        display: flex;
+        gap: var(--spacing-md);
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .team-logo {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .team-info {
+        flex: 1;
+      }
+
+      .team-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 0.25rem;
+      }
+
+      .team-conference {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .team-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: 0.25rem;
+      }
+
+      .team-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+        margin-top: auto;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-item-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-item-value {
+        font-family: var(--font-mono);
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--burnt-orange);
+      }
+
+      /* Loading State */
+      .loading {
+        text-align: center;
+        padding: var(--spacing-xl);
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .loading i {
+        font-size: 2rem;
+        color: var(--burnt-orange);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-xl);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        color: var(--burnt-orange);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .empty-state p {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .search-container {
+          grid-template-columns: 1fr;
+        }
+
+        .teams-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stats-bar {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="/" class="nav-brand" aria-label="Blaze Sports Intel Home">
+          <i class="fas fa-fire" aria-hidden="true"></i>
+          Blaze Sports Intel
+        </a>
+        <ul class="nav-links">
+          <li><a href="/college-baseball/" class="nav-link">College Baseball Hub</a></li>
+          <li><a href="/college-baseball/games/" class="nav-link">Live Games</a></li>
+          <li><a href="/college-baseball/standings/" class="nav-link">Standings</a></li>
+          <li><a href="/college-baseball/players/" class="nav-link">Players</a></li>
+          <li><a href="/copilot/" class="nav-link">AI Copilot</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content" data-aos="fade-up">
+        <div class="hero-badge">🏫 NCAA Baseball Teams</div>
+        <h1 class="hero-title">Complete Team Directory</h1>
+        <p class="hero-subtitle">
+          Team rosters, season schedules, game results, and statistical breakdowns for all NCAA Division I baseball
+          programs. From SEC powerhouses to mid-major contenders—every D1 team covered.
+        </p>
+      </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-container" data-aos="fade-up">
+        <div class="search-group">
+          <label class="search-label" for="team-search">Search Teams</label>
+          <input
+            type="text"
+            id="team-search"
+            class="search-input"
+            placeholder="Search by team name, city, or mascot..."
+            autocomplete="off"
+          />
+        </div>
+        <button id="search-btn" class="search-btn">
+          <i class="fas fa-search"></i>
+          Search
+        </button>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <main id="main-content" class="content">
+      <!-- Stats Bar -->
+      <div class="stats-bar" data-aos="fade-up">
+        <div class="stat-card">
+          <div class="stat-value" id="total-teams">Loading...</div>
+          <div class="stat-label">D1 Teams</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-conferences">Loading...</div>
+          <div class="stat-label">Conferences</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="power5-teams">Loading...</div>
+          <div class="stat-label">Power 5 Teams</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="mid-major-teams">Loading...</div>
+          <div class="stat-label">Mid-Major Teams</div>
+        </div>
+      </div>
+
+      <!-- Teams Grid -->
+      <div id="teams-container">
+        <div class="loading" role="status" aria-live="polite" aria-label="Loading teams">
+          <i class="fas fa-circle-notch" aria-hidden="true"></i>
+          <p>Loading teams...</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true,
+        offset: 100
+      });
+
+      // Power 5 conferences
+      const POWER_5 = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
+
+      // State
+      let allTeams = [];
+      let currentSearch = '';
+
+      // Search functionality
+      const searchInput = document.getElementById('team-search');
+      const searchBtn = document.getElementById('search-btn');
+
+      searchBtn.addEventListener('click', () => {
+        currentSearch = searchInput.value.trim();
+        loadTeams();
+      });
+
+      searchInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+          currentSearch = searchInput.value.trim();
+          loadTeams();
+        }
+      });
+
+      // Load teams
+      async function loadTeams() {
+        const container = document.getElementById('teams-container');
+        container.innerHTML = `
+          <div class="loading" role="status" aria-live="polite" aria-label="Loading teams">
+            <i class="fas fa-circle-notch" aria-hidden="true"></i>
+            <p>Loading teams...</p>
+          </div>
+        `;
+
+        try {
+          const params = new URLSearchParams();
+          if (currentSearch) params.append('search', currentSearch);
+
+          const response = await fetch(`/api/college-baseball/teams?${params}`);
+          const data = await response.json();
+
+          if (!data.teams || data.teams.length === 0) {
+            container.innerHTML = `
+              <div class="empty-state" data-aos="fade-up" role="status">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <h3>No Teams Found</h3>
+                <p>No teams match your search criteria. Try a different search term.</p>
+              </div>
+            `;
+            return;
+          }
+
+          allTeams = data.teams;
+
+          // Update stats
+          updateStats(data.teams);
+
+          // Render teams grid
+          container.innerHTML = `<div class="teams-grid">${data.teams.map(team => createTeamCard(team)).join('')}</div>`;
+
+          // Reinitialize AOS
+          AOS.refresh();
+        } catch (error) {
+          console.error('Error loading teams:', error);
+          container.innerHTML = `
+            <div class="empty-state" data-aos="fade-up" role="alert">
+              <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+              <h3>Error Loading Teams</h3>
+              <p>Unable to load team data. Please try again later.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Update stats bar
+      function updateStats(teams) {
+        document.getElementById('total-teams').textContent = teams.length;
+
+        const conferences = new Set(teams.map(t => t.conference).filter(Boolean));
+        document.getElementById('total-conferences').textContent = conferences.size;
+
+        const power5Teams = teams.filter(t => POWER_5.some(p5 => t.conference && t.conference.includes(p5)));
+        document.getElementById('power5-teams').textContent = power5Teams.length;
+
+        const midMajorTeams = teams.filter(t => t.conference && !POWER_5.some(p5 => t.conference.includes(p5)));
+        document.getElementById('mid-major-teams').textContent = midMajorTeams.length;
+      }
+
+      // Create team card HTML
+      function createTeamCard(team) {
+        const location = team.location ? team.location.city && team.location.state
+          ? `${team.location.city}, ${team.location.state}`
+          : team.location.city || team.location.state || 'Location N/A'
+          : 'Location N/A';
+
+        return `
+          <div class="team-card" data-aos="fade-up">
+            <div class="team-header">
+              <img
+                src="${team.logo || 'https://placehold.co/64x64/BF5700/white?text=' + encodeURIComponent(team.abbreviation || team.name.substring(0, 2))}"
+                alt="${team.name}"
+                class="team-logo"
+                onerror="this.src='https://placehold.co/64x64/BF5700/white?text=${encodeURIComponent(team.abbreviation || team.name.substring(0, 2))}'"
+              />
+              <div class="team-info">
+                <div class="team-name">${team.name}</div>
+                <div class="team-conference">${team.conference || 'Independent'}</div>
+                <div class="team-location">
+                  <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                  ${location}
+                </div>
+              </div>
+            </div>
+
+            <div class="team-stats">
+              <div class="stat-item">
+                <span class="stat-item-label">Division</span>
+                <span class="stat-item-value">${team.division || 'D1'}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-item-label">Mascot</span>
+                <span class="stat-item-value">${team.mascot || '—'}</span>
+              </div>
+              ${
+                team.contact && team.contact.website
+                  ? `
+              <div class="stat-item">
+                <span class="stat-item-label">Website</span>
+                <span class="stat-item-value">
+                  <a href="${team.contact.website}" target="_blank" style="color: var(--burnt-orange);">
+                    <i class="fas fa-external-link-alt"></i>
+                  </a>
+                </span>
+              </div>
+              `
+                  : ''
+              }
+              ${
+                team.contact && team.contact.twitter
+                  ? `
+              <div class="stat-item">
+                <span class="stat-item-label">Twitter</span>
+                <span class="stat-item-value">
+                  <a href="https://twitter.com/${team.contact.twitter}" target="_blank" style="color: var(--burnt-orange);">
+                    <i class="fab fa-twitter"></i>
+                  </a>
+                </span>
+              </div>
+              `
+                  : ''
+              }
+            </div>
+          </div>
+        `;
+      }
+
+      // Initial load
+      loadTeams();
+    </script>
+  </body>
+</html>
