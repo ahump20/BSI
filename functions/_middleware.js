@@ -2,12 +2,13 @@
  * Seasonal Routing Middleware
  *
  * Automatically redirects root path (/) to the appropriate sport based on current season:
- * - Baseball: March 1 - June 30 (college baseball spring season)
- * - Football: August 1 - December 31 (college football fall season)
+ * - Basketball: January 1 - March 31 (NCAA basketball / March Madness)
+ * - Baseball: April 1 - July 31 (college baseball season)
+ * - Football: August 1 - December 31 (college football season)
  *
  * Respects user preferences via:
- * - Query parameter: ?sport=baseball or ?sport=football
- * - Cookie: preferred_sport=baseball or preferred_sport=football
+ * - Query parameter: ?sport=basketball, ?sport=baseball, or ?sport=football
+ * - Cookie: preferred_sport=basketball, preferred_sport=baseball, or preferred_sport=football
  *
  * All other routes pass through unchanged.
  */
@@ -23,7 +24,7 @@ export async function onRequest(context) {
 
   // Check for manual override via query parameter
   const sportParam = url.searchParams.get('sport')
-  if (sportParam === 'baseball' || sportParam === 'football') {
+  if (sportParam === 'baseball' || sportParam === 'football' || sportParam === 'basketball') {
     // Set cookie to remember preference (30 days)
     const cookieHeader = `preferred_sport=${sportParam}; Path=/; Max-Age=2592000; SameSite=Lax`
 
@@ -39,9 +40,19 @@ export async function onRequest(context) {
           ['Set-Cookie', cookieHeader]
         ])
       })
-    } else {
+    } else if (sportParam === 'football') {
       // Redirect to football with cookie
       const redirectUrl = new URL('/football', request.url).toString()
+      return new Response(null, {
+        status: 302,
+        headers: {
+          'Location': redirectUrl,
+          'Set-Cookie': cookieHeader
+        }
+      })
+    } else if (sportParam === 'basketball') {
+      // Redirect to basketball with cookie
+      const redirectUrl = new URL('/basketball', request.url).toString()
       return new Response(null, {
         status: 302,
         headers: {
@@ -62,6 +73,10 @@ export async function onRequest(context) {
     return Response.redirect(new URL('/football', request.url).toString(), 302)
   }
 
+  if (preferredSport === 'basketball') {
+    return Response.redirect(new URL('/basketball', request.url).toString(), 302)
+  }
+
   if (preferredSport === 'baseball') {
     return next() // Already on baseball page
   }
@@ -70,29 +85,27 @@ export async function onRequest(context) {
   const currentDate = getCurrentDateInCentralTime()
   const currentMonth = currentDate.getMonth() + 1 // 1-12
 
-  // Determine active sport season
-  const isBaseballSeason = currentMonth >= 3 && currentMonth <= 6  // March-June
-  const isFootballSeason = currentMonth >= 8 && currentMonth <= 12 // August-December
+  // Determine active sport season (non-overlapping)
+  const isBasketballSeason = currentMonth >= 1 && currentMonth <= 3  // January-March
+  const isBaseballSeason = currentMonth >= 4 && currentMonth <= 7     // April-July
+  const isFootballSeason = currentMonth >= 8 && currentMonth <= 12   // August-December
+
+  if (isBasketballSeason) {
+    // Redirect to basketball during winter/March Madness
+    return Response.redirect(new URL('/basketball', request.url).toString(), 302)
+  }
+
+  if (isBaseballSeason) {
+    // Stay on baseball during spring/summer season
+    return next()
+  }
 
   if (isFootballSeason) {
     // Redirect to football during fall season
     return Response.redirect(new URL('/football', request.url).toString(), 302)
   }
 
-  if (isBaseballSeason) {
-    // Stay on baseball during spring season
-    return next()
-  }
-
-  // Off-season (January, February, July) - default to most recent season
-  // January/February: Show football (season just ended)
-  // July: Show baseball (season just ended)
-  const defaultSport = currentMonth === 7 ? 'baseball' : 'football'
-
-  if (defaultSport === 'football') {
-    return Response.redirect(new URL('/football', request.url).toString(), 302)
-  }
-
+  // Fallback (should never reach here with current logic)
   return next()
 }
 
