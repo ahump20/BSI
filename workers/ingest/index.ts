@@ -39,7 +39,7 @@ async function executeWithConstraintGuard<T>(
       const diagnostic = target ? ` (${target})` : '';
       const message = `[Ingest] Unique constraint violation${diagnostic} while processing ${context}`;
       console.error(message, error);
-      throw new Error(`${message}: ${error.message}`);
+      throw new Error(message);
     }
 
     throw error;
