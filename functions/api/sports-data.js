@@ -1,3 +1,5 @@
+import { fetchNCAABaseballSnapshot } from './baseball-live.js';
+
 /**
  * Cloudflare Pages Functions - Sports Data Integration
  * blazesportsintel.com
@@ -241,6 +243,10 @@ async function getNCAAData(env) {
     if (cached) return JSON.parse(cached);
   }
 
+  const baseballSnapshot = await fetchNCAABaseballSnapshot(env, {
+    preferLive: true,
+  });
+
   const data = {
     timestamp: new Date().toISOString(),
     sport: 'NCAA',
@@ -279,13 +285,14 @@ async function getNCAAData(env) {
         first_round: 8,
         total: 94,
         top_pick: { name: 'Paul Skenes', school: 'LSU', pick: 1 }
-      }
+      },
+      live_snapshot: baseballSnapshot
     }
   };
 
   if (env.SPORTS_CACHE) {
     await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
-      expirationTtl: 300
+      expirationTtl: 60
     });
   }
 
