@@ -17,17 +17,19 @@
 
 .conference-select {
   padding: 8px 12px;
-  background-color: var(--card-bg);
+  background: var(--glass-light);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
   font-size: 13px;
   outline: none;
   cursor: pointer;
+  backdrop-filter: blur(16px);
 }
 
 .conference-select:focus {
-  border-color: var(--accent-color);
+  border-color: var(--blaze-ember);
+  box-shadow: 0 0 0 3px rgba(191, 87, 0, 0.2);
 }
 
 .standings-table-wrapper {
@@ -40,31 +42,33 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 12px;
   overflow: hidden;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 36px rgba(13, 13, 18, 0.35);
 }
 
 .standings-table th {
-  background-color: var(--secondary-color);
+  background: rgba(22, 22, 32, 0.78);
   padding: 12px 8px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.16);
   white-space: nowrap;
 }
 
 .standings-table td {
   padding: 12px 8px;
   font-size: 13px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.16);
 }
 
 .standings-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(191, 87, 0, 0.08);
 }
 
 .standings-table .rank-col {
@@ -84,8 +88,8 @@
 }
 
 .tournament-team {
-  background-color: rgba(0, 168, 107, 0.05);
-  border-left: 3px solid var(--accent-color);
+  background-color: rgba(204, 102, 0, 0.12);
+  border-left: 3px solid var(--blaze-ember);
 }
 
 .record {
@@ -113,7 +117,7 @@
 }
 
 .rpi-rank {
-  color: var(--accent-color);
+  color: var(--blaze-ember);
 }
 
 .rpi-value {
@@ -134,11 +138,11 @@
 }
 
 .win-streak {
-  color: var(--accent-color);
+  color: var(--blaze-ember);
 }
 
 .loss-streak {
-  color: var(--live-indicator);
+  color: #ff6b6b;
 }
 
 .hide-mobile {
@@ -150,15 +154,18 @@
   align-items: center;
   gap: 8px;
   padding: 12px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 12px;
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 24px;
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 24px rgba(13, 13, 18, 0.3);
 }
 
 .tournament-indicator {
-  color: var(--accent-color);
+  color: var(--blaze-amber);
   font-size: 16px;
 }
 
@@ -179,18 +186,21 @@
 }
 
 .leader-category {
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 12px;
   padding: 16px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 32px rgba(13, 13, 18, 0.32);
 }
 
 .leader-category h4 {
   font-size: 14px;
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--blaze-ember);
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.16);
 }
 
 .leader-item {
@@ -198,7 +208,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.16);
   font-size: 13px;
 }
 
@@ -218,13 +228,13 @@
 }
 
 .player-team {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   font-size: 12px;
 }
 
 .player-stat {
   font-weight: 700;
-  color: var(--accent-color);
+  color: var(--blaze-amber);
   min-width: 50px;
   text-align: right;
 }

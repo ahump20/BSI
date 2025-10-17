@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import ParticleBackground from './components/ParticleBackground'
 
 function App() {
   const [games, setGames] = useState([])
@@ -40,9 +41,11 @@ function App() {
   if (loading) {
     return (
       <div className="container">
+        <ParticleBackground />
         <header>
-          <h1>⚾ College Baseball Live</h1>
-          <p className="tagline">Real-time college baseball scores and updates</p>
+          <h1>🔥 BLAZE SPORTS INTEL</h1>
+          <p className="tagline">Practice to Play. Blaze Data Wins the Day.</p>
+          <p className="subtitle">Deep South Sports Authority • College Baseball</p>
         </header>
         <div className="loading">
           <div className="spinner"></div>
@@ -55,8 +58,11 @@ function App() {
   if (error) {
     return (
       <div className="container">
+        <ParticleBackground />
         <header>
-          <h1>⚾ College Baseball Live</h1>
+          <h1>🔥 BLAZE SPORTS INTEL</h1>
+          <p className="tagline">Practice to Play. Blaze Data Wins the Day.</p>
+          <p className="subtitle">Deep South Sports Authority • College Baseball</p>
         </header>
         <div className="error">
           <p>⚠️ Failed to load live data</p>
@@ -73,9 +79,11 @@ function App() {
 
   return (
     <div className="container">
+      <ParticleBackground />
       <header>
-        <h1>⚾ College Baseball Live</h1>
-        <p className="tagline">Real-time scores with comprehensive game data</p>
+        <h1>🔥 BLAZE SPORTS INTEL</h1>
+        <p className="tagline">Practice to Play. Blaze Data Wins the Day.</p>
+        <p className="subtitle">Deep South Sports Authority • College Baseball</p>
       </header>
 
       <main>
