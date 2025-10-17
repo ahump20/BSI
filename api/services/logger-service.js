@@ -1,3 +1,15 @@
+import * as Sentry from '@sentry/node';
+
+function readEnv(key) {
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
+    return process.env[key];
+  }
+  if (typeof globalThis !== 'undefined' && globalThis[key]) {
+    return globalThis[key];
+  }
+  return undefined;
+}
+
 /**
  * BLAZE SPORTS INTEL - LOGGER SERVICE
  * Phase 2B: Enterprise-grade structured logging
@@ -36,6 +48,11 @@ class LoggerService {
     this.logBuffer = [];
     this.maxBufferSize = 100;
     this.flushInterval = 30000; // 30 seconds
+
+    this.sentryInitialized = false;
+    this.sentryDsn = readEnv('SENTRY_DSN') || readEnv('NEXT_PUBLIC_SENTRY_DSN') || null;
+    this.sentryEnvironment = readEnv('SENTRY_ENVIRONMENT') || this.environment;
+    this.sentryRelease = readEnv('SENTRY_RELEASE') || readEnv('VERCEL_GIT_COMMIT_SHA') || this.version;
 
     // Start log flushing
     if (this.environment === 'production') {
@@ -242,10 +259,46 @@ class LoggerService {
    */
   async sendToMonitoring(logEntry) {
     try {
-      // In production, integrate with Sentry, DataDog, etc.
-      if (typeof globalThis.SENTRY_DSN !== 'undefined') {
-        // Send to Sentry
+      const dsn = this.sentryDsn || readEnv('SENTRY_DSN') || readEnv('NEXT_PUBLIC_SENTRY_DSN');
+      if (!dsn) {
+        return;
       }
+
+      if (!this.sentryInitialized) {
+        Sentry.init({
+          dsn,
+          environment: this.sentryEnvironment,
+          release: this.sentryRelease,
+          tracesSampleRate: Number(readEnv('SENTRY_TRACES_SAMPLE_RATE') ?? 0),
+          enabled: true
+        });
+        this.sentryInitialized = true;
+      }
+
+      const { error: errorPayload, ...context } = logEntry;
+
+      Sentry.withScope((scope) => {
+        scope.setLevel((logEntry.level || 'error').toLowerCase());
+        scope.setContext('log_entry', context);
+        scope.setTag('service', this.service);
+        scope.setTag('environment', this.sentryEnvironment);
+        scope.setTag('release', this.sentryRelease);
+        scope.setTag('logger_version', this.version);
+        if (logEntry.traceId) {
+          scope.setTag('trace_id', logEntry.traceId);
+        }
+
+        if (errorPayload && errorPayload.stack) {
+          const monitoringError = new Error(errorPayload.message || logEntry.message);
+          monitoringError.name = errorPayload.name || 'LoggerError';
+          monitoringError.stack = errorPayload.stack;
+          Sentry.captureException(monitoringError);
+        } else {
+          Sentry.captureMessage(logEntry.message, (logEntry.level || 'error').toLowerCase());
+        }
+      });
+
+      await Sentry.flush(2000);
     } catch (error) {
       console.error('Failed to send to monitoring:', error);
     }
