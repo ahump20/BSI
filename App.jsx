@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
+import ParticleBackground from './components/ParticleBackground';
 import './App.css';
 
 function App() {
@@ -62,8 +63,13 @@ function App() {
 
   return (
     <div className="app">
+      <ParticleBackground />
       <header className="app-header">
-        <h1>College Baseball Live</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.5px' }}>
+          🔥 BLAZE SPORTS INTEL
+        </h1>
+        <p className="tagline">Practice to Play. Blaze Data Wins the Day.</p>
+        <p className="subtitle">Deep South Sports Authority • College Baseball</p>
         <div className="conference-filter">
           <select>
             <option value="all">All Conferences</option>

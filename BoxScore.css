@@ -9,7 +9,7 @@
 .back-button {
   background: none;
   border: none;
-  color: var(--accent-color);
+  color: var(--blaze-ember);
   font-size: 14px;
   cursor: pointer;
   padding: 8px 0;
@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  font-weight: 600;
 }
 
 .game-info h2 {
@@ -40,20 +41,22 @@
   width: 100%;
   min-width: 500px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 12px;
   overflow: hidden;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 36px rgba(13, 13, 18, 0.35);
 }
 
 .line-score th,
 .line-score td {
   padding: 12px 8px;
   text-align: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(191, 87, 0, 0.16);
 }
 
 .line-score th {
-  background-color: var(--secondary-color);
+  background: rgba(22, 22, 32, 0.78);
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -72,8 +75,9 @@
 }
 
 .line-score .total-header {
-  background-color: var(--primary-color);
+  background-color: rgba(191, 87, 0, 0.15);
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .line-score .inning-score {
@@ -83,14 +87,15 @@
 .line-score .total-score {
   font-weight: 700;
   font-size: 16px;
-  background-color: rgba(0, 168, 107, 0.1);
+  background: rgba(204, 102, 0, 0.2);
+  color: var(--text-primary);
 }
 
 .stats-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.2);
 }
 
 .stats-tabs button {
@@ -107,8 +112,10 @@
 }
 
 .stats-tabs button.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  color: var(--blaze-ember);
+  border-bottom-color: transparent;
+  background: linear-gradient(90deg, rgba(191, 87, 0, 0.08), rgba(204, 102, 0, 0.12));
+  border-radius: 12px 12px 0 0;
 }
 
 .stats-content {
@@ -124,7 +131,8 @@
   font-weight: 600;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--accent-color);
+  border-bottom: 2px solid transparent;
+  border-image: var(--gradient-primary) 1;
 }
 
 .stats-table-wrapper {
@@ -136,30 +144,32 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 12px;
   overflow: hidden;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 36px rgba(13, 13, 18, 0.35);
 }
 
 .stats-table th {
-  background-color: var(--secondary-color);
+  background: rgba(22, 22, 32, 0.78);
   padding: 10px 8px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.16);
 }
 
 .stats-table td {
   padding: 12px 8px;
   font-size: 13px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.16);
 }
 
 .stats-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(191, 87, 0, 0.08);
 }
 
 .stats-table .player-col {
@@ -182,22 +192,22 @@
 .stats-table .avg,
 .stats-table .era {
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--blaze-ember);
 }
 
 .decision-pitcher {
-  background-color: rgba(0, 168, 107, 0.05);
+  background: rgba(204, 102, 0, 0.12);
 }
 
 .decision {
   display: inline-block;
   margin-left: 8px;
   padding: 2px 6px;
-  background-color: var(--accent-color);
-  color: var(--primary-color);
+  background: var(--gradient-primary);
+  color: #ffffff;
   font-size: 10px;
   font-weight: 700;
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
 /* Tablet and up */
