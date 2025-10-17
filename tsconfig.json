@@ -23,7 +23,11 @@
     "isolatedModules": true,
     "noEmitOnError": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "lib/**/*.ts",

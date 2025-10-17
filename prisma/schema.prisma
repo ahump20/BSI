@@ -1,0 +1,141 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Division {
+  D1
+  D2
+  D3
+  JUCO
+}
+
+enum Sport {
+  NFL
+  MLB
+  CFB
+  CBB
+}
+
+model Conference {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  division    Division
+  sport       Sport    @default(CBB)
+  teams       Team[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Team {
+  id            String      @id @default(cuid())
+  slug          String      @unique
+  name          String
+  school        String?
+  mascot        String?
+  conference    Conference? @relation(fields: [conferenceId], references: [id])
+  conferenceId  String?
+  sport         Sport       @default(CBB)
+  division      Division    @default(D1)
+  logoUrl       String?
+  primaryColor  String?
+  secondaryColor String?
+  homeGames     Game[]      @relation("HomeTeam")
+  awayGames     Game[]      @relation("AwayTeam")
+  players       Player[]
+  rankings      Ranking[]
+  teamStats     TeamStats[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Player {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  firstName    String
+  lastName     String
+  fullName     String
+  team         Team?    @relation(fields: [teamId], references: [id])
+  teamId       String?
+  position     String?
+  jerseyNumber Int?
+  height       String?
+  weight       Int?
+  classYear    String?
+  hometown     String?
+  highSchool   String?
+  photoUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Game {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  scheduledAt    DateTime
+  status         String
+  homeTeam       Team     @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  homeTeamId     String
+  awayTeam       Team     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  awayTeamId     String
+  homeScore      Int?
+  awayScore      Int?
+  venueId        String?
+  venueName      String?
+  currentInning  Int?
+  season         Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Ranking {
+  id               String   @id @default(cuid())
+  team             Team     @relation(fields: [teamId], references: [id])
+  teamId           String
+  season           Int
+  week             Int
+  pollType         String
+  rank             Int
+  previousRank     Int?
+  votes            Int?
+  firstPlaceVotes  Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([teamId, season, week, pollType])
+}
+
+model TeamStats {
+  id              String   @id @default(cuid())
+  team            Team     @relation(fields: [teamId], references: [id])
+  teamId          String
+  season          Int
+  wins            Int      @default(0)
+  losses          Int      @default(0)
+  confWins        Int      @default(0)
+  confLosses      Int      @default(0)
+  homeWins        Int      @default(0)
+  homeLosses      Int      @default(0)
+  awayWins        Int      @default(0)
+  awayLosses      Int      @default(0)
+  runsScored      Int      @default(0)
+  runsAllowed     Int      @default(0)
+  battingAvg      Float?
+  era             Float?
+  fieldingPct     Float?
+  rpi             Float?
+  strengthOfSched Float?
+  pythagWins      Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([teamId, season])
+}
