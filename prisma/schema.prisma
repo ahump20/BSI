@@ -24,10 +24,45 @@ enum Sport {
   CBB
 }
 
+enum GameStatus {
+  SCHEDULED
+  LIVE
+  FINAL
+  POSTPONED
+  CANCELLED
+}
+
+enum Position {
+  P
+  C
+  IF1B
+  IF2B
+  IF3B
+  IFSS
+  OF
+  DH
+  UTIL
+}
+
+enum HandedEnum {
+  L
+  R
+  S
+}
+
+enum AcademicYear {
+  FR
+  SO
+  JR
+  SR
+  GS
+}
+
 model Conference {
   id          String   @id @default(cuid())
   slug        String   @unique
   name        String
+  shortName   String?
   division    Division
   sport       Sport    @default(CBB)
   teams       Team[]
@@ -36,34 +71,35 @@ model Conference {
 }
 
 model Team {
-  id            String      @id @default(cuid())
-  slug          String      @unique
-  name          String
-  school        String?
-  mascot        String?
-  conference    Conference? @relation(fields: [conferenceId], references: [id])
-  conferenceId  String?
-  sport         Sport       @default(CBB)
-  division      Division    @default(D1)
-  logoUrl       String?
-  primaryColor  String?
+  id             String      @id @default(cuid())
+  slug           String      @unique
+  name           String
+  abbreviation   String?
+  school         String?
+  mascot         String?
+  conference     Conference? @relation(fields: [conferenceId], references: [id])
+  conferenceId   String?
+  sport          Sport       @default(CBB)
+  division       Division    @default(D1)
+  logoUrl        String?
+  primaryColor   String?
   secondaryColor String?
-  homeGames     Game[]      @relation("HomeTeam")
-  awayGames     Game[]      @relation("AwayTeam")
-  players       Player[]
-  rankings      Ranking[]
-  teamStats     TeamStats[]
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  homeGames      Game[]      @relation("HomeTeam")
+  awayGames      Game[]      @relation("AwayTeam")
+  players        Player[]
+  rankings       Ranking[]
+  teamStats      TeamStats[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 model Player {
-  id           String   @id @default(cuid())
-  slug         String   @unique
+  id           String        @id @default(cuid())
+  slug         String        @unique
   firstName    String
   lastName     String
   fullName     String
-  team         Team?    @relation(fields: [teamId], references: [id])
+  team         Team?         @relation(fields: [teamId], references: [id])
   teamId       String?
   position     String?
   jerseyNumber Int?
@@ -73,18 +109,20 @@ model Player {
   hometown     String?
   highSchool   String?
   photoUrl     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  playerStats  PlayerStats[]
+  boxLines     BoxLine[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Game {
-  id             String   @id @default(cuid())
-  slug           String   @unique
+  id             String      @id @default(cuid())
+  slug           String      @unique
   scheduledAt    DateTime
   status         String
-  homeTeam       Team     @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  homeTeam       Team        @relation("HomeTeam", fields: [homeTeamId], references: [id])
   homeTeamId     String
-  awayTeam       Team     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  awayTeam       Team        @relation("AwayTeam", fields: [awayTeamId], references: [id])
   awayTeamId     String
   homeScore      Int?
   awayScore      Int?
@@ -92,8 +130,47 @@ model Game {
   venueName      String?
   currentInning  Int?
   season         Int
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  events         GameEvent[]
+  boxLines       BoxLine[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model GameEvent {
+  id          String   @id @default(cuid())
+  game        Game     @relation(fields: [gameId], references: [id])
+  gameId      String
+  inning      Int
+  halfInning  String?
+  description String
+  eventType   String
+  timestamp   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BoxLine {
+  id        String   @id @default(cuid())
+  game      Game     @relation(fields: [gameId], references: [id])
+  gameId    String
+  player    Player   @relation(fields: [playerId], references: [id])
+  playerId  String
+  teamType  String   // "home" or "away"
+  data      String   // JSON string with stats
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlayerStats {
+  id        String   @id @default(cuid())
+  player    Player   @relation(fields: [playerId], references: [id])
+  playerId  String
+  season    Int
+  data      String   // JSON string with stats
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([playerId, season])
 }
 
 model Ranking {

@@ -207,12 +207,12 @@ export class PythagoreanAnalyzer {
     pointsFor: number,
     pointsAgainst: number,
     gamesPlayed: number,
-    sport: 'football' | 'basketball'
+    sport: 'football' | 'basketball' | 'hockey'
   ): number {
     const pointDiffPerGame = (pointsFor - pointsAgainst) / gamesPlayed;
 
     // Sport-specific scaling
-    const scale = sport === 'football' ? 2 : 0.5;
+    const scale = sport === 'football' ? 2 : (sport === 'hockey' ? 1 : 0.5);
     const rating = 50 + (pointDiffPerGame * scale);
 
     return Math.max(0, Math.min(100, Math.round(rating * 10) / 10));

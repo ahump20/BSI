@@ -339,7 +339,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
   });
 
   // Build current season stats
-  const currentSeason = currentSeasonStats
+  const currentSeasonData = currentSeasonStats
     ? {
         season: currentSeasonStats.season,
         batting:
@@ -401,7 +401,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     weight: player.weight,
     hometown: player.hometown,
     team: player.team,
-    currentSeason,
+    currentSeason: currentSeasonData,
     career: {
       seasons: player.playerStats.length,
       batting:
