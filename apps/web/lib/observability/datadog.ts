@@ -10,8 +10,10 @@ declare global {
   }
 }
 
-const RUM_SAMPLE_RATE = Number(process.env.NEXT_PUBLIC_DATADOG_SESSION_SAMPLE_RATE ?? '100');
-const RUM_REPLAY_SAMPLE_RATE = Number(process.env.NEXT_PUBLIC_DATADOG_REPLAY_SAMPLE_RATE ?? '20');
+const DEFAULT_RUM_SAMPLE_RATE = 100;
+const DEFAULT_RUM_REPLAY_SAMPLE_RATE = 20;
+const RUM_SAMPLE_RATE = Number(process.env.NEXT_PUBLIC_DATADOG_SESSION_SAMPLE_RATE ?? String(DEFAULT_RUM_SAMPLE_RATE));
+const RUM_REPLAY_SAMPLE_RATE = Number(process.env.NEXT_PUBLIC_DATADOG_REPLAY_SAMPLE_RATE ?? String(DEFAULT_RUM_REPLAY_SAMPLE_RATE));
 
 function getSite(): string {
   return process.env.NEXT_PUBLIC_DATADOG_SITE ?? 'datadoghq.com';
