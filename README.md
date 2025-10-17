@@ -421,6 +421,30 @@ HAWKEYE_ENDPOINT=https://api.hawkeye.com
 ENIGMA_ENGINE_URL=https://enigma.blazesportsintel.com
 ```
 
+### Baseball Boxscore Ingest Pipeline
+
+Set the following secrets when enabling the Highlightly ↔ SportsRadar ingest worker and storage pipeline:
+
+```bash
+# Data providers
+HIGHLIGHTLY_API_BASE_URL=https://api.highlightly.com
+HIGHLIGHTLY_API_KEY=your_highlightly_key
+SPORTSRADAR_API_BASE_URL=https://api.sportradar.us/college-baseball/trial/v2/en
+SPORTSRADAR_API_KEY=your_sportsradar_key
+
+# Supabase persistence (service role key stays server-side only)
+SUPABASE_URL=https://your-supabase-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role
+
+# Cloudflare R2 object storage
+R2_ACCOUNT_ID=your_r2_account_id
+R2_ACCESS_KEY_ID=your_r2_access_key
+R2_SECRET_ACCESS_KEY=your_r2_secret_key
+R2_BUCKET_NAME=blaze-baseball-boxscores
+# Optional custom endpoint (defaults to https://<R2_ACCOUNT_ID>.r2.cloudflarestorage.com)
+R2_ENDPOINT=https://custom.r2.cloudflare.com
+```
+
 ## Development
 
 ```bash

@@ -10,8 +10,11 @@
     "deploy": "npm run build && wrangler pages deploy dist"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.911.0",
+    "@supabase/supabase-js": "^2.75.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
