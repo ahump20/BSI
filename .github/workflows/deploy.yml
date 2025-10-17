@@ -29,3 +29,15 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: apps/api-worker
           command: deploy
+
+      - name: Notify Sentry release
+        if: success()
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+          version: ${{ github.sha }}
+          ignore_missing: true

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { recordRuntimeEvent } from '../lib/observability/datadog-runtime';
 
 const navigationLinks = [
   {
@@ -54,6 +55,8 @@ const featureHighlights = [
 ];
 
 export default function HomePage() {
+  void recordRuntimeEvent('route_render', { route: '/', sport: 'baseball' });
+
   return (
     <div className="di-shell">
       <main className="di-container">
