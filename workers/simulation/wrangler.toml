@@ -1,0 +1,29 @@
+# Cloudflare Workers Configuration - Simulation Worker
+# Handles Monte Carlo simulations with advanced probability models
+
+name = "blazesports-simulations"
+main = "index.ts"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[vars]
+# DATABASE_URL = ""
+# SIMULATION_SECRET = ""
+
+[[kv_namespaces]]
+binding = "KV"
+id = "a53c3726fc3044be82e79d2d1e371d26"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blazesports-historical"
+database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"
+
+[compatibility_flags]
+nodejs_compat = true
