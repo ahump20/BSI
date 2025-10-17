@@ -204,7 +204,7 @@ export async function getConferenceBySlug(slug: string): Promise<ConferenceDetai
     return null;
   }
 
-  return conference;
+  return conference as any;
 }
 
 /**
@@ -363,7 +363,7 @@ export async function getConferenceStandings(
 
     return {
       rank: index + 1,
-      team: entry!.team,
+      team: entry!.team as any,
       record: {
         ...entry!.record,
         gamesBack,
@@ -371,10 +371,10 @@ export async function getConferenceStandings(
       stats: entry!.stats,
       advanced: entry!.advanced,
     };
-  });
+  }) as any;
 
   return {
-    conference,
+    conference: conference as any,
     season,
     standings,
     leader: {

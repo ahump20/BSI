@@ -58,6 +58,14 @@ enum AcademicYear {
   GS
 }
 
+enum PollType {
+  AP
+  COACHES
+  COMPOSITE
+  CFP
+  RPI
+}
+
 model Conference {
   id          String   @id @default(cuid())
   slug        String   @unique
@@ -75,6 +83,8 @@ model Team {
   slug           String      @unique
   name           String
   abbreviation   String?
+  city           String?
+  state          String?
   school         String?
   mascot         String?
   conference     Conference? @relation(fields: [conferenceId], references: [id])
@@ -102,6 +112,9 @@ model Player {
   team         Team?         @relation(fields: [teamId], references: [id])
   teamId       String?
   position     String?
+  bats         String?
+  throws       String?
+  year         String?
   jerseyNumber Int?
   height       String?
   weight       Int?
@@ -137,38 +150,89 @@ model Game {
 }
 
 model GameEvent {
-  id          String   @id @default(cuid())
-  game        Game     @relation(fields: [gameId], references: [id])
-  gameId      String
-  inning      Int
-  halfInning  String?
-  description String
-  eventType   String
-  timestamp   DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  game         Game     @relation(fields: [gameId], references: [id])
+  gameId       String
+  sequence     Int
+  inning       Int
+  inningHalf   String?
+  halfInning   String?
+  outs         Int?
+  homeWinProb  Float?
+  wpaSwing     Float?
+  description  String
+  eventType    String
+  timestamp    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model BoxLine {
-  id        String   @id @default(cuid())
-  game      Game     @relation(fields: [gameId], references: [id])
-  gameId    String
-  player    Player   @relation(fields: [playerId], references: [id])
-  playerId  String
-  teamType  String   // "home" or "away"
-  data      String   // JSON string with stats
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  game          Game     @relation(fields: [gameId], references: [id])
+  gameId        String
+  player        Player   @relation(fields: [playerId], references: [id])
+  playerId      String
+  side          String   // "HOME" or "AWAY"
+  // Batting stats
+  ab            Int?
+  r             Int?
+  h             Int?
+  rbi           Int?
+  bb            Int?
+  so            Int?
+  // Pitching stats
+  ip            Float?
+  hitsAllowed   Int?
+  runsAllowed   Int?
+  earnedRuns    Int?
+  bbAllowed     Int?
+  soRecorded    Int?
+  decision      String?  // W, L, S, etc.
+  points        Int?     // For other sports
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model PlayerStats {
-  id        String   @id @default(cuid())
-  player    Player   @relation(fields: [playerId], references: [id])
-  playerId  String
-  season    Int
-  data      String   // JSON string with stats
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  player            Player   @relation(fields: [playerId], references: [id])
+  playerId          String
+  season            Int
+  // Batting stats
+  gamesPlayed       Int      @default(0)
+  atBats            Int      @default(0)
+  runs              Int      @default(0)
+  hits              Int      @default(0)
+  doubles           Int      @default(0)
+  triples           Int      @default(0)
+  homeRuns          Int      @default(0)
+  rbi               Int      @default(0)
+  walks             Int      @default(0)
+  strikeouts        Int      @default(0)
+  stolenBases       Int      @default(0)
+  caughtStealing    Int      @default(0)
+  battingAvg        Float?
+  onBasePct         Float?
+  sluggingPct       Float?
+  // Pitching stats
+  gamesPitched      Int      @default(0)
+  gamesStarted      Int      @default(0)
+  wins              Int      @default(0)
+  losses            Int      @default(0)
+  saves             Int      @default(0)
+  inningsPitched    Float    @default(0)
+  hitsAllowed       Int      @default(0)
+  runsAllowed       Int      @default(0)
+  earnedRuns        Int      @default(0)
+  walksAllowed      Int      @default(0)
+  homeRunsAllowed   Int      @default(0)
+  era               Float?
+  whip              Float?
+  strikeoutsPerNine Float?
+  walksPerNine      Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@unique([playerId, season])
 }
@@ -183,6 +247,7 @@ model Ranking {
   rank             Int
   previousRank     Int?
   votes            Int?
+  points           Int?
   firstPlaceVotes  Int?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -205,8 +270,19 @@ model TeamStats {
   awayLosses      Int      @default(0)
   runsScored      Int      @default(0)
   runsAllowed     Int      @default(0)
+  points          Int      @default(0)
+  hitsTotal       Int      @default(0)
+  homeRuns        Int      @default(0)
+  stolenBases     Int      @default(0)
   battingAvg      Float?
+  onBasePct       Float?
+  sluggingPct     Float?
   era             Float?
+  whip            Float?
+  earnedRuns      Int      @default(0)
+  hitsAllowed     Int      @default(0)
+  strikeouts      Int      @default(0)
+  walks           Int      @default(0)
   fieldingPct     Float?
   rpi             Float?
   strengthOfSched Float?
