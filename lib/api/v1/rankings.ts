@@ -206,12 +206,12 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
       previousRank: ranking.previousRank ?? undefined,
       movement,
       movementAmount,
-      team: ranking.team,
+      team: ranking.team as any,
       record,
       points: ranking.points ?? undefined,
       firstPlaceVotes: ranking.firstPlaceVotes ?? undefined,
     };
-  });
+  }) as any;
 
   return {
     rankings: rankingEntries,
@@ -266,7 +266,7 @@ export async function getRankingsHistory(
 
   if (rankings.length === 0) {
     return {
-      team,
+      team: team as any,
       pollType,
       season,
       history: [],
@@ -310,7 +310,7 @@ export async function getRankingsHistory(
   const currentRank = rankings[rankings.length - 1]?.rank;
 
   return {
-    team,
+    team: team as any,
     pollType,
     season,
     history,

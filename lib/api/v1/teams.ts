@@ -270,14 +270,14 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
 
   // Combine and sort recent games
   const allGames = [
-    ...team.homeGames.map((g) => ({
+    ...team.homeGames.map((g: any) => ({
       ...g,
       isHome: true,
       opponent: g.awayTeam,
       teamScore: g.homeScore,
       opponentScore: g.awayScore,
     })),
-    ...team.awayGames.map((g) => ({
+    ...team.awayGames.map((g: any) => ({
       ...g,
       isHome: false,
       opponent: g.homeTeam,
@@ -344,6 +344,6 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
     ...team,
     roster: team.players,
     stats,
-    recentGames,
-  };
+    recentGames: recentGames as any,
+  } as any;
 }
