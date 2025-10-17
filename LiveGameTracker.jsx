@@ -40,7 +40,11 @@ function LiveGameTracker({ games, onGameSelect, loading }) {
     <div className="live-game-tracker">
       <div className="games-header">
         <h2>Live Games</h2>
-        <span className="live-indicator">● LIVE</span>
+        <span
+          className="live-indicator"
+          role="status"
+          aria-label="Live games in progress"
+        ></span>
       </div>
       
       <div className="games-list">
