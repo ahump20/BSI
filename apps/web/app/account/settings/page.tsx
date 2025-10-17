@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const supportLinks = [
   { href: '/account', label: 'Account Overview' },
-  { href: '/auth/sign-in', label: 'Secure Sign In' },
+  { href: '/auth/login?returnTo=/account/settings', label: 'Secure Sign In' },
   { href: '/privacy', label: 'Privacy Center' }
 ];
 
@@ -13,8 +13,8 @@ export default function AccountSettingsPage() {
         <span className="di-kicker">Diamond Insights · Account Settings</span>
         <h1 className="di-page-title">Settings & Personalization</h1>
         <p className="di-page-subtitle">
-          Notification, alert routing, and saved content controls will live here. This placeholder ensures the route stays
-          active with dark-mode theming and responsive layout until Clerk preferences are wired in.
+          Notification, alert routing, and saved content controls land here soon. Auth0 backs identity and role assignments
+          while we wire real-time preferences into the Diamond Insights stack.
         </p>
         <div className="di-card-grid">
           <article className="di-card">

@@ -70,8 +70,8 @@ export default function HomePage() {
             <Link className="di-action" href="/baseball/ncaab/hub">
               Enter the Baseball Hub
             </Link>
-            <Link className="di-action di-action--secondary" href="/auth/sign-up">
-              Join Diamond Pro Beta
+            <Link className="di-action di-action--secondary" href="/auth/login?returnTo=/account">
+              Manage Diamond Pro Access
             </Link>
           </div>
         </section>
@@ -127,8 +127,8 @@ export default function HomePage() {
             <article className="di-card">
               <h3>Need Early Access?</h3>
               <p>Reach out for Diamond Pro onboarding or operations partnerships across the Deep South footprint.</p>
-              <Link className="di-inline-link" href="/account">
-                Manage your Diamond Insights profile
+              <Link className="di-inline-link" href="/auth/login?returnTo=/account">
+                Sign in to manage your Diamond Insights profile
               </Link>
             </article>
           </div>

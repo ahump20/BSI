@@ -13,6 +13,11 @@
 
 **Status**: Phase 1 Complete | Phase 2 Complete (API + Ingest + NLG + Testing) | Phase 3 Ready to Start
 
+### 2025-10-17 — Auth0 + Stripe Monetization Pass
+- Replaced placeholder auth pages with `/auth/login` and `/auth/callback` backed by Auth0 Universal Login and secure session cookies.
+- Seeded viewer/editor/admin roles through the Auth0 Management API and wired checkout webhooks to elevate Diamond Pro members automatically.
+- Introduced Stripe product automation for BSI Pro monthly/annual plans, API checkout links, and UI gating that reflects Auth0 role assignments.
+
 ---
 
 ## Phase 1: Archive & Audit Current State
