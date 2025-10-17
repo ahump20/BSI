@@ -1,5 +1,12 @@
 .box-score {
   width: 100%;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--burnt-orange-shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .box-score-header {
@@ -40,20 +47,24 @@
   width: 100%;
   min-width: 500px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: var(--burnt-orange-shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .line-score th,
 .line-score td {
   padding: 12px 8px;
   text-align: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
 }
 
 .line-score th {
-  background-color: var(--secondary-color);
+  background-color: rgba(26, 26, 26, 0.75);
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -90,7 +101,7 @@
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .stats-tabs button {
@@ -103,12 +114,14 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  border-radius: 12px 12px 0 0;
 }
 
 .stats-tabs button.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  color: var(--blaze-ember);
+  border-bottom-color: var(--blaze-ember);
+  background: var(--glass-light);
 }
 
 .stats-content {
@@ -136,30 +149,34 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: var(--burnt-orange-shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .stats-table th {
-  background-color: var(--secondary-color);
+  background-color: rgba(26, 26, 26, 0.75);
   padding: 10px 8px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .stats-table td {
   padding: 12px 8px;
   font-size: 13px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .stats-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(191, 87, 0, 0.18);
 }
 
 .stats-table .player-col {
