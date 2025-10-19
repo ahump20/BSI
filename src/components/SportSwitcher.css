@@ -12,12 +12,12 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff6b00 0%, #ff8533 100%);
+  background: var(--gradient-primary);
   border: none;
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 24px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+  box-shadow: var(--shadow-burnt);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
@@ -26,7 +26,7 @@
 
 .fab:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(255, 107, 0, 0.6);
+  box-shadow: var(--shadow-crimson);
 }
 
 .fab:active {
@@ -65,10 +65,11 @@
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  background-color: #2a2a2a;
-  border: 2px solid #404040;
+  background-color: var(--card-bg);
+  border: 2px solid var(--border-subtle);
   border-radius: 28px;
-  color: #ffffff;
+  color: var(--text-secondary);
+  font-family: var(--font-primary);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -78,13 +79,13 @@
 }
 
 .sport-option:hover:not(.current) {
-  background-color: #333;
+  background-color: var(--glass-medium);
   transform: translateX(-4px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .sport-option.current {
-  background-color: #1a1a1a;
+  background-color: var(--surface-overlay);
   cursor: default;
   opacity: 0.6;
 }
@@ -134,7 +135,7 @@
 /* Accessibility */
 .fab:focus,
 .sport-option:focus {
-  outline: 2px solid #ff6b00;
+  outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
 
