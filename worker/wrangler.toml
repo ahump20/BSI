@@ -1,0 +1,10 @@
+name = "bsi-feature-flags-worker"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+kv_namespaces = [
+  { binding = "FEATURE_FLAGS", id = "a53c3726fc3044be82e79d2d1e371d26" }
+]
+
+[vars]
+UE_UPSTREAM = "https://ue.blazesportsintel.com"
