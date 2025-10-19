@@ -130,13 +130,7 @@ Coming in Phase 2-4:
 
 ## Cron Schedule
 
-Data updates run every 15 minutes during season (February-June):
-```
-*/15 * * 2-6 *
-```
-
-See `/functions/scheduled/update-college-baseball.js`
-
+Data updates run every 15 minutes, every day, from February through June (months 2-6 in cron's 1-indexed format), regardless of whether games are being played:
 ## Testing
 
 Run tests with:
