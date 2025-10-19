@@ -11,6 +11,7 @@
  * Rate Limits: 10 requests per second (tier-dependent)
  */
 
+import { Division, FeedPrecision, GameStatus, InningHalf, Sport } from '@prisma/client';
 import type {
   GamesQueryParams,
   TeamStatsQueryParams,
@@ -52,7 +53,7 @@ export class SportsDataIOAdapter {
     const data = await response.json();
 
     // Transform to standard format
-    return data.map((game: any) => this.transformGame(game));
+    return data.map((game: any) => this.transformGame(game, params));
   }
 
   /**
@@ -90,39 +91,50 @@ export class SportsDataIOAdapter {
   /**
    * Transform SportsDataIO game format to standard format
    */
-  private transformGame(game: any): ProviderGame {
-    // Map SportsDataIO status to standard status
-    let status: ProviderGame['status'];
-    if (game.Status === 'Scheduled') {
-      status = 'SCHEDULED';
-    } else if (game.Status === 'InProgress') {
-      status = 'LIVE';
-    } else if (game.Status === 'Final') {
-      status = 'FINAL';
-    } else if (game.Status === 'Postponed') {
-      status = 'POSTPONED';
-    } else if (game.Status === 'Canceled') {
-      status = 'CANCELLED';
-    } else {
-      status = 'SCHEDULED'; // Default fallback
+  private transformGame(game: any, params: GamesQueryParams): ProviderGame {
+    let status: GameStatus;
+    switch (game.Status) {
+      case 'InProgress':
+        status = GameStatus.LIVE;
+        break;
+      case 'Final':
+        status = GameStatus.FINAL;
+        break;
+      case 'Postponed':
+        status = GameStatus.POSTPONED;
+        break;
+      case 'Canceled':
+        status = GameStatus.CANCELED;
+        break;
+      default:
+        status = GameStatus.SCHEDULED;
+    }
+
+    let inningHalf: InningHalf | undefined;
+    if (game.InningHalf === 'T') {
+      inningHalf = InningHalf.TOP;
+    } else if (game.InningHalf === 'B') {
+      inningHalf = InningHalf.BOTTOM;
     }
 
     return {
       id: game.GameID.toString(),
       scheduledAt: game.DateTime,
       status,
+      sport: params.sport ?? Sport.BASEBALL,
+      division: params.division ?? Division.D1,
       homeTeamId: game.HomeTeamID?.toString() || '',
       awayTeamId: game.AwayTeamID?.toString() || '',
       homeScore: game.HomeTeamScore ?? null,
       awayScore: game.AwayTeamScore ?? null,
       venueId: game.StadiumID?.toString(),
       currentInning: game.Inning ?? undefined,
-      currentInningHalf: game.InningHalf === 'T' ? 'TOP' : game.InningHalf === 'B' ? 'BOTTOM' : undefined,
+      currentInningHalf: inningHalf,
       balls: game.Balls ?? undefined,
       strikes: game.Strikes ?? undefined,
       outs: game.Outs ?? undefined,
       providerName: 'SportsDataIO',
-      feedPrecision: 'EVENT' // SportsDataIO provides event-level data
+      feedPrecision: FeedPrecision.EVENT,
     };
   }
 
@@ -141,12 +153,27 @@ export class SportsDataIOAdapter {
       awayLosses: teamData.AwayLosses ?? 0,
       runsScored: teamData.RunsScored ?? 0,
       runsAllowed: teamData.RunsAllowed ?? 0,
+      hitsTotal: teamData.Hits ?? 0,
+      doubles: teamData.Doubles ?? 0,
+      triples: teamData.Triples ?? 0,
+      homeRuns: teamData.HomeRuns ?? 0,
+      stolenBases: teamData.StolenBases ?? 0,
+      caughtStealing: teamData.CaughtStealing ?? 0,
       battingAvg: teamData.BattingAverage ?? 0,
       era: teamData.EarnedRunAverage ?? 0,
       fieldingPct: teamData.FieldingPercentage ?? 0,
-      rpi: undefined, // SportsDataIO doesn't provide RPI directly
-      strengthOfSched: undefined, // SportsDataIO doesn't provide SOS directly
-      pythagWins: undefined // Will be calculated separately
+      onBasePct: teamData.OnBasePercentage ?? undefined,
+      sluggingPct: teamData.SluggingPercentage ?? undefined,
+      ops: teamData.OnBasePlusSlugging ?? undefined,
+      hitsAllowed: teamData.HitsAllowed ?? undefined,
+      strikeouts: teamData.Strikeouts ?? undefined,
+      walks: teamData.Walks ?? undefined,
+      whip: teamData.WalksHitsPerInningPitched ?? undefined,
+      rpi: undefined,
+      strengthOfSched: undefined,
+      pythagWins: undefined,
+      recentForm: undefined,
+      injuryImpact: undefined,
     };
   }
 }

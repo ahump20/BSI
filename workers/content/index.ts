@@ -220,7 +220,7 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
           conference: {
             select: { name: true },
           },
-          stats: {
+          teamStats: {
             where: { season: new Date().getFullYear() },
             take: 1,
           },
@@ -231,7 +231,7 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
           conference: {
             select: { name: true },
           },
-          stats: {
+          teamStats: {
             where: { season: new Date().getFullYear() },
             take: 1,
           },
@@ -260,8 +260,8 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
     throw new Error(`Game ${gameId} not found`);
   }
 
-  const homeTeamStats = game.homeTeam.stats[0];
-  const awayTeamStats = game.awayTeam.stats[0];
+  const homeTeamStats = game.homeTeam.teamStats[0];
+  const awayTeamStats = game.awayTeam.teamStats[0];
 
   // Build context
   const context: GameContext = {

@@ -5,7 +5,8 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "test:visual": "playwright test --config=playwright.config.ts"
+    "test:visual": "playwright test --config=playwright.config.ts",
+    "prisma": "prisma generate"
   },
   "dependencies": {
     "@datadog/browser-logs": "^5.12.0",

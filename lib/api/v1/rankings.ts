@@ -17,7 +17,7 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { PollType, Prisma } from '@prisma/client';
+import { PollType, Prisma, SeasonType } from '@prisma/client';
 
 export interface RankingsQueryParams {
   pollType?: PollType;
@@ -159,10 +159,11 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
 
   // Get team records for the season
   const teamIds = rankings.map((r) => r.teamId);
-  const teamStats = await prisma.teamStats.findMany({
+  const teamStats = await prisma.teamSeasonStat.findMany({
     where: {
       teamId: { in: teamIds },
       season,
+      seasonType: SeasonType.REGULAR,
     },
     select: {
       teamId: true,
@@ -279,10 +280,11 @@ export async function getRankingsHistory(
   }
 
   // Get team stats for each week
-  const teamStats = await prisma.teamStats.findFirst({
+  const teamStats = await prisma.teamSeasonStat.findFirst({
     where: {
       teamId,
       season,
+      seasonType: SeasonType.REGULAR,
     },
     select: {
       wins: true,

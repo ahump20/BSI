@@ -1,7 +1,8 @@
+import type { Division, FeedPrecision, GameStatus, InningHalf, Sport } from '@prisma/client';
+
 /**
  * Worker Environment Types
  */
-
 export interface Env {
   // Database
   DATABASE_URL: string;
@@ -30,19 +31,21 @@ export interface Env {
 export interface ProviderGame {
   id: string;
   scheduledAt: string;
-  status: 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED';
+  status: GameStatus;
+  sport: Sport;
+  division: Division;
   homeTeamId: string;
   awayTeamId: string;
   homeScore: number | null;
   awayScore: number | null;
   venueId?: string;
   currentInning?: number;
-  currentInningHalf?: 'TOP' | 'BOTTOM';
+  currentInningHalf?: InningHalf;
   balls?: number;
   strikes?: number;
   outs?: number;
   providerName: string;
-  feedPrecision: 'EVENT' | 'PITCH' | 'PLAY';
+  feedPrecision: FeedPrecision;
 }
 
 /**
@@ -59,22 +62,37 @@ export interface ProviderTeamStats {
   awayLosses: number;
   runsScored: number;
   runsAllowed: number;
+  hitsTotal: number;
+  doubles: number;
+  triples: number;
+  homeRuns: number;
+  stolenBases: number;
+  caughtStealing: number;
   battingAvg: number;
   era: number;
   fieldingPct: number;
   rpi?: number;
   strengthOfSched?: number;
   pythagWins?: number;
+  onBasePct?: number;
+  sluggingPct?: number;
+  ops?: number;
+  hitsAllowed?: number;
+  strikeouts?: number;
+  walks?: number;
+  whip?: number;
+  recentForm?: string;
+  injuryImpact?: number;
 }
 
 /**
  * Query parameters for getGames
  */
 export interface GamesQueryParams {
-  sport: 'baseball' | 'football' | 'basketball';
-  division: 'D1' | 'D2' | 'D3' | 'JUCO';
+  sport: Sport;
+  division: Division;
   date: Date;
-  status?: Array<'SCHEDULED' | 'LIVE' | 'FINAL'>;
+  status?: GameStatus[];
   teamId?: string;
 }
 
