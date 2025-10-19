@@ -1,71 +1,1513 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#1a1a1a" />
-    <meta name="description" content="Live college baseball scores, box scores, and standings - the coverage ESPN won't give you" />
-    <title>College Baseball Live</title>
-    
-    <!-- PWA Support -->
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
-    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Blaze Sports Intel | Championship Analytics Platform</title>
+    <meta name="description" content="Practice to Play. Blaze Data Wins the Day. Elite championship analytics platform delivering real-time data-driven intelligence for Baseball, Football, and Basketball. Professional scouting, performance metrics, and strategic insights from the Deep South Sports Authority powered by SportsDataIO.">
+    <meta name="keywords" content="sports analytics, championship intelligence, Deep South sports, Texas athletics, baseball analytics, football analytics, basketball analytics, MLB scouting, NFL strategy, NBA metrics, NCAA recruiting, Austin Humphrey, Blaze Sports Intel, Monte Carlo simulation, AI sports analysis, SportsDataIO">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/">
+    <meta property="og:title" content="🔥 Blaze Sports Intel | Deep South Sports Authority">
+    <meta property="og:description" content="Practice to Play. Blaze Data Wins the Day. Championship intelligence platform delivering elite analytics for professional and collegiate sports organizations.">
+    <meta property="og:site_name" content="Blaze Sports Intel">
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://blazesportsintel.com/">
+    <meta property="twitter:title" content="🔥 Blaze Sports Intel | Championship Intelligence">
+    <meta property="twitter:description" content="Practice to Play. Blaze Data Wins the Day. Elite sports intelligence platform delivering championship-caliber analytics.">
+    <meta property="twitter:creator" content="@BISportsIntel">
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#BF5700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://blazesportsintel.com/">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js for particle background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- AOS Animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
     <style>
-      body {
-        margin: 0;
-        padding: 0;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      }
-      
-      #root {
-        min-height: 100vh;
-      }
-      
-      /* Loading screen */
-      .loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: #1a1a1a;
-        z-index: 9999;
-      }
-      
-      .loading-spinner {
-        width: 48px;
-        height: 48px;
-        border: 4px solid #404040;
-        border-top-color: #00a86b;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      
-      .loading-text {
-        margin-top: 16px;
-        color: #a0a0a0;
-        font-size: 14px;
-      }
+        /* ==================== CSS VARIABLES ==================== */
+        :root {
+            /* Sophisticated Burnt Orange Palette - Psychology Optimized */
+            --blaze-burnt-orange: #BF5700;           /* Deep burnt orange - primary brand */
+            --blaze-ember: #CC6600;                  /* Rich ember glow - warmth & energy */
+            --blaze-copper: #D97B38;                 /* Copper accent - sophistication */
+            --blaze-sunset: #E69551;                 /* Sunset warmth - approachability */
+            --blaze-bronze: #A0522D;                 /* Bronze depth - stability */
+            --blaze-amber: #FFBF00;                  /* Amber highlight - excellence */
+            --blaze-rust: #8B4513;                   /* Rust undertone - heritage */
+            --blaze-terracotta: #E2725B;             /* Terracotta accent - earth connection */
+
+            /* Gradient Definitions */
+            --gradient-primary: linear-gradient(135deg, #BF5700 0%, #CC6600 50%, #D97B38 100%);
+            --gradient-ember: linear-gradient(135deg, #CC6600 0%, #E69551 100%);
+            --gradient-deep: linear-gradient(135deg, #8B4513 0%, #BF5700 50%, #CC6600 100%);
+            --gradient-glow: radial-gradient(circle at center, rgba(191, 87, 0, 0.3) 0%, transparent 70%);
+
+            /* Dark Theme - Enhanced Contrast */
+            --dark-charcoal: #0D0D12;                /* Deep charcoal base */
+            --dark-slate: #161620;                   /* Slate secondary */
+            --dark-graphite: #1F1F2E;                /* Graphite tertiary */
+            --dark-midnight: #0A0A0F;                /* Midnight depth */
+            --dark-border: rgba(191, 87, 0, 0.15);   /* Burnt orange tinted borders */
+
+            /* Glass Morphism - Burnt Orange Tinted */
+            --glass-light: rgba(191, 87, 0, 0.08);
+            --glass-medium: rgba(191, 87, 0, 0.12);
+            --glass-heavy: rgba(191, 87, 0, 0.18);
+            --glass-border: rgba(191, 87, 0, 0.25);
+            --glass-glow: rgba(204, 102, 0, 0.15);
+
+            /* Text - Warm Tinted */
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.92);
+            --text-tertiary: rgba(255, 235, 215, 0.75);   /* Warm white */
+            --text-quaternary: rgba(255, 235, 215, 0.55); /* Warm muted */
+            --text-burnt-orange: #FFE4C4;                 /* Bisque tint for emphasis */
+
+            /* Semantic - Burnt Orange Harmony */
+            --success: #2ECC71;
+            --warning: #FFBF00;
+            --danger: #E74C3C;
+            --info: #3498DB;
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+
+            /* Effects - Enhanced Psychological Impact */
+            --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 600ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+            /* Glow Effects */
+            --glow-soft: 0 0 30px rgba(191, 87, 0, 0.4);
+            --glow-medium: 0 0 50px rgba(204, 102, 0, 0.5), 0 0 80px rgba(191, 87, 0, 0.3);
+            --glow-intense: 0 0 60px rgba(204, 102, 0, 0.6), 0 0 100px rgba(191, 87, 0, 0.4), 0 0 140px rgba(217, 123, 56, 0.2);
+
+            /* Shadow Depths */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+            --shadow-burnt: 0 8px 32px rgba(191, 87, 0, 0.3);
+
+            /* Spacing */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+        }
+
+        /* ==================== GLOBAL RESET ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--dark-charcoal);
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(191, 87, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(204, 102, 0, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(160, 82, 45, 0.04) 0%, transparent 70%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: var(--blaze-ember);
+            color: var(--text-primary);
+            text-shadow: 0 0 8px rgba(204, 102, 0, 0.5);
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-slate);
+            border-left: 1px solid var(--dark-border);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--dark-slate);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gradient-ember);
+            box-shadow: var(--glow-soft);
+        }
+
+        /* ==================== THREE.JS CANVAS ==================== */
+        #particle-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ==================== HEADER/NAV ==================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(13, 13, 18, 0.95) 0%, transparent 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 8px 32px 0 rgba(191, 87, 0, 0.1);
+            border-bottom: 1px solid var(--dark-border);
+            transition: all var(--transition-base);
+        }
+
+        .nav.scrolled {
+            background: rgba(13, 13, 18, 0.98);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(191, 87, 0, 0.6));
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color var(--transition-fast);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--blaze-copper);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width var(--transition-base);
+            box-shadow: var(--glow-soft);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.75rem;
+            border-radius: var(--radius-xl);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width var(--transition-slow), height var(--transition-slow);
+        }
+
+        .nav-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .nav-btn-primary {
+            background: var(--gradient-primary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-burnt);
+            border: 1px solid rgba(217, 123, 56, 0.3);
+        }
+
+        .nav-btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--glow-medium);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            border-radius: 3px;
+            transition: all var(--transition-base);
+        }
+
+        /* ==================== HERO SECTION ==================== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            z-index: 10;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.65rem 1.75rem;
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            color: var(--blaze-amber);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--glow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-badge::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(204, 102, 0, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                box-shadow: var(--glow-soft);
+            }
+            50% {
+                transform: translateY(-12px) scale(1.02);
+                box-shadow: var(--glow-medium);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            filter: drop-shadow(0 0 40px rgba(191, 87, 0, 0.4)) drop-shadow(0 0 80px rgba(204, 102, 0, 0.2));
+            animation: titleGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 40px rgba(191, 87, 0, 0.4)) drop-shadow(0 0 80px rgba(204, 102, 0, 0.2));
+            }
+            50% {
+                filter: drop-shadow(0 0 60px rgba(204, 102, 0, 0.6)) drop-shadow(0 0 100px rgba(191, 87, 0, 0.3));
+            }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            color: var(--text-tertiary);
+            margin-bottom: 3rem;
+            line-height: 1.7;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 1.35rem 2.75rem;
+            border-radius: var(--radius-xl);
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.85rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cta-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+            z-index: -1;
+        }
+
+        .cta-btn:hover::after {
+            width: 400px;
+            height: 400px;
+        }
+
+        .cta-btn-primary {
+            background: var(--gradient-primary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-burnt);
+            border: 2px solid rgba(217, 123, 56, 0.4);
+        }
+
+        .cta-btn-primary:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: var(--glow-intense);
+        }
+
+        .cta-btn-secondary {
+            background: var(--glass-medium);
+            color: var(--text-primary);
+            border: 2px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+        }
+
+        .cta-btn-secondary:hover {
+            background: var(--glass-heavy);
+            border-color: var(--blaze-ember);
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: var(--glow-soft);
+        }
+
+        /* ==================== SPORTS HUBS SECTION ==================== */
+        .sports-section {
+            position: relative;
+            z-index: 10;
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, transparent 0%, var(--dark-slate) 100%);
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            color: var(--blaze-amber);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: var(--glow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-badge::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 191, 0, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite linear;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            letter-spacing: 1.5px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-primary);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+            box-shadow: var(--glow-soft);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-tertiary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .sport-card {
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-align: center;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .sport-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            z-index: -1;
+        }
+
+        .sport-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(191, 87, 0, 0.4);
+            border-color: transparent;
+        }
+
+        .sport-card:hover::after {
+            opacity: 0.1;
+        }
+
+        .sport-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .sport-name {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .sport-status {
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            position: relative;
+            z-index: 10;
+            background: var(--dark-slate);
+            border-top: 1px solid var(--dark-border);
+            padding: 4rem 2rem 2rem;
+            margin-top: 6rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--dark-border);
+            color: var(--text-quaternary);
+        }
+
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(13, 13, 18, 0.98);
+                backdrop-filter: blur(20px) saturate(180%);
+                -webkit-backdrop-filter: blur(20px) saturate(180%);
+                box-shadow: 0 8px 32px 0 rgba(191, 87, 0, 0.1);
+                flex-direction: column;
+                padding: 2rem;
+                transition: left var(--transition-base);
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .mobile-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .mobile-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .mobile-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -6px);
+            }
+
+            .hero {
+                padding: 5rem 1rem 3rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .cta-btn {
+                justify-content: center;
+            }
+
+            .sports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .sport-card {
+                padding: 1.5rem;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div id="root">
-      <div class="loading-screen">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading...</div>
-      </div>
-    </div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+</head>
+<body>
+    <!-- Three.js Particle Background -->
+    <canvas id="particle-field"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='/'">
+                🔥 BLAZE SPORTS INTEL
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#sports" class="nav-link">Sports</a></li>
+                <li><a href="/analytics" class="nav-link">Analytics</a></li>
+                <li><a href="/copilot" class="nav-link">AI Copilot</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+                <li><a href="/copilot" class="nav-btn nav-btn-primary">Launch AI Copilot</a></li>
+            </ul>
+            <div class="mobile-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="hero-badge">
+                Built from Deep South observation
+            </div>
+            <h1 class="hero-title">
+                Practice to Play.<br>Blaze Data Wins the Day.
+            </h1>
+            <p class="hero-subtitle">
+                Most tools count what's convenient. Blaze captures what swings outcomes—situation, momentum, and adjustments under pressure—so coaches decide faster.
+            </p>
+            <div class="hero-cta">
+                <a href="/analytics" class="cta-btn cta-btn-primary">
+                    <i class="fas fa-chart-line"></i>
+                    View Analytics
+                </a>
+                <a href="/about" class="cta-btn cta-btn-secondary">
+                    <i class="fas fa-info-circle"></i>
+                    Why This Exists
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sports Hubs Section -->
+    <section class="sports-section" id="sports">
+        <div class="section-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Coverage</div>
+                <h2 class="section-title">Three sports</h2>
+                <p class="section-subtitle">
+                    Baseball → Football → Basketball. Youth through professional levels.
+                </p>
+            </div>
+
+            <div class="sports-grid">
+                <a href="/mlb/" class="sport-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="sport-icon">⚾</div>
+                    <h3 class="sport-name">MLB</h3>
+                    <p class="sport-status">Professional Baseball Analytics</p>
+                </a>
+
+                <a href="/nfl/" class="sport-card" data-aos="zoom-in" data-aos-delay="150">
+                    <div class="sport-icon">🏈</div>
+                    <h3 class="sport-name">NFL</h3>
+                    <p class="sport-status">Professional Football Analytics</p>
+                </a>
+
+                <a href="/cfb/" class="sport-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="sport-icon">🏈</div>
+                    <h3 class="sport-name">COLLEGE FOOTBALL</h3>
+                    <p class="sport-status">NCAA D1 • SEC • Big 12</p>
+                </a>
+
+                <a href="/cbb/" class="sport-card" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="sport-icon">🏀</div>
+                    <h3 class="sport-name">COLLEGE BASKETBALL</h3>
+                    <p class="sport-status">NCAA D1 Men's & Women's</p>
+                </a>
+
+                <a href="/college-baseball/" class="sport-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="sport-icon">⚾</div>
+                    <h3 class="sport-name">COLLEGE BASEBALL</h3>
+                    <p class="sport-status">Complete ESPN Won't Provide</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Features Section -->
+    <section class="sports-section" style="background: linear-gradient(180deg, var(--dark-slate) 0%, var(--dark-graphite) 100%);">
+        <div class="section-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Platform Access</div>
+                <h2 class="section-title">Intelligence Tools</h2>
+                <p class="section-subtitle">
+                    AI-powered analytics, real-time dashboards, and coaching intelligence systems.
+                </p>
+            </div>
+
+            <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+                <!-- AI Copilot -->
+                <a href="/copilot" class="sport-card" data-aos="zoom-in" data-aos-delay="100" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">AI Copilot</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Semantic Search • RAG Insights • Workers AI</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Natural language queries across all sports data with AI-powered insights and recommendations.
+                    </p>
+                </a>
+
+                <!-- Analytics Dashboard -->
+                <a href="/analytics" class="sport-card" data-aos="zoom-in" data-aos-delay="150" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Analytics Dashboard</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Live Scores • Standings • Statistical Projections</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Real-time sports data with Pythagorean win projections, playoff probability trends, and heatmaps.
+                    </p>
+                </a>
+
+                <!-- Interactive Dashboard -->
+                <a href="/components/interactive-dashboard.html" class="sport-card" data-aos="zoom-in" data-aos-delay="200" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Interactive Dashboard</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Mobile • Real-time • 3D Visualizations</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Production-ready dashboard with authentication, testing suite, deployment tools, and monitoring.
+                    </p>
+                </a>
+
+                <!-- College Baseball -->
+                <a href="/college-baseball-demo" class="sport-card" data-aos="zoom-in" data-aos-delay="250" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">⚾</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">College Baseball</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">NCAA D1 • Box Scores • Player Stats</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Complete coverage ESPN won't provide—full box scores, standings, and player-level analytics.
+                    </p>
+                </a>
+
+                <!-- Historical Comparisons -->
+                <a href="/historicalcomparisons" class="sport-card" data-aos="zoom-in" data-aos-delay="300" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">📈</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Historical Comparisons</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Cross-Era Analysis • Statistical Context</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Compare players and teams across eras with context-adjusted metrics and historical benchmarks.
+                    </p>
+                </a>
+
+                <!-- Performance Benchmark -->
+                <a href="/performance-benchmark" class="sport-card" data-aos="zoom-in" data-aos-delay="350" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">⏱️</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Performance Metrics</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Core Web Vitals • Device Testing</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Automated benchmarking across device classes with FPS tracking and optimization recommendations.
+                    </p>
+                </a>
+
+                <!-- Multi-Sport Analytics -->
+                <a href="/sports-analytics-dashboard" class="sport-card" data-aos="zoom-in" data-aos-delay="400" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Multi-Sport Dashboard</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Cross-Sport Analytics • Unified View</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Comprehensive analytics dashboard spanning Baseball, Football, and Basketball with unified metrics.
+                    </p>
+                </a>
+
+                <!-- NFL Analytics -->
+                <a href="/nfl-analytics" class="sport-card" data-aos="zoom-in" data-aos-delay="450" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🏈</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">NFL Analytics</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Game Analysis • Predictive Models • Film Study</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Professional football analytics with game breakdowns, advanced metrics, and strategic insights.
+                    </p>
+                </a>
+
+                <!-- Enhanced AI Insights -->
+                <a href="/copilot/insights" class="sport-card" data-aos="zoom-in" data-aos-delay="500" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🧠</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Enhanced AI Insights</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Gemini 2.5 • GPT-5 • Claude 4.5 • RAG Pipeline</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Multi-provider AI insights with semantic search, RAG, and intelligent query routing for superior analysis.
+                    </p>
+                </a>
+
+                <!-- Enhanced Search -->
+                <a href="/copilot/search" class="sport-card" data-aos="zoom-in" data-aos-delay="550" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Enhanced Search</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Vector Embeddings • Semantic Search • Relevance Scoring</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        AI-powered semantic search with vector embeddings and intelligent relevance scoring across all sports data.
+                    </p>
+                </a>
+
+                <!-- Dashboard Manager -->
+                <a href="/dashboards/manager" class="sport-card" data-aos="zoom-in" data-aos-delay="600" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Dashboard Manager</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Widget Library • Custom Layouts • Real-Time Updates</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Create and manage custom analytics dashboards with drag-and-drop widgets and comprehensive sports data integration.
+                    </p>
+                </a>
+
+                <!-- Prediction Stream -->
+                <a href="/predictions/stream" class="sport-card" data-aos="zoom-in" data-aos-delay="650" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">📡</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Live Prediction Stream</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Real-Time Updates • Win Probability • Key Moments • SSE Streaming</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Real-time AI-powered game predictions with win probability analysis, key moment detection, and comprehensive performance metrics.
+                    </p>
+                </a>
+
+                <!-- Live Scores -->
+                <a href="/live/scores" class="sport-card" data-aos="zoom-in" data-aos-delay="700" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🏟️</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Live Scores</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Multi-Sport • Real-Time Updates • Auto-Refresh • Cross-Platform</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Real-time scores across MLB, NFL, NBA, CFB, CBB, and College Baseball with auto-refresh, date navigation, and comprehensive game details.
+                    </p>
+                </a>
+
+                <!-- Live Data Interface -->
+                <a href="/live/data" class="sport-card" data-aos="zoom-in" data-aos-delay="750" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">📡</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Live Data Interface</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">WebSocket Streams • Real-Time Analytics • Activity Monitoring • Data Export</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Comprehensive live data streams with real-time updates, filtering, search, sparkline visualizations, and activity logging for all sports data.
+                    </p>
+                </a>
+
+                <!-- Championship Dashboard -->
+                <a href="/dashboards/championship" class="sport-card" data-aos="zoom-in" data-aos-delay="800" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Championship Dashboard</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Babylon.js WebGPU • 3D Visualization • Real-Time Data • Interactive Controls</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        3D championship sports visualization with Babylon.js 8.0 WebGPU rendering, real-time analytics, interactive camera controls, and performance monitoring.
+                    </p>
+                </a>
+
+                <!-- Copilot Endpoints -->
+                <a href="/copilot/endpoints" class="sport-card" data-aos="zoom-in" data-aos-delay="850" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🔧</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Copilot Endpoints</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">API Management • Endpoint Testing • Request Builder • Usage Tracking</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Comprehensive API endpoint management dashboard with interactive testing interface, request builder, performance metrics, and usage history for all copilot services.
+                    </p>
+                </a>
+
+                <!-- Predictions Analytics Engine -->
+                <a href="/predictions/analytics-engine" class="sport-card" data-aos="zoom-in" data-aos-delay="900" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Predictions Analytics Engine</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Win Probability • Betting Lines • Model Accuracy • Performance Tracking</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Comprehensive predictive analytics platform with real-time win probability modeling, betting line analysis with value detection, and rigorous model performance tracking.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Visualizations Section -->
+    <section class="sports-section" style="background: linear-gradient(180deg, var(--dark-graphite) 0%, var(--dark-midnight) 100%);">
+        <div class="section-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">3D Graphics</div>
+                <h2 class="section-title">Advanced Visualizations</h2>
+                <p class="section-subtitle">
+                    Interactive 3D demos powered by Babylon.js 8.0 WebGPU, Three.js, and Monte Carlo simulations.
+                </p>
+            </div>
+
+            <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+                <!-- Monte Carlo Three.js -->
+                <a href="/BSI-archive/demo-visualizations/blaze_monte_carlo_threejs.html" class="sport-card" data-aos="zoom-in" data-aos-delay="100" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🎲</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Monte Carlo Simulation</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">10,000 Iterations • Three.js • Real-time</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Interactive 3D particle system showing probabilistic playoff scenarios with live statistical modeling.
+                    </p>
+                </a>
+
+                <!-- Championship Platform -->
+                <a href="/BSI-archive/demo-visualizations/championship_platform_demo.html" class="sport-card" data-aos="zoom-in" data-aos-delay="150" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Championship Platform</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Live Data • 3D Stadium • Babylon.js</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        3D stadium visualizations with real-time game data integration and dynamic camera controls.
+                    </p>
+                </a>
+
+                <!-- Babylon.js Sports Dashboard -->
+                <a href="/BSI-archive/demo-visualizations/blaze-3d-sports-dashboard.html" class="sport-card" data-aos="zoom-in" data-aos-delay="200" style="text-align: left;">
+                    <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">3D Sports Dashboard</h3>
+                    <p class="sport-status" style="margin-bottom: 0.5rem;">Babylon.js 8.0 • WebGPU • Physics</p>
+                    <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
+                        Complete 3D dashboard with WebGPU rendering, physics simulations, and interactive data exploration.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Garrido Code Coaching Series -->
+    <section class="sports-section" style="background: linear-gradient(180deg, var(--dark-midnight) 0%, var(--dark-slate) 100%);">
+        <div class="section-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Coaching Intelligence</div>
+                <h2 class="section-title">The Garrido Code</h2>
+                <p class="section-subtitle">
+                    10-episode coaching philosophy series from legendary Texas baseball coach Augie Garrido.
+                </p>
+            </div>
+
+            <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <a href="/garrido/chaos.html" class="sport-card" data-aos="zoom-in" data-aos-delay="50">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🌪️</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 1: Chaos</h3>
+                    <p class="sport-status">Embracing the Unpredictable</p>
+                </a>
+
+                <a href="/garrido/responsibility.html" class="sport-card" data-aos="zoom-in" data-aos-delay="75">
+                    <div class="sport-icon" style="font-size: 2.5rem;">⚖️</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 2: Responsibility</h3>
+                    <p class="sport-status">Ownership & Accountability</p>
+                </a>
+
+                <a href="/garrido/focus.html" class="sport-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🎯</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 3: Focus</h3>
+                    <p class="sport-status">Mental Preparation</p>
+                </a>
+
+                <a href="/garrido/patience.html" class="sport-card" data-aos="zoom-in" data-aos-delay="125">
+                    <div class="sport-icon" style="font-size: 2.5rem;">⏳</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 4: Patience</h3>
+                    <p class="sport-status">Long-Term Development</p>
+                </a>
+
+                <a href="/garrido/courage.html" class="sport-card" data-aos="zoom-in" data-aos-delay="150">
+                    <div class="sport-icon" style="font-size: 2.5rem;">💪</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 5: Courage</h3>
+                    <p class="sport-status">Leading Under Pressure</p>
+                </a>
+
+                <a href="/garrido/compassion.html" class="sport-card" data-aos="zoom-in" data-aos-delay="175">
+                    <div class="sport-icon" style="font-size: 2.5rem;">❤️</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 6: Compassion</h3>
+                    <p class="sport-status">Building Relationships</p>
+                </a>
+
+                <a href="/garrido/trust.html" class="sport-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🤝</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 7: Trust</h3>
+                    <p class="sport-status">Team Chemistry</p>
+                </a>
+
+                <a href="/garrido/resilience.html" class="sport-card" data-aos="zoom-in" data-aos-delay="225">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🛡️</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 8: Resilience</h3>
+                    <p class="sport-status">Bouncing Back</p>
+                </a>
+
+                <a href="/garrido/excellence.html" class="sport-card" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🌟</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 9: Excellence</h3>
+                    <p class="sport-status">Championship Standards</p>
+                </a>
+
+                <a href="/garrido/legacy.html" class="sport-card" data-aos="zoom-in" data-aos-delay="275">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🏅</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Episode 10: Legacy</h3>
+                    <p class="sport-status">Beyond Championships</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- College Baseball Expanded -->
+    <section class="sports-section" style="background: linear-gradient(180deg, var(--dark-slate) 0%, var(--dark-graphite) 100%);">
+        <div class="section-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Complete Coverage</div>
+                <h2 class="section-title">College Baseball Deep Dive</h2>
+                <p class="section-subtitle">
+                    Every stat ESPN won't show you. Complete box scores, player stats, and scouting reports.
+                </p>
+            </div>
+
+            <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <a href="/college-baseball/games/" class="sport-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="sport-icon" style="font-size: 3rem;">📅</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem;">Live Games</h3>
+                    <p class="sport-status">Real-time Scores • Complete Box Scores</p>
+                </a>
+
+                <a href="/college-baseball/standings/" class="sport-card" data-aos="zoom-in" data-aos-delay="150">
+                    <div class="sport-icon" style="font-size: 3rem;">📊</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem;">Standings</h3>
+                    <p class="sport-status">Conference Rankings • RPI • Strength of Schedule</p>
+                </a>
+
+                <a href="/college-baseball/teams/" class="sport-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="sport-icon" style="font-size: 3rem;">🏫</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem;">Team Profiles</h3>
+                    <p class="sport-status">Complete Rosters • Statistics • Analytics</p>
+                </a>
+
+                <a href="/college-baseball/players/" class="sport-card" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="sport-icon" style="font-size: 3rem;">👤</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem;">Player Stats</h3>
+                    <p class="sport-status">Batting • Pitching • Fielding • Advanced Metrics</p>
+                </a>
+
+                <a href="/college-baseball/scouting-report/" class="sport-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="sport-icon" style="font-size: 3rem;">🔍</div>
+                    <h3 class="sport-name" style="font-size: 1.5rem;">Scouting Reports</h3>
+                    <p class="sport-status">Draft Prospects • Tools Grades • Pro Projections</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Component Library -->
+    <section class="sports-section" style="background: linear-gradient(180deg, var(--dark-graphite) 0%, var(--dark-slate) 100%);">
+        <div class="section-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-badge">Component Library</div>
+                <h2 class="section-title">UI Components</h2>
+                <p class="section-subtitle">
+                    Production-ready components with design tokens, CSS modules, and accessibility standards.
+                </p>
+            </div>
+
+            <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
+                <a href="/components/Button.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🔘</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Button</h3>
+                    <p class="sport-status">Primary, Secondary, Variants</p>
+                </a>
+
+                <a href="/components/Card.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🃏</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Card</h3>
+                    <p class="sport-status">Glass Morphism, Borders</p>
+                </a>
+
+                <a href="/components/KPIWidget.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">📈</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">KPI Widget</h3>
+                    <p class="sport-status">Metrics, Trends, Sparklines</p>
+                </a>
+
+                <a href="/components/DataStamp.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🕐</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Data Stamp</h3>
+                    <p class="sport-status">Freshness Indicators</p>
+                </a>
+
+                <a href="/components/LoadingSpinner.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">⏳</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Loading States</h3>
+                    <p class="sport-status">Spinners, Skeletons, Progress</p>
+                </a>
+
+                <a href="/components/ErrorBoundary.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">⚠️</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Error Handling</h3>
+                    <p class="sport-status">Boundaries, Messages, Recovery</p>
+                </a>
+
+                <a href="/components/Toast.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">📬</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Toast</h3>
+                    <p class="sport-status">Notifications, Alerts</p>
+                </a>
+
+                <a href="/components/Modal.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">🪟</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Modal</h3>
+                    <p class="sport-status">Dialogs, Overlays</p>
+                </a>
+
+                <a href="/components/Dropdown.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">📋</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Dropdown</h3>
+                    <p class="sport-status">Menus, Select, Multi-select</p>
+                </a>
+
+                <a href="/components/Tabs.html" class="sport-card" data-aos="zoom-in">
+                    <div class="sport-icon" style="font-size: 2.5rem;">📑</div>
+                    <h3 class="sport-name" style="font-size: 1.3rem;">Tabs</h3>
+                    <p class="sport-status">Navigation, Content Switching</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Legal & Compliance Links -->
+            <div class="footer-links" style="display: flex; flex-wrap: wrap; gap: 1.5rem 3rem; justify-content: center; margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
+                <a href="/legal/privacy/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-shield-alt" style="color: var(--blaze-copper);"></i>
+                    Privacy Policy
+                </a>
+                <a href="/legal/terms/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-file-contract" style="color: var(--blaze-copper);"></i>
+                    Terms of Service
+                </a>
+                <a href="/legal/accessibility/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-universal-access" style="color: var(--blaze-copper);"></i>
+                    Accessibility
+                </a>
+                <a href="/legal/ai-disclosure/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-robot" style="color: var(--blaze-copper);"></i>
+                    AI Disclosure
+                </a>
+                <a href="/legal/cookies/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-cookie-bite" style="color: var(--blaze-copper);"></i>
+                    Cookie Policy
+                </a>
+                <a href="/legal/copyright/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-copyright" style="color: var(--blaze-copper);"></i>
+                    Copyright & DMCA
+                </a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Blaze Sports Intel. Built with <span class="text-gradient">🔥</span> in Boerne, Texas.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                    Deep South Sports Authority • Championship Analytics Platform
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // ==================== INITIALIZE AOS ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100,
+                easing: 'ease-out'
+            });
+        });
+
+        // ==================== NAVIGATION SCROLL EFFECT ====================
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // ==================== MOBILE MENU TOGGLE ====================
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileToggle.addEventListener('click', () => {
+            mobileToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // ==================== SMOOTH SCROLL ====================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ==================== THREE.JS PARTICLE SYSTEM ====================
+        function initParticleSystem() {
+            const canvas = document.getElementById('particle-field');
+            if (!canvas || typeof THREE === 'undefined') {
+                console.warn('Three.js or canvas not available');
+                return;
+            }
+
+            try {
+                // Scene setup
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(
+                    75,
+                    window.innerWidth / window.innerHeight,
+                    0.1,
+                    1000
+                );
+                const renderer = new THREE.WebGLRenderer({
+                    canvas,
+                    alpha: true,
+                    antialias: true
+                });
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setClearColor(0x000000, 0);
+                camera.position.z = 500;
+
+                // Detect device type and set particle count
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const particleCount = isMobile ? 8000 : 150000;
+
+                // Create particles
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                const velocities = new Float32Array(particleCount * 3);
+
+                // Burnt orange color palette
+                const colorPalette = [
+                    new THREE.Color(0xBF5700), // Burnt orange
+                    new THREE.Color(0xCC6600), // Ember
+                    new THREE.Color(0xD97B38), // Copper
+                    new THREE.Color(0xE69551), // Sunset
+                    new THREE.Color(0xFFBF00), // Amber
+                ];
+
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    // Random position
+                    positions[i] = (Math.random() - 0.5) * 2000;
+                    positions[i + 1] = (Math.random() - 0.5) * 2000;
+                    positions[i + 2] = (Math.random() - 0.5) * 1000;
+
+                    // Random velocity
+                    velocities[i] = (Math.random() - 0.5) * 0.3;
+                    velocities[i + 1] = (Math.random() - 0.5) * 0.3;
+                    velocities[i + 2] = (Math.random() - 0.5) * 0.3;
+
+                    // Random burnt orange color
+                    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                    colors[i] = color.r;
+                    colors[i + 1] = color.g;
+                    colors[i + 2] = color.b;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                // Particle material
+                const material = new THREE.PointsMaterial({
+                    size: isMobile ? 1.5 : 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8,
+                    blending: THREE.AdditiveBlending,
+                    sizeAttenuation: true
+                });
+
+                const particles = new THREE.Points(geometry, material);
+                scene.add(particles);
+
+                // Mouse interaction
+                let mouseX = 0;
+                let mouseY = 0;
+
+                document.addEventListener('mousemove', (event) => {
+                    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+                });
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+
+                    const positions = particles.geometry.attributes.position.array;
+
+                    for (let i = 0; i < particleCount * 3; i += 3) {
+                        // Update position with velocity
+                        positions[i] += velocities[i];
+                        positions[i + 1] += velocities[i + 1];
+                        positions[i + 2] += velocities[i + 2];
+
+                        // Boundary check and wrap
+                        if (Math.abs(positions[i]) > 1000) positions[i] *= -1;
+                        if (Math.abs(positions[i + 1]) > 1000) positions[i + 1] *= -1;
+                        if (Math.abs(positions[i + 2]) > 500) positions[i + 2] *= -1;
+                    }
+
+                    particles.geometry.attributes.position.needsUpdate = true;
+
+                    // Rotate particles slowly
+                    particles.rotation.y += 0.0002;
+                    particles.rotation.x += 0.0001;
+
+                    // Mouse parallax effect
+                    camera.position.x += (mouseX * 50 - camera.position.x) * 0.05;
+                    camera.position.y += (mouseY * 50 - camera.position.y) * 0.05;
+
+                    renderer.render(scene, camera);
+                }
+
+                animate();
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            } catch (error) {
+                console.error('Particle system initialization failed:', error);
+            }
+        }
+
+        // Initialize particle system on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initParticleSystem);
+        } else {
+            initParticleSystem();
+        }
+    </script>
+</body>
 </html>
