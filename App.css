@@ -1,12 +1,66 @@
 :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #2d2d2d;
-  --accent-color: #00a86b;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
-  --border-color: #404040;
-  --card-bg: #1e1e1e;
+  /* Brand palette */
+  --blaze-burnt-orange: #bf5700;
+  --blaze-ember: #cc6600;
+  --blaze-copper: #d97b38;
+  --blaze-sunset: #e68a4f;
+  --blaze-crimson: #8b0000;
+  --blaze-cardinal: #dc143c;
+  --blaze-powder: #b0e0e6;
+  --blaze-charcoal: #0d0d12;
+
+  /* Surface colors */
+  --surface-primary: var(--blaze-charcoal);
+  --surface-secondary: #161620;
+  --surface-elevated: #1f1f2e;
+  --surface-overlay: rgba(13, 13, 18, 0.72);
+  --card-bg: var(--surface-elevated);
+
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: rgba(248, 250, 252, 0.72);
+  --text-tertiary: rgba(248, 250, 252, 0.56);
+
+  /* Brand accents */
+  --brand-primary: var(--blaze-burnt-orange);
+  --brand-secondary: var(--blaze-ember);
+  --brand-tertiary: var(--blaze-copper);
+  --brand-surface-strong: rgba(191, 87, 0, 0.18);
+  --brand-surface-soft: rgba(191, 87, 0, 0.1);
+  --live-indicator: var(--blaze-cardinal);
+
+  /* Borders and outlines */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(217, 123, 56, 0.32);
+  --focus-ring-color: rgba(217, 123, 56, 0.45);
+
+  /* Gradients */
+  --gradient-brand: linear-gradient(
+    135deg,
+    var(--blaze-burnt-orange) 0%,
+    var(--blaze-ember) 50%,
+    var(--blaze-copper) 100%
+  );
+  --gradient-highlight: linear-gradient(135deg, var(--blaze-crimson) 0%, var(--blaze-cardinal) 100%);
+  --gradient-hero: radial-gradient(ellipse at top, rgba(191, 87, 0, 0.15), transparent 70%),
+    radial-gradient(ellipse at bottom, rgba(139, 0, 0, 0.12), transparent 70%),
+    radial-gradient(ellipse at right, rgba(176, 224, 230, 0.08), transparent 70%);
+
+  /* Glass morphism */
+  --glass-light: rgba(13, 13, 18, 0.45);
+  --glass-medium: rgba(13, 13, 18, 0.65);
+  --glass-heavy: rgba(13, 13, 18, 0.78);
+  --glass-border: 1px solid rgba(191, 87, 0, 0.2);
+
+  /* Shadows & glows */
+  --shadow-burnt: 0 8px 32px rgba(191, 87, 0, 0.3), 0 2px 8px rgba(191, 87, 0, 0.18);
+  --shadow-crimson: 0 8px 32px rgba(220, 20, 60, 0.25);
+  --glow-soft: 0 0 40px rgba(217, 123, 56, 0.18);
+  --glow-medium: 0 0 60px rgba(217, 123, 56, 0.28);
+
+  /* Legacy aliases */
+  --primary-color: var(--surface-primary);
+  --secondary-color: var(--surface-secondary);
 }
 
 * {
@@ -21,7 +75,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--primary-color);
+  background-color: var(--surface-primary);
   color: var(--text-primary);
   overflow-x: hidden;
 }
@@ -36,7 +90,7 @@ body {
 .app-header {
   position: sticky;
   top: 0;
-  background-color: var(--secondary-color);
+  background-color: var(--surface-secondary);
   padding: 16px;
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
@@ -61,7 +115,8 @@ body {
 }
 
 .conference-filter select:focus {
-  border-color: var(--accent-color);
+  border-color: var(--brand-secondary);
+  box-shadow: 0 0 0 2px var(--brand-surface-soft), 0 0 0 4px var(--focus-ring-color);
 }
 
 .bottom-nav {
@@ -69,7 +124,7 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--secondary-color);
+  background-color: var(--surface-secondary);
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: space-around;
@@ -93,7 +148,7 @@ body {
 }
 
 .bottom-nav button.active {
-  color: var(--accent-color);
+  color: var(--brand-tertiary);
 }
 
 .bottom-nav button:active {
@@ -124,7 +179,7 @@ body {
   width: 40px;
   height: 40px;
   border: 3px solid var(--border-color);
-  border-top-color: var(--accent-color);
+  border-top-color: var(--brand-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

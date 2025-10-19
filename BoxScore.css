@@ -9,7 +9,7 @@
 .back-button {
   background: none;
   border: none;
-  color: var(--accent-color);
+  color: var(--brand-tertiary);
   font-size: 14px;
   cursor: pointer;
   padding: 8px 0;
@@ -83,7 +83,7 @@
 .line-score .total-score {
   font-weight: 700;
   font-size: 16px;
-  background-color: rgba(0, 168, 107, 0.1);
+  background-color: var(--brand-surface-strong);
 }
 
 .stats-tabs {
@@ -107,8 +107,8 @@
 }
 
 .stats-tabs button.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  color: var(--brand-tertiary);
+  border-bottom-color: var(--brand-tertiary);
 }
 
 .stats-content {
@@ -124,7 +124,7 @@
   font-weight: 600;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--accent-color);
+  border-bottom: 2px solid var(--brand-primary);
 }
 
 .stats-table-wrapper {
@@ -182,19 +182,19 @@
 .stats-table .avg,
 .stats-table .era {
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--brand-tertiary);
 }
 
 .decision-pitcher {
-  background-color: rgba(0, 168, 107, 0.05);
+  background-color: var(--brand-surface-soft);
 }
 
 .decision {
   display: inline-block;
   margin-left: 8px;
   padding: 2px 6px;
-  background-color: var(--accent-color);
-  color: var(--primary-color);
+  background-color: var(--brand-primary);
+  color: #fff;
   font-size: 10px;
   font-weight: 700;
   border-radius: 4px;
