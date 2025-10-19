@@ -7,6 +7,7 @@
   --live-indicator: #ff3b30;
   --border-color: #404040;
   --card-bg: #1e1e1e;
+  --font-family-display: 'Source Serif Pro', 'Times New Roman', serif;
 }
 
 * {
@@ -40,12 +41,42 @@ body {
   padding: 16px;
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.app-header h1 {
-  font-size: 20px;
+.brand-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.display-headline {
+  font-family: var(--font-family-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.tagline {
+  font-family: var(--font-family-display);
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 12px;
+  color: #fbbf24;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 640px;
+}
+
+.conference-filter {
+  width: 100%;
 }
 
 .conference-filter select {
@@ -150,8 +181,27 @@ body {
 
 /* Tablet and up */
 @media (min-width: 768px) {
-  .app-header h1 {
-    font-size: 24px;
+  .app-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 24px 32px;
+  }
+
+  .brand-intro {
+    max-width: 60%;
+  }
+
+  .display-headline {
+    font-size: 36px;
+  }
+
+  .tagline {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 16px;
   }
 
   .app-content {
