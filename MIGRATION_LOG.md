@@ -642,10 +642,10 @@ enum FeedPrecision { EVENT | PITCH }
 ---
 
 **Document Version**: 1.1.0
-### 2025-10-20 (Phase 2 Data Model Refresh)
+### 2024-10-20 (Phase 2 Data Model Refresh)
 - ✅ Defined first-class Prisma schema for baseball domain (conferences, teams, players, games, rankings).
 - ✅ Captured baseline migration `20241020130000_init_baseball_schema` aligning database tables/enums to API contracts.
 - ✅ Added Prisma CLI + generated client to workspace dependencies and verified local tooling via `prisma generate` + `npm run dev`.
 
-**Last Updated**: 2025-10-20 19:20 CDT
+**Last Updated**: 2024-10-20 19:20 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
