@@ -1,12 +1,27 @@
 :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #2d2d2d;
-  --accent-color: #00a86b;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
-  --border-color: #404040;
-  --card-bg: #1e1e1e;
+  --surface-950: #0d0704;
+  --surface-900: #140b06;
+  --surface-850: #1c1009;
+  --surface-800: #24150d;
+  --surface-750: #2f1c12;
+  --glass-light: rgba(47, 28, 18, 0.55);
+  --glass-medium: rgba(31, 18, 11, 0.72);
+  --glass-heavy: rgba(18, 10, 6, 0.88);
+  --glass-border: rgba(255, 140, 85, 0.28);
+  --blaze-ember: #d86b1f;
+  --blaze-ember-bright: #ff8c3a;
+  --blaze-ember-deep: #a94a12;
+  --gradient-primary: linear-gradient(135deg, #ffb056 0%, #f3732f 45%, #c13f04 100%);
+  --primary-color: var(--surface-950);
+  --secondary-color: var(--surface-850);
+  --text-primary: #fbe9dc;
+  --text-secondary: #d3b8a9;
+  --live-indicator: #ff4d3d;
+  --border-color: rgba(255, 140, 85, 0.2);
+  --card-bg: rgba(31, 18, 11, 0.82);
+  --shadow-glass: 0 20px 44px rgba(8, 4, 2, 0.65);
+  --font-primary: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Source Serif Pro', 'Georgia', serif;
 }
 
 * {
@@ -16,12 +31,11 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--primary-color);
+  background: radial-gradient(circle at top, rgba(248, 167, 104, 0.12), transparent 45%),
+    var(--primary-color);
   color: var(--text-primary);
   overflow-x: hidden;
 }
@@ -31,18 +45,24 @@ body {
   display: flex;
   flex-direction: column;
   padding-bottom: 70px; /* Space for bottom nav */
+  background: linear-gradient(160deg, rgba(209, 104, 43, 0.08), transparent 55%),
+    var(--surface-950);
 }
 
 .app-header {
   position: sticky;
   top: 0;
-  background-color: var(--secondary-color);
+  background: var(--glass-medium);
   padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   z-index: 100;
 }
 
 .app-header h1 {
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 12px;
@@ -51,17 +71,20 @@ body {
 .conference-filter select {
   width: 100%;
   padding: 10px;
-  background-color: var(--card-bg);
+  background: var(--glass-light);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   font-size: 14px;
   outline: none;
   cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .conference-filter select:focus {
-  border-color: var(--accent-color);
+  border-color: var(--blaze-ember-bright);
+  box-shadow: 0 0 0 2px rgba(216, 107, 31, 0.25);
 }
 
 .bottom-nav {
@@ -69,12 +92,15 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--secondary-color);
-  border-top: 1px solid var(--border-color);
+  background: var(--glass-heavy);
+  border-top: 1px solid var(--glass-border);
   display: flex;
   justify-content: space-around;
   padding: 8px 0;
   z-index: 100;
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .bottom-nav button {
@@ -89,15 +115,16 @@ body {
   font-size: 12px;
   padding: 8px;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.2s;
 }
 
 .bottom-nav button.active {
-  color: var(--accent-color);
+  color: var(--blaze-ember-bright);
 }
 
 .bottom-nav button:active {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(248, 141, 74, 0.08);
+  transform: translateY(1px);
 }
 
 .nav-icon {
@@ -109,6 +136,18 @@ body {
   padding: 16px;
   max-width: 100%;
   overflow-x: hidden;
+}
+
+.game-card,
+.box-score,
+.standings-card {
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-glass);
 }
 
 .loading-state {
@@ -123,14 +162,16 @@ body {
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--accent-color);
+  border: 3px solid var(--glass-border);
+  border-top-color: var(--blaze-ember);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -170,7 +211,7 @@ body {
   .bottom-nav {
     position: static;
     border-top: none;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--glass-border);
     padding: 0;
   }
 
