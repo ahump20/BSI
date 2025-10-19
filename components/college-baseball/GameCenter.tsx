@@ -169,8 +169,8 @@ export default function GameCenter({
       </div>
 
       {/* Refresh button */}
-      <button 
-        className="refresh-button"
+      <button
+        className="refresh-button cta-button"
         onClick={handleRefresh}
         disabled={loading}
       >
@@ -280,25 +280,12 @@ export default function GameCenter({
         .refresh-button {
           width: 100%;
           margin-top: 1.5rem;
-          padding: 1rem;
-          background: #2563eb;
-          color: white;
-          border: none;
-          border-radius: 0.5rem;
+          min-height: 48px;
+          --cta-padding-y: 0.85rem;
+          --cta-padding-x: 1.25rem;
+          --cta-radius: 1rem;
           font-size: 1rem;
-          font-weight: 500;
-          cursor: pointer;
-          min-height: 44px;
-          transition: background 0.2s;
-        }
-
-        .refresh-button:disabled {
-          background: #9ca3af;
-          cursor: not-allowed;
-        }
-
-        .refresh-button:active:not(:disabled) {
-          transform: scale(0.98);
+          font-weight: 700;
         }
 
         @media (min-width: 640px) {
@@ -323,15 +310,14 @@ function GameCard({ game, isSelected, onClick }: GameCardProps) {
   const isFinal = game.status === 'final';
   
   return (
-    <div 
-      className={`game-card ${isSelected ? 'selected' : ''} ${isLive ? 'live' : ''}`}
+    <div
+      className={`game-card accent-border ${isSelected ? 'selected' : ''} ${isLive ? 'live' : ''}`}
       onClick={onClick}
     >
       {/* Live indicator */}
       {isLive && (
         <div className="live-indicator">
-          <span className="live-dot"></span>
-          LIVE
+          Live
         </div>
       )}
 
@@ -362,8 +348,9 @@ function GameCard({ game, isSelected, onClick }: GameCardProps) {
 
       <style jsx>{`
         .game-card {
+          --accent-border-radius: 0.75rem;
           background: white;
-          border: 2px solid #e5e7eb;
+          border: 1px solid transparent;
           border-radius: 0.75rem;
           padding: 1rem;
           cursor: pointer;
@@ -372,13 +359,11 @@ function GameCard({ game, isSelected, onClick }: GameCardProps) {
         }
 
         .game-card.live {
-          border-color: #dc2626;
-          background: #fef2f2;
+          background: #fff7ed;
         }
 
         .game-card.selected {
-          border-color: #2563eb;
-          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
 
         .game-card:active {
@@ -389,25 +374,6 @@ function GameCard({ game, isSelected, onClick }: GameCardProps) {
           position: absolute;
           top: 0.75rem;
           right: 0.75rem;
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-          font-size: 0.75rem;
-          font-weight: bold;
-          color: #dc2626;
-        }
-
-        .live-dot {
-          width: 8px;
-          height: 8px;
-          background: #dc2626;
-          border-radius: 50%;
-          animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
         }
 
         .game-info {
