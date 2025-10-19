@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import SportSwitcher from './components/SportSwitcher'
 
+const Header = () => (
+  <header>
+    <h1 className="brand-title">🔥 BLAZE SPORTS INTEL</h1>
+    <p className="tagline">Diamond-level NCAA baseball coverage</p>
+    <p className="subtitle">Mobile-first analytics, recruiting intel, and live scoring</p>
+  </header>
+)
+
 function App() {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
@@ -40,10 +48,7 @@ function App() {
   if (loading) {
     return (
       <div className="container">
-        <header>
-          <h1>⚾ College Baseball Live</h1>
-          <p className="tagline">Real-time college baseball scores and updates</p>
-        </header>
+        <Header />
         <div className="loading">
           <div className="spinner"></div>
           <p>Loading live scores...</p>
@@ -55,9 +60,7 @@ function App() {
   if (error) {
     return (
       <div className="container">
-        <header>
-          <h1>⚾ College Baseball Live</h1>
-        </header>
+        <Header />
         <div className="error">
           <p>⚠️ Failed to load live data</p>
           <p className="error-detail">{error}</p>
@@ -73,10 +76,7 @@ function App() {
 
   return (
     <div className="container">
-      <header>
-        <h1>⚾ College Baseball Live</h1>
-        <p className="tagline">Real-time scores with comprehensive game data</p>
-      </header>
+      <Header />
 
       <main>
         <section className="live-scores">
