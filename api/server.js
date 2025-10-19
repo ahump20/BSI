@@ -17,6 +17,7 @@ import dotenv from 'dotenv';
 
 import SportsDataService from './sports-data-service.js';
 import LoggerService from './services/logger-service.js';
+import SchedulingOptimizerService from './services/scheduling-optimizer.js';
 
 // Load environment variables
 dotenv.config();
@@ -37,6 +38,11 @@ class BlazeIntelligenceAPIServer {
 
         // Initialize sports data service with ML pipeline
         this.sportsService = new SportsDataService(this.env);
+
+        // Advanced scheduling optimizer using historical data
+        this.optimizerService = new SchedulingOptimizerService({
+            logger: this.logger,
+        });
 
         this.setupMiddleware();
         this.setupRoutes();
@@ -153,6 +159,44 @@ class BlazeIntelligenceAPIServer {
                     teamKey: req.params.teamKey,
                     sport,
                     timestamp: new Date().toISOString()
+                });
+            }
+        });
+
+        // Scheduling optimizer for what-if scenarios
+        this.app.post('/api/v1/scheduling/optimizer', async (req, res) => {
+            const body = req.body || {};
+            const membershipTier = (req.headers['x-membership-tier'] || body.membershipTier || body.subscription?.tier || 'free');
+
+            try {
+                const payload = this.optimizerService.runOptimization({
+                    teamId: body.teamId,
+                    conferenceId: body.conferenceId,
+                    historicalGames: body.historicalGames || [],
+                    teams: body.teams || [],
+                    prospectiveMatchups: body.prospectiveMatchups || [],
+                    season: body.season,
+                    membershipTier,
+                    options: {
+                        simulations: body.simulations ?? body.options?.simulations,
+                        includeAdvanced: body.includeAdvanced ?? body.options?.includeAdvanced,
+                    },
+                });
+
+                res.json({
+                    success: true,
+                    ...payload,
+                });
+            } catch (error) {
+                this.logger.error('Scheduling optimizer failed', {
+                    teamId: body.teamId,
+                    conferenceId: body.conferenceId,
+                }, error);
+
+                res.status(400).json({
+                    success: false,
+                    error: error.message,
+                    timestamp: new Date().toISOString(),
                 });
             }
         });
