@@ -6,6 +6,19 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  const BrandHeader = () => (
+    <header>
+      <div className="brand-lockup">
+        <span className="brand-icon" aria-hidden="true">🔥</span>
+        <div className="brand-text">
+          <h1 className="brand-title">Blaze Sports Intel</h1>
+          <p className="tagline">Mobile-first NCAA Division I baseball intelligence</p>
+          <p className="subtitle">Deep South Sports Authority • College Baseball</p>
+        </div>
+      </div>
+    </header>
+  )
+
   useEffect(() => {
     // Fetch live college baseball games from ESPN API
     const fetchGames = async () => {
@@ -40,10 +53,7 @@ function App() {
   if (loading) {
     return (
       <div className="container">
-        <header>
-          <h1>⚾ College Baseball Live</h1>
-          <p className="tagline">Real-time college baseball scores and updates</p>
-        </header>
+        <BrandHeader />
         <div className="loading">
           <div className="spinner"></div>
           <p>Loading live scores...</p>
@@ -55,9 +65,7 @@ function App() {
   if (error) {
     return (
       <div className="container">
-        <header>
-          <h1>⚾ College Baseball Live</h1>
-        </header>
+        <BrandHeader />
         <div className="error">
           <p>⚠️ Failed to load live data</p>
           <p className="error-detail">{error}</p>
@@ -73,10 +81,7 @@ function App() {
 
   return (
     <div className="container">
-      <header>
-        <h1>⚾ College Baseball Live</h1>
-        <p className="tagline">Real-time scores with comprehensive game data</p>
-      </header>
+      <BrandHeader />
 
       <main>
         <section className="live-scores">

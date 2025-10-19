@@ -4,10 +4,23 @@
   box-sizing: border-box;
 }
 
+:root {
+  --color-base-900: #1a202c;
+  --color-surface-800: #2d3748;
+  --color-border: rgba(148, 163, 184, 0.24);
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: rgba(148, 163, 184, 0.72);
+  --color-accent-gold: #fbbf24;
+  --color-accent-crimson: #dc2626;
+  --font-sans: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  --display-font: 'Source Serif Pro', 'Merriweather', 'Georgia', serif;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  font-family: var(--font-sans);
+  background-color: var(--color-base-900);
+  color: var(--color-text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,23 +34,59 @@ body {
 
 /* Header */
 header {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  background: linear-gradient(135deg, rgba(45, 55, 72, 0.92) 0%, rgba(26, 32, 44, 0.98) 100%);
   padding: 20px;
   text-align: center;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--color-border);
 }
 
-header h1 {
-  font-size: 28px;
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-icon {
+  font-size: 32px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(220, 38, 38, 0.45));
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.brand-title {
+  font-family: var(--display-font);
+  font-size: 30px;
   font-weight: 700;
-  margin-bottom: 8px;
-  color: #ffffff;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary);
+  line-height: 1.05;
+  text-transform: uppercase;
 }
 
 .tagline {
-  font-size: 14px;
-  color: #a0a0a0;
-  font-weight: 400;
+  font-family: var(--display-font);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-gold);
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-family: var(--display-font);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
 }
 
 /* Main content */
