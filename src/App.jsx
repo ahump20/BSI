@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import PrimaryNavigation from './components/PrimaryNavigation'
 
 function App() {
   const [games, setGames] = useState([])
@@ -73,6 +74,7 @@ function App() {
 
   return (
     <div className="container">
+      <PrimaryNavigation />
       <header>
         <h1>⚾ College Baseball Live</h1>
         <p className="tagline">Real-time scores with comprehensive game data</p>
