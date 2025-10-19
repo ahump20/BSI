@@ -197,6 +197,57 @@ class BlazeIntelligenceAPIServer {
             }
         });
 
+        // Scheduling optimizer (RPI/SOR projection)
+        this.app.post('/api/v1/scheduling/optimizer', async (req, res) => {
+            const requestBody = req.body || {};
+            const { teamId, conference, currentMetrics, futureOpponents, userTier, iterations, deterministic } = requestBody;
+
+            if (!teamId || !Array.isArray(futureOpponents)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Missing required parameters',
+                    required: ['teamId', 'futureOpponents[]'],
+                });
+            }
+
+            const requestStarted = Date.now();
+
+            try {
+                const projection = await this.sportsService.optimizeSchedulingProjection({
+                    teamId,
+                    conference,
+                    currentMetrics,
+                    futureOpponents,
+                    userTier,
+                    iterations,
+                    deterministic,
+                });
+
+                const upgradeMessage = projection.tierAccess.advancedUnlocked
+                    ? null
+                    : 'Diamond Pro unlocks multi-thousand iteration Monte Carlo runs, percentile bands, and exportable scheduling packets.';
+
+                res.json({
+                    success: true,
+                    data: projection.forecast,
+                    tierAccess: projection.tierAccess,
+                    performance: {
+                        computeMs: projection.forecast.meta.durationMs,
+                        totalMs: Date.now() - requestStarted,
+                        cached: projection.forecast.meta.cached,
+                    },
+                    upgradeMessage,
+                });
+            } catch (error) {
+                this.logger.error('Scheduling optimizer failed', requestBody, error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Scheduling optimizer unavailable',
+                    message: error.message,
+                });
+            }
+        });
+
         // Player performance predictions
         this.app.post('/api/predict/player', async (req, res) => {
             try {
@@ -302,7 +353,8 @@ class BlazeIntelligenceAPIServer {
                     'POST /api/predict/game': 'ML-powered game outcome predictions',
                     'POST /api/predict/player': 'ML-powered player performance predictions',
                     'POST /api/ml/train': 'Initiate ML model training',
-                    'GET /api/team/:sport/:teamKey': 'Enhanced team data'
+                    'GET /api/team/:sport/:teamKey': 'Enhanced team data',
+                    'POST /api/v1/scheduling/optimizer': 'Project RPI/SOR deltas for proposed non-conference schedules'
                 },
                 supportedSports: ['mlb', 'nfl', 'nba', 'ncaa_football', 'ncaa_baseball'],
                 features: [
