@@ -487,6 +487,19 @@ export const mockPortalActivity = {
       },
       topPrograms: ['Stanford', 'Oregon State', 'UC Irvine'],
     },
+    {
+      id: 'great-plains',
+      name: 'Great Plains',
+      coordinates: [39.0119, -98.4842],
+      conferences: ['Big 12', 'MVC'],
+      positions: ['P', 'C', 'UT'],
+      metrics: {
+        '7d': { transferCommits: 3, nilEstimate: 0.9, recruitingIndex: 78 },
+        '30d': { transferCommits: 9, nilEstimate: 2.1, recruitingIndex: 84 },
+        '90d': { transferCommits: 21, nilEstimate: 4.7, recruitingIndex: 88 },
+      },
+      // Intentionally no topPrograms to validate tooltip fallback handling
+    },
   ],
   recentMoves: [
     {
