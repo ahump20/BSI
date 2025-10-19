@@ -169,8 +169,8 @@ export default function GameCenter({
       </div>
 
       {/* Refresh button */}
-      <button 
-        className="refresh-button"
+      <button
+        className="refresh-button cta-button"
         onClick={handleRefresh}
         disabled={loading}
       >
@@ -280,25 +280,11 @@ export default function GameCenter({
         .refresh-button {
           width: 100%;
           margin-top: 1.5rem;
-          padding: 1rem;
-          background: #2563eb;
-          color: white;
-          border: none;
-          border-radius: 0.5rem;
-          font-size: 1rem;
-          font-weight: 500;
-          cursor: pointer;
-          min-height: 44px;
-          transition: background 0.2s;
+          min-height: 48px;
         }
 
         .refresh-button:disabled {
-          background: #9ca3af;
           cursor: not-allowed;
-        }
-
-        .refresh-button:active:not(:disabled) {
-          transform: scale(0.98);
         }
 
         @media (min-width: 640px) {
