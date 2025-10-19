@@ -1,43 +1,36 @@
-name: Deploy to Cloudflare
+name: Deploy to Vercel
+
 on:
   push:
-    branches: [ main, bsi/restore-2025-09-26 ]
+    branches: [main]
+
 permissions:
   contents: read
   deployments: write
+
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
         with:
-          version: 9
-      - run: pnpm i --frozen-lockfile
-      - run: pnpm -w build
-      - name: Deploy Pages (OpenNext output)
-        uses: cloudflare/pages-action@v1
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Deploy to Vercel
+        uses: vercel/actions/deploy@v2
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: blazesportsintel
-          directory: apps/web/.open-next
-          wranglerVersion: '3'
-      - name: Deploy Worker (edge headers/redirects)
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          workingDirectory: apps/api-worker
-          command: deploy
-
-      - name: Notify Sentry release
-        if: success()
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        with:
-          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
-          version: ${{ github.sha }}
-          ignore_missing: true
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          org-id: ${{ secrets.VERCEL_ORG_ID }}
+          production: true

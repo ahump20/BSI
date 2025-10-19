@@ -644,3 +644,9 @@ enum FeedPrecision { EVENT | PITCH }
 **Document Version**: 1.1.0
 **Last Updated**: 2025-10-13 22:30 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
+
+### 2025-10-17 – Next.js 15 Foundation
+- Scaffolded a Next.js 15 App Router experience at the repository root (`app/`) with TypeScript-first components for baseball, football, and basketball scoreboards.
+- Introduced Tailwind CSS wired to the shared dark-mode token palette and migrated client views to token-driven utility classes.
+- Removed the legacy Vite surface (`src/`, `vite.config.js`) in favor of App Router layout/page components.
+- Updated CI to ship through Vercel (`vercel/actions`) for both preview and production pipelines.

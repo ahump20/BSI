@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "outDir": "./",
+    "rootDir": "./",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "incremental": true,
+    "allowJs": true,
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmitOnError": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "lib/**/*.ts",
+    "context7-enhanced/src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "apps/web/**/*"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
+}
