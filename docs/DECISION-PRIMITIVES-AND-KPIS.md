@@ -17,7 +17,7 @@ Each primitive must be backed by live model outputs with audit trails referencin
 - **Context**: Encourages aggressive plate discipline and pitch sequencing when opponent relief corps is depleted in late innings.
 
 ### Cold Bat Watch
-- **Trigger**: `EV_10d <= EV_60d - 3.5 mph` **and** `Z-Contact%` trending downward
+- **Trigger**: `EV_10d <= EV_60d - 3.5 mph` **and** `Z-Contact%_10d <= Z-Contact%_60d - 5%`
 - **Recommendation**: "Slump/injury watch."
 - **Context**: Flags hitters whose recent contact quality and zone contact deteriorate enough to warrant mechanical or health review.
 
