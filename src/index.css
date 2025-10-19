@@ -5,9 +5,9 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  font-family: var(--font-primary);
+  background-color: var(--surface-900);
+  color: var(--text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,22 +21,24 @@ body {
 
 /* Header */
 header {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  background: var(--gradient-dusk);
   padding: 20px;
   text-align: center;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border-subtle);
+  backdrop-filter: blur(14px);
 }
 
 header h1 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #ffffff;
+  color: var(--text-primary);
+  font-family: var(--font-display);
 }
 
 .tagline {
   font-size: 14px;
-  color: #a0a0a0;
+  color: var(--text-muted);
   font-weight: 400;
 }
 
@@ -49,7 +51,7 @@ main {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 16px;
-  color: #ffffff;
+  color: var(--text-secondary);
 }
 
 /* Games grid */
@@ -59,23 +61,24 @@ main {
 }
 
 .game-card {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(16px);
 }
 
 .game-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 36px var(--glass-shadow);
 }
 
 .game-status {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  color: #00a86b;
+  color: var(--accent-live);
   margin-bottom: 12px;
   letter-spacing: 0.5px;
 }
@@ -96,26 +99,26 @@ main {
 .team-name {
   font-size: 16px;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--text-primary);
   flex: 1;
 }
 
 .team-score {
   font-size: 24px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   min-width: 40px;
   text-align: right;
 }
 
 .game-meta {
   padding-top: 12px;
-  border-top: 1px solid #404040;
+  border-top: 1px solid var(--border-subtle);
 }
 
 .venue {
   font-size: 13px;
-  color: #808080;
+  color: var(--text-muted);
 }
 
 /* Loading state */
@@ -131,8 +134,8 @@ main {
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #404040;
-  border-top-color: #00a86b;
+  border: 4px solid var(--border-subtle);
+  border-top-color: var(--accent-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -145,35 +148,36 @@ main {
 }
 
 .loading p {
-  color: #a0a0a0;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 /* Error state */
 .error {
-  background-color: #2a1a1a;
-  border: 1px solid #4a3030;
+  background: var(--glass-bg);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   padding: 20px;
   margin: 20px;
   text-align: center;
+  box-shadow: 0 14px 40px var(--glass-shadow);
 }
 
 .error p {
-  color: #ff6b6b;
+  color: var(--accent-primary);
   margin-bottom: 8px;
 }
 
 .error-detail {
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  color: #ff8888;
+  color: var(--accent-primary-strong);
 }
 
 .error-hint {
   margin-top: 12px;
   font-size: 13px;
-  color: #808080;
+  color: var(--text-muted);
   line-height: 1.8;
 }
 
@@ -181,7 +185,7 @@ main {
 .no-games {
   text-align: center;
   padding: 40px 20px;
-  color: #808080;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -190,12 +194,12 @@ main {
   margin-top: 40px;
   padding: 20px;
   text-align: center;
-  border-top: 1px solid #333;
+  border-top: 1px solid var(--border-subtle);
 }
 
 .data-source p {
   font-size: 12px;
-  color: #606060;
+  color: var(--text-muted);
   line-height: 1.8;
 }
 

@@ -15,19 +15,19 @@ function SportSwitcher({ currentSport = 'baseball' }) {
       name: 'Baseball',
       icon: '⚾',
       path: '/',
-      color: '#00a86b'
+      accentVar: 'var(--sport-baseball-accent)'
     },
     {
       name: 'Football',
       icon: '🏈',
       path: '/football',
-      color: '#ff6b00'
+      accentVar: 'var(--sport-football-accent)'
     },
     {
       name: 'Basketball',
       icon: '🏀',
       path: '/basketball',
-      color: '#ff8c00'
+      accentVar: 'var(--sport-basketball-accent)'
     }
   ]
 
@@ -50,7 +50,7 @@ function SportSwitcher({ currentSport = 'baseball' }) {
                 key={sport.name}
                 className={`sport-option ${isCurrent ? 'current' : ''}`}
                 onClick={() => handleSportClick(sport.path)}
-                style={{ borderColor: sport.color }}
+                style={{ '--sport-accent': sport.accentVar }}
                 disabled={isCurrent}
               >
                 <span className="sport-icon">{sport.icon}</span>
