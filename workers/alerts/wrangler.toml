@@ -1,0 +1,29 @@
+# Cloudflare Workers Configuration - Watchlist Alert Worker
+# Purpose: Evaluate live game triggers and dispatch alerts based on user watchlists
+
+name = "blazesports-alerts"
+compatibility_date = "2025-01-01"
+main = "index.ts"
+
+workers_dev = true
+
+[[triggers.crons]]
+# High frequency polling for leverage events
+crons = ["*/1 * * * *"]
+
+[vars]
+# Set via `wrangler secret put`
+# DATABASE_URL = ""
+# WATCHLIST_ALERT_WEBHOOK = ""
+# WATCHLIST_ALERT_EMAIL_WEBHOOK = ""
+# LIVE_GAMES_API = "https://api.blazesportsintel.com/live-snapshots"
+# ALERT_MIN_PROBABILITY_DELTA = "0.15"
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"
+
+[compatibility_flags]
+nodejs_compat = true

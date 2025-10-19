@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WatchlistEntityType {
+  TEAM
+  GAME
+}
+
+enum WatchlistAlertScenario {
+  LEAD_CHANGE
+  UPSET_ALERT
+  GAME_START
+}
+
+model WatchlistPreference {
+  id                     String                 @id @default(cuid())
+  userId                 String
+  entityType             WatchlistEntityType
+  entityId               String
+  displayName            String?
+  alertLeadChange        Boolean                @default(false)
+  alertUpsetProbability  Boolean                @default(false)
+  alertGameStart         Boolean                @default(false)
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  alerts                 WatchlistAlertLog[]
+
+  @@unique([userId, entityType, entityId], name: "watchlist_user_entity_unique")
+  @@index([userId])
+}
+
+model WatchlistAlertLog {
+  id           String                  @id @default(cuid())
+  watchlistId  String
+  scenario     WatchlistAlertScenario
+  details      Json?
+  triggeredAt  DateTime                @default(now())
+
+  watchlist    WatchlistPreference     @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+
+  @@index([watchlistId, triggeredAt])
+}

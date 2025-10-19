@@ -10,6 +10,8 @@
     "deploy": "npm run build && wrangler pages deploy dist"
   },
   "dependencies": {
+    "@prisma/client": "^6.0.1",
+    "@prisma/extension-accelerate": "^1.0.0",
     "@sentry/node": "^8.25.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

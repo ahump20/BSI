@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import WatchlistPanel from '@/components/WatchlistPanel';
 
 const plannerLinks = [
   { href: '/baseball/ncaab/hub', label: 'Return to Hub' },
@@ -39,6 +40,7 @@ export default function BaseballGamesPage() {
               ))}
             </ul>
           </article>
+          <WatchlistPanel />
         </div>
       </section>
     </main>
