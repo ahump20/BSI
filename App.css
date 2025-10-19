@@ -1,12 +1,59 @@
 :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #2d2d2d;
-  --accent-color: #00a86b;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
-  --border-color: #404040;
-  --card-bg: #1e1e1e;
+  /* Burnt Orange Core Palette */
+  --color-burnt-50: #fff4e6;
+  --color-burnt-100: #ffe0bf;
+  --color-burnt-200: #ffc38a;
+  --color-burnt-300: #ff9f4d;
+  --color-burnt-400: #ff8224;
+  --color-burnt-500: #f26a00;
+  --color-burnt-600: #d85c00;
+  --color-burnt-700: #b04a00;
+  --color-burnt-800: #7f3600;
+  --color-burnt-900: #4c2100;
+
+  /* Gradient Tokens */
+  --gradient-sunrise: linear-gradient(135deg, var(--color-burnt-500) 0%, var(--color-burnt-700) 100%);
+  --gradient-dusk: linear-gradient(135deg, var(--surface-700) 0%, var(--surface-900) 100%);
+  --gradient-aurora: linear-gradient(135deg, var(--color-burnt-400) 0%, var(--color-burnt-200) 50%, var(--color-burnt-50) 100%);
+
+  /* Glass Morphism */
+  --glass-bg: rgba(17, 24, 39, 0.68);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.16);
+  --glass-shadow: rgba(2, 6, 17, 0.55);
+
+  /* Dark Theme Surfaces */
+  --surface-950: #04070c;
+  --surface-900: #080d16;
+  --surface-800: #111927;
+  --surface-700: #1a2535;
+  --surface-600: #233140;
+  --surface-500: #2e3f52;
+  --surface-card: rgba(17, 25, 39, 0.92);
+  --surface-overlay: rgba(8, 13, 22, 0.72);
+
+  /* Border + Text Tokens */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5f5;
+  --text-muted: #94a3b8;
+  --text-inverse: #04070c;
+
+  /* Brand + Accents */
+  --accent-primary: var(--color-burnt-500);
+  --accent-primary-strong: var(--color-burnt-400);
+  --accent-live: var(--color-burnt-300);
+  --focus-ring: rgba(242, 106, 0, 0.45);
+
+  /* Sport Specific Accents */
+  --sport-baseball-accent: var(--color-burnt-400);
+  --sport-football-accent: var(--color-burnt-500);
+  --sport-basketball-accent: var(--color-burnt-300);
+
+  /* Typography */
+  --font-primary: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Bebas Neue', 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
 
 * {
@@ -16,12 +63,10 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--primary-color);
+  background-color: var(--surface-900);
   color: var(--text-primary);
   overflow-x: hidden;
 }
@@ -36,32 +81,37 @@ body {
 .app-header {
   position: sticky;
   top: 0;
-  background-color: var(--secondary-color);
+  background: var(--gradient-dusk);
   padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-subtle);
   z-index: 100;
+  backdrop-filter: blur(14px);
 }
 
 .app-header h1 {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 12px;
+  font-family: var(--font-display);
+  letter-spacing: 1px;
 }
 
 .conference-filter select {
   width: 100%;
   padding: 10px;
-  background-color: var(--card-bg);
+  background: var(--surface-card);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   font-size: 14px;
   outline: none;
   cursor: pointer;
+  box-shadow: 0 8px 24px var(--glass-shadow);
 }
 
 .conference-filter select:focus {
-  border-color: var(--accent-color);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .bottom-nav {
@@ -69,12 +119,13 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--secondary-color);
-  border-top: 1px solid var(--border-color);
+  background-color: var(--surface-800);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-around;
   padding: 8px 0;
   z-index: 100;
+  backdrop-filter: blur(12px);
 }
 
 .bottom-nav button {
@@ -85,19 +136,20 @@ body {
   gap: 4px;
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 12px;
   padding: 8px;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.2s;
 }
 
 .bottom-nav button.active {
-  color: var(--accent-color);
+  color: var(--accent-primary);
 }
 
 .bottom-nav button:active {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--surface-overlay);
+  transform: translateY(1px);
 }
 
 .nav-icon {
@@ -123,8 +175,8 @@ body {
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--accent-color);
+  border: 3px solid var(--border-subtle);
+  border-top-color: var(--accent-primary-strong);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -170,7 +222,7 @@ body {
   .bottom-nav {
     position: static;
     border-top: none;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-subtle);
     padding: 0;
   }
 
