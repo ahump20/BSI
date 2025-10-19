@@ -1,42 +1,42 @@
-import Link from 'next/link';
+'use client';
+
+import { SignUp } from '@clerk/nextjs';
 
 export default function SignUpPage() {
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  if (!publishableKey) {
+    return (
+      <main className="di-auth-shell">
+        <section className="di-auth-card">
+          <span className="di-badge">Diamond Insights</span>
+          <h1 className="di-page-title">Sign up unavailable</h1>
+          <p className="di-card-subtitle">
+            Provision NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to enable hosted sign-up. Until then, use the contact form to
+            request access.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
   return (
-    <main className="di-page">
-      <section className="di-section di-auth">
-        <span className="di-kicker">Diamond Insights · Auth</span>
-        <h1 className="di-page-title">Create Account</h1>
-        <p className="di-page-subtitle">
-          Registration flows are nearly online. This placeholder maintains the URL structure and dark-mode design while we hook
-          Clerk onboarding, Stripe trials, and paywall states.
-        </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Diamond Pro Access</h2>
-            <p>Expect gated content, staff collaboration spaces, and live alert configuration post sign-up.</p>
-            <ul className="di-list">
-              <li>Choose between Free and Diamond Pro tiers.</li>
-              <li>Invite teammates with shared permissions.</li>
-              <li>Sync saved boards to mobile devices.</li>
-            </ul>
-          </article>
-          <article className="di-card">
-            <h2>Already have an account?</h2>
-            <p>Jump back to the sign-in flow.</p>
-            <ul className="di-list">
-              <li>
-                <Link className="di-inline-link" href="/auth/sign-in">
-                  Sign in to Diamond Insights
-                </Link>
-              </li>
-              <li>
-                <Link className="di-inline-link" href="/account">
-                  Manage existing settings
-                </Link>
-              </li>
-            </ul>
-          </article>
-        </div>
+    <main className="di-auth-shell">
+      <section className="di-auth-card" aria-label="Create your Diamond Insights account">
+        <SignUp
+          routing="path"
+          path="/auth/sign-up"
+          signInUrl="/auth/sign-in"
+          afterSignUpUrl="/account"
+          appearance={{
+            variables: {
+              colorBackground: 'rgba(17, 24, 39, 0.85)',
+              colorInputBackground: '#0b1120',
+              colorPrimary: '#fbbf24',
+              borderRadius: '18px'
+            }
+          }}
+        />
       </section>
     </main>
   );
