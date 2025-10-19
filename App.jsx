@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
@@ -9,6 +9,9 @@ function App() {
   const [selectedGame, setSelectedGame] = useState(null);
   const [liveGames, setLiveGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [winProbabilities, setWinProbabilities] = useState({});
+  const [pitchMetrics, setPitchMetrics] = useState({});
+  const lastPayloadTokenRef = useRef(null);
 
   useEffect(() => {
     // Fetch live games on mount and set up polling
@@ -21,8 +24,20 @@ function App() {
     try {
       const response = await fetch('/api/games/live');
       const data = await response.json();
-      setLiveGames(data.games);
       setLoading(false);
+
+      const payloadToken =
+        data?.meta?.generatedAt || JSON.stringify(data.games ?? []);
+
+      if (payloadToken && payloadToken === lastPayloadTokenRef.current) {
+        return;
+      }
+
+      lastPayloadTokenRef.current = payloadToken;
+
+      setLiveGames(data.games || []);
+      setWinProbabilities(data.winProbabilities || {});
+      setPitchMetrics(data.pitchMetrics || {});
     } catch (error) {
       console.error('Error fetching live games:', error);
       setLoading(false);
@@ -38,10 +53,12 @@ function App() {
     switch (activeView) {
       case 'live':
         return (
-          <LiveGameTracker 
-            games={liveGames} 
+          <LiveGameTracker
+            games={liveGames}
             onGameSelect={handleGameSelect}
             loading={loading}
+            winProbabilities={winProbabilities}
+            pitchMetrics={pitchMetrics}
           />
         );
       case 'boxscore':

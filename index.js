@@ -1,6 +1,12 @@
 // Cloudflare Worker - Backend API for College Baseball Tracker
 
-import { mockLiveGames, mockBoxScore, mockStandings } from './mockData';
+import {
+  mockLiveGames,
+  mockBoxScore,
+  mockStandings,
+  mockWinProbabilities,
+  mockPitchMetrics,
+} from './mockData';
 
 export default {
   async fetch(request, env, ctx) {
@@ -21,8 +27,8 @@ export default {
     try {
       // Route: Get live games
       if (path === '/api/games/live') {
-        const games = await fetchLiveGames(env);
-        return jsonResponse({ games }, corsHeaders);
+        const payload = await fetchLiveGames(env);
+        return jsonResponse(payload, corsHeaders);
       }
 
       // Route: Get box score for a specific game
@@ -77,12 +83,38 @@ async function fetchLiveGames(env) {
   if (cached) return cached;
 
   const games = mockLiveGames;
-  
-  await env.KV?.put('live-games', JSON.stringify(games), {
+  const winProbabilities = mockWinProbabilities;
+  const pitchMetrics = limitPitchHistory(mockPitchMetrics, 50);
+  const generatedAt = new Date().toISOString();
+
+  const payload = {
+    games,
+    winProbabilities,
+    pitchMetrics,
+    meta: {
+      generatedAt,
+      version: 1,
+      source: 'mock',
+    },
+  };
+
+  await env.KV?.put('live-games', JSON.stringify(payload), {
     expirationTtl: 30,
   });
 
-  return games;
+  return payload;
+}
+
+function limitPitchHistory(metricsByGame, limit) {
+  return Object.entries(metricsByGame).reduce((acc, [gameId, metrics]) => {
+    if (!Array.isArray(metrics)) {
+      acc[gameId] = [];
+      return acc;
+    }
+
+    acc[gameId] = metrics.slice(-limit);
+    return acc;
+  }, {});
 }
 
 // Fetch detailed box score for a game
