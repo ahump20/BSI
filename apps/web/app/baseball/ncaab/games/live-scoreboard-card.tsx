@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import type { LiveGameTeam } from '../../../../lib/hooks/use-live-games-data';
 import { useLiveCollegeBaseballGames } from '../../../../lib/hooks/use-live-games-data';
+import type { LiveGameTeam } from '../../../../lib/hooks/use-live-games-data';
 
 const DEFAULT_TIME_ZONE = 'America/Chicago';
 const REFRESH_INTERVAL_MS = 60000;
