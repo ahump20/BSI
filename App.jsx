@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
+import WatchlistDrawer from './components/WatchlistDrawer';
 import './App.css';
 
 function App() {
@@ -55,6 +56,16 @@ function App() {
         );
       case 'standings':
         return <Standings />;
+      case 'watchlist':
+        return (
+          <WatchlistDrawer
+            isActive={activeView === 'watchlist'}
+            onSelectGame={(game) => {
+              setSelectedGame(game);
+              setActiveView('boxscore');
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -91,12 +102,19 @@ function App() {
           <span className="nav-icon">📊</span>
           Box Score
         </button>
-        <button 
+        <button
           className={activeView === 'standings' ? 'active' : ''}
           onClick={() => setActiveView('standings')}
         >
           <span className="nav-icon">🏆</span>
           Standings
+        </button>
+        <button
+          className={activeView === 'watchlist' ? 'active' : ''}
+          onClick={() => setActiveView('watchlist')}
+        >
+          <span className="nav-icon">⭐</span>
+          Watchlist
         </button>
       </nav>
 

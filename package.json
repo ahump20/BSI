@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@sentry/node": "^8.25.0",
+    "@clerk/clerk-react": "^5.6.0",
+    "@prisma/client": "^6.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "prisma": "^6.2.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.7.0",
