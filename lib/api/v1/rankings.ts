@@ -16,8 +16,11 @@
  * }
  */
 
+import { getCachedJSON, setCachedJSON } from '@/lib/cache/redis';
 import { prisma } from '@/lib/db/prisma';
 import { PollType, Prisma } from '@prisma/client';
+
+const RANKINGS_CACHE_PREFIX = 'api:v1:rankings';
 
 export interface RankingsQueryParams {
   pollType?: PollType;
@@ -127,6 +130,12 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
     targetWeek = latestRanking?.week ?? 1;
   }
 
+  const cacheKey = `${RANKINGS_CACHE_PREFIX}:list:${pollType}:${season}:${targetWeek}:${safeLimit}`;
+  const cached = await getCachedJSON<RankingsResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   // Get rankings for specified poll/season/week
   const rankings = await prisma.ranking.findMany({
     where: {
@@ -213,7 +222,7 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
     };
   });
 
-  return {
+  const response: RankingsResponse = {
     rankings: rankingEntries,
     metadata: {
       pollType,
@@ -223,6 +232,10 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
       totalTeamsRanked: rankings.length,
     },
   };
+
+  await setCachedJSON(cacheKey, response, 900);
+
+  return response;
 }
 
 /**
@@ -253,6 +266,12 @@ export async function getRankingsHistory(
     return null;
   }
 
+  const cacheKey = `${RANKINGS_CACHE_PREFIX}:history:${teamId}:${pollType}:${season}:${limit}`;
+  const cached = await getCachedJSON<RankingsHistoryResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   // Get all rankings for this team/poll/season
   const rankings = await prisma.ranking.findMany({
     where: {
@@ -265,7 +284,7 @@ export async function getRankingsHistory(
   });
 
   if (rankings.length === 0) {
-    return {
+    const emptyResponse: RankingsHistoryResponse = {
       team,
       pollType,
       season,
@@ -276,6 +295,10 @@ export async function getRankingsHistory(
         weeksRanked: 0,
       },
     };
+
+    await setCachedJSON(cacheKey, emptyResponse, 900);
+
+    return emptyResponse;
   }
 
   // Get team stats for each week
@@ -309,7 +332,7 @@ export async function getRankingsHistory(
   const lowestRank = Math.max(...ranks);
   const currentRank = rankings[rankings.length - 1]?.rank;
 
-  return {
+  const response: RankingsHistoryResponse = {
     team,
     pollType,
     season,
@@ -321,6 +344,10 @@ export async function getRankingsHistory(
       currentRank,
     },
   };
+
+  await setCachedJSON(cacheKey, response, 900);
+
+  return response;
 }
 
 /**
@@ -345,6 +372,12 @@ export async function getCompositeRankings(
       select: { week: true },
     });
     targetWeek = latestRanking?.week ?? 1;
+  }
+
+  const cacheKey = `${RANKINGS_CACHE_PREFIX}:composite:${targetSeason}:${targetWeek}`;
+  const cached = await getCachedJSON<RankingsResponse>(cacheKey);
+  if (cached) {
+    return cached;
   }
 
   // Use the pre-calculated composite rankings if available
@@ -377,12 +410,15 @@ export async function getCompositeRankings(
   });
 
   if (compositeRankings.length > 0) {
-    return getRankings({
+    const response = await getRankings({
       pollType: 'COMPOSITE',
       season: targetSeason,
       week: targetWeek,
       limit: 25,
     });
+
+    await setCachedJSON(cacheKey, response, 900);
+    return response;
   }
 
   // If no composite rankings, calculate on-the-fly
@@ -460,7 +496,7 @@ export async function getCompositeRankings(
       points: entry.totalPoints,
     }));
 
-  return {
+  const response: RankingsResponse = {
     rankings: compositeEntries,
     metadata: {
       pollType: 'COMPOSITE' as PollType,
@@ -469,4 +505,8 @@ export async function getCompositeRankings(
       totalTeamsRanked: compositeEntries.length,
     },
   };
+
+  await setCachedJSON(cacheKey, response, 900);
+
+  return response;
 }

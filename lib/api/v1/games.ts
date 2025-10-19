@@ -17,8 +17,11 @@
  * }
  */
 
+import { getCachedJSON, setCachedJSON } from '@/lib/cache/redis';
 import { prisma } from '@/lib/db/prisma';
 import { Game, GameStatus, Prisma } from '@prisma/client';
+
+const GAMES_CACHE_PREFIX = 'api:v1:games';
 
 export interface GamesQueryParams {
   date?: string;
@@ -115,6 +118,20 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
     limit = 50,
     offset = 0,
   } = params;
+
+  const cacheKey = `${GAMES_CACHE_PREFIX}:list:${[
+    date ?? 'all',
+    status ?? 'all',
+    conference ?? 'all',
+    teamId ?? 'all',
+    limit,
+    offset,
+  ].join(':')}`;
+
+  const cached = await getCachedJSON<GamesResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
 
   // Validate and clamp limit
   const safeLimit = Math.min(Math.max(limit, 1), 100);
@@ -217,7 +234,7 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
     prisma.game.count({ where }),
   ]);
 
-  return {
+  const response: GamesResponse = {
     games,
     pagination: {
       total,
@@ -226,12 +243,25 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
       hasMore: offset + safeLimit < total,
     },
   };
+
+  const ttl = games.some((game) => game.status === GameStatus.LIVE || game.status === 'LIVE')
+    ? 60
+    : 300;
+  await setCachedJSON(cacheKey, response, ttl);
+
+  return response;
 }
 
 /**
  * Get game by ID with full details (events + box scores)
  */
 export async function getGameById(id: string): Promise<GameDetailResponse | null> {
+  const cacheKey = `${GAMES_CACHE_PREFIX}:detail:${id}`;
+  const cached = await getCachedJSON<GameDetailResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const game = await prisma.game.findUnique({
     where: { id },
     include: {
@@ -356,9 +386,14 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
         : undefined,
     }));
 
-  return {
+  const response: GameDetailResponse = {
     ...game,
     homeBoxLines,
     awayBoxLines,
   };
+
+  const ttl = game.status === GameStatus.LIVE || game.status === 'LIVE' ? 60 : 300;
+  await setCachedJSON(cacheKey, response, ttl);
+
+  return response;
 }

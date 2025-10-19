@@ -81,11 +81,11 @@ class ProviderFailoverSimulator {
 
     // Sort by priority
     const sortedProviders = [...this.config].sort((a, b) => a.priority - b.priority);
+    let selected: string | null = null;
 
     for (const config of sortedProviders) {
       const status = this.providers.get(config.name)!;
 
-      // Check if circuit breaker should reset
       if (!status.available && status.lastFailureTime) {
         const timeSinceFailure = now - status.lastFailureTime;
         if (timeSinceFailure >= config.resetTimeout) {
@@ -95,13 +95,12 @@ class ProviderFailoverSimulator {
         }
       }
 
-      // Return first available provider
-      if (status.available) {
-        return config.name;
+      if (status.available && selected === null) {
+        selected = config.name;
       }
     }
 
-    return null; // All providers unavailable
+    return selected;
   }
 
   /**
@@ -237,7 +236,9 @@ describe('Provider Failover Logic', () => {
       expect(simulator.getProvider('SportsDataIO')!.available).toBe(false);
 
       // Advance time by 61 seconds (past 60s reset timeout)
+      const now = Date.now();
       vi.useFakeTimers();
+      vi.setSystemTime(now);
       vi.advanceTimersByTime(61000);
 
       // Circuit should reset
@@ -257,15 +258,19 @@ describe('Provider Failover Logic', () => {
         simulator.recordFailure('ESPN');
       }
 
+      const now = Date.now();
       vi.useFakeTimers();
+      vi.setSystemTime(now);
 
       // After 61s, SportsDataIO should reset but ESPN should not
       vi.advanceTimersByTime(61000);
+      simulator.getNextProvider();
       expect(simulator.getProvider('SportsDataIO')!.available).toBe(true);
       expect(simulator.getProvider('ESPN')!.available).toBe(false);
 
       // After another 60s (121s total), ESPN should reset
       vi.advanceTimersByTime(60000);
+      simulator.getNextProvider();
       expect(simulator.getProvider('ESPN')!.available).toBe(true);
 
       vi.useRealTimers();
@@ -298,7 +303,9 @@ describe('Provider Failover Logic', () => {
       simulator.recordSuccess('NCAA_API');
 
       // Reset SportsDataIO circuit
+      const now = Date.now();
       vi.useFakeTimers();
+      vi.setSystemTime(now);
       vi.advanceTimersByTime(61000);
 
       // Should try SportsDataIO again

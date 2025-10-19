@@ -76,7 +76,7 @@
 
 #### REFACTOR (Modernize)
 - [ ] Sport landing pages → Next.js App Router
-- [ ] API functions → Next.js API routes
+- [x] API functions → Next.js API routes
 - [ ] Static HTML → React components
 - [ ] Python scripts → TypeScript/Node
 
@@ -177,6 +177,7 @@ enum FeedPrecision { EVENT | PITCH }
 - `GET /api/v1/conferences/[slug]/standings` - Conference standings
 - `GET /api/v1/rankings` - Polls + RPI + strength metrics
 - `POST /api/stripe/webhook` - Payment processing
+- ✅ Legacy Cloudflare Pages Functions decommissioned (college baseball endpoints migrated)
 
 ### Ingest Worker (Cloudflare)
 

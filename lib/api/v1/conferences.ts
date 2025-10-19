@@ -21,8 +21,11 @@
  * }
  */
 
+import { getCachedJSON, setCachedJSON } from '@/lib/cache/redis';
 import { prisma } from '@/lib/db/prisma';
 import { Conference, Division, Prisma } from '@prisma/client';
+
+const CONFERENCES_CACHE_PREFIX = 'api:v1:conferences';
 
 export interface ConferencesQueryParams {
   division?: Division;
@@ -129,6 +132,12 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
     offset = 0,
   } = params;
 
+  const cacheKey = `${CONFERENCES_CACHE_PREFIX}:list:${division ?? 'all'}:${limit}:${offset}`;
+  const cached = await getCachedJSON<ConferencesResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   // Validate and clamp limit
   const safeLimit = Math.min(Math.max(limit, 1), 100);
 
@@ -158,7 +167,7 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
     prisma.conference.count({ where }),
   ]);
 
-  return {
+  const response: ConferencesResponse = {
     conferences: conferences.map((conf) => ({
       ...conf,
       teamCount: conf._count.teams,
@@ -170,12 +179,22 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
       hasMore: offset + safeLimit < total,
     },
   };
+
+  await setCachedJSON(cacheKey, response, 1800);
+
+  return response;
 }
 
 /**
  * Get conference by slug with full team listing
  */
 export async function getConferenceBySlug(slug: string): Promise<ConferenceDetailResponse | null> {
+  const cacheKey = `${CONFERENCES_CACHE_PREFIX}:detail:${slug}`;
+  const cached = await getCachedJSON<ConferenceDetailResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const conference = await prisma.conference.findUnique({
     where: { slug },
     include: {
@@ -204,6 +223,8 @@ export async function getConferenceBySlug(slug: string): Promise<ConferenceDetai
     return null;
   }
 
+  await setCachedJSON(cacheKey, conference, 1800);
+
   return conference;
 }
 
@@ -214,6 +235,14 @@ export async function getConferenceStandings(
   slug: string,
   params: StandingsQueryParams = {}
 ): Promise<ConferenceStandingsResponse | null> {
+  const cacheKey = `${CONFERENCES_CACHE_PREFIX}:standings:${slug}:${params.season ?? 'current'}:${
+    params.sortBy ?? 'winPct'
+  }:${params.order ?? 'desc'}`;
+  const cached = await getCachedJSON<ConferenceStandingsResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const {
     season = new Date().getFullYear(),
     sortBy = 'winPct',
@@ -373,7 +402,7 @@ export async function getConferenceStandings(
     };
   });
 
-  return {
+  const response: ConferenceStandingsResponse = {
     conference,
     season,
     standings,
@@ -385,4 +414,8 @@ export async function getConferenceStandings(
     },
     lastUpdated: new Date(),
   };
+
+  await setCachedJSON(cacheKey, response, 4 * 60 * 60);
+
+  return response;
 }
