@@ -31,6 +31,56 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.cta-button {
+  --cta-gradient-start: var(--di-accent);
+  --cta-gradient-end: var(--di-accent-strong);
+  --cta-text-color: #0b1120;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background-image: linear-gradient(135deg, var(--cta-gradient-start), var(--cta-gradient-end));
+  color: var(--cta-text-color);
+  font-family: var(--di-font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.32);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-image 0.2s ease;
+}
+
+.cta-button:hover:not(:disabled),
+.cta-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(220, 38, 38, 0.4);
+}
+
+.cta-button:focus-visible {
+  outline: 2px solid rgba(251, 191, 36, 0.85);
+  outline-offset: 3px;
+}
+
+.cta-button:active:not(:disabled) {
+  transform: translateY(0);
+  background-image: linear-gradient(135deg, #d97706, #b91c1c);
+  box-shadow: 0 8px 20px rgba(153, 27, 27, 0.45);
+}
+
+.cta-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  box-shadow: none;
+  background-image: linear-gradient(135deg, rgba(251, 191, 36, 0.6), rgba(220, 38, 38, 0.6));
+  color: rgba(11, 17, 32, 0.7);
+}
+
 a {
   color: inherit;
   text-decoration: none;

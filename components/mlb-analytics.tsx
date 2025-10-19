@@ -233,10 +233,11 @@ const MLBAnalyticsEngine = () => {
               <div className="ai-section">
                 <div className="ai-header">
                   <h3><Cpu size={20} /> AI-Powered Insights</h3>
-                  <button 
-                    className="btn-primary"
+                  <button
+                    className="btn-primary cta-button"
                     onClick={generateAIInsight}
                     disabled={loading}
+                    type="button"
                   >
                     Generate Analysis
                   </button>
@@ -656,22 +657,12 @@ const MLBAnalyticsEngine = () => {
         }
 
         .btn-primary {
-          padding: 10px 20px;
-          background: linear-gradient(45deg, #ff8c00, #ff4500);
-          border: none;
-          border-radius: 5px;
-          color: #fff;
-          font-weight: 600;
-          cursor: pointer;
-          transition: transform 0.2s ease;
-        }
-
-        .btn-primary:hover {
-          transform: scale(1.05);
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
         }
 
         .btn-primary:disabled {
-          opacity: 0.5;
           cursor: not-allowed;
         }
 

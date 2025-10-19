@@ -243,7 +243,9 @@ function BoxScore({ game, onBack }) {
   return (
     <div className="box-score">
       <div className="box-score-header">
-        <button className="back-button" onClick={onBack}>← Back</button>
+        <button className="back-button cta-button" onClick={onBack} type="button">
+          ← Back
+        </button>
         <div className="game-info">
           <h2>{game.awayTeam.name} at {game.homeTeam.name}</h2>
           <span className="game-date">{game.date}</span>
