@@ -1,41 +1,45 @@
-import Link from 'next/link';
+import { SignIn } from '@clerk/nextjs';
 
 export default function SignInPage() {
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  if (!publishableKey) {
+    return (
+      <main className="di-page">
+        <section className="di-section di-auth">
+          <span className="di-kicker">Diamond Insights · Auth</span>
+          <h1 className="di-page-title">Sign In</h1>
+          <p className="di-page-subtitle">
+            Authentication is offline while Clerk environment keys are missing. Add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to enable
+            sign-in flows.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="di-page">
       <section className="di-section di-auth">
         <span className="di-kicker">Diamond Insights · Auth</span>
         <h1 className="di-page-title">Sign In</h1>
         <p className="di-page-subtitle">
-          Clerk integration is in progress. While we finish hooking up the auth provider, this placeholder keeps the route,
-          messaging, and responsive design intact.
+          Log into Diamond Insights to sync your scouting boards, manage alerts, and unlock Diamond Pro automation.
         </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Next Steps</h2>
-            <p>Diamond Pro members will authenticate here to access premium scouting tools.</p>
-            <ul className="di-list">
-              <li>Secure magic links and passkeys.</li>
-              <li>Multi-factor enrollment for staff accounts.</li>
-              <li>Session management synced across devices.</li>
-            </ul>
-          </article>
-          <article className="di-card">
-            <h2>Need an Account?</h2>
-            <p>Choose an action below.</p>
-            <ul className="di-list">
-              <li>
-                <Link className="di-inline-link" href="/auth/sign-up">
-                  Create a Diamond Insights account
-                </Link>
-              </li>
-              <li>
-                <Link className="di-inline-link" href="/account">
-                  Return to Account Center
-                </Link>
-              </li>
-            </ul>
-          </article>
+        <div className="di-card di-auth-card">
+          <SignIn
+            path="/auth/sign-in"
+            routing="path"
+            signUpUrl="/auth/sign-up"
+            appearance={{
+              elements: {
+                card: 'di-card di-auth-widget',
+                headerTitle: 'di-page-title',
+                headerSubtitle: 'di-page-subtitle'
+              }
+            }}
+            afterSignInUrl="/account"
+          />
         </div>
       </section>
     </main>

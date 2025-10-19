@@ -11,6 +11,7 @@
     "noEmit": true,
     "incremental": true,
     "esModuleInterop": true,
+    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -21,7 +22,11 @@
         "name": "next"
       }
     ],
-    "target": "ES2017"
+    "target": "ES2017",
+    "paths": {
+      "@/app/*": ["app/*"],
+      "@/lib/*": ["lib/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
