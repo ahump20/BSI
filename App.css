@@ -79,6 +79,11 @@ body {
   width: 100%;
 }
 
+@media (min-width: 768px) {
+  .conference-filter {
+    width: auto;
+  }
+}
 .conference-filter select {
   width: 100%;
   padding: 10px;
