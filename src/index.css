@@ -40,6 +40,89 @@ header h1 {
   font-weight: 400;
 }
 
+/* Primary navigation */
+.primary-nav {
+  background-color: #151515;
+  border-bottom: 1px solid #2f2f2f;
+  padding: 0 16px;
+}
+
+.primary-nav__list {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  overflow-x: auto;
+  padding: 12px 0;
+  margin: 0 auto;
+  scrollbar-width: thin;
+}
+
+.primary-nav__item {
+  flex: 0 0 auto;
+}
+
+.primary-nav__link {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: #c7c7c7;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.primary-nav__link:hover,
+.primary-nav__link:focus-visible {
+  color: #ffffff;
+  background-color: rgba(0, 168, 107, 0.1);
+  outline: none;
+}
+
+.primary-nav__link--active {
+  color: #ffffff;
+  background-color: #00a86b;
+  box-shadow: 0 0 12px rgba(0, 168, 107, 0.35);
+}
+
+.primary-nav__submenu {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.primary-nav__submenu-item {
+  flex: 0 0 auto;
+}
+
+.primary-nav__submenu-link {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #b0b0b0;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.primary-nav__submenu-link:hover,
+.primary-nav__submenu-link:focus-visible {
+  background-color: rgba(0, 168, 107, 0.15);
+  color: #ffffff;
+  outline: none;
+}
+
+.primary-nav__submenu-link--active {
+  background-color: #00a86b;
+  color: #ffffff;
+}
+
 /* Main content */
 main {
   padding: 20px;
@@ -197,6 +280,29 @@ main {
   font-size: 12px;
   color: #606060;
   line-height: 1.8;
+}
+
+@media (min-width: 768px) {
+  .primary-nav {
+    padding: 0 32px;
+  }
+
+  .primary-nav__list {
+    justify-content: center;
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .primary-nav__link {
+    font-size: 15px;
+    padding: 12px 18px;
+  }
+
+  .primary-nav__submenu-link {
+    font-size: 13px;
+    padding: 8px 14px;
+  }
 }
 
 /* Responsive adjustments */
