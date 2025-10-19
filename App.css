@@ -137,7 +137,7 @@ body {
 }
 
 .bottom-nav button:active {
-  background-color: rgba(191, 87, 0, 0.16);
+  background-color: color-mix(in srgb, var(--accent-color) 16%, transparent);
 }
 
 .nav-icon {
