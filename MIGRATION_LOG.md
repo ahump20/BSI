@@ -644,3 +644,9 @@ enum FeedPrecision { EVENT | PITCH }
 **Document Version**: 1.1.0
 **Last Updated**: 2025-10-13 22:30 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
+
+---
+
+### 2025-10-19
+- Added `/predictions/analytics-engine/` marketing page showcasing the Predictions Analytics Engine in dark mode.
+- Updated navigation and redirects to route visitors from marketing pages back into the homepage experience.

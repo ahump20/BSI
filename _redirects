@@ -1,2 +1,3 @@
 # Redirect www to non-www
 https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301!
+/predictions/analytics-engine /predictions/analytics-engine/index.html 200
