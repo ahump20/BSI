@@ -40,24 +40,28 @@
   width: 100%;
   min-width: 500px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 14px;
   overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .line-score th,
 .line-score td {
   padding: 12px 8px;
   text-align: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
 }
 
 .line-score th {
-  background-color: var(--secondary-color);
+  background: linear-gradient(135deg, rgba(204, 85, 0, 0.18), rgba(22, 24, 32, 0.72));
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .line-score .team-header,
@@ -72,7 +76,7 @@
 }
 
 .line-score .total-header {
-  background-color: var(--primary-color);
+  background: rgba(204, 85, 0, 0.2);
   font-weight: 700;
 }
 
@@ -83,14 +87,14 @@
 .line-score .total-score {
   font-weight: 700;
   font-size: 16px;
-  background-color: rgba(0, 168, 107, 0.1);
+  background: rgba(204, 85, 0, 0.18);
 }
 
 .stats-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .stats-tabs button {
@@ -103,12 +107,21 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.stats-tabs button:hover {
+  color: var(--text-primary);
+  background: rgba(204, 85, 0, 0.1);
+  border-bottom-color: rgba(204, 85, 0, 0.35);
 }
 
 .stats-tabs button.active {
-  color: var(--accent-color);
+  color: var(--text-primary);
   border-bottom-color: var(--accent-color);
+  background: linear-gradient(135deg, rgba(204, 85, 0, 0.28), rgba(204, 85, 0, 0.05));
+  box-shadow: 0 10px 24px rgba(204, 85, 0, 0.25);
 }
 
 .stats-content {
@@ -136,30 +149,34 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 14px;
   overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-soft);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .stats-table th {
-  background-color: var(--secondary-color);
+  background: linear-gradient(135deg, rgba(204, 85, 0, 0.16), rgba(22, 24, 32, 0.68));
   padding: 10px 8px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .stats-table td {
   padding: 12px 8px;
   font-size: 13px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .stats-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background: rgba(204, 85, 0, 0.08);
 }
 
 .stats-table .player-col {
@@ -186,18 +203,19 @@
 }
 
 .decision-pitcher {
-  background-color: rgba(0, 168, 107, 0.05);
+  background: rgba(204, 85, 0, 0.08);
 }
 
 .decision {
   display: inline-block;
   margin-left: 8px;
   padding: 2px 6px;
-  background-color: var(--accent-color);
-  color: var(--primary-color);
+  background: linear-gradient(135deg, rgba(204, 85, 0, 0.8), rgba(204, 85, 0, 0.55));
+  color: var(--text-primary);
   font-size: 10px;
   font-weight: 700;
   border-radius: 4px;
+  box-shadow: 0 6px 16px rgba(204, 85, 0, 0.35);
 }
 
 /* Tablet and up */
