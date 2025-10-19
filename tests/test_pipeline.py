@@ -18,7 +18,9 @@ def _prepare_test_config(tmp_path: Path) -> Path:
     config = yaml.safe_load(base_config_path.read_text())
     database_path = tmp_path / "test.db"
     config["database"]["url"] = f"sqlite+pysqlite:///{database_path}"
-    config["storage"]["raw_path"] = str(tmp_path / "raw")
+    storage_cfg = config.setdefault("storage", {})
+    storage_cfg["provider"] = "local"
+    storage_cfg["local_path"] = str(tmp_path / "raw")
     config_path = tmp_path / "test_config.yaml"
     config_path.write_text(yaml.safe_dump(config))
     return config_path
