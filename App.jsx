@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
+import ParticleBackground from './src/components/ParticleBackground';
 import './App.css';
 
 function App() {
@@ -62,47 +63,50 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>College Baseball Live</h1>
-        <div className="conference-filter">
-          <select>
-            <option value="all">All Conferences</option>
-            <option value="sec">SEC</option>
-            <option value="acc">ACC</option>
-            <option value="big12">Big 12</option>
-            <option value="pac12">Pac-12</option>
-            <option value="big10">Big Ten</option>
-          </select>
-        </div>
-      </header>
+      <ParticleBackground />
+      <div className="app-layer">
+        <header className="app-header">
+          <h1>College Baseball Live</h1>
+          <div className="conference-filter">
+            <select>
+              <option value="all">All Conferences</option>
+              <option value="sec">SEC</option>
+              <option value="acc">ACC</option>
+              <option value="big12">Big 12</option>
+              <option value="pac12">Pac-12</option>
+              <option value="big10">Big Ten</option>
+            </select>
+          </div>
+        </header>
 
-      <nav className="bottom-nav">
-        <button 
-          className={activeView === 'live' ? 'active' : ''}
-          onClick={() => setActiveView('live')}
-        >
-          <span className="nav-icon">⚾</span>
-          Live
-        </button>
-        <button 
-          className={activeView === 'boxscore' ? 'active' : ''}
-          onClick={() => setActiveView('boxscore')}
-        >
-          <span className="nav-icon">📊</span>
-          Box Score
-        </button>
-        <button 
-          className={activeView === 'standings' ? 'active' : ''}
-          onClick={() => setActiveView('standings')}
-        >
-          <span className="nav-icon">🏆</span>
-          Standings
-        </button>
-      </nav>
+        <nav className="bottom-nav">
+          <button
+            className={activeView === 'live' ? 'active' : ''}
+            onClick={() => setActiveView('live')}
+          >
+            <span className="nav-icon">⚾</span>
+            Live
+          </button>
+          <button
+            className={activeView === 'boxscore' ? 'active' : ''}
+            onClick={() => setActiveView('boxscore')}
+          >
+            <span className="nav-icon">📊</span>
+            Box Score
+          </button>
+          <button
+            className={activeView === 'standings' ? 'active' : ''}
+            onClick={() => setActiveView('standings')}
+          >
+            <span className="nav-icon">🏆</span>
+            Standings
+          </button>
+        </nav>
 
-      <main className="app-content">
-        {renderView()}
-      </main>
+        <main className="app-content">
+          {renderView()}
+        </main>
+      </div>
     </div>
   );
 }
