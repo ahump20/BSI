@@ -12,6 +12,7 @@
 .games-header h2 {
   font-size: 18px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .live-indicator {
@@ -33,21 +34,27 @@
 }
 
 .game-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
 }
 
 .game-card:active {
   transform: scale(0.98);
-  background-color: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-medium);
+  border-color: var(--glass-border-brand);
+  box-shadow: var(--shadow-glow-sm);
 }
 
 .game-card.status-live {
-  border-left: 3px solid var(--live-indicator);
+  border-left: 3px solid var(--accent-color);
+  box-shadow: 0 0 0 1px rgba(191, 87, 0, 0.18), var(--shadow-glow-sm);
 }
 
 .game-card.status-final {
@@ -60,13 +67,14 @@
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .status-text {
   font-size: 12px;
   font-weight: 600;
   color: var(--accent-color);
+  text-shadow: 0 0 12px rgba(191, 87, 0, 0.35);
   text-transform: uppercase;
 }
 
@@ -128,7 +136,7 @@
 }
 
 .pitcher-info {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--glass-border);
   padding-top: 12px;
 }
 
@@ -153,7 +161,7 @@
 .game-venue {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--glass-border);
   font-size: 12px;
   color: var(--text-secondary);
 }
@@ -172,6 +180,7 @@
 
   .game-card {
     padding: 20px;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
   .team-name {
@@ -186,8 +195,9 @@
   }
 
   .game-card:hover {
-    border-color: var(--accent-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-color: var(--glass-border-brand);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-glow-md);
+    background: var(--gradient-brand-soft);
   }
 }

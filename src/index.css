@@ -1,3 +1,47 @@
+:root {
+  --primary-color: #0d0d12;
+  --secondary-color: #161620;
+  --tertiary-color: #1f1f2e;
+
+  --burnt-orange-400: #ff7d3c;
+  --burnt-orange-500: #bf5700;
+  --burnt-orange-600: #9c4500;
+  --accent-color: var(--burnt-orange-500);
+  --accent-strong: var(--burnt-orange-600);
+
+  --gradient-brand-primary: linear-gradient(
+    135deg,
+    var(--burnt-orange-500) 0%,
+    #cc6600 55%,
+    #d97b38 100%
+  );
+  --gradient-brand-soft: linear-gradient(
+    135deg,
+    rgba(191, 87, 0, 0.22) 0%,
+    rgba(217, 123, 56, 0.16) 100%
+  );
+  --gradient-surface-overlay: radial-gradient(
+    circle at top center,
+    rgba(191, 87, 0, 0.22) 0%,
+    transparent 60%
+  );
+
+  --glass-blur: 12px;
+  --glass-blur-heavy: 24px;
+  --glass-bg-light: rgba(255, 255, 255, 0.08);
+  --glass-bg-medium: rgba(255, 255, 255, 0.12);
+  --glass-bg-heavy: rgba(255, 255, 255, 0.16);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-border-brand: rgba(191, 87, 0, 0.28);
+
+  --text-primary: rgba(255, 255, 255, 0.98);
+  --text-secondary: rgba(255, 255, 255, 0.72);
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+
+  --shadow-glow-sm: 0 0 18px rgba(191, 87, 0, 0.28);
+  --shadow-glow-md: 0 0 36px rgba(191, 87, 0, 0.32);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,8 +50,9 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  background-image: var(--gradient-surface-overlay);
+  color: var(--text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,22 +66,25 @@ body {
 
 /* Header */
 header {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   padding: 20px;
   text-align: center;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 header h1 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .tagline {
   font-size: 14px;
-  color: #a0a0a0;
+  color: var(--text-secondary);
   font-weight: 400;
 }
 
@@ -59,23 +107,29 @@ main {
 }
 
 .game-card {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: 8px;
   padding: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
 }
 
 .game-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow-md);
+  border-color: var(--glass-border-brand);
+  background: var(--gradient-brand-soft);
 }
 
 .game-status {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  color: #00a86b;
+  color: var(--accent-color);
+  text-shadow: 0 0 12px rgba(191, 87, 0, 0.35);
   margin-bottom: 12px;
   letter-spacing: 0.5px;
 }
@@ -96,26 +150,26 @@ main {
 .team-name {
   font-size: 16px;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--text-secondary);
   flex: 1;
 }
 
 .team-score {
   font-size: 24px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   min-width: 40px;
   text-align: right;
 }
 
 .game-meta {
   padding-top: 12px;
-  border-top: 1px solid #404040;
+  border-top: 1px solid var(--glass-border);
 }
 
 .venue {
   font-size: 13px;
-  color: #808080;
+  color: var(--text-tertiary);
 }
 
 /* Loading state */
@@ -131,8 +185,8 @@ main {
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #404040;
-  border-top-color: #00a86b;
+  border: 4px solid var(--glass-border);
+  border-top-color: var(--accent-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -145,14 +199,14 @@ main {
 }
 
 .loading p {
-  color: #a0a0a0;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 /* Error state */
 .error {
-  background-color: #2a1a1a;
-  border: 1px solid #4a3030;
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border);
   border-radius: 8px;
   padding: 20px;
   margin: 20px;
@@ -160,20 +214,20 @@ main {
 }
 
 .error p {
-  color: #ff6b6b;
+  color: var(--accent-color);
   margin-bottom: 8px;
 }
 
 .error-detail {
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  color: #ff8888;
+  color: var(--text-secondary);
 }
 
 .error-hint {
   margin-top: 12px;
   font-size: 13px;
-  color: #808080;
+  color: var(--text-tertiary);
   line-height: 1.8;
 }
 
@@ -181,7 +235,7 @@ main {
 .no-games {
   text-align: center;
   padding: 40px 20px;
-  color: #808080;
+  color: var(--text-tertiary);
   font-size: 14px;
 }
 
@@ -190,12 +244,12 @@ main {
   margin-top: 40px;
   padding: 20px;
   text-align: center;
-  border-top: 1px solid #333;
+  border-top: 1px solid var(--glass-border);
 }
 
 .data-source p {
   font-size: 12px;
-  color: #606060;
+  color: var(--text-tertiary);
   line-height: 1.8;
 }
 
