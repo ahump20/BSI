@@ -94,6 +94,28 @@ function RosterPortalHeatmap() {
 
   const trendingPrograms = data?.trendingPrograms ?? [];
 
+  const timeframeLabelMap = data?.filters?.timeframeLabels ?? {};
+  const formatTimeframeLabel = (value) => {
+    if (!value) return value;
+    if (timeframeLabelMap[value]) {
+      return timeframeLabelMap[value];
+    }
+
+    const dayMatch = /^([0-9]+)d$/i.exec(value);
+    if (dayMatch) {
+      const count = Number(dayMatch[1]);
+      return `Last ${count} day${count === 1 ? '' : 's'}`;
+    }
+
+    const weekMatch = /^([0-9]+)w$/i.exec(value);
+    if (weekMatch) {
+      const count = Number(weekMatch[1]);
+      return `Last ${count} week${count === 1 ? '' : 's'}`;
+    }
+
+    return value;
+  };
+
   const availableFilters = {
     timeframes: data?.filters?.availableTimeframes ?? ['30d'],
     conferences: ['all', ...(data?.filters?.availableConferences ?? [])],
@@ -132,11 +154,7 @@ function RosterPortalHeatmap() {
           >
             {availableFilters.timeframes.map((option) => (
               <option key={option} value={option}>
-                {option === '7d'
-                  ? 'Last 7 days'
-                  : option === '30d'
-                  ? 'Last 30 days'
-                  : 'Last 90 days'}
+                {formatTimeframeLabel(option)}
               </option>
             ))}
           </select>

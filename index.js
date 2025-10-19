@@ -147,6 +147,7 @@ async function fetchPortalActivity(env, searchParams) {
   const positionParam = searchParams.get('position');
 
   const availableTimeframes = mockPortalActivity.timeframes;
+  const timeframeLabels = mockPortalActivity.timeframeLabels ?? {};
   const defaultTimeframe = mockPortalActivity.defaultTimeframe;
   const timeframe = availableTimeframes.includes(timeframeParam)
     ? timeframeParam
@@ -179,12 +180,19 @@ async function fetchPortalActivity(env, searchParams) {
       },
     }));
 
+  const parseDays = (value) => {
+    if (!value) return null;
+    const match = /^([0-9]+)d$/i.exec(value);
+    return match ? Number(match[1]) : null;
+  };
+
   const recentMoves = mockPortalActivity.recentMoves.filter((move) => {
+    const timeframeDays = parseDays(timeframe);
+    const moveDays = parseDays(move.timeframe);
     const matchesTimeframe =
-      timeframe === '90d'
-        ? true
-        : move.timeframe === timeframe ||
-          (timeframe === '30d' && move.timeframe === '7d');
+      timeframeDays == null || moveDays == null
+        ? move.timeframe === timeframe
+        : moveDays <= timeframeDays;
     const matchesConference =
       conference === 'all' ? true : move.conferenceTo === conference;
     const matchesPosition = position === 'all' ? true : move.position === position;
@@ -213,6 +221,12 @@ async function fetchPortalActivity(env, searchParams) {
     timeframe,
     filters: {
       availableTimeframes,
+      timeframeLabels: availableTimeframes.reduce((acc, key) => {
+        if (timeframeLabels[key]) {
+          acc[key] = timeframeLabels[key];
+        }
+        return acc;
+      }, {}),
       availableConferences: Array.from(
         new Set(mockPortalActivity.regions.flatMap((region) => region.conferences))
       ).sort(),
