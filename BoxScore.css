@@ -83,7 +83,7 @@
 .line-score .total-score {
   font-weight: 700;
   font-size: 16px;
-  background-color: rgba(191, 87, 0, 0.16);
+  background-color: color-mix(in srgb, var(--accent-color) 16%, transparent);
 }
 
 .stats-tabs {
