@@ -1,4 +1,8 @@
-import Link from 'next/link';
+import { AccentLink } from '../../../(components)/AccentLink';
+import { CardGrid } from '../../../(components)/CardGrid';
+import { InfoCard } from '../../../(components)/InfoCard';
+import { PageHeader } from '../../../(components)/PageHeader';
+import { PageShell } from '../../../(components)/PageShell';
 
 const quickActions = [
   { href: '/auth/sign-up', label: 'Upgrade to Diamond Pro' },
@@ -8,39 +12,35 @@ const quickActions = [
 
 export default function BaseballRankingsPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · Rankings</span>
-        <h1 className="di-page-title">Diamond Index & Polls</h1>
-        <p className="di-page-subtitle">
-          Our blended power rating, featuring Diamond Index, RPI, and human composite polls, will populate this view. The
-          placeholder maintains UX continuity and dark theme while we finalize ranking algorithms.
-        </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>On Deck</h2>
-            <p>Expect sortable poll cards, résumé snippets, and movement indicators.</p>
-            <ul className="di-list">
+    <PageShell>
+      <section className="flex flex-col gap-section-gap">
+        <PageHeader
+          kicker="Diamond Insights · Rankings"
+          title="Diamond Index & Polls"
+          description="Our blended power rating, featuring Diamond Index, RPI, and human composite polls, will populate this view. The placeholder maintains UX continuity and dark theme while we finalize ranking algorithms."
+        />
+        <CardGrid>
+          <InfoCard
+            title="On Deck"
+            description="Expect sortable poll cards, résumé snippets, and movement indicators."
+          >
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               <li>Delta badges showing week-over-week shifts.</li>
               <li>Strength-of-schedule overlays and predictive tiers.</li>
               <li>Top 25 focus with quick filters for Freshman Impact, Pitching, and Offense.</li>
             </ul>
-          </article>
-          <article className="di-card">
-            <h2>Quick Actions</h2>
-            <p>Stay productive while data sync finishes.</p>
-            <ul className="di-list">
+          </InfoCard>
+          <InfoCard title="Quick Actions" description="Stay productive while data sync finishes.">
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               {quickActions.map((action) => (
                 <li key={action.href}>
-                  <Link className="di-inline-link" href={action.href}>
-                    {action.label}
-                  </Link>
+                  <AccentLink href={action.href}>{action.label}</AccentLink>
                 </li>
               ))}
             </ul>
-          </article>
-        </div>
+          </InfoCard>
+        </CardGrid>
       </section>
-    </main>
+    </PageShell>
   );
 }

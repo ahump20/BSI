@@ -1,4 +1,8 @@
-import Link from 'next/link';
+import { AccentLink } from '../../../(components)/AccentLink';
+import { CardGrid } from '../../../(components)/CardGrid';
+import { InfoCard } from '../../../(components)/InfoCard';
+import { PageHeader } from '../../../(components)/PageHeader';
+import { PageShell } from '../../../(components)/PageShell';
 
 const navigation = [
   { href: '/baseball/ncaab/hub', label: 'Return to Hub' },
@@ -8,39 +12,35 @@ const navigation = [
 
 export default function BaseballNewsPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · Briefings</span>
-        <h1 className="di-page-title">Newsroom & Portal Tracker</h1>
-        <p className="di-page-subtitle">
-          The editorial desk is preparing live game capsules, transfer portal updates, and recruiting intel. Until feeds go
-          live, this placeholder keeps navigation warm and communicates what to expect from the newsroom cadence.
-        </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Editorial Roadmap</h2>
-            <p>Expect automated recaps with human verification and curated storylines per market.</p>
-            <ul className="di-list">
+    <PageShell>
+      <section className="flex flex-col gap-section-gap">
+        <PageHeader
+          kicker="Diamond Insights · Briefings"
+          title="Newsroom & Portal Tracker"
+          description="The editorial desk is preparing live game capsules, transfer portal updates, and recruiting intel. Until feeds go live, this placeholder keeps navigation warm and communicates what to expect from the newsroom cadence."
+        />
+        <CardGrid>
+          <InfoCard
+            title="Editorial Roadmap"
+            description="Expect automated recaps with human verification and curated storylines per market."
+          >
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               <li>Instant recaps sourced from verified game data.</li>
               <li>Portal tracker with commitment verification workflows.</li>
               <li>Diamond Pro premium briefs for operations staffs.</li>
             </ul>
-          </article>
-          <article className="di-card">
-            <h2>Navigate</h2>
-            <p>Access adjacent areas while coverage spins up.</p>
-            <ul className="di-list">
+          </InfoCard>
+          <InfoCard title="Navigate" description="Access adjacent areas while coverage spins up.">
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               {navigation.map((item) => (
                 <li key={item.href}>
-                  <Link className="di-inline-link" href={item.href}>
-                    {item.label}
-                  </Link>
+                  <AccentLink href={item.href}>{item.label}</AccentLink>
                 </li>
               ))}
             </ul>
-          </article>
-        </div>
+          </InfoCard>
+        </CardGrid>
       </section>
-    </main>
+    </PageShell>
   );
 }

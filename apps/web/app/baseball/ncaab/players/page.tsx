@@ -1,4 +1,8 @@
-import Link from 'next/link';
+import { AccentLink } from '../../../(components)/AccentLink';
+import { CardGrid } from '../../../(components)/CardGrid';
+import { InfoCard } from '../../../(components)/InfoCard';
+import { PageHeader } from '../../../(components)/PageHeader';
+import { PageShell } from '../../../(components)/PageShell';
 
 const quickRoutes = [
   { href: '/auth/sign-in', label: 'Sign in for Diamond Pro scouting reports' },
@@ -8,39 +12,35 @@ const quickRoutes = [
 
 export default function BaseballPlayersPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · Player Intel</span>
-        <h1 className="di-page-title">Player Profiles</h1>
-        <p className="di-page-subtitle">
-          Our player knowledge graph—linking pitch characteristics, biomechanics, and recruiting momentum—is loading soon. The
-          interface below stands in so routing, theming, and accessibility remain stable during data hookups.
-        </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Pipeline</h2>
-            <p>Expect pitch mix visuals, health monitors, and NIL valuations with audit trails.</p>
-            <ul className="di-list">
+    <PageShell>
+      <section className="flex flex-col gap-section-gap">
+        <PageHeader
+          kicker="Diamond Insights · Player Intel"
+          title="Player Profiles"
+          description="Our player knowledge graph—linking pitch characteristics, biomechanics, and recruiting momentum—is loading soon. The interface below stands in so routing, theming, and accessibility remain stable during data hookups."
+        />
+        <CardGrid>
+          <InfoCard
+            title="Pipeline"
+            description="Expect pitch mix visuals, health monitors, and NIL valuations with audit trails."
+          >
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               <li>Unified datasets from TrackMan, Synergy, and school feeds.</li>
               <li>Progressive release schedule with freshness badges.</li>
               <li>Diamond Pro tagging for private board collaboration.</li>
             </ul>
-          </article>
-          <article className="di-card">
-            <h2>Quick Links</h2>
-            <p>Keep momentum while the feeds finalize.</p>
-            <ul className="di-list">
+          </InfoCard>
+          <InfoCard title="Quick Links" description="Keep momentum while the feeds finalize.">
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               {quickRoutes.map((route) => (
                 <li key={route.href}>
-                  <Link className="di-inline-link" href={route.href}>
-                    {route.label}
-                  </Link>
+                  <AccentLink href={route.href}>{route.label}</AccentLink>
                 </li>
               ))}
             </ul>
-          </article>
-        </div>
+          </InfoCard>
+        </CardGrid>
       </section>
-    </main>
+    </PageShell>
   );
 }

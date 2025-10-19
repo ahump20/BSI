@@ -1,4 +1,8 @@
-import Link from 'next/link';
+import { AccentLink } from '../../../(components)/AccentLink';
+import { CardGrid } from '../../../(components)/CardGrid';
+import { InfoCard } from '../../../(components)/InfoCard';
+import { PageHeader } from '../../../(components)/PageHeader';
+import { PageShell } from '../../../(components)/PageShell';
 
 const sections = [
   { href: '/baseball/ncaab/games', label: 'Scoreboard & Live Games', summary: 'Track real-time scores, win probability, and inning-by-inning context.' },
@@ -13,27 +17,21 @@ const sections = [
 
 export default function BaseballHubPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · NCAA Division I Baseball</span>
-        <h1 className="di-page-title">College Baseball Command Center</h1>
-        <p className="di-page-subtitle">
-          Your single landing zone for live game telemetry, advanced scouting intel, and conference health across the
-          national landscape. Final visuals and data hooks are en route; this shell keeps navigation live while we finish
-          the ingest plumbing.
-        </p>
-        <div className="di-card-grid">
+    <PageShell>
+      <section className="flex flex-col gap-section-gap">
+        <PageHeader
+          kicker="Diamond Insights · NCAA Division I Baseball"
+          title="College Baseball Command Center"
+          description="Your single landing zone for live game telemetry, advanced scouting intel, and conference health across the national landscape. Final visuals and data hooks are en route; this shell keeps navigation live while we finish the ingest plumbing."
+        />
+        <CardGrid className="xl:grid-cols-3">
           {sections.map((section) => (
-            <article key={section.href} className="di-card">
-              <h2>{section.label}</h2>
-              <p>{section.summary}</p>
-              <Link className="di-inline-link" href={section.href}>
-                Enter {section.label}
-              </Link>
-            </article>
+            <InfoCard key={section.href} title={section.label} description={section.summary}>
+              <AccentLink href={section.href}>Enter {section.label}</AccentLink>
+            </InfoCard>
           ))}
-        </div>
+        </CardGrid>
       </section>
-    </main>
+    </PageShell>
   );
 }
