@@ -14,16 +14,9 @@
   font-weight: 600;
 }
 
-.live-indicator {
-  color: var(--live-indicator);
+.games-header .live-indicator {
   font-size: 12px;
-  font-weight: 600;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  letter-spacing: 0.06em;
 }
 
 .games-list {
@@ -42,12 +35,20 @@
 }
 
 .game-card:active {
-  transform: scale(0.98);
-  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(1px);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .game-card.status-live {
-  border-left: 3px solid var(--live-indicator);
+  border-color: transparent;
+}
+
+.game-card.status-live .status-text {
+  color: var(--live-indicator);
+}
+
+.game-card.status-live .situation {
+  color: var(--text-secondary);
 }
 
 .game-card.status-final {
@@ -180,7 +181,7 @@
 }
 
 /* Desktop */
-@media (min-width: 1024px) {
+@media (hover: hover) and (min-width: 1024px) {
   .games-list {
     grid-template-columns: repeat(3, 1fr);
   }
