@@ -63,7 +63,14 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>College Baseball Live</h1>
+        <div className="brand-lockup">
+          <span className="brand-icon" aria-hidden="true">🔥</span>
+          <div className="brand-text">
+            <h1 className="brand-title">Blaze Sports Intel</h1>
+            <p className="tagline">Mobile-first NCAA Division I baseball intelligence</p>
+            <p className="subtitle">Deep South Sports Authority • College Baseball</p>
+          </div>
+        </div>
         <div className="conference-filter">
           <select>
             <option value="all">All Conferences</option>
