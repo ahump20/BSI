@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './LiveGameTracker.css';
+import WinProbabilityTimeline from './components/WinProbabilityTimeline';
+import PitchTunnelOverlay from './components/PitchTunnelOverlay';
 
 function LiveGameTracker({ games, onGameSelect, loading }) {
+  const [expandedGameId, setExpandedGameId] = useState(null);
+  const [pitchTunnelVisibility, setPitchTunnelVisibility] = useState({});
+
+  const handleExpandToggle = (gameId) => {
+    setExpandedGameId((previous) => {
+      if (previous === gameId) {
+        setPitchTunnelVisibility((state) => ({ ...state, [gameId]: false }));
+        return null;
+      }
+      return gameId;
+    });
+  };
+
+  const handlePitchTunnelToggle = (gameId) => {
+    setExpandedGameId(gameId);
+    setPitchTunnelVisibility((state) => ({
+      ...state,
+      [gameId]: !state[gameId],
+    }));
+  };
+
   if (loading) {
     return (
       <div className="loading-state">
@@ -45,11 +68,7 @@ function LiveGameTracker({ games, onGameSelect, loading }) {
       
       <div className="games-list">
         {games.map((game) => (
-          <div 
-            key={game.id} 
-            className={`game-card ${getGameStatusClass(game.status)}`}
-            onClick={() => onGameSelect(game)}
-          >
+          <div key={game.id} className={`game-card ${getGameStatusClass(game.status)}`}>
             <div className="game-status">
               <span className="status-text">{getGameStatus(game)}</span>
               {game.status === 'live' && game.situation && (
@@ -98,6 +117,59 @@ function LiveGameTracker({ games, onGameSelect, loading }) {
             <div className="game-venue">
               <span>{game.venue}</span>
             </div>
+
+            <div className="game-actions">
+              <button
+                type="button"
+                className="action-button primary"
+                onClick={() => onGameSelect(game)}
+              >
+                View Box Score
+              </button>
+              {game.liveWinProbability && (
+                <button
+                  type="button"
+                  className={`action-button ${
+                    expandedGameId === game.id ? 'active' : ''
+                  }`}
+                  onClick={() => handleExpandToggle(game.id)}
+                >
+                  {expandedGameId === game.id ? 'Hide Timeline' : 'Win Probability'}
+                </button>
+              )}
+              {game.liveWinProbability?.pitchTracking && (
+                <button
+                  type="button"
+                  className={`action-button ${
+                    pitchTunnelVisibility[game.id] ? 'active' : ''
+                  }`}
+                  onClick={() => handlePitchTunnelToggle(game.id)}
+                >
+                  {pitchTunnelVisibility[game.id] ? 'Hide Tunnel' : 'Pitch Tunnel'}
+                </button>
+              )}
+            </div>
+
+            {expandedGameId === game.id && game.liveWinProbability && (
+              <div className="game-analytics">
+                <WinProbabilityTimeline
+                  data={game.liveWinProbability}
+                  homeTeam={game.homeTeam.name}
+                  awayTeam={game.awayTeam.name}
+                />
+
+                {pitchTunnelVisibility[game.id] && (
+                  <PitchTunnelOverlay
+                    releasePoints={
+                      game.liveWinProbability.pitchTracking?.releasePoints || []
+                    }
+                    plateLocations={
+                      game.liveWinProbability.pitchTracking?.plateLocations || []
+                    }
+                  />
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>

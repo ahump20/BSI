@@ -35,15 +35,12 @@
 .game-card {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 16px;
-  cursor: pointer;
   transition: all 0.2s;
-}
-
-.game-card:active {
-  transform: scale(0.98);
-  background-color: rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .game-card.status-live {
@@ -158,6 +155,220 @@
   color: var(--text-secondary);
 }
 
+.game-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.action-button {
+  flex: 1 1 110px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button.primary {
+  background: var(--accent-color);
+  border-color: transparent;
+  color: #0f172a;
+}
+
+.action-button.active,
+.action-button:hover {
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.action-button.active {
+  background: rgba(0, 168, 107, 0.12);
+}
+
+.game-analytics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.timeline-card,
+.pitch-tunnel-card {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.timeline-header,
+.pitch-tunnel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.timeline-header h4,
+.pitch-tunnel-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.timeline-subtitle,
+.pitch-tunnel-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.timeline-legend,
+.pitch-tunnel-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.legend-chip,
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.legend-chip.legend-home {
+  background: var(--accent-color);
+}
+
+.legend-chip.legend-away {
+  background: #f59e0b;
+}
+
+.legend-dot {
+  display: inline-block;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timeline-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline-tooltip {
+  background: rgba(17, 24, 39, 0.95);
+  color: var(--text-primary);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tooltip-heading {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.tooltip-body {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.tooltip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  font-size: 12px;
+}
+
+.tooltip-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.timeline-footer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.probability-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0, 168, 107, 0.15);
+  color: var(--accent-color);
+}
+
+.probability-chip.away {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.timeline-empty-state,
+.pitch-tunnel-empty {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 16px;
+  text-align: center;
+}
+
+.pitch-tunnel-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pitch-tunnel-canvas {
+  width: 100%;
+  height: auto;
+}
+
+.overlay-axis-label {
+  fill: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.pitch-tunnel-path text {
+  fill: rgba(255, 255, 255, 0.8);
+  font-size: 10px;
+  text-anchor: middle;
+}
+
+.overlay-outcome-label {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.overlay-pitch-label {
+  font-weight: 600;
+}
+
 /* Tablet and up */
 @media (min-width: 768px) {
   .games-header h2 {
@@ -172,10 +383,15 @@
 
   .game-card {
     padding: 20px;
+    gap: 16px;
   }
 
   .team-name {
     font-size: 16px;
+  }
+
+  .game-analytics {
+    gap: 20px;
   }
 }
 
@@ -187,7 +403,10 @@
 
   .game-card:hover {
     border-color: var(--accent-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.35);
+  }
+
+  .game-actions {
+    gap: 12px;
   }
 }
