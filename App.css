@@ -7,6 +7,16 @@
   --live-indicator: #ff3b30;
   --border-color: #404040;
   --card-bg: #1e1e1e;
+  --blaze-ember: #bf5700;
+  --blaze-amber: #ffbf00;
+  --gradient-ember: radial-gradient(circle at center,
+      var(--blaze-ember) 0%,
+      rgba(255, 140, 0, 0.85) 55%,
+      var(--blaze-amber) 100%);
+  --gradient-primary: linear-gradient(135deg,
+      var(--blaze-ember) 0%,
+      #d97b38 55%,
+      var(--blaze-amber) 100%);
 }
 
 * {
@@ -24,6 +34,11 @@ body {
   background-color: var(--primary-color);
   color: var(--text-primary);
   overflow-x: hidden;
+}
+
+.accent-border {
+  border: 1px solid transparent;
+  border-image: var(--gradient-primary) 1;
 }
 
 .app {
