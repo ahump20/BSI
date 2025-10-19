@@ -35,8 +35,12 @@ This guide walks you through deploying the complete SportsDataIO integration sys
    ```bash
    npm install -g wrangler
    ```
-3. **SportsDataIO API Key**: You have `d34e00995322470fb49b6d02a8a4df33`
-4. **Git Repository**: Pushed to GitHub (ahump20/BSI)
+3. **SportsDataIO API Key**: Store the value as `SPORTSDATAIO_API_KEY` in your secrets manager or `.env`
+4. **Upstash Redis Credentials**: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` for 60s live-game caching
+5. **Highlightly/ESPN Access**:
+   - `ESPN_SCOREBOARD_URL` (defaults to the public college baseball scoreboard)
+   - Optional: `ESPN_API_KEY` or `HIGHLIGHTLY_API_KEY` if your provider requires authentication
+6. **Git Repository**: Pushed to GitHub (ahump20/BSI)
 
 ## Step 1: Create D1 Database
 
@@ -101,7 +105,7 @@ preview_id = "preview456def789"  # Preview namespace
 ```bash
 # Set SportsDataIO API key
 wrangler pages secret put SPORTSDATA_API_KEY --project-name blazesportsintel
-# When prompted, enter: d34e00995322470fb49b6d02a8a4df33
+# When prompted, enter the value from your local SPORTSDATAIO_API_KEY
 
 # Set Anthropic API key (for chat assistant)
 wrangler pages secret put ANTHROPIC_API_KEY --project-name blazesportsintel
@@ -116,6 +120,24 @@ wrangler pages secret list --project-name blazesportsintel
 # SPORTSDATA_API_KEY
 # ANTHROPIC_API_KEY
 ```
+
+## Step 4a: Configure Next.js Live Games Environment
+
+Create or update `apps/web/.env.local` (or your global `.env`) with the live scoreboard variables:
+
+```bash
+UPSTASH_REDIS_REST_URL="https://<your-upstash-instance>.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="<your-upstash-rest-token>"
+ESPN_SCOREBOARD_URL="https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard"
+# Optional: only required if your provider enforces keys
+ESPN_API_KEY=""
+HIGHLIGHTLY_API_BASE_URL=""
+HIGHLIGHTLY_API_KEY=""
+```
+
+- `UPSTASH_REDIS_REST_*` enables the 60-second cache for `/api/v1/games/live` responses.
+- Override `ESPN_SCOREBOARD_URL` or supply `HIGHLIGHTLY_*` if you switch providers.
+- Leave provider keys blank for the public ESPN feed.
 
 ## Step 5: Deploy to Cloudflare Pages
 

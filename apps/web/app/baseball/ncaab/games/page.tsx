@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LiveScoreboardCard from './live-scoreboard-card';
 
 const plannerLinks = [
   { href: '/baseball/ncaab/hub', label: 'Return to Hub' },
@@ -13,10 +14,10 @@ export default function BaseballGamesPage() {
         <span className="di-kicker">Diamond Insights · Games</span>
         <h1 className="di-page-title">Live Games & Scoreboard</h1>
         <p className="di-page-subtitle">
-          Live data wiring is underway. This mobile-first shell confirms routing, theming, and accessibility while we attach
-          the Highlightly feed, probabilistic win models, and shot charts.
+          Track the college baseball board with sub-minute caching, then jump into scouting workflows as telemetry builds out.
         </p>
         <div className="di-card-grid">
+          <LiveScoreboardCard />
           <article className="di-card">
             <h2>Game Day Checklist</h2>
             <p>Expect inning-by-inning updates, leverage index, and situational spray charts in this slot.</p>
