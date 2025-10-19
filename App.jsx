@@ -63,7 +63,11 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>College Baseball Live</h1>
+        <h1 className="display-heading">College Baseball Live</h1>
+        <p className="tagline">Diamond data for the D1 grind</p>
+        <p className="subtitle">
+          Real-time scores, scouting intel, and analytics built for college baseball.
+        </p>
         <div className="conference-filter">
           <select>
             <option value="all">All Conferences</option>
