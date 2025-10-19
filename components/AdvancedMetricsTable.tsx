@@ -373,7 +373,7 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                   key={column.key}
                   style={column.width ? { width: column.width } : undefined}
                   title={column.tooltip}
-                  onClick={() => column.key !== 'highlight' && handleSort(column.key)}
+                  onClick={() => column.key !== 'highlight' && column.isSortable !== false && handleSort(column.key)}
                   className={column.key === sortKey ? `sorted-${sortDirection}` : undefined}
                 >
                   {column.label}
