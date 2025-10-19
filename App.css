@@ -7,6 +7,10 @@
   --live-indicator: #ff3b30;
   --border-color: #404040;
   --card-bg: #1e1e1e;
+  --blaze-ember: #cc6600;
+  --font-display: 'Source Serif Pro', 'Bebas Neue', sans-serif;
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --brand-letter-spacing: 0.18em;
 }
 
 * {
@@ -16,9 +20,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-sans, 'Inter', 'Helvetica Neue', Arial, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--primary-color);
@@ -42,10 +44,39 @@ body {
   z-index: 100;
 }
 
-.app-header h1 {
+.app-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.app-header h1,
+.brand-title {
   font-size: 20px;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
+  font-family: var(--font-display);
+  letter-spacing: var(--brand-letter-spacing);
+  text-transform: uppercase;
+}
+
+.tagline {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--blaze-ember);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--blaze-ember);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .conference-filter select {
@@ -150,7 +181,8 @@ body {
 
 /* Tablet and up */
 @media (min-width: 768px) {
-  .app-header h1 {
+  .app-header h1,
+  .brand-title {
     font-size: 24px;
   }
 
