@@ -5,7 +5,28 @@ import 'leaflet/dist/leaflet.css';
 const MAP_CENTER = [37.8, -96.9];
 const MAP_ZOOM = 4;
 
-const formatNil = (value) => `$${value.toFixed(1)}M`;
+const formatNil = (value, fallback = '$0') => {
+  if (value === null || value === undefined) {
+    return fallback;
+  }
+
+  const numeric = Number(value);
+
+  if (!Number.isFinite(numeric)) {
+    return fallback;
+  }
+
+  if (numeric === 0) {
+    return '$0';
+  }
+
+  return `$${numeric.toFixed(1)}M`;
+};
+
+const normalizeNil = (value) => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+};
 
 const formatDate = (iso) => {
   const date = new Date(iso);
@@ -74,7 +95,7 @@ function RosterPortalHeatmap() {
     const averageNil =
       regionMetrics.length > 0
         ? regionMetrics.reduce(
-            (sum, region) => sum + (region.metrics?.nilEstimate ?? 0),
+            (sum, region) => sum + normalizeNil(region.metrics?.nilEstimate),
             0
           ) / regionMetrics.length
         : 0;
@@ -200,7 +221,7 @@ function RosterPortalHeatmap() {
                 />
                 {regionMetrics.map((region) => {
                   const commits = region.metrics?.transferCommits ?? 0;
-                  const nilEstimate = region.metrics?.nilEstimate ?? 0;
+                  const nilEstimate = normalizeNil(region.metrics?.nilEstimate);
                   const recruitingIndex = region.metrics?.recruitingIndex ?? '—';
                   return (
                     <CircleMarker
@@ -266,7 +287,7 @@ function RosterPortalHeatmap() {
                           <span className="team-to">{move.toTeam}</span>
                         </td>
                         <td>{move.position}</td>
-                        <td>{formatNil(move.nilEstimate)}</td>
+                        <td>{formatNil(normalizeNil(move.nilEstimate))}</td>
                         <td>{formatDate(move.commitDate)}</td>
                       </tr>
                     ))}
@@ -301,7 +322,7 @@ function RosterPortalHeatmap() {
                         </div>
                         <div>
                           <span className="summary-label">NIL momentum</span>
-                          <span className="summary-value">{formatNil(program.metrics.nilMomentum)}</span>
+                          <span className="summary-value">{formatNil(normalizeNil(program.metrics?.nilMomentum))}</span>
                         </div>
                       </div>
                       <footer>
