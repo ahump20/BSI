@@ -1,5 +1,12 @@
 .standings {
   width: 100%;
+  background: var(--glass-heavy);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  box-shadow: var(--elevation-soft);
 }
 
 .standings-header {
@@ -8,6 +15,8 @@
   align-items: center;
   margin-bottom: 20px;
   gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .standings-header h2 {
@@ -16,18 +25,22 @@
 }
 
 .conference-select {
-  padding: 8px 12px;
-  background-color: var(--card-bg);
+  padding: 10px 14px;
+  background: var(--glass-medium);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   font-size: 13px;
   outline: none;
   cursor: pointer;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 6px 18px rgba(2, 9, 20, 0.35);
 }
 
 .conference-select:focus {
-  border-color: var(--accent-color);
+  border-color: rgba(191, 87, 0, 0.6);
+  box-shadow: 0 0 0 2px rgba(191, 87, 0, 0.35);
 }
 
 .standings-table-wrapper {
@@ -40,31 +53,35 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 14px;
   overflow: hidden;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 12px 32px rgba(3, 8, 20, 0.35);
 }
 
 .standings-table th {
-  background-color: var(--secondary-color);
+  background: var(--glass-light);
   padding: 12px 8px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
   white-space: nowrap;
 }
 
 .standings-table td {
   padding: 12px 8px;
   font-size: 13px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 .standings-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(135deg, rgba(191, 87, 0, 0.08), transparent);
 }
 
 .standings-table .rank-col {
@@ -84,8 +101,8 @@
 }
 
 .tournament-team {
-  background-color: rgba(0, 168, 107, 0.05);
-  border-left: 3px solid var(--accent-color);
+  background: linear-gradient(135deg, rgba(191, 87, 0, 0.16), rgba(191, 87, 0, 0.08));
+  border-left: 3px solid var(--brand-burnt-orange);
 }
 
 .record {
@@ -113,7 +130,7 @@
 }
 
 .rpi-rank {
-  color: var(--accent-color);
+  color: var(--brand-burnt-orange-bright);
 }
 
 .rpi-value {
@@ -134,7 +151,7 @@
 }
 
 .win-streak {
-  color: var(--accent-color);
+  color: var(--brand-burnt-orange-bright);
 }
 
 .loss-streak {
@@ -149,16 +166,20 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--glass-medium);
+  border-radius: 14px;
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 24px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 10px 24px rgba(3, 8, 20, 0.32);
 }
 
 .tournament-indicator {
-  color: var(--accent-color);
+  color: var(--brand-burnt-orange-bright);
   font-size: 16px;
 }
 
@@ -179,18 +200,22 @@
 }
 
 .leader-category {
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  padding: 16px;
+  background: var(--glass-medium);
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 12px 28px rgba(3, 8, 20, 0.35);
 }
 
 .leader-category h4 {
   font-size: 14px;
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--brand-burnt-orange-bright);
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
 }
 
 .leader-item {

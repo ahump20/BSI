@@ -33,21 +33,26 @@
 }
 
 .game-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 18px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--elevation-soft);
 }
 
 .game-card:active {
   transform: scale(0.98);
-  background-color: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, var(--glass-light), rgba(191, 87, 0, 0.18));
+  box-shadow: 0 8px 20px rgba(3, 8, 20, 0.45);
 }
 
 .game-card.status-live {
-  border-left: 3px solid var(--live-indicator);
+  border-left: 3px solid var(--brand-burnt-orange);
+  box-shadow: var(--elevation-soft), 0 0 0 1px rgba(191, 87, 0, 0.32);
 }
 
 .game-card.status-final {
@@ -60,13 +65,13 @@
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 .status-text {
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--brand-burnt-orange-bright);
   text-transform: uppercase;
 }
 
@@ -86,7 +91,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 10px 0;
 }
 
 .team.leading .team-name {
@@ -128,7 +133,7 @@
 }
 
 .pitcher-info {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
   padding-top: 12px;
 }
 
@@ -153,7 +158,7 @@
 .game-venue {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
   font-size: 12px;
   color: var(--text-secondary);
 }
@@ -171,7 +176,7 @@
   }
 
   .game-card {
-    padding: 20px;
+    padding: 22px;
   }
 
   .team-name {
@@ -186,8 +191,9 @@
   }
 
   .game-card:hover {
-    border-color: var(--accent-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-color: rgba(191, 87, 0, 0.55);
+    transform: translateY(-4px);
+    box-shadow: var(--elevation-strong), 0 0 0 1px rgba(191, 87, 0, 0.35);
+    background: linear-gradient(135deg, var(--glass-medium), rgba(191, 87, 0, 0.12));
   }
 }

@@ -1,15 +1,24 @@
 .box-score {
   width: 100%;
+  background: var(--glass-heavy);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  box-shadow: var(--elevation-soft);
 }
 
 .box-score-header {
   margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .back-button {
   background: none;
   border: none;
-  color: var(--accent-color);
+  color: var(--brand-burnt-orange-bright);
   font-size: 14px;
   cursor: pointer;
   padding: 8px 0;
@@ -40,20 +49,24 @@
   width: 100%;
   min-width: 500px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 14px;
   overflow: hidden;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 12px 32px rgba(3, 8, 20, 0.35);
 }
 
 .line-score th,
 .line-score td {
   padding: 12px 8px;
   text-align: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(148, 163, 184, 0.18);
 }
 
 .line-score th {
-  background-color: var(--secondary-color);
+  background: var(--glass-light);
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -72,7 +85,7 @@
 }
 
 .line-score .total-header {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--glass-light), rgba(191, 87, 0, 0.12));
   font-weight: 700;
 }
 
@@ -83,32 +96,51 @@
 .line-score .total-score {
   font-weight: 700;
   font-size: 16px;
-  background-color: rgba(0, 168, 107, 0.1);
+  background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(191, 87, 0, 0.1));
+  color: var(--text-primary);
 }
 
 .stats-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 6px;
+  background: var(--glass-medium);
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 .stats-tabs button {
   flex: 1;
-  padding: 12px;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
   color: var(--text-secondary);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
 }
 
 .stats-tabs button.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  color: var(--text-primary);
+  background: linear-gradient(
+      135deg,
+      var(--glass-light),
+      rgba(191, 87, 0, 0.24)
+    ),
+    var(--glass-medium);
+  border-color: rgba(191, 87, 0, 0.6);
+  box-shadow: 0 10px 24px var(--brand-burnt-orange-glow);
+}
+
+.stats-tabs button:hover {
+  color: var(--text-primary);
+  border-color: rgba(191, 87, 0, 0.35);
+  background: linear-gradient(135deg, var(--glass-light), rgba(191, 87, 0, 0.12));
 }
 
 .stats-content {
@@ -124,7 +156,7 @@
   font-weight: 600;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--accent-color);
+  border-bottom: 2px solid rgba(191, 87, 0, 0.6);
 }
 
 .stats-table-wrapper {
@@ -136,30 +168,34 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 14px;
   overflow: hidden;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 12px 32px rgba(3, 8, 20, 0.35);
 }
 
 .stats-table th {
-  background-color: var(--secondary-color);
+  background: var(--glass-light);
   padding: 10px 8px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
 }
 
 .stats-table td {
   padding: 12px 8px;
   font-size: 13px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 .stats-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(135deg, rgba(191, 87, 0, 0.08), transparent);
 }
 
 .stats-table .player-col {
@@ -182,19 +218,19 @@
 .stats-table .avg,
 .stats-table .era {
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--brand-burnt-orange-bright);
 }
 
 .decision-pitcher {
-  background-color: rgba(0, 168, 107, 0.05);
+  background: linear-gradient(135deg, rgba(191, 87, 0, 0.12), rgba(191, 87, 0, 0.06));
 }
 
 .decision {
   display: inline-block;
   margin-left: 8px;
   padding: 2px 6px;
-  background-color: var(--accent-color);
-  color: var(--primary-color);
+  background-color: var(--brand-burnt-orange);
+  color: var(--text-primary);
   font-size: 10px;
   font-weight: 700;
   border-radius: 4px;
