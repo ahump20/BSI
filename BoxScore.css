@@ -200,6 +200,324 @@
   border-radius: 4px;
 }
 
+
+.stats-tabs button.pro-locked {
+  position: relative;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+.stats-tabs button.pro-locked.active {
+  color: var(--accent-color);
+}
+
+.pro-badge {
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: linear-gradient(135deg, #fbbf24, #dc2626);
+  color: #0f172a;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.advanced-placeholder,
+.advanced-error,
+.advanced-upgrade {
+  background: rgba(45, 55, 72, 0.35);
+  border: 1px solid rgba(226, 232, 240, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.advanced-error {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.advanced-upgrade h3 {
+  color: var(--accent-color);
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.advanced-upgrade p {
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.upgrade-button {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #fbbf24, #dc2626);
+  color: #0f172a;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.upgrade-button:hover {
+  transform: translateY(-1px);
+}
+
+.upgrade-helper {
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.upgrade-helper a {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.advanced-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.advanced-metrics__tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.advanced-metrics__tab {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 232, 240, 0.12);
+  background: rgba(26, 32, 44, 0.6);
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.advanced-metrics__tab.active {
+  background: rgba(251, 191, 36, 0.2);
+  color: var(--accent-color);
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.advanced-metrics__table-wrapper {
+  overflow-x: auto;
+}
+
+.advanced-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  background: rgba(26, 32, 44, 0.7);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.advanced-table th,
+.advanced-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  font-size: 13px;
+  text-align: left;
+}
+
+.advanced-table th {
+  background: rgba(15, 23, 42, 0.65);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: rgba(226, 232, 240, 0.8);
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.advanced-table th .sort-indicator {
+  margin-left: 4px;
+  font-size: 10px;
+}
+
+.advanced-table tbody tr:hover {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.player-id .player-name {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.player-id .player-team {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.sparkbar {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 32px;
+}
+
+.sparkbar-bar {
+  width: 6px;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.9), rgba(217, 119, 6, 0.8));
+}
+
+.sparkbar--emphasize .sparkbar-bar {
+  background: linear-gradient(180deg, rgba(203, 213, 225, 0.9), rgba(148, 163, 184, 0.8));
+}
+
+.spray-distribution {
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.media-thumbnail {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.8);
+  cursor: pointer;
+  padding: 0;
+  width: 64px;
+  height: 40px;
+}
+
+.media-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.1);
+}
+
+.media-thumbnail .media-type {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 12px;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.media-thumbnail.placeholder {
+  color: var(--text-secondary);
+  font-size: 12px;
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.media-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+
+.media-modal {
+  background: rgba(17, 24, 39, 0.95);
+  border-radius: 16px;
+  max-width: 640px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  overflow: hidden;
+}
+
+.media-modal__header,
+.media-modal__footer {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.media-modal__header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.media-modal__close {
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.media-modal__body {
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.media-modal__body video,
+.media-modal__body img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.media-modal__description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.media-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.media-tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.16);
+  color: rgba(191, 219, 254, 0.9);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.media-modal__footer {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.media-modal__expires {
+  color: rgba(248, 250, 252, 0.6);
+}
+
+.advanced-metrics__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.advanced-metrics__powered {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+
 /* Tablet and up */
 @media (min-width: 768px) {
   .game-info h2 {

@@ -25,6 +25,15 @@ export default {
         return jsonResponse({ games }, corsHeaders);
       }
 
+      if (path === '/api/billing/entitlements') {
+        const userId =
+          request.headers.get('x-user-id') ||
+          url.searchParams.get('userId') ||
+          'anonymous';
+        const entitlements = await fetchStripeEntitlements(userId, env);
+        return jsonResponse(entitlements, corsHeaders);
+      }
+
       // Route: Get box score for a specific game
       if (path.match(/^\/api\/games\/[^/]+\/boxscore$/)) {
         const gameId = path.split('/')[3];
@@ -96,8 +105,8 @@ async function fetchBoxScore(gameId, env) {
   const cached = await env.KV?.get(`boxscore-${gameId}`, 'json');
   if (cached) return cached;
 
-  const boxScore = mockBoxScore;
-  
+  const boxScore = await enrichBoxScoreWithAdvanced(mockBoxScore, env);
+
   await env.KV?.put(`boxscore-${gameId}`, JSON.stringify(boxScore), {
     expirationTtl: 15, // Cache for 15 seconds during live games
   });
@@ -145,8 +154,89 @@ async function scrapeNCAAScoreboard() {
 async function scrapeD1Baseball() {
   const response = await fetch('https://d1baseball.com/scores/');
   const html = await response.text();
-  
+
   // Parse live scores and game details
-  
+
   return [];
+}
+
+async function enrichBoxScoreWithAdvanced(boxScore, env) {
+  const clone = typeof structuredClone === 'function'
+    ? structuredClone(boxScore)
+    : JSON.parse(JSON.stringify(boxScore));
+
+  if (!clone.advanced) {
+    return clone;
+  }
+
+  if (Array.isArray(clone.advanced.media)) {
+    const signedMedia = [];
+    for (const mediaItem of clone.advanced.media) {
+      const signedUrl = await signMediaUrl(mediaItem.assetUrl, env);
+      signedMedia.push({
+        ...mediaItem,
+        signedUrl,
+        expiresAt: Math.floor(Date.now() / 1000) + 300,
+      });
+    }
+    clone.advanced.media = signedMedia;
+  }
+
+  clone.advanced.generatedAt = new Date().toISOString();
+
+  return clone;
+}
+
+async function signMediaUrl(url, env, ttlSeconds = 300) {
+  if (!url) return url;
+
+  const secret = env.MEDIA_SIGNING_SECRET || 'dev-diamond-insights-secret';
+  const expires = Math.floor(Date.now() / 1000) + ttlSeconds;
+  const payload = `${url}:${expires}`;
+
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signatureBuffer = await crypto.subtle.sign('HMAC', key, encoder.encode(payload));
+  const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+  const signature = signatureArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}expires=${expires}&sig=${signature}`;
+}
+
+async function fetchStripeEntitlements(userId, env) {
+  const cacheKey = `entitlements-${userId}`;
+  const cached = await env.KV?.get(cacheKey, 'json');
+  if (cached) {
+    return cached;
+  }
+
+  const proUsers = (env.STRIPE_PRO_USERS || '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  const isPro = proUsers.includes(userId);
+  const entitlement = {
+    userId,
+    isPro,
+    plan: isPro ? 'diamond_pro' : 'free',
+    features: isPro
+      ? ['advanced_box_score', 'video_highlights', 'diamond_pro_insights']
+      : [],
+    refreshedAt: new Date().toISOString(),
+    ttlSeconds: 60,
+  };
+
+  await env.KV?.put(cacheKey, JSON.stringify(entitlement), {
+    expirationTtl: entitlement.ttlSeconds,
+  });
+
+  return entitlement;
 }
