@@ -301,7 +301,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
 
     // Batting stats from box line
     const batting =
-      boxLine.ab && boxLine.ab > 0
+      typeof boxLine.ab === 'number' && boxLine.ab >= 0
         ? {
             ab: boxLine.ab,
             r: boxLine.r ?? 0,
