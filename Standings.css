@@ -162,6 +162,125 @@
   font-size: 16px;
 }
 
+.portal-summary-section {
+  margin-bottom: 32px;
+}
+
+.portal-widget-placeholder {
+  background-color: var(--card-bg);
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.portal-summary-widget {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.portal-summary-widget__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.portal-summary-widget__kicker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-color);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.portal-summary-widget__cta {
+  color: var(--accent-color);
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.portal-summary-widget__error {
+  border-radius: 10px;
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  background: rgba(220, 38, 38, 0.12);
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #ffb4b4;
+}
+
+.portal-summary-widget__loading {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.portal-summary-widget__body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.portal-summary-widget__totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.portal-summary-widget__totals dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+}
+
+.portal-summary-widget__totals dd {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.portal-summary-widget__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.portal-summary-widget__name-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.portal-summary-widget__name {
+  font-weight: 600;
+}
+
+.portal-summary-widget__meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.portal-summary-widget__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 .stat-leaders {
   margin-top: 32px;
 }

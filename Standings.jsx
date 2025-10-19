@@ -1,14 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import './Standings.css';
+
+const PortalSummaryWidget = React.lazy(() => import('./components/PortalSummaryWidget.jsx'));
 
 function Standings() {
   const [conference, setConference] = useState('sec');
   const [standingsData, setStandingsData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showPortalWidget, setShowPortalWidget] = useState(false);
 
   useEffect(() => {
     fetchStandings();
   }, [conference]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const scheduleHydration = () => setShowPortalWidget(true);
+
+    if ('requestIdleCallback' in window) {
+      const idleHandle = window.requestIdleCallback(scheduleHydration, { timeout: 1500 });
+      return () => window.cancelIdleCallback(idleHandle);
+    }
+
+    const timeout = window.setTimeout(scheduleHydration, 600);
+    return () => window.clearTimeout(timeout);
+  }, []);
 
   const fetchStandings = async () => {
     setLoading(true);
@@ -102,6 +121,16 @@ function Standings() {
 
       <div className="standings-legend">
         <span className="tournament-indicator">■</span> NCAA Tournament Position
+      </div>
+
+      <div className="portal-summary-section">
+        {showPortalWidget ? (
+          <Suspense fallback={<div className="portal-widget-placeholder">Loading transfer activity…</div>}>
+            <PortalSummaryWidget />
+          </Suspense>
+        ) : (
+          <div className="portal-widget-placeholder">Preparing portal insights…</div>
+        )}
       </div>
 
       <div className="stat-leaders">
