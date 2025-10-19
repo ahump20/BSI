@@ -10,8 +10,10 @@
  * - Team and conference context
  */
 
-import { prisma } from '@/lib/db/prisma';
+import { getPrismaClientSingleton } from '@/lib/db/prisma';
 import { Player, Position, HandedEnum, AcademicYear } from '@prisma/client';
+
+const prisma = getPrismaClientSingleton();
 
 export interface PlayerDetailResponse {
   // Biographical

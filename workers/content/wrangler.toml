@@ -9,6 +9,7 @@ crons = ["*/15 * * * *", "0 */6 * * *"]
 # Environment variables (set via wrangler secret)
 [vars]
 # DATABASE_URL - set via wrangler secret put DATABASE_URL
+# PRISMA_ACCELERATE_URL - set via wrangler secret put PRISMA_ACCELERATE_URL
 # ANTHROPIC_API_KEY - set via wrangler secret put ANTHROPIC_API_KEY
 # OPENAI_API_KEY - set via wrangler secret put OPENAI_API_KEY
 # GOOGLE_GEMINI_API_KEY - set via wrangler secret put GOOGLE_GEMINI_API_KEY

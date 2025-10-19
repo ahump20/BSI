@@ -5,6 +5,7 @@
 export interface Env {
   // Database
   DATABASE_URL: string;
+  PRISMA_ACCELERATE_URL?: string;
 
   // KV Cache
   CACHE: KVNamespace;

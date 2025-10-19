@@ -6,6 +6,7 @@
 
 export interface Env {
   DATABASE_URL: string;
+  PRISMA_ACCELERATE_URL?: string;
   ANTHROPIC_API_KEY: string;
   OPENAI_API_KEY: string;
   GOOGLE_GEMINI_API_KEY: string;

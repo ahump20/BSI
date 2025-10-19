@@ -19,11 +19,26 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { PrismaClient } from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
+import { createPrismaClient, type EdgePrismaClient } from '../../lib/db/prisma';
 import type { Env } from './types';
 
-const prisma = new PrismaClient();
+function createEdgePrisma(env: Env): EdgePrismaClient {
+  return createPrismaClient({
+    datasourceUrl: env.PRISMA_ACCELERATE_URL ?? env.DATABASE_URL,
+    accelerateUrl: env.PRISMA_ACCELERATE_URL,
+  });
+}
+
+async function withPrisma<T>(env: Env, run: (prisma: EdgePrismaClient) => Promise<T>): Promise<T> {
+  const prisma = createEdgePrisma(env);
+
+  try {
+    return await run(prisma);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 
 export default {
   /**
@@ -145,73 +160,76 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
   const season = currentDate.getFullYear();
 
   try {
-    // Fetch live games for college baseball
-    const games = await providerManager.getGames({
-      sport: 'baseball',
-      division: 'D1',
-      date: currentDate,
-      status: ['SCHEDULED', 'LIVE', 'FINAL']
-    });
-
-    console.log(`[Ingest] Fetched ${games.length} games from provider`);
-
-    // Batch upsert games
-    const upsertPromises = games.map(game => {
-      return prisma.game.upsert({
-        where: { externalId: game.id },
-        update: {
-          status: game.status,
-          homeScore: game.homeScore,
-          awayScore: game.awayScore,
-          currentInning: game.currentInning,
-          currentInningHalf: game.currentInningHalf,
-          balls: game.balls,
-          strikes: game.strikes,
-          outs: game.outs,
-          lastUpdated: new Date()
-        },
-        create: {
-          externalId: game.id,
-          sport: 'BASEBALL',
-          division: 'D1',
-          season,
-          seasonType: 'REGULAR',
-          scheduledAt: new Date(game.scheduledAt),
-          status: game.status,
-          homeTeamId: game.homeTeamId,
-          awayTeamId: game.awayTeamId,
-          homeScore: game.homeScore,
-          awayScore: game.awayScore,
-          venueId: game.venueId,
-          currentInning: game.currentInning,
-          currentInningHalf: game.currentInningHalf,
-          balls: game.balls,
-          strikes: game.strikes,
-          outs: game.outs,
-          providerName: game.providerName,
-          feedPrecision: game.feedPrecision
-        }
+    await withPrisma(env, async prisma => {
+      // Fetch live games for college baseball
+      const games = await providerManager.getGames({
+        sport: 'baseball',
+        division: 'D1',
+        date: currentDate,
+        status: ['SCHEDULED', 'LIVE', 'FINAL']
       });
-    });
 
-    await Promise.all(upsertPromises);
+      console.log(`[Ingest] Fetched ${games.length} games from provider`);
 
-    console.log(`[Ingest] Successfully upserted ${games.length} games`);
-
-    // Cache live games in KV (60s TTL)
-    const cacheKey = `live:games:${season}:${currentDate.toISOString().split('T')[0]}`;
-    await env.CACHE.put(cacheKey, JSON.stringify(games), {
-      expirationTtl: 60
-    });
-
-    // Track success in Analytics Engine
-    if (env.ANALYTICS) {
-      env.ANALYTICS.writeDataPoint({
-        blobs: ['ingest_success', 'live_games'],
-        doubles: [games.length],
-        indexes: [season.toString()]
+      // Batch upsert games
+      const upsertPromises = games.map(game => {
+        return prisma.game.upsert({
+          where: { externalId: game.id },
+          update: {
+            status: game.status,
+            homeScore: game.homeScore,
+            awayScore: game.awayScore,
+            currentInning: game.currentInning,
+            currentInningHalf: game.currentInningHalf,
+            balls: game.balls,
+            strikes: game.strikes,
+            outs: game.outs,
+            lastUpdated: new Date()
+          },
+          create: {
+            externalId: game.id,
+            sport: 'BASEBALL',
+            division: 'D1',
+            season,
+            seasonType: 'REGULAR',
+            scheduledAt: new Date(game.scheduledAt),
+            status: game.status,
+            homeTeamId: game.homeTeamId,
+            awayTeamId: game.awayTeamId,
+            homeScore: game.homeScore,
+            awayScore: game.awayScore,
+            venueId: game.venueId,
+            currentInning: game.currentInning,
+            currentInningHalf: game.currentInningHalf,
+            balls: game.balls,
+            strikes: game.strikes,
+            outs: game.outs,
+            providerName: game.providerName,
+            feedPrecision: game.feedPrecision
+          }
+        });
       });
-    }
+
+      await Promise.all(upsertPromises);
+
+      console.log(`[Ingest] Successfully upserted ${games.length} games`);
+
+      // Cache live games in KV (60s TTL)
+      const cacheKey = `live:games:${season}:${currentDate.toISOString().split('T')[0]}`;
+      await env.CACHE.put(cacheKey, JSON.stringify(games), {
+        expirationTtl: 60
+      });
+
+      // Track success in Analytics Engine
+      if (env.ANALYTICS) {
+        env.ANALYTICS.writeDataPoint({
+          blobs: ['ingest_success', 'live_games'],
+          doubles: [games.length],
+          indexes: [season.toString()]
+        });
+      }
+    });
+
   } catch (error) {
     console.error('[Ingest] Live games ingestion failed:', error);
     throw error;
@@ -228,135 +246,137 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
   const season = new Date().getFullYear();
 
   try {
-    // Get all D1 teams
-    const teams = await prisma.team.findMany({
-      where: {
-        sport: 'BASEBALL',
-        division: 'D1'
-      },
-      select: {
-        id: true,
-        externalId: true
-      }
-    });
-
-    console.log(`[Ingest] Fetching stats for ${teams.length} teams`);
-
-    // Fetch stats with rate limiting (10 concurrent)
-    const batchSize = 10;
-    for (let i = 0; i < teams.length; i += batchSize) {
-      const batch = teams.slice(i, i + batchSize);
-
-      const statsPromises = batch.map(async (team) => {
-        try {
-          const stats = await providerManager.getTeamStats({
-            teamId: team.externalId,
-            season
-          });
-
-          // Upsert team stats
-          return prisma.teamStats.upsert({
-            where: {
-              teamId_season: {
-                teamId: team.id,
-                season
-              }
-            },
-            update: {
-              wins: stats.wins,
-              losses: stats.losses,
-              confWins: stats.confWins,
-              confLosses: stats.confLosses,
-              homeWins: stats.homeWins,
-              homeLosses: stats.homeLosses,
-              awayWins: stats.awayWins,
-              awayLosses: stats.awayLosses,
-              runsScored: stats.runsScored,
-              runsAllowed: stats.runsAllowed,
-              battingAvg: stats.battingAvg,
-              era: stats.era,
-              fieldingPct: stats.fieldingPct,
-              rpi: stats.rpi,
-              strengthOfSched: stats.strengthOfSched,
-              pythagWins: stats.pythagWins,
-              lastUpdated: new Date()
-            },
-            create: {
-              teamId: team.id,
-              season,
-              wins: stats.wins,
-              losses: stats.losses,
-              confWins: stats.confWins,
-              confLosses: stats.confLosses,
-              homeWins: stats.homeWins,
-              homeLosses: stats.homeLosses,
-              awayWins: stats.awayWins,
-              awayLosses: stats.awayLosses,
-              runsScored: stats.runsScored,
-              runsAllowed: stats.runsAllowed,
-              battingAvg: stats.battingAvg,
-              era: stats.era,
-              fieldingPct: stats.fieldingPct,
-              rpi: stats.rpi,
-              strengthOfSched: stats.strengthOfSched,
-              pythagWins: stats.pythagWins
-            }
-          });
-        } catch (error) {
-          console.error(`[Ingest] Failed to fetch stats for team ${team.id}:`, error);
-          return null;
+    await withPrisma(env, async prisma => {
+      // Get all D1 teams
+      const teams = await prisma.team.findMany({
+        where: {
+          sport: 'BASEBALL',
+          division: 'D1'
+        },
+        select: {
+          id: true,
+          externalId: true
         }
       });
 
-      await Promise.all(statsPromises);
+      console.log(`[Ingest] Fetching stats for ${teams.length} teams`);
 
-      // Rate limit pause between batches
-      if (i + batchSize < teams.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      // Fetch stats with rate limiting (10 concurrent)
+      const batchSize = 10;
+      for (let i = 0; i < teams.length; i += batchSize) {
+        const batch = teams.slice(i, i + batchSize);
+
+        const statsPromises = batch.map(async (team) => {
+          try {
+            const stats = await providerManager.getTeamStats({
+              teamId: team.externalId,
+              season
+            });
+
+            // Upsert team stats
+            return prisma.teamStats.upsert({
+              where: {
+                teamId_season: {
+                  teamId: team.id,
+                  season
+                }
+              },
+              update: {
+                wins: stats.wins,
+                losses: stats.losses,
+                confWins: stats.confWins,
+                confLosses: stats.confLosses,
+                homeWins: stats.homeWins,
+                homeLosses: stats.homeLosses,
+                awayWins: stats.awayWins,
+                awayLosses: stats.awayLosses,
+                runsScored: stats.runsScored,
+                runsAllowed: stats.runsAllowed,
+                battingAvg: stats.battingAvg,
+                era: stats.era,
+                fieldingPct: stats.fieldingPct,
+                rpi: stats.rpi,
+                strengthOfSched: stats.strengthOfSched,
+                pythagWins: stats.pythagWins,
+                lastUpdated: new Date()
+              },
+              create: {
+                teamId: team.id,
+                season,
+                wins: stats.wins,
+                losses: stats.losses,
+                confWins: stats.confWins,
+                confLosses: stats.confLosses,
+                homeWins: stats.homeWins,
+                homeLosses: stats.homeLosses,
+                awayWins: stats.awayWins,
+                awayLosses: stats.awayLosses,
+                runsScored: stats.runsScored,
+                runsAllowed: stats.runsAllowed,
+                battingAvg: stats.battingAvg,
+                era: stats.era,
+                fieldingPct: stats.fieldingPct,
+                rpi: stats.rpi,
+                strengthOfSched: stats.strengthOfSched,
+                pythagWins: stats.pythagWins
+              }
+            });
+          } catch (error) {
+            console.error(`[Ingest] Failed to fetch stats for team ${team.id}:`, error);
+            return null;
+          }
+        });
+
+        await Promise.all(statsPromises);
+
+        // Rate limit pause between batches
+        if (i + batchSize < teams.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
       }
-    }
 
-    console.log(`[Ingest] Successfully ingested stats for ${teams.length} teams`);
+      console.log(`[Ingest] Successfully ingested stats for ${teams.length} teams`);
 
-    // Cache standings in KV (4hr TTL)
-    const standings = await prisma.teamStats.findMany({
-      where: { season },
-      include: {
-        team: {
-          select: {
-            id: true,
-            name: true,
-            school: true,
-            abbreviation: true,
-            conference: {
-              select: {
-                id: true,
-                name: true,
-                slug: true
+      // Cache standings in KV (4hr TTL)
+      const standings = await prisma.teamStats.findMany({
+        where: { season },
+        include: {
+          team: {
+            select: {
+              id: true,
+              name: true,
+              school: true,
+              abbreviation: true,
+              conference: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true
+                }
               }
             }
           }
-        }
-      },
-      orderBy: [
-        { wins: 'desc' },
-        { losses: 'asc' }
-      ]
-    });
-
-    const cacheKey = `standings:${season}`;
-    await env.CACHE.put(cacheKey, JSON.stringify(standings), {
-      expirationTtl: 14400 // 4 hours
-    });
-
-    // Track success in Analytics Engine
-    if (env.ANALYTICS) {
-      env.ANALYTICS.writeDataPoint({
-        blobs: ['ingest_success', 'team_stats'],
-        doubles: [teams.length],
-        indexes: [season.toString()]
+        },
+        orderBy: [
+          { wins: 'desc' },
+          { losses: 'asc' }
+        ]
       });
-    }
+
+      const cacheKey = `standings:${season}`;
+      await env.CACHE.put(cacheKey, JSON.stringify(standings), {
+        expirationTtl: 14400 // 4 hours
+      });
+
+      // Track success in Analytics Engine
+      if (env.ANALYTICS) {
+        env.ANALYTICS.writeDataPoint({
+          blobs: ['ingest_success', 'team_stats'],
+          doubles: [teams.length],
+          indexes: [season.toString()]
+        });
+      }
+    });
   } catch (error) {
     console.error('[Ingest] Team stats ingestion failed:', error);
     throw error;
@@ -373,76 +393,78 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
   const season = new Date().getFullYear();
 
   try {
-    // Aggregate completed games for archival
-    const completedGames = await prisma.game.findMany({
-      where: {
-        season,
-        status: 'FINAL',
-        archived: false
-      },
-      include: {
-        homeTeam: true,
-        awayTeam: true,
-        events: true,
-        boxLines: true
+    await withPrisma(env, async prisma => {
+      // Aggregate completed games for archival
+      const completedGames = await prisma.game.findMany({
+        where: {
+          season,
+          status: 'FINAL',
+          archived: false
+        },
+        include: {
+          homeTeam: true,
+          awayTeam: true,
+          events: true,
+          boxLines: true
+        }
+      });
+
+      console.log(`[Ingest] Archiving ${completedGames.length} completed games`);
+
+      // Archive to R2 (immutable storage)
+      if (completedGames.length > 0) {
+        const archiveData = {
+          season,
+          archivedAt: new Date().toISOString(),
+          games: completedGames
+        };
+
+        const archiveKey = `archives/${season}/${new Date().toISOString().split('T')[0]}.json`;
+        await env.R2_BUCKET.put(archiveKey, JSON.stringify(archiveData), {
+          customMetadata: {
+            season: season.toString(),
+            gameCount: completedGames.length.toString(),
+            archivedAt: new Date().toISOString()
+          }
+        });
+
+        // Mark games as archived
+        await prisma.game.updateMany({
+          where: {
+            id: { in: completedGames.map(g => g.id) }
+          },
+          data: {
+            archived: true,
+            archivedAt: new Date()
+          }
+        });
+
+        console.log(`[Ingest] Archived ${completedGames.length} games to R2: ${archiveKey}`);
+      }
+
+      // Recalculate advanced stats
+      console.log('[Ingest] Recalculating advanced statistics...');
+
+      // Update RPI calculations
+      await recalculateRPI(season, prisma);
+
+      // Update strength of schedule
+      await recalculateStrengthOfSchedule(season, prisma);
+
+      // Update Pythagorean win expectations
+      await recalculatePythagoreanWins(season, prisma);
+
+      console.log('[Ingest] Historical data ingestion complete');
+
+      // Track success in Analytics Engine
+      if (env.ANALYTICS) {
+        env.ANALYTICS.writeDataPoint({
+          blobs: ['ingest_success', 'historical'],
+          doubles: [completedGames.length],
+          indexes: [season.toString()]
+        });
       }
     });
-
-    console.log(`[Ingest] Archiving ${completedGames.length} completed games`);
-
-    // Archive to R2 (immutable storage)
-    if (completedGames.length > 0) {
-      const archiveData = {
-        season,
-        archivedAt: new Date().toISOString(),
-        games: completedGames
-      };
-
-      const archiveKey = `archives/${season}/${new Date().toISOString().split('T')[0]}.json`;
-      await env.R2_BUCKET.put(archiveKey, JSON.stringify(archiveData), {
-        customMetadata: {
-          season: season.toString(),
-          gameCount: completedGames.length.toString(),
-          archivedAt: new Date().toISOString()
-        }
-      });
-
-      // Mark games as archived
-      await prisma.game.updateMany({
-        where: {
-          id: { in: completedGames.map(g => g.id) }
-        },
-        data: {
-          archived: true,
-          archivedAt: new Date()
-        }
-      });
-
-      console.log(`[Ingest] Archived ${completedGames.length} games to R2: ${archiveKey}`);
-    }
-
-    // Recalculate advanced stats
-    console.log('[Ingest] Recalculating advanced statistics...');
-
-    // Update RPI calculations
-    await recalculateRPI(season);
-
-    // Update strength of schedule
-    await recalculateStrengthOfSchedule(season);
-
-    // Update Pythagorean win expectations
-    await recalculatePythagoreanWins(season);
-
-    console.log('[Ingest] Historical data ingestion complete');
-
-    // Track success in Analytics Engine
-    if (env.ANALYTICS) {
-      env.ANALYTICS.writeDataPoint({
-        blobs: ['ingest_success', 'historical'],
-        doubles: [completedGames.length],
-        indexes: [season.toString()]
-      });
-    }
   } catch (error) {
     console.error('[Ingest] Historical data ingestion failed:', error);
     throw error;
@@ -452,7 +474,7 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
 /**
  * Recalculate RPI (Rating Percentage Index)
  */
-async function recalculateRPI(season: number): Promise<void> {
+async function recalculateRPI(season: number, prisma: EdgePrismaClient): Promise<void> {
   // Get all teams with their records
   const teams = await prisma.teamStats.findMany({
     where: { season },
@@ -505,7 +527,7 @@ async function recalculateRPI(season: number): Promise<void> {
 /**
  * Recalculate Strength of Schedule
  */
-async function recalculateStrengthOfSchedule(season: number): Promise<void> {
+async function recalculateStrengthOfSchedule(season: number, prisma: EdgePrismaClient): Promise<void> {
   const teams = await prisma.teamStats.findMany({
     where: { season },
     include: {
@@ -568,7 +590,7 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
 /**
  * Recalculate Pythagorean Win Expectation
  */
-async function recalculatePythagoreanWins(season: number): Promise<void> {
+async function recalculatePythagoreanWins(season: number, prisma: EdgePrismaClient): Promise<void> {
   const teams = await prisma.teamStats.findMany({
     where: { season }
   });

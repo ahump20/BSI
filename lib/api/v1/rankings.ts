@@ -16,8 +16,10 @@
  * }
  */
 
-import { prisma } from '@/lib/db/prisma';
+import { getPrismaClientSingleton } from '@/lib/db/prisma';
 import { PollType, Prisma } from '@prisma/client';
+
+const prisma = getPrismaClientSingleton();
 
 export interface RankingsQueryParams {
   pollType?: PollType;

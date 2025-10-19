@@ -1,50 +1,89 @@
 /**
- * Prisma Client Singleton
+ * Prisma Client Factory for Edge Runtimes
  *
- * Ensures a single PrismaClient instance is used throughout the application
- * to avoid exhausting database connections.
- *
- * Usage:
- * ```typescript
- * import { prisma } from '@/lib/db/prisma';
- *
- * const teams = await prisma.team.findMany();
- * ```
+ * Provides a helper to instantiate the Prisma Client configured for Prisma
+ * Accelerate/Data Proxy so we can talk to Postgres over HTTPS from edge
+ * environments like Cloudflare Workers or the Next.js edge runtime.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client/edge';
+import { withAccelerate } from '@prisma/extension-accelerate';
 
-// PrismaClient is attached to the `global` object in development to prevent
-// exhausting your database connection limit.
-//
-// Learn more:
-// https://pris.ly/d/help/next-js-best-practices
+export type EdgePrismaClient = ReturnType<typeof createPrismaClient>;
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-
-/**
- * Gracefully disconnect from database
- * Call this during application shutdown
- */
-export async function disconnectDatabase(): Promise<void> {
-  await prisma.$disconnect();
+export interface CreatePrismaClientOptions {
+  /**
+   * The datasource URL to pass to Prisma. Typically this should point at the
+   * Prisma Accelerate/Data Proxy endpoint rather than the direct database.
+   */
+  datasourceUrl?: string;
+  /**
+   * Optional explicit Accelerate URL. When omitted, the Accelerate extension
+   * will fall back to `process.env.PRISMA_ACCELERATE_URL`.
+   */
+  accelerateUrl?: string;
 }
 
 /**
- * Test database connection
- * @returns true if connection successful, false otherwise
+ * Create a new Prisma Client instance configured for edge runtimes.
  */
-export async function testConnection(): Promise<boolean> {
+export function createPrismaClient(
+  options: CreatePrismaClientOptions = {}
+): PrismaClient {
+  const env = typeof process !== 'undefined' ? process.env : undefined;
+
+  const datasourceUrl =
+    options.datasourceUrl ??
+    env?.PRISMA_ACCELERATE_URL ??
+    env?.DATABASE_URL;
+
+  if (!datasourceUrl) {
+    throw new Error('Missing Prisma datasource URL for edge client.');
+  }
+
+  const accelerateUrl = options.accelerateUrl ?? env?.PRISMA_ACCELERATE_URL;
+
+  const accelerateExtension = accelerateUrl
+    ? withAccelerate({ accelerateUrl })
+    : withAccelerate();
+
+  return new PrismaClient({ datasourceUrl }).$extends(accelerateExtension);
+}
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: EdgePrismaClient | undefined;
+};
+
+export function getPrismaClientSingleton(): EdgePrismaClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+
+  return globalForPrisma.prisma;
+}
+
+/**
+ * Gracefully disconnect from database. Useful for scripts/tests that want to
+ * ensure we release the Data Proxy connection at the end of execution.
+ */
+export async function disconnectDatabase(client?: EdgePrismaClient): Promise<void> {
+  if (client) {
+    await client.$disconnect();
+    return;
+  }
+
+  if (globalForPrisma.prisma) {
+    await globalForPrisma.prisma.$disconnect();
+    globalForPrisma.prisma = undefined;
+  }
+}
+
+/**
+ * Test database connection for diagnostics.
+ */
+export async function testConnection(client?: EdgePrismaClient): Promise<boolean> {
+  const prisma = client ?? getPrismaClientSingleton();
+
   try {
     await prisma.$queryRaw`SELECT 1`;
     return true;

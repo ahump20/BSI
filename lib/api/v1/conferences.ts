@@ -21,8 +21,10 @@
  * }
  */
 
-import { prisma } from '@/lib/db/prisma';
+import { getPrismaClientSingleton } from '@/lib/db/prisma';
 import { Conference, Division, Prisma } from '@prisma/client';
+
+const prisma = getPrismaClientSingleton();
 
 export interface ConferencesQueryParams {
   division?: Division;

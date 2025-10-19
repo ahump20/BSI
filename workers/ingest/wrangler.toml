@@ -30,6 +30,7 @@ crons = ["0 2 * * *"]
 # ESPN_API_KEY = ""
 # INGEST_SECRET = ""
 # DATABASE_URL = ""
+# PRISMA_ACCELERATE_URL = ""
 
 # KV Namespace (Cache)
 [[kv_namespaces]]

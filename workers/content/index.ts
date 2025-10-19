@@ -4,7 +4,6 @@
  * Generates game recaps and previews with fact-checking
  */
 
-import { PrismaClient } from '@prisma/client';
 import type {
   Env,
   ContentRequest,
@@ -19,6 +18,24 @@ import {
   fillRecapTemplate,
   fillPreviewTemplate,
 } from '../../lib/nlg/prompt-templates';
+import { createPrismaClient, type EdgePrismaClient } from '../../lib/db/prisma';
+
+function createEdgePrisma(env: Env): EdgePrismaClient {
+  return createPrismaClient({
+    datasourceUrl: env.PRISMA_ACCELERATE_URL ?? env.DATABASE_URL,
+    accelerateUrl: env.PRISMA_ACCELERATE_URL,
+  });
+}
+
+async function withPrisma<T>(env: Env, run: (prisma: EdgePrismaClient) => Promise<T>): Promise<T> {
+  const prisma = createEdgePrisma(env);
+
+  try {
+    return await run(prisma);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 
 export default {
   /**
@@ -107,11 +124,7 @@ export default {
  * Generate content for a specific game
  */
 async function generateContent(request: ContentRequest, env: Env): Promise<ContentResponse> {
-  const prisma = new PrismaClient({
-    datasources: { db: { url: env.DATABASE_URL } },
-  });
-
-  try {
+  return withPrisma(env, async prisma => {
     // Fetch game context from database
     const context = await fetchGameContext(request.gameId, prisma);
 
@@ -200,15 +213,13 @@ async function generateContent(request: ContentRequest, env: Env): Promise<Conte
       wordCount,
       readingTimeMinutes,
     };
-  } finally {
-    await prisma.$disconnect();
-  }
+  });
 }
 
 /**
  * Fetch game context from database
  */
-async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<GameContext> {
+async function fetchGameContext(gameId: string, prisma: EdgePrismaClient): Promise<GameContext> {
   const game = await prisma.game.findUnique({
     where: { id: gameId },
     include: {
@@ -364,11 +375,7 @@ function generateSummary(content: string): string {
  * Generate recaps for recently completed games
  */
 async function generatePendingRecaps(env: Env, ctx: ExecutionContext): Promise<void> {
-  const prisma = new PrismaClient({
-    datasources: { db: { url: env.DATABASE_URL } },
-  });
-
-  try {
+  await withPrisma(env, async prisma => {
     // Find games completed in last 15 minutes without articles
     const now = new Date();
     const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
@@ -407,20 +414,14 @@ async function generatePendingRecaps(env: Env, ctx: ExecutionContext): Promise<v
         console.error(`[ContentWorker] Failed to generate recap for game ${game.id}:`, error);
       }
     }
-  } finally {
-    await prisma.$disconnect();
-  }
+  });
 }
 
 /**
  * Generate previews for upcoming games
  */
 async function generatePendingPreviews(env: Env, ctx: ExecutionContext): Promise<void> {
-  const prisma = new PrismaClient({
-    datasources: { db: { url: env.DATABASE_URL } },
-  });
-
-  try {
+  await withPrisma(env, async prisma => {
     // Find games scheduled in next 6-12 hours without previews
     const now = new Date();
     const sixHoursFromNow = new Date(now.getTime() + 6 * 60 * 60 * 1000);
@@ -461,7 +462,5 @@ async function generatePendingPreviews(env: Env, ctx: ExecutionContext): Promise
         console.error(`[ContentWorker] Failed to generate preview for game ${game.id}:`, error);
       }
     }
-  } finally {
-    await prisma.$disconnect();
-  }
+  });
 }
