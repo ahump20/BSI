@@ -191,6 +191,369 @@
             margin-right: auto;
         }
 
+        /* Founder Hero */
+        .founder-hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-copy {
+            text-align: left;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            background: rgba(217, 123, 56, 0.15);
+            border: 1px solid rgba(217, 123, 56, 0.35);
+            color: var(--blaze-copper);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--glow-soft);
+        }
+
+        .hero-copy .hero-title {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-copy .hero-subtitle {
+            margin-bottom: 2rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1.75rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(217, 123, 56, 0.35);
+            background: var(--glass-medium);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-base);
+        }
+
+        .hero-action:hover {
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow-burnt);
+            transform: translateY(-2px);
+        }
+
+        .hero-action.secondary {
+            background: transparent;
+            border-color: rgba(217, 123, 56, 0.25);
+        }
+
+        .hero-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+
+        .hero-meta-card {
+            background: var(--glass-medium);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(217, 123, 56, 0.25);
+            padding: 1.5rem;
+        }
+
+        .hero-meta-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-meta-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            justify-self: center;
+        }
+
+        .hero-image-glow {
+            position: absolute;
+            inset: -8%;
+            background: radial-gradient(circle at 50% 50%, rgba(217, 123, 56, 0.4), transparent 70%);
+            filter: blur(40px);
+            opacity: 0.6;
+        }
+
+        .hero-image {
+            position: relative;
+            z-index: 1;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 2px solid rgba(217, 123, 56, 0.35);
+            box-shadow: var(--shadow-burnt);
+            max-width: 420px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hero-image-caption {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+
+        /* Origin Section */
+        .origin-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem 0;
+        }
+
+        .origin-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2.5rem;
+        }
+
+        .origin-card {
+            background: var(--glass-medium);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(217, 123, 56, 0.35);
+            overflow: hidden;
+            box-shadow: var(--glow-soft);
+        }
+
+        .origin-media {
+            position: relative;
+        }
+
+        .origin-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .origin-caption {
+            position: absolute;
+            left: 1.25rem;
+            bottom: 1.25rem;
+            padding: 0.4rem 0.85rem;
+            background: rgba(0, 0, 0, 0.65);
+            border-radius: 999px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .origin-content {
+            padding: 2rem;
+        }
+
+        .origin-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .origin-content p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .origin-quote {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(191, 87, 0, 0.15);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(217, 123, 56, 0.4);
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Timeline */
+        .timeline-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.75rem;
+        }
+
+        .timeline-item {
+            background: var(--glass-light);
+            border: 1px solid rgba(217, 123, 56, 0.2);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .timeline-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .timeline-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .timeline-era {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--blaze-copper);
+            font-weight: 700;
+        }
+
+        .timeline-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .timeline-copy {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        /* Legacy Section */
+        .legacy-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .legacy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .legacy-card {
+            background: var(--glass-medium);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(217, 123, 56, 0.35);
+            overflow: hidden;
+            box-shadow: var(--glow-soft);
+        }
+
+        .legacy-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .legacy-content h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .legacy-content p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+        }
+
+        .legacy-quote {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--blaze-copper);
+            line-height: 1.6;
+        }
+
+        /* Media Kit */
+        .media-kit-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .media-kit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+
+        .media-kit-card {
+            background: var(--glass-light);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(217, 123, 56, 0.25);
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .media-kit-card img {
+            width: 100%;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(217, 123, 56, 0.25);
+        }
+
+        .download-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(217, 123, 56, 0.35);
+            background: var(--gradient-primary);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 700;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+
+        .download-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-burnt);
+        }
+
         /* Story Section */
         .story-section {
             max-width: 1200px;
@@ -468,6 +831,29 @@
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .founder-hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-copy {
+                text-align: center;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .hero-meta {
+                justify-content: center;
+                grid-template-columns: repeat(2, minmax(0, 240px));
+            }
+
+            .hero-image {
+                max-width: 360px;
+            }
+        }
+
         @media (max-width: 968px) {
             .story-grid {
                 grid-template-columns: 1fr;
@@ -486,6 +872,22 @@
                 font-size: 1.25rem;
             }
 
+            .origin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .legacy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .media-kit-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .philosophy-card {
                 padding: 2rem;
             }
@@ -502,6 +904,23 @@
 
             .hero-section {
                 padding: 2rem 1rem;
+            }
+
+            .hero-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-badge {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .timeline-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .media-kit-grid {
+                grid-template-columns: 1fr;
             }
 
             .story-section {
@@ -534,11 +953,170 @@
     <main class="main-content">
         <!-- Hero Section -->
         <section class="hero-section" data-aos="fade-up">
-            <div class="section-badge">Why This Exists</div>
-            <h1 class="hero-title">Deep South Sports Authority</h1>
-            <p class="hero-subtitle">
-                Practice to Play. Blaze Data Wins the Day. Built where decisions outpace spreadsheets—from Memphis to Texas stadiums. Closing the gap between convenient metrics and winning intelligence.
-            </p>
+            <div class="founder-hero">
+                <div class="hero-copy">
+                    <div class="hero-badge"><i class="fas fa-star"></i> Founder</div>
+                    <h1 class="hero-title">Austin Humphrey</h1>
+                    <p class="hero-subtitle">Texas born by intention, Memphis raised by grit. I build BlazeSportsIntel so college baseball programs can turn heritage, data, and instinct into wins.</p>
+
+                    <div class="hero-actions">
+                        <a class="hero-action" href="mailto:austin@blazesportsintel.com">
+                            <i class="fas fa-envelope"></i> Connect with Austin
+                        </a>
+                        <a class="hero-action secondary" href="#timeline">
+                            <i class="fas fa-route"></i> Explore the journey
+                        </a>
+                    </div>
+
+                    <div class="hero-meta">
+                        <div class="hero-meta-card">
+                            <div class="hero-meta-label">Origin</div>
+                            <div class="hero-meta-value">Memphis, TN — on Texas soil</div>
+                        </div>
+                        <div class="hero-meta-card">
+                            <div class="hero-meta-label">Mission</div>
+                            <div class="hero-meta-value">Diamond intelligence for every program</div>
+                        </div>
+                        <div class="hero-meta-card">
+                            <div class="hero-meta-label">Experience</div>
+                            <div class="hero-meta-value">Player · Coach · Analyst</div>
+                        </div>
+                        <div class="hero-meta-card">
+                            <div class="hero-meta-label">Focus</div>
+                            <div class="hero-meta-value">Mobile-first | Dark mode | Data-driven</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-image-wrapper">
+                    <div class="hero-image-glow"></div>
+                    <figure class="hero-image">
+                        <img src="/images/founder/IMG_4574.PNG" alt="Portrait of Austin Humphrey smiling in brand colors" loading="lazy">
+                    </figure>
+                    <p class="hero-image-caption">Media-ready founder headshot — download high-resolution assets below.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Origin Story -->
+        <section class="origin-section" data-aos="fade-up" id="origin">
+            <div class="section-badge" style="margin-bottom: 2.5rem;">Origin Story</div>
+            <div class="origin-grid">
+                <article class="origin-card">
+                    <div class="origin-media">
+                        <img src="/images/founder/IMG_4576.PNG" alt="Newspaper clipping announcing Austin Humphrey's birth on Texas soil" loading="lazy">
+                        <span class="origin-caption">Memphis Commercial Appeal</span>
+                    </div>
+                    <div class="origin-content">
+                        <h3>Born in Memphis on Texas Soil</h3>
+                        <p>The story started on March 25, 1993 — Memphis, Tennessee. Same day as Davy Crockett, surrounded by Longhorn pride, with a bag of Texas soil from Washington-on-the-Brazos under the hospital bed. Tradition and intentionality set the tone.</p>
+                    </div>
+                </article>
+                <article class="origin-card">
+                    <div class="origin-media">
+                        <img src="/images/founder/IMG_4578.PNG" alt="Bag of Texas soil representing BlazeSportsIntel heritage" loading="lazy">
+                        <span class="origin-caption">Texas Heritage</span>
+                    </div>
+                    <div class="origin-content">
+                        <h3>Heritage You Can Hold</h3>
+                        <p>That same soil still travels with me — a reminder that BlazeSportsIntel is anchored in respect for the game, family legacy, and the republic that defined Texas toughness.</p>
+                    </div>
+                </article>
+            </div>
+            <div class="origin-quote">“Born in Memphis on Texas soil.”</div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="timeline-section" data-aos="fade-up" id="timeline">
+            <div class="timeline-header">
+                <h2 class="story-title" style="margin-bottom: 1rem;">From Sandlot to Sports Intelligence</h2>
+                <p class="story-paragraph" style="margin: 0 auto; max-width: 720px;">Every phase sharpened the edge — playing, coaching, and now architecting the platform that equips college baseball to dominate 365 days a year.</p>
+            </div>
+            <div class="timeline-grid">
+                <article class="timeline-item">
+                    <img src="/images/founder/IMG_4579.PNG" alt="Young Austin Humphrey in Texas Longhorns gear" loading="lazy">
+                    <div class="timeline-body">
+                        <span class="timeline-era">1990s · Roots</span>
+                        <h3 class="timeline-title">Longhorn Loyalty</h3>
+                        <p class="timeline-copy">Raised on burnt orange traditions, Saturdays at the ballpark, and family stories about Texas heroes. The fandom formed the baseline.</p>
+                    </div>
+                </article>
+                <article class="timeline-item">
+                    <img src="/images/founder/IMG_4580.PNG" alt="Austin Humphrey's youth baseball team photo" loading="lazy">
+                    <div class="timeline-body">
+                        <span class="timeline-era">2000s · Player</span>
+                        <h3 class="timeline-title">Youth Baseball Grind</h3>
+                        <p class="timeline-copy">From select ball to high school reps, I learned the pace of the dugout, the rhythm of development, and the stakes coaches juggle.</p>
+                    </div>
+                </article>
+                <article class="timeline-item">
+                    <img src="/images/founder/IMG_4578.PNG" alt="Austin Humphrey with family celebrating baseball roots" loading="lazy">
+                    <div class="timeline-body">
+                        <span class="timeline-era">2010s · Family Legacy</span>
+                        <h3 class="timeline-title">Mentored by Pops</h3>
+                        <p class="timeline-copy">My father coached, scouted, and showed me how preparation beats hype. That mentorship fuels our focus on actionable intelligence.</p>
+                    </div>
+                </article>
+                <article class="timeline-item">
+                    <img src="/images/founder/IMG_4574.PNG" alt="Austin Humphrey presenting BlazeSportsIntel platform" loading="lazy">
+                    <div class="timeline-body">
+                        <span class="timeline-era">Today · Architect</span>
+                        <h3 class="timeline-title">Building BlazeSportsIntel</h3>
+                        <p class="timeline-copy">Now I channel that lifetime in the game into a platform designed for coaches, analysts, and athletes who expect clarity in every decision.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Legacy -->
+        <section class="legacy-section" data-aos="fade-up" id="legacy">
+            <div class="legacy-grid">
+                <article class="legacy-card">
+                    <img src="/images/founder/IMG_4578.PNG" alt="Austin Humphrey with his father at a baseball field" loading="lazy">
+                </article>
+                <div class="legacy-content">
+                    <h3>Family-Powered Competitive Edge</h3>
+                    <p>My pops taught me to chart every pitch, track every runner, and listen between the lines. BlazeSportsIntel is a promise to carry that discipline into every feature we ship.</p>
+                    <p class="legacy-quote">“If we’re not delivering the insight a dugout needs in the seventh inning, it doesn’t ship.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Media Kit -->
+        <section class="media-kit-section" data-aos="fade-up" id="media-kit">
+            <div class="section-badge" style="margin-bottom: 2.5rem;">Press &amp; Media</div>
+            <div class="media-kit-grid">
+                <article class="media-kit-card">
+                    <img src="/images/founder/IMG_4574.PNG" alt="Color headshot of Austin Humphrey" loading="lazy">
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Color Headshot</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Use this portrait for features, podcasts, and event promotions. Optimized for dark mode layouts.</p>
+                    </div>
+                    <a class="download-button" href="/images/founder/IMG_4574.PNG" download>
+                        <i class="fas fa-download"></i> Download (PNG)
+                    </a>
+                </article>
+                <article class="media-kit-card">
+                    <img src="/images/founder/IMG_4576.PNG" alt="Black and white headshot of Austin Humphrey" loading="lazy">
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Black &amp; White Headshot</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">High-contrast option for press kits or conference programs requiring grayscale assets.</p>
+                    </div>
+                    <a class="download-button" href="/images/founder/IMG_4576.PNG" download>
+                        <i class="fas fa-download"></i> Download (PNG)
+                    </a>
+                </article>
+                <article class="media-kit-card">
+                    <img src="/images/founder/IMG_4578.PNG" alt="Austin Humphrey with his father" loading="lazy">
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Legacy Photo</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Father-and-son moment that illustrates mentorship, culture, and continuity for feature stories.</p>
+                    </div>
+                    <a class="download-button" href="/images/founder/IMG_4578.PNG" download>
+                        <i class="fas fa-download"></i> Download (PNG)
+                    </a>
+                </article>
+            </div>
         </section>
 
         <!-- Story Section -->
