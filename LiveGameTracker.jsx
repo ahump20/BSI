@@ -1,7 +1,14 @@
 import React from 'react';
+import WinProbabilityCard from './components/WinProbabilityCard';
 import './LiveGameTracker.css';
 
-function LiveGameTracker({ games, onGameSelect, loading }) {
+function LiveGameTracker({
+  games,
+  onGameSelect,
+  loading,
+  winProbabilities = {},
+  pitchMetrics = {},
+}) {
   if (loading) {
     return (
       <div className="loading-state">
@@ -43,11 +50,13 @@ function LiveGameTracker({ games, onGameSelect, loading }) {
         <span className="live-indicator">● LIVE</span>
       </div>
       
-      <div className="games-list">
+      <div className="games-list flex flex-col gap-4 sm:gap-5">
         {games.map((game) => (
-          <div 
-            key={game.id} 
-            className={`game-card ${getGameStatusClass(game.status)}`}
+          <div
+            key={game.id}
+            className={`game-card ${getGameStatusClass(
+              game.status
+            )} flex flex-col gap-3`}
             onClick={() => onGameSelect(game)}
           >
             <div className="game-status">
@@ -57,6 +66,16 @@ function LiveGameTracker({ games, onGameSelect, loading }) {
                   {game.situation.outs} Out · {game.situation.runners}
                 </span>
               )}
+            </div>
+
+            <div className="analytics-wrapper mt-1 flex flex-col gap-4 sm:mt-2 sm:flex-row sm:gap-6">
+              <WinProbabilityCard
+                gameId={game.id}
+                homeTeam={game.homeTeam}
+                awayTeam={game.awayTeam}
+                winProbability={winProbabilities?.[game.id]}
+                pitchMetrics={pitchMetrics?.[game.id]}
+              />
             </div>
 
             <div className="game-teams">

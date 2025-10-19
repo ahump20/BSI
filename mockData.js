@@ -1,5 +1,51 @@
 // Mock data structures - represents what real NCAA/D1Baseball data would look like
 
+const baseTimestamp = Date.parse('2025-03-15T18:00:00Z');
+
+const createWinProbability = (startPercent, deltas, intervalMinutes = 2) => {
+  let current = startPercent;
+  const timeline = deltas.map((delta, index) => {
+    current = Math.min(98, Math.max(2, current + delta));
+    const timestamp = new Date(
+      baseTimestamp + index * intervalMinutes * 60 * 1000
+    ).toISOString();
+
+    return {
+      timestamp,
+      homeWinPercent: Number(current.toFixed(1)),
+      awayWinPercent: Number((100 - current).toFixed(1)),
+    };
+  });
+
+  const lastUpdated = timeline.length
+    ? timeline[timeline.length - 1].timestamp
+    : new Date(baseTimestamp).toISOString();
+
+  return { timeline, lastUpdated };
+};
+
+const pitchTypes = ['FB', 'SL', 'CH', 'CU'];
+
+const createPitchSeries = (baseVelocity, baseSpin, count = 60) =>
+  Array.from({ length: count }, (_, index) => {
+    const velocityVariation = Math.sin(index / 3.2) * 1.4 + (index % 5 === 0 ? 0.8 : 0);
+    const spinVariation = Math.cos(index / 4.5) * 90 + (index % 7 === 0 ? -40 : 0);
+    const velocity = Number((baseVelocity + velocityVariation).toFixed(1));
+    const spinRate = Math.round(baseSpin + spinVariation);
+    const x = Number((Math.sin(index / 2.8) * 0.55 + (index % 6 === 0 ? 0.08 : 0)).toFixed(2));
+    const y = Number((Math.cos(index / 3.1) * 0.48 + (index % 9 === 0 ? -0.07 : 0)).toFixed(2));
+    const timestamp = new Date(baseTimestamp + index * 25 * 1000).toISOString();
+
+    return {
+      id: `pitch-${index + 1}`,
+      timestamp,
+      velocity,
+      spinRate,
+      pitchType: pitchTypes[index % pitchTypes.length],
+      location: { x, y },
+    };
+  });
+
 export const mockLiveGames = [
   {
     id: 'game-001',
@@ -429,6 +475,51 @@ export const mockBoxScore = {
       },
     ],
   },
+};
+
+export const mockWinProbabilities = {
+  'game-001': createWinProbability(55, [
+    2.4,
+    1.6,
+    -3.1,
+    2.8,
+    1.4,
+    -0.9,
+    3.6,
+    -1.2,
+    2.1,
+    1.8,
+    -0.7,
+    2.4,
+  ]),
+  'game-002': createWinProbability(48, [
+    -1.6,
+    2.1,
+    3.4,
+    -2.9,
+    -1.1,
+    2.7,
+    1.9,
+    -0.8,
+    2.5,
+    1.2,
+  ]),
+  'game-003': createWinProbability(62, [
+    1.4,
+    2.6,
+    3.1,
+    -1.8,
+    4.2,
+    0.8,
+    -2.7,
+    3.5,
+  ]),
+};
+
+export const mockPitchMetrics = {
+  'game-001': createPitchSeries(94.3, 2475),
+  'game-002': createPitchSeries(92.8, 2335, 48),
+  'game-003': createPitchSeries(90.6, 2280, 36),
 };
 
 export const mockStandings = {
