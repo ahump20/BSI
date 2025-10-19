@@ -13,6 +13,11 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './tests/setupTests.js',
+    include: ['tests/components/**/*.test.{js,jsx,ts,tsx}'],
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,

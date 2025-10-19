@@ -202,6 +202,13 @@ function RosterPortalHeatmap() {
                   const commits = region.metrics?.transferCommits ?? 0;
                   const nilEstimate = region.metrics?.nilEstimate ?? 0;
                   const recruitingIndex = region.metrics?.recruitingIndex ?? '—';
+                  const topPrograms = Array.isArray(region.topPrograms)
+                    ? region.topPrograms
+                    : [];
+                  const topProgramsLabel =
+                    topPrograms.length > 0
+                      ? topPrograms.slice(0, 3).join(' • ')
+                      : 'No featured programs yet';
                   return (
                     <CircleMarker
                       key={region.id}
@@ -220,7 +227,7 @@ function RosterPortalHeatmap() {
                             <strong>{commits}</strong> commits · {formatNil(nilEstimate)} NIL · index {recruitingIndex}
                           </p>
                           <p className="heatmap-tooltip-programs">
-                            {region.topPrograms.slice(0, 3).join(' • ')}
+                            {topProgramsLabel}
                           </p>
                         </div>
                       </Tooltip>
