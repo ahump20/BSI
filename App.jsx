@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
+import RosterPortalHeatmap from './RosterPortalHeatmap';
 import './App.css';
 
 function App() {
@@ -55,6 +56,8 @@ function App() {
         );
       case 'standings':
         return <Standings />;
+      case 'portal':
+        return <RosterPortalHeatmap />;
       default:
         return null;
     }
@@ -91,12 +94,19 @@ function App() {
           <span className="nav-icon">📊</span>
           Box Score
         </button>
-        <button 
+        <button
           className={activeView === 'standings' ? 'active' : ''}
           onClick={() => setActiveView('standings')}
         >
           <span className="nav-icon">🏆</span>
           Standings
+        </button>
+        <button
+          className={activeView === 'portal' ? 'active' : ''}
+          onClick={() => setActiveView('portal')}
+        >
+          <span className="nav-icon">🌐</span>
+          Portal
         </button>
       </nav>
 
