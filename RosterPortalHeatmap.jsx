@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
+import { formatNil } from './lib/formatNil.js';
+
 const MAP_CENTER = [37.8, -96.9];
 const MAP_ZOOM = 4;
-
-const formatNil = (value) => `$${value.toFixed(1)}M`;
 
 const formatDate = (iso) => {
   const date = new Date(iso);
