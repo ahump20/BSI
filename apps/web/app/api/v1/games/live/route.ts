@@ -227,7 +227,7 @@ function createCacheKey(date: string, conference: string | null): string {
 function buildUpstreamHeaders(): HeadersInit {
   const headers: HeadersInit = {
     'Accept': 'application/json',
-    'User-Agent': 'BlazeSportsIntel/1.0 (+https://blazesportsintel.com)'
+    'User-Agent': 'BlazeSports Intel/1.0 (+https://blazesportsintel.com)'
   };
 
   if (process.env.ESPN_API_KEY) {
