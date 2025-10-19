@@ -24,6 +24,24 @@ docker-compose up -d
 # API Docs: http://localhost:8000/docs
 ```
 
+## Secret Scanning & Commit Hooks
+
+Preventing accidental credential leaks is part of our security playbook. The repository ships with a [pre-commit](https://pre-commit.com/) hook that runs [Secretlint](https://github.com/secretlint/secretlint) using the recommended preset before every commit and pull request build.
+
+```bash
+# Install Node dependencies (includes Secretlint)
+npm install
+
+# Install pre-commit and register the hook (once per workstation)
+pip install pre-commit
+pre-commit install
+
+# Run a full secret scan manually
+npm run precommit
+```
+
+> **Tip:** During pre-commit execution only the staged files are scanned. Use `npm run precommit` to audit the entire working tree before releases.
+
 ## Architecture
 
 ### Core Pipeline

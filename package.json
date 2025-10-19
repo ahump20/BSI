@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist"
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "secretlint": "secretlint",
+    "precommit": "npm run secretlint -- \"**/*\""
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -18,6 +20,8 @@
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.7.0",
     "vite": "^5.0.0",
-    "wrangler": "^3.22.0"
+    "wrangler": "^3.22.0",
+    "secretlint": "^8.0.0",
+    "@secretlint/secretlint-rule-preset-recommend": "^8.0.0"
   }
 }
