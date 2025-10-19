@@ -158,8 +158,8 @@ function chooseBookmaker(event: TheOddsEvent): TheOddsBookmaker | null {
   if (!event.bookmakers || event.bookmakers.length === 0) {
     return null;
   }
-  const sorted = [...event.bookmakers].sort((a, b) => new Date(b.last_update).getTime() - new Date(a.last_update).getTime());
-  return sorted[0];
+  event.bookmakers.sort((a, b) => new Date(b.last_update).getTime() - new Date(a.last_update).getTime());
+  return event.bookmakers[0];
 }
 
 async function readJson<T>(filePath: string): Promise<T> {
