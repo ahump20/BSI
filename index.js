@@ -32,6 +32,12 @@ export default {
         return jsonResponse(boxScore, corsHeaders);
       }
 
+      // Route: Get the current user's subscription tier
+      if (path === '/api/user/subscription') {
+        const subscription = await fetchUserSubscription(env);
+        return jsonResponse(subscription, corsHeaders);
+      }
+
       // Route: Get conference standings
       if (path.match(/^\/api\/standings\/[^/]+$/)) {
         const conference = path.split('/')[3];
@@ -97,12 +103,37 @@ async function fetchBoxScore(gameId, env) {
   if (cached) return cached;
 
   const boxScore = mockBoxScore;
-  
+
   await env.KV?.put(`boxscore-${gameId}`, JSON.stringify(boxScore), {
     expirationTtl: 15, // Cache for 15 seconds during live games
   });
 
   return boxScore;
+}
+
+// Fetch subscription profile for the current user (mock implementation)
+async function fetchUserSubscription(env) {
+  const cached = await env.KV?.get('user-subscription', 'json');
+  if (cached) return cached;
+
+  const subscription = {
+    tier: 'diamond-pro',
+    isPro: true,
+    status: 'active',
+    renewsOn: '2025-04-15',
+    perks: [
+      'expected-hitting-insights',
+      'expected-pitching-insights',
+      'defensive-quality-metrics',
+      'licensed-highlight-replays',
+    ],
+  };
+
+  await env.KV?.put('user-subscription', JSON.stringify(subscription), {
+    expirationTtl: 60,
+  });
+
+  return subscription;
 }
 
 // Fetch conference standings
