@@ -7,6 +7,13 @@
   --live-indicator: #ff3b30;
   --border-color: #404040;
   --card-bg: #1e1e1e;
+  --glass-light: rgba(45, 55, 72, 0.55);
+  --glass-medium: rgba(26, 32, 44, 0.72);
+  --glass-heavy: rgba(15, 23, 42, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 18px 40px rgba(8, 12, 24, 0.45);
+  --glass-blur-sm: 14px;
+  --glass-blur-lg: 22px;
 }
 
 * {
@@ -36,10 +43,13 @@ body {
 .app-header {
   position: sticky;
   top: 0;
-  background-color: var(--secondary-color);
+  background: var(--glass-heavy);
   padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
   z-index: 100;
+  backdrop-filter: blur(var(--glass-blur-lg));
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+  box-shadow: var(--glass-shadow);
 }
 
 .app-header h1 {
@@ -51,13 +61,15 @@ body {
 .conference-filter select {
   width: 100%;
   padding: 10px;
-  background-color: var(--card-bg);
+  background-color: var(--glass-light);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   font-size: 14px;
   outline: none;
   cursor: pointer;
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
 }
 
 .conference-filter select:focus {
@@ -69,12 +81,15 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--secondary-color);
-  border-top: 1px solid var(--border-color);
+  background: var(--glass-heavy);
+  border-top: 1px solid var(--glass-border);
   display: flex;
   justify-content: space-around;
   padding: 8px 0;
   z-index: 100;
+  backdrop-filter: blur(var(--glass-blur-lg));
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+  box-shadow: var(--glass-shadow);
 }
 
 .bottom-nav button {
@@ -83,25 +98,44 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  background: none;
+  background: transparent;
   border: none;
   color: var(--text-secondary);
   font-size: 12px;
   padding: 8px;
   cursor: pointer;
-  transition: color 0.2s;
+  border-radius: 12px;
+  transition: color 0.2s, background-color 0.2s;
 }
 
 .bottom-nav button.active {
   color: var(--accent-color);
+  background-color: rgba(0, 168, 107, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 168, 107, 0.2);
 }
 
 .bottom-nav button:active {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .nav-icon {
   font-size: 20px;
+}
+
+@supports not ((backdrop-filter: blur(1px))) {
+  .app-header,
+  .bottom-nav {
+    background-color: var(--secondary-color);
+    box-shadow: none;
+  }
+
+  .conference-filter select {
+    background-color: var(--card-bg);
+  }
+
+  .bottom-nav button.active {
+    box-shadow: none;
+  }
 }
 
 .app-content {
@@ -170,7 +204,7 @@ body {
   .bottom-nav {
     position: static;
     border-top: none;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--glass-border);
     padding: 0;
   }
 

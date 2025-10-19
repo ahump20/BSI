@@ -33,17 +33,20 @@
 }
 
 .game-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  box-shadow: var(--glass-shadow);
 }
 
 .game-card:active {
   transform: scale(0.98);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .game-card.status-live {
@@ -188,6 +191,14 @@
   .game-card:hover {
     border-color: var(--accent-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 168, 107, 0.18);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px))) {
+  .game-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
   }
 }
