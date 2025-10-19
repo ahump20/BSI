@@ -172,7 +172,8 @@ export class ESPNAPIAdapter {
       fieldingPct: findStat('fieldingPercentage'),
       rpi: undefined, // ESPN doesn't provide RPI directly
       strengthOfSched: undefined, // ESPN doesn't provide SOS directly
-      pythagWins: undefined // Will be calculated separately
+      pythagWins: undefined, // Will be calculated separately
+      fieldingStats: undefined,
     };
   }
 }

@@ -268,6 +268,7 @@ enum FeedPrecision { EVENT | PITCH }
 - [x] Create ingest worker (Cloudflare Workers with cron schedule)
 - [x] Integrate NLG content generation (auto-recap/preview)
 - [x] Test provider failover (Unit tests + monitoring tools + documentation)
+- [x] Harden baseball_fielding_stats (dedupe + unique indexes on player/game + season aggregates)
 
 ### Week 6-14: Frontend MVP
 - [ ] Next.js project setup (monorepo)

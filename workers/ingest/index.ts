@@ -22,6 +22,7 @@
 import { PrismaClient } from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
 import type { Env } from './types';
+import { assertNoDuplicateFieldingStats, FieldingStatPayload } from './validation';
 
 const prisma = new PrismaClient();
 
@@ -157,6 +158,17 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 
     // Batch upsert games
     const upsertPromises = games.map(game => {
+      const rawFieldingStats = Array.isArray((game as { fieldingStats?: unknown }).fieldingStats)
+        ? ((game as { fieldingStats: FieldingStatPayload[] }).fieldingStats)
+        : [];
+
+      if (rawFieldingStats.length > 0) {
+        assertNoDuplicateFieldingStats(rawFieldingStats, {
+          source: 'ingestLiveGames',
+          gameId: game.id,
+        });
+      }
+
       return prisma.game.upsert({
         where: { externalId: game.id },
         update: {
@@ -253,6 +265,13 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
             teamId: team.externalId,
             season
           });
+
+          if (Array.isArray(stats.fieldingStats) && stats.fieldingStats.length > 0) {
+            assertNoDuplicateFieldingStats(stats.fieldingStats, {
+              source: 'ingestTeamStats',
+              seasonId: season.toString(),
+            });
+          }
 
           // Upsert team stats
           return prisma.teamStats.upsert({

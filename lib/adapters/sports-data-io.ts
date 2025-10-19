@@ -146,7 +146,8 @@ export class SportsDataIOAdapter {
       fieldingPct: teamData.FieldingPercentage ?? 0,
       rpi: undefined, // SportsDataIO doesn't provide RPI directly
       strengthOfSched: undefined, // SportsDataIO doesn't provide SOS directly
-      pythagWins: undefined // Will be calculated separately
+      pythagWins: undefined, // Will be calculated separately
+      fieldingStats: undefined,
     };
   }
 }

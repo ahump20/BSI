@@ -65,6 +65,14 @@ export interface ProviderTeamStats {
   rpi?: number;
   strengthOfSched?: number;
   pythagWins?: number;
+  fieldingStats?: ProviderFieldingStat[];
+}
+
+export interface ProviderFieldingStat {
+  playerId: string;
+  gameId?: string | null;
+  seasonId?: string | null;
+  [key: string]: unknown;
 }
 
 /**
