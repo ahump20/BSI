@@ -31,8 +31,10 @@ function RosterPortalHeatmap() {
   }, []);
 
   useEffect(() => {
+    let active = true;
     const controller = new AbortController();
     const loadData = async () => {
+      if (!active) return;
       setLoading(true);
       setError(null);
       try {
@@ -48,20 +50,28 @@ function RosterPortalHeatmap() {
           throw new Error('Failed to load portal activity');
         }
         const payload = await response.json();
+        if (!active || controller.signal.aborted) {
+          return;
+        }
         setData(payload);
       } catch (err) {
-        if (err.name !== 'AbortError') {
+        if (err.name !== 'AbortError' && active && !controller.signal.aborted) {
           console.error('Portal heatmap error:', err);
           setError('Unable to load portal activity. Please try again.');
         }
       } finally {
-        setLoading(false);
+        if (active && !controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     loadData();
 
-    return () => controller.abort();
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [filters.timeframe, filters.conference, filters.position]);
 
   const regionMetrics = data?.regions ?? [];
