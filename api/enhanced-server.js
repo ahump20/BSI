@@ -11,6 +11,7 @@ import pkg from 'pg';
 const { Pool } = pkg;
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
+import SchedulingOptimizerService from './services/scheduling-optimizer.js';
 
 // Load environment variables
 dotenv.config();
@@ -32,6 +33,7 @@ class EnhancedAPIServer {
     });
 
     this.setupMiddleware();
+    this.optimizerService = new SchedulingOptimizerService({ logger: console });
     this.setupRoutes();
   }
 
@@ -135,6 +137,36 @@ class EnhancedAPIServer {
         res.status(500).json({
           success: false,
           error: error.message
+        });
+      }
+    });
+
+    // Scheduling optimizer endpoint
+    this.app.post('/api/v1/scheduling/optimizer', async (req, res) => {
+      const body = req.body || {};
+      const membershipTier = (req.headers['x-membership-tier'] || body.membershipTier || body.subscription?.tier || 'free');
+
+      try {
+        const payload = this.optimizerService.runOptimization({
+          teamId: body.teamId,
+          conferenceId: body.conferenceId,
+          historicalGames: body.historicalGames || [],
+          teams: body.teams || [],
+          prospectiveMatchups: body.prospectiveMatchups || [],
+          season: body.season,
+          membershipTier,
+          options: {
+            simulations: body.simulations ?? body.options?.simulations,
+            includeAdvanced: body.includeAdvanced ?? body.options?.includeAdvanced,
+          },
+        });
+
+        res.json({ success: true, ...payload });
+      } catch (error) {
+        res.status(400).json({
+          success: false,
+          error: error.message,
+          timestamp: new Date().toISOString(),
         });
       }
     });
