@@ -1,5 +1,12 @@
 .box-score {
   width: 100%;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--surface-radius);
+  padding: 24px;
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .box-score-header {
@@ -40,8 +47,12 @@
   width: 100%;
   min-width: 500px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: var(--surface-radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   overflow: hidden;
 }
 
@@ -53,7 +64,7 @@
 }
 
 .line-score th {
-  background-color: var(--secondary-color);
+  background: var(--glass-heavy);
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -136,13 +147,17 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: var(--surface-radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   overflow: hidden;
 }
 
 .stats-table th {
-  background-color: var(--secondary-color);
+  background: var(--glass-heavy);
   padding: 10px 8px;
   text-align: left;
   font-size: 11px;

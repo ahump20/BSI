@@ -33,12 +33,15 @@
 }
 
 .game-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--surface-radius);
   padding: 16px;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .game-card:active {
@@ -188,6 +191,6 @@
   .game-card:hover {
     border-color: var(--accent-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
   }
 }
