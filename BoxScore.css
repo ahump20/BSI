@@ -1,9 +1,19 @@
 .box-score {
   width: 100%;
+  background: var(--glass-heavy);
+  border: 1px solid var(--blaze-border-strong);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow-strong);
 }
 
 .box-score-header {
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .back-button {
@@ -40,20 +50,24 @@
   width: 100%;
   min-width: 500px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 16px;
   overflow: hidden;
+  border: 1px solid var(--blaze-border-soft);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.85));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.85));
+  box-shadow: var(--glass-shadow-soft);
 }
 
 .line-score th,
 .line-score td {
   padding: 12px 8px;
   text-align: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--blaze-border-soft);
 }
 
 .line-score th {
-  background-color: var(--secondary-color);
+  background: rgba(251, 191, 36, 0.12);
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -72,7 +86,7 @@
 }
 
 .line-score .total-header {
-  background-color: var(--primary-color);
+  background: rgba(251, 191, 36, 0.16);
   font-weight: 700;
 }
 
@@ -83,32 +97,52 @@
 .line-score .total-score {
   font-weight: 700;
   font-size: 16px;
-  background-color: rgba(0, 168, 107, 0.1);
+  background: rgba(0, 168, 107, 0.12);
 }
 
 .stats-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--blaze-border-soft);
 }
 
 .stats-tabs button {
   flex: 1;
   padding: 12px;
-  background: none;
-  border: none;
+  background: var(--glass-light);
+  border: 1px solid transparent;
   border-bottom: 2px solid transparent;
   color: var(--text-secondary);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border-radius: 12px 12px 0 0;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.6));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.6));
 }
 
 .stats-tabs button.active {
   color: var(--accent-color);
   border-bottom-color: var(--accent-color);
+  border-color: var(--blaze-border-strong);
+  box-shadow: 0 12px 28px rgba(0, 168, 107, 0.25);
+}
+
+.stats-tabs button:focus-visible {
+  outline: none;
+  color: var(--text-primary);
+  border-color: var(--blaze-border-strong);
+  box-shadow: 0 12px 28px rgba(251, 191, 36, 0.22);
+}
+
+@media (hover: hover) {
+  .stats-tabs button:hover {
+    color: var(--text-primary);
+    border-color: var(--blaze-border-soft);
+    box-shadow: 0 12px 28px rgba(251, 191, 36, 0.18);
+  }
 }
 
 .stats-content {
@@ -136,30 +170,34 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: 16px;
   overflow: hidden;
+  border: 1px solid var(--blaze-border-soft);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.85));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.85));
+  box-shadow: var(--glass-shadow-soft);
 }
 
 .stats-table th {
-  background-color: var(--secondary-color);
+  background: rgba(251, 191, 36, 0.12);
   padding: 10px 8px;
   text-align: left;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--blaze-border-soft);
 }
 
 .stats-table td {
   padding: 12px 8px;
   font-size: 13px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--blaze-border-soft);
 }
 
 .stats-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background: rgba(251, 191, 36, 0.08);
 }
 
 .stats-table .player-col {
@@ -186,7 +224,7 @@
 }
 
 .decision-pitcher {
-  background-color: rgba(0, 168, 107, 0.05);
+  background: rgba(0, 168, 107, 0.08);
 }
 
 .decision {
