@@ -17,7 +17,8 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { PollType, Prisma } from '@prisma/client';
+import { PollType, Prisma } from '@prisma/client/edge';
+import type { DatabaseClient } from '@/lib/db/client';
 
 export interface RankingsQueryParams {
   pollType?: PollType;
@@ -102,7 +103,10 @@ export interface RankingsHistoryResponse {
 /**
  * Get rankings for a specific poll type and week
  */
-export async function getRankings(params: RankingsQueryParams = {}): Promise<RankingsResponse> {
+export async function getRankings(
+  params: RankingsQueryParams = {},
+  db: DatabaseClient = prisma
+): Promise<RankingsResponse> {
   const currentYear = new Date().getFullYear();
   const {
     pollType = 'COACHES',
@@ -116,7 +120,7 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
   // If week not specified, get the latest week for this poll/season
   let targetWeek = week;
   if (!targetWeek) {
-    const latestRanking = await prisma.ranking.findFirst({
+    const latestRanking = await db.ranking.findFirst({
       where: {
         pollType,
         season,
@@ -128,7 +132,7 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
   }
 
   // Get rankings for specified poll/season/week
-  const rankings = await prisma.ranking.findMany({
+  const rankings = await db.ranking.findMany({
     where: {
       pollType,
       season,
@@ -159,7 +163,7 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
 
   // Get team records for the season
   const teamIds = rankings.map((r) => r.teamId);
-  const teamStats = await prisma.teamStats.findMany({
+  const teamStats = await db.teamStats.findMany({
     where: {
       teamId: { in: teamIds },
       season,
@@ -229,7 +233,8 @@ export async function getRankings(params: RankingsQueryParams = {}): Promise<Ran
  * Get ranking history for a specific team
  */
 export async function getRankingsHistory(
-  params: RankingsHistoryQueryParams
+  params: RankingsHistoryQueryParams,
+  db: DatabaseClient = prisma
 ): Promise<RankingsHistoryResponse | null> {
   const currentYear = new Date().getFullYear();
   const {
@@ -240,7 +245,7 @@ export async function getRankingsHistory(
   } = params;
 
   // Get team info
-  const team = await prisma.team.findUnique({
+  const team = await db.team.findUnique({
     where: { id: teamId },
     select: {
       id: true,
@@ -254,7 +259,7 @@ export async function getRankingsHistory(
   }
 
   // Get all rankings for this team/poll/season
-  const rankings = await prisma.ranking.findMany({
+  const rankings = await db.ranking.findMany({
     where: {
       teamId,
       pollType,
@@ -279,7 +284,7 @@ export async function getRankingsHistory(
   }
 
   // Get team stats for each week
-  const teamStats = await prisma.teamStats.findFirst({
+  const teamStats = await db.teamStats.findFirst({
     where: {
       teamId,
       season,
@@ -328,7 +333,8 @@ export async function getRankingsHistory(
  */
 export async function getCompositeRankings(
   season?: number,
-  week?: number
+  week?: number,
+  db: DatabaseClient = prisma
 ): Promise<RankingsResponse> {
   const currentYear = new Date().getFullYear();
   const targetSeason = season ?? currentYear;
@@ -336,7 +342,7 @@ export async function getCompositeRankings(
   // Get latest week if not specified
   let targetWeek = week;
   if (!targetWeek) {
-    const latestRanking = await prisma.ranking.findFirst({
+    const latestRanking = await db.ranking.findFirst({
       where: {
         pollType: 'COMPOSITE',
         season: targetSeason,
@@ -348,7 +354,7 @@ export async function getCompositeRankings(
   }
 
   // Use the pre-calculated composite rankings if available
-  const compositeRankings = await prisma.ranking.findMany({
+  const compositeRankings = await db.ranking.findMany({
     where: {
       pollType: 'COMPOSITE',
       season: targetSeason,
@@ -382,12 +388,12 @@ export async function getCompositeRankings(
       season: targetSeason,
       week: targetWeek,
       limit: 25,
-    });
+    }, db);
   }
 
   // If no composite rankings, calculate on-the-fly
   // Get all rankings for this week from different polls
-  const allRankings = await prisma.ranking.findMany({
+  const allRankings = await db.ranking.findMany({
     where: {
       season: targetSeason,
       week: targetWeek,

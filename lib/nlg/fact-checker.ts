@@ -5,13 +5,13 @@
  */
 
 import type { GameContext, FactCheckResult } from '../../workers/content/types';
-import type { PrismaClient } from '@prisma/client';
+import type { DatabaseClient } from '../db/client';
 
 export class FactChecker {
-  private prisma: PrismaClient;
+  private prisma: DatabaseClient;
   private context: GameContext;
 
-  constructor(prisma: PrismaClient, context: GameContext) {
+  constructor(prisma: DatabaseClient, context: GameContext) {
     this.prisma = prisma;
     this.context = context;
   }

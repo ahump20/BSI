@@ -17,7 +17,8 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Team, Division, Prisma } from '@prisma/client';
+import { Team, Division, Prisma } from '@prisma/client/edge';
+import type { DatabaseClient } from '@/lib/db/client';
 
 export interface TeamsQueryParams {
   conference?: string;
@@ -109,7 +110,10 @@ export interface TeamDetailResponse extends Team {
 /**
  * List teams with filters
  */
-export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse> {
+export async function getTeams(
+  params: TeamsQueryParams,
+  db: DatabaseClient = prisma
+): Promise<TeamsResponse> {
   const {
     conference,
     division,
@@ -135,7 +139,7 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
 
   // Execute queries in parallel
   const [teams, total] = await Promise.all([
-    prisma.team.findMany({
+    db.team.findMany({
       where,
       include: {
         conference: {
@@ -153,7 +157,7 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
       take: safeLimit,
       skip: offset,
     }),
-    prisma.team.count({ where }),
+    db.team.count({ where }),
   ]);
 
   return {
@@ -170,10 +174,13 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
 /**
  * Get team by slug with full details (roster + stats + recent games)
  */
-export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | null> {
+export async function getTeamBySlug(
+  slug: string,
+  db: DatabaseClient = prisma
+): Promise<TeamDetailResponse | null> {
   const currentSeason = new Date().getFullYear();
 
-  const team = await prisma.team.findUnique({
+  const team = await db.team.findUnique({
     where: { slug },
     include: {
       conference: {

@@ -12,7 +12,7 @@
  * ```
  */
 
-import { PrismaClient } from '@prisma/client';
+import { createDatabaseClient, type DatabaseClient } from '@/lib/db/client';
 
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
@@ -21,13 +21,18 @@ import { PrismaClient } from '@prisma/client';
 // https://pris.ly/d/help/next-js-best-practices
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: DatabaseClient | undefined;
 };
+
+const logLevels =
+  process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'];
 
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  createDatabaseClient({
+    databaseUrl: process.env.DATABASE_URL || '',
+    accelerateUrl: process.env.PRISMA_ACCELERATE_URL,
+    log: logLevels,
   });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

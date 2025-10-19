@@ -22,7 +22,8 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Conference, Division, Prisma } from '@prisma/client';
+import { Conference, Division, Prisma } from '@prisma/client/edge';
+import type { DatabaseClient } from '@/lib/db/client';
 
 export interface ConferencesQueryParams {
   division?: Division;
@@ -122,7 +123,10 @@ export interface ConferenceStandingsResponse {
 /**
  * List conferences with optional division filter
  */
-export async function getConferences(params: ConferencesQueryParams): Promise<ConferencesResponse> {
+export async function getConferences(
+  params: ConferencesQueryParams,
+  db: DatabaseClient = prisma
+): Promise<ConferencesResponse> {
   const {
     division,
     limit = 50,
@@ -141,7 +145,7 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
 
   // Execute queries in parallel
   const [conferences, total] = await Promise.all([
-    prisma.conference.findMany({
+    db.conference.findMany({
       where,
       include: {
         _count: {
@@ -155,7 +159,7 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
       take: safeLimit,
       skip: offset,
     }),
-    prisma.conference.count({ where }),
+    db.conference.count({ where }),
   ]);
 
   return {
@@ -175,8 +179,11 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
 /**
  * Get conference by slug with full team listing
  */
-export async function getConferenceBySlug(slug: string): Promise<ConferenceDetailResponse | null> {
-  const conference = await prisma.conference.findUnique({
+export async function getConferenceBySlug(
+  slug: string,
+  db: DatabaseClient = prisma
+): Promise<ConferenceDetailResponse | null> {
+  const conference = await db.conference.findUnique({
     where: { slug },
     include: {
       teams: {
@@ -212,7 +219,8 @@ export async function getConferenceBySlug(slug: string): Promise<ConferenceDetai
  */
 export async function getConferenceStandings(
   slug: string,
-  params: StandingsQueryParams = {}
+  params: StandingsQueryParams = {},
+  db: DatabaseClient = prisma
 ): Promise<ConferenceStandingsResponse | null> {
   const {
     season = new Date().getFullYear(),
@@ -221,7 +229,7 @@ export async function getConferenceStandings(
   } = params;
 
   // Get conference
-  const conference = await prisma.conference.findUnique({
+  const conference = await db.conference.findUnique({
     where: { slug },
     select: {
       id: true,
@@ -236,7 +244,7 @@ export async function getConferenceStandings(
   }
 
   // Get all teams in conference with their stats
-  const teams = await prisma.team.findMany({
+  const teams = await db.team.findMany({
     where: {
       conferenceId: conference.id,
     },

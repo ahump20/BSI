@@ -4,13 +4,13 @@
  * Generates game recaps and previews with fact-checking
  */
 
-import { PrismaClient } from '@prisma/client';
 import type {
   Env,
   ContentRequest,
   ContentResponse,
   GameContext,
 } from './types';
+import { createWorkerDatabaseClient, type DatabaseClient } from '../../lib/db/client';
 import { LLMProvider } from '../../lib/nlg/llm-provider';
 import { FactChecker } from '../../lib/nlg/fact-checker';
 import {
@@ -107,9 +107,7 @@ export default {
  * Generate content for a specific game
  */
 async function generateContent(request: ContentRequest, env: Env): Promise<ContentResponse> {
-  const prisma = new PrismaClient({
-    datasources: { db: { url: env.DATABASE_URL } },
-  });
+  const prisma = createWorkerDatabaseClient(env);
 
   try {
     // Fetch game context from database
@@ -208,7 +206,7 @@ async function generateContent(request: ContentRequest, env: Env): Promise<Conte
 /**
  * Fetch game context from database
  */
-async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<GameContext> {
+async function fetchGameContext(gameId: string, prisma: DatabaseClient): Promise<GameContext> {
   const game = await prisma.game.findUnique({
     where: { id: gameId },
     include: {
@@ -364,9 +362,7 @@ function generateSummary(content: string): string {
  * Generate recaps for recently completed games
  */
 async function generatePendingRecaps(env: Env, ctx: ExecutionContext): Promise<void> {
-  const prisma = new PrismaClient({
-    datasources: { db: { url: env.DATABASE_URL } },
-  });
+  const prisma = createWorkerDatabaseClient(env);
 
   try {
     // Find games completed in last 15 minutes without articles
@@ -416,9 +412,7 @@ async function generatePendingRecaps(env: Env, ctx: ExecutionContext): Promise<v
  * Generate previews for upcoming games
  */
 async function generatePendingPreviews(env: Env, ctx: ExecutionContext): Promise<void> {
-  const prisma = new PrismaClient({
-    datasources: { db: { url: env.DATABASE_URL } },
-  });
+  const prisma = createWorkerDatabaseClient(env);
 
   try {
     // Find games scheduled in next 6-12 hours without previews

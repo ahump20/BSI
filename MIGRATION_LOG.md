@@ -628,6 +628,14 @@ enum FeedPrecision { EVENT | PITCH }
 
 ---
 
+### 2025-10-16 — Edge Runtime Data Layer Hardening
+- Migrated Workers (ingest + content) to the Prisma Accelerate edge client to remove Node polyfill requirements.
+- Added shared `createDatabaseClient` factory so Workers and Next.js reuse the same contract.
+- Updated API helpers (games, teams, conferences, rankings, players) and NLG fact checker to accept injected clients for Worker compatibility.
+- Wired Prisma generate pipeline to emit the Data Proxy bundle (`npm run prisma:generate`).
+
+---
+
 ## Contacts & Resources
 
 **Owner**: Austin Humphrey (austin@blazesportsintel.com)

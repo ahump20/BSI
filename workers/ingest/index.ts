@@ -19,11 +19,10 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client/edge';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
 import type { Env } from './types';
-
-const prisma = new PrismaClient();
+import { createWorkerDatabaseClient } from '../../lib/db/client';
 
 async function executeWithConstraintGuard<T>(
   operation: () => Promise<T>,
@@ -161,6 +160,7 @@ export default {
 async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting live games ingestion...');
 
+  const prisma = createWorkerDatabaseClient(env);
   const providerManager = new ProviderManager(env);
   const currentDate = new Date();
   const season = currentDate.getFullYear();
@@ -240,6 +240,8 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
   } catch (error) {
     console.error('[Ingest] Live games ingestion failed:', error);
     throw error;
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -249,6 +251,7 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting team stats ingestion...');
 
+  const prisma = createWorkerDatabaseClient(env);
   const providerManager = new ProviderManager(env);
   const season = new Date().getFullYear();
 
@@ -389,6 +392,8 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
   } catch (error) {
     console.error('[Ingest] Team stats ingestion failed:', error);
     throw error;
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -398,6 +403,7 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
 async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting historical data ingestion...');
 
+  const prisma = createWorkerDatabaseClient(env);
   const providerManager = new ProviderManager(env);
   const season = new Date().getFullYear();
 
@@ -479,6 +485,8 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
   } catch (error) {
     console.error('[Ingest] Historical data ingestion failed:', error);
     throw error;
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

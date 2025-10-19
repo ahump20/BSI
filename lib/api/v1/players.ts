@@ -11,7 +11,8 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Player, Position, HandedEnum, AcademicYear } from '@prisma/client';
+import { Player, Position, HandedEnum, AcademicYear } from '@prisma/client/edge';
+import type { DatabaseClient } from '@/lib/db/client';
 
 export interface PlayerDetailResponse {
   // Biographical
@@ -146,10 +147,13 @@ export interface PlayerDetailResponse {
 /**
  * Get player by ID with full statistics and recent performances
  */
-export async function getPlayerById(id: string): Promise<PlayerDetailResponse | null> {
+export async function getPlayerById(
+  id: string,
+  db: DatabaseClient = prisma
+): Promise<PlayerDetailResponse | null> {
   const currentSeason = new Date().getFullYear();
 
-  const player = await prisma.player.findUnique({
+  const player = await db.player.findUnique({
     where: { id },
     include: {
       team: {

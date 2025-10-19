@@ -18,7 +18,8 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Game, GameStatus, Prisma } from '@prisma/client';
+import { Game, GameStatus, Prisma } from '@prisma/client/edge';
+import type { DatabaseClient } from '@/lib/db/client';
 
 export interface GamesQueryParams {
   date?: string;
@@ -106,7 +107,10 @@ export interface GameDetailResponse extends Game {
 /**
  * List games with filters
  */
-export async function getGames(params: GamesQueryParams): Promise<GamesResponse> {
+export async function getGames(
+  params: GamesQueryParams,
+  db: DatabaseClient = prisma
+): Promise<GamesResponse> {
   const {
     date,
     status,
@@ -169,7 +173,7 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
 
   // Execute queries in parallel
   const [games, total] = await Promise.all([
-    prisma.game.findMany({
+    db.game.findMany({
       where,
       include: {
         homeTeam: {
@@ -214,7 +218,7 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
       take: safeLimit,
       skip: offset,
     }),
-    prisma.game.count({ where }),
+    db.game.count({ where }),
   ]);
 
   return {
@@ -231,8 +235,11 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
 /**
  * Get game by ID with full details (events + box scores)
  */
-export async function getGameById(id: string): Promise<GameDetailResponse | null> {
-  const game = await prisma.game.findUnique({
+export async function getGameById(
+  id: string,
+  db: DatabaseClient = prisma
+): Promise<GameDetailResponse | null> {
+  const game = await db.game.findUnique({
     where: { id },
     include: {
       homeTeam: {
