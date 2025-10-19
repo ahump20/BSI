@@ -648,8 +648,12 @@ class MLPipelineService {
 
                 const homeAdvantage = this.featureEngineering.calculateHomeFieldAdvantage({ sport: row.sport });
                 const label = (row.home_score != null && row.away_score != null)
-                    ? (row.home_score > row.away_score ? [1, 0] : [0, 1])
-                    : [0, 0];
+                    ? (row.home_score > row.away_score
+                        ? [1, 0, 0]
+                        : (row.home_score < row.away_score
+                            ? [0, 1, 0]
+                            : [0, 0, 1]))
+                    : [0, 0, 0];
 
                 return {
                     game_id: row.game_id,
