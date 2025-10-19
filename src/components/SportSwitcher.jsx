@@ -15,19 +15,19 @@ function SportSwitcher({ currentSport = 'baseball' }) {
       name: 'Baseball',
       icon: '⚾',
       path: '/',
-      color: '#00a86b'
+      color: 'var(--accent-color)'
     },
     {
       name: 'Football',
       icon: '🏈',
       path: '/football',
-      color: '#ff6b00'
+      color: 'var(--blaze-flame)'
     },
     {
       name: 'Basketball',
       icon: '🏀',
       path: '/basketball',
-      color: '#ff8c00'
+      color: 'var(--blaze-sunset)'
     }
   ]
 

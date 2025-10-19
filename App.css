@@ -1,12 +1,52 @@
 :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #2d2d2d;
-  --accent-color: #00a86b;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
-  --border-color: #404040;
-  --card-bg: #1e1e1e;
+  --blaze-ember: #bf5700;
+  --blaze-flame: #cc6600;
+  --blaze-copper: #d97b38;
+  --blaze-sunset: #e68a4f;
+  --blaze-crimson: #8b0000;
+  --blaze-cardinal: #dc143c;
+  --blaze-powder: #b0e0e6;
+  --blaze-charcoal: #1a1a1a;
+  --blaze-graphite: #242424;
+  --blaze-onyx: #0f0f0f;
+
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--blaze-ember) 0%,
+    var(--blaze-flame) 50%,
+    var(--blaze-copper) 100%
+  );
+  --gradient-accent: linear-gradient(135deg, var(--blaze-crimson) 0%, var(--blaze-cardinal) 100%);
+  --gradient-hero: radial-gradient(ellipse at top, rgba(191, 87, 0, 0.15), transparent 70%),
+    radial-gradient(ellipse at bottom, rgba(139, 0, 0, 0.12), transparent 70%),
+    radial-gradient(ellipse at right, rgba(176, 224, 230, 0.08), transparent 70%);
+
+  --text-primary: #f5f5f5;
+  --text-secondary: rgba(245, 245, 245, 0.82);
+  --text-tertiary: rgba(245, 245, 245, 0.6);
+
+  --glass-light: rgba(26, 26, 26, 0.4);
+  --glass-medium: rgba(26, 26, 26, 0.6);
+  --glass-heavy: rgba(26, 26, 26, 0.8);
+
+  --shadow-burnt: 0 8px 32px rgba(191, 87, 0, 0.3), 0 2px 8px rgba(191, 87, 0, 0.2);
+  --shadow-crimson: 0 8px 32px rgba(220, 20, 60, 0.25);
+  --glow-soft: 0 0 40px rgba(217, 123, 56, 0.15);
+  --glow-medium: 0 0 60px rgba(217, 123, 56, 0.25);
+
+  --primary-color: var(--blaze-charcoal);
+  --secondary-color: var(--blaze-graphite);
+  --card-bg: rgba(36, 36, 36, 0.92);
+  --surface-overlay: rgba(15, 15, 15, 0.85);
+
+  --border-color: rgba(191, 87, 0, 0.32);
+  --border-subtle: rgba(245, 245, 245, 0.08);
+
+  --accent-color: var(--blaze-ember);
+  --live-indicator: var(--blaze-cardinal);
+
+  --font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Source Serif Pro', 'Georgia', serif;
 }
 
 * {
@@ -16,9 +56,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--primary-color);
@@ -46,6 +84,8 @@ body {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 12px;
+  font-family: var(--font-display);
+  color: var(--text-primary);
 }
 
 .conference-filter select {
