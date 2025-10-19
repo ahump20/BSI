@@ -1,31 +1,233 @@
-name: Deploy to Cloudflare
+name: Deploy
+
 on:
-  push:
-    branches: [ main, bsi/restore-2025-09-26 ]
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+
 permissions:
   contents: read
   deployments: write
+  id-token: write
+
+concurrency:
+  group: deploy-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
 jobs:
-  build-and-deploy:
+  deploy_preview:
+    name: Preview Deploy
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch != 'main' && github.event.workflow_run.head_branch != '' }}
     runs-on: ubuntu-latest
+    environment:
+      name: preview
+    env:
+      NODE_VERSION: '20.17.0'
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+      CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+      CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+      CLOUDFLARE_R2_BUCKET: ${{ secrets.CLOUDFLARE_R2_BUCKET }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
         with:
           version: 9
-      - run: pnpm i --frozen-lockfile
-      - run: pnpm -w build
-      - name: Deploy Pages (OpenNext output)
-        uses: cloudflare/pages-action@v1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: blazesportsintel
-          directory: apps/web/.open-next
-          wranglerVersion: '3'
-      - name: Deploy Worker (edge headers/redirects)
-        uses: cloudflare/wrangler-action@v3
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install
+          fi
+
+      - name: Build workspace
+        run: pnpm -r build --if-present
+
+      - name: Tag Sentry release
+        id: sentry_preview
+        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
+        uses: getsentry/action-release@v2
+        env:
+          SENTRY_AUTH_TOKEN: ${{ env.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ env.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          workingDirectory: apps/api-worker
-          command: deploy
+          environment: preview
+          version: ${{ github.event.workflow_run.head_sha }}
+          projects: ${{ env.SENTRY_PROJECT }}
+          finalize: true
+
+      - name: Deploy to Netlify (preview)
+        id: netlify_preview
+        if: ${{ env.NETLIFY_AUTH_TOKEN != '' && env.NETLIFY_SITE_ID != '' }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ env.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ env.NETLIFY_SITE_ID }}
+        run: |
+          pnpm dlx netlify-cli deploy \
+            --auth "$NETLIFY_AUTH_TOKEN" \
+            --site "$NETLIFY_SITE_ID" \
+            --dir apps/web/.next \
+            --message "Preview deploy for $GITHUB_SHA" \
+            --json > netlify-preview.json
+          DEPLOY_URL=$(jq -r '.deploy_url' netlify-preview.json)
+          echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Sync assets to Cloudflare R2
+        if: ${{ env.CLOUDFLARE_R2_BUCKET != '' && env.CLOUDFLARE_R2_ACCESS_KEY_ID != '' && env.CLOUDFLARE_R2_SECRET_ACCESS_KEY != '' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: https://${{ env.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          CLOUDFLARE_R2_BUCKET: ${{ env.CLOUDFLARE_R2_BUCKET }}
+        run: |
+          pip install --quiet --user awscli
+          export PATH="$HOME/.local/bin:$PATH"
+          aws s3 sync apps/web/public s3://$CLOUDFLARE_R2_BUCKET/web --endpoint-url "$R2_ENDPOINT" --delete
+
+      - name: Purge Cloudflare cache
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ZONE_ID != '' }}
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ env.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ env.CLOUDFLARE_API_TOKEN }}" \
+            -H 'Content-Type: application/json' \
+            --data '{"purge_everything":true}'
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          cat <<'MARKDOWN' >> "$GITHUB_STEP_SUMMARY"
+          ## Preview deployment
+          * Branch: `${{ github.event.workflow_run.head_branch }}`
+          * Sentry release: ${{ steps.sentry_preview.outcome || 'skipped' }}
+          * Netlify URL: ${{ steps.netlify_preview.outputs.deploy_url || 'not published' }}
+          MARKDOWN
+
+  deploy_production:
+    name: Production Deploy
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    env:
+      NODE_VERSION: '20.17.0'
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_PRODUCTION }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+      CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+      CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+      CLOUDFLARE_R2_BUCKET: ${{ secrets.CLOUDFLARE_R2_BUCKET }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install
+          fi
+
+      - name: Build workspace
+        run: pnpm -r build --if-present
+
+      - name: Tag Sentry release
+        id: sentry_production
+        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
+        uses: getsentry/action-release@v2
+        env:
+          SENTRY_AUTH_TOKEN: ${{ env.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ env.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
+        with:
+          environment: production
+          version: ${{ github.event.workflow_run.head_sha }}
+          projects: ${{ env.SENTRY_PROJECT }}
+          finalize: true
+
+      - name: Deploy to Netlify (production)
+        id: netlify_production
+        if: ${{ env.NETLIFY_AUTH_TOKEN != '' && env.NETLIFY_SITE_ID != '' }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ env.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ env.NETLIFY_SITE_ID }}
+        run: |
+          pnpm dlx netlify-cli deploy \
+            --auth "$NETLIFY_AUTH_TOKEN" \
+            --site "$NETLIFY_SITE_ID" \
+            --dir apps/web/.next \
+            --prod \
+            --message "Production deploy for $GITHUB_SHA" \
+            --json > netlify-production.json
+          DEPLOY_URL=$(jq -r '.deploy_url' netlify-production.json)
+          echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Sync assets to Cloudflare R2
+        if: ${{ env.CLOUDFLARE_R2_BUCKET != '' && env.CLOUDFLARE_R2_ACCESS_KEY_ID != '' && env.CLOUDFLARE_R2_SECRET_ACCESS_KEY != '' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: https://${{ env.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          CLOUDFLARE_R2_BUCKET: ${{ env.CLOUDFLARE_R2_BUCKET }}
+        run: |
+          pip install --quiet --user awscli
+          export PATH="$HOME/.local/bin:$PATH"
+          aws s3 sync apps/web/public s3://$CLOUDFLARE_R2_BUCKET/web --endpoint-url "$R2_ENDPOINT" --delete
+
+      - name: Purge Cloudflare cache
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ZONE_ID != '' }}
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ env.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ env.CLOUDFLARE_API_TOKEN }}" \
+            -H 'Content-Type: application/json' \
+            --data '{"purge_everything":true}'
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          cat <<'MARKDOWN' >> "$GITHUB_STEP_SUMMARY"
+          ## Production deployment
+          * Branch: `${{ github.event.workflow_run.head_branch }}`
+          * Sentry release: ${{ steps.sentry_production.outcome || 'skipped' }}
+          * Netlify URL: ${{ steps.netlify_production.outputs.deploy_url || 'not published' }}
+          MARKDOWN

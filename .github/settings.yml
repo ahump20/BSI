@@ -1,0 +1,20 @@
+branches:
+  - name: main
+    protection:
+      required_status_checks:
+        strict: true
+        contexts:
+          - CI / Quality Gates
+      enforce_admins: false
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+  - name: bsi/restore-2025-09-26
+    protection:
+      required_status_checks:
+        strict: true
+        contexts:
+          - CI / Quality Gates
+          - Deploy / Preview Deploy
+      enforce_admins: false
+      required_pull_request_reviews:
+        required_approving_review_count: 1
