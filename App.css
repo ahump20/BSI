@@ -1,12 +1,35 @@
 :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #2d2d2d;
-  --accent-color: #00a86b;
+  --blaze-burnt-orange: #bf5700;
+  --blaze-ember: #cc6600;
+  --blaze-copper: #d97b38;
+  --blaze-amber: #ffbf00;
+
+  --gradient-primary: linear-gradient(
+    135deg,
+    #bf5700 0%,
+    #cc6600 50%,
+    #d97b38 100%
+  );
+
+  --dark-charcoal: #0d0d12;
+  --dark-slate: #161620;
+  --dark-graphite: #1f1f2e;
+
+  --glass-light: rgba(191, 87, 0, 0.08);
+  --glass-medium: rgba(191, 87, 0, 0.12);
+  --glass-heavy: rgba(191, 87, 0, 0.18);
+  --glass-border: rgba(191, 87, 0, 0.25);
+
   --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
-  --border-color: #404040;
-  --card-bg: #1e1e1e;
+  --text-secondary: rgba(255, 255, 255, 0.92);
+  --text-tertiary: rgba(255, 235, 215, 0.75);
+
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+  --font-display: 'Bebas Neue', 'Impact', sans-serif;
+
+  --live-indicator: var(--blaze-amber);
 }
 
 * {
@@ -16,12 +39,10 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--primary-color);
+  background-color: var(--dark-charcoal);
   color: var(--text-primary);
   overflow-x: hidden;
 }
@@ -36,9 +57,9 @@ body {
 .app-header {
   position: sticky;
   top: 0;
-  background-color: var(--secondary-color);
+  background-color: var(--dark-slate);
   padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
   z-index: 100;
 }
 
@@ -51,9 +72,9 @@ body {
 .conference-filter select {
   width: 100%;
   padding: 10px;
-  background-color: var(--card-bg);
+  background-color: var(--dark-graphite);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
   border-radius: 8px;
   font-size: 14px;
   outline: none;
@@ -61,7 +82,7 @@ body {
 }
 
 .conference-filter select:focus {
-  border-color: var(--accent-color);
+  border-color: var(--blaze-burnt-orange);
 }
 
 .bottom-nav {
@@ -69,8 +90,8 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--secondary-color);
-  border-top: 1px solid var(--border-color);
+  background-color: var(--dark-slate);
+  border-top: 1px solid var(--glass-border);
   display: flex;
   justify-content: space-around;
   padding: 8px 0;
@@ -93,7 +114,7 @@ body {
 }
 
 .bottom-nav button.active {
-  color: var(--accent-color);
+  color: var(--blaze-burnt-orange);
 }
 
 .bottom-nav button:active {
@@ -123,8 +144,8 @@ body {
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--accent-color);
+  border: 3px solid var(--glass-border);
+  border-top-color: var(--blaze-burnt-orange);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -170,7 +191,7 @@ body {
   .bottom-nav {
     position: static;
     border-top: none;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--glass-border);
     padding: 0;
   }
 
