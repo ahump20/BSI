@@ -69,7 +69,7 @@ export type UseLiveGamesOptions = {
   enabled?: boolean;
 };
 
-const API_ENDPOINT = '/api/v1/games/live';
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || '/api/v1/games/live';
 
 export function useLiveCollegeBaseballGames(options?: UseLiveGamesOptions) {
   const { date, conference, refreshIntervalMs = 60000, enabled = true } = options ?? {};
