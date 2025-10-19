@@ -17,6 +17,10 @@ export async function onRequest(context) {
   const { request, next, env } = context
   const url = new URL(request.url)
 
+  // DISABLED: Seasonal routing - let homepage show by default
+  // User can manually navigate to sport pages via navigation
+  return next()
+
   // Only apply routing logic to root path
   if (url.pathname !== '/') {
     return next()
