@@ -11,13 +11,17 @@
     "@datadog/browser-logs": "^5.12.0",
     "@datadog/browser-rum": "^5.12.0",
     "@sentry/nextjs": "^8.25.0",
+    "leaflet": "^1.9.4",
     "next": "^15.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0",
+    "swr": "^2.3.6"
   },
   "devDependencies": {
     "@applitools/eyes-playwright": "^1.23.0",
     "@playwright/test": "^1.49.0",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^22.7.5",
     "@types/react": "19.2.2",
     "eslint": "^9.13.0",

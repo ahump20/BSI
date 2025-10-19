@@ -31,9 +31,11 @@ test.describe('Applitools visual smoke', () => {
       config.setTestName(`${route.name} (${environment})`);
       config.setEnvironmentName(environment);
       config.setViewportSize({ width: 1280, height: 720 });
-      config.setProperty('route', route.path);
-      config.setProperty('release', release);
-      config.setProperty('build', testInfo.project.name);
+      config.setProperties([
+        { name: 'route', value: route.path },
+        { name: 'release', value: release },
+        { name: 'build', value: testInfo.project.name }
+      ]);
       eyes.setConfiguration(config);
 
       try {
