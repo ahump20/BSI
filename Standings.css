@@ -17,13 +17,15 @@
 
 .conference-select {
   padding: 8px 12px;
-  background-color: var(--card-bg);
+  background: var(--glass-light);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   font-size: 13px;
   outline: none;
   cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .conference-select:focus {
@@ -40,13 +42,17 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: var(--surface-radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   overflow: hidden;
 }
 
 .standings-table th {
-  background-color: var(--secondary-color);
+  background: var(--glass-heavy);
   padding: 12px 8px;
   text-align: left;
   font-size: 11px;
@@ -150,11 +156,15 @@
   align-items: center;
   gap: 8px;
   padding: 12px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: var(--surface-radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--surface-shadow);
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 24px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .tournament-indicator {
@@ -179,9 +189,13 @@
 }
 
 .leader-category {
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border-radius: var(--surface-radius);
+  border: 1px solid var(--glass-border);
   padding: 16px;
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .leader-category h4 {

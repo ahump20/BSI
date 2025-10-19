@@ -1,3 +1,12 @@
+:root {
+  --glass-light: rgba(45, 45, 45, 0.55);
+  --glass-medium: rgba(30, 30, 30, 0.65);
+  --glass-heavy: rgba(22, 22, 22, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --surface-radius: 16px;
+  --surface-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -59,16 +68,19 @@ main {
 }
 
 .game-card {
-  background-color: #2a2a2a;
-  border: 1px solid #404040;
-  border-radius: 8px;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--surface-radius);
   padding: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .game-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 
 .game-status {
