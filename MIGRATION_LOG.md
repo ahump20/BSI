@@ -166,6 +166,12 @@ enum GameStatus { SCHEDULED | LIVE | FINAL | POSTPONED }
 enum FeedPrecision { EVENT | PITCH }
 ```
 
+### Personalization Stack Update (2025-10-17)
+
+- Added dedicated schema at `apps/web/prisma/schema.prisma` for `WatchlistPreference` + `WatchlistAlertLog` to support Clerk user identities and alert auditing.
+- Provisioned unique constraint on `(userId, entityType, entityId)` to prevent duplicate pins and indexed `userId` for fast lookups by API and worker jobs.
+- Introduced alert scenario enum (`LEAD_CHANGE`, `UPSET_ALERT`, `GAME_START`) to map server evaluations to push/email templates.
+
 ### API Layer (/api/v1)
 
 **Endpoints**:

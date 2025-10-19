@@ -1,4 +1,6 @@
-import Link from 'next/link';
+import { SignIn } from '@clerk/nextjs';
+
+const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 export default function SignInPage() {
   return (
@@ -7,35 +9,27 @@ export default function SignInPage() {
         <span className="di-kicker">Diamond Insights · Auth</span>
         <h1 className="di-page-title">Sign In</h1>
         <p className="di-page-subtitle">
-          Clerk integration is in progress. While we finish hooking up the auth provider, this placeholder keeps the route,
-          messaging, and responsive design intact.
+          Access your personalized watchlists, alert preferences, and Diamond Pro tools with secure Clerk authentication.
         </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Next Steps</h2>
-            <p>Diamond Pro members will authenticate here to access premium scouting tools.</p>
-            <ul className="di-list">
-              <li>Secure magic links and passkeys.</li>
-              <li>Multi-factor enrollment for staff accounts.</li>
-              <li>Session management synced across devices.</li>
-            </ul>
-          </article>
-          <article className="di-card">
-            <h2>Need an Account?</h2>
-            <p>Choose an action below.</p>
-            <ul className="di-list">
-              <li>
-                <Link className="di-inline-link" href="/auth/sign-up">
-                  Create a Diamond Insights account
-                </Link>
-              </li>
-              <li>
-                <Link className="di-inline-link" href="/account">
-                  Return to Account Center
-                </Link>
-              </li>
-            </ul>
-          </article>
+        <div className="di-auth-card">
+          {hasClerkKey ? (
+            <SignIn
+              appearance={{
+                elements: {
+                  rootBox: 'di-card di-card--surface',
+                  card: 'di-auth-card-inner'
+                }
+              }}
+              routing="hash"
+            />
+          ) : (
+            <article className="di-card">
+              <h2>Authentication is provisioning</h2>
+              <p className="di-text-muted">
+                Clerk keys are not configured in this environment. Add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to enable the hosted sign in experience.
+              </p>
+            </article>
+          )}
         </div>
       </section>
     </main>

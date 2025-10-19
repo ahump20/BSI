@@ -1,4 +1,6 @@
-import Link from 'next/link';
+import { SignUp } from '@clerk/nextjs';
+
+const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 export default function SignUpPage() {
   return (
@@ -7,35 +9,27 @@ export default function SignUpPage() {
         <span className="di-kicker">Diamond Insights · Auth</span>
         <h1 className="di-page-title">Create Account</h1>
         <p className="di-page-subtitle">
-          Registration flows are nearly online. This placeholder maintains the URL structure and dark-mode design while we hook
-          Clerk onboarding, Stripe trials, and paywall states.
+          Join Blaze Sports Intel to sync watchlists, configure alerts, and collaborate with your Diamond Pro staff.
         </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Diamond Pro Access</h2>
-            <p>Expect gated content, staff collaboration spaces, and live alert configuration post sign-up.</p>
-            <ul className="di-list">
-              <li>Choose between Free and Diamond Pro tiers.</li>
-              <li>Invite teammates with shared permissions.</li>
-              <li>Sync saved boards to mobile devices.</li>
-            </ul>
-          </article>
-          <article className="di-card">
-            <h2>Already have an account?</h2>
-            <p>Jump back to the sign-in flow.</p>
-            <ul className="di-list">
-              <li>
-                <Link className="di-inline-link" href="/auth/sign-in">
-                  Sign in to Diamond Insights
-                </Link>
-              </li>
-              <li>
-                <Link className="di-inline-link" href="/account">
-                  Manage existing settings
-                </Link>
-              </li>
-            </ul>
-          </article>
+        <div className="di-auth-card">
+          {hasClerkKey ? (
+            <SignUp
+              appearance={{
+                elements: {
+                  rootBox: 'di-card di-card--surface',
+                  card: 'di-auth-card-inner'
+                }
+              }}
+              routing="hash"
+            />
+          ) : (
+            <article className="di-card">
+              <h2>Sign-up is nearly ready</h2>
+              <p className="di-text-muted">
+                Provide NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to activate hosted onboarding and Diamond Pro enrollment flows.
+              </p>
+            </article>
+          )}
         </div>
       </section>
     </main>
