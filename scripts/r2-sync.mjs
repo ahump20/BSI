@@ -128,7 +128,7 @@ async function uploadFile(filePath) {
   }
 
   const contentType = getContentType(key);
-  const cacheControl = /(\.\w+)(\.[a-f0-9]{8,})?$/i.test(relative) ? CACHE_CONTROL_IMMUTABLE : CACHE_CONTROL_FALLBACK;
+  const cacheControl = /\.[a-f0-9]{8,}\.\w+$/i.test(relative) ? CACHE_CONTROL_IMMUTABLE : CACHE_CONTROL_FALLBACK;
 
   const body = await fs.readFile(filePath);
 
