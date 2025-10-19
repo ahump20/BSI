@@ -1,12 +1,54 @@
 :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #2d2d2d;
-  --accent-color: #00a86b;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
+  /* Burnt Orange Brand Tokens */
+  --blaze-burnt-orange: #cc5500;
+  --blaze-ember: #e9692c;
+  --blaze-copper: #d65a1f;
+  --blaze-sunset: #ff8c42;
+  --blaze-bronze: #b34719;
+  --blaze-amber: #f6ad55;
+
+  /* Dark Mode Surfaces */
+  --surface-950: #0b0f16;
+  --surface-900: #121a24;
+  --surface-850: #161f2b;
+  --surface-800: #1a202c;
+  --surface-700: #2d3748;
+  --surface-600: #374357;
+  --card-elevated: #1f2735;
+
+  /* Glass & Overlays */
+  --glass-light: rgba(26, 32, 44, 0.72);
+  --glass-medium: rgba(18, 26, 36, 0.82);
+  --glass-heavy: rgba(12, 18, 28, 0.92);
+
+  /* Gradients */
+  --gradient-burnt-orange: linear-gradient(
+    135deg,
+    var(--blaze-bronze) 0%,
+    var(--blaze-burnt-orange) 45%,
+    var(--blaze-sunset) 100%
+  );
+  --gradient-ember: linear-gradient(135deg, var(--blaze-copper), var(--blaze-ember));
+  --gradient-dusk: linear-gradient(145deg, #111827 0%, #1f2937 50%, #2d3748 100%);
+
+  /* Borders & Shadows */
+  --border-subtle: rgba(226, 232, 240, 0.08);
+  --border-strong: rgba(226, 232, 240, 0.16);
+  --shadow-soft: 0 8px 28px rgba(8, 12, 20, 0.35);
+
+  /* Typography */
+  --font-primary: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont,
+    'Roboto', 'Helvetica Neue', sans-serif;
+  --font-display: 'Source Serif Pro', 'Merriweather', 'Georgia', serif;
+  --font-mono: 'Roboto Mono', 'Fira Code', monospace;
+
+  /* Text */
+  --text-primary: #e2e8f0;
+  --text-secondary: rgba(226, 232, 240, 0.72);
+  --text-tertiary: rgba(226, 232, 240, 0.48);
+
+  /* Status */
   --live-indicator: #ff3b30;
-  --border-color: #404040;
-  --card-bg: #1e1e1e;
 }
 
 * {
@@ -16,14 +58,42 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--primary-color);
+  background-color: var(--surface-950);
   color: var(--text-primary);
+  line-height: 1.6;
   overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+p,
+span,
+li,
+label {
+  color: var(--text-secondary);
+}
+
+strong,
+b {
+  color: var(--text-primary);
+}
+
+small,
+.meta,
+.helper-text {
+  color: var(--text-tertiary);
 }
 
 .app {
@@ -36,9 +106,11 @@ body {
 .app-header {
   position: sticky;
   top: 0;
-  background-color: var(--secondary-color);
+  background-color: var(--glass-heavy);
+  backdrop-filter: blur(18px);
   padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
   z-index: 100;
 }
 
@@ -51,9 +123,9 @@ body {
 .conference-filter select {
   width: 100%;
   padding: 10px;
-  background-color: var(--card-bg);
+  background-color: var(--card-elevated);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   font-size: 14px;
   outline: none;
@@ -61,7 +133,7 @@ body {
 }
 
 .conference-filter select:focus {
-  border-color: var(--accent-color);
+  border-color: var(--blaze-burnt-orange);
 }
 
 .bottom-nav {
@@ -69,8 +141,9 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--secondary-color);
-  border-top: 1px solid var(--border-color);
+  background-color: var(--glass-medium);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-around;
   padding: 8px 0;
@@ -93,11 +166,11 @@ body {
 }
 
 .bottom-nav button.active {
-  color: var(--accent-color);
+  color: var(--blaze-burnt-orange);
 }
 
 .bottom-nav button:active {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(204, 85, 0, 0.12);
 }
 
 .nav-icon {
@@ -123,8 +196,8 @@ body {
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--accent-color);
+  border: 3px solid var(--border-subtle);
+  border-top-color: var(--blaze-burnt-orange);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -170,7 +243,7 @@ body {
   .bottom-nav {
     position: static;
     border-top: none;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-subtle);
     padding: 0;
   }
 
