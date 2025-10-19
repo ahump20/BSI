@@ -3,29 +3,7 @@
  */
 
 // Cloudflare Workers types
-declare global {
-  interface KVNamespace {
-    get(key: string, options?: { type: 'text' }): Promise<string | null>;
-    get(key: string, options: { type: 'json' }): Promise<any>;
-    get(key: string, options: { type: 'arrayBuffer' }): Promise<ArrayBuffer | null>;
-    get(key: string, options: { type: 'stream' }): Promise<ReadableStream | null>;
-    put(key: string, value: string | ArrayBuffer | ArrayBufferView | ReadableStream, options?: any): Promise<void>;
-    delete(key: string): Promise<void>;
-    list(options?: any): Promise<any>;
-  }
-
-  interface R2Bucket {
-    get(key: string): Promise<any>;
-    put(key: string, value: ReadableStream | ArrayBuffer | ArrayBufferView | string | null | Blob, options?: any): Promise<any>;
-    delete(key: string | string[]): Promise<void>;
-    list(options?: any): Promise<any>;
-  }
-
-  interface AnalyticsEngineDataset {
-    writeDataPoint(event: any): void;
-  }
-}
-
+import type { KVNamespace, R2Bucket, AnalyticsEngineDataset } from '@cloudflare/workers-types';
 export interface Env {
   // Database
   DATABASE_URL: string;
