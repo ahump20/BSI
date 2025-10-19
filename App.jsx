@@ -65,7 +65,7 @@ function App() {
       <header className="app-header">
         <h1>College Baseball Live</h1>
         <div className="conference-filter">
-          <select>
+          <select className="cta-button conference-select">
             <option value="all">All Conferences</option>
             <option value="sec">SEC</option>
             <option value="acc">ACC</option>
