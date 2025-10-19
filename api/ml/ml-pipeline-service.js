@@ -1011,7 +1011,14 @@ class MLPipelineService {
         });
 
         for (let i = 0; i < featureCount; i += 1) {
-            stds[i] = Math.sqrt(stds[i] / sampleCount) || 1;
+            stds[i] = Math.sqrt(stds[i] / sampleCount);
+            if (stds[i] === 0) {
+                this.logger && typeof this.logger.warn === 'function' &&
+                    this.logger.warn(
+                        `Feature at index ${i} has zero standard deviation (constant value: ${means[i]}). Consider excluding this feature from the model. Falling back to std=1 for normalization.`
+                    );
+                stds[i] = 1;
+            }
         }
 
         const normalizedFeatures = engineeredData.features.map((featureVector) => (
