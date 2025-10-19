@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Component Library | Blaze Sports Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #09090f;
+      --surface: rgba(18, 18, 27, 0.95);
+      --surface-alt: rgba(27, 27, 38, 0.95);
+      --accent: #FBBF24;
+      --accent-soft: rgba(251, 191, 36, 0.16);
+      --text: #F8FAFC;
+      --muted: rgba(248, 250, 252, 0.72);
+      --border: rgba(248, 250, 252, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, rgba(251,191,36,0.08), transparent),
+                  radial-gradient(circle at bottom right, rgba(234,179,8,0.15), transparent 45%),
+                  var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+    header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 2rem;
+    }
+    .kicker {
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    h1 {
+      margin: 0.4rem 0 1rem;
+      font-size: clamp(2.5rem, 6vw, 3.3rem);
+    }
+    .lede {
+      max-width: 780px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .component-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+    .component-nav a {
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.45rem 0.95rem;
+      background: rgba(255,255,255,0.04);
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+    }
+    .component-nav a:hover {
+      border-color: rgba(251, 191, 36, 0.4);
+      color: var(--accent);
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: grid;
+      gap: 2rem;
+    }
+    section.component {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      padding: 2rem;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+    }
+    section.component h2 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.6rem, 4vw, 2.15rem);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    section.component p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .details {
+      display: grid;
+      gap: 0.5rem;
+      margin: 0 0 1.2rem 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    .meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.3rem;
+    }
+    .meta-tags span {
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(251,191,36,0.35);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      background: var(--accent);
+      color: #1A1200;
+      font-weight: 600;
+      transition: transform 0.2s ease;
+    }
+    .cta:hover { transform: translateY(-2px); }
+    footer {
+      max-width: 1100px;
+      margin: 3rem auto 0;
+      padding: 0 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    @media (max-width: 640px) {
+      section.component { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="kicker">Design System</div>
+    <h1>UI Component Library</h1>
+    <p class="lede">Reusable components crafted for the Blaze Sports Intel mobile-first diamond experience. Each module below includes recommended usage patterns, responsive behavior, and integration notes.</p>
+    <div class="component-nav" aria-label="Component navigation">
+      <a href="#diamond-scoreboard">Scoreboard</a>
+      <a href="#momentum-timeline">Momentum Timeline</a>
+      <a href="#edge-alert-banner">Edge Alert Banner</a>
+      <a href="#tabbed-intel-deck">Tabbed Intel Deck</a>
+      <a href="#filter-drawer">Filter Drawer</a>
+      <a href="#performance-tile-grid">Performance Tile Grid</a>
+      <a href="#basepath-visualizer">Basepath Visualizer</a>
+      <a href="#scouting-checklist">Scouting Checklist</a>
+      <a href="#injury-risk-monitor">Injury Risk Monitor</a>
+      <a href="#command-center-footer">Command Center Footer</a>
+    </div>
+  </header>
+  <main>
+    <section id="diamond-scoreboard" class="component">
+      <h2><i class="fas fa-table"></i> Diamond Scoreboard</h2>
+      <div class="meta-tags">
+        <span>Live</span>
+        <span>Dark Mode</span>
+        <span>Mobile Optimized</span>
+      </div>
+      <p>Displays inning-by-inning scoring with leverage badges, pitch counts, and win probability chips. Designed for frictionless use inside dugout tablets.</p>
+      <ul class="details">
+        <li>Supports condensed (mobile) and expanded (desktop) layouts.</li>
+        <li>Auto-refresh interval with animation smoothing.</li>
+        <li>Integrates with the live scoreboard API endpoints.</li>
+      </ul>
+      <a class="cta" href="/analytics.html" target="_blank" rel="noopener">View Usage Example <i class="fas fa-arrow-up-right-from-square"></i></a>
+    </section>
+    <section id="momentum-timeline" class="component">
+      <h2><i class="fas fa-stream"></i> Momentum Timeline</h2>
+      <div class="meta-tags">
+        <span>Game Flow</span>
+        <span>Gesture Friendly</span>
+      </div>
+      <p>Chronological tracker illustrating momentum swings, pitching changes, and scoring bursts using gradient intensity.</p>
+      <ul class="details">
+        <li>Horizontal scroll with snap points for key leverage moments.</li>
+        <li>Supports annotations for coaching notes or Pro subscriber unlocks.</li>
+        <li>Accessible contrast states for high-contrast mode users.</li>
+      </ul>
+      <a class="cta" href="/analytics-api-integrated.html" target="_blank" rel="noopener">Inspect Timeline Demo <i class="fas fa-arrow-up-right-from-square"></i></a>
+    </section>
+    <section id="edge-alert-banner" class="component">
+      <h2><i class="fas fa-bullhorn"></i> Edge Alert Banner</h2>
+      <div class="meta-tags">
+        <span>Notifications</span>
+        <span>Dismissible</span>
+      </div>
+      <p>Banner module that surfaces matchup anomalies, weather alerts, or Pro-exclusive insights with inline action buttons.</p>
+      <ul class="details">
+        <li>Auto-dismiss timers with manual override for critical alerts.</li>
+        <li>Supports iconography variations based on alert severity.</li>
+        <li>Integrates with Edge alert automation triggers.</li>
+      </ul>
+      <a class="cta" href="/sports-analytics-dashboard.html" target="_blank" rel="noopener">Preview Alert Pattern <i class="fas fa-arrow-up-right-from-square"></i></a>
+    </section>
+    <section id="tabbed-intel-deck" class="component">
+      <h2><i class="fas fa-layer-group"></i> Tabbed Intel Deck</h2>
+      <div class="meta-tags">
+        <span>Navigation</span>
+        <span>Data Dense</span>
+      </div>
+      <p>Multi-tab container for switching between scouting reports, heatmaps, and video playlists without losing context.</p>
+      <ul class="details">
+        <li>Supports up to five tabs with keyboard navigation compliance.</li>
+        <li>Lazy-loads heavy content to protect initial performance budgets.</li>
+        <li>Provides Pro gating wrapper for premium intel tabs.</li>
+      </ul>
+      <a class="cta" href="/sports-analytics-dashboard-enhanced.html" target="_blank" rel="noopener">See Tabbed Layout <i class="fas fa-arrow-up-right-from-square"></i></a>
+    </section>
+    <section id="filter-drawer" class="component">
+      <h2><i class="fas fa-sliders-h"></i> Filter Drawer</h2>
+      <div class="meta-tags">
+        <span>Controls</span>
+        <span>Gestures</span>
+      </div>
+      <p>Slide-in drawer exposing situational filters, opponent toggles, and dataset switches tuned for thumb reach.</p>
+      <ul class="details">
+        <li>Supports multi-select chips with quick clear actions.</li>
+        <li>Anchored to bottom edge on mobile for ergonomic reach.</li>
+        <li>Persists selections per user session via secure storage.</li>
+      </ul>
+      <a class="cta" href="/index-enhanced.html#dashboard" rel="noopener">Open Dashboard Filters <i class="fas fa-arrow-right"></i></a>
+    </section>
+    <section id="performance-tile-grid" class="component">
+      <h2><i class="fas fa-chart-bar"></i> Performance Tile Grid</h2>
+      <div class="meta-tags">
+        <span>KPIs</span>
+        <span>Adaptive</span>
+      </div>
+      <p>Card grid showcasing headline KPIs with spark lines, ranking badges, and Pro paywall hints.</p>
+      <ul class="details">
+        <li>Responsive columns shift from 1 → 3 based on viewport.</li>
+        <li>Supports color-coded tiers and inline trend arrows.</li>
+        <li>Optimized for aria-live announcements on updates.</li>
+      </ul>
+      <a class="cta" href="/analytics-test.html" target="_blank" rel="noopener">Review Tile Demo <i class="fas fa-arrow-up-right-from-square"></i></a>
+    </section>
+    <section id="basepath-visualizer" class="component">
+      <h2><i class="fas fa-route"></i> Basepath Visualizer</h2>
+      <div class="meta-tags">
+        <span>Animation</span>
+        <span>Live Data</span>
+      </div>
+      <p>Animated basepath module syncing outs, pitch counts, and steal probability to highlight pressure states.</p>
+      <ul class="details">
+        <li>Renders baserunner avatars with fatigue indicators.</li>
+        <li>Hooks into win probability service for dynamic color coding.</li>
+        <li>Includes accessible text alternatives for screen readers.</li>
+      </ul>
+      <a class="cta" href="/sports-analytics-dashboard.html" rel="noopener">Watch Basepath Animation <i class="fas fa-arrow-right"></i></a>
+    </section>
+    <section id="scouting-checklist" class="component">
+      <h2><i class="fas fa-clipboard-list"></i> Scouting Checklist</h2>
+      <div class="meta-tags">
+        <span>Workflow</span>
+        <span>Exportable</span>
+      </div>
+      <p>Interactive checklist component for pre-series scouting deliverables with export-to-PDF controls.</p>
+      <ul class="details">
+        <li>Supports section headers and nested bullet points.</li>
+        <li>Automatically timestamps staff updates.</li>
+        <li>Integrates with Pro-only locking states for premium intel.</li>
+      </ul>
+      <a class="cta" href="/baseball/ncaab/hub" rel="noopener">Open Hub Workflow <i class="fas fa-arrow-right"></i></a>
+    </section>
+    <section id="injury-risk-monitor" class="component">
+      <h2><i class="fas fa-shield-alt"></i> Injury Risk Monitor</h2>
+      <div class="meta-tags">
+        <span>Health</span>
+        <span>Automation</span>
+      </div>
+      <p>Traffic-light dashboard synthesizing workload, biomechanics, and medical staff notes to mitigate injuries.</p>
+      <ul class="details">
+        <li>Color-coded tiers with tooltip explanations.</li>
+        <li>Configurable alert thresholds per position group.</li>
+        <li>Logs manual overrides for compliance auditing.</li>
+      </ul>
+      <a class="cta" href="/analytics.html" rel="noopener">Inspect Risk Model <i class="fas fa-arrow-right"></i></a>
+    </section>
+    <section id="command-center-footer" class="component">
+      <h2><i class="fas fa-headset"></i> Command Center Footer</h2>
+      <div class="meta-tags">
+        <span>Navigation</span>
+        <span>Mobile-First</span>
+      </div>
+      <p>Persistent mobile footer combining navigation shortcuts, live alerts, and quick actions for Diamond Pro users.</p>
+      <ul class="details">
+        <li>Supports up to five navigation icons with badge counts.</li>
+        <li>Hooks into notification feed for proactive alerts.</li>
+        <li>Adjusts for safe-area insets on modern devices.</li>
+      </ul>
+      <a class="cta" href="/index-enhanced.html#nav" rel="noopener">Review Navigation Pattern <i class="fas fa-arrow-right"></i></a>
+    </section>
+  </main>
+  <footer>
+    These components power the Blaze Sports Intel design system and keep every surface Omaha-ready.
+  </footer>
+</body>
+</html>
