@@ -210,7 +210,7 @@ CREATE TABLE model_training_runs (
     -- Performance metrics
     accuracy DECIMAL(5,4),
     precision_score DECIMAL(5,4),
-    recall SCORE DECIMAL(5,4),
+    recall_score DECIMAL(5,4),
     f1_score DECIMAL(5,4),
     mean_absolute_error DECIMAL(10,6),
     root_mean_squared_error DECIMAL(10,6),
