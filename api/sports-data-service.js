@@ -13,6 +13,7 @@ import SportsDataAdapter from './adapters/sports-data-adapter.js';
 import SportsAnalyticsModels from './models/sports-analytics-models.js';
 import MLPipelineService from './ml/ml-pipeline-service.js';
 import DatabaseConnectionService from './database/connection-service.js';
+import ConferenceStrengthService from './services/conferenceStrength.js';
 
 class SportsDataService {
     constructor(env, options = {}) {
@@ -35,6 +36,11 @@ class SportsDataService {
 
         this.adapter = new SportsDataAdapter(this.cache, this.logger);
         this.analytics = new SportsAnalyticsModels(this.logger);
+        this.conferenceStrength = new ConferenceStrengthService(this.cache, this.logger, {
+            iterations: 600,
+            mode: 'advanced',
+            cacheTtlSeconds: 90,
+        });
 
         // Initialize database connection
         this.database = new DatabaseConnectionService({
@@ -506,9 +512,85 @@ class SportsDataService {
                                 dataSource: "ESPN API",
                                 lastUpdated: new Date().toISOString()
                             };
-                        }
-                    }
-                }
+            }
+        }
+    }
+
+    async optimizeSchedulingProjection(request = {}) {
+        const {
+            teamId,
+            conference,
+            currentMetrics = {},
+            futureOpponents = [],
+            userTier = 'free',
+            iterations,
+            deterministic,
+        } = request;
+
+        if (!teamId) {
+            throw new Error('teamId is required for scheduling optimization');
+        }
+
+        const normalizedConference = conference || 'independent';
+        const currentRpi = this.normalizeNumber(currentMetrics.rpi, 0.5);
+        const currentSor = this.normalizeNumber(currentMetrics.sor, 0.5);
+        const currentWins = this.normalizeNumber(currentMetrics.wins, 0);
+        const currentLosses = this.normalizeNumber(currentMetrics.losses, 0);
+
+        const sanitizedOpponents = futureOpponents.map((opponent) => ({
+            teamId: opponent.teamId || opponent.id || `temp-${Math.random().toString(36).slice(2, 8)}`,
+            name: opponent.name || 'Opponent',
+            conference: opponent.conference || 'non-conference',
+            rpi: this.normalizeNumber(opponent.rpi, 0.5, 0, 1),
+            sor: this.normalizeNumber(opponent.sor, 0.5, 0, 1),
+            games: opponent.games && opponent.games > 0 ? opponent.games : 1,
+            winProbability:
+                typeof opponent.winProbability === 'number'
+                    ? Math.min(Math.max(opponent.winProbability, 0.01), 0.99)
+                    : undefined,
+            location: opponent.location === 'home' || opponent.location === 'away' ? opponent.location : 'neutral',
+        }));
+
+        const snapshot = {
+            teamId,
+            conference: normalizedConference,
+            currentRpi,
+            currentSor,
+            currentWins,
+            currentLosses,
+            futureOpponents: sanitizedOpponents,
+        };
+
+        const isDiamondPro = userTier === 'diamond-pro' || userTier === 'pro';
+        const resolvedIterations = isDiamondPro
+            ? Math.min(Math.max(iterations || 900, 400), 2500)
+            : 1;
+
+        const resolvedMode = isDiamondPro ? 'advanced' : 'basic';
+
+        const forecast = await this.conferenceStrength.forecastStrength(snapshot, {
+            mode: resolvedMode,
+            iterations: resolvedIterations,
+            deterministic: isDiamondPro ? deterministic ?? false : true,
+            cacheTtlSeconds: isDiamondPro ? 90 : 120,
+        });
+
+        return {
+            forecast,
+            tierAccess: {
+                userTier: isDiamondPro ? 'diamond-pro' : 'free',
+                advancedUnlocked: isDiamondPro,
+            },
+        };
+    }
+
+    normalizeNumber(value, fallback = 0, min = -Infinity, max = Infinity) {
+        const parsed = Number(value);
+        if (Number.isFinite(parsed)) {
+            return Math.min(Math.max(parsed, min), max);
+        }
+        return Math.min(Math.max(Number(fallback) || 0, min), max);
+    }
             }
 
             return this.getNFLFallbackData(teamKey);
