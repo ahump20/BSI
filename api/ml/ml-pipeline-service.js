@@ -946,8 +946,11 @@ class MLPipelineService {
                 let ageFactor = 0.5;
                 if (birthDate) {
                     const age = (calculationDate - birthDate) / (365.25 * 24 * 60 * 60 * 1000);
+                    // Normalize age to a 0-1 range based on typical professional athlete career span (18-38 years).
+                    // Ages below 18 map to 0, ages above 38 map to 1.
+                    // This factor allows the model to account for age-related performance trends, 
+                    // where younger players (closer to 18) may have different expected performance than older players (closer to 38).
                     ageFactor = Math.min(1, Math.max(0, (age - 18) / 20));
-                }
 
                 return {
                     player_id: row.player_id,
