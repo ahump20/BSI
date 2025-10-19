@@ -370,7 +370,7 @@ class RealAPIServer {
               const pa = Math.pow(pointsAgainst, exponent);
               const expectedWinPct = pf / (pf + pa);
               pythagorean = {
-                expectedWins: games ? Number(Math.round(expectedWinPct * games)) : null,
+                expectedWins: games ? Math.round(expectedWinPct * games) : null,
                 winPercentage: expectedWinPct.toFixed(3),
                 inputs: {
                   pointsFor,
