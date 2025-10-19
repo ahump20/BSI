@@ -4,9 +4,12 @@
   --accent-color: #00a86b;
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
+  --text-tagline: #fbbf24;
+  --text-subtitle: #d0d0d0;
   --live-indicator: #ff3b30;
   --border-color: #404040;
   --card-bg: #1e1e1e;
+  --font-display: 'Bebas Neue', 'Oswald', sans-serif;
 }
 
 * {
@@ -40,12 +43,46 @@ body {
   padding: 16px;
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.app-header h1 {
+.app-header-branding {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.app-title {
   font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-title-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.tagline {
+  font-size: 12px;
   font-weight: 600;
-  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-tagline);
+}
+
+.subtitle {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-subtitle);
+}
+
+.conference-filter {
+  margin-top: 4px;
 }
 
 .conference-filter select {
@@ -150,8 +187,18 @@ body {
 
 /* Tablet and up */
 @media (min-width: 768px) {
-  .app-header h1 {
-    font-size: 24px;
+  .app-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .app-title {
+    font-size: 26px;
+  }
+
+  .conference-filter {
+    margin-top: 0;
   }
 
   .app-content {
