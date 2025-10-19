@@ -1,12 +1,54 @@
 :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #2d2d2d;
-  --accent-color: #00a86b;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
-  --border-color: #404040;
-  --card-bg: #1e1e1e;
+  /* Burnt Orange tonal palette */
+  --color-burnt-orange-50: #fff6ef;
+  --color-burnt-orange-100: #ffe7d3;
+  --color-burnt-orange-200: #fdc99f;
+  --color-burnt-orange-300: #f7a468;
+  --color-burnt-orange-400: #ec8237;
+  --color-burnt-orange-500: #bf5700;
+  --color-burnt-orange-600: #9e4600;
+  --color-burnt-orange-700: #7f3600;
+  --color-burnt-orange-800: #5b2500;
+  --color-burnt-orange-900: #351500;
+
+  /* Dark neutrals */
+  --color-charcoal-950: #0f0703;
+  --color-charcoal-900: #150a05;
+  --color-charcoal-800: #1c0f08;
+  --color-charcoal-700: #26160d;
+  --color-charcoal-600: #322016;
+
+  /* Glassmorphism tokens */
+  --glass-background: rgba(18, 9, 5, 0.72);
+  --glass-border: rgba(255, 172, 102, 0.28);
+  --glass-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  --glass-blur: 18px;
+
+  /* Gradient accent */
+  --gradient-burnt-horizon: linear-gradient(
+    135deg,
+    var(--color-burnt-orange-500) 0%,
+    var(--color-burnt-orange-700) 45%,
+    var(--color-charcoal-950) 100%
+  );
+
+  /* Font tokens */
+  --font-primary: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Bebas Neue', 'Inter', 'Segoe UI', sans-serif;
+
+  /* Semantic aliases */
+  --primary-color: var(--color-charcoal-950);
+  --secondary-color: var(--color-charcoal-900);
+  --card-bg: var(--color-charcoal-800);
+  --border-color: rgba(255, 195, 160, 0.22);
+  --accent-color: var(--color-burnt-orange-500);
+  --accent-color-strong: var(--color-burnt-orange-600);
+  --text-primary: #fdf8f4;
+  --text-secondary: rgba(244, 221, 204, 0.72);
+  --text-tertiary: rgba(244, 221, 204, 0.56);
+  --text-on-accent: #140901;
+  --live-indicator: var(--color-burnt-orange-400);
+  --surface-overlay: rgba(23, 12, 7, 0.75);
 }
 
 * {
@@ -16,9 +58,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--primary-color);
@@ -97,7 +137,7 @@ body {
 }
 
 .bottom-nav button:active {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(191, 87, 0, 0.16);
 }
 
 .nav-icon {
