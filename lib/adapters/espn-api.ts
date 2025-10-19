@@ -28,6 +28,16 @@ export class ESPNAPIAdapter {
     this.baseUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball';
   }
 
+  private slugify(value: string | undefined): string | undefined {
+    if (!value) return undefined;
+
+    return value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .replace(/-{2,}/g, '-');
+  }
+
   /**
    * Fetch games for a specific date
    */
@@ -105,6 +115,8 @@ export class ESPNAPIAdapter {
     // Find home and away teams
     const homeTeam = competitors.find((c: any) => c.homeAway === 'home') || {};
     const awayTeam = competitors.find((c: any) => c.homeAway === 'away') || {};
+    const homeTeamName = homeTeam.team?.displayName || homeTeam.team?.nickname || `Team ${homeTeam.team?.id}`;
+    const awayTeamName = awayTeam.team?.displayName || awayTeam.team?.nickname || `Team ${awayTeam.team?.id}`;
 
     // Map ESPN status to standard status
     const statusType = competition.status?.type?.name?.toLowerCase() || '';
@@ -129,6 +141,10 @@ export class ESPNAPIAdapter {
       status,
       homeTeamId: homeTeam.team?.id?.toString() || homeTeam.id?.toString() || '',
       awayTeamId: awayTeam.team?.id?.toString() || awayTeam.id?.toString() || '',
+      homeTeamName,
+      awayTeamName,
+      homeTeamSlug: this.slugify(homeTeamName),
+      awayTeamSlug: this.slugify(awayTeamName),
       homeScore: parseFloat(homeTeam.score) || null,
       awayScore: parseFloat(awayTeam.score) || null,
       venueId: competition.venue?.id?.toString(),

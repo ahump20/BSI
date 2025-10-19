@@ -644,3 +644,12 @@ enum FeedPrecision { EVENT | PITCH }
 **Document Version**: 1.1.0
 **Last Updated**: 2025-10-13 22:30 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
+
+## Phase 2.5: Database Modernization (2025-10-19)
+
+### Highlights
+- ✅ Authored new Prisma schema (`prisma/schema.prisma`) for baseball-first domain coverage (conferences, teams, players, games, events, stats, rankings, articles).
+- ✅ Generated baseline migration (`prisma/migrations/20241019_baseball_foundation`) and PostgreSQL reference DDL (`schema/001_initial_schema.sql`).
+- ✅ Added Accelerate-ready client (`lib/db/client.ts`) with Edge/runtime pooling configuration.
+- ✅ Seed fixtures for SEC showdown (Texas vs LSU) with season stats + news (`prisma/seed.ts`, `prisma/fixtures/baseball.json`).
+- ⚠️ `prisma migrate dev` attempted against local Postgres placeholder but blocked (no server in container). Migration SQL emitted via `prisma migrate diff` for deployment pipelines.

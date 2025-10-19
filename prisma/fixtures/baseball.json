@@ -1,0 +1,220 @@
+{
+  "conferences": [
+    {
+      "id": "sec-baseball",
+      "slug": "sec-baseball",
+      "name": "Southeastern Conference",
+      "sport": "BASEBALL",
+      "division": "D1",
+      "shortName": "SEC",
+      "region": "Southeast"
+    }
+  ],
+  "teams": [
+    {
+      "id": "TEXAS",
+      "externalId": "TEXAS",
+      "slug": "texas-longhorns",
+      "name": "Texas Longhorns",
+      "nickname": "Longhorns",
+      "sport": "BASEBALL",
+      "division": "D1",
+      "school": "University of Texas",
+      "abbreviation": "TEX",
+      "city": "Austin",
+      "state": "TX",
+      "primaryColor": "#BF5700",
+      "secondaryColor": "#333F48",
+      "logoUrl": "https://assets.bsi.dev/logos/texas.svg",
+      "conferenceId": "sec-baseball"
+    },
+    {
+      "id": "LSU",
+      "externalId": "LSU",
+      "slug": "lsu-tigers",
+      "name": "LSU Tigers",
+      "nickname": "Tigers",
+      "sport": "BASEBALL",
+      "division": "D1",
+      "school": "Louisiana State University",
+      "abbreviation": "LSU",
+      "city": "Baton Rouge",
+      "state": "LA",
+      "primaryColor": "#461D7C",
+      "secondaryColor": "#FDD023",
+      "logoUrl": "https://assets.bsi.dev/logos/lsu.svg",
+      "conferenceId": "sec-baseball"
+    }
+  ],
+  "players": [
+    {
+      "id": "player-hookem",
+      "externalId": "player-hookem",
+      "slug": "sam-johnson",
+      "teamId": "TEXAS",
+      "firstName": "Sam",
+      "lastName": "Johnson",
+      "fullName": "Sam Johnson",
+      "position": "RHP",
+      "jerseyNumber": 14,
+      "bats": "R",
+      "throws": "R",
+      "height": "6'2\"",
+      "weight": 198,
+      "classYear": "JR",
+      "hometown": "Dallas",
+      "homeState": "TX"
+    },
+    {
+      "id": "player-geaux",
+      "externalId": "player-geaux",
+      "slug": "ben-thomas",
+      "teamId": "LSU",
+      "firstName": "Ben",
+      "lastName": "Thomas",
+      "fullName": "Ben Thomas",
+      "position": "CF",
+      "jerseyNumber": 7,
+      "bats": "L",
+      "throws": "R",
+      "height": "6'0\"",
+      "weight": 190,
+      "classYear": "SO",
+      "hometown": "Baton Rouge",
+      "homeState": "LA"
+    }
+  ],
+  "games": [
+    {
+      "id": "game-texas-lsu-2024",
+      "externalId": "2024-02-16-texas-lsu",
+      "sport": "BASEBALL",
+      "division": "D1",
+      "season": 2024,
+      "seasonType": "REGULAR",
+      "scheduledAt": "2024-02-16T23:00:00.000Z",
+      "status": "FINAL",
+      "venue": "Minute Maid Park",
+      "city": "Houston",
+      "state": "TX",
+      "providerName": "Fixture",
+      "feedPrecision": "EVENT",
+      "homeTeamId": "LSU",
+      "awayTeamId": "TEXAS",
+      "homeScore": 6,
+      "awayScore": 4
+    }
+  ],
+  "teamStats": [
+    {
+      "teamId": "TEXAS",
+      "season": 2024,
+      "scope": "SEASON",
+      "wins": 42,
+      "losses": 20,
+      "confWins": 18,
+      "confLosses": 12,
+      "homeWins": 24,
+      "homeLosses": 6,
+      "awayWins": 12,
+      "awayLosses": 10,
+      "runsScored": 368,
+      "runsAllowed": 290,
+      "battingAvg": 0.292,
+      "era": 3.78,
+      "fieldingPct": 0.977,
+      "strengthOfSched": 0.61,
+      "rpi": 0.623,
+      "pythagWins": 41.2
+    },
+    {
+      "teamId": "LSU",
+      "season": 2024,
+      "scope": "SEASON",
+      "wins": 45,
+      "losses": 18,
+      "confWins": 20,
+      "confLosses": 10,
+      "homeWins": 28,
+      "homeLosses": 4,
+      "awayWins": 11,
+      "awayLosses": 9,
+      "runsScored": 402,
+      "runsAllowed": 270,
+      "battingAvg": 0.305,
+      "era": 3.22,
+      "fieldingPct": 0.982,
+      "strengthOfSched": 0.64,
+      "rpi": 0.667,
+      "pythagWins": 44.8
+    }
+  ],
+  "playerStats": [
+    {
+      "playerId": "player-hookem",
+      "teamId": "TEXAS",
+      "season": 2024,
+      "scope": "SEASON",
+      "gamesPlayed": 28,
+      "inningsPitched": 72.1,
+      "strikeoutsPitched": 86,
+      "era": 2.95,
+      "whip": 1.04
+    },
+    {
+      "playerId": "player-geaux",
+      "teamId": "LSU",
+      "season": 2024,
+      "scope": "SEASON",
+      "gamesPlayed": 58,
+      "atBats": 210,
+      "runs": 54,
+      "hits": 76,
+      "homeRuns": 15,
+      "rbis": 48,
+      "walks": 32,
+      "strikeouts": 40,
+      "stolenBases": 22,
+      "battingAvg": 0.362,
+      "obp": 0.441,
+      "slg": 0.598,
+      "ops": 1.039
+    }
+  ],
+  "rankings": [
+    {
+      "sport": "BASEBALL",
+      "poll": "DI Baseball Top 25",
+      "season": 2024,
+      "week": 8,
+      "teamId": "LSU",
+      "rank": 2,
+      "points": 1475,
+      "firstPlaceVotes": 3
+    },
+    {
+      "sport": "BASEBALL",
+      "poll": "DI Baseball Top 25",
+      "season": 2024,
+      "week": 8,
+      "teamId": "TEXAS",
+      "rank": 9,
+      "points": 987
+    }
+  ],
+  "articles": [
+    {
+      "slug": "lsu-outlasts-texas-opening-weekend-2024",
+      "title": "LSU Outlasts Texas in Instant-Classic Houston Opener",
+      "summary": "Ben Thomas delivered a three-hit night as LSU edged Texas in a 6-4 Friday showdown at the Shriners College Classic.",
+      "body": "LSU jumped ahead with a three-run third inning and never trailed, leaning on a deep bullpen to close the door. Texas starter Sam Johnson fanned nine but exited in the sixth after 103 pitches.",
+      "status": "PUBLISHED",
+      "sport": "BASEBALL",
+      "teamId": "LSU",
+      "gameId": "game-texas-lsu-2024",
+      "author": "Diamond Insights Desk",
+      "tags": ["game-recap", "sec"],
+      "publishedAt": "2024-02-17T03:15:00.000Z"
+    }
+  ]
+}

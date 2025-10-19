@@ -27,6 +27,16 @@ export class NCAAAPIAdapter {
     this.baseUrl = 'https://data.ncaa.com/casablanca';
   }
 
+  private slugify(value: string | undefined): string | undefined {
+    if (!value) return undefined;
+
+    return value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .replace(/-{2,}/g, '-');
+  }
+
   /**
    * Fetch games for a specific date
    */
@@ -106,6 +116,8 @@ export class NCAAAPIAdapter {
     // Extract team IDs from NCAA structure
     const home = game.game?.home || {};
     const away = game.game?.away || {};
+    const homeTeamName = home.names?.full || home.names?.short || home.team?.displayName || `Team ${home.teamId}`;
+    const awayTeamName = away.names?.full || away.names?.short || away.team?.displayName || `Team ${away.teamId}`;
 
     return {
       id: game.game?.gameID?.toString() || game.id?.toString() || '',
@@ -113,6 +125,10 @@ export class NCAAAPIAdapter {
       status,
       homeTeamId: home.teamId?.toString() || home.id?.toString() || '',
       awayTeamId: away.teamId?.toString() || away.id?.toString() || '',
+      homeTeamName,
+      awayTeamName,
+      homeTeamSlug: this.slugify(homeTeamName),
+      awayTeamSlug: this.slugify(awayTeamName),
       homeScore: home.score ?? null,
       awayScore: away.score ?? null,
       venueId: game.game?.location?.venueId?.toString(),

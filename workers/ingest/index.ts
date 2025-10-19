@@ -19,11 +19,10 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { Prisma, PrismaClient } from '@prisma/client';
+import { GameStatus, Prisma, SeasonType, StatScope } from '@prisma/client/edge';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
+import { prisma } from '../../lib/db/client';
 import type { Env } from './types';
-
-const prisma = new PrismaClient();
 
 async function executeWithConstraintGuard<T>(
   operation: () => Promise<T>,
@@ -161,7 +160,7 @@ export default {
 async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting live games ingestion...');
 
-  const providerManager = new ProviderManager(env);
+  const providerManager = new ProviderManager(env, prisma);
   const currentDate = new Date();
   const season = currentDate.getFullYear();
 
@@ -183,29 +182,28 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
           prisma.game.upsert({
             where: { externalId: game.id },
             update: {
-              status: game.status,
+              status: game.status as GameStatus,
               homeScore: game.homeScore,
               awayScore: game.awayScore,
               currentInning: game.currentInning,
               currentInningHalf: game.currentInningHalf,
               balls: game.balls,
               strikes: game.strikes,
-              outs: game.outs,
-              lastUpdated: new Date()
+              outs: game.outs
             },
             create: {
               externalId: game.id,
               sport: 'BASEBALL',
               division: 'D1',
               season,
-              seasonType: 'REGULAR',
+              seasonType: SeasonType.REGULAR,
               scheduledAt: new Date(game.scheduledAt),
-              status: game.status,
+              status: game.status as GameStatus,
               homeTeamId: game.homeTeamId,
               awayTeamId: game.awayTeamId,
               homeScore: game.homeScore,
               awayScore: game.awayScore,
-              venueId: game.venueId,
+              venue: game.venueId,
               currentInning: game.currentInning,
               currentInningHalf: game.currentInningHalf,
               balls: game.balls,
@@ -249,7 +247,6 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting team stats ingestion...');
 
-  const providerManager = new ProviderManager(env);
   const season = new Date().getFullYear();
 
   try {
@@ -284,9 +281,10 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
             () =>
               prisma.teamStats.upsert({
                 where: {
-                  teamId_season: {
+                  teamId_season_scope: {
                     teamId: team.id,
-                    season
+                    season,
+                    scope: StatScope.SEASON
                   }
                 },
                 update: {
@@ -306,11 +304,12 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
                   rpi: stats.rpi,
                   strengthOfSched: stats.strengthOfSched,
                   pythagWins: stats.pythagWins,
-                  lastUpdated: new Date()
+                  lastSyncedAt: new Date()
                 },
                 create: {
                   teamId: team.id,
                   season,
+                  scope: StatScope.SEASON,
                   wins: stats.wins,
                   losses: stats.losses,
                   confWins: stats.confWins,
@@ -349,7 +348,7 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
 
     // Cache standings in KV (4hr TTL)
     const standings = await prisma.teamStats.findMany({
-      where: { season },
+      where: { season, scope: StatScope.SEASON },
       include: {
         team: {
           select: {
@@ -398,7 +397,7 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
 async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting historical data ingestion...');
 
-  const providerManager = new ProviderManager(env);
+  const providerManager = new ProviderManager(env, prisma);
   const season = new Date().getFullYear();
 
   try {
@@ -488,20 +487,20 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
 async function recalculateRPI(season: number): Promise<void> {
   // Get all teams with their records
   const teams = await prisma.teamStats.findMany({
-    where: { season },
+    where: { season, scope: StatScope.SEASON },
     include: {
       team: {
         include: {
           homeGames: {
             where: {
               season,
-              status: 'FINAL'
+              status: GameStatus.FINAL
             }
           },
           awayGames: {
             where: {
               season,
-              status: 'FINAL'
+              status: GameStatus.FINAL
             }
           }
         }
@@ -527,9 +526,10 @@ async function recalculateRPI(season: number): Promise<void> {
       () =>
         prisma.teamStats.update({
           where: {
-            teamId_season: {
+            teamId_season_scope: {
               teamId: teamStat.teamId,
-              season
+              season,
+              scope: StatScope.SEASON
             }
           },
           data: { rpi }
@@ -544,16 +544,16 @@ async function recalculateRPI(season: number): Promise<void> {
  */
 async function recalculateStrengthOfSchedule(season: number): Promise<void> {
   const teams = await prisma.teamStats.findMany({
-    where: { season },
+    where: { season, scope: StatScope.SEASON },
     include: {
       team: {
         include: {
           homeGames: {
-            where: { season, status: 'FINAL' },
+            where: { season, status: GameStatus.FINAL },
             include: { awayTeam: { include: { teamStats: true } } }
           },
           awayGames: {
-            where: { season, status: 'FINAL' },
+            where: { season, status: GameStatus.FINAL },
             include: { homeTeam: { include: { teamStats: true } } }
           }
         }
@@ -566,7 +566,7 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
 
     // Collect opponent win percentages
     teamStat.team.homeGames.forEach(game => {
-      const oppStats = game.awayTeam.teamStats.find(s => s.season === season);
+      const oppStats = game.awayTeam.teamStats.find(s => s.season === season && s.scope === StatScope.SEASON);
       if (oppStats) {
         const oppGames = oppStats.wins + oppStats.losses;
         if (oppGames > 0) {
@@ -576,7 +576,7 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
     });
 
     teamStat.team.awayGames.forEach(game => {
-      const oppStats = game.homeTeam.teamStats.find(s => s.season === season);
+      const oppStats = game.homeTeam.teamStats.find(s => s.season === season && s.scope === StatScope.SEASON);
       if (oppStats) {
         const oppGames = oppStats.wins + oppStats.losses;
         if (oppGames > 0) {
@@ -594,9 +594,10 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
       () =>
         prisma.teamStats.update({
           where: {
-            teamId_season: {
+            teamId_season_scope: {
               teamId: teamStat.teamId,
-              season
+              season,
+              scope: StatScope.SEASON
             }
           },
           data: { strengthOfSched: sos }
@@ -611,7 +612,7 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
  */
 async function recalculatePythagoreanWins(season: number): Promise<void> {
   const teams = await prisma.teamStats.findMany({
-    where: { season }
+    where: { season, scope: StatScope.SEASON }
   });
 
   // Baseball exponent: typically 1.83
@@ -630,9 +631,10 @@ async function recalculatePythagoreanWins(season: number): Promise<void> {
         () =>
           prisma.teamStats.update({
             where: {
-              teamId_season: {
+              teamId_season_scope: {
                 teamId: teamStat.teamId,
-                season
+                season,
+                scope: StatScope.SEASON
               }
             },
             data: { pythagWins }

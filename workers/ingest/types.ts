@@ -33,6 +33,10 @@ export interface ProviderGame {
   status: 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED';
   homeTeamId: string;
   awayTeamId: string;
+  homeTeamName: string;
+  awayTeamName: string;
+  homeTeamSlug?: string;
+  awayTeamSlug?: string;
   homeScore: number | null;
   awayScore: number | null;
   venueId?: string;
