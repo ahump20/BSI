@@ -94,4 +94,3 @@ export function SportSwitcher({ currentSport = 'baseball' }: SportSwitcherProps)
   );
 }
 
-export default SportSwitcher;
