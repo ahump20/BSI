@@ -1,20 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
+import MobileNav from './src/components/navigation/MobileNav';
 import './App.css';
 
 function App() {
-  const [activeView, setActiveView] = useState('live');
+  const [activeView, setActiveView] = useState('scores');
   const [selectedGame, setSelectedGame] = useState(null);
   const [liveGames, setLiveGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMobileNavVisible, setIsMobileNavVisible] = useState(false);
 
   useEffect(() => {
-    // Fetch live games on mount and set up polling
     fetchLiveGames();
-    const interval = setInterval(fetchLiveGames, 30000); // Poll every 30 seconds
+    const interval = setInterval(fetchLiveGames, 30000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const updateVisibility = () => setIsMobileNavVisible(mediaQuery.matches);
+
+    updateVisibility();
+    mediaQuery.addEventListener('change', updateVisibility);
+
+    return () => mediaQuery.removeEventListener('change', updateVisibility);
   }, []);
 
   const fetchLiveGames = async () => {
@@ -34,38 +49,109 @@ function App() {
     setActiveView('boxscore');
   };
 
+  const handleNavigation = (key, href) => {
+    switch (key) {
+      case 'scores':
+        setActiveView('scores');
+        return true;
+      case 'teams':
+        setActiveView('teams');
+        return true;
+      case 'standings':
+        setActiveView('standings');
+        return true;
+      case 'search':
+        setActiveView('search');
+        return true;
+      case 'account':
+        setActiveView('account');
+        return true;
+      default:
+        window.location.href = href;
+        return false;
+    }
+  };
+
+  const navItems = useMemo(
+    () => [
+      { key: 'scores', label: 'Scores', href: '/scores', icon: '🏟️' },
+      { key: 'teams', label: 'Teams', href: '/teams', icon: '👥' },
+      { key: 'standings', label: 'Standings', href: '/standings', icon: '📈' },
+      { key: 'search', label: 'Search', href: '/search', icon: '🔍' },
+    ],
+    [],
+  );
+
+  const extendedLinks = useMemo(
+    () => [
+      { key: 'account', label: 'Account', href: '/account', icon: '👤' },
+      { key: 'news', label: 'News', href: '/news', icon: '📰' },
+      { key: 'settings', label: 'Settings', href: '/settings', icon: '⚙️' },
+    ],
+    [],
+  );
+
+  const activeNavKey = activeView === 'boxscore' ? 'scores' : activeView;
+
   const renderView = () => {
     switch (activeView) {
-      case 'live':
+      case 'scores':
         return (
-          <LiveGameTracker 
-            games={liveGames} 
+          <LiveGameTracker
+            games={liveGames}
             onGameSelect={handleGameSelect}
             loading={loading}
           />
         );
       case 'boxscore':
         return selectedGame ? (
-          <BoxScore 
-            game={selectedGame} 
-            onBack={() => setActiveView('live')}
-          />
+          <BoxScore game={selectedGame} onBack={() => setActiveView('scores')} />
         ) : (
           <div className="empty-state">Select a game to view details</div>
         );
       case 'standings':
         return <Standings />;
+      case 'teams':
+        return (
+          <section className="placeholder-view" aria-labelledby="teams-view-title">
+            <h2 id="teams-view-title">Teams Directory</h2>
+            <p>
+              Explore detailed team capsules, roster intel, and trends. This view is
+              currently in development.
+            </p>
+          </section>
+        );
+      case 'search':
+        return (
+          <section className="placeholder-view" aria-labelledby="search-view-title">
+            <h2 id="search-view-title">Search Blaze Sports Intel</h2>
+            <p>
+              Use the global search to surface programs, players, and matchups. The
+              search experience will ship alongside the recruiting tracker.
+            </p>
+          </section>
+        );
+      case 'account':
+        return (
+          <section className="placeholder-view" aria-labelledby="account-view-title">
+            <h2 id="account-view-title">Sign in to Diamond Pro</h2>
+            <p>
+              Manage your subscription, notification settings, and personalization
+              controls right here.
+            </p>
+          </section>
+        );
       default:
         return null;
     }
   };
 
   return (
-    <div className="app">
+    <div className={`app${isMobileNavVisible ? ' app--mobile-nav' : ''}`}>
       <header className="app-header">
         <h1>College Baseball Live</h1>
         <div className="conference-filter">
-          <select>
+          <select aria-label="Filter by conference">
             <option value="all">All Conferences</option>
             <option value="sec">SEC</option>
             <option value="acc">ACC</option>
@@ -76,33 +162,16 @@ function App() {
         </div>
       </header>
 
-      <nav className="bottom-nav">
-        <button 
-          className={activeView === 'live' ? 'active' : ''}
-          onClick={() => setActiveView('live')}
-        >
-          <span className="nav-icon">⚾</span>
-          Live
-        </button>
-        <button 
-          className={activeView === 'boxscore' ? 'active' : ''}
-          onClick={() => setActiveView('boxscore')}
-        >
-          <span className="nav-icon">📊</span>
-          Box Score
-        </button>
-        <button 
-          className={activeView === 'standings' ? 'active' : ''}
-          onClick={() => setActiveView('standings')}
-        >
-          <span className="nav-icon">🏆</span>
-          Standings
-        </button>
-      </nav>
+      <main className="app-content">{renderView()}</main>
 
-      <main className="app-content">
-        {renderView()}
-      </main>
+      {isMobileNavVisible && (
+        <MobileNav
+          items={navItems}
+          extendedLinks={extendedLinks}
+          activeKey={activeNavKey}
+          onNavigate={handleNavigation}
+        />
+      )}
     </div>
   );
 }
