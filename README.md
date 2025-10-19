@@ -406,20 +406,24 @@ analysis = client.biomech.get_analysis('athlete_001')
 
 ## Environment Variables
 
-```bash
-# Copy example config
-cp .env.example .env
-
-# Core settings
-POSTGRES_DB=blaze_biomech
-REDIS_URL=redis://redis:6379
-S3_BUCKET=blaze-pose-data
-
-# External integrations
-KINTRAX_API_KEY=your_key_here
-HAWKEYE_ENDPOINT=https://api.hawkeye.com
-ENIGMA_ENGINE_URL=https://enigma.blazesportsintel.com
-```
+1. Copy the templates and keep them out of source control:
+   ```bash
+   cp .env.example .env
+   cp .env.local.example .env.local
+   ```
+2. Populate secrets by category so each integration stays documented:
+   - **Cloudflare R2 & Supabase S3** – `CLOUDFLARE_R2_ACCOUNT_ID`, `CLOUDFLARE_R2_ACCESS_KEY_ID`, `CLOUDFLARE_R2_SECRET_ACCESS_KEY`, `CLOUDFLARE_R2_BUCKET_NAME`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_S3_ACCESS_KEY_ID`, `SUPABASE_S3_SECRET_ACCESS_KEY`.
+   - **Netlify / Vercel / Render automation** – `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `RENDER_API_KEY`, `RENDER_SERVICE_ID`.
+   - **GitHub / NPM / Cursor tooling** – `GITHUB_TOKEN`, `GITHUB_APP_ID`, `NPM_TOKEN`, `CURSOR_API_KEY`.
+   - **Sentry / Datadog / Applitools observability** – `SENTRY_DSN`, `DATADOG_API_KEY`, `DATADOG_APP_KEY`, `APPLITOOLS_API_KEY`, `GRAFANA_USER`, `GRAFANA_PASSWORD`, `PROMETHEUS_PORT`.
+   - **Auth0 / Stripe** – `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, `AUTH0_CLIENT_SECRET`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
+   - **Sports feeds** – `SPORTSDATAIO_API_KEY`, `MLB_API_KEY`, `NFL_API_KEY`, `NBA_API_KEY`, `NCAA_API_KEY`, `CFBDATA_API_KEY`, `THEODDS_API_KEY`, `ESPN_API_KEY`, `HIGHLIGHTLY_API_KEY`, `SPORTRADAR_API_KEY`, `INGEST_SECRET`.
+   - **Automation tools** – `PAGERDUTY_TOKEN`, `PAGERDUTY_ROUTING_KEY`, `SLACK_WEBHOOK_URL`, `GITHUB_ACTIONS_TOKEN`.
+   - **AI providers** – `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_GEMINI_API_KEY`.
+   - **CMS & product tooling** – `CONTENTFUL_SPACE_ID`, `CONTENTFUL_DELIVERY_TOKEN`, `NOTION_API_KEY`, `LINEAR_API_KEY`, `JIRA_API_TOKEN`, `SHORTCUT_API_TOKEN`.
+   - **ngrok & Cucumber QA utilities** – `NGROK_AUTHTOKEN`, `CUCUMBER_PUBLISH_TOKEN`.
+   - **Analytics** – `GA_MEASUREMENT_ID`, `POSTHOG_API_KEY`, `MIXPANEL_PROJECT_TOKEN`, `PLAUSIBLE_API_KEY`.
+3. Reference `.env.local.example` for the developer overrides you expect to set on your workstation.
 
 ## Development
 
