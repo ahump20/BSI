@@ -186,7 +186,7 @@
 }
 
 .decision-pitcher {
-  background-color: rgba(191, 87, 0, 0.1);
+  background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
 .decision {
