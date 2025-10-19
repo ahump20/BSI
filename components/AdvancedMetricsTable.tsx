@@ -450,7 +450,7 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
 
       <footer className="advanced-metrics__footer">
         <span>Diamond Pro metrics refreshed {data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString() : 'recently'}.</span>
-        <span className="advanced-metrics__powered">Powered by Stripe entitlements · Highlightly ingest placeholder.</span>
+        <span className="advanced-metrics__powered">Powered by Stripe entitlements · Highlight ingest placeholder.</span>
       </footer>
 
       <MediaModal clip={activeClip} onClose={() => setActiveClip(null)} />
