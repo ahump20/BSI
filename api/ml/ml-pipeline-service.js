@@ -1850,7 +1850,10 @@ class SportsFeatureEngineer {
             SELECT AVG(CASE
                     WHEN (g.home_team_id = $1 AND g.home_score > g.away_score)
                       OR (g.away_team_id = $1 AND g.away_score > g.home_score)
-                    THEN 1.0 ELSE 0.0 END) AS win_rate
+                    THEN 1.0
+                    WHEN g.home_score = g.away_score THEN 0.5
+                    ELSE 0.0
+                END) AS win_rate
             FROM (
                 SELECT *
                 FROM games g
