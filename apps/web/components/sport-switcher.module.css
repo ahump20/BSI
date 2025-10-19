@@ -39,6 +39,14 @@
   transform: rotate(90deg);
 }
 
+.fabOpen:hover {
+  transform: rotate(90deg) scale(1.05);
+  box-shadow: 0 0.75rem 1.75rem rgba(255, 107, 0, 0.45);
+}
+
+.fabOpen:active {
+  transform: rotate(90deg) scale(0.95);
+}
 .menu {
   position: absolute;
   bottom: 4.75rem;
