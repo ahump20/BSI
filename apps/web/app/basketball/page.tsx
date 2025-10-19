@@ -1,5 +1,20 @@
 import Link from 'next/link';
 import { recordRuntimeEvent } from '../../lib/observability/datadog-runtime';
+import {
+  card,
+  cardBody,
+  cardHeading,
+  commandContainer,
+  featureGrid,
+  heroPill,
+  heroSection,
+  heroSubtitle,
+  heroTitle,
+  inlineLink,
+  landingShell,
+  navHeadingTitle,
+  sectionWrapper
+} from '../../lib/ui/styles';
 
 export default async function BasketballLandingPage() {
   void recordRuntimeEvent('route_render', { route: '/basketball', sport: 'basketball' });
@@ -20,31 +35,34 @@ export default async function BasketballLandingPage() {
   ];
 
   return (
-    <div className="di-shell">
-      <main className="di-container" aria-labelledby="basketball-heading">
-        <section className="di-hero" id="basketball-heading">
-          <span className="di-pill">Hardwood Signal</span>
-          <h1 className="di-title">Basketball Intelligence Preview</h1>
-          <p className="di-subtitle">
+    <div className={landingShell}>
+      <main className={commandContainer} aria-labelledby="basketball-heading">
+        <section className={heroSection} id="basketball-heading">
+          <span className={heroPill}>Hardwood Signal</span>
+          <h1 className={heroTitle}>Basketball Intelligence Preview</h1>
+          <p className={heroSubtitle}>
             BlazeSportsIntel keeps the culture connected—dark-mode dashboards, mobile-first scouting packets, and actionable
             recruiting telemetry.
           </p>
         </section>
 
-        <section className="di-section" aria-labelledby="basketball-highlights">
-          <h2 id="basketball-highlights" className="di-page-title">
+        <section className={sectionWrapper} aria-labelledby="basketball-highlights">
+          <h2 id="basketball-highlights" className={navHeadingTitle}>
             Coming Online Soon
           </h2>
-          <div className="di-card-grid">
+          <div className={featureGrid}>
             {highlights.map((highlight) => (
-              <article key={highlight.title} className="di-card">
-                <h3>{highlight.title}</h3>
-                <p>{highlight.description}</p>
+              <article key={highlight.title} className={card}>
+                <h3 className={cardHeading}>{highlight.title}</h3>
+                <p className={cardBody}>{highlight.description}</p>
               </article>
             ))}
           </div>
-          <Link className="di-inline-link" href="/auth/sign-up">
+          <Link className={inlineLink} href="/auth/sign-up">
             Join the Hardwood Pilot
+            <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+              →
+            </span>
           </Link>
         </section>
       </main>

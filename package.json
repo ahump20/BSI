@@ -23,5 +23,11 @@
     "prisma": "^6.17.1",
     "vite": "^5.0.0",
     "wrangler": "^3.22.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.2",
+      "@types/react-dom": "19.2.2"
+    }
   }
 }

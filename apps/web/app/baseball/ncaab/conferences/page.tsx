@@ -1,4 +1,17 @@
 import Link from 'next/link';
+import {
+  bulletList,
+  card,
+  cardBody,
+  cardGrid,
+  cardHeading,
+  inlineLink,
+  pageKicker,
+  pageSection,
+  pageShell,
+  pageSubtitle,
+  pageTitle
+} from '../../../../lib/ui/styles';
 
 const conferenceFlows = [
   { href: '/baseball/ncaab/standings', label: 'View Standings' },
@@ -8,32 +21,35 @@ const conferenceFlows = [
 
 export default function BaseballConferencesPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · Conference Pulse</span>
-        <h1 className="di-page-title">Conference Intelligence</h1>
-        <p className="di-page-subtitle">
+    <main className={pageShell}>
+      <section className={pageSection}>
+        <span className={pageKicker}>Diamond Insights · Conference Pulse</span>
+        <h1 className={pageTitle}>Conference Intelligence</h1>
+        <p className={pageSubtitle}>
           SEC, ACC, Big 12, Sun Belt, and every league will receive parity coverage with tempo, offensive profile, and travel
           strain metrics. This placeholder keeps information architecture wired into production while dashboards are staged.
         </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Planned Modules</h2>
-            <p>Future widgets will display tournament résumés, bubble ratings, and historical matchup context.</p>
-            <ul className="di-list">
+        <div className={cardGrid}>
+          <article className={card}>
+            <h2 className={cardHeading}>Planned Modules</h2>
+            <p className={cardBody}>Future widgets will display tournament résumés, bubble ratings, and historical matchup context.</p>
+            <ul className={bulletList}>
               <li>Automatic NCAA résumé tracker with quad breakdowns.</li>
               <li>Conference power score built on run differential and schedule hardness.</li>
               <li>Travel analytics for coaches and operations leads.</li>
             </ul>
           </article>
-          <article className="di-card">
-            <h2>Next Steps</h2>
-            <p>Select another live surface.</p>
-            <ul className="di-list">
+          <article className={card}>
+            <h2 className={cardHeading}>Next Steps</h2>
+            <p className={cardBody}>Select another live surface.</p>
+            <ul className={bulletList}>
               {conferenceFlows.map((flow) => (
                 <li key={flow.href}>
-                  <Link className="di-inline-link" href={flow.href}>
+                  <Link className={inlineLink} href={flow.href}>
                     {flow.label}
+                    <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+                      →
+                    </span>
                   </Link>
                 </li>
               ))}

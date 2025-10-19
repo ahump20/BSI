@@ -1,37 +1,56 @@
 import Link from 'next/link';
+import {
+  bulletList,
+  card,
+  cardBody,
+  cardGrid,
+  cardHeading,
+  inlineLink,
+  pageKicker,
+  pageSection,
+  pageShell,
+  pageSubtitle,
+  pageTitle
+} from '../../../lib/ui/styles';
 
 export default function SignUpPage() {
   return (
-    <main className="di-page">
-      <section className="di-section di-auth">
-        <span className="di-kicker">Diamond Insights · Auth</span>
-        <h1 className="di-page-title">Create Account</h1>
-        <p className="di-page-subtitle">
+    <main className={pageShell}>
+      <section className={pageSection}>
+        <span className={pageKicker}>Diamond Insights · Auth</span>
+        <h1 className={pageTitle}>Create Account</h1>
+        <p className={pageSubtitle}>
           Registration flows are nearly online. This placeholder maintains the URL structure and dark-mode design while we hook
           Clerk onboarding, Stripe trials, and paywall states.
         </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Diamond Pro Access</h2>
-            <p>Expect gated content, staff collaboration spaces, and live alert configuration post sign-up.</p>
-            <ul className="di-list">
+        <div className={cardGrid}>
+          <article className={card}>
+            <h2 className={cardHeading}>Diamond Pro Access</h2>
+            <p className={cardBody}>Expect gated content, staff collaboration spaces, and live alert configuration post sign-up.</p>
+            <ul className={bulletList}>
               <li>Choose between Free and Diamond Pro tiers.</li>
               <li>Invite teammates with shared permissions.</li>
               <li>Sync saved boards to mobile devices.</li>
             </ul>
           </article>
-          <article className="di-card">
-            <h2>Already have an account?</h2>
-            <p>Jump back to the sign-in flow.</p>
-            <ul className="di-list">
+          <article className={card}>
+            <h2 className={cardHeading}>Already have an account?</h2>
+            <p className={cardBody}>Jump back to the sign-in flow.</p>
+            <ul className={bulletList}>
               <li>
-                <Link className="di-inline-link" href="/auth/sign-in">
+                <Link className={inlineLink} href="/auth/sign-in">
                   Sign in to Diamond Insights
+                  <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+                    →
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link className="di-inline-link" href="/account">
+                <Link className={inlineLink} href="/account">
                   Manage existing settings
+                  <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+                    →
+                  </span>
                 </Link>
               </li>
             </ul>

@@ -1,5 +1,31 @@
 import Link from 'next/link';
 import { recordRuntimeEvent } from '../lib/observability/datadog-runtime';
+import {
+  card,
+  cardBody,
+  cardGrid,
+  cardHeading,
+  commandContainer,
+  featureGrid,
+  heroActions,
+  heroPill,
+  heroSection,
+  heroSubtitle,
+  heroTitle,
+  inlineLink,
+  landingShell,
+  microcopy,
+  navCard,
+  navCardDescription,
+  navCardTitle,
+  navHeadingSubtitle,
+  navHeadingTitle,
+  navList,
+  navWrapper,
+  primaryAction,
+  secondaryAction,
+  sectionWrapper
+} from '../lib/ui/styles';
 
 const navigationLinks = [
   {
@@ -58,80 +84,87 @@ export default function HomePage() {
   void recordRuntimeEvent('route_render', { route: '/', sport: 'baseball' });
 
   return (
-    <div className="di-shell">
-      <main className="di-container">
-        <section className="di-hero" aria-labelledby="diamond-insights-hero">
-          <span className="di-pill">Diamond Insights</span>
-          <h1 id="diamond-insights-hero" className="di-title">
+    <div className={landingShell}>
+      <main className={commandContainer}>
+        <section className={heroSection} aria-labelledby="diamond-insights-hero">
+          <span className={heroPill}>Diamond Insights</span>
+          <h1 id="diamond-insights-hero" className={heroTitle}>
             College Baseball Intelligence for the Deep South
           </h1>
-          <p className="di-subtitle">
+          <p className={heroSubtitle}>
             BlazeSportsIntel is pivoting into the definitive NCAA Division I baseball platform—live telemetry, scouting intel,
             and recruiting context built mobile-first and dark-mode native.
           </p>
-          <div className="di-actions">
-            <Link className="di-action" href="/baseball/ncaab/hub">
+          <div className={heroActions}>
+            <Link className={primaryAction} href="/baseball/ncaab/hub">
               Enter the Baseball Hub
             </Link>
-            <Link className="di-action di-action--secondary" href="/auth/sign-up">
+            <Link className={secondaryAction} href="/auth/sign-up">
               Join Diamond Pro Beta
             </Link>
           </div>
         </section>
 
-        <nav className="di-nav" aria-labelledby="diamond-insights-navigation">
-          <div className="di-nav-heading">
-            <h2 id="diamond-insights-navigation" className="di-page-title">
+        <nav className={sectionWrapper} aria-labelledby="diamond-insights-navigation">
+          <div className={navWrapper}>
+            <h2 id="diamond-insights-navigation" className={navHeadingTitle}>
               Navigate the College Baseball Stack
             </h2>
-            <p className="di-page-subtitle">
+            <p className={navHeadingSubtitle}>
               Every route is mobile-optimized and ready for data hookups—start in the hub or jump straight to live surfaces.
             </p>
           </div>
-          <ul className="di-nav-list">
+          <ul className={navList}>
             {navigationLinks.map((link) => (
               <li key={link.href}>
-                <Link className="di-nav-card" href={link.href}>
-                  <span>{link.title}</span>
-                  <p>{link.description}</p>
+                <Link className={navCard} href={link.href}>
+                  <span className={navCardTitle}>{link.title}</span>
+                  <p className={navCardDescription}>{link.description}</p>
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <section className="di-section" aria-labelledby="diamond-insights-highlights">
-          <h2 id="diamond-insights-highlights" className="di-page-title">
+        <section className={sectionWrapper} aria-labelledby="diamond-insights-highlights">
+          <h2 id="diamond-insights-highlights" className={navHeadingTitle}>
             Diamond Insights Operating Principles
           </h2>
-          <div className="di-card-grid">
+          <div className={featureGrid}>
             {featureHighlights.map((feature) => (
-              <article key={feature.title} className="di-card">
-                <h3>{feature.title}</h3>
-                <p>{feature.body}</p>
+              <article key={feature.title} className={card}>
+                <h3 className={cardHeading}>{feature.title}</h3>
+                <p className={cardBody}>{feature.body}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="di-section" aria-labelledby="diamond-insights-status">
-          <h2 id="diamond-insights-status" className="di-page-title">
+        <section className={sectionWrapper} aria-labelledby="diamond-insights-status">
+          <h2 id="diamond-insights-status" className={navHeadingTitle}>
             Platform Status
           </h2>
-          <div className="di-card-grid">
-            <article className="di-card">
-              <h3>Foundation Build</h3>
-              <p>
+          <div className={cardGrid}>
+            <article className={card}>
+              <h3 className={cardHeading}>Foundation Build</h3>
+              <p className={cardBody}>
                 Phase 2 (MVP) scaffolding is underway. Routing is locked, theming is stabilized, and data ingestion hooks are
                 staged for Highlightly, TrackMan, and NCAA stat endpoints.
               </p>
-              <p className="di-microcopy">Updated: {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+              <p className={microcopy}>
+                Updated: {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+              </p>
             </article>
-            <article className="di-card">
-              <h3>Need Early Access?</h3>
-              <p>Reach out for Diamond Pro onboarding or operations partnerships across the Deep South footprint.</p>
-              <Link className="di-inline-link" href="/account">
+            <article className={card}>
+              <h3 className={cardHeading}>Need Early Access?</h3>
+              <p className={cardBody}>
+                Reach out for Diamond Pro onboarding or operations partnerships across the Deep South footprint.
+              </p>
+              <Link className={inlineLink} href="/account">
                 Manage your Diamond Insights profile
+                <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
               </Link>
             </article>
           </div>

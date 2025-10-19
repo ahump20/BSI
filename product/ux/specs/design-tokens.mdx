@@ -1,0 +1,65 @@
+---
+title: Design Tokens — Tailwind Integration
+description: Brand tokens powering the BlazeSportsIntel Tailwind preset.
+---
+
+import { Callout } from 'nextra-theme-docs';
+
+## Overview
+
+The Tailwind preset exported from `packages/design-tokens/tailwind.preset.ts` centralizes BlazeSportsIntel’s dark-mode first foundations. The preset is consumed by `apps/web/tailwind.config.ts` and should be reused by future surfaces to maintain parity across mobile and desktop flows.
+
+<Callout type="info">
+All values below meet WCAG 2.2 AA contrast requirements when applied as documented.
+</Callout>
+
+## Color Tokens
+
+| Token | Value | Usage |
+| --- | --- | --- |
+| `brand-base` | `#0b1120` | Default background for shells and page-level wrappers. |
+| `brand-surface` | `#111827` | Card backgrounds and elevated surfaces. |
+| `brand-surface-muted` | `#1f2937` | Muted surface backgrounds or dividers. |
+| `brand-border` | `rgba(148, 163, 184, 0.2)` | Border color for cards and navigation tiles. |
+| `brand-text` | `#e2e8f0` | Primary text color on dark surfaces. |
+| `brand-muted` | `#94a3b8` | Secondary copy and helper text. |
+| `brand-accent` | `#fbbf24` | Primary accent for actions, pills, and focus rings. |
+| `brand-accent-strong` | `#dc2626` | High-emphasis accent for warnings or highlight states. |
+
+## Radius & Spacing
+
+- **Border radius**
+  - `rounded-xl`: `1.125rem` — default card radius.
+  - `rounded-pill`: `999px` — pills and action buttons.
+- **Spacing extensions** (`theme.spacing`)
+  - `4.5` → `1.125rem`
+  - `5.5` → `1.375rem`
+  - `6.5` → `1.625rem`
+  - `7.5` → `1.875rem`
+  - `13.5` → `3.375rem`
+  - `15` → `3.75rem`
+
+Use these with Tailwind utility syntax (`py-4.5`, `gap-5.5`, etc.) when native scale values do not satisfy the layout spec.
+
+## Typography
+
+- `font-sans` → Inter stack for UI and data contexts.
+- `font-heading` → Source Serif Pro for headlines.
+- Apply `text-balance` on hero headings to maintain mobile readability.
+
+## Shell Patterns
+
+- `landingShell` and `pageShell` wrappers deliver radial gradients defined in `apps/web/tailwind.config.ts` as `bg-brand-radial` and `bg-teal-radial`.
+- `commandContainer` and `pageSection` enforce the `1120px` max-width and spacing rhythm across the App Router tree.
+
+## Interaction & Accessibility
+
+- Primary actions reuse `primaryAction` styles from `apps/web/lib/ui/styles.ts`, providing gradient buttons with compliant focus rings (`ring-brand-accent` + `ring-offset-brand-base`).
+- Inline links adopt the `inlineLink` class which adds motion affordances while retaining high-contrast accent color.
+- Body base styles live in `app/globals.css` and include Tailwind’s `ring` utilities to guarantee visible focus treatments.
+
+## Extension Guidelines
+
+1. When introducing new components, prefer composing utilities from `apps/web/lib/ui/styles.ts` instead of redefining bespoke class strings.
+2. Add new tokens to `packages/design-tokens/tailwind.preset.ts` and document the usage here to keep product, design, and engineering aligned.
+3. Avoid overriding tokens locally—extend Tailwind via the preset to retain consistency across workspaces.

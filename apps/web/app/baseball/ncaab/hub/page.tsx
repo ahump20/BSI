@@ -1,4 +1,16 @@
 import Link from 'next/link';
+import {
+  card,
+  cardBody,
+  cardHeading,
+  featureGrid,
+  inlineLink,
+  pageKicker,
+  pageSection,
+  pageShell,
+  pageSubtitle,
+  pageTitle
+} from '../../../../lib/ui/styles';
 
 const sections = [
   { href: '/baseball/ncaab/games', label: 'Scoreboard & Live Games', summary: 'Track real-time scores, win probability, and inning-by-inning context.' },
@@ -13,22 +25,25 @@ const sections = [
 
 export default function BaseballHubPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · NCAA Division I Baseball</span>
-        <h1 className="di-page-title">College Baseball Command Center</h1>
-        <p className="di-page-subtitle">
+    <main className={pageShell}>
+      <section className={pageSection}>
+        <span className={pageKicker}>Diamond Insights · NCAA Division I Baseball</span>
+        <h1 className={pageTitle}>College Baseball Command Center</h1>
+        <p className={pageSubtitle}>
           Your single landing zone for live game telemetry, advanced scouting intel, and conference health across the
           national landscape. Final visuals and data hooks are en route; this shell keeps navigation live while we finish
           the ingest plumbing.
         </p>
-        <div className="di-card-grid">
+        <div className={featureGrid}>
           {sections.map((section) => (
-            <article key={section.href} className="di-card">
-              <h2>{section.label}</h2>
-              <p>{section.summary}</p>
-              <Link className="di-inline-link" href={section.href}>
+            <article key={section.href} className={card}>
+              <h2 className={cardHeading}>{section.label}</h2>
+              <p className={cardBody}>{section.summary}</p>
+              <Link className={inlineLink} href={section.href}>
                 Enter {section.label}
+                <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
               </Link>
             </article>
           ))}

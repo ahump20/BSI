@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type * as React from 'react';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import ObservabilityProvider from './observability-provider';
@@ -31,10 +31,10 @@ export const viewport: Viewport = {
   themeColor: '#1a1a1a'
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-brand-base font-sans text-brand-text antialiased">
         <ObservabilityProvider>{children}</ObservabilityProvider>
       </body>
     </html>

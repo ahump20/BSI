@@ -1,6 +1,21 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { recordRuntimeEvent } from '../../../../../lib/observability/datadog-runtime';
+import {
+  card,
+  cardBody,
+  cardHeading,
+  commandContainer,
+  featureGrid,
+  heroPill,
+  heroSection,
+  heroSubtitle,
+  heroTitle,
+  inlineLink,
+  landingShell,
+  navHeadingTitle,
+  sectionWrapper
+} from '../../../../../lib/ui/styles';
 
 type GameDetailPageProps = {
   params: Promise<{ gameSlug: string }>;
@@ -26,36 +41,41 @@ export default async function GameDetailPage({ params }: GameDetailPageProps) {
   });
 
   return (
-    <div className="di-shell">
-      <main className="di-container" aria-labelledby="game-detail-heading">
-        <section className="di-hero" id="game-detail-heading">
-          <span className="di-pill">Diamond Game Center</span>
-          <h1 className="di-title">{formattedName.toUpperCase()}</h1>
-          <p className="di-subtitle">
+    <div className={landingShell}>
+      <main className={commandContainer} aria-labelledby="game-detail-heading">
+        <section className={heroSection} id="game-detail-heading">
+          <span className={heroPill}>Diamond Game Center</span>
+          <h1 className={heroTitle}>{formattedName.toUpperCase()}</h1>
+          <p className={heroSubtitle}>
             Live telemetry, leverage scoring, and scouting packets sync here once Highlightly and TrackMan feeds finalize.
           </p>
         </section>
 
-        <section className="di-section" aria-labelledby="game-detail-overview">
-          <h2 id="game-detail-overview" className="di-page-title">
+        <section className={sectionWrapper} aria-labelledby="game-detail-overview">
+          <h2 id="game-detail-overview" className={navHeadingTitle}>
             Game Detail Blueprint
           </h2>
-          <div className="di-card-grid">
-            <article className="di-card">
-              <h3>Live Game Thread</h3>
-              <p>Edge runtime will hydrate pitch charts, baserunner visualizations, and leverage markers every 45 seconds.</p>
+          <div className={featureGrid}>
+            <article className={card}>
+              <h3 className={cardHeading}>Live Game Thread</h3>
+              <p className={cardBody}>
+                Edge runtime will hydrate pitch charts, baserunner visualizations, and leverage markers every 45 seconds.
+              </p>
             </article>
-            <article className="di-card">
-              <h3>Scouting Stack</h3>
-              <p>Attach bullpen notes, video timestamps, and biomech signals for staff workflows.</p>
+            <article className={card}>
+              <h3 className={cardHeading}>Scouting Stack</h3>
+              <p className={cardBody}>Attach bullpen notes, video timestamps, and biomech signals for staff workflows.</p>
             </article>
-            <article className="di-card">
-              <h3>Export Ready</h3>
-              <p>Diamond Pro subscribers can export PDF packets directly to staff iPads postgame.</p>
+            <article className={card}>
+              <h3 className={cardHeading}>Export Ready</h3>
+              <p className={cardBody}>Diamond Pro subscribers can export PDF packets directly to staff iPads postgame.</p>
             </article>
           </div>
-          <Link className="di-inline-link" href="/baseball/ncaab/games">
+          <Link className={inlineLink} href="/baseball/ncaab/games">
             Return to Live Games
+            <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+              →
+            </span>
           </Link>
         </section>
       </main>

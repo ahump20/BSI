@@ -1,4 +1,17 @@
 import Link from 'next/link';
+import {
+  bulletList,
+  card,
+  cardBody,
+  cardGrid,
+  cardHeading,
+  inlineLink,
+  pageKicker,
+  pageSection,
+  pageShell,
+  pageSubtitle,
+  pageTitle
+} from '../../../../lib/ui/styles';
 
 const plannerLinks = [
   { href: '/baseball/ncaab/hub', label: 'Return to Hub' },
@@ -8,32 +21,37 @@ const plannerLinks = [
 
 export default function BaseballGamesPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · Games</span>
-        <h1 className="di-page-title">Live Games & Scoreboard</h1>
-        <p className="di-page-subtitle">
+    <main className={pageShell}>
+      <section className={pageSection}>
+        <span className={pageKicker}>Diamond Insights · Games</span>
+        <h1 className={pageTitle}>Live Games & Scoreboard</h1>
+        <p className={pageSubtitle}>
           Live data wiring is underway. This mobile-first shell confirms routing, theming, and accessibility while we attach
           the Highlightly feed, probabilistic win models, and shot charts.
         </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Game Day Checklist</h2>
-            <p>Expect inning-by-inning updates, leverage index, and situational spray charts in this slot.</p>
-            <ul className="di-list">
-              <li>Live win probability model with <abbr title="Expected Runs Added">xRA</abbr> overlays.</li>
+        <div className={cardGrid}>
+          <article className={card}>
+            <h2 className={cardHeading}>Game Day Checklist</h2>
+            <p className={cardBody}>Expect inning-by-inning updates, leverage index, and situational spray charts in this slot.</p>
+            <ul className={bulletList}>
+              <li>
+                Live win probability model with <abbr title="Expected Runs Added">xRA</abbr> overlays.
+              </li>
               <li>Tabbed views for Box Score, Plays, and Team Tendencies.</li>
               <li>Push alerts tuned to leverage moments.</li>
             </ul>
           </article>
-          <article className="di-card">
-            <h2>Navigate</h2>
-            <p>Select another surface to continue planning.</p>
-            <ul className="di-list">
+          <article className={card}>
+            <h2 className={cardHeading}>Navigate</h2>
+            <p className={cardBody}>Select another surface to continue planning.</p>
+            <ul className={bulletList}>
               {plannerLinks.map((item) => (
                 <li key={item.href}>
-                  <Link className="di-inline-link" href={item.href}>
+                  <Link className={inlineLink} href={item.href}>
                     {item.label}
+                    <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
+                      →
+                    </span>
                   </Link>
                 </li>
               ))}
