@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import ScoreboardClient from './scoreboard-client';
 
 const plannerLinks = [
   { href: '/baseball/ncaab/hub', label: 'Return to Hub' },
@@ -13,9 +14,14 @@ export default function BaseballGamesPage() {
         <span className="di-kicker">Diamond Insights · Games</span>
         <h1 className="di-page-title">Live Games & Scoreboard</h1>
         <p className="di-page-subtitle">
-          Live data wiring is underway. This mobile-first shell confirms routing, theming, and accessibility while we attach
-          the Highlightly feed, probabilistic win models, and shot charts.
+          Our edge runtime normalizes ESPN&apos;s feed, caches it for 45 seconds in Upstash, and keeps this board idempotent
+          for every refresh.
         </p>
+      </section>
+      <section className="di-section">
+        <ScoreboardClient />
+      </section>
+      <section className="di-section">
         <div className="di-card-grid">
           <article className="di-card">
             <h2>Game Day Checklist</h2>
