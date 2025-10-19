@@ -626,6 +626,12 @@ enum FeedPrecision { EVENT | PITCH }
 
 **Ready for Phase 3**: Frontend MVP (Next.js + Stripe + Game Center)
 
+### 2025-10-19 – Phase 3 Kickoff Updates
+- [x] Replaced legacy Vite scoreboard with Next.js 15 App Router page at `/baseball/ncaab`.
+- [x] Elevated React to 19.x and TypeScript to 5.9 across the web app for concurrent-compatible hydration.
+- [x] Added branded live scoreboard shell with ESPN polling, mobile-first styling, and floating sport switcher.
+- [x] Decommissioned `src/App.jsx` + `src/main.jsx`; root scripts now proxy to Next.js workflows.
+
 ---
 
 ## Contacts & Resources
