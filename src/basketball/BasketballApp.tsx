@@ -2,6 +2,8 @@ import { useState } from 'react'
 import SportSwitcher from '../components/SportSwitcher'
 import './basketball.css'
 
+type BasketballView = 'scores' | 'standings' | 'stats';
+
 /**
  * Basketball App Component
  *
@@ -11,8 +13,8 @@ import './basketball.css'
  * - Conference rankings
  * - Tournament projections
  */
-function BasketballApp() {
-  const [activeView, setActiveView] = useState('scores')
+function BasketballApp(): JSX.Element {
+  const [activeView, setActiveView] = useState<BasketballView>('scores')
 
   return (
     <div className="basketball-app">
