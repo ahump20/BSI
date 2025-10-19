@@ -10,11 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          version: 9
-      - run: pnpm i --frozen-lockfile
-      - run: pnpm -w build
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
       - name: Deploy Pages (OpenNext output)
         uses: cloudflare/pages-action@v1
         with:

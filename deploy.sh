@@ -63,7 +63,7 @@ cd ..
 # Build the frontend
 echo ""
 echo "🔨 Building frontend..."
-npm install
+npm ci
 npm run build
 
 # Deploy to Cloudflare Pages
