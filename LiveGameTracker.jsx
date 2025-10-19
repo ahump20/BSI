@@ -31,7 +31,7 @@ function LiveGameTracker({ games, onGameSelect, loading }) {
   };
 
   const getGameStatusClass = (status) => {
-    if (status === 'live') return 'status-live';
+    if (status === 'live') return 'status-live accent-border';
     if (status === 'final') return 'status-final';
     return 'status-scheduled';
   };

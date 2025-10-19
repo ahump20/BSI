@@ -4,7 +4,20 @@
   --accent-color: #00a86b;
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
+  --burnt-orange-700: #8c3d00;
+  --burnt-orange-600: #a64a00;
+  --burnt-orange-500: #bf5700;
+  --burnt-orange-400: #d96814;
+  --burnt-orange-300: #f37d29;
+  --burnt-orange-gradient: linear-gradient(
+    135deg,
+    var(--burnt-orange-700) 0%,
+    var(--burnt-orange-500) 55%,
+    var(--burnt-orange-300) 100%
+  );
+  --burnt-orange-soft-glow: rgba(191, 87, 0, 0.25);
+  --live-indicator: var(--burnt-orange-500);
+  --cta-text: #120801;
   --border-color: #404040;
   --card-bg: #1e1e1e;
 }
@@ -72,8 +85,9 @@ body {
   background-color: var(--secondary-color);
   border-top: 1px solid var(--border-color);
   display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
   z-index: 100;
 }
 
@@ -88,20 +102,35 @@ body {
   color: var(--text-secondary);
   font-size: 12px;
   padding: 8px;
+  border-radius: 12px;
+  min-height: 48px;
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .bottom-nav button.active {
-  color: var(--accent-color);
+  color: var(--cta-text);
+  background: var(--burnt-orange-gradient);
+  box-shadow: 0 14px 26px var(--burnt-orange-soft-glow);
 }
 
 .bottom-nav button:active {
-  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(1px);
 }
 
 .nav-icon {
   font-size: 20px;
+}
+
+@media (hover: hover) {
+  .bottom-nav button:hover {
+    color: var(--text-primary);
+  }
+}
+
+.bottom-nav button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.24);
+  outline-offset: 2px;
 }
 
 .app-content {

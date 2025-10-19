@@ -243,7 +243,7 @@ function BoxScore({ game, onBack }) {
   return (
     <div className="box-score">
       <div className="box-score-header">
-        <button className="back-button" onClick={onBack}>← Back</button>
+        <button className="back-button cta-button" onClick={onBack}>← Back</button>
         <div className="game-info">
           <h2>{game.awayTeam.name} at {game.homeTeam.name}</h2>
           <span className="game-date">{game.date}</span>
@@ -253,14 +253,14 @@ function BoxScore({ game, onBack }) {
       {renderLineScore()}
 
       <div className="stats-tabs">
-        <button 
-          className={activeTab === 'batting' ? 'active' : ''}
+        <button
+          className={`tab-button ${activeTab === 'batting' ? 'active cta-button' : ''}`}
           onClick={() => setActiveTab('batting')}
         >
           Batting
         </button>
-        <button 
-          className={activeTab === 'pitching' ? 'active' : ''}
+        <button
+          className={`tab-button ${activeTab === 'pitching' ? 'active cta-button' : ''}`}
           onClick={() => setActiveTab('pitching')}
         >
           Pitching
