@@ -111,6 +111,267 @@ body {
   overflow-x: hidden;
 }
 
+.portal-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heatmap-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.heatmap-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.heatmap-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.heatmap-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.heatmap-summary div {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.summary-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.heatmap-controls {
+  display: grid;
+  gap: 12px;
+  background: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.heatmap-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.heatmap-controls select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+}
+
+.heatmap-controls select:focus {
+  border-color: var(--accent-color);
+}
+
+.heatmap-map-card {
+  background: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.heatmap-map {
+  width: 100%;
+  height: 320px;
+}
+
+.heatmap-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #1a202c;
+}
+
+.heatmap-tooltip h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.heatmap-tooltip p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.heatmap-tooltip-programs {
+  font-size: 11px !important;
+  color: rgba(26, 32, 44, 0.7);
+}
+
+.heatmap-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heatmap-panel {
+  background: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heatmap-panel header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heatmap-panel h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.panel-meta {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.heatmap-table th,
+.heatmap-table td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.heatmap-table th {
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.heatmap-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.player-name {
+  display: block;
+  font-weight: 600;
+}
+
+.player-geo {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.team-from,
+.team-to {
+  display: inline-block;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrow {
+  margin: 0 4px;
+  color: var(--text-secondary);
+}
+
+.trending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.trending-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trending-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trending-card h4 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.badge {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.trending-geo {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.trending-metrics {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trending-metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trending-card footer {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -143,9 +404,17 @@ body {
   color: var(--text-secondary);
 }
 
+.empty-state-compact {
+  padding: 32px 16px;
+}
+
 .empty-icon {
   font-size: 48px;
   opacity: 0.3;
+}
+
+.empty-state-compact .empty-icon {
+  font-size: 36px;
 }
 
 /* Tablet and up */
@@ -162,6 +431,38 @@ body {
 
   .conference-filter select {
     max-width: 300px;
+  }
+
+  .heatmap-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .heatmap-header h2 {
+    font-size: 24px;
+  }
+
+  .heatmap-summary {
+    width: 240px;
+  }
+
+  .heatmap-controls {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 20px;
+  }
+
+  .heatmap-map {
+    height: 380px;
+  }
+
+  .heatmap-grid {
+    flex-direction: row;
+  }
+
+  .heatmap-panel {
+    flex: 1;
   }
 }
 
@@ -183,5 +484,13 @@ body {
 
   .app {
     padding-bottom: 0;
+  }
+
+  .heatmap-map {
+    height: 420px;
+  }
+
+  .heatmap-summary {
+    width: 300px;
   }
 }
