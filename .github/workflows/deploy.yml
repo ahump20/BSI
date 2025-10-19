@@ -14,6 +14,7 @@ jobs:
         with:
           version: 9
       - run: pnpm i --frozen-lockfile
+      - run: pnpm run generate:prisma
       - run: pnpm -w build
       - name: Deploy Pages (OpenNext output)
         uses: cloudflare/pages-action@v1

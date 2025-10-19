@@ -313,21 +313,21 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
     .map((line) => ({
       player: line.player,
       batting: {
-        ab: line.ab,
-        r: line.r,
-        h: line.h,
+        ab: line.atBats,
+        r: line.runs,
+        h: line.hits,
         rbi: line.rbi,
-        bb: line.bb,
-        so: line.so,
+        bb: line.walks,
+        so: line.strikeouts,
       },
-      pitching: line.ip
+      pitching: line.inningsPitched
         ? {
-            ip: line.ip,
+            ip: Number(line.inningsPitched),
             h: line.hitsAllowed ?? 0,
             r: line.runsAllowed ?? 0,
             er: line.earnedRuns ?? 0,
-            bb: line.bbAllowed ?? 0,
-            so: line.soRecorded ?? 0,
+            bb: line.walksAllowed ?? 0,
+            so: line.strikeoutsRecorded ?? 0,
           }
         : undefined,
     }));
@@ -337,21 +337,21 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
     .map((line) => ({
       player: line.player,
       batting: {
-        ab: line.ab,
-        r: line.r,
-        h: line.h,
+        ab: line.atBats,
+        r: line.runs,
+        h: line.hits,
         rbi: line.rbi,
-        bb: line.bb,
-        so: line.so,
+        bb: line.walks,
+        so: line.strikeouts,
       },
-      pitching: line.ip
+      pitching: line.inningsPitched
         ? {
-            ip: line.ip,
+            ip: Number(line.inningsPitched),
             h: line.hitsAllowed ?? 0,
             r: line.runsAllowed ?? 0,
             er: line.earnedRuns ?? 0,
-            bb: line.bbAllowed ?? 0,
-            so: line.soRecorded ?? 0,
+            bb: line.walksAllowed ?? 0,
+            so: line.strikeoutsRecorded ?? 0,
           }
         : undefined,
     }));

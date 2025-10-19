@@ -4,6 +4,8 @@
   "type": "module",
   "description": "Mobile-first college baseball live tracker with full box scores",
   "scripts": {
+    "generate:prisma": "node ./scripts/generate-prisma.mjs",
+    "prebuild": "node ./scripts/generate-prisma.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

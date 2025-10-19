@@ -301,28 +301,28 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
 
     // Batting stats from box line
     const batting =
-      boxLine.ab > 0
+      boxLine.atBats > 0
         ? {
-            ab: boxLine.ab,
-            r: boxLine.r,
-            h: boxLine.h,
+            ab: boxLine.atBats,
+            r: boxLine.runs,
+            h: boxLine.hits,
             rbi: boxLine.rbi,
-            bb: boxLine.bb,
-            so: boxLine.so,
-            avg: boxLine.ab > 0 ? (boxLine.h / boxLine.ab).toFixed(3) : undefined,
+            bb: boxLine.walks,
+            so: boxLine.strikeouts,
+            avg: boxLine.atBats > 0 ? (boxLine.hits / boxLine.atBats).toFixed(3) : undefined,
           }
         : undefined;
 
     // Pitching stats from box line (if IP > 0)
     const pitching =
-      boxLine.ip && boxLine.ip > 0
+      boxLine.inningsPitched && Number(boxLine.inningsPitched) > 0
         ? {
-            ip: boxLine.ip,
+            ip: Number(boxLine.inningsPitched),
             h: boxLine.hitsAllowed ?? 0,
             r: boxLine.runsAllowed ?? 0,
             er: boxLine.earnedRuns ?? 0,
-            bb: boxLine.bbAllowed ?? 0,
-            so: boxLine.soRecorded ?? 0,
+            bb: boxLine.walksAllowed ?? 0,
+            so: boxLine.strikeoutsRecorded ?? 0,
             decision: boxLine.decision as 'W' | 'L' | 'S' | null,
           }
         : undefined;
