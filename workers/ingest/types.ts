@@ -22,6 +22,7 @@ export interface Env {
 
   // Worker Secrets
   INGEST_SECRET: string;
+  NOTIFICATION_WEBHOOK?: string;
 }
 
 /**

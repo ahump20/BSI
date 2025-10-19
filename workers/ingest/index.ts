@@ -21,7 +21,11 @@
 
 import { Prisma, PrismaClient } from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
-import type { Env } from './types';
+import type { Env, ProviderGame } from './types';
+import {
+  ensureWatchlistSchema,
+  loadWatchlistEntriesForTeams,
+} from '../../db/watchlist/index.js';
 
 const prisma = new PrismaClient();
 
@@ -229,6 +233,8 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
       expirationTtl: 60
     });
 
+    ctx.waitUntil(processWatchlistAlerts(games, env));
+
     // Track success in Analytics Engine
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
@@ -241,6 +247,213 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
     console.error('[Ingest] Live games ingestion failed:', error);
     throw error;
   }
+}
+
+interface WatchlistNotificationState {
+  lastLeadDiff?: number;
+  walkoffNotified?: boolean;
+  upsetNotified?: boolean;
+  baselineWinProb?: number;
+}
+
+interface WatchlistAlertPayload {
+  type: 'lead-change' | 'walk-off' | 'upset-odds';
+  userId: string;
+  teamId: string;
+  teamName: string;
+  opponentName: string;
+  gameId: string;
+  score: { team: number; opponent: number };
+  winProbability?: number | null;
+  message: string;
+  timestamp: string;
+}
+
+async function processWatchlistAlerts(games: ProviderGame[], env: Env): Promise<void> {
+  if (!games.length) {
+    return;
+  }
+
+  const teamIds = Array.from(
+    new Set(
+      games.flatMap((game) => [game.homeTeamId, game.awayTeamId]).filter((value): value is string => Boolean(value))
+    )
+  );
+
+  if (teamIds.length === 0) {
+    return;
+  }
+
+  await ensureWatchlistSchema(prisma);
+  const watchlistEntries = await loadWatchlistEntriesForTeams(teamIds, prisma);
+
+  if (watchlistEntries.length === 0) {
+    return;
+  }
+
+  const externalIds = games.map((game) => game.id);
+  const dbGames = await prisma.game.findMany({
+    where: {
+      OR: [
+        { externalId: { in: externalIds } },
+        { id: { in: externalIds } },
+      ],
+    },
+    include: {
+      homeTeam: {
+        select: { id: true, name: true, slug: true },
+      },
+      awayTeam: {
+        select: { id: true, name: true, slug: true },
+      },
+      events: {
+        orderBy: { sequence: 'desc' },
+        take: 1,
+        select: {
+          id: true,
+          description: true,
+          eventType: true,
+          inning: true,
+          inningHalf: true,
+          homeWinProb: true,
+        },
+      },
+    },
+  });
+
+  const gameLookup = new Map<string, typeof dbGames[number]>();
+  for (const game of dbGames) {
+    if (game.externalId) {
+      gameLookup.set(game.externalId, game);
+    }
+    gameLookup.set(game.id, game);
+  }
+
+  for (const entry of watchlistEntries) {
+    const relevantGames = games.filter(
+      (game) => game.homeTeamId === entry.teamId || game.awayTeamId === entry.teamId
+    );
+
+    for (const providerGame of relevantGames) {
+      const dbGame = gameLookup.get(providerGame.id);
+      if (!dbGame) continue;
+
+      const teamIsHome = dbGame.homeTeamId === entry.teamId;
+      const teamScore = (teamIsHome ? dbGame.homeScore : dbGame.awayScore) ?? 0;
+      const opponentScore = (teamIsHome ? dbGame.awayScore : dbGame.homeScore) ?? 0;
+      const scoreDiff = teamScore - opponentScore;
+      const latestEvent = dbGame.events[0];
+      const homeWinProb = latestEvent?.homeWinProb ?? null;
+      const teamWinProb = homeWinProb === null ? null : teamIsHome ? homeWinProb : 1 - homeWinProb;
+
+      const stateKey = `watchlist:state:${entry.userId}:${dbGame.id}`;
+      const existingStateRaw = await env.CACHE.get(stateKey);
+      const previousState: WatchlistNotificationState = existingStateRaw
+        ? JSON.parse(existingStateRaw)
+        : {};
+
+      const nextState: WatchlistNotificationState = { ...previousState };
+      if (teamWinProb !== null) {
+        if (previousState.baselineWinProb === undefined) {
+          nextState.baselineWinProb = teamWinProb;
+        } else {
+          nextState.baselineWinProb = Math.min(previousState.baselineWinProb, teamWinProb);
+        }
+      }
+
+      const opponentName = teamIsHome ? dbGame.awayTeam.name : dbGame.homeTeam.name;
+      const notifications: Array<WatchlistAlertPayload> = [];
+
+      if (entry.alertLeadChanges) {
+        const previousDiff = previousState.lastLeadDiff ?? 0;
+        const changed = Math.sign(previousDiff) !== Math.sign(scoreDiff) && scoreDiff !== 0;
+        if (changed) {
+          notifications.push({
+            type: 'lead-change',
+            userId: entry.userId,
+            teamId: entry.teamId,
+            teamName: entry.teamName,
+            opponentName,
+            gameId: dbGame.id,
+            score: { team: teamScore, opponent: opponentScore },
+            winProbability: teamWinProb,
+            message: `${entry.teamName} just took the lead ${teamScore}-${opponentScore} over ${opponentName}.`,
+            timestamp: new Date().toISOString(),
+          });
+        }
+        nextState.lastLeadDiff = scoreDiff;
+      }
+
+      if (entry.alertWalkOffs && dbGame.status === 'FINAL') {
+        const description = latestEvent?.description?.toLowerCase() ?? '';
+        const eventType = latestEvent?.eventType?.toLowerCase() ?? '';
+        const looksLikeWalkoff = description.includes('walk-off') || eventType.includes('walk');
+        if (teamIsHome && looksLikeWalkoff && !previousState.walkoffNotified) {
+          notifications.push({
+            type: 'walk-off',
+            userId: entry.userId,
+            teamId: entry.teamId,
+            teamName: entry.teamName,
+            opponentName,
+            gameId: dbGame.id,
+            score: { team: teamScore, opponent: opponentScore },
+            winProbability: teamWinProb,
+            message: `${entry.teamName} walked off ${opponentName} ${teamScore}-${opponentScore}.`,
+            timestamp: new Date().toISOString(),
+          });
+          nextState.walkoffNotified = true;
+        }
+      }
+
+      if (entry.alertUpsetOdds && teamWinProb !== null && nextState.baselineWinProb !== undefined) {
+        const baseline = nextState.baselineWinProb;
+        const isUnderdog = baseline <= 0.4;
+        const crossedThreshold = teamWinProb >= 0.65;
+        if (isUnderdog && crossedThreshold && !previousState.upsetNotified) {
+          notifications.push({
+            type: 'upset-odds',
+            userId: entry.userId,
+            teamId: entry.teamId,
+            teamName: entry.teamName,
+            opponentName,
+            gameId: dbGame.id,
+            score: { team: teamScore, opponent: opponentScore },
+            winProbability: teamWinProb,
+            message: `${entry.teamName} now has ${Math.round(teamWinProb * 100)}% win odds against ${opponentName}.`,
+            timestamp: new Date().toISOString(),
+          });
+          nextState.upsetNotified = true;
+        }
+      }
+
+      if (notifications.length > 0) {
+        await Promise.all(notifications.map((payload) => dispatchWatchlistNotification(env, payload)));
+      }
+
+      await env.CACHE.put(stateKey, JSON.stringify(nextState), { expirationTtl: 3600 });
+    }
+  }
+}
+
+async function dispatchWatchlistNotification(env: Env, payload: WatchlistAlertPayload): Promise<void> {
+  if (env.NOTIFICATION_WEBHOOK) {
+    try {
+      await fetch(env.NOTIFICATION_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      return;
+    } catch (error) {
+      console.error('[Watchlist Alerts] Failed to dispatch webhook notification', error);
+    }
+  }
+
+  console.log('[Watchlist Alerts]', payload.type, payload.message, {
+    userId: payload.userId,
+    teamId: payload.teamId,
+    gameId: payload.gameId,
+  });
 }
 
 /**

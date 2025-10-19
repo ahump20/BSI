@@ -17,6 +17,11 @@ import dotenv from 'dotenv';
 
 import SportsDataService from './sports-data-service.js';
 import LoggerService from './services/logger-service.js';
+import {
+    ensureWatchlistSchema,
+    getUserWatchlist,
+    upsertWatchlistEntry
+} from '../db/watchlist/index.js';
 
 // Load environment variables
 dotenv.config();
@@ -41,6 +46,10 @@ class BlazeIntelligenceAPIServer {
         this.setupMiddleware();
         this.setupRoutes();
         this.setupErrorHandling();
+
+        ensureWatchlistSchema().catch((error) => {
+            this.logger.error('Failed to initialize watchlist schema', {}, error);
+        });
     }
 
     setupMiddleware() {
@@ -116,6 +125,84 @@ class BlazeIntelligenceAPIServer {
                     status: 'unhealthy',
                     error: error.message,
                     timestamp: new Date().toISOString()
+                });
+            }
+        });
+
+        // Watchlist endpoints
+        this.app.get('/api/v1/watchlist', async (req, res) => {
+            try {
+                const userId = req.header('x-user-id') || req.header('X-User-Id');
+
+                if (!userId) {
+                    return res.status(401).json({
+                        error: 'Authentication required',
+                        message: 'Provide the user identity header from Clerk.',
+                    });
+                }
+
+                const payload = await getUserWatchlist(userId);
+
+                res.json({
+                    watchlist: payload.watchlist,
+                    games: payload.games,
+                    timestamp: new Date().toISOString(),
+                });
+            } catch (error) {
+                this.logger.error('Failed to fetch watchlist', {}, error);
+                res.status(500).json({
+                    error: 'Unable to load watchlist',
+                    message: error instanceof Error ? error.message : 'Unknown error',
+                });
+            }
+        });
+
+        this.app.post('/api/v1/watchlist', async (req, res) => {
+            try {
+                const userId = req.header('x-user-id') || req.header('X-User-Id');
+
+                if (!userId) {
+                    return res.status(401).json({
+                        error: 'Authentication required',
+                        message: 'Provide the user identity header from Clerk.',
+                    });
+                }
+
+                const {
+                    teamId,
+                    teamSlug,
+                    alertLeadChanges,
+                    alertWalkOffs,
+                    alertUpsetOdds,
+                } = req.body ?? {};
+
+                if (!teamId && !teamSlug) {
+                    return res.status(400).json({
+                        error: 'Missing team identifier',
+                        message: 'Include either teamId or teamSlug in the request body.',
+                    });
+                }
+
+                await upsertWatchlistEntry(userId, {
+                    teamId,
+                    teamSlug,
+                    alertLeadChanges,
+                    alertWalkOffs,
+                    alertUpsetOdds,
+                });
+
+                const payload = await getUserWatchlist(userId);
+
+                res.json({
+                    watchlist: payload.watchlist,
+                    games: payload.games,
+                    timestamp: new Date().toISOString(),
+                });
+            } catch (error) {
+                this.logger.error('Failed to update watchlist', {}, error);
+                res.status(500).json({
+                    error: 'Unable to update watchlist',
+                    message: error instanceof Error ? error.message : 'Unknown error',
                 });
             }
         });
