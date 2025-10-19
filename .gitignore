@@ -18,6 +18,14 @@ wrangler-*.local.toml
 .env.local
 .env
 
+!api/ml/node_modules/
+!api/ml/node_modules/@tensorflow/tfjs-node/
+!api/ml/node_modules/@tensorflow/tfjs-node/index.js
+!api/ml/node_modules/@tensorflow/tfjs-node/package.json
+!api/ml/node_modules/pg/
+!api/ml/node_modules/pg/index.js
+!api/ml/node_modules/pg/package.json
+
 # API Keys and Secrets
 test-api-keys.cjs
 validated-keys.env

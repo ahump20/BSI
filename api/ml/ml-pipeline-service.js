@@ -167,9 +167,14 @@ class MLPipelineService {
 
             // Get training data
             const trainingData = await this.prepareTrainingData(modelType, options);
+            const trainSamples = trainingData.train?.features?.length || 0;
+            const validationSamples = trainingData.validation?.features?.length || 0;
+
             this.logger.info(`Prepared training data`, {
                 modelType,
-                samples: trainingData.train.features.length,
+                trainSamples,
+                validationSamples,
+                totalSamples: trainSamples + validationSamples,
                 features: trainingData.featureCount
             });
 
@@ -948,10 +953,10 @@ class MLPipelineService {
                     const age = (calculationDate - birthDate) / (365.25 * 24 * 60 * 60 * 1000);
                     // Normalize age to a 0-1 range based on typical professional athlete career span (18-38 years).
                     // Ages below 18 map to 0, ages above 38 map to 1.
-                    // This factor allows the model to account for age-related performance trends, 
+                    // This factor allows the model to account for age-related performance trends,
                     // where younger players (closer to 18) may have different expected performance than older players (closer to 38).
                     ageFactor = Math.min(1, Math.max(0, (age - 18) / 20));
-
+                }
                 return {
                     player_id: row.player_id,
                     team_id: row.team_id,
