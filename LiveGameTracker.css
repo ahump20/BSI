@@ -15,15 +15,42 @@
 }
 
 .live-indicator {
-  color: var(--live-indicator);
-  font-size: 12px;
-  font-weight: 600;
-  animation: pulse 2s infinite;
+  --indicator-gradient: var(--burnt-orange-gradient, linear-gradient(135deg, var(--burnt-orange-400), var(--burnt-orange-600)));
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  border-radius: 999px;
+  background-image: var(--indicator-gradient);
+  box-shadow: 0 0 0 0 rgba(191, 87, 0, 0.35);
+  animation: glow 2.6s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.live-indicator::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff7eb 0%, var(--burnt-orange-300) 45%, var(--burnt-orange-500) 100%);
+  box-shadow: 0 0 12px rgba(191, 87, 0, 0.55);
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(191, 87, 0, 0.35), 0 10px 24px rgba(191, 87, 0, 0.2);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(191, 87, 0, 0.05), 0 14px 32px rgba(191, 87, 0, 0.3);
+    transform: translateY(-1px);
+  }
 }
 
 .games-list {

@@ -4,7 +4,12 @@
   --accent-color: #00a86b;
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
-  --live-indicator: #ff3b30;
+  --burnt-orange-300: #ffad74;
+  --burnt-orange-400: #ff7d3c;
+  --burnt-orange-500: #bf5700;
+  --burnt-orange-600: #9c4500;
+  --burnt-orange-gradient: linear-gradient(135deg, var(--burnt-orange-400), var(--burnt-orange-600));
+  --live-indicator: var(--burnt-orange-500);
   --border-color: #404040;
   --card-bg: #1e1e1e;
 }
@@ -48,20 +53,31 @@ body {
   margin-bottom: 12px;
 }
 
-.conference-filter select {
-  width: 100%;
-  padding: 10px;
-  background-color: var(--card-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  cursor: pointer;
+.conference-filter {
+  position: relative;
 }
 
-.conference-filter select:focus {
-  border-color: var(--accent-color);
+.conference-filter::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  border-right: 2px solid rgba(255, 255, 255, 0.75);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.75);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.conference-filter select {
+  width: 100%;
+  padding: 12px 48px 12px 18px;
+  font-size: 12px;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .bottom-nav {
@@ -102,6 +118,67 @@ body {
 
 .nav-icon {
   font-size: 20px;
+}
+
+.accent-border {
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: linear-gradient(var(--secondary-color), var(--secondary-color)) padding-box,
+    var(--burnt-orange-gradient) border-box;
+  box-shadow: 0 0 0 1px rgba(191, 87, 0, 0.12);
+}
+
+.cta-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(var(--secondary-color), var(--secondary-color)) padding-box,
+    var(--burnt-orange-gradient) border-box;
+  background-size: 200% 200%;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease,
+    background-position 0.45s ease;
+  box-shadow: 0 14px 32px rgba(191, 87, 0, 0.28);
+}
+
+.cta-button:hover {
+  background-position: 100% 0;
+  box-shadow: 0 18px 40px rgba(191, 87, 0, 0.32);
+}
+
+.cta-button:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 8px 20px rgba(191, 87, 0, 0.3);
+}
+
+.cta-button:focus-visible {
+  outline: 2px solid var(--burnt-orange-300);
+  outline-offset: 3px;
+}
+
+.conference-filter select.cta-button {
+  justify-content: space-between;
+  text-align: left;
+  line-height: 1.2;
+  box-shadow: 0 12px 28px rgba(191, 87, 0, 0.24);
+}
+
+.conference-filter select.cta-button option {
+  color: #111;
+  background-color: #ffffff;
 }
 
 .app-content {
