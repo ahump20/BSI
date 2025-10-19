@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import PrimaryNav from './components/PrimaryNav'
 
 function App() {
   const [games, setGames] = useState([])
@@ -44,6 +45,9 @@ function App() {
           <h1>⚾ College Baseball Live</h1>
           <p className="tagline">Real-time college baseball scores and updates</p>
         </header>
+        <nav aria-label="Primary" className="primary-nav-wrapper">
+          <PrimaryNav />
+        </nav>
         <div className="loading">
           <div className="spinner"></div>
           <p>Loading live scores...</p>
@@ -58,6 +62,9 @@ function App() {
         <header>
           <h1>⚾ College Baseball Live</h1>
         </header>
+        <nav aria-label="Primary" className="primary-nav-wrapper">
+          <PrimaryNav />
+        </nav>
         <div className="error">
           <p>⚠️ Failed to load live data</p>
           <p className="error-detail">{error}</p>
@@ -77,6 +84,9 @@ function App() {
         <h1>⚾ College Baseball Live</h1>
         <p className="tagline">Real-time scores with comprehensive game data</p>
       </header>
+      <nav aria-label="Primary" className="primary-nav-wrapper">
+        <PrimaryNav />
+      </nav>
 
       <main>
         <section className="live-scores">
