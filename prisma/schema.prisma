@@ -50,7 +50,7 @@ enum Position {
   C
   FIRST_BASE  @map("1B")
   SECOND_BASE  @map("2B")
-  THIRD_BASE   @map("3B")
+  THIRD_BASE  @map("3B")
   SS
   LF
   CF
