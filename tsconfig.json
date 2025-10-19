@@ -31,7 +31,11 @@
   },
   "include": [
     "lib/**/*.ts",
-    "context7-enhanced/src/**/*.ts"
+    "context7-enhanced/src/**/*.ts",
+    "api/**/*.ts",
+    "index.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
