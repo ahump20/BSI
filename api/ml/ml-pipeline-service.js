@@ -636,8 +636,10 @@ class MLPipelineService {
                 const restDaysHome = lastHome ? Math.max(0, Math.round((gameDate - lastHome) / (24 * 60 * 60 * 1000))) : 3;
                 const restDaysAway = lastAway ? Math.max(0, Math.round((gameDate - lastAway) / (24 * 60 * 60 * 1000))) : 3;
 
-                const homeOffensive = toNumber(homeStats.offensive_rating, toNumber(row.home_runs_scored, 0) / Math.max(toNumber(row.home_games_played, 1), 1));
-                const awayOffensive = toNumber(awayStats.offensive_rating, toNumber(row.away_runs_scored, 0) / Math.max(toNumber(row.away_games_played, 1), 1));
+                const defaultHomeOffensiveRating = toNumber(row.home_runs_scored, 0) / Math.max(toNumber(row.home_games_played, 1), 1);
+                const defaultAwayOffensiveRating = toNumber(row.away_runs_scored, 0) / Math.max(toNumber(row.away_games_played, 1), 1);
+                const homeOffensive = toNumber(homeStats.offensive_rating, defaultHomeOffensiveRating);
+                const awayOffensive = toNumber(awayStats.offensive_rating, defaultAwayOffensiveRating);
                 const homeDefensive = toNumber(homeStats.defensive_rating, toNumber(row.home_runs_allowed, 0) / Math.max(toNumber(row.home_games_played, 1), 1));
                 const awayDefensive = toNumber(awayStats.defensive_rating, toNumber(row.away_runs_allowed, 0) / Math.max(toNumber(row.away_games_played, 1), 1));
 
