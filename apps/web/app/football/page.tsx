@@ -1,5 +1,19 @@
 import Link from 'next/link';
+
 import { recordRuntimeEvent } from '../../lib/observability/datadog-runtime';
+import {
+  actionButton,
+  cardGrid,
+  cardSurface,
+  heroPill,
+  heroSection,
+  heroSubtitle,
+  heroTitle,
+  layoutContainer,
+  layoutShell,
+  section,
+  sectionTitle
+} from '../../lib/ui/di-variants';
 
 export default async function FootballLandingPage() {
   void recordRuntimeEvent('route_render', { route: '/football', sport: 'football' });
@@ -20,28 +34,28 @@ export default async function FootballLandingPage() {
   ];
 
   return (
-    <div className="di-shell">
-      <main className="di-container" aria-labelledby="football-heading">
-        <section className="di-hero" id="football-heading">
-          <span className="di-pill">Gridiron Signal</span>
-          <h1 className="di-title">Deep South Football Intel</h1>
-          <p className="di-subtitle">
+    <div className={layoutShell({ variant: 'hero' })}>
+      <main className={layoutContainer()} aria-labelledby="football-heading">
+        <section className={heroSection()} id="football-heading">
+          <span className={heroPill()}>Gridiron Signal</span>
+          <h1 className={heroTitle()}>Deep South Football Intel</h1>
+          <p className={heroSubtitle()}>
             Complement the Diamond stack with fall analytics—portal velocity, recruiting scorecards, and live win probability.
           </p>
-          <Link className="di-action" href="/auth/sign-up">
+          <Link className={actionButton()} href="/auth/sign-up">
             Reserve Football Access
           </Link>
         </section>
 
-        <section className="di-section" aria-labelledby="football-tiles">
-          <h2 id="football-tiles" className="di-page-title">
+        <section className={section()} aria-labelledby="football-tiles">
+          <h2 id="football-tiles" className={sectionTitle()}>
             Fall 2025 Preview
           </h2>
-          <div className="di-card-grid">
+          <div className={cardGrid()}>
             {featureTiles.map((tile) => (
-              <article key={tile.title} className="di-card">
-                <h3>{tile.title}</h3>
-                <p>{tile.description}</p>
+              <article key={tile.title} className={cardSurface()}>
+                <h3 className="font-display text-2xl text-di-text">{tile.title}</h3>
+                <p className="text-sm text-di-textMuted sm:text-base">{tile.description}</p>
               </article>
             ))}
           </div>
