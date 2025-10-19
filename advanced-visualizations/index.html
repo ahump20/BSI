@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Visualizations | Blaze Sports Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0A0A0F;
+      --surface: #16161f;
+      --surface-alt: #1f1f2b;
+      --accent: #FBBF24;
+      --text: #E2E8F0;
+      --muted: rgba(226, 232, 240, 0.7);
+      --border: rgba(226, 232, 240, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(180deg, #0A0A0F 0%, #11111a 100%);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      padding: 0 1.5rem 4rem;
+    }
+    header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 0 1.5rem;
+    }
+    .kicker {
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+    h1 {
+      font-size: clamp(2.25rem, 5vw, 3rem);
+      margin: 0.25rem 0 0.75rem;
+    }
+    p.lede {
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    nav.breadcrumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    nav.breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 2rem 0 0;
+    }
+    .toc a {
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .toc a:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.25);
+      color: var(--accent);
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      gap: 2.5rem;
+    }
+    section.viz {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2rem;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+    }
+    section.viz h2 {
+      margin-top: 0;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+    section.viz p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+    .viz-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .viz-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    a.primary-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #1A1200;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+    a.primary-link:hover {
+      transform: translateY(-2px);
+    }
+    footer {
+      max-width: 960px;
+      margin: 3rem auto 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/index-enhanced.html">Home</a>
+      <span>/</span>
+      <span>Advanced Visualizations</span>
+    </nav>
+    <div class="kicker">Diamond Insights · Visualization Lab</div>
+    <h1>Advanced Visualizations</h1>
+    <p class="lede">Explore immersive data experiences tailor-made for NCAA Division I baseball operations. Each module below links directly into the visualization stack that powers Blaze Sports Intel.</p>
+    <div class="toc" aria-label="Visualization shortcuts">
+      <a href="#spray-chart-lab">Spray Chart Lab</a>
+      <a href="#pitch-sequence-3d">Pitch Sequencing Cube</a>
+      <a href="#run-production-heatmaps">Run Production Heatmaps</a>
+    </div>
+  </header>
+  <main>
+    <section id="spray-chart-lab" class="viz">
+      <h2><i class="fas fa-baseball-bat-ball"></i> Spray Chart Lab</h2>
+      <div class="viz-meta">
+        <span><i class="fas fa-location-arrow"></i> Park-adjusted trajectories</span>
+        <span><i class="fas fa-layer-group"></i> Situation filters</span>
+        <span><i class="fas fa-mobile-alt"></i> Mobile-ready</span>
+      </div>
+      <p>Generate comparative spray charts across venues, handedness splits, and pitch families. The lab normalizes exit velocity, launch angle, and fence depth so coaches can tailor defensive alignments on the fly.</p>
+      <a class="primary-link" href="/analytics.html" target="_blank" rel="noopener">
+        Launch Analytics Suite
+        <i class="fas fa-arrow-up-right-from-square"></i>
+      </a>
+    </section>
+    <section id="pitch-sequence-3d" class="viz">
+      <h2><i class="fas fa-cube"></i> Pitch Sequencing Cube</h2>
+      <div class="viz-meta">
+        <span><i class="fas fa-vr-cardboard"></i> 3D pitch tunnels</span>
+        <span><i class="fas fa-stopwatch"></i> Temporal overlays</span>
+        <span><i class="fas fa-bullseye"></i> Swing decision outcomes</span>
+      </div>
+      <p>Overlay release point dispersion, pitch break, and batter response to expose sequencing tells. The cube helps identify when arsenals leak tunneling discipline or when sequencing sets up predictable swing decisions.</p>
+      <a class="primary-link" href="/sports-analytics-dashboard-enhanced.html" target="_blank" rel="noopener">
+        View Sequencing Dashboard
+        <i class="fas fa-arrow-up-right-from-square"></i>
+      </a>
+    </section>
+    <section id="run-production-heatmaps" class="viz">
+      <h2><i class="fas fa-fire"></i> Run Production Heatmaps</h2>
+      <div class="viz-meta">
+        <span><i class="fas fa-fire-flame-curved"></i> Run value grids</span>
+        <span><i class="fas fa-layer-group"></i> Base/Out states</span>
+        <span><i class="fas fa-lightbulb"></i> Bullpen pressure signals</span>
+      </div>
+      <p>Map expected run production for every count, location, and base-out state. Heatmaps surface where opponents leak win probability, guiding bullpen matchups and defensive shifts.</p>
+      <a class="primary-link" href="/analytics-api-integrated.html" target="_blank" rel="noopener">
+        Explore API Demo
+        <i class="fas fa-arrow-up-right-from-square"></i>
+      </a>
+    </section>
+  </main>
+  <footer>
+    Built for coaching staffs that live at the intersection of tradition and high-performance analytics.
+  </footer>
+</body>
+</html>
