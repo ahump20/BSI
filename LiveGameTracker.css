@@ -33,25 +33,42 @@
 }
 
 .game-card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: var(--glass-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
+    background 0.2s ease;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--glass-shadow-soft);
+}
+
+.game-card:hover {
+  border-color: rgba(204, 85, 0, 0.35);
+  background: linear-gradient(150deg, rgba(204, 85, 0, 0.22), rgba(14, 16, 22, 0.65));
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
 }
 
 .game-card:active {
-  transform: scale(0.98);
-  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(1px);
+  background: rgba(204, 85, 0, 0.18);
+}
+
+.game-card:focus-visible {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(204, 85, 0, 0.35);
 }
 
 .game-card.status-live {
   border-left: 3px solid var(--live-indicator);
+  box-shadow: 0 20px 48px rgba(255, 59, 48, 0.2), var(--glass-shadow-soft);
 }
 
 .game-card.status-final {
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .game-status {
@@ -60,7 +77,7 @@
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .status-text {
@@ -128,7 +145,7 @@
 }
 
 .pitcher-info {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--glass-border);
   padding-top: 12px;
 }
 
@@ -153,7 +170,7 @@
 .game-venue {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--glass-border);
   font-size: 12px;
   color: var(--text-secondary);
 }
@@ -174,6 +191,10 @@
     padding: 20px;
   }
 
+  .game-card:hover {
+    transform: translateY(-3px);
+  }
+
   .team-name {
     font-size: 16px;
   }
@@ -186,8 +207,6 @@
   }
 
   .game-card:hover {
-    border-color: var(--accent-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px);
   }
 }
