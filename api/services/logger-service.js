@@ -182,6 +182,7 @@ class LoggerService {
       this.prettyPrint(logEntry);
     } else {
       // JSON format for production
+      console.log(JSON.stringify(logEntry));
     }
 
     // Add to buffer for batch processing
@@ -203,14 +204,17 @@ class LoggerService {
 
     const color = colors[logEntry.level] || reset;
     const timestamp = new Date(logEntry.timestamp).toLocaleTimeString();
+    const formattedMessage = `${color}[${timestamp}] ${logEntry.level}${reset} ${logEntry.message}`;
+    const errorDetails = logEntry.error ? logEntry.error : '';
 
-      `${color}[${timestamp}] ${logEntry.level}${reset} ${logEntry.message}`,
-      logEntry.error ? logEntry.error : ''
-    );
+    // eslint-disable-next-line no-console
+    console.log(formattedMessage, errorDetails);
 
     // Show metadata if present
     const { timestamp: _, level: __, message: ___, error: ____, ...metadata } = logEntry;
     if (Object.keys(metadata).length > 0) {
+      // eslint-disable-next-line no-console
+      console.dir(metadata, { depth: null, colors: true });
     }
   }
 
