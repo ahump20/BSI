@@ -13,7 +13,7 @@ Each primitive must be backed by live model outputs with audit trails referencin
 
 ### Late Edge
 - **Trigger**: `opp_bullpen_freshness <= 30` **and** `tie_after_7`
-- **Recommendation**: "+7–10% W% if close; work counts."
+- **Recommendation**: "+7–10% W% if close; extend at-bats to drive up opposing bullpen pitch counts."
 - **Context**: Encourages aggressive plate discipline and pitch sequencing when opponent relief corps is depleted in late innings.
 
 ### Cold Bat Watch
