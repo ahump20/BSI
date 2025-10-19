@@ -20,6 +20,45 @@
             padding: 20px;
         }
 
+        .nav-header {
+            position: relative;
+            z-index: 100;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px 24px;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            color: white;
+        }
+
         #canvas3d {
             position: fixed;
             top: 0;
@@ -285,6 +324,16 @@
     </style>
 </head>
 <body>
+    <div class="nav-header">
+        <a href="/" class="nav-logo">
+            <span>🔥</span>
+            <span>BLAZE SPORTS INTEL</span>
+        </a>
+        <a href="/" class="back-btn">
+            ← Back to Home
+        </a>
+    </div>
+
     <canvas id="canvas3d"></canvas>
 
     <div class="fps-display">
