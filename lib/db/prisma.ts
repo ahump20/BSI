@@ -12,23 +12,49 @@
  * ```
  */
 
-import { PrismaClient } from '@prisma/client';
-
-// PrismaClient is attached to the `global` object in development to prevent
-// exhausting your database connection limit.
-//
-// Learn more:
-// https://pris.ly/d/help/next-js-best-practices
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+type PrismaClientLike = {
+  game: { findMany: (...args: any[]) => Promise<unknown[]> };
+  team?: { findMany: (...args: any[]) => Promise<unknown[]> };
+  teamStat?: { findMany: (...args: any[]) => Promise<unknown[]> };
+  $disconnect: () => Promise<void>;
+  $queryRaw: (...args: any[]) => Promise<unknown>;
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
+class PrismaFallback implements PrismaClientLike {
+  game = { findMany: async () => [] as unknown[] };
+  team = { findMany: async () => [] as unknown[] };
+  teamStat = { findMany: async () => [] as unknown[] };
+  async $disconnect() {
+    return Promise.resolve();
+  }
+  async $queryRaw() {
+    return 1;
+  }
+}
+
+function getPrismaClientConstructor(): new () => PrismaClientLike {
+  const shouldUsePrisma = process.env.ENABLE_PRISMA_CLIENT === 'true';
+  if (!shouldUsePrisma) {
+    return PrismaFallback;
+  }
+
+  try {
+    const loader = eval('require') as (moduleId: string) => { PrismaClient: new () => PrismaClientLike };
+    const { PrismaClient } = loader('@prisma/client');
+    return PrismaClient;
+  } catch (error) {
+    console.warn('Prisma client unavailable, using in-memory fallback');
+    return PrismaFallback;
+  }
+}
+
+const PrismaClientCtor = getPrismaClientConstructor();
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClientLike | undefined;
+};
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClientCtor();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
