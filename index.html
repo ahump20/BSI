@@ -3,10 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="theme-color" content="#0f0703" />
     <meta name="description" content="Live college baseball scores, box scores, and standings - the coverage ESPN won't give you" />
     <title>College Baseball Live</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- PWA Support -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
@@ -15,9 +22,16 @@
       body {
         margin: 0;
         padding: 0;
-        background-color: #1a1a1a;
-        color: #ffffff;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background-color: var(--primary-color, #0f0703);
+        color: var(--text-primary, #fdf8f4);
+        font-family: var(
+          --font-primary,
+          'Inter',
+          'Segoe UI',
+          'Helvetica Neue',
+          Arial,
+          sans-serif
+        );
       }
       
       #root {
@@ -35,15 +49,15 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-color: #1a1a1a;
+        background-color: var(--primary-color, #0f0703);
         z-index: 9999;
       }
-      
+
       .loading-spinner {
         width: 48px;
         height: 48px;
-        border: 4px solid #404040;
-        border-top-color: #00a86b;
+        border: 4px solid var(--border-color, rgba(255, 195, 160, 0.22));
+        border-top-color: var(--accent-color, #bf5700);
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
@@ -54,7 +68,7 @@
       
       .loading-text {
         margin-top: 16px;
-        color: #a0a0a0;
+        color: var(--text-secondary, rgba(244, 221, 204, 0.72));
         font-size: 14px;
       }
     </style>

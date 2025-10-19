@@ -83,7 +83,7 @@
 .line-score .total-score {
   font-weight: 700;
   font-size: 16px;
-  background-color: rgba(0, 168, 107, 0.1);
+  background-color: rgba(191, 87, 0, 0.16);
 }
 
 .stats-tabs {
@@ -186,7 +186,7 @@
 }
 
 .decision-pitcher {
-  background-color: rgba(0, 168, 107, 0.05);
+  background-color: rgba(191, 87, 0, 0.1);
 }
 
 .decision {
@@ -194,7 +194,7 @@
   margin-left: 8px;
   padding: 2px 6px;
   background-color: var(--accent-color);
-  color: var(--primary-color);
+  color: var(--text-on-accent);
   font-size: 10px;
   font-weight: 700;
   border-radius: 4px;
