@@ -433,7 +433,12 @@ export const mockBoxScore = {
 
 export const mockPortalActivity = {
   defaultTimeframe: '30d',
-  timeframes: ['7d', '30d', '90d'],
+  timeframes: ['7d', '14d', '30d', '90d'],
+  timeframeLabels: {
+    '7d': 'Last 7 days',
+    '30d': 'Last 30 days',
+    '90d': 'Last 90 days',
+  },
   regions: [
     {
       id: 'deep-south',
@@ -443,6 +448,7 @@ export const mockPortalActivity = {
       positions: ['P', 'IF', 'OF', 'C'],
       metrics: {
         '7d': { transferCommits: 9, nilEstimate: 2.1, recruitingIndex: 91 },
+        '14d': { transferCommits: 15, nilEstimate: 3.5, recruitingIndex: 93 },
         '30d': { transferCommits: 24, nilEstimate: 5.2, recruitingIndex: 95 },
         '90d': { transferCommits: 58, nilEstimate: 11.4, recruitingIndex: 97 },
       },
@@ -456,6 +462,7 @@ export const mockPortalActivity = {
       positions: ['P', 'OF', 'UT'],
       metrics: {
         '7d': { transferCommits: 7, nilEstimate: 1.4, recruitingIndex: 88 },
+        '14d': { transferCommits: 12, nilEstimate: 2.5, recruitingIndex: 90 },
         '30d': { transferCommits: 19, nilEstimate: 3.6, recruitingIndex: 92 },
         '90d': { transferCommits: 43, nilEstimate: 7.9, recruitingIndex: 94 },
       },
@@ -469,6 +476,7 @@ export const mockPortalActivity = {
       positions: ['IF', 'OF', 'C'],
       metrics: {
         '7d': { transferCommits: 6, nilEstimate: 1.9, recruitingIndex: 89 },
+        '14d': { transferCommits: 10, nilEstimate: 3.1, recruitingIndex: 91 },
         '30d': { transferCommits: 16, nilEstimate: 4.8, recruitingIndex: 93 },
         '90d': { transferCommits: 39, nilEstimate: 9.7, recruitingIndex: 96 },
       },
@@ -482,6 +490,7 @@ export const mockPortalActivity = {
       positions: ['P', 'IF'],
       metrics: {
         '7d': { transferCommits: 4, nilEstimate: 1.2, recruitingIndex: 83 },
+        '14d': { transferCommits: 7, nilEstimate: 1.8, recruitingIndex: 85 },
         '30d': { transferCommits: 11, nilEstimate: 2.9, recruitingIndex: 87 },
         '90d': { transferCommits: 28, nilEstimate: 6.1, recruitingIndex: 90 },
       },
@@ -544,6 +553,17 @@ export const mockPortalActivity = {
       geography: 'Deep South',
       timeframe: '90d',
     },
+    {
+      player: 'Logan Piersall',
+      position: 'IF',
+      fromTeam: 'Coastal Carolina',
+      toTeam: 'Georgia',
+      conferenceTo: 'SEC',
+      commitDate: '2025-03-02',
+      nilEstimate: 0.27,
+      geography: 'Deep South',
+      timeframe: '14d',
+    },
   ],
   trendingPrograms: [
     {
@@ -553,6 +573,7 @@ export const mockPortalActivity = {
       positionsNeed: ['P', 'OF'],
       timeframes: {
         '7d': { netTransfers: 2, nilMomentum: 0.6 },
+        '14d': { netTransfers: 3, nilMomentum: 0.9 },
         '30d': { netTransfers: 5, nilMomentum: 1.4 },
         '90d': { netTransfers: 9, nilMomentum: 2.1 },
       },
@@ -564,6 +585,7 @@ export const mockPortalActivity = {
       positionsNeed: ['P', 'UT'],
       timeframes: {
         '7d': { netTransfers: 1, nilMomentum: 0.3 },
+        '14d': { netTransfers: 2, nilMomentum: 0.5 },
         '30d': { netTransfers: 3, nilMomentum: 0.9 },
         '90d': { netTransfers: 6, nilMomentum: 1.6 },
       },
@@ -575,6 +597,7 @@ export const mockPortalActivity = {
       positionsNeed: ['IF', 'C'],
       timeframes: {
         '7d': { netTransfers: 1, nilMomentum: 0.4 },
+        '14d': { netTransfers: 2, nilMomentum: 0.7 },
         '30d': { netTransfers: 4, nilMomentum: 1.1 },
         '90d': { netTransfers: 7, nilMomentum: 1.8 },
       },
@@ -586,6 +609,7 @@ export const mockPortalActivity = {
       positionsNeed: ['C', 'P'],
       timeframes: {
         '7d': { netTransfers: 0, nilMomentum: 0.2 },
+        '14d': { netTransfers: 1, nilMomentum: 0.3 },
         '30d': { netTransfers: 2, nilMomentum: 0.6 },
         '90d': { netTransfers: 4, nilMomentum: 1.1 },
       },

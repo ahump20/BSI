@@ -4,6 +4,11 @@ import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./tests/setupTests.js'],
+    include: ['tests/ui/**/*.test.{js,jsx,ts,tsx}'],
+  },
   server: {
     port: 3000,
     proxy: {
