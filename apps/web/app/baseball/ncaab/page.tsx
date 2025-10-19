@@ -297,7 +297,11 @@ export default function BaseballNcaabScoreboardPage() {
                     </div>
 
                     <div className={styles.meta}>
-                      <span>{status.state === 'pre' ? 'First pitch' : 'Updated'}: {formatStartTime(event)}</span>
+                      <span>
+                        {status.state === 'pre'
+                          ? `First pitch: ${formatStartTime(event)}`
+                          : `Status: ${status.label}`}
+                      </span>
                       <span>Event ID: {event.id}</span>
                     </div>
                   </article>
