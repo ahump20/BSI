@@ -43,6 +43,51 @@ export interface ProviderGame {
   outs?: number;
   providerName: string;
   feedPrecision: 'EVENT' | 'PITCH' | 'PLAY';
+  season?: number;
+  seasonType?: 'REGULAR' | 'POSTSEASON' | 'CONFERENCE' | 'EXHIBITION';
+  events?: ProviderEvent[];
+  boxScore?: ProviderBoxLine[];
+}
+
+export interface ProviderEvent {
+  sequence: number;
+  inning: number;
+  inningHalf: 'TOP' | 'BOTTOM';
+  outs?: number;
+  eventType: string;
+  description: string;
+  homeWinProb?: number;
+  wpaSwing?: number;
+}
+
+export interface ProviderBoxLine {
+  playerId: string;
+  teamId: string;
+  side: 'HOME' | 'AWAY';
+  battingOrder?: number;
+  batting: {
+    ab: number;
+    r: number;
+    h: number;
+    rbi: number;
+    bb: number;
+    so: number;
+    doubles?: number;
+    triples?: number;
+    homeRuns?: number;
+    stolenBases?: number;
+    caughtStealing?: number;
+  };
+  pitching?: {
+    ip?: number;
+    hitsAllowed?: number;
+    runsAllowed?: number;
+    earnedRuns?: number;
+    bbAllowed?: number;
+    soRecorded?: number;
+    homeRunsAllowed?: number;
+    decision?: 'W' | 'L' | 'S' | 'ND';
+  };
 }
 
 /**
@@ -62,6 +107,15 @@ export interface ProviderTeamStats {
   battingAvg: number;
   era: number;
   fieldingPct: number;
+  hitsTotal?: number;
+  homeRuns?: number;
+  stolenBases?: number;
+  earnedRuns?: number;
+  hitsAllowed?: number;
+  strikeouts?: number;
+  walks?: number;
+  onBasePct?: number;
+  sluggingPct?: number;
   rpi?: number;
   strengthOfSched?: number;
   pythagWins?: number;

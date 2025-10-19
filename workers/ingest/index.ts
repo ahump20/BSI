@@ -19,9 +19,17 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { Prisma, PrismaClient } from '@prisma/client';
+import {
+  Prisma,
+  PrismaClient,
+  GameStatus,
+  SeasonType,
+  FeedPrecision,
+  BoxLineSide,
+  InningHalf
+} from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
-import type { Env } from './types';
+import type { Env, ProviderGame, ProviderBoxLine } from './types';
 
 const prisma = new PrismaClient();
 
@@ -176,45 +184,85 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 
     console.log(`[Ingest] Fetched ${games.length} games from provider`);
 
+    // Resolve provider team IDs to internal team IDs once per batch
+    const teamExternalIds = Array.from(
+      new Set(
+        games.flatMap((game) => [game.homeTeamId, game.awayTeamId, game.boxScore?.map((line) => line.teamId) ?? []]).flat()
+      )
+    ).filter((id): id is string => Boolean(id));
+
+    const knownTeams = await prisma.team.findMany({
+      where: { externalId: { in: teamExternalIds } },
+      select: { id: true, externalId: true }
+    });
+
+    const teamMap = new Map(
+      knownTeams
+        .filter((team) => Boolean(team.externalId))
+        .map((team) => [team.externalId as string, team.id])
+    );
+
     // Batch upsert games
     const upsertPromises = games.map((game) =>
       executeWithConstraintGuard(
-        () =>
-          prisma.game.upsert({
+        async () => {
+          const normalizedStatus = normalizeGameStatus(game.status);
+          const normalizedSeasonType = (game.seasonType ?? 'REGULAR') as SeasonType;
+          const feedPrecision = (game.feedPrecision ?? 'EVENT') as FeedPrecision;
+
+          const homeTeamDbId = teamMap.get(game.homeTeamId);
+          const awayTeamDbId = teamMap.get(game.awayTeamId);
+
+          if (!homeTeamDbId || !awayTeamDbId) {
+            console.warn(
+              `[Ingest] Skipping game ${game.id} - missing team mapping (home: ${game.homeTeamId}, away: ${game.awayTeamId})`
+            );
+            return null;
+          }
+
+          const dbGame = await prisma.game.upsert({
             where: { externalId: game.id },
             update: {
-              status: game.status,
+              status: normalizedStatus,
               homeScore: game.homeScore,
               awayScore: game.awayScore,
               currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
+              currentInningHalf: mapInningHalf(game.currentInningHalf),
               balls: game.balls,
               strikes: game.strikes,
               outs: game.outs,
-              lastUpdated: new Date()
+              lastUpdated: new Date(),
+              homeTeamId: homeTeamDbId,
+              awayTeamId: awayTeamDbId,
+              feedPrecision
             },
             create: {
               externalId: game.id,
               sport: 'BASEBALL',
               division: 'D1',
-              season,
-              seasonType: 'REGULAR',
+              season: game.season ?? season,
+              seasonType: normalizedSeasonType,
               scheduledAt: new Date(game.scheduledAt),
-              status: game.status,
-              homeTeamId: game.homeTeamId,
-              awayTeamId: game.awayTeamId,
+              status: normalizedStatus,
+              homeTeamId: homeTeamDbId,
+              awayTeamId: awayTeamDbId,
               homeScore: game.homeScore,
               awayScore: game.awayScore,
               venueId: game.venueId,
               currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
+              currentInningHalf: mapInningHalf(game.currentInningHalf),
               balls: game.balls,
               strikes: game.strikes,
               outs: game.outs,
               providerName: game.providerName,
-              feedPrecision: game.feedPrecision
+              feedPrecision
             }
-          }),
+          });
+
+          await syncGameAncillaryData(dbGame.id, game, teamMap);
+
+          return dbGame;
+        },
         `game upsert ${game.id}`
       )
     );
@@ -240,6 +288,144 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
   } catch (error) {
     console.error('[Ingest] Live games ingestion failed:', error);
     throw error;
+  }
+}
+
+function normalizeGameStatus(status: ProviderGame['status']): GameStatus {
+  switch (status) {
+    case 'LIVE':
+      return 'LIVE';
+    case 'FINAL':
+      return 'FINAL';
+    case 'POSTPONED':
+      return 'POSTPONED';
+    case 'CANCELLED':
+    case 'CANCELED':
+      return 'CANCELED';
+    default:
+      return 'SCHEDULED';
+  }
+}
+
+function mapInningHalf(half?: 'TOP' | 'BOTTOM'): InningHalf | null {
+  if (!half) {
+    return null;
+  }
+
+  return half === 'BOTTOM' ? 'BOTTOM' : 'TOP';
+}
+
+function mapBoxLineSide(side: ProviderBoxLine['side']): BoxLineSide {
+  return side === 'AWAY' ? 'AWAY' : 'HOME';
+}
+
+function calculateTotalBases(line: ProviderBoxLine): number {
+  const doubles = line.batting.doubles ?? 0;
+  const triples = line.batting.triples ?? 0;
+  const homeRuns = line.batting.homeRuns ?? 0;
+  const singles = Math.max(0, line.batting.h - doubles - triples - homeRuns);
+
+  return singles + doubles * 2 + triples * 3 + homeRuns * 4;
+}
+
+async function syncGameAncillaryData(
+  gameId: string,
+  providerGame: ProviderGame,
+  teamMap: Map<string, string>
+): Promise<void> {
+  // Sync play-by-play events
+  if (providerGame.events) {
+    const eventData = providerGame.events.map((event, index) => ({
+      gameId,
+      sequence: event.sequence ?? index + 1,
+      inning: event.inning,
+      inningHalf: mapInningHalf(event.inningHalf) ?? 'TOP',
+      outs: event.outs ?? null,
+      eventType: event.eventType,
+      description: event.description,
+      homeWinProb: event.homeWinProb ?? null,
+      wpaSwing: event.wpaSwing ?? null
+    }));
+
+    await prisma.$transaction(async (tx) => {
+      await tx.event.deleteMany({ where: { gameId } });
+      if (eventData.length > 0) {
+        await tx.event.createMany({ data: eventData, skipDuplicates: true });
+      }
+    });
+  }
+
+  // Sync box score lines
+  if (providerGame.boxScore) {
+    const playerExternalIds = Array.from(
+      new Set(providerGame.boxScore.map((line) => line.playerId).filter(Boolean))
+    );
+
+    const players = playerExternalIds.length
+      ? await prisma.player.findMany({
+          where: { externalId: { in: playerExternalIds } },
+          select: { id: true, externalId: true }
+        })
+      : [];
+
+    const playerMap = new Map(
+      players
+        .filter((player) => Boolean(player.externalId))
+        .map((player) => [player.externalId as string, player.id])
+    );
+
+    const boxLineData: Prisma.GameBoxLineCreateManyInput[] = [];
+
+    for (const line of providerGame.boxScore) {
+      const teamId = teamMap.get(line.teamId);
+      const playerId = playerMap.get(line.playerId);
+
+      if (!teamId || !playerId) {
+        console.warn(
+          `[Ingest] Skipping box line for game ${gameId} - missing mapping`,
+          JSON.stringify({ playerExternalId: line.playerId, teamExternalId: line.teamId })
+        );
+        continue;
+      }
+
+      boxLineData.push({
+        gameId,
+        teamId,
+        playerId,
+        side: mapBoxLineSide(line.side),
+        battingOrder: line.battingOrder ?? null,
+        ab: line.batting.ab,
+        r: line.batting.r,
+        h: line.batting.h,
+        rbi: line.batting.rbi,
+        bb: line.batting.bb,
+        so: line.batting.so,
+        doubles: line.batting.doubles ?? null,
+        triples: line.batting.triples ?? null,
+        homeRuns: line.batting.homeRuns ?? null,
+        stolenBases: line.batting.stolenBases ?? null,
+        caughtStealing: line.batting.caughtStealing ?? null,
+        totalBases: calculateTotalBases(line),
+        ip: line.pitching?.ip ?? null,
+        hitsAllowed: line.pitching?.hitsAllowed ?? null,
+        runsAllowed: line.pitching?.runsAllowed ?? null,
+        earnedRuns: line.pitching?.earnedRuns ?? null,
+        bbAllowed: line.pitching?.bbAllowed ?? null,
+        soRecorded: line.pitching?.soRecorded ?? null,
+        homeRunsAllowed: line.pitching?.homeRunsAllowed ?? null,
+        decision:
+          line.pitching?.decision && line.pitching.decision !== 'ND'
+            ? line.pitching.decision
+            : null
+      });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.gameBoxLine.deleteMany({ where: { gameId } });
+      if (boxLineData.length > 0) {
+        await tx.gameBoxLine.createMany({ data: boxLineData, skipDuplicates: true });
+      }
+    });
   }
 }
 
@@ -300,9 +486,18 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
                   awayLosses: stats.awayLosses,
                   runsScored: stats.runsScored,
                   runsAllowed: stats.runsAllowed,
+                  hitsTotal: stats.hitsTotal ?? 0,
+                  homeRuns: stats.homeRuns ?? 0,
+                  stolenBases: stats.stolenBases ?? 0,
                   battingAvg: stats.battingAvg,
+                  onBasePct: stats.onBasePct,
+                  sluggingPct: stats.sluggingPct,
                   era: stats.era,
                   fieldingPct: stats.fieldingPct,
+                  earnedRuns: stats.earnedRuns ?? stats.runsAllowed ?? 0,
+                  hitsAllowed: stats.hitsAllowed ?? 0,
+                  strikeouts: stats.strikeouts ?? 0,
+                  walks: stats.walks ?? 0,
                   rpi: stats.rpi,
                   strengthOfSched: stats.strengthOfSched,
                   pythagWins: stats.pythagWins,
@@ -321,9 +516,18 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
                   awayLosses: stats.awayLosses,
                   runsScored: stats.runsScored,
                   runsAllowed: stats.runsAllowed,
+                  hitsTotal: stats.hitsTotal ?? 0,
+                  homeRuns: stats.homeRuns ?? 0,
+                  stolenBases: stats.stolenBases ?? 0,
                   battingAvg: stats.battingAvg,
+                  onBasePct: stats.onBasePct,
+                  sluggingPct: stats.sluggingPct,
                   era: stats.era,
                   fieldingPct: stats.fieldingPct,
+                  earnedRuns: stats.earnedRuns ?? stats.runsAllowed ?? 0,
+                  hitsAllowed: stats.hitsAllowed ?? 0,
+                  strikeouts: stats.strikeouts ?? 0,
+                  walks: stats.walks ?? 0,
                   rpi: stats.rpi,
                   strengthOfSched: stats.strengthOfSched,
                   pythagWins: stats.pythagWins
