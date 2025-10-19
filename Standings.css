@@ -17,17 +17,20 @@
 
 .conference-select {
   padding: 8px 12px;
-  background-color: var(--card-bg);
+  background-color: var(--glass-light);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   font-size: 13px;
   outline: none;
   cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .conference-select:focus {
-  border-color: var(--accent-color);
+  border-color: var(--blaze-ember-bright);
+  box-shadow: 0 0 0 2px rgba(216, 107, 31, 0.2);
 }
 
 .standings-table-wrapper {
@@ -41,8 +44,9 @@
   min-width: 600px;
   border-collapse: collapse;
   background-color: var(--card-bg);
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: var(--shadow-glass);
 }
 
 .standings-table th {
@@ -84,8 +88,8 @@
 }
 
 .tournament-team {
-  background-color: rgba(0, 168, 107, 0.05);
-  border-left: 3px solid var(--accent-color);
+  background-color: rgba(216, 107, 31, 0.08);
+  border-left: 3px solid var(--blaze-ember);
 }
 
 .record {
@@ -113,7 +117,7 @@
 }
 
 .rpi-rank {
-  color: var(--accent-color);
+  color: var(--blaze-ember-bright);
 }
 
 .rpi-value {
@@ -134,7 +138,7 @@
 }
 
 .win-streak {
-  color: var(--accent-color);
+  color: var(--blaze-ember-bright);
 }
 
 .loss-streak {
@@ -150,15 +154,18 @@
   align-items: center;
   gap: 8px;
   padding: 12px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background-color: var(--glass-light);
+  border-radius: 16px;
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 24px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .tournament-indicator {
-  color: var(--accent-color);
+  color: var(--blaze-ember-bright);
   font-size: 16px;
 }
 
@@ -179,15 +186,19 @@
 }
 
 .leader-category {
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background-color: var(--glass-medium);
+  border-radius: 16px;
   padding: 16px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-glass);
 }
 
 .leader-category h4 {
   font-size: 14px;
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--blaze-ember-bright);
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
@@ -224,7 +235,7 @@
 
 .player-stat {
   font-weight: 700;
-  color: var(--accent-color);
+  color: var(--blaze-ember-bright);
   min-width: 50px;
   text-align: right;
 }

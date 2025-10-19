@@ -15,7 +15,7 @@ function SportSwitcher({ currentSport = 'baseball' }) {
       name: 'Baseball',
       icon: '⚾',
       path: '/',
-      color: '#00a86b'
+      color: 'var(--blaze-ember)'
     },
     {
       name: 'Football',
