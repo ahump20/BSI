@@ -5,6 +5,9 @@
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
   --live-indicator: #ff3b30;
+  --gradient-ember: linear-gradient(135deg, #ff6b00 0%, #ff3b30 100%);
+  --ember-glow-inner: rgba(255, 59, 48, 0.55);
+  --ember-glow-outer: rgba(255, 107, 0, 0.65);
   --border-color: #404040;
   --card-bg: #1e1e1e;
 }
