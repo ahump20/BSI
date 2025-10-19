@@ -3,21 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#1a1a1a" />
-    <meta name="description" content="Live college baseball scores, box scores, and standings - the coverage ESPN won't give you" />
-    <title>College Baseball Live</title>
+    <meta name="theme-color" content="#BF5700" />
+    <meta
+      name="description"
+      content="Blaze Sports Intel delivers mobile-first college baseball scores, scouting intel, and advanced analytics for Division I programs."
+    />
+    <title>Blaze Sports Intel | College Baseball Intelligence</title>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Blaze Sports Intel | College Baseball Intelligence" />
+    <meta
+      property="og:description"
+      content="Blaze Sports Intel delivers mobile-first college baseball scores, scouting intel, and advanced analytics for Division I programs."
+    />
+    <meta property="og:url" content="https://blazesportsintel.com/" />
+    <meta property="og:image" content="https://blazesportsintel.com/og-default.jpg" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Blaze Sports Intel | College Baseball Intelligence" />
+    <meta
+      name="twitter:description"
+      content="Blaze Sports Intel delivers mobile-first college baseball scores, scouting intel, and advanced analytics for Division I programs."
+    />
+    <meta name="twitter:image" content="https://blazesportsintel.com/og-default.jpg" />
+    <meta name="twitter:url" content="https://blazesportsintel.com/" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     
     <!-- PWA Support -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     
     <style>
+      :root {
+        --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          'Roboto', sans-serif;
+        --font-family-display: 'Bebas Neue', 'Impact', 'Arial Black', sans-serif;
+        --font-family-mono: 'SF Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+      }
+
       body {
         margin: 0;
         padding: 0;
         background-color: #1a1a1a;
         color: #ffffff;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-family: var(--font-family-sans);
       }
       
       #root {
