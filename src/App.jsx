@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import ParticleBackground from './components/ParticleBackground'
 
 function App() {
   const [games, setGames] = useState([])
@@ -73,6 +74,7 @@ function App() {
 
   return (
     <div className="container">
+      <ParticleBackground />
       <header>
         <h1>⚾ College Baseball Live</h1>
         <p className="tagline">Real-time scores with comprehensive game data</p>
