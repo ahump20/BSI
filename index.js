@@ -172,7 +172,7 @@ async function fetchPortalActivity(env, searchParams) {
       coordinates: region.coordinates,
       conferences: region.conferences,
       positions: region.positions,
-      topPrograms: region.topPrograms,
+      topPrograms: region.topPrograms ?? [],
       metrics: {
         timeframe,
         ...region.metrics[timeframe],
