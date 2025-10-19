@@ -144,6 +144,11 @@ blazesportsintel.com/
 
 ## Phase 3: Technical Implementation
 
+### 2025-10-16 – SQLite Schema Hardening
+
+- Realigned legacy SQLite foreign keys so every reference now targets a unique key by pairing `sport` with the natural identifier (`team_id`, `player_id`, `game_id`).
+- Regenerated the schema against a fresh database to confirm SQLite no longer raises `foreign key mismatch` during migrations.
+
 ### Prisma Schema (PostgreSQL)
 
 Location: `/prisma/schema.prisma`

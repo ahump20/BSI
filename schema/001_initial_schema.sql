@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     sport TEXT NOT NULL CHECK(sport IN ('NFL', 'MLB', 'CFB', 'CBB')),
     player_id INTEGER NOT NULL,  -- SportsDataIO PlayerID
-    team_id INTEGER,             -- Current team (foreign key to teams.team_id)
+    team_id INTEGER,             -- Current team (foreign key to teams by sport)
     first_name TEXT,
     last_name TEXT,
     full_name TEXT NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS players (
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     UNIQUE(sport, player_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (sport, team_id) REFERENCES teams(sport, team_id)
 );
 
 CREATE INDEX idx_players_sport_team ON players(sport, team_id);
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS standings (
     data_source TEXT DEFAULT 'SportsDataIO',
     last_updated TEXT DEFAULT (datetime('now')),
     UNIQUE(sport, season, season_type, team_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (sport, team_id) REFERENCES teams(sport, team_id)
 );
 
 CREATE INDEX idx_standings_sport_season ON standings(sport, season, season_type);
@@ -137,8 +137,8 @@ CREATE TABLE IF NOT EXISTS games (
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     UNIQUE(sport, game_id),
-    FOREIGN KEY (home_team_id) REFERENCES teams(team_id),
-    FOREIGN KEY (away_team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (sport, home_team_id) REFERENCES teams(sport, team_id),
+    FOREIGN KEY (sport, away_team_id) REFERENCES teams(sport, team_id)
 );
 
 CREATE INDEX idx_games_sport_season ON games(sport, season, season_type);
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS team_season_stats (
     stats_json TEXT,  -- Store full JSON for sport-specific stats
     last_updated TEXT DEFAULT (datetime('now')),
     UNIQUE(sport, season, season_type, team_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (sport, team_id) REFERENCES teams(sport, team_id)
 );
 
 CREATE INDEX idx_team_stats_sport_season ON team_season_stats(sport, season, season_type);
@@ -255,8 +255,8 @@ CREATE TABLE IF NOT EXISTS player_season_stats (
     stats_json TEXT,  -- Store full JSON for all stats
     last_updated TEXT DEFAULT (datetime('now')),
     UNIQUE(sport, season, season_type, player_id),
-    FOREIGN KEY (player_id) REFERENCES players(player_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (sport, player_id) REFERENCES players(sport, player_id),
+    FOREIGN KEY (sport, team_id) REFERENCES teams(sport, team_id)
 );
 
 CREATE INDEX idx_player_stats_sport_season ON player_season_stats(sport, season, season_type);
@@ -283,8 +283,8 @@ CREATE TABLE IF NOT EXISTS team_game_stats (
     stats_json TEXT,  -- Store full game stats JSON
     created_at TEXT DEFAULT (datetime('now')),
     UNIQUE(sport, game_id, team_id),
-    FOREIGN KEY (game_id) REFERENCES games(game_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (sport, game_id) REFERENCES games(sport, game_id),
+    FOREIGN KEY (sport, team_id) REFERENCES teams(sport, team_id)
 );
 
 CREATE INDEX idx_team_game_stats_game ON team_game_stats(game_id);
@@ -305,9 +305,9 @@ CREATE TABLE IF NOT EXISTS player_game_stats (
     stats_json TEXT,  -- Store full player game stats JSON
     created_at TEXT DEFAULT (datetime('now')),
     UNIQUE(sport, game_id, player_id),
-    FOREIGN KEY (game_id) REFERENCES games(game_id),
-    FOREIGN KEY (player_id) REFERENCES players(player_id),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (sport, game_id) REFERENCES games(sport, game_id),
+    FOREIGN KEY (sport, player_id) REFERENCES players(sport, player_id),
+    FOREIGN KEY (sport, team_id) REFERENCES teams(sport, team_id)
 );
 
 CREATE INDEX idx_player_game_stats_game ON player_game_stats(game_id);
@@ -329,8 +329,8 @@ CREATE TABLE IF NOT EXISTS depth_charts (
     injury_body_part TEXT,
     injury_notes TEXT,
     last_updated TEXT DEFAULT (datetime('now')),
-    FOREIGN KEY (team_id) REFERENCES teams(team_id),
-    FOREIGN KEY (player_id) REFERENCES players(player_id)
+    FOREIGN KEY (sport, team_id) REFERENCES teams(sport, team_id),
+    FOREIGN KEY (sport, player_id) REFERENCES players(sport, player_id)
 );
 
 CREATE INDEX idx_depth_charts_team ON depth_charts(team_id, position);
