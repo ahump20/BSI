@@ -633,8 +633,21 @@ class MLPipelineService {
                 const gameDate = new Date(row.game_date);
                 const lastHome = row.home_last_game_date ? new Date(row.home_last_game_date) : null;
                 const lastAway = row.away_last_game_date ? new Date(row.away_last_game_date) : null;
-                const restDaysHome = lastHome ? Math.max(0, Math.round((gameDate - lastHome) / (24 * 60 * 60 * 1000))) : 3;
-                const restDaysAway = lastAway ? Math.max(0, Math.round((gameDate - lastAway) / (24 * 60 * 60 * 1000))) : 3;
+                // Fallback rest days when last game date is unavailable.
+                // This is a domain-specific assumption and may vary by sport.
+                // For example: MLB teams play almost daily (1 rest day), NFL teams play weekly (7 rest days).
+                // Adjust the mapping below as needed for supported sports.
+                const defaultRestDaysBySport = {
+                    mlb: 1,
+                    nfl: 7,
+                    nba: 2,
+                    ncaa_baseball: 2,
+                    ncaa_football: 7,
+                    ncaa_basketball: 2
+                };
+                const fallbackRestDays = defaultRestDaysBySport[row.sport] ?? 3;
+                const restDaysHome = lastHome ? Math.max(0, Math.round((gameDate - lastHome) / (24 * 60 * 60 * 1000))) : fallbackRestDays;
+                const restDaysAway = lastAway ? Math.max(0, Math.round((gameDate - lastAway) / (24 * 60 * 60 * 1000))) : fallbackRestDays;
 
                 const defaultHomeOffensiveRating = toNumber(row.home_runs_scored, 0) / Math.max(toNumber(row.home_games_played, 1), 1);
                 const defaultAwayOffensiveRating = toNumber(row.away_runs_scored, 0) / Math.max(toNumber(row.away_games_played, 1), 1);
