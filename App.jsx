@@ -1,5 +1,5 @@
 import React from 'react'
-import BaseballCoachingHub from './src/features/baseball/BaseballCoachingHub'
+import BaseballCoachingHub from './features/baseball/BaseballCoachingHub'
 import './App.css'
 
 const App = () => {
