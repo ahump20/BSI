@@ -51,7 +51,12 @@ const MLBAnalyticsEngine = () => {
   };
 
   const generateAIInsight = async () => {
+    if (!teamData) {
+      return;
+    }
+
     setLoading(true);
+    const snapshot = teamData;
     try {
       // In production, this calls your Worker which uses Workers AI
       // const response = await fetch(`${API_BASE}/ai/analyze`, {
@@ -59,11 +64,16 @@ const MLBAnalyticsEngine = () => {
       //   body: JSON.stringify({ team: selectedTeam, data: teamData })
       // });
       // const result = await response.json();
-      
+
       // Mock AI insight
       setTimeout(() => {
+        if (!snapshot) {
+          setLoading(false);
+          return;
+        }
+
         setAIInsight(
-          `Based on advanced sabermetric analysis, the ${teamData.name} show a pythagorean win expectation of 68.4 wins, suggesting they underperformed by 2.6 games. Their 4.73 ERA combined with a 4.45 FIP indicates potential for regression toward better pitching performance. The team's .308 wOBA ranks below league average, indicating offensive struggles that contributed to their 91 losses. Monte Carlo simulations project a 72-76 win range for next season with current roster construction.`
+          `Based on advanced sabermetric analysis, the ${snapshot.name} show a pythagorean win expectation of 68.4 wins, suggesting they underperformed by 2.6 games. Their 4.73 ERA combined with a 4.45 FIP indicates potential for regression toward better pitching performance. The team's .308 wOBA ranks below league average, indicating offensive struggles that contributed to their 91 losses. Monte Carlo simulations project a 72-76 win range for next season with current roster construction.`
         );
         setLoading(false);
       }, 1500);
