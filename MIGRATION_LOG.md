@@ -166,6 +166,12 @@ enum GameStatus { SCHEDULED | LIVE | FINAL | POSTPONED }
 enum FeedPrecision { EVENT | PITCH }
 ```
 
+### 2025-10-17 – Pitching Outs Normalization
+
+- Added migration `schema/002_pitching_outs.sql` to replace legacy decimal innings with an `innings_pitched_outs` integer column for player and team season stats.
+- Updated ingest adapters to convert provider values like `6.1` into outs during load, ensuring downstream Prisma models store normalized data.
+- Refreshed API calculations (players, teams, games) to derive ERA/WHIP and UI inning notation from the outs-based storage model.
+
 ### API Layer (/api/v1)
 
 **Endpoints**:

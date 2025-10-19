@@ -19,6 +19,7 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { Game, GameStatus, Prisma } from '@prisma/client';
+import { extractPitchingOuts, outsToInningsNotation } from '@/lib/utils/baseball';
 
 export interface GamesQueryParams {
   date?: string;
@@ -69,6 +70,7 @@ export interface GameDetailResponse extends Game {
     };
     pitching?: {
       ip: number;
+      outs: number;
       h: number;
       r: number;
       er: number;
@@ -94,6 +96,7 @@ export interface GameDetailResponse extends Game {
     };
     pitching?: {
       ip: number;
+      outs: number;
       h: number;
       r: number;
       er: number;
@@ -310,51 +313,61 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
   // Separate box lines by team side
   const homeBoxLines = game.boxLines
     .filter((line) => line.side === 'HOME')
-    .map((line) => ({
-      player: line.player,
-      batting: {
-        ab: line.ab,
-        r: line.r,
-        h: line.h,
-        rbi: line.rbi,
-        bb: line.bb,
-        so: line.so,
-      },
-      pitching: line.ip
-        ? {
-            ip: line.ip,
-            h: line.hitsAllowed ?? 0,
-            r: line.runsAllowed ?? 0,
-            er: line.earnedRuns ?? 0,
-            bb: line.bbAllowed ?? 0,
-            so: line.soRecorded ?? 0,
-          }
-        : undefined,
-    }));
+    .map((line) => {
+      const pitchingOuts = extractPitchingOuts(line);
+      return {
+        player: line.player,
+        batting: {
+          ab: line.ab,
+          r: line.r,
+          h: line.h,
+          rbi: line.rbi,
+          bb: line.bb,
+          so: line.so,
+        },
+        pitching:
+          pitchingOuts > 0
+            ? {
+                ip: outsToInningsNotation(pitchingOuts),
+                outs: pitchingOuts,
+                h: line.hitsAllowed ?? 0,
+                r: line.runsAllowed ?? 0,
+                er: line.earnedRuns ?? 0,
+                bb: line.bbAllowed ?? 0,
+                so: line.soRecorded ?? 0,
+              }
+            : undefined,
+      };
+    });
 
   const awayBoxLines = game.boxLines
     .filter((line) => line.side === 'AWAY')
-    .map((line) => ({
-      player: line.player,
-      batting: {
-        ab: line.ab,
-        r: line.r,
-        h: line.h,
-        rbi: line.rbi,
-        bb: line.bb,
-        so: line.so,
-      },
-      pitching: line.ip
-        ? {
-            ip: line.ip,
-            h: line.hitsAllowed ?? 0,
-            r: line.runsAllowed ?? 0,
-            er: line.earnedRuns ?? 0,
-            bb: line.bbAllowed ?? 0,
-            so: line.soRecorded ?? 0,
-          }
-        : undefined,
-    }));
+    .map((line) => {
+      const pitchingOuts = extractPitchingOuts(line);
+      return {
+        player: line.player,
+        batting: {
+          ab: line.ab,
+          r: line.r,
+          h: line.h,
+          rbi: line.rbi,
+          bb: line.bb,
+          so: line.so,
+        },
+        pitching:
+          pitchingOuts > 0
+            ? {
+                ip: outsToInningsNotation(pitchingOuts),
+                outs: pitchingOuts,
+                h: line.hitsAllowed ?? 0,
+                r: line.runsAllowed ?? 0,
+                er: line.earnedRuns ?? 0,
+                bb: line.bbAllowed ?? 0,
+                so: line.soRecorded ?? 0,
+              }
+            : undefined,
+      };
+    });
 
   return {
     ...game,

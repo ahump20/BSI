@@ -18,6 +18,12 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { Team, Division, Prisma } from '@prisma/client';
+import {
+  calculateEra,
+  calculateWhip,
+  extractPitchingOuts,
+  outsToInningsNotation,
+} from '@/lib/utils/baseball';
 
 export interface TeamsQueryParams {
   conference?: string;
@@ -80,6 +86,8 @@ export interface TeamDetailResponse extends Team {
       hitsAllowed: number;
       strikeouts: number;
       walks: number;
+      inningsPitched?: number;
+      inningsPitchedOuts?: number;
       era?: number;
       whip?: number;
     };
@@ -208,30 +216,6 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
           season: currentSeason,
         },
         take: 1,
-        select: {
-          season: true,
-          wins: true,
-          losses: true,
-          confWins: true,
-          confLosses: true,
-          runsScored: true,
-          hitsTotal: true,
-          homeRuns: true,
-          stolenBases: true,
-          battingAvg: true,
-          onBasePct: true,
-          sluggingPct: true,
-          runsAllowed: true,
-          earnedRuns: true,
-          hitsAllowed: true,
-          strikeouts: true,
-          walks: true,
-          era: true,
-          whip: true,
-          pythagWins: true,
-          strengthOfSched: true,
-          rpi: true,
-        },
       },
       homeGames: {
         orderBy: { scheduledAt: 'desc' },
@@ -305,39 +289,54 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
   // Format stats
   const rawStats = team.teamStats[0];
   const stats = rawStats
-    ? {
-        season: rawStats.season,
-        record: {
-          wins: rawStats.wins,
-          losses: rawStats.losses,
-          confWins: rawStats.confWins,
-          confLosses: rawStats.confLosses,
-          winPct: rawStats.wins / (rawStats.wins + rawStats.losses || 1),
-        },
-        batting: {
-          runsScored: rawStats.runsScored,
-          hitsTotal: rawStats.hitsTotal,
-          homeRuns: rawStats.homeRuns,
-          stolenBases: rawStats.stolenBases,
-          battingAvg: rawStats.battingAvg ?? undefined,
-          onBasePct: rawStats.onBasePct ?? undefined,
-          sluggingPct: rawStats.sluggingPct ?? undefined,
-        },
-        pitching: {
-          runsAllowed: rawStats.runsAllowed,
-          earnedRuns: rawStats.earnedRuns,
-          hitsAllowed: rawStats.hitsAllowed,
-          strikeouts: rawStats.strikeouts,
-          walks: rawStats.walks,
-          era: rawStats.era ?? undefined,
-          whip: rawStats.whip ?? undefined,
-        },
-        advanced: {
-          pythagWins: rawStats.pythagWins ?? undefined,
-          strengthOfSched: rawStats.strengthOfSched ?? undefined,
-          rpi: rawStats.rpi ?? undefined,
-        },
-      }
+    ? (() => {
+        const pitchingOuts = extractPitchingOuts(rawStats as unknown as Record<string, unknown>);
+        const inningsNotation = pitchingOuts > 0 ? outsToInningsNotation(pitchingOuts) : undefined;
+        const computedEra =
+          pitchingOuts > 0
+            ? calculateEra((rawStats as any).earnedRuns ?? 0, pitchingOuts)
+            : undefined;
+        const computedWhip =
+          pitchingOuts > 0
+            ? calculateWhip((rawStats as any).hitsAllowed ?? 0, (rawStats as any).walks ?? 0, pitchingOuts)
+            : undefined;
+
+        return {
+          season: rawStats.season,
+          record: {
+            wins: rawStats.wins,
+            losses: rawStats.losses,
+            confWins: rawStats.confWins,
+            confLosses: rawStats.confLosses,
+            winPct: rawStats.wins / (rawStats.wins + rawStats.losses || 1),
+          },
+          batting: {
+            runsScored: rawStats.runsScored,
+            hitsTotal: rawStats.hitsTotal,
+            homeRuns: rawStats.homeRuns,
+            stolenBases: rawStats.stolenBases,
+            battingAvg: rawStats.battingAvg ?? undefined,
+            onBasePct: rawStats.onBasePct ?? undefined,
+            sluggingPct: rawStats.sluggingPct ?? undefined,
+          },
+          pitching: {
+            runsAllowed: rawStats.runsAllowed,
+            earnedRuns: rawStats.earnedRuns,
+            hitsAllowed: rawStats.hitsAllowed,
+            strikeouts: rawStats.strikeouts,
+            walks: rawStats.walks,
+            inningsPitched: inningsNotation,
+            inningsPitchedOuts: pitchingOuts || undefined,
+            era: computedEra ?? rawStats.era ?? undefined,
+            whip: computedWhip ?? rawStats.whip ?? undefined,
+          },
+          advanced: {
+            pythagWins: rawStats.pythagWins ?? undefined,
+            strengthOfSched: rawStats.strengthOfSched ?? undefined,
+            rpi: rawStats.rpi ?? undefined,
+          },
+        };
+      })()
     : null;
 
   return {

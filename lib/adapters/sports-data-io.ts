@@ -11,6 +11,7 @@
  * Rate Limits: 10 requests per second (tier-dependent)
  */
 
+import { inningsNotationToOuts } from '../utils/baseball';
 import type {
   GamesQueryParams,
   TeamStatsQueryParams,
@@ -130,6 +131,10 @@ export class SportsDataIOAdapter {
    * Transform SportsDataIO team stats format to standard format
    */
   private transformTeamStats(teamData: any): ProviderTeamStats {
+    const inningsValue =
+      teamData.InningsPitched ?? teamData.InningsPitchedDecimal ?? teamData.InningsPitchedOverall;
+    const inningsPitchedOuts = inningsNotationToOuts(inningsValue);
+
     return {
       wins: teamData.Wins ?? 0,
       losses: teamData.Losses ?? 0,
@@ -144,6 +149,7 @@ export class SportsDataIOAdapter {
       battingAvg: teamData.BattingAverage ?? 0,
       era: teamData.EarnedRunAverage ?? 0,
       fieldingPct: teamData.FieldingPercentage ?? 0,
+      inningsPitchedOuts: inningsPitchedOuts || undefined,
       rpi: undefined, // SportsDataIO doesn't provide RPI directly
       strengthOfSched: undefined, // SportsDataIO doesn't provide SOS directly
       pythagWins: undefined // Will be calculated separately

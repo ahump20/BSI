@@ -12,6 +12,13 @@
 
 import { prisma } from '@/lib/db/prisma';
 import { Player, Position, HandedEnum, AcademicYear } from '@prisma/client';
+import {
+  calculateEra,
+  calculateWhip,
+  extractPitchingOuts,
+  outsToInningsFloat,
+  outsToInningsNotation,
+} from '@/lib/utils/baseball';
 
 export interface PlayerDetailResponse {
   // Biographical
@@ -71,6 +78,7 @@ export interface PlayerDetailResponse {
       losses: number;
       saves: number;
       inningsPitched: number;
+      inningsPitchedOuts: number;
       hitsAllowed: number;
       runsAllowed: number;
       earnedRuns: number;
@@ -104,6 +112,7 @@ export interface PlayerDetailResponse {
       losses: number;
       saves: number;
       inningsPitched: number;
+      inningsPitchedOuts: number;
       strikeouts: number;
       era: number;
       whip: number;
@@ -133,6 +142,7 @@ export interface PlayerDetailResponse {
     };
     pitching?: {
       ip: number;
+      outs: number;
       h: number;
       r: number;
       er: number;
@@ -231,23 +241,26 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
   );
 
   const careerPitchingStats = player.playerStats.reduce(
-    (acc, stats) => ({
-      gamesPlayed: acc.gamesPlayed + stats.gamesPitched,
-      wins: acc.wins + stats.wins,
-      losses: acc.losses + stats.losses,
-      saves: acc.saves + stats.saves,
-      inningsPitched: acc.inningsPitched + stats.inningsPitched,
-      strikeouts: acc.strikeouts + stats.strikeouts,
-      earnedRuns: acc.earnedRuns + stats.earnedRuns,
-      hitsAllowed: acc.hitsAllowed + stats.hitsAllowed,
-      walksAllowed: acc.walksAllowed + stats.walksAllowed,
-    }),
+    (acc, stats) => {
+      const outs = extractPitchingOuts(stats);
+      return {
+        gamesPlayed: acc.gamesPlayed + (stats.gamesPitched ?? 0),
+        wins: acc.wins + (stats.wins ?? 0),
+        losses: acc.losses + (stats.losses ?? 0),
+        saves: acc.saves + (stats.saves ?? 0),
+        outs: acc.outs + outs,
+        strikeouts: acc.strikeouts + (stats.strikeouts ?? 0),
+        earnedRuns: acc.earnedRuns + (stats.earnedRuns ?? 0),
+        hitsAllowed: acc.hitsAllowed + (stats.hitsAllowed ?? 0),
+        walksAllowed: acc.walksAllowed + (stats.walksAllowed ?? 0),
+      };
+    },
     {
       gamesPlayed: 0,
       wins: 0,
       losses: 0,
       saves: 0,
-      inningsPitched: 0,
+      outs: 0,
       strikeouts: 0,
       earnedRuns: 0,
       hitsAllowed: 0,
@@ -274,14 +287,13 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     ? totalBases / careerBattingStats.atBats
     : 0;
 
-  const careerEra = careerPitchingStats.inningsPitched > 0
-    ? (careerPitchingStats.earnedRuns * 9) / careerPitchingStats.inningsPitched
-    : 0;
+  const careerEra = calculateEra(careerPitchingStats.earnedRuns, careerPitchingStats.outs);
 
-  const careerWhip = careerPitchingStats.inningsPitched > 0
-    ? (careerPitchingStats.hitsAllowed + careerPitchingStats.walksAllowed) /
-      careerPitchingStats.inningsPitched
-    : 0;
+  const careerWhip = calculateWhip(
+    careerPitchingStats.hitsAllowed,
+    careerPitchingStats.walksAllowed,
+    careerPitchingStats.outs
+  );
 
   // Process recent games
   const recentGames = player.boxLines.map((boxLine) => {
@@ -314,10 +326,12 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
         : undefined;
 
     // Pitching stats from box line (if IP > 0)
+    const pitchingOuts = extractPitchingOuts(boxLine);
     const pitching =
-      boxLine.ip && boxLine.ip > 0
+      pitchingOuts > 0
         ? {
-            ip: boxLine.ip,
+            ip: outsToInningsNotation(pitchingOuts),
+            outs: pitchingOuts,
             h: boxLine.hitsAllowed ?? 0,
             r: boxLine.runsAllowed ?? 0,
             er: boxLine.earnedRuns ?? 0,
@@ -363,27 +377,52 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
                 ops: (currentSeasonStats.onBasePct ?? 0) + (currentSeasonStats.sluggingPct ?? 0),
               }
             : undefined,
-        pitching:
-          currentSeasonStats.inningsPitched > 0
-            ? {
-                gamesPlayed: currentSeasonStats.gamesPitched,
-                gamesStarted: currentSeasonStats.gamesStarted,
-                wins: currentSeasonStats.wins,
-                losses: currentSeasonStats.losses,
-                saves: currentSeasonStats.saves,
-                inningsPitched: currentSeasonStats.inningsPitched,
-                hitsAllowed: currentSeasonStats.hitsAllowed,
-                runsAllowed: currentSeasonStats.runsAllowed,
-                earnedRuns: currentSeasonStats.earnedRuns,
-                walks: currentSeasonStats.walksAllowed,
-                strikeouts: currentSeasonStats.strikeouts,
-                homeRunsAllowed: currentSeasonStats.homeRunsAllowed,
-                era: currentSeasonStats.era ?? 0,
-                whip: currentSeasonStats.whip ?? 0,
-                strikeoutsPerNine: currentSeasonStats.strikeoutsPerNine ?? 0,
-                walksPerNine: currentSeasonStats.walksPerNine ?? 0,
-              }
-            : undefined,
+        pitching: (() => {
+          const seasonOuts = extractPitchingOuts(currentSeasonStats);
+          if (seasonOuts <= 0) {
+            return undefined;
+          }
+
+          const inningsFloat = outsToInningsFloat(seasonOuts);
+          const computedStrikeoutsPerNine =
+            inningsFloat > 0
+              ? Number((((currentSeasonStats.strikeouts ?? 0) / inningsFloat) * 9).toFixed(2))
+              : null;
+          const computedWalksPerNine =
+            inningsFloat > 0
+              ? Number((((currentSeasonStats.walksAllowed ?? 0) / inningsFloat) * 9).toFixed(2))
+              : null;
+
+          const earnedRuns = currentSeasonStats.earnedRuns ?? 0;
+          return {
+            gamesPlayed: currentSeasonStats.gamesPitched ?? 0,
+            gamesStarted: currentSeasonStats.gamesStarted ?? 0,
+            wins: currentSeasonStats.wins ?? 0,
+            losses: currentSeasonStats.losses ?? 0,
+            saves: currentSeasonStats.saves ?? 0,
+            inningsPitched: outsToInningsNotation(seasonOuts),
+            inningsPitchedOuts: seasonOuts,
+            hitsAllowed: currentSeasonStats.hitsAllowed ?? 0,
+            runsAllowed: currentSeasonStats.runsAllowed ?? 0,
+            earnedRuns,
+            walks: currentSeasonStats.walksAllowed ?? 0,
+            strikeouts: currentSeasonStats.strikeouts ?? 0,
+            homeRunsAllowed: currentSeasonStats.homeRunsAllowed ?? 0,
+            era:
+              earnedRuns > 0
+                ? calculateEra(earnedRuns, seasonOuts)
+                : currentSeasonStats.era ?? 0,
+            whip: calculateWhip(
+              currentSeasonStats.hitsAllowed ?? 0,
+              currentSeasonStats.walksAllowed ?? 0,
+              seasonOuts
+            ),
+            strikeoutsPerNine:
+              computedStrikeoutsPerNine ?? currentSeasonStats.strikeoutsPerNine ?? 0,
+            walksPerNine:
+              computedWalksPerNine ?? currentSeasonStats.walksPerNine ?? 0,
+          };
+        })(),
       }
     : null;
 
@@ -419,13 +458,14 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
             }
           : undefined,
       pitching:
-        careerPitchingStats.inningsPitched > 0
+        careerPitchingStats.outs > 0
           ? {
               gamesPlayed: careerPitchingStats.gamesPlayed,
               wins: careerPitchingStats.wins,
               losses: careerPitchingStats.losses,
               saves: careerPitchingStats.saves,
-              inningsPitched: careerPitchingStats.inningsPitched,
+              inningsPitched: outsToInningsNotation(careerPitchingStats.outs),
+              inningsPitchedOuts: careerPitchingStats.outs,
               strikeouts: careerPitchingStats.strikeouts,
               era: careerEra,
               whip: careerWhip,

@@ -62,6 +62,7 @@ export interface ProviderTeamStats {
   battingAvg: number;
   era: number;
   fieldingPct: number;
+  inningsPitchedOuts?: number;
   rpi?: number;
   strengthOfSched?: number;
   pythagWins?: number;

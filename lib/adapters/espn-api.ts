@@ -12,6 +12,7 @@
  * Note: ESPN API is less reliable for college baseball than SportsDataIO
  */
 
+import { inningsNotationToOuts } from '../utils/baseball';
 import type {
   GamesQueryParams,
   TeamStatsQueryParams,
@@ -156,6 +157,7 @@ export class ESPNAPIAdapter {
       return parseFloat(stat?.value || '0') || 0;
     };
 
+    const inningsValue = findStat('inningsPitched');
     return {
       wins: findStat('wins'),
       losses: findStat('losses'),
@@ -170,6 +172,7 @@ export class ESPNAPIAdapter {
       battingAvg: findStat('battingAverage'),
       era: findStat('earnedRunAverage'),
       fieldingPct: findStat('fieldingPercentage'),
+      inningsPitchedOuts: inningsNotationToOuts(inningsValue) || undefined,
       rpi: undefined, // ESPN doesn't provide RPI directly
       strengthOfSched: undefined, // ESPN doesn't provide SOS directly
       pythagWins: undefined // Will be calculated separately

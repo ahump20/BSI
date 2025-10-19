@@ -254,6 +254,52 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
             season
           });
 
+          const updateData: any = {
+            wins: stats.wins,
+            losses: stats.losses,
+            confWins: stats.confWins,
+            confLosses: stats.confLosses,
+            homeWins: stats.homeWins,
+            homeLosses: stats.homeLosses,
+            awayWins: stats.awayWins,
+            awayLosses: stats.awayLosses,
+            runsScored: stats.runsScored,
+            runsAllowed: stats.runsAllowed,
+            battingAvg: stats.battingAvg,
+            era: stats.era,
+            fieldingPct: stats.fieldingPct,
+            rpi: stats.rpi,
+            strengthOfSched: stats.strengthOfSched,
+            pythagWins: stats.pythagWins,
+            lastUpdated: new Date(),
+          };
+
+          const createData: any = {
+            teamId: team.id,
+            season,
+            wins: stats.wins,
+            losses: stats.losses,
+            confWins: stats.confWins,
+            confLosses: stats.confLosses,
+            homeWins: stats.homeWins,
+            homeLosses: stats.homeLosses,
+            awayWins: stats.awayWins,
+            awayLosses: stats.awayLosses,
+            runsScored: stats.runsScored,
+            runsAllowed: stats.runsAllowed,
+            battingAvg: stats.battingAvg,
+            era: stats.era,
+            fieldingPct: stats.fieldingPct,
+            rpi: stats.rpi,
+            strengthOfSched: stats.strengthOfSched,
+            pythagWins: stats.pythagWins,
+          };
+
+          if (typeof stats.inningsPitchedOuts === 'number') {
+            updateData.inningsPitchedOuts = Math.round(stats.inningsPitchedOuts);
+            createData.inningsPitchedOuts = Math.round(stats.inningsPitchedOuts);
+          }
+
           // Upsert team stats
           return prisma.teamStats.upsert({
             where: {
@@ -262,45 +308,8 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
                 season
               }
             },
-            update: {
-              wins: stats.wins,
-              losses: stats.losses,
-              confWins: stats.confWins,
-              confLosses: stats.confLosses,
-              homeWins: stats.homeWins,
-              homeLosses: stats.homeLosses,
-              awayWins: stats.awayWins,
-              awayLosses: stats.awayLosses,
-              runsScored: stats.runsScored,
-              runsAllowed: stats.runsAllowed,
-              battingAvg: stats.battingAvg,
-              era: stats.era,
-              fieldingPct: stats.fieldingPct,
-              rpi: stats.rpi,
-              strengthOfSched: stats.strengthOfSched,
-              pythagWins: stats.pythagWins,
-              lastUpdated: new Date()
-            },
-            create: {
-              teamId: team.id,
-              season,
-              wins: stats.wins,
-              losses: stats.losses,
-              confWins: stats.confWins,
-              confLosses: stats.confLosses,
-              homeWins: stats.homeWins,
-              homeLosses: stats.homeLosses,
-              awayWins: stats.awayWins,
-              awayLosses: stats.awayLosses,
-              runsScored: stats.runsScored,
-              runsAllowed: stats.runsAllowed,
-              battingAvg: stats.battingAvg,
-              era: stats.era,
-              fieldingPct: stats.fieldingPct,
-              rpi: stats.rpi,
-              strengthOfSched: stats.strengthOfSched,
-              pythagWins: stats.pythagWins
-            }
+            update: updateData,
+            create: createData,
           });
         } catch (error) {
           console.error(`[Ingest] Failed to fetch stats for team ${team.id}:`, error);
