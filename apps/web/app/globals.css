@@ -213,6 +213,11 @@ a:focus-visible {
   line-height: 1.6;
 }
 
+.di-card-subtitle {
+  color: var(--di-text-muted);
+  font-size: 0.9rem;
+}
+
 .di-inline-link {
   color: var(--di-accent);
   font-weight: 600;
@@ -258,6 +263,68 @@ a:focus-visible {
   flex-direction: column;
   gap: 0.45rem;
   font-size: 0.93rem;
+}
+
+.di-live-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.di-live-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--di-surface-muted);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: calc(var(--di-radius) * 0.75);
+  padding: 1rem 1.1rem;
+}
+
+.di-live-list__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.di-live-list__teams {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.di-live-team {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.di-live-team__name {
+  font-weight: 600;
+}
+
+.di-live-team--home .di-live-team__name {
+  color: var(--di-accent);
+}
+
+.di-live-team__score {
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.di-live-team__record {
+  font-size: 0.78rem;
+  color: var(--di-text-muted);
+}
+
+.di-live-list__venue {
+  font-size: 0.78rem;
+  color: var(--di-text-muted);
 }
 
 .di-kicker {
