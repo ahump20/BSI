@@ -15,6 +15,15 @@
 
 ---
 
+## Security Hardening Log
+
+### 2025-10-17 – API key sanitization & rotation follow-up
+- Sanitized `.env.local.example` so that all provider keys use obvious placeholders (`YOUR_SPORTSDATAIO_API_KEY`, `YOUR_COLLEGEFOOTBALLDATA_API_KEY`, `YOUR_THEODDS_API_KEY`, `YOUR_MLB_STATS_API_KEY`).
+- Confirmed no other working tree files contain the previously exposed SportsDataIO, CollegeFootballData, or TheOdds API secrets; exposures exist only in historical commits (`ce9b5658`, `ea209acf`, `4cc861c`). A full key rotation remains mandatory because those commits are already public.
+- **Manual action required**: Revoke the old credentials in each provider dashboard and generate replacements. Update GitHub Actions/Pages secrets (`SPORTSDATAIO_API_KEY`, `CFBDATA_API_KEY`, `THEODDS_API_KEY`) and any downstream deployments once new keys are issued. Access to provider consoles was not available from this environment, so the actual rotation must be completed by an authorized operator.
+
+---
+
 ## Phase 1: Archive & Audit Current State
 
 ### Archive Structure
