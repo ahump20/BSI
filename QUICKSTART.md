@@ -11,11 +11,13 @@ npm
 
 ```bash
 cd college-baseball-tracker
-npm install
+npm ci
 
 # Install Wrangler globally
 npm install -g wrangler
 ```
+
+> **Why `npm ci`?** We standardize on npm for deterministic builds. `npm ci` installs directly from the checked-in `package-lock.json`, guaranteeing that local environments and CI use the same dependency tree. Use `npm install` only when you intentionally need to update dependencies and regenerate the lockfile.
 
 ## Step 2: Set Up Cloudflare (3 min)
 
