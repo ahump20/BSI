@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import ParticleBackground from './components/ParticleBackground'
 
 function App() {
   const [games, setGames] = useState([])
@@ -40,6 +41,7 @@ function App() {
   if (loading) {
     return (
       <div className="container">
+        <ParticleBackground />
         <header>
           <h1>⚾ College Baseball Live</h1>
           <p className="tagline">Real-time college baseball scores and updates</p>
@@ -55,6 +57,7 @@ function App() {
   if (error) {
     return (
       <div className="container">
+        <ParticleBackground />
         <header>
           <h1>⚾ College Baseball Live</h1>
         </header>
@@ -73,6 +76,7 @@ function App() {
 
   return (
     <div className="container">
+      <ParticleBackground />
       <header>
         <h1>⚾ College Baseball Live</h1>
         <p className="tagline">Real-time scores with comprehensive game data</p>
