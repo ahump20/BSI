@@ -4,7 +4,13 @@
  * Generates game recaps and previews with fact-checking
  */
 
-import { PrismaClient } from '@prisma/client';
+import {
+  ArticleStatus,
+  GameStatus,
+  Prisma,
+  PrismaClient,
+  SeasonType,
+} from '@prisma/client';
 import type {
   Env,
   ContentRequest,
@@ -19,6 +25,17 @@ import {
   fillRecapTemplate,
   fillPreviewTemplate,
 } from '../../lib/nlg/prompt-templates';
+
+const decimalToNumber = (value: Prisma.Decimal | number | null | undefined): number => {
+  if (value === null || value === undefined) {
+    return 0;
+  }
+
+  return typeof value === 'number' ? value : value.toNumber();
+};
+
+const createArticleSlug = (gameId: string, type: 'recap' | 'preview'): string =>
+  `game-${gameId}-${type}`.toLowerCase();
 
 export default {
   /**
@@ -114,6 +131,7 @@ async function generateContent(request: ContentRequest, env: Env): Promise<Conte
   try {
     // Fetch game context from database
     const context = await fetchGameContext(request.gameId, prisma);
+    const slug = createArticleSlug(request.gameId, request.type);
 
     // Initialize LLM provider
     const llmProvider = new LLMProvider(
@@ -123,24 +141,18 @@ async function generateContent(request: ContentRequest, env: Env): Promise<Conte
     );
 
     // Generate content based on type
-    let systemPrompt: string;
-    let userPrompt: string;
-
-    if (request.type === 'recap') {
-      systemPrompt = RECAP_TEMPLATE.system;
-      userPrompt = fillRecapTemplate(context);
-    } else {
-      systemPrompt = PREVIEW_TEMPLATE.system;
-      userPrompt = fillPreviewTemplate(context);
-    }
+    const systemPrompt =
+      request.type === 'recap' ? RECAP_TEMPLATE.system : PREVIEW_TEMPLATE.system;
+    const userPrompt =
+      request.type === 'recap' ? fillRecapTemplate(context) : fillPreviewTemplate(context);
 
     // Generate with LLM
     const llmResponse = await llmProvider.generateWithRetry({
       systemPrompt,
       userPrompt,
-      maxTokens: request.maxTokens || 2000,
-      temperature: request.temperature || 0.7,
-      provider: request.provider || 'anthropic',
+      maxTokens: request.maxTokens ?? 2000,
+      temperature: request.temperature ?? 0.7,
+      provider: request.provider ?? 'anthropic',
     });
 
     // Extract title and content
@@ -159,21 +171,32 @@ async function generateContent(request: ContentRequest, env: Env): Promise<Conte
     const readingTimeMinutes = Math.ceil(wordCount / 200); // 200 WPM average
 
     // Store article in database
-    const article = await prisma.article.create({
-      data: {
-        gameId: request.gameId,
-        type: request.type,
+    const article = await prisma.article.upsert({
+      where: { slug },
+      update: {
         title,
         content,
         summary,
-        provider: llmResponse.provider,
-        model: llmResponse.model,
-        tokensUsed: llmResponse.tokensUsed,
-        factCheckScore: verificationScore.overallScore,
-        factCheckResults: JSON.stringify(factCheckResults),
-        wordCount,
-        readingTimeMinutes,
+        sport: context.game.sport,
+        league: context.game.league,
+        status: ArticleStatus.PUBLISHED,
+        author: 'Diamond Insights AutoPen',
+        teamId: request.type === 'recap' ? context.game.homeTeamId : null,
         publishedAt: new Date(),
+        source: `auto-${request.type}-${llmResponse.provider}`,
+      },
+      create: {
+        slug,
+        title,
+        summary,
+        content,
+        sport: context.game.sport,
+        league: context.game.league,
+        status: ArticleStatus.PUBLISHED,
+        author: 'Diamond Insights AutoPen',
+        teamId: request.type === 'recap' ? context.game.homeTeamId : null,
+        publishedAt: new Date(),
+        source: `auto-${request.type}-${llmResponse.provider}`,
       },
     });
 
@@ -220,8 +243,8 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
           conference: {
             select: { name: true },
           },
-          stats: {
-            where: { season: new Date().getFullYear() },
+          teamStats: {
+            where: { season: new Date().getFullYear(), seasonType: SeasonType.REGULAR },
             take: 1,
           },
         },
@@ -231,8 +254,8 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
           conference: {
             select: { name: true },
           },
-          stats: {
-            where: { season: new Date().getFullYear() },
+          teamStats: {
+            where: { season: new Date().getFullYear(), seasonType: SeasonType.REGULAR },
             take: 1,
           },
         },
@@ -249,9 +272,9 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
           },
         },
         orderBy: {
-          totalBases: 'desc', // Sort by impact
+          totalBases: 'desc',
         },
-        take: 10, // Top 10 performers
+        take: 10,
       },
     },
   });
@@ -260,10 +283,9 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
     throw new Error(`Game ${gameId} not found`);
   }
 
-  const homeTeamStats = game.homeTeam.stats[0];
-  const awayTeamStats = game.awayTeam.stats[0];
+  const homeTeamStats = game.homeTeam.teamStats[0];
+  const awayTeamStats = game.awayTeam.teamStats[0];
 
-  // Build context
   const context: GameContext = {
     game: {
       id: game.id,
@@ -271,61 +293,67 @@ async function fetchGameContext(gameId: string, prisma: PrismaClient): Promise<G
       status: game.status,
       homeScore: game.homeScore,
       awayScore: game.awayScore,
-      currentInning: game.currentInning || undefined,
-      venueId: game.venueId || undefined,
-      venueName: game.venue?.name || undefined,
+      currentInning: game.currentInning ?? undefined,
+      venueId: game.venueId ?? undefined,
+      venueName: game.venue?.name ?? undefined,
+      sport: game.sport,
+      league: game.league,
+      homeTeamId: game.homeTeamId,
     },
     homeTeam: {
       id: game.homeTeam.id,
       name: game.homeTeam.name,
       school: game.homeTeam.school,
-      conference: game.homeTeam.conference.name,
+      conference: game.homeTeam.conference?.name ?? 'Independent',
       record: homeTeamStats ? `${homeTeamStats.wins}-${homeTeamStats.losses}` : '0-0',
     },
     awayTeam: {
       id: game.awayTeam.id,
       name: game.awayTeam.name,
       school: game.awayTeam.school,
-      conference: game.awayTeam.conference.name,
+      conference: game.awayTeam.conference?.name ?? 'Independent',
       record: awayTeamStats ? `${awayTeamStats.wins}-${awayTeamStats.losses}` : '0-0',
     },
   };
 
-  // Add box score if game is final
-  if (game.status === 'FINAL' && game.boxLines.length > 0) {
-    const homeBoxLines = game.boxLines.filter(bl => bl.teamId === game.homeTeamId);
-    const awayBoxLines = game.boxLines.filter(bl => bl.teamId === game.awayTeamId);
+  if (game.status === GameStatus.FINAL && game.boxLines.length > 0) {
+    const homeBoxLines = game.boxLines.filter((line) => line.teamId === game.homeTeamId);
+    const awayBoxLines = game.boxLines.filter((line) => line.teamId === game.awayTeamId);
 
     context.boxScore = {
       homeStats: {
-        runs: game.homeScore || 0,
-        hits: homeBoxLines.reduce((sum, bl) => sum + bl.hits, 0),
-        errors: 0, // Would need separate tracking
-        leftOnBase: 0, // Would need separate tracking
-        battingAvg: homeTeamStats?.battingAvg || 0,
-        era: homeTeamStats?.era,
-      },
-      awayStats: {
-        runs: game.awayScore || 0,
-        hits: awayBoxLines.reduce((sum, bl) => sum + bl.hits, 0),
+        runs: game.homeScore ?? 0,
+        hits: homeBoxLines.reduce((sum, line) => sum + line.h, 0),
         errors: 0,
         leftOnBase: 0,
-        battingAvg: awayTeamStats?.battingAvg || 0,
-        era: awayTeamStats?.era,
+        battingAvg: homeTeamStats ? decimalToNumber(homeTeamStats.battingAvg) : 0,
+        era: homeTeamStats ? decimalToNumber(homeTeamStats.era) : undefined,
+      },
+      awayStats: {
+        runs: game.awayScore ?? 0,
+        hits: awayBoxLines.reduce((sum, line) => sum + line.h, 0),
+        errors: 0,
+        leftOnBase: 0,
+        battingAvg: awayTeamStats ? decimalToNumber(awayTeamStats.battingAvg) : 0,
+        era: awayTeamStats ? decimalToNumber(awayTeamStats.era) : undefined,
       },
     };
 
-    // Top performers
     context.topPerformers = {
       hitting: game.boxLines
-        .filter(bl => bl.atBats > 0)
+        .filter((line) => line.ab > 0)
         .slice(0, 5)
-        .map(bl => ({
-          playerId: bl.player.id,
-          playerName: `${bl.player.firstName} ${bl.player.lastName}`,
-          position: bl.player.position || 'UNKNOWN',
-          stats: `${bl.hits}-${bl.atBats}, ${bl.homeRuns} HR, ${bl.rbi} RBI`,
-          impact: bl.homeRuns > 0 || bl.rbi > 2 ? 'high' : bl.hits >= 2 ? 'medium' : 'low',
+        .map((line) => ({
+          playerId: line.player.id,
+          playerName: `${line.player.firstName} ${line.player.lastName}`,
+          position: line.player.position ?? 'UNKNOWN',
+          stats: `${line.h}-${line.ab}, ${line.homeRuns} HR, ${line.rbi} RBI`,
+          impact:
+            line.homeRuns > 0 || line.rbi > 2
+              ? 'high'
+              : line.h >= 2
+                ? 'medium'
+                : 'low',
         })),
     };
   }
@@ -369,28 +397,37 @@ async function generatePendingRecaps(env: Env, ctx: ExecutionContext): Promise<v
   });
 
   try {
-    // Find games completed in last 15 minutes without articles
     const now = new Date();
     const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
 
-    const games = await prisma.game.findMany({
+    const candidateGames = await prisma.game.findMany({
       where: {
-        status: 'FINAL',
+        status: GameStatus.FINAL,
         updatedAt: {
           gte: fifteenMinutesAgo,
         },
-        articles: {
-          none: {
-            type: 'recap',
-          },
-        },
       },
-      take: 5, // Limit to 5 games per run
+      select: {
+        id: true,
+      },
+      take: 5,
     });
+
+    const recapSlugs = candidateGames.map((game) => createArticleSlug(game.id, 'recap'));
+    const existingRecaps = await prisma.article.findMany({
+      where: {
+        slug: { in: recapSlugs },
+      },
+      select: { slug: true },
+    });
+    const existingRecapSet = new Set(existingRecaps.map((article) => article.slug));
+
+    const games = candidateGames.filter(
+      (game, index) => !existingRecapSet.has(recapSlugs[index])
+    );
 
     console.log(`[ContentWorker] Found ${games.length} games needing recaps`);
 
-    // Generate recaps
     for (const game of games) {
       try {
         await generateContent(
@@ -421,30 +458,39 @@ async function generatePendingPreviews(env: Env, ctx: ExecutionContext): Promise
   });
 
   try {
-    // Find games scheduled in next 6-12 hours without previews
     const now = new Date();
     const sixHoursFromNow = new Date(now.getTime() + 6 * 60 * 60 * 1000);
     const twelveHoursFromNow = new Date(now.getTime() + 12 * 60 * 60 * 1000);
 
-    const games = await prisma.game.findMany({
+    const candidateGames = await prisma.game.findMany({
       where: {
-        status: 'SCHEDULED',
+        status: GameStatus.SCHEDULED,
         scheduledAt: {
           gte: sixHoursFromNow,
           lte: twelveHoursFromNow,
         },
-        articles: {
-          none: {
-            type: 'preview',
-          },
-        },
       },
-      take: 10, // Limit to 10 games per run
+      select: {
+        id: true,
+      },
+      take: 10,
     });
+
+    const previewSlugs = candidateGames.map((game) => createArticleSlug(game.id, 'preview'));
+    const existingPreviews = await prisma.article.findMany({
+      where: {
+        slug: { in: previewSlugs },
+      },
+      select: { slug: true },
+    });
+    const existingPreviewSet = new Set(existingPreviews.map((article) => article.slug));
+
+    const games = candidateGames.filter(
+      (game, index) => !existingPreviewSet.has(previewSlugs[index])
+    );
 
     console.log(`[ContentWorker] Found ${games.length} games needing previews`);
 
-    // Generate previews
     for (const game of games) {
       try {
         await generateContent(

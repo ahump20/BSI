@@ -19,9 +19,18 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { Prisma, PrismaClient } from '@prisma/client';
+import {
+  DataFeedPrecision,
+  GameStatus,
+  InningHalf,
+  League,
+  Prisma,
+  PrismaClient,
+  SeasonType,
+  Sport
+} from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
-import type { Env } from './types';
+import type { Env, ProviderGame } from './types';
 
 const prisma = new PrismaClient();
 
@@ -183,36 +192,37 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
           prisma.game.upsert({
             where: { externalId: game.id },
             update: {
-              status: game.status,
+              status: mapGameStatus(game.status),
               homeScore: game.homeScore,
               awayScore: game.awayScore,
               currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
+              currentInningHalf: mapInningHalf(game.currentInningHalf),
               balls: game.balls,
               strikes: game.strikes,
               outs: game.outs,
-              lastUpdated: new Date()
+              lastUpdated: new Date(),
+              feedPrecision: mapFeedPrecision(game.feedPrecision)
             },
             create: {
               externalId: game.id,
-              sport: 'BASEBALL',
-              division: 'D1',
+              sport: Sport.BASEBALL,
+              league: League.NCAA_D1,
               season,
-              seasonType: 'REGULAR',
+              seasonType: SeasonType.REGULAR,
               scheduledAt: new Date(game.scheduledAt),
-              status: game.status,
+              status: mapGameStatus(game.status),
               homeTeamId: game.homeTeamId,
               awayTeamId: game.awayTeamId,
               homeScore: game.homeScore,
               awayScore: game.awayScore,
               venueId: game.venueId,
               currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
+              currentInningHalf: mapInningHalf(game.currentInningHalf),
               balls: game.balls,
               strikes: game.strikes,
               outs: game.outs,
               providerName: game.providerName,
-              feedPrecision: game.feedPrecision
+              feedPrecision: mapFeedPrecision(game.feedPrecision)
             }
           }),
         `game upsert ${game.id}`
@@ -256,8 +266,8 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
     // Get all D1 teams
     const teams = await prisma.team.findMany({
       where: {
-        sport: 'BASEBALL',
-        division: 'D1'
+        sport: Sport.BASEBALL,
+        league: League.NCAA_D1
       },
       select: {
         id: true,
@@ -282,11 +292,12 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
           // Upsert team stats
           return executeWithConstraintGuard(
             () =>
-              prisma.teamStats.upsert({
+              prisma.teamSeasonStat.upsert({
                 where: {
-                  teamId_season: {
+                  teamId_season_seasonType: {
                     teamId: team.id,
-                    season
+                    season,
+                    seasonType: SeasonType.REGULAR
                   }
                 },
                 update: {
@@ -300,17 +311,30 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
                   awayLosses: stats.awayLosses,
                   runsScored: stats.runsScored,
                   runsAllowed: stats.runsAllowed,
-                  battingAvg: stats.battingAvg,
-                  era: stats.era,
-                  fieldingPct: stats.fieldingPct,
-                  rpi: stats.rpi,
-                  strengthOfSched: stats.strengthOfSched,
-                  pythagWins: stats.pythagWins,
+                  hitsTotal: stats.hitsTotal ?? 0,
+                  homeRuns: stats.homeRuns ?? 0,
+                  stolenBases: stats.stolenBases ?? 0,
+                  battingAvg: decimalOrNull(stats.battingAvg),
+                  onBasePct: decimalOrNull(stats.onBasePct),
+                  sluggingPct: decimalOrNull(stats.sluggingPct),
+                  era: decimalOrNull(stats.era),
+                  whip: decimalOrNull(stats.whip),
+                  fieldingPct: decimalOrNull(stats.fieldingPct),
+                  rpi: decimalOrNull(stats.rpi),
+                  strengthOfSched: decimalOrNull(stats.strengthOfSched),
+                  pythagWins: decimalOrNull(stats.pythagWins),
+                  earnedRuns: stats.earnedRuns ?? 0,
+                  hitsAllowed: stats.hitsAllowed ?? 0,
+                  strikeouts: stats.strikeouts ?? 0,
+                  walks: stats.walks ?? 0,
                   lastUpdated: new Date()
                 },
                 create: {
                   teamId: team.id,
+                  sport: Sport.BASEBALL,
+                  league: League.NCAA_D1,
                   season,
+                  seasonType: SeasonType.REGULAR,
                   wins: stats.wins,
                   losses: stats.losses,
                   confWins: stats.confWins,
@@ -321,12 +345,22 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
                   awayLosses: stats.awayLosses,
                   runsScored: stats.runsScored,
                   runsAllowed: stats.runsAllowed,
-                  battingAvg: stats.battingAvg,
-                  era: stats.era,
-                  fieldingPct: stats.fieldingPct,
-                  rpi: stats.rpi,
-                  strengthOfSched: stats.strengthOfSched,
-                  pythagWins: stats.pythagWins
+                  hitsTotal: stats.hitsTotal ?? 0,
+                  homeRuns: stats.homeRuns ?? 0,
+                  stolenBases: stats.stolenBases ?? 0,
+                  battingAvg: decimalOrNull(stats.battingAvg),
+                  onBasePct: decimalOrNull(stats.onBasePct),
+                  sluggingPct: decimalOrNull(stats.sluggingPct),
+                  era: decimalOrNull(stats.era),
+                  whip: decimalOrNull(stats.whip),
+                  fieldingPct: decimalOrNull(stats.fieldingPct),
+                  rpi: decimalOrNull(stats.rpi),
+                  strengthOfSched: decimalOrNull(stats.strengthOfSched),
+                  pythagWins: decimalOrNull(stats.pythagWins),
+                  earnedRuns: stats.earnedRuns ?? 0,
+                  hitsAllowed: stats.hitsAllowed ?? 0,
+                  strikeouts: stats.strikeouts ?? 0,
+                  walks: stats.walks ?? 0
                 }
               }),
             `team stats upsert ${team.id}`
@@ -348,7 +382,7 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
     console.log(`[Ingest] Successfully ingested stats for ${teams.length} teams`);
 
     // Cache standings in KV (4hr TTL)
-    const standings = await prisma.teamStats.findMany({
+    const standings = await prisma.teamSeasonStat.findMany({
       where: { season },
       include: {
         team: {
@@ -406,7 +440,7 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
     const completedGames = await prisma.game.findMany({
       where: {
         season,
-        status: 'FINAL',
+        status: GameStatus.FINAL,
         archived: false
       },
       include: {
@@ -487,7 +521,7 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
  */
 async function recalculateRPI(season: number): Promise<void> {
   // Get all teams with their records
-  const teams = await prisma.teamStats.findMany({
+  const teams = await prisma.teamSeasonStat.findMany({
     where: { season },
     include: {
       team: {
@@ -495,13 +529,13 @@ async function recalculateRPI(season: number): Promise<void> {
           homeGames: {
             where: {
               season,
-              status: 'FINAL'
+              status: GameStatus.FINAL
             }
           },
           awayGames: {
             where: {
               season,
-              status: 'FINAL'
+              status: GameStatus.FINAL
             }
           }
         }
@@ -525,14 +559,15 @@ async function recalculateRPI(season: number): Promise<void> {
 
     await executeWithConstraintGuard(
       () =>
-        prisma.teamStats.update({
+        prisma.teamSeasonStat.update({
           where: {
-            teamId_season: {
+            teamId_season_seasonType: {
               teamId: teamStat.teamId,
-              season
+              season,
+              seasonType: teamStat.seasonType
             }
           },
-          data: { rpi }
+          data: { rpi: new Prisma.Decimal(rpi.toFixed(4)) }
         }),
       `team stats rpi ${teamStat.teamId}`
     );
@@ -543,17 +578,17 @@ async function recalculateRPI(season: number): Promise<void> {
  * Recalculate Strength of Schedule
  */
 async function recalculateStrengthOfSchedule(season: number): Promise<void> {
-  const teams = await prisma.teamStats.findMany({
+  const teams = await prisma.teamSeasonStat.findMany({
     where: { season },
     include: {
       team: {
         include: {
           homeGames: {
-            where: { season, status: 'FINAL' },
+            where: { season, status: GameStatus.FINAL },
             include: { awayTeam: { include: { teamStats: true } } }
           },
           awayGames: {
-            where: { season, status: 'FINAL' },
+            where: { season, status: GameStatus.FINAL },
             include: { homeTeam: { include: { teamStats: true } } }
           }
         }
@@ -592,14 +627,15 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
 
     await executeWithConstraintGuard(
       () =>
-        prisma.teamStats.update({
+        prisma.teamSeasonStat.update({
           where: {
-            teamId_season: {
+            teamId_season_seasonType: {
               teamId: teamStat.teamId,
-              season
+              season,
+              seasonType: teamStat.seasonType
             }
           },
-          data: { strengthOfSched: sos }
+          data: { strengthOfSched: decimalOrNull(sos) }
         }),
       `team stats sos ${teamStat.teamId}`
     );
@@ -610,7 +646,7 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
  * Recalculate Pythagorean Win Expectation
  */
 async function recalculatePythagoreanWins(season: number): Promise<void> {
-  const teams = await prisma.teamStats.findMany({
+  const teams = await prisma.teamSeasonStat.findMany({
     where: { season }
   });
 
@@ -628,17 +664,60 @@ async function recalculatePythagoreanWins(season: number): Promise<void> {
 
       await executeWithConstraintGuard(
         () =>
-          prisma.teamStats.update({
+          prisma.teamSeasonStat.update({
             where: {
-              teamId_season: {
+              teamId_season_seasonType: {
                 teamId: teamStat.teamId,
-                season
+                season,
+                seasonType: teamStat.seasonType
               }
             },
-            data: { pythagWins }
+            data: { pythagWins: decimalOrNull(pythagWins) }
           }),
         `team stats pythag ${teamStat.teamId}`
       );
     }
   }
+}
+
+function mapGameStatus(status: ProviderGame['status']): GameStatus {
+  switch (status) {
+    case 'LIVE':
+      return GameStatus.LIVE;
+    case 'FINAL':
+      return GameStatus.FINAL;
+    case 'POSTPONED':
+      return GameStatus.POSTPONED;
+    case 'CANCELLED':
+      return GameStatus.CANCELLED;
+    default:
+      return GameStatus.SCHEDULED;
+  }
+}
+
+function mapInningHalf(half?: ProviderGame['currentInningHalf']): InningHalf | undefined {
+  if (!half) {
+    return undefined;
+  }
+
+  return half === 'TOP' ? InningHalf.TOP : InningHalf.BOTTOM;
+}
+
+function mapFeedPrecision(precision: ProviderGame['feedPrecision']): DataFeedPrecision {
+  switch (precision) {
+    case 'PITCH':
+      return DataFeedPrecision.PITCH;
+    case 'PLAY':
+      return DataFeedPrecision.PLAY;
+    default:
+      return DataFeedPrecision.EVENT;
+  }
+}
+
+function decimalOrNull(value: number | null | undefined): Prisma.Decimal | null {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  return new Prisma.Decimal(value);
 }

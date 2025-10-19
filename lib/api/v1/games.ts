@@ -18,7 +18,7 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Game, GameStatus, Prisma } from '@prisma/client';
+import { Game, GameStatus, InningHalf, Prisma } from '@prisma/client';
 
 export interface GamesQueryParams {
   date?: string;
@@ -44,8 +44,8 @@ export interface GameDetailResponse extends Game {
     id: string;
     sequence: number;
     inning: number;
-    inningHalf: string;
-    outs: number;
+    inningHalf: InningHalf;
+    outs: number | null;
     eventType: string;
     description: string;
     homeWinProb?: number;
@@ -56,7 +56,7 @@ export interface GameDetailResponse extends Game {
       id: string;
       firstName: string;
       lastName: string;
-      jerseyNumber?: string;
+      jerseyNumber?: number;
       position: string;
     };
     batting: {
@@ -81,7 +81,7 @@ export interface GameDetailResponse extends Game {
       id: string;
       firstName: string;
       lastName: string;
-      jerseyNumber?: string;
+      jerseyNumber?: number;
       position: string;
     };
     batting: {
@@ -278,8 +278,8 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
         select: {
           id: true,
           sequence: true,
-          inning: true,
-          inningHalf: true,
+          inningNumber: true,
+          half: true,
           outs: true,
           eventType: true,
           description: true,
@@ -309,7 +309,7 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
 
   // Separate box lines by team side
   const homeBoxLines = game.boxLines
-    .filter((line) => line.side === 'HOME')
+    .filter((line) => line.teamId === game.homeTeamId)
     .map((line) => ({
       player: line.player,
       batting: {
@@ -322,7 +322,7 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
       },
       pitching: line.ip
         ? {
-            ip: line.ip,
+            ip: line.ip ? line.ip.toNumber() : 0,
             h: line.hitsAllowed ?? 0,
             r: line.runsAllowed ?? 0,
             er: line.earnedRuns ?? 0,
@@ -333,7 +333,7 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
     }));
 
   const awayBoxLines = game.boxLines
-    .filter((line) => line.side === 'AWAY')
+    .filter((line) => line.teamId === game.awayTeamId)
     .map((line) => ({
       player: line.player,
       batting: {
@@ -346,7 +346,7 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
       },
       pitching: line.ip
         ? {
-            ip: line.ip,
+            ip: line.ip ? line.ip.toNumber() : 0,
             h: line.hitsAllowed ?? 0,
             r: line.runsAllowed ?? 0,
             er: line.earnedRuns ?? 0,
@@ -356,8 +356,21 @@ export async function getGameById(id: string): Promise<GameDetailResponse | null
         : undefined,
     }));
 
+  const events = game.events.map((event) => ({
+    id: event.id,
+    sequence: event.sequence,
+    inning: event.inningNumber,
+    inningHalf: event.half,
+    outs: event.outs ?? null,
+    eventType: event.eventType,
+    description: event.description ?? '',
+    homeWinProb: event.homeWinProb ? event.homeWinProb.toNumber() : undefined,
+    wpaSwing: event.wpaSwing ? event.wpaSwing.toNumber() : undefined,
+  }));
+
   return {
     ...game,
+    events,
     homeBoxLines,
     awayBoxLines,
   };

@@ -4,6 +4,8 @@
  * Defines interfaces for NLG content generation with fact-checking
  */
 
+import type { GameStatus, League, Sport } from '@prisma/client';
+
 export interface Env {
   DATABASE_URL: string;
   ANTHROPIC_API_KEY: string;
@@ -18,12 +20,15 @@ export interface GameContext {
   game: {
     id: string;
     scheduledAt: string;
-    status: 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED';
+    status: GameStatus;
     homeScore: number | null;
     awayScore: number | null;
     currentInning?: number;
     venueId?: string;
     venueName?: string;
+    sport: Sport;
+    league: League;
+    homeTeamId: string;
   };
   homeTeam: {
     id: string;

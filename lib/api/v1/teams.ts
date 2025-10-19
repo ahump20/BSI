@@ -17,11 +17,11 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Team, Division, Prisma } from '@prisma/client';
+import { GameStatus, League, Prisma, SeasonType, Team } from '@prisma/client';
 
 export interface TeamsQueryParams {
   conference?: string;
-  division?: Division;
+  division?: League;
   limit?: number;
   offset?: number;
 }
@@ -47,13 +47,13 @@ export interface TeamDetailResponse extends Team {
     id: string;
     firstName: string;
     lastName: string;
-    jerseyNumber?: string;
+    jerseyNumber?: number;
     position: string;
     bats?: string;
     throws?: string;
-    year?: string;
-    height?: number;
-    weight?: number;
+    classYear?: string;
+    heightInches?: number;
+    weightLbs?: number;
     hometown?: string;
   }>;
   stats: {
@@ -92,7 +92,7 @@ export interface TeamDetailResponse extends Team {
   recentGames: Array<{
     id: string;
     scheduledAt: Date;
-    status: string;
+    status: GameStatus;
     opponent: {
       id: string;
       name: string;
@@ -130,7 +130,7 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
   }
 
   if (division) {
-    where.division = division;
+    where.league = division;
   }
 
   // Execute queries in parallel
@@ -197,15 +197,16 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
           position: true,
           bats: true,
           throws: true,
-          year: true,
-          height: true,
-          weight: true,
+          classYear: true,
+          heightInches: true,
+          weightLbs: true,
           hometown: true,
         },
       },
       teamStats: {
         where: {
           season: currentSeason,
+          seasonType: SeasonType.REGULAR,
         },
         take: 1,
         select: {
@@ -297,7 +298,7 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
     teamScore: game.teamScore ?? undefined,
     opponentScore: game.opponentScore ?? undefined,
     result:
-      game.status === 'FINAL' && game.teamScore !== null && game.opponentScore !== null
+      game.status === GameStatus.FINAL && game.teamScore !== null && game.opponentScore !== null
         ? (game.teamScore > game.opponentScore ? 'W' : 'L')
         : null,
   }));
@@ -319,9 +320,9 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
           hitsTotal: rawStats.hitsTotal,
           homeRuns: rawStats.homeRuns,
           stolenBases: rawStats.stolenBases,
-          battingAvg: rawStats.battingAvg ?? undefined,
-          onBasePct: rawStats.onBasePct ?? undefined,
-          sluggingPct: rawStats.sluggingPct ?? undefined,
+          battingAvg: rawStats.battingAvg ? rawStats.battingAvg.toNumber() : undefined,
+          onBasePct: rawStats.onBasePct ? rawStats.onBasePct.toNumber() : undefined,
+          sluggingPct: rawStats.sluggingPct ? rawStats.sluggingPct.toNumber() : undefined,
         },
         pitching: {
           runsAllowed: rawStats.runsAllowed,
@@ -329,13 +330,13 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
           hitsAllowed: rawStats.hitsAllowed,
           strikeouts: rawStats.strikeouts,
           walks: rawStats.walks,
-          era: rawStats.era ?? undefined,
-          whip: rawStats.whip ?? undefined,
+          era: rawStats.era ? rawStats.era.toNumber() : undefined,
+          whip: rawStats.whip ? rawStats.whip.toNumber() : undefined,
         },
         advanced: {
-          pythagWins: rawStats.pythagWins ?? undefined,
-          strengthOfSched: rawStats.strengthOfSched ?? undefined,
-          rpi: rawStats.rpi ?? undefined,
+          pythagWins: rawStats.pythagWins ? rawStats.pythagWins.toNumber() : undefined,
+          strengthOfSched: rawStats.strengthOfSched ? rawStats.strengthOfSched.toNumber() : undefined,
+          rpi: rawStats.rpi ? rawStats.rpi.toNumber() : undefined,
         },
       }
     : null;
