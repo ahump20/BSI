@@ -23,11 +23,19 @@
     "isolatedModules": true,
     "noEmitOnError": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "lib/**/*.ts",
-    "context7-enhanced/src/**/*.ts"
+    "context7-enhanced/src/**/*.ts",
+    "api/**/*.ts",
+    "index.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

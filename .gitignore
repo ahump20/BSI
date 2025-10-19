@@ -17,6 +17,7 @@ config/*.env
 wrangler-*.local.toml
 .env.local
 .env
+.next/
 
 # API Keys and Secrets
 test-api-keys.cjs

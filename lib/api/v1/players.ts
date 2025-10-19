@@ -301,15 +301,15 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
 
     // Batting stats from box line
     const batting =
-      boxLine.ab > 0
+      boxLine.ab && boxLine.ab > 0
         ? {
             ab: boxLine.ab,
-            r: boxLine.r,
-            h: boxLine.h,
-            rbi: boxLine.rbi,
-            bb: boxLine.bb,
-            so: boxLine.so,
-            avg: boxLine.ab > 0 ? (boxLine.h / boxLine.ab).toFixed(3) : undefined,
+            r: boxLine.r ?? 0,
+            h: boxLine.h ?? 0,
+            rbi: boxLine.rbi ?? 0,
+            bb: boxLine.bb ?? 0,
+            so: boxLine.so ?? 0,
+            avg: boxLine.ab > 0 && boxLine.h ? (boxLine.h / boxLine.ab).toFixed(3) : undefined,
           }
         : undefined;
 
@@ -339,7 +339,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
   });
 
   // Build current season stats
-  const currentSeason = currentSeasonStats
+  const currentSeasonData = currentSeasonStats
     ? {
         season: currentSeasonStats.season,
         batting:
@@ -392,16 +392,16 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     firstName: player.firstName,
     lastName: player.lastName,
     fullName: `${player.firstName} ${player.lastName}`,
-    jerseyNumber: player.jerseyNumber,
-    position: player.position,
-    bats: player.bats,
-    throws: player.throws,
-    year: player.year,
-    height: player.height,
-    weight: player.weight,
-    hometown: player.hometown,
-    team: player.team,
-    currentSeason,
+    jerseyNumber: player.jerseyNumber?.toString(),
+    position: player.position as any,
+    bats: player.bats as any,
+    throws: player.throws as any,
+    year: player.year as any,
+    height: player.height ? parseInt(player.height) : undefined,
+    weight: player.weight ?? undefined,
+    hometown: player.hometown ?? undefined,
+    team: player.team as any,
+    currentSeason: currentSeasonData,
     career: {
       seasons: player.playerStats.length,
       batting:
@@ -432,6 +432,6 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
             }
           : undefined,
     },
-    recentGames,
+    recentGames: recentGames as any,
   };
 }
