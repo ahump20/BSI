@@ -1,45 +1,91 @@
-:root {
-  --di-bg: #0b1120;
-  --di-surface: #111827;
-  --di-surface-muted: #1f2937;
-  --di-border: rgba(148, 163, 184, 0.2);
-  --di-text: #e2e8f0;
-  --di-text-muted: #94a3b8;
-  --di-accent: #fbbf24;
-  --di-accent-strong: #dc2626;
-  --di-radius: 18px;
-  --di-font-heading: 'Source Serif Pro', 'Times New Roman', serif;
-  --di-font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --di-max-width: 1120px;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@layer base {
+  :root {
+    --di-bg: theme('colors.surface.primary');
+    --di-surface: theme('colors.surface.secondary');
+    --di-surface-muted: theme('colors.surface.elevated');
+    --di-border: theme('colors.border.subtle');
+    --di-text: theme('colors.text.primary');
+    --di-text-muted: theme('colors.text.secondary');
+    --di-accent: theme('colors.brand.sunset');
+    --di-accent-strong: theme('colors.brand.cardinal');
+    --di-radius: theme('borderRadius.lg');
+    --di-font-heading: 'Source Serif Pro', 'Times New Roman', serif;
+    --di-font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --di-max-width: 1120px;
 
-html {
-  color-scheme: dark;
-}
+    --surface-primary: theme('colors.surface.primary');
+    --surface-secondary: theme('colors.surface.secondary');
+    --surface-elevated: theme('colors.surface.elevated');
+    --surface-overlay: theme('colors.surface.overlay');
+    --card-bg: var(--surface-elevated);
 
-body {
-  font-family: var(--di-font-body);
-  background: var(--di-bg);
-  color: var(--di-text);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+    --text-primary: theme('colors.text.primary');
+    --text-secondary: theme('colors.text.secondary');
+    --text-tertiary: theme('colors.text.tertiary');
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+    --brand-primary: theme('colors.brand.burnt');
+    --brand-secondary: theme('colors.brand.ember');
+    --brand-tertiary: theme('colors.brand.copper');
+    --brand-surface-strong: theme('colors.brandSurface.strong');
+    --brand-surface-soft: theme('colors.brandSurface.soft');
+    --live-indicator: theme('colors.state.live');
 
-a:focus-visible {
-  outline: 2px solid var(--di-accent);
-  outline-offset: 4px;
-  border-radius: 999px;
+    --border-color: theme('colors.border.subtle');
+    --border-strong: theme('colors.border.strong');
+    --focus-ring-color: theme('colors.focus.ring');
+
+    --gradient-brand: theme('backgroundImage.brand');
+    --gradient-highlight: theme('backgroundImage.highlight');
+    --gradient-hero: theme('backgroundImage.hero');
+
+    --glass-light: theme('colors.glass.light');
+    --glass-medium: theme('colors.glass.medium');
+    --glass-heavy: theme('colors.glass.heavy');
+    --glass-border-color: theme('colors.glass.border');
+    --glass-border: 1px solid var(--glass-border-color);
+
+    --shadow-burnt: theme('boxShadow.burnt');
+    --shadow-crimson: theme('boxShadow.crimson');
+    --glow-soft: theme('boxShadow.glowSoft');
+    --glow-medium: theme('boxShadow.glowMedium');
+
+    --primary-color: var(--surface-primary);
+    --secondary-color: var(--surface-secondary);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--di-font-body);
+    background: var(--di-bg);
+    color: var(--di-text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--di-accent);
+    outline-offset: 4px;
+    border-radius: 999px;
+  }
 }
 
 .di-shell {

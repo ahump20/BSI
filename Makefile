@@ -60,22 +60,22 @@ up:
 
 # Complete environment setup
 setup:
-	@echo "$(BLUE)Setting up BSI development environment...$(NC)"
-	@if [ ! -f .env ]; then cp .env.example .env; fi
-	@pip3 install -r requirements.txt || true
-	@npm install || true
-	@pre-commit install || true
-	@echo "$(GREEN)✓ Setup complete! Run 'make dev' to start developing$(NC)"
+        @echo "$(BLUE)Setting up BSI development environment...$(NC)"
+        @if [ ! -f .env ]; then cp .env.example .env; fi
+        @pip3 install -r requirements.txt || true
+        @npm --prefix apps/web install || true
+        @pre-commit install || true
+        @echo "$(GREEN)✓ Setup complete! Run 'make dev' to start developing$(NC)"
 
 # Start in development mode with hot reload
 dev:
-	@echo "🔧 Starting in development mode with hot reload..."
-	@if [ ! -f .env ]; then cp .env.example .env; fi
-	@trap 'make down' INT TERM EXIT; \
-	python3 -m http.server 8000 & \
-	wrangler pages dev . --port 8787 --live-reload & \
-	python3 main.py --dev-mode & \
-	wait
+        @echo "🔧 Starting in development mode with hot reload..."
+        @if [ ! -f .env ]; then cp .env.example .env; fi
+        @trap 'make down' INT TERM EXIT; \
+        python3 -m http.server 8000 & \
+        npm --prefix apps/web run dev -- --hostname 0.0.0.0 & \
+        python3 main.py --dev-mode & \
+        wait
 
 # Watch for file changes
 watch:
@@ -99,9 +99,9 @@ down:
 
 # Run tests
 test:
-	@echo "🧪 Running test suite..."
-	docker-compose run --rm api pytest tests/ -v --cov=api --cov-report=term-missing
-	docker-compose run --rm frontend npm test
+        @echo "🧪 Running test suite..."
+        docker-compose run --rm api pytest tests/ -v --cov=api --cov-report=term-missing
+        npm --prefix apps/web run test:visual || true
 
 # Build all images
 build:
@@ -110,20 +110,19 @@ build:
 
 # Build for production
 build-prod:
-	@echo "📦 Building production images..."
-	docker build -t blaze-biomech-api:latest -f api/Dockerfile.prod api/
-	docker build -t blaze-biomech-frontend:latest -f frontend/Dockerfile.prod frontend/
-	docker build -t blaze-biomech-processor:latest -f processor/Dockerfile.prod processor/
+        @echo "📦 Building production images..."
+        docker build -t blaze-biomech-api:latest -f api/Dockerfile.prod api/
+        docker build -t blaze-biomech-processor:latest -f processor/Dockerfile.prod processor/
 
 # Clean up everything
 clean:
-	@echo "🧹 Cleaning up..."
-	docker-compose down -v
-	docker system prune -f
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.pyc" -delete 2>/dev/null || true
-	rm -rf .pytest_cache 2>/dev/null || true
-	rm -rf frontend/node_modules 2>/dev/null || true
+        @echo "🧹 Cleaning up..."
+        docker-compose down -v
+        docker system prune -f
+        find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+        find . -type f -name "*.pyc" -delete 2>/dev/null || true
+        rm -rf .pytest_cache 2>/dev/null || true
+        rm -rf apps/web/node_modules 2>/dev/null || true
 
 # View logs
 logs:
@@ -136,8 +135,8 @@ logs-api:
 logs-processor:
 	docker-compose logs -f processor
 
-logs-frontend:
-	docker-compose logs -f frontend
+logs-web:
+        docker-compose logs -f web
 
 # Load sample data
 seed:
@@ -146,17 +145,15 @@ seed:
 
 # Format code
 format:
-	@echo "✨ Formatting code..."
-	docker-compose run --rm api black .
-	docker-compose run --rm api isort .
-	docker-compose run --rm frontend npm run format
+        @echo "✨ Formatting code..."
+        docker-compose run --rm api black .
+        docker-compose run --rm api isort .
 
 # Lint code
 lint:
-	@echo "🔍 Linting code..."
-	docker-compose run --rm api pylint api/
-	docker-compose run --rm api mypy api/
-	docker-compose run --rm frontend npm run lint
+        @echo "🔍 Linting code..."
+        docker-compose run --rm api pylint api/
+        docker-compose run --rm api mypy api/
 
 # Database operations
 db-migrate:
@@ -198,24 +195,30 @@ security-scan:
 
 # Deploy to production (Cloudflare Pages)
 deploy: test build
-	@echo "$(BLUE)Deploying to blazesportsintel.com...$(NC)"
-	wrangler pages deploy . --project-name=blazesportsintel --env=production
-	@echo "$(GREEN)✓ Deployed to https://blazesportsintel.com$(NC)"
+        @echo "$(BLUE)Deploying to blazesportsintel.com...$(NC)"
+        npm --prefix apps/web run build
+        (cd apps/web && npx @cloudflare/next-on-pages)
+        wrangler pages deploy apps/web/.vercel/output/static --project-name=diamond-insights-platform --env=production
+        @echo "$(GREEN)✓ Deployed to https://blazesportsintel.com$(NC)"
 
 # Deploy to Cloudflare (alias)
 deploy-cf: deploy
 
 # Deploy preview environment
 deploy-preview:
-	@echo "$(BLUE)Deploying preview environment...$(NC)"
-	wrangler pages deploy . --project-name=blazesportsintel --env=preview
-	@echo "$(GREEN)✓ Preview deployed to https://preview.blazesportsintel.com$(NC)"
+        @echo "$(BLUE)Deploying preview environment...$(NC)"
+        npm --prefix apps/web run build
+        (cd apps/web && npx @cloudflare/next-on-pages)
+        wrangler pages deploy apps/web/.vercel/output/static --project-name=diamond-insights-platform --env=preview
+        @echo "$(GREEN)✓ Preview deployed to https://preview.blazesportsintel.com$(NC)"
 
 # Deploy to staging
 deploy-staging:
-	@echo "$(BLUE)Deploying to staging...$(NC)"
-	wrangler pages deploy . --project-name=blazesportsintel --env=staging
-	@echo "$(GREEN)✓ Staging deployed$(NC)"
+        @echo "$(BLUE)Deploying to staging...$(NC)"
+        npm --prefix apps/web run build
+        (cd apps/web && npx @cloudflare/next-on-pages)
+        wrangler pages deploy apps/web/.vercel/output/static --project-name=diamond-insights-platform --env=staging
+        @echo "$(GREEN)✓ Staging deployed$(NC)"
 
 # Deploy to AWS
 deploy-aws:
