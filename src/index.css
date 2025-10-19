@@ -17,6 +17,32 @@ body {
   max-width: 100%;
   min-height: 100vh;
   padding: 0;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.particle-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+.particle-background canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+header,
+main,
+footer,
+.loading,
+.error {
+  position: relative;
+  z-index: 1;
 }
 
 /* Header */
