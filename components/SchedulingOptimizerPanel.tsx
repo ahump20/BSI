@@ -104,6 +104,7 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
         name: team.name,
         conference: team.conference ?? 'non-conference',
         rpi: parseMetric(team.rpiValue, 0.5),
+        // If SOR value is missing, fall back to RPI value. This fallback is intentional and should be documented for maintainers.
         sor: parseMetric(team.sorValue ?? team.rpiValue, 0.5),
       }));
   }, [teams, selectedTeamId]);
