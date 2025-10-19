@@ -30,7 +30,16 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
   padding-bottom: 70px; /* Space for bottom nav */
+}
+
+.particle-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .app-header {

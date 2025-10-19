@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
+import ParticleBackground from './src/components/ParticleBackground';
 import './App.css';
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
 
   return (
     <div className="app">
+      <ParticleBackground />
       <header className="app-header">
         <h1>College Baseball Live</h1>
         <div className="conference-filter">
