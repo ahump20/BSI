@@ -1,496 +1,286 @@
-# Blaze Biomechanics Vision System
+# BlazeSportsIntel MCP Overview
 
-**Real-time 3D pose tracking + biomechanical analysis for elite athletic performance prediction**
+## Purpose
+- Anchor the BlazeSportsIntel mobile stack to a single, Cloudflare-friendly Model Context Protocol (MCP) surface that delivers college baseball intelligence first, while leaving hooks for football, basketball, and track & field expansions.
+- Standardize how tools expose deterministic payloads, caching hints, and citation-ready metadata so downstream clients (mobile apps, workers, dashboards) can reason about source trust without custom adapters.
 
-## Mission
-Bridge computer vision and biomechanics to quantify the "unseen" micro-moves that predict elite upside. Integrates seamlessly with the Champion Enigma Engine to deliver actionable insights from multi-camera 3D pose data.
+## Sport Coverage Ladder
+1. **Baseball (Primary)** – NCAA Division I focus with extensions for recruiting, portal, and MLB draft crosswalks.
+2. **Football (Secondary)** – Depth modules activate only when baseball parity is satisfied; inheriting the same telemetry contracts.
+3. **Basketball (Tertiary)** – Lightweight analytics overlays for postseason scouting.
+4. **Track & Field (Emerging)** – Event timing and split projections for training partners.
 
-## Quick Start
+### No-Soccer Policy
+- BlazeSportsIntel does **not** ingest, cache, or visualize soccer content. Attempts to register soccer contexts must be rejected at the tool layer with `422` errors and audit logging.
 
-```bash
-# Clone and setup
-git clone https://github.com/blazesportsintel/biomech-vision.git
-cd blaze-biomech-vision
+## MCP Tool Suite
+| Tool | Intent | Mobile-First Contract Notes |
+| --- | --- | --- |
+| `resolve-library-id` | Resolve a canonical library slug used by mobile clients. | Responses must fit in ≤1 KB and include `meta.cache` hints for KV hydration. |
+| `get-library-docs` | Pull curated documentation slices for sanctioned libraries. | Must prefer dark-mode UI snippets; TTL defaults to 12 hours unless overridden. |
+| `sports-context` | Supply compact, ordered sport capsules for chat or widgets. | Respect the baseball → football → basketball → track ordering regardless of request order. |
+| `inject-sports-context` | Merge supplemental context into a docs payload. | Enforce bounded supplements (<750 characters) with explicit TTLs. |
+| `cache-stats` | Inspect cache health for docs/context scopes. | Only available in non-production nodes; guard behind `NODE_ENV !== "production"`. |
+| `invalidate-cache` | Drop KV/Redis entries by key or glob. | Requires dual confirmation flags in production deployments.
 
-# One-command launch
-make up
+### Usage Examples
+All tools accept a **mobile-first contract** object: `version`, `tool`, `meta`, and `input`. The `meta.cache` block carries hints used by Cloudflare KV, R2, and D1 workers.
 
-# Or using docker-compose directly
-docker-compose up -d
-
-# Access the system
-# Dashboard: http://localhost:3000
-# API: http://localhost:8000
-# API Docs: http://localhost:8000/docs
-```
-
-## Architecture
-
-### Core Pipeline
-```
-Multi-Camera Feed → 3D Pose Extraction → Feature Computation → Enigma Mapping → Coach UX
-     ↓                    ↓                     ↓                    ↓              ↓
-  Raw Video         Joint Angles          Biomech Metrics     Trait Scores    Clip Reels
-```
-
-### Key Components
-
-1. **Pose Ingestion Service**: Handles multi-format 3D skeleton data (OpenPose, MediaPipe, KinaTrax, Hawk-Eye)
-2. **Feature Extraction Engine**: Computes 30+ biomechanical features in real-time
-3. **Risk Assessment Module**: Identifies injury risk patterns and mechanical inefficiencies
-4. **Clip Generation System**: Auto-generates video segments tied to specific metrics
-5. **Champion Enigma Integration**: Maps biomechanics to trait dimensions
-
-## Measured Micro-Signals
-
-### Baseball
-- **Hip-Shoulder Separation**: Peak separation angle at foot contact
-- **Pelvis Rotation Velocity**: Angular velocity through rotation sequence
-- **Trunk Angular Momentum**: Energy transfer efficiency
-- **Ground Contact Time**: Load phase duration
-- **Elbow Valgus Angle**: Injury risk indicator
-
-### Football
-- **First-Step Explosiveness**: 0-400ms burst metrics
-- **Center of Mass Projection**: Balance and acceleration efficiency
-- **Shin Angle at Launch**: Power generation indicator
-- **Hip Extension Power**: Drive phase mechanics
-
-### Basketball
-- **Lateral Step Quickness**: Change of direction efficiency
-- **Jump Loading Rate**: Force development speed
-- **Landing Stability Index**: ACL risk assessment
-- **Deceleration Control**: Eccentric strength indicator
-
-### Track & Field
-- **Ground Contact Asymmetry**: Left/right imbalance detection
-- **Flight Time Ratio**: Elastic energy utilization
-- **Vertical Oscillation**: Running economy metric
-- **Cadence Variability**: Fatigue indicator
-
-## 🚀 API Documentation
-
-### Quick Start
-```bash
-# Start the API server
-npm run api:start
-
-# Test health endpoint
-curl http://localhost:3000/health
-
-# View API documentation
-open http://localhost:3000/api/docs
-```
-
-### Core Analysis Endpoints
-
-#### Health & Status
-```http
-GET /health
-```
-Returns system health status and database connectivity.
-
-**Response:**
+#### `resolve-library-id`
 ```json
 {
-  "status": "healthy",
-  "database": "connected", 
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-```
-
-#### Teams Management
-```http
-GET /api/teams
-```
-Retrieve all teams from the database.
-
-**Response:**
-```json
-{
-  "success": true,
-  "count": 32,
-  "teams": [
-    {
-      "id": 1,
-      "name": "Cardinals",
-      "sport": "MLB",
-      "division": "NL Central"
+  "version": "2025.10-mobile",
+  "tool": "resolve-library-id",
+  "meta": {
+    "client": "bsi-mobile-app",
+    "cache": {
+      "tier": "kv",
+      "ttlSeconds": 86400,
+      "staleWhileRevalidateSeconds": 600
     }
-  ],
-  "dataSource": "PostgreSQL Database"
+  },
+  "input": {
+    "libraryName": "context7 enhanced"
+  }
 }
 ```
-
-#### MLB Data & Analytics
-```http
-GET /api/mlb/:teamId?
-```
-Fetch real MLB team data with advanced analytics.
-
-**Parameters:**
-- `teamId` (optional): MLB team ID (defaults to 138 for Cardinals)
-
-**Response:**
+_Response excerpt_
 ```json
 {
-  "success": true,
-  "team": {
-    "id": 138,
-    "name": "St. Louis Cardinals",
-    "abbreviation": "STL"
-  },
-  "standings": [
-    {
-      "team": "Cardinals",
-      "wins": 82,
-      "losses": 80,
-      "pct": ".506"
+  "id": "@blaze/context7-enhanced",
+  "name": "Context7 Enhanced",
+  "source": "official",
+  "meta": {
+    "cache": {
+      "tier": "kv",
+      "hit": false,
+      "ttlSeconds": 86400
     }
-  ],
-  "analytics": {
-    "pythagorean": {
-      "expectedWins": 79,
-      "winPercentage": "0.488",
-      "runsScored": 744,
-      "runsAllowed": 776
-    },
-    "dataSource": "Calculated from real MLB Stats API data"
-  },
-  "cached": false,
-  "timestamp": "2024-01-01T00:00:00.000Z"
+  }
 }
 ```
 
-#### NFL Data & Analytics
-```http
-GET /api/nfl/:teamId?
-```
-Fetch real NFL team data from ESPN API.
-
-**Parameters:**
-- `teamId` (optional): NFL team ID (defaults to 10 for Titans)
-
-**Response:**
+#### `get-library-docs`
 ```json
 {
-  "success": true,
-  "team": {
-    "id": 10,
-    "displayName": "Tennessee Titans",
-    "abbreviation": "TEN"
+  "version": "2025.10-mobile",
+  "tool": "get-library-docs",
+  "meta": {
+    "client": "bsi-mobile-app",
+    "cache": {
+      "tier": "r2",
+      "ttlSeconds": 43200,
+      "revalidateEverySeconds": 1800
+    }
   },
-  "dataSource": "ESPN API"
+  "input": {
+    "context7CompatibleLibraryID": "@blaze/context7-enhanced",
+    "topic": "dark-mode-theming",
+    "tokens": 2400
+  }
+}
+```
+_Response excerpt_
+```json
+{
+  "docs": "Tailwind tokens for dark-mode mobile cards...",
+  "meta": {
+    "libraryID": "@blaze/context7-enhanced",
+    "topic": "dark-mode-theming",
+    "cache": {
+      "tier": "r2",
+      "hit": true,
+      "ageMs": 42000
+    }
+  }
 }
 ```
 
-### Biomechanics & Pose Analysis
-
-#### Pose Data Ingestion
-```http
-POST /api/v1/pose/ingest
-Content-Type: application/json
-```
-Stream 3D pose data for real-time analysis.
-
-**Request Body:**
+#### `sports-context`
 ```json
 {
-  "athlete_id": "athlete_001",
-  "timestamp": "2024-01-01T00:00:00.000Z",
-  "pose_data": {
-    "keypoints": [
-      {"x": 0.5, "y": 0.3, "z": 0.1, "confidence": 0.95},
-      {"x": 0.52, "y": 0.35, "z": 0.12, "confidence": 0.92}
-    ],
+  "version": "2025.10-mobile",
+  "tool": "sports-context",
+  "meta": {
+    "client": "bsi-mobile-app",
+    "cache": {
+      "tier": "redis",
+      "ttlSeconds": 60,
+      "bustOn": ["live-game", "portal-update"]
+    }
+  },
+  "input": {
     "sport": "baseball",
-    "action": "pitch"
+    "league": "NCAA-DI",
+    "team": "LSU Tigers",
+    "timeframe": "live"
+  }
+}
+```
+_Response excerpt_
+```json
+{
+  "supplement": {
+    "type": "context",
+    "ts": "2025-10-13T14:05:22Z",
+    "ttlSeconds": 45,
+    "ordering": ["baseball", "football", "basketball", "track"],
+    "body": "Baseball • LSU up 4-1 mid 6th..."
+  },
+  "cache": {
+    "tier": "redis",
+    "hit": false
   }
 }
 ```
 
-#### Biomechanical Analysis
-```http
-GET /api/v1/analysis/{athlete_id}/biomech
-```
-Get comprehensive biomechanical analysis for an athlete.
-
-**Response:**
+#### `inject-sports-context`
 ```json
 {
-  "athlete_id": "athlete_001",
-  "biomech_metrics": {
-    "hip_shoulder_separation": {
-      "peak_angle": 45.7,
-      "percentile": 85,
-      "status": "excellent"
-    },
-    "pelvis_rotation_velocity": {
-      "peak_velocity": 687.3,
-      "unit": "deg/s",
-      "percentile": 72
-    },
-    "ground_contact_time": {
-      "duration": 180,
-      "unit": "ms",
-      "percentile": 64
+  "version": "2025.10-mobile",
+  "tool": "inject-sports-context",
+  "meta": {
+    "client": "bsi-mobile-app",
+    "cache": {
+      "tier": "kv",
+      "ttlSeconds": 600,
+      "propagate": true
     }
   },
-  "risk_assessment": {
-    "injury_risk_score": 2.3,
-    "risk_level": "low",
-    "primary_concerns": []
+  "input": {
+    "context7CompatibleLibraryID": "@blaze/context7-enhanced",
+    "topic": "lineup-optimizers",
+    "supplement": {
+      "type": "context",
+      "ts": "2025-10-13T14:07:10Z",
+      "ttlSeconds": 120,
+      "ordering": ["baseball", "football", "basketball", "track"],
+      "body": "Portal watch: two-way transfer target visiting Thursday."
+    }
   }
 }
 ```
-
-#### Champion Enigma Trait Scores
-```http
-GET /api/v1/enigma/{athlete_id}/scores
-```
-Get Champion Enigma intelligence trait scores.
-
-**Response:**
+_Response excerpt_
 ```json
 {
-  "athlete_id": "athlete_001",
-  "enigma_scores": {
-    "clutch_factor": 8.7,
-    "adaptability": 7.2,
-    "competitive_drive": 9.1,
-    "biomech_efficiency": 8.4,
-    "mental_resilience": 7.8
-  },
-  "overall_rating": 8.24,
-  "projection": "elite_upside"
-}
-```
-
-#### Video Clip Generation
-```http
-POST /api/v1/clips/generate
-Content-Type: application/json
-```
-Generate metric-specific video clips.
-
-**Request Body:**
-```json
-{
-  "athlete_id": "athlete_001",
-  "metric_type": "hip_shoulder_separation",
-  "time_range": {
-    "start": "2024-01-01T10:00:00.000Z",
-    "end": "2024-01-01T10:05:00.000Z"
-  },
-  "highlight_threshold": 75
-}
-```
-
-### Risk Assessment
-
-#### Injury Risk Profile
-```http
-GET /api/v1/risk/{athlete_id}/profile
-```
-Comprehensive injury risk assessment.
-
-**Response:**
-```json
-{
-  "athlete_id": "athlete_001",
-  "risk_profile": {
-    "overall_score": 2.3,
-    "risk_level": "low",
-    "body_regions": {
-      "elbow": {
-        "risk_score": 1.8,
-        "primary_metrics": ["valgus_angle", "forearm_rotation"]
-      },
-      "shoulder": {
-        "risk_score": 2.1,
-        "primary_metrics": ["external_rotation", "abduction_angle"]
-      },
-      "lower_back": {
-        "risk_score": 1.5,
-        "primary_metrics": ["hip_shoulder_separation", "trunk_tilt"]
-      }
+  "merged": {
+    "docs": "Lineup optimizer API parameters...",
+    "supplement": {
+      "type": "context",
+      "ts": "2025-10-13T14:07:10Z",
+      "ttlSeconds": 120,
+      "ordering": ["baseball", "football", "basketball", "track"],
+      "body": "Portal watch: two-way transfer target visiting Thursday."
     }
   }
 }
 ```
 
-#### Real-time Alerts
-```http
-GET /api/v1/risk/alerts
-```
-Get current mechanical red flags and alerts.
-
-### Database Operations
-
-#### Analytics Storage
-```http
-POST /api/analytics
-Content-Type: application/json
-```
-Store analytical calculations and metrics.
-
-#### Performance Metrics
-```http
-GET /api/performance/{athlete_id}
-```
-Retrieve performance metrics and trends.
-
-### Authentication
-
-All API endpoints support JWT authentication:
-
-```http
-Authorization: Bearer <jwt_token>
-```
-
-### Rate Limits
-
-- **Development**: 1000 requests/minute
-- **Production**: 500 requests/minute per API key
-- **Burst**: Up to 100 requests in 10 seconds
-
-### Error Responses
-
-All endpoints return consistent error formats:
-
+#### `cache-stats`
 ```json
 {
-  "success": false,
-  "error": "Error description",
-  "code": "ERROR_CODE",
-  "timestamp": "2024-01-01T00:00:00.000Z"
+  "version": "2025.10-mobile",
+  "tool": "cache-stats",
+  "meta": {
+    "client": "bsi-mobile-app",
+    "cache": {
+      "tier": "d1",
+      "ttlSeconds": 30,
+      "debug": true
+    }
+  },
+  "input": {
+    "scope": "docs"
+  }
+}
+```
+_Response excerpt_
+```json
+{
+  "scope": "docs",
+  "mem": { "size": 128, "hits": 542, "misses": 23 },
+  "redis": { "hits": 211, "misses": 9 },
+  "p95HitMs": 14
 }
 ```
 
-### WebSocket Endpoints
-
-Real-time data streaming via WebSocket:
-
-```javascript
-const ws = new WebSocket('ws://localhost:3000/ws');
-
-// Subscribe to live pose data
-ws.send(JSON.stringify({
-  type: 'subscribe',
-  channel: 'pose_stream',
-  athlete_id: 'athlete_001'
-}));
+#### `invalidate-cache`
+```json
+{
+  "version": "2025.10-mobile",
+  "tool": "invalidate-cache",
+  "meta": {
+    "client": "bsi-mobile-app",
+    "cache": {
+      "tier": "kv",
+      "ttlSeconds": 5,
+      "requires": ["prod-confirm", "pager-duty-ack"]
+    }
+  },
+  "input": {
+    "pattern": "sports-context:baseball:lsu:*"
+  }
+}
+```
+_Response excerpt_
+```json
+{
+  "ok": true,
+  "removed": 12
+}
 ```
 
-### SDK Examples
+## Citation Rules
+1. Always cite MCP-derived facts with the `F:<relative_path>†Lx-Ly` or `<chunk_id>†Lx-Ly` syntax.
+2. Summaries must trail the cited sentence; never lead with the citation.
+3. Tool responses must embed a `meta.source` block listing the authoritative path or run chunk.
+4. When a fact spans multiple tools, cite the most authoritative (docs before context before cache stats).
 
-#### Node.js
-```javascript
-import BlazeSDK from '@blazesportsintel/sdk';
+## Cloudflare KV/R2/D1 Caching Blueprint
+- **KV (Hot Edge Read Layer)**: Store deterministic doc and context responses with TTL ≤24h; enable `stale-while-revalidate` workers for mobile prefetches. Keys follow `mcp:{tool}:{hash}`. KV writes originate from `mcp/server.ts` only.
+- **R2 (Object Payload Archive)**: Persist large doc slices (>32 KB) and replayable game bundles. `meta.cache.tier === "r2"` instructs downstream workers to bypass KV and fetch signed R2 URLs.
+- **D1 (Queryable Audit Log)**: Mirror cache events (`invalidate-cache`, smoke checks) with ISO timestamps and partner identifiers. D1 entries guard compliance and power the admin audit UI.
+- **Redis/Upstash (Live Overlay)**: Handle sub-60 second sports contexts. TTL hard-capped at 60 seconds with automatic fan-out to KV once stability >90 seconds.
+- **Worker Flow**: Mobile request → Edge Worker checks Redis → falls back to KV → escalates to R2 if `meta.cache.tier` demands → logs event to D1 for traceability.
 
-const blaze = new BlazeSDK({
-  apiKey: 'your-api-key',
-  baseUrl: 'http://localhost:3000'
-});
+## `mcp/server.ts` Setup
+The TypeScript server binds the tools above into a Cloudflare Worker-compatible MCP endpoint.
 
-const analysis = await blaze.biomech.getAnalysis('athlete_001');
-```
+### Dependencies
+- Node.js 20+
+- `pnpm` 9+
+- TypeScript, `tsx`, and `zod` (already declared in the MCP workspace)
 
-#### Python
-```python
-from blaze_sdk import BlazeClient
+### Environment Variables for Approved Data Partners
+| Variable | Partner | Purpose |
+| --- | --- | --- |
+| `MCP_PARTNER_HIGHLIGHTLY_KEY` | Highlightly | College baseball play-by-play + pitch data. |
+| `MCP_PARTNER_TRACKMAN_KEY` | TrackMan | Indoor training telemetry (exit velo, spin). |
+| `MCP_PARTNER_STATSCAST_KEY` | Statcast | MLB alignment for draft comps. |
+| `MCP_PARTNER_FASTMODEL_KEY` | FastModel | Basketball set-play context (for offseason scouting). |
+| `MCP_PARTNER_PERFTRACK_KEY` | Performance Tracking Labs | Track & field split timing feeds. |
 
-client = BlazeClient(api_key='your-api-key')
-analysis = client.biomech.get_analysis('athlete_001')
-```
+Populate these variables in `.env.local` (development) and `wrangler.toml` secrets (Cloudflare). Never commit raw keys.
 
-## Environment Variables
-
+### Local Installation
 ```bash
-# Copy example config
-cp .env.example .env
-
-# Core settings
-POSTGRES_DB=blaze_biomech
-REDIS_URL=redis://redis:6379
-S3_BUCKET=blaze-pose-data
-
-# External integrations
-KINTRAX_API_KEY=your_key_here
-HAWKEYE_ENDPOINT=https://api.hawkeye.com
-ENIGMA_ENGINE_URL=https://enigma.blazesportsintel.com
+pnpm install
+pnpm exec prisma generate # ensures shared types when server resolves player IDs
+pnpm exec tsx scripts/apply-mcp-keys.ts --profile dev
 ```
 
-## Development
-
+### Local Smoke Checks
 ```bash
-# Run with hot reload
-make dev
+# Validate partner keys and cache bindings
+pnpm exec tsx mcp/server.ts --smoke-check partners
 
-# Run tests
-make test
+# Dry-run the championship dashboard contract
+pnpm exec tsx mcp/server.ts --smoke-check championship
 
-# Format code
-make format
-
-# Build production images
-make build-prod
+# Verify Redis and KV connectivity with synthetic baseball contexts
+pnpm exec tsx mcp/server.ts --smoke-check cache
 ```
+Each smoke check writes a row to the D1 audit log and emits a structured JSON report under `./.reports/mcp/` for manual inspection. Failures must block deployment until addressed.
 
-## Performance Benchmarks
-
-- **Pose Processing**: 30 FPS real-time for 4 camera streams
-- **Feature Extraction**: <50ms per frame
-- **Clip Generation**: 2-3 seconds per 10-second segment
-- **API Response**: p95 < 200ms
-
-## Sample Data
-
-The system includes sample 3D pose streams and athlete profiles:
-
-```bash
-# Load sample data
-python scripts/seed_data.py
-
-# Sample athletes included:
-# - Baseball: 5 pitchers, 5 hitters with full motion capture
-# - Football: 3 QBs, 4 WRs with first-step analysis
-# - Basketball: 6 players with jump/land sequences
-```
-
-## Deployment
-
-### Production (AWS/Cloudflare)
-```bash
-# Deploy to Cloudflare R2 + Workers
-make deploy-cloudflare
-
-# Or traditional AWS
-make deploy-aws
-```
-
-## Security Notes
-
-- All pose data encrypted at rest (AES-256)
-- API authentication via JWT with refresh tokens
-- Rate limiting: 1000 requests/minute per client
-- No PII stored with biomechanical data
-- HIPAA-compliant data handling available
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Camera calibration errors**: Ensure calibration files in `sample_data/calibration/`
-2. **Memory issues with video processing**: Adjust `VIDEO_BUFFER_SIZE` in `.env`
-3. **Slow feature extraction**: Enable GPU support with `USE_GPU=true`
-
-## License
-
-MIT License - See LICENSE file for details
-
-## Support
-
-- Documentation: https://docs.blazesportsintel.com/biomech
-- API Status: https://status.blazesportsintel.com
-- Contact: biomech@blazesportsintel.com
+## Further Study
+- **Coursera – Sports Analytics** (University of Michigan): https://www.coursera.org/learn/sports-analytics. Use for conceptual frameworks only; course datasets are licensed for personal educational use and **cannot** be redistributed or reproduced inside BlazeSportsIntel products without written permission.
