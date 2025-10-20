@@ -7,11 +7,32 @@ logging:
   level: "INFO"
 
 database:
-  url: "sqlite+pysqlite:///storage/blaze_nil.db"
+  env_var: "DATABASE_URL"
+  url: null
   echo: false
+  pool:
+    size: 10
+    max_overflow: 20
+    timeout: 30
+    recycle: 1800
+  ssl:
+    mode: "require"
+    root_cert_path: null
 
 storage:
-  raw_path: "storage/raw"
+  provider: "r2"
+  bucket_env: "RAW_STORAGE_BUCKET"
+  region_env: "OBJECT_STORAGE_REGION"
+  endpoint_env: "OBJECT_STORAGE_ENDPOINT"
+  credentials:
+    access_key_env: "OBJECT_STORAGE_ACCESS_KEY_ID"
+    secret_key_env: "OBJECT_STORAGE_SECRET_ACCESS_KEY"
+    session_token_env: "OBJECT_STORAGE_SESSION_TOKEN"
+  cloudflare:
+    account_id_env: "CLOUDFLARE_ACCOUNT_ID"
+    api_token_env: "CLOUDFLARE_R2_TOKEN"
+  prefix: "nil/raw/"
+  local_path: "storage/raw"
 
 redis:
   host: "localhost"

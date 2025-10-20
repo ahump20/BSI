@@ -21,13 +21,31 @@ _ENGINE = None
 _SESSION_FACTORY = None
 
 
+def _resolve_database_url(config: dict[str, object]) -> str:
+    env_var = config.get("env_var", "DATABASE_URL")
+    if isinstance(env_var, str):
+        database_url = os.getenv(env_var)
+        if database_url:
+            return database_url
+
+    fallback = config.get("url")
+    if isinstance(fallback, str) and fallback:
+        return fallback
+
+    raise RuntimeError(
+        "DATABASE_URL environment variable is not set and no fallback URL is configured."
+    )
+
+
 def _create_engine():
     config = load_config()
-    database_url = os.getenv("DATABASE_URL", config["database"]["url"])
-    echo = bool(config["database"].get("echo", False))
+    database_config: dict[str, object] = config.get("database", {})
+    database_url = _resolve_database_url(database_config)
+    echo = bool(database_config.get("echo", False))
 
     url: URL = make_url(database_url)
     connect_args: dict[str, object] = {}
+    engine_kwargs: dict[str, object] = {"echo": echo, "future": True}
 
     if url.drivername.startswith("sqlite"):
         database = url.database or ""
@@ -39,7 +57,31 @@ def _create_engine():
             url = url.set(database=str(db_path))
         connect_args["check_same_thread"] = False
 
-    engine = create_engine(url, echo=echo, future=True, connect_args=connect_args)
+    if url.drivername.startswith("postgresql"):
+        ssl_config = database_config.get("ssl", {}) if isinstance(database_config, dict) else {}
+        if isinstance(ssl_config, dict):
+            ssl_mode = ssl_config.get("mode", "require")
+            if ssl_mode:
+                connect_args["sslmode"] = ssl_mode
+            root_cert = ssl_config.get("root_cert_path")
+            if root_cert:
+                connect_args["sslrootcert"] = str(root_cert)
+
+        pool_config = (
+            database_config.get("pool", {}) if isinstance(database_config, dict) else {}
+        )
+        if isinstance(pool_config, dict):
+            engine_kwargs["pool_size"] = int(pool_config.get("size", 5))
+            engine_kwargs["max_overflow"] = int(pool_config.get("max_overflow", 10))
+            engine_kwargs["pool_timeout"] = int(pool_config.get("timeout", 30))
+            engine_kwargs["pool_recycle"] = int(pool_config.get("recycle", 1800))
+
+        engine_kwargs["pool_pre_ping"] = True
+
+    if connect_args:
+        engine_kwargs["connect_args"] = connect_args
+
+    engine = create_engine(url, **engine_kwargs)
     return engine
 
 
