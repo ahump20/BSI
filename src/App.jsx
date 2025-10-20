@@ -5,12 +5,18 @@ function App() {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [lastUpdated, setLastUpdated] = useState(null)
 
   useEffect(() => {
+    let isMounted = true
+
     // Fetch live college baseball games from ESPN API
-    const fetchGames = async () => {
+    const fetchGames = async ({ initial = false } = {}) => {
       try {
-        setLoading(true)
+        if (initial) {
+          setLoading(true)
+        }
+
         const response = await fetch(
           'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard'
         )
@@ -20,21 +26,44 @@ function App() {
         }
 
         const data = await response.json()
+
+        if (!isMounted) {
+          return
+        }
+
         setGames(data.events || [])
         setError(null)
       } catch (err) {
+        if (!isMounted) {
+          return
+        }
+
         console.error('Failed to fetch games:', err)
         setError(err.message)
       } finally {
-        setLoading(false)
+        if (!isMounted) {
+          return
+        }
+
+        setLastUpdated(new Date())
+
+        if (initial) {
+          setLoading(false)
+        }
       }
     }
 
-    fetchGames()
+    fetchGames({ initial: true })
 
     // Refresh every 30 seconds for live updates
-    const interval = setInterval(fetchGames, 30000)
-    return () => clearInterval(interval)
+    const interval = setInterval(() => {
+      fetchGames()
+    }, 30000)
+
+    return () => {
+      isMounted = false
+      clearInterval(interval)
+    }
   }, [])
 
   if (loading) {
@@ -71,6 +100,25 @@ function App() {
     )
   }
 
+  const sortedGames = [...games].sort((a, b) => {
+    const firstDate = a?.date || a?.competitions?.[0]?.date
+    const secondDate = b?.date || b?.competitions?.[0]?.date
+
+    if (!firstDate && !secondDate) {
+      return 0
+    }
+
+    if (!firstDate) {
+      return 1
+    }
+
+    if (!secondDate) {
+      return -1
+    }
+
+    return new Date(firstDate) - new Date(secondDate)
+  })
+
   return (
     <div className="container">
       <header>
@@ -81,20 +129,23 @@ function App() {
       <main>
         <section className="live-scores">
           <h2>Live Scores</h2>
-          {games.length === 0 ? (
+          {sortedGames.length === 0 ? (
             <p className="no-games">No games currently in progress</p>
           ) : (
             <div className="games-grid">
-              {games.map((event) => {
+              {sortedGames.map((event) => {
                 const competition = event.competitions?.[0]
                 const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home')
                 const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away')
                 const status = competition?.status
+                const competitionDate = competition?.date || event?.date
+                const firstPitchTime = competitionDate ? new Date(competitionDate) : null
+                const statusDetail = status?.type?.detail || status?.type?.shortDetail
 
                 return (
                   <div key={event.id} className="game-card">
                     <div className="game-status">
-                      {status?.type?.completed ? 'Final' : status?.type?.detail || 'Live'}
+                      {status?.type?.completed ? 'Final' : statusDetail || 'Live'}
                     </div>
 
                     <div className="game-teams">
@@ -113,6 +164,17 @@ function App() {
                       <span className="venue">
                         {competition?.venue?.fullName || 'TBD'}
                       </span>
+                      {firstPitchTime && !status?.type?.completed && (
+                        <span className="start-time">
+                          {status?.type?.state === 'in'
+                            ? statusDetail
+                            : firstPitchTime.toLocaleTimeString('en-US', {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                timeZone: 'America/Chicago'
+                              })}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )
@@ -125,11 +187,14 @@ function App() {
           <p>
             Data source: ESPN College Baseball API
             <br />
-            Last updated: {new Date().toLocaleString('en-US', {
-              timeZone: 'America/Chicago',
-              dateStyle: 'medium',
-              timeStyle: 'short'
-            })}
+            Last updated:{' '}
+            {lastUpdated
+              ? lastUpdated.toLocaleString('en-US', {
+                  timeZone: 'America/Chicago',
+                  dateStyle: 'medium',
+                  timeStyle: 'short'
+                })
+              : '—'}
           </p>
         </footer>
       </main>
