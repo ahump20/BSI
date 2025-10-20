@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import SportSwitcher from './components/SportSwitcher'
 
 function App() {
@@ -7,35 +7,60 @@ function App() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // Fetch live college baseball games from ESPN API
-    const fetchGames = async () => {
+    let cancelled = false
+
+    // Fetch live college baseball games from Cloudflare Worker proxying ESPN
+    const fetchGames = async (withSpinner = false) => {
       try {
-        setLoading(true)
-        const response = await fetch(
-          'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard'
-        )
+        if (withSpinner) {
+          setLoading(true)
+        }
+
+        const response = await fetch('/api/games/live', {
+          headers: {
+            Accept: 'application/json'
+          }
+        })
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`)
         }
 
         const data = await response.json()
-        setGames(data.events || [])
-        setError(null)
+        if (!cancelled) {
+          setGames(Array.isArray(data.games) ? data.games : [])
+          setError(null)
+        }
       } catch (err) {
         console.error('Failed to fetch games:', err)
-        setError(err.message)
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Unable to load live games')
+        }
       } finally {
-        setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+        }
       }
     }
 
-    fetchGames()
+    fetchGames(true)
 
     // Refresh every 30 seconds for live updates
-    const interval = setInterval(fetchGames, 30000)
-    return () => clearInterval(interval)
+    const interval = setInterval(() => {
+      fetchGames(false)
+    }, 30000)
+
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
   }, [])
+
+  const formattedGames = useMemo(() => games.map((game) => ({
+    ...game,
+    statusLabel: deriveStatusLabel(game),
+    secondaryLabel: deriveSecondaryLabel(game),
+  })), [games])
 
   if (loading) {
     return (
@@ -81,38 +106,49 @@ function App() {
       <main>
         <section className="live-scores">
           <h2>Live Scores</h2>
-          {games.length === 0 ? (
+          {formattedGames.length === 0 ? (
             <p className="no-games">No games currently in progress</p>
           ) : (
             <div className="games-grid">
-              {games.map((event) => {
-                const competition = event.competitions?.[0]
-                const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home')
-                const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away')
-                const status = competition?.status
-
+              {formattedGames.map((game) => {
+                const { awayTeam, homeTeam } = game
                 return (
-                  <div key={event.id} className="game-card">
-                    <div className="game-status">
-                      {status?.type?.completed ? 'Final' : status?.type?.detail || 'Live'}
+                  <div key={game.id} className="game-card">
+                    <div className={`game-status game-status--${game.status}`}>
+                      {game.statusLabel}
                     </div>
 
                     <div className="game-teams">
                       <div className="team">
-                        <span className="team-name">{awayTeam?.team?.displayName || 'Away'}</span>
-                        <span className="team-score">{awayTeam?.score || '0'}</span>
+                        <span className="team-name">{awayTeam?.name || 'Away'}</span>
+                        <span className="team-score">{formatScore(awayTeam?.score)}</span>
+                        {awayTeam?.record && (
+                          <span className="team-record">{awayTeam.record}</span>
+                        )}
                       </div>
 
                       <div className="team">
-                        <span className="team-name">{homeTeam?.team?.displayName || 'Home'}</span>
-                        <span className="team-score">{homeTeam?.score || '0'}</span>
+                        <span className="team-name">{homeTeam?.name || 'Home'}</span>
+                        <span className="team-score">{formatScore(homeTeam?.score)}</span>
+                        {homeTeam?.record && (
+                          <span className="team-record">{homeTeam.record}</span>
+                        )}
                       </div>
                     </div>
 
                     <div className="game-meta">
-                      <span className="venue">
-                        {competition?.venue?.fullName || 'TBD'}
-                      </span>
+                      <span className="venue">{game.venue || 'Venue TBD'}</span>
+                      {game.secondaryLabel && (
+                        <span className="game-secondary">{game.secondaryLabel}</span>
+                      )}
+                      {game.status === 'live' && game.situation && (
+                        <span className="game-situation">
+                          {game.situation.runners}
+                          {typeof game.situation.outs === 'number' && (
+                            <> • {game.situation.outs} {game.situation.outs === 1 ? 'out' : 'outs'}</>
+                          )}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )
@@ -123,7 +159,7 @@ function App() {
 
         <footer className="data-source">
           <p>
-            Data source: ESPN College Baseball API
+            Data source: ESPN College Baseball API via Diamond Insights Cloudflare Worker
             <br />
             Last updated: {new Date().toLocaleString('en-US', {
               timeZone: 'America/Chicago',
@@ -141,3 +177,55 @@ function App() {
 }
 
 export default App
+
+function deriveStatusLabel(game) {
+  if (!game) return 'Scheduled'
+
+  switch (game.status) {
+    case 'live':
+      return game.statusText || formatInningLabel(game.inning) || 'Live'
+    case 'final':
+      return 'Final'
+    case 'delayed':
+      return game.statusText || 'Delayed'
+    default:
+      return game.scheduledTime ? `Starts ${game.scheduledTime}` : 'Scheduled'
+  }
+}
+
+function deriveSecondaryLabel(game) {
+  if (!game) return null
+
+  if (game.status === 'scheduled') {
+    return game.statusText || game.scheduledTime || null
+  }
+
+  if (game.status === 'live') {
+    const inningLabel = formatInningLabel(game.inning)
+    if (game.statusText && inningLabel && game.statusText !== inningLabel) {
+      return `${inningLabel} • ${game.statusText}`
+    }
+    return game.statusText || inningLabel
+  }
+
+  return game.statusText || null
+}
+
+function formatInningLabel(inning) {
+  if (!inning?.number) return null
+  const half = inning.half ? `${inning.half} ` : ''
+  return `${half}${toOrdinal(inning.number)}`
+}
+
+function toOrdinal(value) {
+  if (typeof value !== 'number') return value
+  const suffixes = ['th', 'st', 'nd', 'rd']
+  const remainder = value % 100
+  const suffix = suffixes[(remainder - 20) % 10] || suffixes[remainder] || suffixes[0]
+  return `${value}${suffix}`
+}
+
+function formatScore(score) {
+  if (score === null || score === undefined) return '0'
+  return String(score)
+}
