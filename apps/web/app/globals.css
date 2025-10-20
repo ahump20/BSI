@@ -238,6 +238,80 @@ h1 {
   line-height: 1.6;
 }
 
+.section-heading {
+  text-align: center;
+  margin: 3rem auto 2rem;
+  max-width: 720px;
+}
+
+.section-lede {
+  color: var(--text-light);
+  margin-top: 0.75rem;
+  font-size: 1.05rem;
+}
+
+.unique-properties {
+  margin: 4rem 0;
+}
+
+.unique-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.unique-card {
+  background: var(--bg-light);
+  border-radius: 12px;
+  padding: 1.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.unique-card h3 {
+  font-size: 1.35rem;
+  color: var(--primary-color);
+}
+
+.unique-card ul,
+.upgrade-card ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  color: var(--text-light);
+}
+
+.upgrades {
+  margin: 4rem 0;
+}
+
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.upgrade-card {
+  background: #101014;
+  color: #fff;
+  border-radius: 12px;
+  padding: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.upgrade-card h3 {
+  font-size: 1.4rem;
+}
+
+.upgrade-card header p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0.5rem;
+}
+
 .mobile-focus {
   margin: 3rem 0;
   background: var(--primary-color);

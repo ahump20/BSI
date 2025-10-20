@@ -95,6 +95,72 @@ const dataSources = [
   'Conference Databases'
 ];
 
+const uniqueProperties = [
+  {
+    title: 'Verified College Baseball Rights',
+    description:
+      'Direct data contracts with every Division I conference and Top 50 JUCO programs keep standings, rosters, and NIL triggers compliant.',
+    callouts: [
+      'Conference-specific validation pipelines flag roster or stats mismatches in under 60 seconds.',
+      'Athlete consent ledger syncs with transfer-portal events to guarantee publishing rights.',
+      'Every feed is archived to R2 for 7-year retention with automated breach alerts.'
+    ]
+  },
+  {
+    title: 'PitchDNA Event Graph',
+    description:
+      'Proprietary schema fuses Statcast, TrackMan, and in-house biomechanics snapshots into a single pitch-level graph.',
+    callouts: [
+      'Links pitch intent, release metrics, and outcome probabilities for scouting departments.',
+      'Pre-computed similarity scores surface comps for prospects and transfer portal targets.',
+      'Edge cache enforces < 1 minute TTL on live games with automatic downgrades when latency spikes.'
+    ]
+  },
+  {
+    title: 'Data Provenance Ledger',
+    description:
+      'Immutable audit trail backs every published number with ingestion source, timestamp, and validation checks.',
+    callouts: [
+      'Red-team hooks run property-based tests on standings before any publish event.',
+      'Diamond Pro subscribers can diff revisions to confirm scouting intel lineage.',
+      'Non-destructive rollbacks protect historical leaderboards without downtime.'
+    ]
+  }
+];
+
+const upgradePaths = [
+  {
+    tier: 'Diamond Pro',
+    summary:
+      'Subscription tier for front offices and college programs that need full recruiting, biomechanics, and predictive layers.',
+    inclusions: [
+      'Advanced win probability models and in-game EPA for every pitch.',
+      'Automated NIL and transfer portal heatmaps with exportable scouting packs.',
+      'Two-pass LLM recap generator with fact verification against the master warehouse.'
+    ]
+  },
+  {
+    tier: 'Diamond Elite',
+    summary:
+      'White-glove upgrade for pro scouting directors requiring edge deployments and custom ingest rules.',
+    inclusions: [
+      'Dedicated Cloudflare Worker pipelines tuned to proprietary ball-tracking feeds.',
+      'Priority support with 15-minute response SLOs and weekly data integrity briefings.',
+      'On-demand model tuning sessions with Blaze analysts and biomechanics staff.'
+    ]
+  },
+  {
+    tier: 'Diamond Enterprise',
+    summary:
+      'Multi-sport roadmap for athletic departments preparing for softball, volleyball, or lacrosse expansions.',
+    inclusions: [
+      'Sport-agnostic ingestion framework unlocked with conference-level change management.',
+      'Shared analytics workspace with access controls for coaches, compliance, and media.',
+      'Custom contract governance plus quarterly security reviews meeting GDPR/CCPA.'
+    ]
+  }
+];
+
 function getCookieValue(name: string): string | undefined {
   if (typeof document === 'undefined') {
     return undefined;
@@ -298,6 +364,52 @@ export default function HoldingPage() {
                 <ul>
                   {area.highlights.map((highlight) => (
                     <li key={highlight}>{highlight}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="unique-properties" aria-labelledby="unique-properties-heading">
+          <div className="section-heading">
+            <h2 id="unique-properties-heading">Unique Properties Anchoring This Branch</h2>
+            <p className="section-lede">
+              Locked-down data rights, college baseball-first schemas, and compliance rails rivals cannot match.
+            </p>
+          </div>
+          <div className="unique-grid">
+            {uniqueProperties.map((property) => (
+              <article key={property.title} className="unique-card">
+                <h3>{property.title}</h3>
+                <p>{property.description}</p>
+                <ul>
+                  {property.callouts.map((callout) => (
+                    <li key={callout}>{callout}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="upgrades" aria-labelledby="upgrades-heading">
+          <div className="section-heading">
+            <h2 id="upgrades-heading">Upgrade Paths Ready Today</h2>
+            <p className="section-lede">
+              Select the Diamond tier aligned to your scouting or athletic department roadmap.
+            </p>
+          </div>
+          <div className="upgrade-grid">
+            {upgradePaths.map((upgrade) => (
+              <article key={upgrade.tier} className="upgrade-card">
+                <header>
+                  <h3>{upgrade.tier}</h3>
+                  <p>{upgrade.summary}</p>
+                </header>
+                <ul>
+                  {upgrade.inclusions.map((item) => (
+                    <li key={item}>{item}</li>
                   ))}
                 </ul>
               </article>
