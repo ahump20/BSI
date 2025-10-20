@@ -31,6 +31,90 @@ function BoxScore({ game, onBack }) {
     return <div className="loading-state">Loading box score...</div>;
   }
 
+  const getBoxScoreInsights = () => {
+    if (!boxScoreData) return [];
+
+    const insights = [];
+    const inningsPlayed = boxScoreData.lineScore?.innings?.length ?? 0;
+    const awayLine = boxScoreData.lineScore?.away ?? {};
+    const homeLine = boxScoreData.lineScore?.home ?? {};
+    const awayRuns = Number(awayLine.runs ?? 0);
+    const homeRuns = Number(homeLine.runs ?? 0);
+    const runDiff = Math.abs(awayRuns - homeRuns);
+    const totalRuns = awayRuns + homeRuns;
+    const awayHits = Number(awayLine.hits ?? 0);
+    const homeHits = Number(homeLine.hits ?? 0);
+    const awayErrors = Number(awayLine.errors ?? 0);
+    const homeErrors = Number(homeLine.errors ?? 0);
+
+    if (inningsPlayed > 9) {
+      insights.push({
+        title: 'Extra innings grind',
+        description:
+          'Both dugouts have stretched the bullpen. Conditioning and bench depth are being tested.',
+      });
+    }
+
+    if (runDiff <= 1 && game.status === 'final') {
+      insights.push({
+        title: 'One-run finish',
+        description:
+          'Nails were chewed down late. Track leverage index to highlight the swing moments for the recap.',
+      });
+    }
+
+    if (awayHits === 0 || homeHits === 0) {
+      const teamName = awayHits === 0 ? game.awayTeam?.name : game.homeTeam?.name;
+      insights.push({
+        title: 'No-hit alert',
+        description: `${teamName ?? 'A lineup'} was held without a hit. Verify the scoring to confirm history.`,
+      });
+    }
+
+    if (totalRuns >= 12) {
+      insights.push({
+        title: 'Offense overload',
+        description:
+          'The bats never cooled off. Slice through situational hitting numbers for the postgame note.',
+      });
+    }
+
+    if (awayErrors === 0 && homeErrors === 0) {
+      insights.push({
+        title: 'Clean gloves',
+        description:
+          'Zero errors on the ledger. Clip the defensive gems for Diamond Pro subscribers.',
+      });
+    }
+
+    const pitchingClips = [...(boxScoreData.pitching?.away ?? []), ...(boxScoreData.pitching?.home ?? [])];
+    const strikeoutLeader = pitchingClips.reduce(
+      (max, pitcher) => (Number(pitcher.k ?? 0) > max ? Number(pitcher.k ?? 0) : max),
+      0
+    );
+    if (strikeoutLeader >= 10) {
+      insights.push({
+        title: 'Strikeout show',
+        description: `A staff member punched out ${strikeoutLeader}. Build a pitch-mix breakdown clip.`,
+      });
+    }
+
+    const multiHitPlayers = [...(boxScoreData.batting?.away ?? []), ...(boxScoreData.batting?.home ?? [])]
+      .filter((player) => Number(player.h ?? 0) >= 3)
+      .map((player) => player.name)
+      .slice(0, 3);
+    if (multiHitPlayers.length > 0) {
+      insights.push({
+        title: 'Hot bats',
+        description: `${multiHitPlayers.join(', ')} stacked 3+ hits. Feature them in the heat map carousel.`,
+      });
+    }
+
+    return insights.slice(0, 5);
+  };
+
+  const boxScoreInsights = getBoxScoreInsights();
+
   const renderLineScore = () => {
     const innings = boxScoreData.lineScore.innings;
     return (
@@ -270,6 +354,20 @@ function BoxScore({ game, onBack }) {
       <div className="stats-content">
         {activeTab === 'batting' ? renderBattingStats() : renderPitchingStats()}
       </div>
+
+      {boxScoreInsights.length > 0 && (
+        <div className="insights-panel">
+          <h3>Game storylines</h3>
+          <div className="insights-grid">
+            {boxScoreInsights.map((insight, idx) => (
+              <div key={`${insight.title}-${idx}`} className="insights-chip">
+                <h4>{insight.title}</h4>
+                <p>{insight.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
