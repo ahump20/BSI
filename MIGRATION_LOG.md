@@ -644,3 +644,9 @@ enum FeedPrecision { EVENT | PITCH }
 **Document Version**: 1.1.0
 **Last Updated**: 2025-10-13 22:30 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
+
+### 2025-10-18 — CI + Observability Hardening
+- Converted Vite React entrypoints to TypeScript (`src/App.tsx`, sport-specific bundles) and enforced strict TS via ESLint + `tsc --noEmit` to align with Phase 2 standards.
+- Added Playwright smoke and axe-powered accessibility tests with GitHub Actions coverage; docs captured in `/docs/accessibility/a11y-audit.md`.
+- Instrumented Sentry for ingestion failures + Core Web Vitals (`src/monitoring/*`), wired build plugin for sourcemap uploads, and documented dashboards/alerts in `monitoring/sentry-dashboards.md`.
+- Stood up Lighthouse CI, lint/typecheck workflows, and codified SLO/error budgets in `/docs/observability/slo-error-budget.md` to lock pre-launch guardrails.

@@ -23,9 +23,13 @@
     "isolatedModules": true,
     "noEmitOnError": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
   },
   "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "lib/**/*.ts",
     "context7-enhanced/src/**/*.ts"
   ],
