@@ -1,0 +1,112 @@
+{
+  "events": [
+    {
+      "id": "401778104",
+      "uid": "s:1~l:14~e:401778104",
+      "date": "2025-06-22T18:30Z",
+      "name": "LSU Tigers at Coastal Carolina Chanticleers",
+      "shortName": "LSU @ CCU",
+      "links": [
+        {
+          "href": "https://www.espn.com/college-baseball/game/_/gameId/401778104",
+          "text": "Gamecast"
+        }
+      ],
+      "competitions": [
+        {
+          "id": "401778104",
+          "uid": "s:1~l:14~e:401778104~c:401778104",
+          "date": "2025-06-22T18:30Z",
+          "venue": {
+            "fullName": "Hawkins Field",
+            "address": {
+              "city": "Nashville",
+              "state": "TN"
+            }
+          },
+          "broadcasts": [
+            {
+              "market": "national",
+              "names": [
+                "ESPN+"
+              ]
+            }
+          ],
+          "status": {
+            "type": {
+              "state": "in",
+              "completed": false,
+              "detail": "Top 5th",
+              "shortDetail": "T5 · 0 Out"
+            }
+          },
+          "competitors": [
+            {
+              "id": "256",
+              "uid": "s:1~l:14~t:256",
+              "homeAway": "away",
+              "score": "4",
+              "curatedRank": {
+                "current": 3
+              },
+              "team": {
+                "id": "256",
+                "uid": "s:1~l:14~t:256",
+                "displayName": "LSU Tigers",
+                "shortDisplayName": "LSU",
+                "abbreviation": "LSU",
+                "slug": "lsu-tigers",
+                "logos": [
+                  {
+                    "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/256.png"
+                  }
+                ]
+              },
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "32-12"
+                }
+              ],
+              "statistics": [
+                { "name": "runs", "displayValue": "4" },
+                { "name": "hits", "displayValue": "7" },
+                { "name": "errors", "displayValue": "1" }
+              ]
+            },
+            {
+              "id": "146",
+              "uid": "s:1~l:14~t:146",
+              "homeAway": "home",
+              "score": "2",
+              "team": {
+                "id": "146",
+                "uid": "s:1~l:14~t:146",
+                "displayName": "Coastal Carolina Chanticleers",
+                "shortDisplayName": "Coastal",
+                "abbreviation": "CCU",
+                "slug": "coastal-carolina-chanticleers",
+                "logos": [
+                  {
+                    "href": "https://a.espncdn.com/i/teamlogos/ncaa/500/146.png"
+                  }
+                ]
+              },
+              "records": [
+                {
+                  "type": "total",
+                  "summary": "28-15"
+                }
+              ],
+              "statistics": [
+                { "name": "runs", "displayValue": "2" },
+                { "name": "hits", "displayValue": "5" },
+                { "name": "errors", "displayValue": "0" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

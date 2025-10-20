@@ -1,6 +1,8 @@
+import path from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL ?? 'http://127.0.0.1:3000';
+const scoreboardFixture = path.join(__dirname, 'tests/fixtures/scoreboard/ncaab.json');
 
 export default defineConfig({
   testDir: './tests/visual',
@@ -21,11 +23,14 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: 'pnpm run dev -- --hostname 127.0.0.1 --port 3000',
+    command: 'pnpm run dev --hostname 127.0.0.1 --port 3000',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
     stderr: 'pipe',
-    timeout: 120 * 1000
+    timeout: 120 * 1000,
+    env: {
+      BSI_SCOREBOARD_FIXTURE_PATH: scoreboardFixture
+    }
   }
 });

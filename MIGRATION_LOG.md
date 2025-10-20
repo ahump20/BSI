@@ -628,6 +628,16 @@ enum FeedPrecision { EVENT | PITCH }
 
 ---
 
+## Phase 3: Frontend MVP Progress Log
+
+**2025-10-18 – Scoreboard modernization**
+
+- Archived the legacy Vite scoreboard entry (`src/App.jsx`) into `archive/2025-10-13/code/legacy-components/vite/App.jsx` to keep routing focused on the Next.js App Router.
+- Implemented a shared NCAA baseball scoreboard helper (`apps/web/lib/baseball/scoreboard.ts`) for server components and API routes.
+- Wired `/baseball/ncaab/games` to the new helper with live regression analytics and Playwright smoke coverage.
+
+---
+
 ## Contacts & Resources
 
 **Owner**: Austin Humphrey (austin@blazesportsintel.com)
@@ -641,6 +651,6 @@ enum FeedPrecision { EVENT | PITCH }
 
 ---
 
-**Document Version**: 1.1.0
-**Last Updated**: 2025-10-13 22:30 CDT
+**Document Version**: 1.1.1
+**Last Updated**: 2025-10-18 09:45 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
