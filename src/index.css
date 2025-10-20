@@ -53,69 +53,171 @@ main {
 }
 
 /* Games grid */
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.scoreboard-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fbbf24;
+  margin-bottom: 16px;
+  letter-spacing: 0.4px;
+}
+
 .games-grid {
   display: grid;
   gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
 .game-card {
   background-color: #2a2a2a;
   border: 1px solid #404040;
-  border-radius: 8px;
-  padding: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  padding: 18px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
 }
 
 .game-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  border-color: #565656;
+}
+
+.game-card__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
 }
 
 .game-status {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  color: #00a86b;
-  margin-bottom: 12px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+}
+
+.status-live .game-status {
+  color: #34d399;
+}
+
+.status-upcoming .game-status {
+  color: #60a5fa;
+}
+
+.status-final .game-status {
+  color: #f87171;
+}
+
+.game-clock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.game-clock span {
+  background-color: rgba(15, 23, 42, 0.45);
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+
+.game-start {
+  font-size: 12px;
+  color: #e2e8f0;
+  font-weight: 500;
 }
 
 .game-teams {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
 .team {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+}
+
+.team-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .team-name {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   color: #ffffff;
-  flex: 1;
+}
+
+.team-record {
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+.team-rank {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbbf24;
+  text-transform: uppercase;
 }
 
 .team-score {
   font-size: 24px;
   font-weight: 700;
   color: #ffffff;
-  min-width: 40px;
+  min-width: 48px;
   text-align: right;
 }
 
-.game-meta {
-  padding-top: 12px;
+.team--leading .team-score {
+  color: #34d399;
+}
+
+.game-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 14px;
   border-top: 1px solid #404040;
 }
 
-.venue {
-  font-size: 13px;
-  color: #808080;
+.venue,
+.network {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+@media (min-width: 768px) {
+  main {
+    padding: 32px;
+  }
+
+  .scoreboard {
+    gap: 40px;
+  }
+
+  .scoreboard-section h3 {
+    font-size: 20px;
+  }
+
+  .team-name {
+    font-size: 17px;
+  }
+
+  .team-score {
+    font-size: 26px;
+  }
 }
 
 /* Loading state */
