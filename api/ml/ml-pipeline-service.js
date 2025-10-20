@@ -948,10 +948,10 @@ class MLPipelineService {
                     const age = (calculationDate - birthDate) / (365.25 * 24 * 60 * 60 * 1000);
                     // Normalize age to a 0-1 range based on typical professional athlete career span (18-38 years).
                     // Ages below 18 map to 0, ages above 38 map to 1.
-                    // This factor allows the model to account for age-related performance trends, 
+                    // This factor allows the model to account for age-related performance trends,
                     // where younger players (closer to 18) may have different expected performance than older players (closer to 38).
                     ageFactor = Math.min(1, Math.max(0, (age - 18) / 20));
-
+                }
                 return {
                     player_id: row.player_id,
                     team_id: row.team_id,
@@ -1795,6 +1795,46 @@ class SportsFeatureEngineer {
     constructor(db, logger) {
         this.db = db;
         this.logger = logger;
+
+        this.teamContextCache = new Map();
+        this.restDaysCache = new Map();
+        this.recentFormCache = new Map();
+
+        this.defaultRestDaysBySport = {
+            mlb: 1,
+            nfl: 7,
+            nba: 2,
+            ncaa_baseball: 2,
+            ncaa_football: 7,
+            ncaa_basketball: 2
+        };
+
+        this.offensiveBaselines = {
+            mlb: 4.3,
+            nfl: 21.5,
+            nba: 110,
+            ncaa_baseball: 6.2,
+            ncaa_football: 28,
+            ncaa_basketball: 102
+        };
+
+        this.defensiveBaselines = {
+            mlb: 4.2,
+            nfl: 21,
+            nba: 110,
+            ncaa_baseball: 6,
+            ncaa_football: 27,
+            ncaa_basketball: 101
+        };
+
+        this.recentFormSampleSizes = {
+            mlb: 10,
+            nfl: 5,
+            nba: 8,
+            ncaa_baseball: 7,
+            ncaa_football: 5,
+            ncaa_basketball: 8
+        };
     }
 
     async engineer(rawData, requiredFeatures) {
@@ -1822,20 +1862,183 @@ class SportsFeatureEngineer {
     }
 
     async calculateFeature(featureName, dataPoint) {
-        // Implement specific feature calculations
+        const numericOrNull = (value) => {
+            const num = Number(value);
+            return Number.isFinite(num) ? num : null;
+        };
+
+        const withFallback = (value, fallback) => {
+            const parsed = numericOrNull(value);
+            return parsed !== null ? parsed : fallback;
+        };
+
         switch (featureName) {
-            case 'elo_difference':
-                return (
-                    Number(dataPoint.home_elo_rating ?? dataPoint.home_elo ?? 1500)
-                    - Number(dataPoint.away_elo_rating ?? dataPoint.away_elo ?? 1500)
+            case 'home_elo_rating':
+                return await this.calculateTeamElo(
+                    dataPoint.home_team_id,
+                    dataPoint.sport,
+                    dataPoint.home_elo_rating ?? dataPoint.home_elo
                 );
+            case 'away_elo_rating':
+                return await this.calculateTeamElo(
+                    dataPoint.away_team_id,
+                    dataPoint.sport,
+                    dataPoint.away_elo_rating ?? dataPoint.away_elo
+                );
+            case 'elo_difference': {
+                const homeElo = await this.calculateFeature('home_elo_rating', dataPoint);
+                const awayElo = await this.calculateFeature('away_elo_rating', dataPoint);
+                return homeElo - awayElo;
+            }
+            case 'home_recent_form':
+                return await this.calculateRecentForm(
+                    dataPoint.home_team_id,
+                    dataPoint.sport
+                );
+            case 'away_recent_form':
+                return await this.calculateRecentForm(
+                    dataPoint.away_team_id,
+                    dataPoint.sport
+                );
+            case 'recent_form': {
+                if (dataPoint.player_id) {
+                    return withFallback(dataPoint.recent_form, 0.5);
+                }
+                const teamId = dataPoint.team_id || dataPoint.home_team_id || dataPoint.away_team_id;
+                return await this.calculateRecentForm(teamId, dataPoint.sport);
+            }
+            case 'home_offensive_rating':
+                return await this.calculateTeamRating(
+                    dataPoint.home_team_id,
+                    dataPoint.sport,
+                    'offense',
+                    dataPoint.home_offensive_rating
+                );
+            case 'away_offensive_rating':
+                return await this.calculateTeamRating(
+                    dataPoint.away_team_id,
+                    dataPoint.sport,
+                    'offense',
+                    dataPoint.away_offensive_rating
+                );
+            case 'home_defensive_rating':
+                return await this.calculateTeamRating(
+                    dataPoint.home_team_id,
+                    dataPoint.sport,
+                    'defense',
+                    dataPoint.home_defensive_rating
+                );
+            case 'away_defensive_rating':
+                return await this.calculateTeamRating(
+                    dataPoint.away_team_id,
+                    dataPoint.sport,
+                    'defense',
+                    dataPoint.away_defensive_rating
+                );
+            case 'strength_of_schedule_diff': {
+                const home = await this.calculateScheduleDifficulty(
+                    dataPoint.home_team_id,
+                    dataPoint.sport,
+                    dataPoint.home_strength_of_schedule
+                );
+                const away = await this.calculateScheduleDifficulty(
+                    dataPoint.away_team_id,
+                    dataPoint.sport,
+                    dataPoint.away_strength_of_schedule
+                );
+                return home - away;
+            }
+            case 'rest_days_diff':
+                return await this.calculateRestDaysDifference(dataPoint);
             case 'home_field_advantage':
                 return this.calculateHomeFieldAdvantage(dataPoint);
-            case 'recent_form':
-                return await this.calculateRecentForm(dataPoint.team_id);
-            // Add more feature calculations...
+            case 'weather_impact':
+                return this.calculateWeatherImpact(dataPoint);
+            case 'preseason_elo':
+                return await this.calculateTeamElo(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    dataPoint.preseason_elo
+                );
+            case 'roster_strength':
+                return await this.calculateRosterStrength(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    dataPoint.roster_strength
+                );
+            case 'coaching_stability':
+                return await this.calculateTeamMetadataScore(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    'coaching_stability',
+                    dataPoint.coaching_stability
+                );
+            case 'injury_risk_score':
+                return await this.calculateTeamMetadataScore(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    'injury_risk_score',
+                    dataPoint.injury_risk_score,
+                    0.25
+                );
+            case 'schedule_difficulty':
+                return await this.calculateScheduleDifficulty(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    dataPoint.schedule_difficulty
+                );
+            case 'offensive_projection':
+                return await this.calculateTeamProjection(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    'offense',
+                    dataPoint.offensive_projection
+                );
+            case 'defensive_projection':
+                return await this.calculateTeamProjection(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    'defense',
+                    dataPoint.defensive_projection
+                );
+            case 'depth_chart_strength':
+                return await this.calculateTeamMetadataScore(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    'depth_chart_strength',
+                    dataPoint.depth_chart_strength
+                );
+            case 'recent_transactions':
+                return await this.calculateRecentTransactions(
+                    dataPoint.team_id,
+                    dataPoint.sport,
+                    dataPoint.recent_transactions
+                );
+            case 'career_stats':
+                return withFallback(dataPoint.career_stats, 0.5);
+            case 'age_factor':
+                return withFallback(dataPoint.age_factor, 0.5);
+            case 'injury_history':
+                return withFallback(dataPoint.injury_history, 0.1);
+            case 'matchup_difficulty':
+                return withFallback(dataPoint.matchup_difficulty, 0.5);
+            case 'rest_days':
+                if (numericOrNull(dataPoint.rest_days) !== null) {
+                    return Number(dataPoint.rest_days);
+                }
+                return await this.calculateRestDays(
+                    dataPoint.team_id,
+                    dataPoint.calculation_date ?? dataPoint.game_date,
+                    dataPoint.sport
+                );
+            case 'home_away_splits':
+                return withFallback(dataPoint.home_away_splits, 0.5);
+            case 'weather_performance':
+                return withFallback(dataPoint.weather_performance, 0.5);
+            case 'clutch_situations':
+                return withFallback(dataPoint.clutch_situations, 0.5);
             default:
-                return dataPoint[featureName] || 0;
+                return withFallback(dataPoint[featureName], 0);
         }
     }
 
@@ -1852,28 +2055,401 @@ class SportsFeatureEngineer {
         return advantages[dataPoint.sport] || 0.54;
     }
 
-    async calculateRecentForm(teamId, games = 10) {
+    async calculateRecentForm(teamId, sport, games) {
+        if (!teamId) {
+            return 0.5;
+        }
+
+        const sampleSize = games
+            || this.recentFormSampleSizes[sport]
+            || this.recentFormSampleSizes.mlb;
+        const cacheKey = `${teamId}:${sport}:${sampleSize}`;
+
+        if (this.recentFormCache.has(cacheKey)) {
+            return this.recentFormCache.get(cacheKey);
+        }
+
         const query = `
-            SELECT AVG(CASE
-                    WHEN (g.home_team_id = $1 AND g.home_score > g.away_score)
-                      OR (g.away_team_id = $1 AND g.away_score > g.home_score)
-                    THEN 1.0
-                    WHEN g.home_score = g.away_score THEN 0.5
-                    ELSE 0.0
-                END) AS win_rate
-            FROM (
-                SELECT *
+            WITH ordered_games AS (
+                SELECT
+                    g.game_id,
+                    g.game_date,
+                    g.home_team_id,
+                    g.away_team_id,
+                    g.home_score,
+                    g.away_score,
+                    g.sport,
+                    g.metadata,
+                    g.innings,
+                    ROW_NUMBER() OVER (
+                        ORDER BY g.game_date DESC, g.updated_at DESC, g.id DESC
+                    ) AS rn
                 FROM games g
                 WHERE (g.home_team_id = $1 OR g.away_team_id = $1)
-                  AND g.status = 'completed'
-                ORDER BY g.game_date DESC
-                LIMIT $2
-            ) g
+                  AND g.status IN ('completed', 'final')
+            ),
+            recent_games AS (
+                SELECT *
+                FROM ordered_games
+                WHERE rn <= $2
+            )
+            SELECT COALESCE(AVG(result + overtime_adjustment), 0.5) AS form_score
+            FROM (
+                SELECT
+                    CASE
+                        WHEN (home_team_id = $1 AND home_score > away_score)
+                          OR (away_team_id = $1 AND away_score > home_score)
+                        THEN 1.0
+                        WHEN home_score = away_score THEN 0.5
+                        ELSE 0.0
+                    END AS result,
+                    CASE
+                        WHEN COALESCE((metadata->>'went_to_overtime')::boolean, FALSE) THEN -0.05
+                        WHEN sport IN ('mlb', 'ncaa_baseball') AND COALESCE(innings, 9) > 9 THEN -0.03
+                        WHEN sport IN ('nba', 'ncaa_basketball', 'nfl', 'ncaa_football')
+                             AND COALESCE((metadata->>'overtime_periods')::int, 0) > 0 THEN -0.05
+                        ELSE 0.0
+                    END AS overtime_adjustment
+                FROM recent_games
+            ) outcomes
         `;
 
-        const result = await this.db.query(query, [teamId, games]);
-        return Number(result.rows[0]?.win_rate) || 0.5;
+        try {
+            const result = await this.db.query(query, [teamId, sampleSize]);
+            const score = Number(result.rows[0]?.form_score);
+            const normalized = Number.isFinite(score) ? score : 0.5;
+            this.recentFormCache.set(cacheKey, normalized);
+            return normalized;
+        } catch (error) {
+            this.logger && typeof this.logger.warn === 'function'
+                && this.logger.warn('Failed to calculate recent form, using default', { teamId, sport }, error);
+            return 0.5;
+        }
+    }
+
+    async calculateTeamElo(teamId, sport, fallback) {
+        const parsed = Number(fallback);
+        if (Number.isFinite(parsed) && parsed > 0) {
+            return parsed;
+        }
+
+        const context = await this.getTeamContext(teamId, sport);
+        if (context?.analytics?.elo_rating != null) {
+            const elo = Number(context.analytics.elo_rating);
+            if (Number.isFinite(elo)) {
+                return elo;
+            }
+        }
+        return 1500;
+    }
+
+    async calculateTeamRating(teamId, sport, type, fallback) {
+        const parsed = Number(fallback);
+        if (Number.isFinite(parsed) && parsed > 0) {
+            return parsed;
+        }
+
+        const context = await this.getTeamContext(teamId, sport);
+        const { sportStats = {}, analytics = {} } = context || {};
+        const gamesPlayedRaw = sportStats.games_played ?? analytics.games_played;
+        const gamesPlayed = Number.isFinite(Number(gamesPlayedRaw)) && Number(gamesPlayedRaw) > 0
+            ? Number(gamesPlayedRaw)
+            : 1;
+
+        const baselineMap = type === 'offense' ? this.offensiveBaselines : this.defensiveBaselines;
+        const baseline = baselineMap[sport] ?? baselineMap.mlb;
+
+        let rating;
+        if (type === 'offense') {
+            rating = sportStats.offensive_rating
+                ?? sportStats.points_per_game
+                ?? sportStats.runs_per_game
+                ?? sportStats.offensive_efficiency
+                ?? sportStats.offensive_index
+                ?? (analytics.runs_scored != null ? analytics.runs_scored / gamesPlayed : null)
+                ?? (sportStats.points != null ? sportStats.points / gamesPlayed : null);
+        } else {
+            rating = sportStats.defensive_rating
+                ?? sportStats.points_allowed_per_game
+                ?? sportStats.runs_allowed_per_game
+                ?? sportStats.defensive_efficiency
+                ?? sportStats.defensive_index
+                ?? (analytics.runs_allowed != null ? analytics.runs_allowed / gamesPlayed : null)
+                ?? (sportStats.points_allowed != null ? sportStats.points_allowed / gamesPlayed : null);
+        }
+
+        const value = Number(rating);
+        if (Number.isFinite(value) && value > 0) {
+            return value;
+        }
+        return baseline;
+    }
+
+    async calculateScheduleDifficulty(teamId, sport, fallback) {
+        const parsed = Number(fallback);
+        if (Number.isFinite(parsed) && parsed > 0) {
+            return parsed;
+        }
+
+        const context = await this.getTeamContext(teamId, sport);
+        if (!context) {
+            return 0.5;
+        }
+
+        const candidate = context.analytics?.strength_of_schedule
+            ?? context.sportStats?.strength_of_schedule
+            ?? context.sportStats?.schedule_difficulty;
+        const value = Number(candidate);
+        if (Number.isFinite(value) && value > 0) {
+            return value;
+        }
+        return 0.5;
+    }
+
+    async calculateRosterStrength(teamId, sport, fallback) {
+        const parsed = Number(fallback);
+        if (Number.isFinite(parsed) && parsed > 0) {
+            return parsed;
+        }
+
+        const context = await this.getTeamContext(teamId, sport);
+        const candidate = context?.sportStats?.roster_strength
+            ?? context?.teamMetadata?.roster_strength
+            ?? context?.sportStats?.talent_index
+            ?? context?.teamMetadata?.talent_index;
+        const value = Number(candidate);
+        if (Number.isFinite(value) && value > 0) {
+            return value;
+        }
+        return 0.5;
+    }
+
+    async calculateTeamMetadataScore(teamId, sport, key, fallback, defaultValue = 0.5) {
+        const parsed = Number(fallback);
+        if (Number.isFinite(parsed) && parsed >= 0) {
+            return parsed;
+        }
+
+        const context = await this.getTeamContext(teamId, sport);
+        const candidate = context?.sportStats?.[key]
+            ?? context?.teamMetadata?.[key];
+        const value = Number(candidate);
+        if (Number.isFinite(value) && value >= 0) {
+            return value;
+        }
+        return defaultValue;
+    }
+
+    async calculateTeamProjection(teamId, sport, type, fallback) {
+        const parsed = Number(fallback);
+        if (Number.isFinite(parsed) && parsed !== 0) {
+            return parsed;
+        }
+
+        const context = await this.getTeamContext(teamId, sport);
+        const stats = context?.sportStats || {};
+        const analytics = context?.analytics || {};
+
+        let candidate;
+        if (type === 'offense') {
+            candidate = stats.offensive_projection
+                ?? stats.projected_points
+                ?? stats.projected_runs_scored
+                ?? analytics.predicted_wins
+                ?? stats.points_per_game;
+        } else {
+            candidate = stats.defensive_projection
+                ?? stats.projected_points_allowed
+                ?? stats.projected_runs_allowed
+                ?? analytics.predicted_losses
+                ?? stats.points_allowed_per_game;
+        }
+
+        const value = Number(candidate);
+        if (Number.isFinite(value) && value !== 0) {
+            return value;
+        }
+        return type === 'offense'
+            ? (this.offensiveBaselines[sport] ?? 1)
+            : (this.defensiveBaselines[sport] ?? 1);
+    }
+
+    async calculateRecentTransactions(teamId, sport, fallback) {
+        const parsed = Number(fallback);
+        if (Number.isFinite(parsed)) {
+            return parsed;
+        }
+
+        const context = await this.getTeamContext(teamId, sport);
+        const candidate = context?.sportStats?.recent_transactions
+            ?? context?.teamMetadata?.recent_transactions_impact
+            ?? context?.teamMetadata?.recent_transactions;
+        const value = Number(candidate);
+        if (Number.isFinite(value)) {
+            return value;
+        }
+        return 0;
+    }
+
+    async calculateRestDaysDifference(dataPoint) {
+        if (dataPoint?.metadata?.rest_days) {
+            const { home, away } = dataPoint.metadata.rest_days;
+            const homeRest = Number(home);
+            const awayRest = Number(away);
+            if (Number.isFinite(homeRest) && Number.isFinite(awayRest)) {
+                return homeRest - awayRest;
+            }
+        }
+
+        const referenceDate = dataPoint.game_date || dataPoint.calculation_date;
+        const homeRest = await this.calculateRestDays(
+            dataPoint.home_team_id,
+            referenceDate,
+            dataPoint.sport
+        );
+        const awayRest = await this.calculateRestDays(
+            dataPoint.away_team_id,
+            referenceDate,
+            dataPoint.sport
+        );
+        return homeRest - awayRest;
+    }
+
+    async calculateRestDays(teamId, referenceDate, sport) {
+        if (!teamId || !referenceDate) {
+            return this.defaultRestDaysBySport[sport] ?? 3;
+        }
+
+        const cacheKey = `${teamId}:${referenceDate}`;
+        if (this.restDaysCache.has(cacheKey)) {
+            return this.restDaysCache.get(cacheKey);
+        }
+
+        const query = `
+            SELECT g.game_date
+            FROM games g
+            WHERE (g.home_team_id = $1 OR g.away_team_id = $1)
+              AND g.status IN ('completed', 'final')
+              AND g.game_date < $2::timestamptz
+            ORDER BY g.game_date DESC
+            LIMIT 1
+        `;
+
+        try {
+            const result = await this.db.query(query, [teamId, referenceDate]);
+            if (!result.rows.length) {
+                const fallback = this.defaultRestDaysBySport[sport] ?? 3;
+                this.restDaysCache.set(cacheKey, fallback);
+                return fallback;
+            }
+            const lastGame = new Date(result.rows[0].game_date);
+            const reference = new Date(referenceDate);
+            const diff = Math.max(0, Math.round((reference - lastGame) / (24 * 60 * 60 * 1000)));
+            this.restDaysCache.set(cacheKey, diff);
+            return diff;
+        } catch (error) {
+            this.logger && typeof this.logger.warn === 'function'
+                && this.logger.warn('Failed to calculate rest days, using default', { teamId, sport }, error);
+            return this.defaultRestDaysBySport[sport] ?? 3;
+        }
+    }
+
+    calculateWeatherImpact(dataPoint) {
+        if (Number.isFinite(Number(dataPoint.weather_impact))) {
+            return Number(dataPoint.weather_impact);
+        }
+
+        const weather = dataPoint.weather
+            || dataPoint.metadata?.weather
+            || dataPoint.metadata?.weather_conditions
+            || {};
+        const candidate = weather.impact_score
+            ?? weather.impact
+            ?? weather.severity
+            ?? weather.wind_impact
+            ?? 0;
+        const value = Number(candidate);
+        return Number.isFinite(value) ? value : 0;
+    }
+
+    async getTeamContext(teamId, sport) {
+        if (!teamId) {
+            return null;
+        }
+
+        const cacheKey = `${teamId}:${sport || 'any'}`;
+        if (this.teamContextCache.has(cacheKey)) {
+            return this.teamContextCache.get(cacheKey);
+        }
+
+        const query = `
+            SELECT
+                ta.games_played,
+                ta.wins,
+                ta.losses,
+                ta.win_percentage,
+                ta.runs_scored,
+                ta.runs_allowed,
+                ta.elo_rating,
+                ta.strength_of_schedule,
+                ta.predicted_wins,
+                ta.predicted_losses,
+                ta.playoff_probability,
+                ta.sport_specific_stats,
+                t.metadata AS team_metadata
+            FROM team_analytics ta
+            JOIN teams t ON ta.team_id = t.id
+            WHERE ta.team_id = $1
+            ORDER BY ta.calculation_date DESC NULLS LAST,
+                     ta.season DESC,
+                     COALESCE(ta.week, 0) DESC
+            LIMIT 1
+        `;
+
+        try {
+            const result = await this.db.query(query, [teamId]);
+            if (!result.rows.length) {
+                this.teamContextCache.set(cacheKey, null);
+                return null;
+            }
+
+            const row = result.rows[0];
+            let sportStats = {};
+            if (row.sport_specific_stats) {
+                try {
+                    sportStats = typeof row.sport_specific_stats === 'string'
+                        ? JSON.parse(row.sport_specific_stats)
+                        : row.sport_specific_stats;
+                } catch (error) {
+                    this.logger && typeof this.logger.warn === 'function'
+                        && this.logger.warn('Failed to parse sport_specific_stats', { teamId }, error);
+                }
+            }
+
+            let teamMetadata = {};
+            if (row.team_metadata) {
+                try {
+                    teamMetadata = typeof row.team_metadata === 'string'
+                        ? JSON.parse(row.team_metadata)
+                        : row.team_metadata;
+                } catch (error) {
+                    this.logger && typeof this.logger.warn === 'function'
+                        && this.logger.warn('Failed to parse team metadata', { teamId }, error);
+                }
+            }
+
+            const { sport_specific_stats, team_metadata, ...analytics } = row;
+            const context = { analytics, sportStats, teamMetadata };
+            this.teamContextCache.set(cacheKey, context);
+            return context;
+        } catch (error) {
+            this.logger && typeof this.logger.warn === 'function'
+                && this.logger.warn('Failed to load team analytics context', { teamId }, error);
+            this.teamContextCache.set(cacheKey, null);
+            return null;
+        }
     }
 }
 
+export { SportsFeatureEngineer };
 export default MLPipelineService;
