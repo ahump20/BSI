@@ -1,4 +1,8 @@
-import Link from 'next/link';
+import { AccentLink } from '../../../(components)/AccentLink';
+import { CardGrid } from '../../../(components)/CardGrid';
+import { InfoCard } from '../../../(components)/InfoCard';
+import { PageHeader } from '../../../(components)/PageHeader';
+import { PageShell } from '../../../(components)/PageShell';
 
 const navTargets = [
   { href: '/baseball/ncaab/rankings', label: 'Power Ratings' },
@@ -8,39 +12,35 @@ const navTargets = [
 
 export default function BaseballStandingsPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · Standings</span>
-        <h1 className="di-page-title">Standings & Form Tracker</h1>
-        <p className="di-page-subtitle">
-          Standings tables, rolling expected wins, and postseason projections will render here. For now, this placeholder keeps
-          navigation intact and signals the dark-mode design language heading toward launch.
-        </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>Coming Soon</h2>
-            <p>Full-table visualizations with swipeable filters and conference toggles.</p>
-            <ul className="di-list">
+    <PageShell>
+      <section className="flex flex-col gap-section-gap">
+        <PageHeader
+          kicker="Diamond Insights · Standings"
+          title="Standings & Form Tracker"
+          description="Standings tables, rolling expected wins, and postseason projections will render here. For now, this placeholder keeps navigation intact and signals the dark-mode design language heading toward launch."
+        />
+        <CardGrid>
+          <InfoCard
+            title="Coming Soon"
+            description="Full-table visualizations with swipeable filters and conference toggles."
+          >
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               <li>Auto-refreshing RPI, ISR, and KPI comparisons.</li>
               <li>Form tracker for last 10 games with sparkline trends.</li>
               <li>Bid probability modeling for Selection Monday scenarios.</li>
             </ul>
-          </article>
-          <article className="di-card">
-            <h2>Navigate</h2>
-            <p>Move to another page while we pipe in the data.</p>
-            <ul className="di-list">
+          </InfoCard>
+          <InfoCard title="Navigate" description="Move to another page while we pipe in the data.">
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               {navTargets.map((target) => (
                 <li key={target.href}>
-                  <Link className="di-inline-link" href={target.href}>
-                    {target.label}
-                  </Link>
+                  <AccentLink href={target.href}>{target.label}</AccentLink>
                 </li>
               ))}
             </ul>
-          </article>
-        </div>
+          </InfoCard>
+        </CardGrid>
       </section>
-    </main>
+    </PageShell>
   );
 }

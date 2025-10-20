@@ -1,4 +1,8 @@
-import Link from 'next/link';
+import { AccentLink } from '../../../(components)/AccentLink';
+import { CardGrid } from '../../../(components)/CardGrid';
+import { InfoCard } from '../../../(components)/InfoCard';
+import { PageHeader } from '../../../(components)/PageHeader';
+import { PageShell } from '../../../(components)/PageShell';
 
 const actions = [
   { href: '/baseball/ncaab/players', label: 'Review Player Intel' },
@@ -8,39 +12,35 @@ const actions = [
 
 export default function BaseballTeamsPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · Programs</span>
-        <h1 className="di-page-title">Team Dashboards</h1>
-        <p className="di-page-subtitle">
-          Program detail views will live here: roster matrices, bullpen usage charts, recruiting velocity, and portal notes.
-          Use the quick actions below while the dataset hydrates.
-        </p>
-        <div className="di-card-grid">
-          <article className="di-card">
-            <h2>What&apos;s Coming</h2>
-            <p>Expect sortable tables, recent form charts, and Diamond Pro scouting packs.</p>
-            <ul className="di-list">
+    <PageShell>
+      <section className="flex flex-col gap-section-gap">
+        <PageHeader
+          kicker="Diamond Insights · Programs"
+          title="Team Dashboards"
+          description="Program detail views will live here: roster matrices, bullpen usage charts, recruiting velocity, and portal notes. Use the quick actions below while the dataset hydrates."
+        />
+        <CardGrid>
+          <InfoCard
+            title="What's Coming"
+            description="Expect sortable tables, recent form charts, and Diamond Pro scouting packs."
+          >
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               <li>Split leaderboards by conference, last 10, and road/home.</li>
               <li>Spray chart heatmaps rendered with mobile pinch-zoom.</li>
               <li>Automated opponent prep packets delivered nightly.</li>
             </ul>
-          </article>
-          <article className="di-card">
-            <h2>Continue Building</h2>
-            <p>Jump into adjacent workflows.</p>
-            <ul className="di-list">
+          </InfoCard>
+          <InfoCard title="Continue Building" description="Jump into adjacent workflows.">
+            <ul className="ml-5 list-disc space-y-list-gap text-sm leading-relaxed text-di-text-muted">
               {actions.map((action) => (
                 <li key={action.href}>
-                  <Link className="di-inline-link" href={action.href}>
-                    {action.label}
-                  </Link>
+                  <AccentLink href={action.href}>{action.label}</AccentLink>
                 </li>
               ))}
             </ul>
-          </article>
-        </div>
+          </InfoCard>
+        </CardGrid>
       </section>
-    </main>
+    </PageShell>
   );
 }
