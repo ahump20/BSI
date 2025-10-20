@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from datetime import timedelta
 from typing import Any, Optional
 
@@ -47,11 +48,25 @@ class CacheClient:
         if self.client is not None:
             payload = self.client.get(key)
             return self._deserialize(payload) if payload else None
-        value, _ = self._memory_store.get(key, (None, 0))
+        self._purge_expired()
+        value, _ = self._memory_store.get(key, (None, 0.0))
         return value
 
     def set(self, key: str, value: Any) -> None:
         if self.client is not None:
             self.client.setex(key, timedelta(seconds=self.ttl), self._serialize(value))
         else:
-            self._memory_store[key] = (value, self.ttl)
+            expires_at = time.monotonic() + float(self.ttl)
+            self._memory_store[key] = (value, expires_at)
+
+    def _purge_expired(self) -> None:
+        if not self._memory_store:
+            return
+        now = time.monotonic()
+        expired_keys = [
+            key
+            for key, (_, expires_at) in self._memory_store.items()
+            if expires_at <= now
+        ]
+        for key in expired_keys:
+            self._memory_store.pop(key, None)
