@@ -141,9 +141,18 @@ export class SportsDataIOAdapter {
       awayLosses: teamData.AwayLosses ?? 0,
       runsScored: teamData.RunsScored ?? 0,
       runsAllowed: teamData.RunsAllowed ?? 0,
+      hitsTotal: teamData.Hits ?? 0,
+      homeRuns: teamData.HomeRuns ?? 0,
+      stolenBases: teamData.StolenBases ?? 0,
       battingAvg: teamData.BattingAverage ?? 0,
+      onBasePct: teamData.OnBasePercentage ?? undefined,
+      sluggingPct: teamData.SluggingPercentage ?? undefined,
       era: teamData.EarnedRunAverage ?? 0,
       fieldingPct: teamData.FieldingPercentage ?? 0,
+      earnedRuns: teamData.EarnedRuns ?? teamData.RunsAllowed ?? 0,
+      hitsAllowed: teamData.HitsAgainst ?? teamData.HitsAllowed ?? 0,
+      strikeouts: teamData.PitchingStrikeouts ?? teamData.Strikeouts ?? 0,
+      walks: teamData.PitchingWalks ?? teamData.Walks ?? 0,
       rpi: undefined, // SportsDataIO doesn't provide RPI directly
       strengthOfSched: undefined, // SportsDataIO doesn't provide SOS directly
       pythagWins: undefined // Will be calculated separately

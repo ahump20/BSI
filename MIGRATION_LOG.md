@@ -166,6 +166,8 @@ enum GameStatus { SCHEDULED | LIVE | FINAL | POSTPONED }
 enum FeedPrecision { EVENT | PITCH }
 ```
 
+- Update: Replaced the manual partial-index migration with a Prisma-managed schema covering conferences, teams, players, games, pitch-by-pitch events, box lines, seasonal stats, rankings, and long-form articles. Added enums for divisions, handedness, academic years, poll types, article metadata, and feed precision so `/api/v1` contracts and the database stay aligned.
+
 ### API Layer (/api/v1)
 
 **Endpoints**:
