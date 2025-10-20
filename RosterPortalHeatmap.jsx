@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { formatTopProgramsList } from './lib/portalHeatmap.js';
 
 const MAP_CENTER = [37.8, -96.9];
 const MAP_ZOOM = 4;
@@ -202,6 +203,7 @@ function RosterPortalHeatmap() {
                   const commits = region.metrics?.transferCommits ?? 0;
                   const nilEstimate = region.metrics?.nilEstimate ?? 0;
                   const recruitingIndex = region.metrics?.recruitingIndex ?? '—';
+                  const topProgramsLabel = formatTopProgramsList(region.topPrograms);
                   return (
                     <CircleMarker
                       key={region.id}
@@ -220,7 +222,7 @@ function RosterPortalHeatmap() {
                             <strong>{commits}</strong> commits · {formatNil(nilEstimate)} NIL · index {recruitingIndex}
                           </p>
                           <p className="heatmap-tooltip-programs">
-                            {region.topPrograms.slice(0, 3).join(' • ')}
+                            {topProgramsLabel}
                           </p>
                         </div>
                       </Tooltip>
