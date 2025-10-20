@@ -11,7 +11,7 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Player, Position, HandedEnum, AcademicYear } from '@prisma/client';
+import { GameStatus, Prisma, SeasonType } from '@prisma/client';
 
 export interface PlayerDetailResponse {
   // Biographical
@@ -19,13 +19,13 @@ export interface PlayerDetailResponse {
   firstName: string;
   lastName: string;
   fullName: string;
-  jerseyNumber?: string;
-  position: Position;
-  bats?: HandedEnum;
-  throws?: HandedEnum;
-  year?: AcademicYear;
-  height?: number;
-  weight?: number;
+  jerseyNumber?: number;
+  position: string;
+  bats?: string;
+  throws?: string;
+  classYear?: string;
+  heightInches?: number;
+  weightLbs?: number;
   hometown?: string;
 
   // Team context
@@ -143,6 +143,14 @@ export interface PlayerDetailResponse {
   }>;
 }
 
+const decimalToNumber = (value: Prisma.Decimal | number | null | undefined): number => {
+  if (value === null || value === undefined) {
+    return 0;
+  }
+
+  return typeof value === 'number' ? value : value.toNumber();
+};
+
 /**
  * Get player by ID with full statistics and recent performances
  */
@@ -170,6 +178,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
         },
       },
       playerStats: {
+        where: { seasonType: SeasonType.REGULAR },
         orderBy: { season: 'desc' },
       },
       boxLines: {
@@ -212,11 +221,30 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     return null;
   }
 
+  const seasonStats = player.playerStats.map((stats) => {
+    const battingAvg = stats.battingAvg ? decimalToNumber(stats.battingAvg) : 0;
+    const onBasePct = stats.onBasePct ? decimalToNumber(stats.onBasePct) : 0;
+    const sluggingPct = stats.sluggingPct ? decimalToNumber(stats.sluggingPct) : 0;
+
+    return {
+      ...stats,
+      battingAvg,
+      onBasePct,
+      sluggingPct,
+      ops: onBasePct + sluggingPct,
+      inningsPitched: stats.inningsPitched ? decimalToNumber(stats.inningsPitched) : 0,
+      era: stats.era ? decimalToNumber(stats.era) : 0,
+      whip: stats.whip ? decimalToNumber(stats.whip) : 0,
+      strikeoutsPerNine: stats.strikeoutsPerNine ? decimalToNumber(stats.strikeoutsPerNine) : 0,
+      walksPerNine: stats.walksPerNine ? decimalToNumber(stats.walksPerNine) : 0,
+    };
+  });
+
   // Get current season stats
-  const currentSeasonStats = player.playerStats.find((s) => s.season === currentSeason);
+  const currentSeasonStats = seasonStats.find((s) => s.season === currentSeason);
 
   // Aggregate career stats
-  const careerBattingStats = player.playerStats.reduce(
+  const careerBattingStats = seasonStats.reduce(
     (acc, stats) => ({
       gamesPlayed: acc.gamesPlayed + stats.gamesPlayed,
       atBats: acc.atBats + stats.atBats,
@@ -230,7 +258,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     { gamesPlayed: 0, atBats: 0, runs: 0, hits: 0, homeRuns: 0, rbi: 0, walks: 0, strikeouts: 0 }
   );
 
-  const careerPitchingStats = player.playerStats.reduce(
+  const careerPitchingStats = seasonStats.reduce(
     (acc, stats) => ({
       gamesPlayed: acc.gamesPlayed + stats.gamesPitched,
       wins: acc.wins + stats.wins,
@@ -265,7 +293,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
       (careerBattingStats.atBats + careerBattingStats.walks)
     : 0;
 
-  const totalBases = player.playerStats.reduce(
+  const totalBases = seasonStats.reduce(
     (acc, stats) =>
       acc + stats.hits + stats.doubles + stats.triples * 2 + stats.homeRuns * 3,
     0
@@ -293,7 +321,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     const opponentScore = isHome ? game.awayScore : game.homeScore;
 
     const gameResult =
-      game.status === 'FINAL' && teamScore !== null && opponentScore !== null
+      game.status === GameStatus.FINAL && teamScore !== null && opponentScore !== null
         ? teamScore > opponentScore
           ? ('W' as const)
           : ('L' as const)
@@ -315,9 +343,9 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
 
     // Pitching stats from box line (if IP > 0)
     const pitching =
-      boxLine.ip && boxLine.ip > 0
+      boxLine.ip && decimalToNumber(boxLine.ip) > 0
         ? {
-            ip: boxLine.ip,
+            ip: decimalToNumber(boxLine.ip),
             h: boxLine.hitsAllowed ?? 0,
             r: boxLine.runsAllowed ?? 0,
             er: boxLine.earnedRuns ?? 0,
@@ -357,14 +385,14 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
                 strikeouts: currentSeasonStats.strikeouts,
                 stolenBases: currentSeasonStats.stolenBases,
                 caughtStealing: currentSeasonStats.caughtStealing,
-                battingAvg: currentSeasonStats.battingAvg ?? 0,
-                onBasePct: currentSeasonStats.onBasePct ?? 0,
-                sluggingPct: currentSeasonStats.sluggingPct ?? 0,
-                ops: (currentSeasonStats.onBasePct ?? 0) + (currentSeasonStats.sluggingPct ?? 0),
+                battingAvg: currentSeasonStats.battingAvg,
+                onBasePct: currentSeasonStats.onBasePct,
+                sluggingPct: currentSeasonStats.sluggingPct,
+                ops: currentSeasonStats.ops,
               }
             : undefined,
         pitching:
-          currentSeasonStats.inningsPitched > 0
+          currentSeasonStats.inningsPitched && currentSeasonStats.inningsPitched > 0
             ? {
                 gamesPlayed: currentSeasonStats.gamesPitched,
                 gamesStarted: currentSeasonStats.gamesStarted,
@@ -378,10 +406,10 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
                 walks: currentSeasonStats.walksAllowed,
                 strikeouts: currentSeasonStats.strikeouts,
                 homeRunsAllowed: currentSeasonStats.homeRunsAllowed,
-                era: currentSeasonStats.era ?? 0,
-                whip: currentSeasonStats.whip ?? 0,
-                strikeoutsPerNine: currentSeasonStats.strikeoutsPerNine ?? 0,
-                walksPerNine: currentSeasonStats.walksPerNine ?? 0,
+                era: currentSeasonStats.era,
+                whip: currentSeasonStats.whip,
+                strikeoutsPerNine: currentSeasonStats.strikeoutsPerNine,
+                walksPerNine: currentSeasonStats.walksPerNine,
               }
             : undefined,
       }
@@ -392,18 +420,18 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     firstName: player.firstName,
     lastName: player.lastName,
     fullName: `${player.firstName} ${player.lastName}`,
-    jerseyNumber: player.jerseyNumber,
-    position: player.position,
-    bats: player.bats,
-    throws: player.throws,
-    year: player.year,
-    height: player.height,
-    weight: player.weight,
-    hometown: player.hometown,
+    jerseyNumber: player.jerseyNumber ?? undefined,
+    position: player.position ?? 'UTIL',
+    bats: player.bats ?? undefined,
+    throws: player.throws ?? undefined,
+    classYear: player.classYear ?? undefined,
+    heightInches: player.heightInches ?? undefined,
+    weightLbs: player.weightLbs ?? undefined,
+    hometown: player.hometown ?? undefined,
     team: player.team,
     currentSeason,
     career: {
-      seasons: player.playerStats.length,
+      seasons: seasonStats.length,
       batting:
         careerBattingStats.atBats > 0
           ? {

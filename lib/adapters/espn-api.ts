@@ -167,9 +167,19 @@ export class ESPNAPIAdapter {
       awayLosses: findStat('awayLosses'),
       runsScored: findStat('runsScored'),
       runsAllowed: findStat('runsAllowed'),
+      hitsTotal: findStat('hits'),
+      homeRuns: findStat('homeRuns'),
+      stolenBases: findStat('stolenBases'),
       battingAvg: findStat('battingAverage'),
+      onBasePct: findStat('onBasePercentage'),
+      sluggingPct: findStat('sluggingPercentage'),
       era: findStat('earnedRunAverage'),
+      whip: findStat('whip'),
       fieldingPct: findStat('fieldingPercentage'),
+      earnedRuns: findStat('earnedRuns'),
+      hitsAllowed: findStat('hitsAllowed'),
+      strikeouts: findStat('strikeouts'),
+      walks: findStat('walks'),
       rpi: undefined, // ESPN doesn't provide RPI directly
       strengthOfSched: undefined, // ESPN doesn't provide SOS directly
       pythagWins: undefined // Will be calculated separately

@@ -1,0 +1,402 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Sport {
+  BASEBALL
+  FOOTBALL
+  BASKETBALL
+}
+
+enum League {
+  NCAA_D1
+  NCAA_D2
+  NCAA_D3
+  JUCO
+  MLB
+}
+
+enum SeasonType {
+  REGULAR
+  POSTSEASON
+  PRESEASON
+}
+
+enum GameStatus {
+  SCHEDULED
+  LIVE
+  FINAL
+  POSTPONED
+  CANCELLED
+}
+
+enum InningHalf {
+  TOP
+  BOTTOM
+}
+
+enum DataFeedPrecision {
+  EVENT
+  PITCH
+  PLAY
+}
+
+enum PollType {
+  COACHES
+  BASEBALL_AMERICA
+  D1BASEBALL
+  PERFECT_GAME
+  COMPOSITE
+}
+
+enum ArticleStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+}
+
+model Conference {
+  id         String   @id @default(cuid())
+  externalId String?  @unique
+  sport      Sport
+  league     League
+  name       String
+  slug       String   @unique
+  shortName  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  teams    Team[]
+  rankings Ranking[]
+
+  @@index([sport, league])
+}
+
+model Venue {
+  id         String   @id @default(cuid())
+  externalId String?  @unique
+  name       String
+  city       String?
+  state      String?
+  capacity   Int?
+  latitude   Float?
+  longitude  Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  games Game[]
+
+  @@index([city, state])
+}
+
+model Team {
+  id             String   @id @default(cuid())
+  externalId     String?  @unique
+  sport          Sport
+  league         League
+  name           String
+  school         String?
+  nickname       String?
+  slug           String   @unique
+  abbreviation   String?
+  conferenceId   String?
+  division       String?
+  logoUrl        String?
+  primaryColor   String?
+  secondaryColor String?
+  foundedYear    Int?
+  city           String?
+  state          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  conference Conference?      @relation(fields: [conferenceId], references: [id])
+  homeGames  Game[]           @relation("HomeTeam")
+  awayGames  Game[]           @relation("AwayTeam")
+  players    Player[]
+  teamStats  TeamSeasonStat[]
+  rankings   Ranking[]
+  articles   Article[]
+  boxLines   GamePlayerStat[] @relation("TeamGamePlayerStats")
+
+  @@index([sport, league])
+  @@index([league, slug])
+}
+
+model Player {
+  id           String    @id @default(cuid())
+  externalId   String?   @unique
+  sport        Sport
+  league       League
+  teamId       String?
+  firstName    String
+  lastName     String
+  fullName     String
+  position     String?
+  jerseyNumber Int?
+  bats         String?
+  throws       String?
+  classYear    String?
+  heightInches Int?
+  weightLbs    Int?
+  birthDate    DateTime?
+  hometown     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  team          Team?              @relation(fields: [teamId], references: [id])
+  playerStats   PlayerSeasonStat[]
+  boxLines      GamePlayerStat[]
+  batterEvents  InningEvent[]      @relation("BatterEvents")
+  pitcherEvents InningEvent[]      @relation("PitcherEvents")
+
+  @@index([sport, league])
+  @@index([teamId])
+}
+
+model Game {
+  id                String            @id @default(cuid())
+  externalId        String            @unique
+  sport             Sport
+  league            League
+  season            Int
+  seasonType        SeasonType        @default(REGULAR)
+  scheduledAt       DateTime
+  status            GameStatus        @default(SCHEDULED)
+  venueId           String?
+  homeTeamId        String
+  awayTeamId        String
+  homeScore         Int?              @default(0)
+  awayScore         Int?              @default(0)
+  currentInning     Int?
+  currentInningHalf InningHalf?
+  balls             Int?
+  strikes           Int?
+  outs              Int?
+  providerName      String
+  feedPrecision     DataFeedPrecision @default(EVENT)
+  lastUpdated       DateTime          @default(now())
+  archived          Boolean           @default(false)
+  archivedAt        DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  venue    Venue?           @relation(fields: [venueId], references: [id])
+  homeTeam Team             @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam Team             @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  events   InningEvent[]
+  boxLines GamePlayerStat[]
+
+  @@index([sport, league, season, status])
+  @@index([season, scheduledAt])
+  @@index([homeTeamId, awayTeamId])
+}
+
+model InningEvent {
+  id           String     @id @default(cuid())
+  gameId       String
+  inningNumber Int
+  half         InningHalf
+  sequence     Int
+  outs         Int?
+  balls        Int?
+  strikes      Int?
+  eventType    String
+  description  String?
+  batterId     String?
+  pitcherId    String?
+  result       Json?
+  homeWinProb  Decimal?   @db.Decimal(6, 4)
+  wpaSwing     Decimal?   @db.Decimal(6, 4)
+  recordedAt   DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  game    Game    @relation(fields: [gameId], references: [id])
+  batter  Player? @relation("BatterEvents", fields: [batterId], references: [id])
+  pitcher Player? @relation("PitcherEvents", fields: [pitcherId], references: [id])
+
+  @@index([gameId, inningNumber, half, sequence])
+  @@index([recordedAt])
+}
+
+model TeamSeasonStat {
+  id              String     @id @default(cuid())
+  teamId          String
+  sport           Sport
+  league          League
+  season          Int
+  seasonType      SeasonType @default(REGULAR)
+  wins            Int        @default(0)
+  losses          Int        @default(0)
+  confWins        Int        @default(0)
+  confLosses      Int        @default(0)
+  homeWins        Int        @default(0)
+  homeLosses      Int        @default(0)
+  awayWins        Int        @default(0)
+  awayLosses      Int        @default(0)
+  runsScored      Int        @default(0)
+  runsAllowed     Int        @default(0)
+  hitsTotal       Int        @default(0)
+  homeRuns        Int        @default(0)
+  stolenBases     Int        @default(0)
+  battingAvg      Decimal?   @db.Decimal(5, 3)
+  onBasePct       Decimal?   @db.Decimal(5, 3)
+  sluggingPct     Decimal?   @db.Decimal(5, 3)
+  era             Decimal?   @db.Decimal(5, 2)
+  whip            Decimal?   @db.Decimal(5, 2)
+  fieldingPct     Decimal?   @db.Decimal(5, 3)
+  rpi             Decimal?   @db.Decimal(6, 4)
+  strengthOfSched Decimal?   @db.Decimal(6, 4)
+  pythagWins      Decimal?   @db.Decimal(6, 2)
+  earnedRuns      Int        @default(0)
+  hitsAllowed     Int        @default(0)
+  strikeouts      Int        @default(0)
+  walks           Int        @default(0)
+  lastUpdated     DateTime   @default(now())
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@unique([teamId, season, seasonType])
+  @@index([sport, league, season])
+}
+
+model PlayerSeasonStat {
+  id                String     @id @default(cuid())
+  playerId          String
+  sport             Sport
+  league            League
+  season            Int
+  seasonType        SeasonType @default(REGULAR)
+  gamesPlayed       Int        @default(0)
+  atBats            Int        @default(0)
+  runs              Int        @default(0)
+  hits              Int        @default(0)
+  doubles           Int        @default(0)
+  triples           Int        @default(0)
+  homeRuns          Int        @default(0)
+  rbi               Int        @default(0)
+  walks             Int        @default(0)
+  strikeouts        Int        @default(0)
+  stolenBases       Int        @default(0)
+  caughtStealing    Int        @default(0)
+  battingAvg        Decimal?   @db.Decimal(5, 3)
+  obp               Decimal?   @db.Decimal(5, 3)
+  slg               Decimal?   @db.Decimal(5, 3)
+  ops               Decimal?   @db.Decimal(6, 3)
+  gamesPitched      Int        @default(0)
+  gamesStarted      Int        @default(0)
+  wins              Int        @default(0)
+  losses            Int        @default(0)
+  saves             Int        @default(0)
+  inningsPitched    Decimal?   @db.Decimal(6, 1)
+  earnedRuns        Int        @default(0)
+  hitsAllowed       Int        @default(0)
+  walksAllowed      Int        @default(0)
+  strikeoutsPitched Int        @default(0)
+  era               Decimal?   @db.Decimal(5, 2)
+  whip              Decimal?   @db.Decimal(5, 2)
+  homeRunsAllowed   Int        @default(0)
+  strikeoutsPerNine Decimal?   @db.Decimal(5, 2)
+  walksPerNine      Decimal?   @db.Decimal(5, 2)
+  lastUpdated       DateTime   @default(now())
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  player Player @relation(fields: [playerId], references: [id])
+
+  @@unique([playerId, season, seasonType])
+  @@index([sport, league, season])
+}
+
+model GamePlayerStat {
+  id             String   @id @default(cuid())
+  gameId         String
+  teamId         String
+  playerId       String
+  battingOrder   Int?
+  side           String?
+  ab             Int      @default(0)
+  r              Int      @default(0)
+  h              Int      @default(0)
+  doubles        Int      @default(0)
+  triples        Int      @default(0)
+  homeRuns       Int      @default(0)
+  rbi            Int      @default(0)
+  bb             Int      @default(0)
+  so             Int      @default(0)
+  stolenBases    Int      @default(0)
+  caughtStealing Int      @default(0)
+  totalBases     Int      @default(0)
+  ip             Decimal? @db.Decimal(4, 1)
+  hitsAllowed    Int      @default(0)
+  runsAllowed    Int      @default(0)
+  earnedRuns     Int      @default(0)
+  bbAllowed      Int      @default(0)
+  soRecorded     Int      @default(0)
+  pitchCount     Int      @default(0)
+  decision       String?
+  result         Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  game   Game   @relation(fields: [gameId], references: [id])
+  team   Team   @relation("TeamGamePlayerStats", fields: [teamId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+
+  @@index([gameId, teamId])
+  @@index([playerId])
+}
+
+model Ranking {
+  id              String    @id @default(cuid())
+  pollType        PollType
+  season          Int
+  week            Int
+  sport           Sport
+  league          League
+  teamId          String
+  conferenceId    String?
+  rank            Int
+  previousRank    Int?
+  points          Int?
+  firstPlaceVotes Int?
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  team       Team        @relation(fields: [teamId], references: [id])
+  conference Conference? @relation(fields: [conferenceId], references: [id])
+
+  @@unique([pollType, season, week, teamId])
+  @@index([sport, league, season, week])
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  summary     String?
+  content     String
+  sport       Sport
+  league      League
+  status      ArticleStatus @default(DRAFT)
+  author      String?
+  teamId      String?
+  publishedAt DateTime?
+  source      String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  team Team? @relation(fields: [teamId], references: [id])
+
+  @@index([sport, league, status])
+  @@index([publishedAt])
+}

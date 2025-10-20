@@ -1,0 +1,39 @@
+name: prisma-schema-diff
+
+on:
+  pull_request:
+    paths:
+      - 'prisma/schema.prisma'
+      - 'prisma/migrations/**'
+      - '.github/workflows/prisma-schema-diff.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'prisma/schema.prisma'
+      - 'prisma/migrations/**'
+
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.5.2
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Prisma schema drift check
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --script

@@ -22,10 +22,10 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Conference, Division, Prisma } from '@prisma/client';
+import { Conference, GameStatus, League, Prisma, SeasonType } from '@prisma/client';
 
 export interface ConferencesQueryParams {
-  division?: Division;
+  division?: League;
   limit?: number;
   offset?: number;
 }
@@ -136,7 +136,7 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
   const where: Prisma.ConferenceWhereInput = {};
 
   if (division) {
-    where.division = division;
+    where.league = division;
   }
 
   // Execute queries in parallel
@@ -149,7 +149,7 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
         },
       },
       orderBy: [
-        { division: 'asc' },
+        { league: 'asc' },
         { name: 'asc' },
       ],
       take: safeLimit,
@@ -242,7 +242,7 @@ export async function getConferenceStandings(
     },
     include: {
       teamStats: {
-        where: { season },
+        where: { season, seasonType: SeasonType.REGULAR },
         take: 1,
       },
       homeGames: {
@@ -251,7 +251,7 @@ export async function getConferenceStandings(
             gte: new Date(`${season}-01-01`),
             lt: new Date(`${season + 1}-01-01`),
           },
-          status: 'FINAL',
+          status: GameStatus.FINAL,
         },
         select: {
           homeScore: true,
@@ -264,7 +264,7 @@ export async function getConferenceStandings(
             gte: new Date(`${season}-01-01`),
             lt: new Date(`${season + 1}-01-01`),
           },
-          status: 'FINAL',
+          status: GameStatus.FINAL,
         },
         select: {
           homeScore: true,
@@ -326,9 +326,9 @@ export async function getConferenceStandings(
         awayRecord: `${awayWins}-${awayLosses}`,
       },
       advanced: {
-        pythagWins: stats.pythagWins ?? undefined,
-        rpi: stats.rpi ?? undefined,
-        strengthOfSched: stats.strengthOfSched ?? undefined,
+        pythagWins: stats.pythagWins ? stats.pythagWins.toNumber() : undefined,
+        rpi: stats.rpi ? stats.rpi.toNumber() : undefined,
+        strengthOfSched: stats.strengthOfSched ? stats.strengthOfSched.toNumber() : undefined,
       },
       // Sorting keys
       sortKeys: {
@@ -336,7 +336,7 @@ export async function getConferenceStandings(
         winPct,
         confWins,
         confWinPct,
-        rpi: stats.rpi ?? 0,
+        rpi: stats.rpi ? stats.rpi.toNumber() : 0,
       },
     };
   }).filter((entry) => entry !== null);
