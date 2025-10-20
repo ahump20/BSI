@@ -1,0 +1,207 @@
+{
+  "team": "Texas Longhorns",
+  "lastUpdated": "2025-06-28T10:15:00-05:00",
+  "programs": [
+    {
+      "program": "Men",
+      "seasons": [
+        {
+          "year": 2024,
+          "record": "29-8",
+          "conference": "SEC",
+          "postseason": "Elite Eight",
+          "coach": "Rodney Terry",
+          "notableWins": [
+            "82-78 vs. Kentucky",
+            "71-65 vs. Tennessee",
+            "77-70 vs. Houston"
+          ]
+        },
+        {
+          "year": 2025,
+          "record": "0-0",
+          "conference": "SEC",
+          "postseason": null,
+          "coach": "Rodney Terry",
+          "notableWins": []
+        }
+      ],
+      "rankings": {
+        "2024Final": {
+          "ap": 6,
+          "kenpom": 5
+        },
+        "2025Preseason": {
+          "ap": 5,
+          "bartTorvik": 4
+        }
+      },
+      "schedule": {
+        "2025-26": [
+          {
+            "gameId": "2025-11-12-gonzaga",
+            "date": "2025-11-12",
+            "opponent": "Gonzaga Bulldogs",
+            "location": "Moody Center (Austin, TX)",
+            "result": "TBD"
+          },
+          {
+            "gameId": "2025-11-22-maui",
+            "date": "2025-11-22",
+            "opponent": "Maui Invitational Quarterfinal",
+            "location": "Lahaina Civic Center (Maui, HI)",
+            "result": "TBD"
+          },
+          {
+            "gameId": "2026-01-04-at-lsu",
+            "date": "2026-01-04",
+            "opponent": "LSU Tigers",
+            "location": "Pete Maravich Assembly Center (Baton Rouge, LA)",
+            "result": "TBD"
+          }
+        ]
+      },
+      "impactPlayers": [
+        {
+          "id": "tyrese-hunter",
+          "name": "Tyrese Hunter",
+          "position": "G",
+          "class": "Senior",
+          "career": {
+            "points": 1456,
+            "assists": 512,
+            "steals": 168
+          }
+        },
+        {
+          "id": "dillon-mitchell",
+          "name": "Dillon Mitchell",
+          "position": "F",
+          "class": "Junior",
+          "career": {
+            "points": 932,
+            "rebounds": 618,
+            "blocks": 114
+          }
+        }
+      ]
+    },
+    {
+      "program": "Women",
+      "seasons": [
+        {
+          "year": 2024,
+          "record": "33-5",
+          "conference": "SEC",
+          "postseason": "Final Four",
+          "coach": "Vic Schaefer",
+          "notableWins": [
+            "74-72 vs. South Carolina",
+            "81-66 vs. LSU",
+            "88-79 vs. Baylor"
+          ]
+        },
+        {
+          "year": 2025,
+          "record": "0-0",
+          "conference": "SEC",
+          "postseason": null,
+          "coach": "Vic Schaefer",
+          "notableWins": []
+        }
+      ],
+      "rankings": {
+        "2024Final": {
+          "ap": 2,
+          "net": 1
+        },
+        "2025Preseason": {
+          "ap": 1,
+          "herHoopStats": 1
+        }
+      },
+      "schedule": {
+        "2025-26": [
+          {
+            "gameId": "2025-11-08-uconn",
+            "date": "2025-11-08",
+            "opponent": "UConn Huskies",
+            "location": "Moody Center (Austin, TX)",
+            "result": "TBD"
+          },
+          {
+            "gameId": "2025-12-15-at-stanford",
+            "date": "2025-12-15",
+            "opponent": "Stanford Cardinal",
+            "location": "Maples Pavilion (Stanford, CA)",
+            "result": "TBD"
+          }
+        ]
+      },
+      "impactPlayers": [
+        {
+          "id": "madison-booker",
+          "name": "Madison Booker",
+          "position": "G/F",
+          "class": "Sophomore",
+          "career": {
+            "points": 588,
+            "assists": 182,
+            "rebounds": 241
+          }
+        },
+        {
+          "id": "aliyah-moore",
+          "name": "Aaliyah Moore",
+          "position": "F",
+          "class": "Senior",
+          "career": {
+            "points": 978,
+            "rebounds": 512,
+            "blocks": 68
+          }
+        }
+      ]
+    }
+  ],
+  "boxScores": {
+    "2024-03-31-women-vs-south-carolina": {
+      "program": "Women",
+      "opponent": "South Carolina Gamecocks",
+      "score": "74-72",
+      "summary": {
+        "texas": {
+          "topScorer": { "player": "Madison Booker", "points": 24 },
+          "rebounds": 36,
+          "assists": 19,
+          "turnovers": 11
+        },
+        "opponent": {
+          "topScorer": { "player": "Kamilla Cardoso", "points": 20 },
+          "rebounds": 34,
+          "assists": 15,
+          "turnovers": 15
+        }
+      }
+    },
+    "2024-03-29-men-vs-houston": {
+      "program": "Men",
+      "opponent": "Houston Cougars",
+      "score": "77-70",
+      "summary": {
+        "texas": {
+          "topScorer": { "player": "Tyrese Hunter", "points": 21 },
+          "rebounds": 32,
+          "assists": 18,
+          "threePointPct": 0.44
+        },
+        "opponent": {
+          "topScorer": { "player": "LJ Cryer", "points": 19 },
+          "rebounds": 30,
+          "assists": 14,
+          "threePointPct": 0.31
+        }
+      }
+    }
+  }
+}

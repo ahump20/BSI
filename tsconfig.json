@@ -27,7 +27,9 @@
   },
   "include": [
     "lib/**/*.ts",
-    "context7-enhanced/src/**/*.ts"
+    "context7-enhanced/src/**/*.ts",
+    "mcp/**/*.ts",
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",

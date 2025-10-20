@@ -1,0 +1,196 @@
+{
+  "team": "Texas Longhorns",
+  "lastUpdated": "2025-06-20T08:05:00-05:00",
+  "programs": [
+    {
+      "program": "Women",
+      "coach": "Edrick Floréal",
+      "seasons": [
+        {
+          "year": "2024 Outdoor",
+          "ncaaFinish": "National Champions",
+          "points": 72,
+          "eventTitles": [
+            "4x100m relay (42.19)",
+            "100m hurdles (12.32)",
+            "Long jump (6.95m)"
+          ]
+        },
+        {
+          "year": "2024 Indoor",
+          "ncaaFinish": "Runner-up",
+          "points": 59,
+          "eventTitles": [
+            "200m (22.32)",
+            "400m (50.82)"
+          ]
+        }
+      ],
+      "schedule": {
+        "2025": [
+          {
+            "meetId": "2025-03-29-texas-relays",
+            "date": "2025-03-29",
+            "meet": "Clyde Littlefield Texas Relays",
+            "location": "Mike A. Myers Stadium (Austin, TX)",
+            "focus": "Sprints & relays"
+          },
+          {
+            "meetId": "2025-05-10-sec-outdoor",
+            "date": "2025-05-10",
+            "meet": "SEC Outdoor Championships",
+            "location": "Baton Rouge, LA",
+            "focus": "Conference title defense"
+          },
+          {
+            "meetId": "2025-06-14-ncaa-outdoor",
+            "date": "2025-06-14",
+            "meet": "NCAA Outdoor Championships",
+            "location": "Eugene, OR",
+            "focus": "Sprint sweep"
+          }
+        ]
+      },
+      "results": {
+        "2024-06-08-ncaa-outdoor": {
+          "meet": "NCAA Outdoor Championships",
+          "location": "Hayward Field (Eugene, OR)",
+          "teamFinish": 1,
+          "points": 72,
+          "eventHighlights": [
+            "4x100m relay championship (42.19)",
+            "Akashia Baker wins 100m (10.98)",
+            "Rosaline Amos wins 100m hurdles (12.32)"
+          ]
+        },
+        "2024-03-09-ncaa-indoor": {
+          "meet": "NCAA Indoor Championships",
+          "location": "The Podium (Spokane, WA)",
+          "teamFinish": 2,
+          "points": 59,
+          "eventHighlights": [
+            "Akashia Baker wins 200m (22.32)",
+            "4x400m relay sets facility record (3:25.40)"
+          ]
+        }
+      },
+      "athletes": [
+        {
+          "id": "akashia-baker",
+          "name": "Akashia Baker",
+          "event": "Sprints",
+          "personalBests": {
+            "100m": 10.98,
+            "200m": 22.11
+          }
+        },
+        {
+          "id": "rosaline-amos",
+          "name": "Rosaline Amos",
+          "event": "Hurdles",
+          "personalBests": {
+            "100mH": 12.28,
+            "400mH": 54.44
+          }
+        }
+      ]
+    },
+    {
+      "program": "Men",
+      "coach": "Edrick Floréal",
+      "seasons": [
+        {
+          "year": "2024 Outdoor",
+          "ncaaFinish": "7th",
+          "points": 32,
+          "eventTitles": [
+            "Pole vault (5.72m)",
+            "4x400m relay (2:58.88)"
+          ]
+        },
+        {
+          "year": "2024 Indoor",
+          "ncaaFinish": "5th",
+          "points": 41,
+          "eventTitles": [
+            "60m (6.52)"
+          ]
+        }
+      ],
+      "schedule": {
+        "2025": [
+          {
+            "meetId": "2025-02-08-tyson",
+            "date": "2025-02-08",
+            "meet": "Tyson Invitational",
+            "location": "Fayetteville, AR",
+            "focus": "Sprint qualifiers"
+          },
+          {
+            "meetId": "2025-03-08-ncaa-indoor",
+            "date": "2025-03-08",
+            "meet": "NCAA Indoor Championships",
+            "location": "Boston, MA",
+            "focus": "Top-5 push"
+          }
+        ]
+      },
+      "results": {
+        "2024-06-08-ncaa-outdoor": {
+          "meet": "NCAA Outdoor Championships",
+          "location": "Hayward Field (Eugene, OR)",
+          "teamFinish": 7,
+          "points": 32,
+          "eventHighlights": [
+            "Logan Williams wins pole vault (5.72m)",
+            "4x400m relay finishes second (2:58.88)"
+          ]
+        },
+        "2024-03-09-ncaa-indoor": {
+          "meet": "NCAA Indoor Championships",
+          "location": "The Podium (Spokane, WA)",
+          "teamFinish": 5,
+          "points": 41,
+          "eventHighlights": [
+            "Michael Holland wins 800m (1:45.02)"
+          ]
+        }
+      },
+      "athletes": [
+        {
+          "id": "michael-holland",
+          "name": "Michael Holland",
+          "event": "Middle Distance",
+          "personalBests": {
+            "800m": 1.45,
+            "1500m": 3.35
+          }
+        },
+        {
+          "id": "logan-williams",
+          "name": "Logan Williams",
+          "event": "Pole Vault",
+          "personalBests": {
+            "poleVault": 5.76
+          }
+        }
+      ]
+    }
+  ],
+  "archive": [
+    {
+      "id": "2024-texas-relays-sweep",
+      "title": "Longhorns double sweep Texas Relays",
+      "date": "2024-03-31",
+      "summary": "Texas swept sprint relays on both sides and posted nation-leading marks in the 100m and 4x400m.",
+      "tags": ["relay", "sprints", "records"]
+    },
+    {
+      "id": "2024-outdoor-championship",
+      "title": "Women reclaim NCAA outdoor title",
+      "date": "2024-06-08",
+      "summary": "Edrick Floréal's squad put up 72 points behind relay dominance to win the national championship in Eugene.",
+      "tags": ["championship", "women", "outdoor"]
+    }
+  ]
+}

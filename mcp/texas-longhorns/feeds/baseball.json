@@ -1,0 +1,122 @@
+{
+  "team": "Texas Longhorns",
+  "lastUpdated": "2025-06-23T16:00:00-05:00",
+  "seasons": [
+    {
+      "year": 2025,
+      "record": "42-11",
+      "conferenceRecord": "22-8",
+      "postseason": "NCAA Regional",
+      "achievements": [
+        "2025 SEC Regular Season Champions",
+        "#5 D1Baseball Final Ranking",
+        "#6 RPI Final Ranking"
+      ]
+    },
+    {
+      "year": 2024,
+      "record": "40-21",
+      "conferenceRecord": "15-9",
+      "postseason": "College World Series Semifinal"
+    }
+  ],
+  "players": [
+    {
+      "id": "ivan-melendez",
+      "name": "Ivan Melendez",
+      "position": "1B",
+      "bats": "R",
+      "throws": "R",
+      "career": {
+        "games": 162,
+        "avg": 0.321,
+        "obp": 0.402,
+        "slg": 0.625,
+        "homeRuns": 58,
+        "rbi": 182
+      }
+    },
+    {
+      "id": "pete-hansen",
+      "name": "Pete Hansen",
+      "position": "LHP",
+      "bats": "L",
+      "throws": "L",
+      "career": {
+        "appearances": 58,
+        "wins": 25,
+        "era": 2.91,
+        "strikeouts": 288,
+        "innings": 312.2
+      }
+    },
+    {
+      "id": "dylan-campbell",
+      "name": "Dylan Campbell",
+      "position": "OF",
+      "bats": "R",
+      "throws": "R",
+      "career": {
+        "games": 189,
+        "avg": 0.312,
+        "obp": 0.395,
+        "slg": 0.544,
+        "steals": 48
+      }
+    }
+  ],
+  "schedule": {
+    "2025": [
+      {
+        "gameId": "2025-02-14-vs-louisville",
+        "date": "2025-02-14",
+        "opponent": "Louisville Cardinals",
+        "location": "Globe Life Field (Arlington, TX)",
+        "note": "Shriners Children's College Showdown"
+      },
+      {
+        "gameId": "2025-03-21-at-lsu",
+        "date": "2025-03-21",
+        "opponent": "LSU Tigers",
+        "location": "Alex Box Stadium (Baton Rouge, LA)",
+        "note": "SEC road series opener"
+      },
+      {
+        "gameId": "2025-04-18-vs-texas-am",
+        "date": "2025-04-18",
+        "opponent": "Texas A&M Aggies",
+        "location": "UFCU Disch-Falk Field (Austin, TX)",
+        "note": "Marquee SEC home series"
+      }
+    ]
+  },
+  "boxScores": {
+    "2025-02-16-vs-lsu": {
+      "gameId": "2025-02-16-vs-lsu",
+      "date": "2025-02-16",
+      "opponent": "LSU Tigers",
+      "location": "UFCU Disch-Falk Field",
+      "score": "5-3",
+      "texasLine": {
+        "runs": 5,
+        "hits": 10,
+        "errors": 1,
+        "pitching": {
+          "starter": "Pete Hansen",
+          "innings": 6.0,
+          "strikeouts": 7,
+          "earnedRuns": 2
+        }
+      },
+      "opponentLine": {
+        "runs": 3,
+        "hits": 7,
+        "errors": 2
+      },
+      "keyPlays": [
+        "Melendez 2-run HR in 5th",
+        "Campbell RBI double in 7th"
+      ]
+    }
+  }
+}
