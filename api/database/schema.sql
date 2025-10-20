@@ -223,6 +223,18 @@ CREATE TABLE model_training_runs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Model artifact evaluations - monitoring deployed regression bundles
+CREATE TABLE IF NOT EXISTS model_artifact_evaluations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    model_key VARCHAR(100) NOT NULL,
+    sport VARCHAR(50),
+    artifact_version VARCHAR(50) NOT NULL,
+    metrics JSONB,
+    calibration JSONB,
+    captured_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE (model_key, artifact_version, sport)
+);
+
 -- Data quality monitoring
 CREATE TABLE data_quality_checks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
