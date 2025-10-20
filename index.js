@@ -138,6 +138,11 @@ async function fetchStandings(conference, env) {
 }
 
 async function fetchPortalActivity(env, searchParams) {
+  const toNumber = (value) => {
+    const numeric = Number(value);
+    return Number.isNaN(numeric) ? 0 : numeric;
+  };
+
   const cacheKey = `portal-activity-${searchParams.toString()}`;
   const cached = await env.KV?.get(cacheKey, 'json');
   if (cached) return cached;
@@ -175,7 +180,9 @@ async function fetchPortalActivity(env, searchParams) {
       topPrograms: region.topPrograms,
       metrics: {
         timeframe,
-        ...region.metrics[timeframe],
+        transferCommits: toNumber(region.metrics[timeframe]?.transferCommits ?? 0),
+        nilEstimate: toNumber(region.metrics[timeframe]?.nilEstimate ?? 0),
+        recruitingIndex: toNumber(region.metrics[timeframe]?.recruitingIndex ?? 0),
       },
     }));
 
@@ -205,7 +212,8 @@ async function fetchPortalActivity(env, searchParams) {
       positionsNeed: program.positionsNeed,
       metrics: {
         timeframe,
-        ...program.timeframes[timeframe],
+        netTransfers: toNumber(program.timeframes[timeframe]?.netTransfers ?? 0),
+        nilMomentum: toNumber(program.timeframes[timeframe]?.nilMomentum ?? 0),
       },
     }));
 
