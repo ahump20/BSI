@@ -1,0 +1,88 @@
+{
+  "slug": "arkansas-razorbacks",
+  "team_name": "Arkansas Razorbacks",
+  "mascot": "Razorbacks",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Program preparing for expanded 16-team SEC slate in 2025 with no divisions."
+  },
+  "location": {
+    "city": "Fayetteville",
+    "state": "Arkansas",
+    "campus": "University of Arkansas",
+    "ballpark": {
+      "name": "Baum-Walker Stadium",
+      "capacity": 11000,
+      "surface": "Natural grass",
+      "recent_upgrades": "Installed new player development center and pitching lab wing in 2023."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#9D2235",
+    "secondary_color_hex": "#FFFFFF"
+  },
+  "head_coach": {
+    "name": "Dave Van Horn",
+    "contract_through": "2029",
+    "base_salary_estimate": 1300000,
+    "staff_tenure": "Entering 23rd season leading Arkansas (hired 2003).",
+    "playing_style": "Power bats with elite pitching development; heavy bullpen matchup usage.",
+    "recent_quotes": "Told HawgBeat in Sept 2024 that roster spots hinge on strike-throwing freshmen earning trust early."
+  },
+  "support_staff": {
+    "pitching_coach": "Matt Hobbs",
+    "hitting_coach": "Nate Thompson",
+    "recruiting_coordinator": "Nate Thompson",
+    "director_of_operations": "Hunter Bell",
+    "analytics_lead": "Michael Morrison",
+    "player_development_director": "Zach Butler",
+    "video_coordinator": "Jared Pickard"
+  },
+  "nil_operations": {
+    "primary_collective": "Arkansas Edge",
+    "lead_contact": "Brooks Cockrell",
+    "contact_channels": [
+      "info@arkansasedge.com",
+      "https://arkansasedge.com/contact"
+    ],
+    "recent_initiatives": "Fall 2024 Diamond Hog experience packages bundled with basketball season-ticket renewals.",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Hunter Yurachek",
+    "baseball_admin": "Kevin Trainor",
+    "financial_points_of_contact": [
+      "tickets@uark.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 0,
+    "sec_titles": 7,
+    "last_super_regional": "2024",
+    "program_trend": "Perennial top-10 with unmatched attendance; expectations remain Omaha or bust."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-14T09:30:00-05:00",
+      "summary": "Fayetteville local radio mentioned staff evaluating two JUCO catchers after fall scrimmages exposed depth.",
+      "source_hint": "ESPN Arkansas radio segment with Phil Elson",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Audit roster status post-MLB Draft; verify collective leadership titles; compile fall ball stat leaders."
+  }
+}
