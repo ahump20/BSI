@@ -157,6 +157,28 @@ class BlazeIntelligenceAPIServer {
             }
         });
 
+        this.app.get('/api/analytics/ncaa_baseball/teams', async (req, res) => {
+            try {
+                const { metadata, teams } = await this.sportsService.listCollegeBaseballRegressionTeams();
+                res.json({
+                    success: true,
+                    data: teams,
+                    metadata: {
+                        ...metadata,
+                        generatedAt: new Date().toISOString(),
+                        description: 'College baseball regression-ready teams (SEC focus)',
+                    },
+                });
+            } catch (error) {
+                this.logger.error('Failed to list NCAA baseball regression teams', {}, error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Unable to load NCAA baseball regression teams',
+                    message: error.message,
+                });
+            }
+        });
+
         // Game predictions using ML models
         this.app.post('/api/predict/game', async (req, res) => {
             try {

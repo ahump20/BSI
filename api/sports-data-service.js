@@ -12,6 +12,7 @@ import HttpClient from './services/http-client.js';
 import SportsDataAdapter from './adapters/sports-data-adapter.js';
 import SportsAnalyticsModels from './models/sports-analytics-models.js';
 import MLPipelineService from './ml/ml-pipeline-service.js';
+import RegressionArtifactService from './ml/regression-artifact-service.js';
 import DatabaseConnectionService from './database/connection-service.js';
 import ConferenceStrengthService from './services/conferenceStrength.js';
 
@@ -41,6 +42,8 @@ class SportsDataService {
             mode: 'advanced',
             cacheTtlSeconds: 90,
         });
+
+        this.regressionService = new RegressionArtifactService(this.logger);
 
         // Initialize database connection
         this.database = new DatabaseConnectionService({
@@ -103,6 +106,17 @@ class SportsDataService {
         try {
             const analytics = {};
 
+            // College baseball regression stack (ridge + logistic artifacts)
+            if (sport === 'ncaa_baseball') {
+                const regressionProfile = this.regressionService.getTeamProfile(teamKey);
+                analytics.regression = {
+                    dataset: regressionProfile.metadata,
+                    team: regressionProfile.team,
+                    models: regressionProfile.models,
+                };
+                analytics.mlPredictions = regressionProfile.predictions;
+            }
+
             // For MLB teams - calculate real sabermetrics
             if (sport === 'mlb' && teamData.stats) {
                 // Replace fake analytics with real Pythagorean Expectation
@@ -163,8 +177,8 @@ class SportsDataService {
 
             // Add ML predictions to enhance traditional analytics
             try {
-                // Predict season performance using ML models
-                if (teamData.teamId) {
+                // Predict season performance using ML models (skip for regression-driven NCAA baseball)
+                if (teamData.teamId && sport !== 'ncaa_baseball') {
                     const seasonPrediction = await this.mlPipeline.predict('season_wins', {
                         teamId: teamData.teamId,
                         sport: sport,
@@ -246,6 +260,13 @@ class SportsDataService {
         }
     }
 
+    async listCollegeBaseballRegressionTeams() {
+        return {
+            metadata: this.regressionService.getMetadata(),
+            teams: this.regressionService.listTeams(),
+        };
+    }
+
     /**
      * Get enhanced team data with real analytics
      * Replaces hardcoded stats with calculated models
@@ -265,6 +286,9 @@ class SportsDataService {
                     break;
                 case 'nba':
                     baseData = await this.getNBATeamData(teamKey);
+                    break;
+                case 'ncaa_baseball':
+                    baseData = await this.getNCAABaseballTeamData(teamKey);
                     break;
                 default:
                     throw new Error(`Unsupported sport: ${sport}`);
@@ -382,6 +406,48 @@ class SportsDataService {
             runsAllowed: null,
             dataStatus: 'placeholder'
         };
+    }
+
+    async getNCAABaseballTeamData(teamKey = 'texas-longhorns') {
+        const timer = this.logger.timer(`getNCAABaseballTeamData:${teamKey}`);
+
+        try {
+            const profile = this.regressionService.getTeamProfile(teamKey);
+
+            const result = {
+                teamId: profile.team.slug,
+                name: profile.team.name,
+                sport: 'ncaa_baseball',
+                conference: profile.team.conference,
+                record: profile.team.record,
+                conferenceRecord: profile.team.conferenceRecord,
+                stats: {
+                    overallWins: profile.team.overallWins,
+                    overallLosses: profile.team.overallLosses,
+                    overallWinPct: profile.team.overallWinPct,
+                    conferenceWins: profile.team.conferenceWins,
+                    conferenceLosses: profile.team.conferenceLosses,
+                    conferenceWinPct: profile.team.conferenceWinPct,
+                    gamesBack: profile.team.gamesBack,
+                    streak: profile.team.streak,
+                },
+                regression: profile,
+                dataSource: '2025 SEC standings dataset (college baseball)',
+                lastUpdated: profile.metadata.lastUpdated,
+            };
+
+            timer.end({ dataset: profile.metadata.conference });
+            return result;
+        } catch (error) {
+            this.logger.error(`Failed to load NCAA baseball team data`, { teamKey }, error);
+            timer.end({ error: true });
+            return {
+                teamKey,
+                sport: 'ncaa_baseball',
+                error: 'NCAA baseball data unavailable',
+                message: error.message || 'Team not found in regression dataset',
+            };
+        }
     }
 
     /**

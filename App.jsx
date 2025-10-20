@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LiveGameTracker from './LiveGameTracker';
 import BoxScore from './BoxScore';
 import Standings from './Standings';
+import RegressionAnalytics from './components/college-baseball/RegressionAnalytics';
 import './App.css';
 
 function App() {
@@ -55,6 +56,8 @@ function App() {
         );
       case 'standings':
         return <Standings />;
+      case 'analytics':
+        return <RegressionAnalytics />;
       default:
         return null;
     }
@@ -91,12 +94,19 @@ function App() {
           <span className="nav-icon">📊</span>
           Box Score
         </button>
-        <button 
+        <button
           className={activeView === 'standings' ? 'active' : ''}
           onClick={() => setActiveView('standings')}
         >
           <span className="nav-icon">🏆</span>
           Standings
+        </button>
+        <button
+          className={activeView === 'analytics' ? 'active' : ''}
+          onClick={() => setActiveView('analytics')}
+        >
+          <span className="nav-icon">📈</span>
+          Analytics
         </button>
       </nav>
 

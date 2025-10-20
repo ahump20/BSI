@@ -279,6 +279,23 @@ class SportsAnalyticsModels {
             rating += components.sos * 0.1;
         }
 
+        if (sport === 'ncaa_baseball' && teamData.regression?.models) {
+            const ridgeModel = teamData.regression.models.winPctRidge;
+            if (ridgeModel?.predictedWinPct !== undefined) {
+                const baseline = ridgeModel.leagueAverage ?? 0.5;
+                const delta = ridgeModel.predictedWinPct - baseline;
+                components.regressionWinPct = parseFloat((delta * 1200).toFixed(2));
+                rating += components.regressionWinPct * 0.5;
+            }
+
+            const topEightModel = teamData.regression.models.topEightLogit;
+            if (topEightModel?.probability !== undefined) {
+                const centered = topEightModel.probability - 0.5;
+                components.regressionTopEight = parseFloat((centered * 800).toFixed(2));
+                rating += components.regressionTopEight * 0.5;
+            }
+        }
+
         rating = Math.max(0, Math.min(1000, rating)); // Bound between 0-1000
 
         return {
