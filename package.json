@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist"
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "test": "vitest run tests/mcp/server.test.ts"
   },
   "dependencies": {
     "@sentry/node": "^10.20.0",
@@ -17,8 +18,12 @@
   "devDependencies": {
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "@types/node": "^22.13.5",
     "@vitejs/plugin-react": "^4.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
     "vite": "^7.1.10",
+    "vitest": "^2.1.8",
     "wrangler": "^3.22.0"
   }
 }

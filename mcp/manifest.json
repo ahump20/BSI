@@ -1,0 +1,53 @@
+{
+  "name": "Texas Longhorns Sports Intelligence",
+  "version": "1.0.0",
+  "description": "Mobile-first MCP toolchain focused on the University of Texas athletics stack with explicit emphasis on baseball, football, basketball, and track & field.",
+  "homepage": "https://blazesportsintel.com",
+  "license": "Proprietary",
+  "author": "BlazeSportsIntel Data Systems",
+  "contact": "ops@blazesportsintel.com",
+  "timezone": "America/Chicago",
+  "citation": {
+    "requirement": "Every data response must include CDT-stamped citations (Central Daylight Time, UTC-5) referencing the upstream provider and retrieval route.",
+    "format": "{provider} • {route} • Accessed {timestamp} CDT"
+  },
+  "tools": [
+    {
+      "name": "get_team_seasons",
+      "description": "Return recent seasons across Texas baseball, football, basketball, and track & field.",
+      "sport": "baseball"
+    },
+    {
+      "name": "get_season_schedule",
+      "description": "Deliver upcoming and completed fixtures for Texas athletics with baseball-first ordering.
+",
+      "sport": "football"
+    },
+    {
+      "name": "get_game_box_score",
+      "description": "Provide a compact mobile-first box score suitable for live tracking across supported sports.",
+      "sport": "basketball"
+    },
+    {
+      "name": "get_player_career",
+      "description": "Summarize a player career arc across the four supported sports with recruiting and pro signals.",
+      "sport": "track_and_field"
+    },
+    {
+      "name": "get_rankings_context",
+      "description": "Surface recent polls, trendlines, and strength-of-schedule context for UT athletics.",
+      "sport": "track_and_field"
+    },
+    {
+      "name": "search_archive",
+      "description": "Search BlazeSportsIntel’s research archive with CDT citation strings baked in.",
+      "sport": "track_and_field"
+    }
+  ],
+  "policies": {
+    "sport_validation": "The MCP explicitly excludes soccer; any soccer query must return a descriptive rejection referencing the exclusion clause.",
+    "data_scope": "Approved data providers: Highlightly College Feed, NCAA Stats API mirror, Longhorn Network public releases.",
+    "privacy": "No PII or credential material may leave the MCP sandbox."
+  }
+}
+
