@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "season": 2025,
+    "updated": "2025-05-18T18:00:00-05:00",
+    "source": "BlazeSportsIntel biomechanics vision system",
+    "notes": "Pose-derived efficiency and joint stress baselines captured during SEC play"
+  },
+  "pitchers": [
+    {
+      "pitcherId": "pitcher_texas_001",
+      "name": "Javen Coleman",
+      "team": "LSU Tigers",
+      "handedness": "L",
+      "releaseEfficiency": 0.86,
+      "hipShoulderSeparation": 47.2,
+      "armStressIndex": 0.68,
+      "armSlotStability": 0.81,
+      "lowerHalfPower": 0.79,
+      "efficiencyTrend": -0.07,
+      "lastCapture": "2025-05-16T20:40:00-05:00"
+    },
+    {
+      "pitcherId": "pitcher_texas_002",
+      "name": "Lebarron Johnson Jr.",
+      "team": "Texas Longhorns",
+      "handedness": "R",
+      "releaseEfficiency": 0.92,
+      "hipShoulderSeparation": 52.5,
+      "armStressIndex": 0.54,
+      "armSlotStability": 0.88,
+      "lowerHalfPower": 0.85,
+      "efficiencyTrend": 0.04,
+      "lastCapture": "2025-05-17T21:05:00-05:00"
+    },
+    {
+      "pitcherId": "pitcher_texas_003",
+      "name": "Luke Holman",
+      "team": "LSU Tigers",
+      "handedness": "R",
+      "releaseEfficiency": 0.78,
+      "hipShoulderSeparation": 41.9,
+      "armStressIndex": 0.74,
+      "armSlotStability": 0.76,
+      "lowerHalfPower": 0.72,
+      "efficiencyTrend": -0.12,
+      "lastCapture": "2025-05-15T19:32:00-05:00"
+    }
+  ]
+}

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist"
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "audit:standings": "node scripts/audit-standings.mjs"
   },
   "dependencies": {
     "@sentry/node": "^8.25.0",
