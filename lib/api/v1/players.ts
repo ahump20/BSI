@@ -10,8 +10,11 @@
  * - Team and conference context
  */
 
+import { getCachedJSON, setCachedJSON } from '@/lib/cache/redis';
 import { prisma } from '@/lib/db/prisma';
-import { Player, Position, HandedEnum, AcademicYear } from '@prisma/client';
+import { Position, HandedEnum, AcademicYear } from '@prisma/client';
+
+const PLAYERS_CACHE_PREFIX = 'api:v1:players';
 
 export interface PlayerDetailResponse {
   // Biographical
@@ -147,6 +150,12 @@ export interface PlayerDetailResponse {
  * Get player by ID with full statistics and recent performances
  */
 export async function getPlayerById(id: string): Promise<PlayerDetailResponse | null> {
+  const cacheKey = `${PLAYERS_CACHE_PREFIX}:detail:${id}`;
+  const cached = await getCachedJSON<PlayerDetailResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const currentSeason = new Date().getFullYear();
 
   const player = await prisma.player.findUnique({
@@ -387,7 +396,7 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
       }
     : null;
 
-  return {
+  const response: PlayerDetailResponse = {
     id: player.id,
     firstName: player.firstName,
     lastName: player.lastName,
@@ -434,4 +443,8 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
     },
     recentGames,
   };
+
+  await setCachedJSON(cacheKey, response, 300);
+
+  return response;
 }

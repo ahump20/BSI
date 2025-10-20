@@ -16,8 +16,11 @@
  * }
  */
 
+import { getCachedJSON, setCachedJSON } from '@/lib/cache/redis';
 import { prisma } from '@/lib/db/prisma';
 import { Team, Division, Prisma } from '@prisma/client';
+
+const TEAMS_CACHE_PREFIX = 'api:v1:teams';
 
 export interface TeamsQueryParams {
   conference?: string;
@@ -117,6 +120,18 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
     offset = 0,
   } = params;
 
+  const cacheKey = `${TEAMS_CACHE_PREFIX}:list:${[
+    conference ?? 'all',
+    division ?? 'all',
+    limit,
+    offset,
+  ].join(':')}`;
+
+  const cached = await getCachedJSON<TeamsResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   // Validate and clamp limit
   const safeLimit = Math.min(Math.max(limit, 1), 100);
 
@@ -156,7 +171,7 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
     prisma.team.count({ where }),
   ]);
 
-  return {
+  const response: TeamsResponse = {
     teams,
     pagination: {
       total,
@@ -165,12 +180,22 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
       hasMore: offset + safeLimit < total,
     },
   };
+
+  await setCachedJSON(cacheKey, response, 300);
+
+  return response;
 }
 
 /**
  * Get team by slug with full details (roster + stats + recent games)
  */
 export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | null> {
+  const cacheKey = `${TEAMS_CACHE_PREFIX}:detail:${slug}`;
+  const cached = await getCachedJSON<TeamDetailResponse>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const currentSeason = new Date().getFullYear();
 
   const team = await prisma.team.findUnique({
@@ -340,10 +365,14 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
       }
     : null;
 
-  return {
+  const response: TeamDetailResponse = {
     ...team,
     roster: team.players,
     stats,
     recentGames,
   };
+
+  await setCachedJSON(cacheKey, response, 300);
+
+  return response;
 }
