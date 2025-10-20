@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import GameInsights from './components/GameInsights'
+import UpgradeCallouts from './components/UpgradeCallouts'
+import { deriveGameInsights, summarizeUpgradeSignals } from './baseball/insights'
 
 function App() {
   const [games, setGames] = useState([])
@@ -36,6 +39,17 @@ function App() {
     const interval = setInterval(fetchGames, 30000)
     return () => clearInterval(interval)
   }, [])
+
+  const insights = useMemo(
+    () =>
+      games.map((event) => ({
+        eventId: event.id,
+        ...deriveGameInsights(event),
+      })),
+    [games]
+  )
+
+  const upgradeSummary = useMemo(() => summarizeUpgradeSignals(insights), [insights])
 
   if (loading) {
     return (
@@ -85,11 +99,12 @@ function App() {
             <p className="no-games">No games currently in progress</p>
           ) : (
             <div className="games-grid">
-              {games.map((event) => {
+              {games.map((event, index) => {
                 const competition = event.competitions?.[0]
                 const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home')
                 const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away')
                 const status = competition?.status
+                const insight = insights[index]
 
                 return (
                   <div key={event.id} className="game-card">
@@ -114,12 +129,23 @@ function App() {
                         {competition?.venue?.fullName || 'TBD'}
                       </span>
                     </div>
+
+                    {insight ? (
+                      <GameInsights meta={insight.meta} properties={insight.properties} />
+                    ) : null}
                   </div>
                 )
               })}
             </div>
           )}
         </section>
+
+        {games.length > 0 ? (
+          <UpgradeCallouts
+            recommendations={upgradeSummary.items}
+            avgPressure={upgradeSummary.avgPressure}
+          />
+        ) : null}
 
         <footer className="data-source">
           <p>
