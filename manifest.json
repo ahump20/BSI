@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.1",
+  "name": "BlazeSportsIntel Championship MCP",
+  "version": "0.1.0",
+  "description": "Mobile-first multi-sport orchestration layer exposing BlazeSportsIntel's golden-season datasets through typed MCP tools.",
+  "contact": {
+    "name": "BlazeSportsIntel Data Ops",
+    "email": "dataops@blazesportsintel.com",
+    "url": "https://www.blazesportsintel.com"
+  },
+  "metadata": {
+    "sportOrder": ["baseball", "football", "basketball", "track"],
+    "validationHooks": {
+      "rejectSports": ["soccer"],
+      "enforceOrder": true
+    },
+    "branding": {
+      "tagline": "Standard over vibes",
+      "theme": "dark-mode"
+    }
+  },
+  "runtime": {
+    "entrypoint": "./server.ts",
+    "environment": "node18"
+  },
+  "tools": [
+    {
+      "name": "get_team_seasons",
+      "description": "Return BlazeSportsIntel's licensed season summaries for a team across the golden seasons portfolio.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "team_id"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "description": "Sport context in lowercase; ordering must follow baseball → football → basketball → track when batching.",
+            "enum": ["baseball", "football", "basketball", "track"]
+          },
+          "team_id": {
+            "type": "string",
+            "description": "Internal BlazeSportsIntel team identifier."
+          },
+          "season": {
+            "type": "integer",
+            "description": "Optional override for the golden season year.",
+            "minimum": 1900
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_season_schedule",
+      "description": "Fetch the authoritative schedule and results for a sport's golden season, normalized for mobile consumption.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "season"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track"],
+            "description": "Requested sport; soccer is rejected upstream."
+          },
+          "season": {
+            "type": "integer",
+            "description": "Golden season year (e.g., 2005, 2008, 2023, 2024).",
+            "minimum": 1900
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_game_box_score",
+      "description": "Deliver a full game box score with CDT-compliant citations and mobile-first stat groupings.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "game_id"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track"],
+            "description": "Sport for the requested game."
+          },
+          "game_id": {
+            "type": "string",
+            "description": "Stable BlazeSportsIntel game identifier."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_player_career",
+      "description": "Summarize a player's collegiate career with BlazeSportsIntel's scouting deltas and CDT-ready references.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "player_id"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track"],
+            "description": "Sport for the player context."
+          },
+          "player_id": {
+            "type": "string",
+            "description": "Internal BlazeSportsIntel player identifier."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_rankings_context",
+      "description": "Surface poll movement, ELO shifts, and committee notes for the tracked seasons.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "season"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track"],
+            "description": "Sport context enforcing the BlazeSportsIntel sport order."
+          },
+          "season": {
+            "type": "integer",
+            "description": "Golden season year.",
+            "minimum": 1900
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_archive",
+      "description": "Search BlazeSportsIntel's licensed archive for mobile-ready clippings, transcripts, and photo metadata.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "query"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track"],
+            "description": "Sport filter."
+          },
+          "query": {
+            "type": "string",
+            "description": "Full-text search expression."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of items to return.",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}
