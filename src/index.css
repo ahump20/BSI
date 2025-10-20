@@ -64,6 +64,9 @@ main {
   border-radius: 8px;
   padding: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .game-card:hover {

@@ -1,0 +1,109 @@
+.game-insights {
+  margin-top: 16px;
+  background: #1f1f1f;
+  border: 1px solid #353535;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.insight-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.metric-card {
+  background: #252525;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #363636;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.metric-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a0aec0;
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.metric-bar {
+  position: relative;
+  height: 6px;
+  background: #2f2f2f;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.metric-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+  transition: width 0.3s ease;
+}
+
+.metric-context {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.insight-properties {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+}
+
+.insight-property {
+  background: #242424;
+  border-radius: 10px;
+  border: 1px solid #343434;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.insight-property h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.insight-property p {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .game-insights {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .insight-properties {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
