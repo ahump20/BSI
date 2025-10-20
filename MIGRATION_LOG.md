@@ -644,3 +644,10 @@ enum FeedPrecision { EVENT | PITCH }
 **Document Version**: 1.1.0
 **Last Updated**: 2025-10-13 22:30 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
+
+---
+
+### 2025-10-17
+
+- Relocated founder imagery (headshots, legacy photos, heritage assets) into `public/images/founder/` so the About experience can reference optimized static paths.
+- Refreshed `about.html` with a media-ready founder hero, origin story timeline, and press kit calls-to-action aligned with BlazeSportsIntel branding.
