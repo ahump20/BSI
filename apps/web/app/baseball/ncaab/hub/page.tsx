@@ -1,5 +1,16 @@
 import Link from 'next/link';
 
+import {
+  cardGrid,
+  cardSurface,
+  inlineLink,
+  kicker,
+  layoutShell,
+  section,
+  sectionSubtitle,
+  sectionTitle
+} from '../../../../lib/ui/di-variants';
+
 const sections = [
   { href: '/baseball/ncaab/games', label: 'Scoreboard & Live Games', summary: 'Track real-time scores, win probability, and inning-by-inning context.' },
   { href: '/baseball/ncaab/teams', label: 'Programs & Scouting', summary: 'Browse SEC, ACC, Big 12, and national profiles with rolling efficiency metrics.' },
@@ -13,22 +24,22 @@ const sections = [
 
 export default function BaseballHubPage() {
   return (
-    <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · NCAA Division I Baseball</span>
-        <h1 className="di-page-title">College Baseball Command Center</h1>
-        <p className="di-page-subtitle">
-          Your single landing zone for live game telemetry, advanced scouting intel, and conference health across the
-          national landscape. Final visuals and data hooks are en route; this shell keeps navigation live while we finish
-          the ingest plumbing.
+    <main className={layoutShell()}>
+      <section className={section()}>
+        <span className={kicker()}>Diamond Insights · NCAA Division I Baseball</span>
+        <h1 className={sectionTitle()}>College Baseball Command Center</h1>
+        <p className={sectionSubtitle()}>
+          Your single landing zone for live game telemetry, advanced scouting intel, and conference health across the national
+          landscape. Final visuals and data hooks are en route; this shell keeps navigation live while we finish the ingest
+          plumbing.
         </p>
-        <div className="di-card-grid">
-          {sections.map((section) => (
-            <article key={section.href} className="di-card">
-              <h2>{section.label}</h2>
-              <p>{section.summary}</p>
-              <Link className="di-inline-link" href={section.href}>
-                Enter {section.label}
+        <div className={cardGrid()}>
+          {sections.map((sectionItem) => (
+            <article key={sectionItem.href} className={cardSurface()}>
+              <h2 className="font-display text-2xl text-di-text">{sectionItem.label}</h2>
+              <p className="text-sm text-di-textMuted sm:text-base">{sectionItem.summary}</p>
+              <Link className={inlineLink()} href={sectionItem.href}>
+                Enter {sectionItem.label}
               </Link>
             </article>
           ))}
