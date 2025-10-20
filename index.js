@@ -25,6 +25,13 @@ export default {
         return jsonResponse({ games }, corsHeaders);
       }
 
+      if (path.match(/^\/api\/analytics\/baseball\/games\/[^/]+$/)) {
+        const gameId = path.split('/')[4];
+        const refresh = url.searchParams.get('refresh') === '1';
+        const analytics = await fetchDiamondProAnalytics(gameId, env, refresh);
+        return jsonResponse(analytics, corsHeaders);
+      }
+
       if (path === '/api/billing/entitlements') {
         const userId =
           request.headers.get('x-user-id') ||
@@ -105,7 +112,7 @@ async function fetchBoxScore(gameId, env) {
   const cached = await env.KV?.get(`boxscore-${gameId}`, 'json');
   if (cached) return cached;
 
-  const boxScore = await enrichBoxScoreWithAdvanced(mockBoxScore, env);
+  const boxScore = await enrichBoxScoreWithAdvanced(mockBoxScore, env, gameId);
 
   await env.KV?.put(`boxscore-${gameId}`, JSON.stringify(boxScore), {
     expirationTtl: 15, // Cache for 15 seconds during live games
@@ -160,7 +167,7 @@ async function scrapeD1Baseball() {
   return [];
 }
 
-async function enrichBoxScoreWithAdvanced(boxScore, env) {
+async function enrichBoxScoreWithAdvanced(boxScore, env, gameId) {
   const clone = typeof structuredClone === 'function'
     ? structuredClone(boxScore)
     : JSON.parse(JSON.stringify(boxScore));
@@ -184,7 +191,28 @@ async function enrichBoxScoreWithAdvanced(boxScore, env) {
 
   clone.advanced.generatedAt = new Date().toISOString();
 
+  try {
+    clone.diamondInsights = await fetchDiamondProAnalytics(gameId || clone?.metadata?.id || 'unknown', env);
+  } catch (error) {
+    console.warn('Diamond Pro analytics unavailable', error);
+  }
+
   return clone;
+}
+
+async function fetchDiamondProAnalytics(gameId, env, refresh = false) {
+  const apiBase = (env?.ANALYTICS_API_BASE || 'http://localhost:8000').replace(/\/$/, '');
+  const url = new URL(`${apiBase}/analytics/baseball/games/${gameId}`);
+  if (refresh || env?.ANALYTICS_FORCE_REFRESH === 'true') {
+    url.searchParams.set('refresh', '1');
+  }
+  const response = await fetch(url.toString(), {
+    headers: { Accept: 'application/json' },
+  });
+  if (!response.ok) {
+    throw new Error(`Diamond Pro analytics fetch failed with status ${response.status}`);
+  }
+  return response.json();
 }
 
 async function signMediaUrl(url, env, ttlSeconds = 300) {

@@ -249,6 +249,21 @@
   line-height: 1.6;
 }
 
+.advanced-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.diamond-insights-loading {
+  background: rgba(45, 55, 72, 0.4);
+  border: 1px solid rgba(226, 232, 240, 0.12);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
 .upgrade-button {
   padding: 12px 20px;
   background: linear-gradient(135deg, #fbbf24, #dc2626);

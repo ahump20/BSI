@@ -8,7 +8,7 @@ from bsi_nil.config import load_config
 from etl import mock_sources
 from etl.normalization import build_id_map, normalize_ids
 from etl.raw_storage import RawStorageClient
-from models import backtest, features as feature_eng
+from models import backtest, baseball_analytics, features as feature_eng
 from models import repository, training
 
 
@@ -32,6 +32,16 @@ def persist_raw(athletes, box_scores, social, search, nil_deals):
     storage.save_dataframe(social, "social_stats")
     storage.save_dataframe(search, "search_interest")
     storage.save_dataframe(nil_deals, "nil_deals")
+
+
+@task
+def persist_baseball_snapshot():
+    logger = get_run_logger()
+    snapshot = baseball_analytics.refresh_snapshot()
+    storage = RawStorageClient()
+    artifact_path = storage.save_json(snapshot, "college_baseball_diamond_snapshot")
+    logger.info("Wrote Diamond Pro baseball analytics snapshot to %s", artifact_path)
+    return snapshot.get("generated_at")
 
 
 @task
@@ -117,6 +127,7 @@ def nightly_pipeline():
     nil_deals = normalize_ids(nil_deals, "athlete_id", id_map)
 
     persist_raw(athletes, box_scores, social, search, nil_deals)
+    persist_baseball_snapshot()
     load_warehouse(athletes, box_scores, social, search)
 
     features_df = engineer_features(athletes, box_scores, social, search)
