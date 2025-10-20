@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SEC Baseball Intelligence Record",
+  "type": "object",
+  "required": [
+    "slug",
+    "team_name",
+    "conference",
+    "season_window",
+    "head_coach",
+    "support_staff",
+    "nil_operations",
+    "roster_overview",
+    "intel_notes",
+    "data_quality"
+  ],
+  "properties": {
+    "slug": {
+      "type": "string"
+    },
+    "team_name": {
+      "type": "string"
+    },
+    "mascot": {
+      "type": "string"
+    },
+    "conference": {
+      "type": "string",
+      "const": "SEC"
+    },
+    "season_window": {
+      "type": "object",
+      "required": ["start_year", "end_year"],
+      "properties": {
+        "start_year": { "type": "integer" },
+        "end_year": { "type": "integer" },
+        "notes": { "type": "string" }
+      }
+    },
+    "location": {
+      "type": "object",
+      "required": ["city", "state"],
+      "properties": {
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "campus": { "type": "string" },
+        "ballpark": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "capacity": { "type": ["integer", "null"] },
+            "surface": { "type": ["string", "null"] },
+            "recent_upgrades": { "type": "string" }
+          }
+        }
+      }
+    },
+    "branding": {
+      "type": "object",
+      "properties": {
+        "primary_color_hex": { "type": "string" },
+        "secondary_color_hex": { "type": "string" }
+      }
+    },
+    "head_coach": {
+      "type": "object",
+      "required": ["name", "contract_through"],
+      "properties": {
+        "name": { "type": "string" },
+        "contract_through": { "type": ["string", "null"] },
+        "base_salary_estimate": { "type": ["number", "null"] },
+        "staff_tenure": { "type": "string" },
+        "playing_style": { "type": "string" },
+        "recent_quotes": { "type": "string" }
+      }
+    },
+    "support_staff": {
+      "type": "object",
+      "properties": {
+        "pitching_coach": { "type": ["string", "null"] },
+        "hitting_coach": { "type": ["string", "null"] },
+        "recruiting_coordinator": { "type": ["string", "null"] },
+        "director_of_operations": { "type": ["string", "null"] },
+        "analytics_lead": { "type": ["string", "null"] },
+        "player_development_director": { "type": ["string", "null"] },
+        "video_coordinator": { "type": ["string", "null"] }
+      }
+    },
+    "nil_operations": {
+      "type": "object",
+      "properties": {
+        "primary_collective": { "type": "string" },
+        "lead_contact": { "type": "string" },
+        "contact_channels": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "recent_initiatives": { "type": "string" },
+        "intel_status": {
+          "type": "string",
+          "enum": ["verified", "needs_verification", "outdated"]
+        }
+      }
+    },
+    "roster_overview": {
+      "type": "object",
+      "properties": {
+        "returning_starters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "position": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "key_departures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "destination": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "incoming_transfers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "position": { "type": "string" },
+              "previous_school": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "impact_freshmen": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "position": { "type": "string" },
+              "hometown": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "injury_report": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "status": { "type": "string" },
+              "return_timeline": { "type": "string" },
+              "last_update": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "front_office": {
+      "type": "object",
+      "properties": {
+        "athletic_director": { "type": ["string", "null"] },
+        "baseball_admin": { "type": ["string", "null"] },
+        "financial_points_of_contact": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "historical_context": {
+      "type": "object",
+      "properties": {
+        "college_world_series_titles": { "type": "integer" },
+        "sec_titles": { "type": "integer" },
+        "last_super_regional": { "type": "string" },
+        "program_trend": { "type": "string" }
+      }
+    },
+    "intel_notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "summary"],
+        "properties": {
+          "timestamp": { "type": "string" },
+          "summary": { "type": "string" },
+          "source_hint": { "type": "string" },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["verified", "pending", "needs_follow_up"]
+          }
+        }
+      }
+    },
+    "data_quality": {
+      "type": "object",
+      "required": ["last_reviewed", "completeness"],
+      "properties": {
+        "last_reviewed": { "type": "string" },
+        "reviewed_by": { "type": "string" },
+        "completeness": {
+          "type": "string",
+          "enum": ["sparse", "partial", "complete"]
+        },
+        "next_actions": { "type": "string" }
+      }
+    }
+  }
+}

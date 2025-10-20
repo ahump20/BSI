@@ -1,0 +1,88 @@
+{
+  "slug": "kentucky-wildcats",
+  "team_name": "Kentucky Wildcats",
+  "mascot": "Wildcats",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Fresh off 2024 College World Series debut; roster turnover heavy."
+  },
+  "location": {
+    "city": "Lexington",
+    "state": "Kentucky",
+    "campus": "University of Kentucky",
+    "ballpark": {
+      "name": "Kentucky Proud Park",
+      "capacity": 4500,
+      "surface": "Artificial turf",
+      "recent_upgrades": "Upgrading pitching lab tech stack with TrackMan bullpen units fall 2024."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#0033A0",
+    "secondary_color_hex": "#FFFFFF"
+  },
+  "head_coach": {
+    "name": "Nick Mingione",
+    "contract_through": "2028",
+    "base_salary_estimate": 900000,
+    "staff_tenure": "Entering ninth season at Kentucky.",
+    "playing_style": "Small-ball heavy 'Mingione Ball' with pressure baserunning and matchup arms.",
+    "recent_quotes": "Shared with Lexington Herald-Leader (Aug 2024) that staff wants more swing-and-miss from Friday starter."
+  },
+  "support_staff": {
+    "pitching_coach": "Dan Roszel",
+    "hitting_coach": "Will Coggin",
+    "recruiting_coordinator": "Austin Cousino",
+    "director_of_operations": "Tyler Hancock",
+    "analytics_lead": "Brandon Wells",
+    "player_development_director": "Timothy 'T.J.' Collett",
+    "video_coordinator": "Andrew Porlier"
+  },
+  "nil_operations": {
+    "primary_collective": "The 15 Club",
+    "lead_contact": "T.J. Beisner",
+    "contact_channels": [
+      "info@the15club.com",
+      "https://www.the15club.com/contact"
+    ],
+    "recent_initiatives": "Rolling out diamond club events with bourbon partners ahead of 2025 season.",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Mitch Barnhart",
+    "baseball_admin": "Sandy Bell",
+    "financial_points_of_contact": [
+      "ukathletics@uky.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 0,
+    "sec_titles": 1,
+    "last_super_regional": "2024",
+    "program_trend": "Momentum high post-CWS; roster depth reliant on portal relievers."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-08T13:00:00-04:00",
+      "summary": "Staff hosting private pro-day for scouts focusing on sophomore RHP Mason Moore's velocity gains.",
+      "source_hint": "Cats Pause premium board chatter",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Need full roster update plus NIL contact verification."
+  }
+}
