@@ -204,18 +204,22 @@ services:
           memory: 2G
           cpus: '1.0'
 
-  # Production frontend with Nginx
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
-      args:
-        NODE_ENV: production
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8000}
+  # Production frontend (Next.js standalone)
+  web:
+    image: node:20
+    working_dir: /app
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+      PORT: 3000
+      API_BASE_URL: ${REACT_APP_API_URL:-http://localhost:8000}
     ports:
-      - "3000:80"
+      - "3000:3000"
     depends_on:
       - api
+    volumes:
+      - ./apps/web:/app
+    command: sh -c "npm install && npm run build && npm run start"
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -225,8 +229,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
-          cpus: '0.5'
+          memory: 512M
+          cpus: '1.0'
 
   # Nginx reverse proxy with SSL termination
   nginx:
@@ -241,7 +245,7 @@ services:
       - nginx_logs:/var/log/nginx
     depends_on:
       - api
-      - frontend
+      - web
     restart: unless-stopped
     logging:
       driver: "json-file"

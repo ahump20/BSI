@@ -52,24 +52,44 @@ fi
 # Deploy the Worker (backend)
 echo ""
 echo "🚀 Deploying Cloudflare Worker (backend API)..."
-cd worker
-wrangler deploy
+WORKER_DIR=""
+if [ -d worker ]; then
+    WORKER_DIR="worker"
+elif [ -d workers/ingest ]; then
+    WORKER_DIR="workers/ingest"
+fi
 
-# Get the Worker URL
-WORKER_URL=$(wrangler deployments list | head -n 2 | tail -n 1 | grep -oP 'https://[^ ]+')
-echo "✅ Worker deployed to: $WORKER_URL"
-cd ..
+if [ -n "$WORKER_DIR" ]; then
+    pushd "$WORKER_DIR" > /dev/null
+    if [ -f wrangler.toml ]; then
+        wrangler deploy
+        WORKER_URL=$(wrangler deployments list | head -n 2 | tail -n 1 | grep -oP 'https://[^ ]+')
+        echo "✅ Worker deployed to: $WORKER_URL"
+    else
+        echo "⚠️  Wrangler configuration missing; skipping worker deploy step."
+        WORKER_URL="(worker deploy skipped)"
+    fi
+    popd > /dev/null
+else
+    echo "⚠️  No worker directory detected. Skipping worker deployment."
+    WORKER_URL="(worker deploy skipped)"
+fi
 
 # Build the frontend
 echo ""
-echo "🔨 Building frontend..."
+echo "🔨 Building frontend (Next.js App Router)..."
+cd apps/web
 npm install
 npm run build
+npx @cloudflare/next-on-pages
 
 # Deploy to Cloudflare Pages
 echo ""
 echo "🚀 Deploying to Cloudflare Pages..."
-wrangler pages deploy dist --project-name=college-baseball-tracker
+wrangler pages deploy .vercel/output/static --project-name=diamond-insights-platform
+
+# Return to repo root
+cd ..
 
 # Get the Pages URL
 echo ""

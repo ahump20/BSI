@@ -144,6 +144,13 @@ blazesportsintel.com/
 
 ## Phase 3: Technical Implementation
 
+### 2025-10-18 — Frontend consolidation (America/Chicago)
+
+- Removed the legacy Vite bundle from the repo root (package.json, Vite configs, `/src`) and centralized reusable Blaze color tokens inside `apps/web/styles/design-tokens.ts` for Tailwind consumption.
+- Promoted `apps/web` as the single UI entry point by wiring Tailwind, updating deployment/development scripts (`deploy.sh`, `Makefile`) and aligning docker-compose services to the Next.js runtime.
+- Implemented redirect + 410 handling in Next.js (`next.config.mjs`, `middleware.ts`) so legacy URLs flow to the new App Router tree or return `410 Gone` for retired APIs.
+- Logged the retirement in this migration log to keep the decommission history auditable.
+
 ### Prisma Schema (PostgreSQL)
 
 Location: `/prisma/schema.prisma`
