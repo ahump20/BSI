@@ -104,7 +104,7 @@ class MLPipelineService {
                     'strength_of_schedule_diff', 'rest_days_diff',
                     'home_field_advantage', 'weather_impact'
                 ],
-                labels: ['home_win', 'away_win'],
+                labels: ['home_win', 'away_win', 'draw'],
                 architecture: this.createGameOutcomeModel,
                 retrainFrequency: 'weekly'
             },
@@ -177,7 +177,7 @@ class MLPipelineService {
             await this.validateTrainingData(trainingData);
 
             // Create and compile model
-            const model = config.architecture.call(this, trainingData.featureCount);
+            const model = config.architecture.call(this, trainingData.featureCount, config);
 
             // Train model with callbacks
             const history = await this.trainModelWithCallbacks(
@@ -298,7 +298,10 @@ class MLPipelineService {
     /**
      * Create game outcome prediction model architecture
      */
-    createGameOutcomeModel(featureCount) {
+    createGameOutcomeModel(featureCount, config = {}) {
+        const classCount = Array.isArray(config.labels) && config.labels.length
+            ? config.labels.length
+            : 2;
         const model = tf.sequential({
             layers: [
                 tf.layers.dense({
@@ -319,7 +322,7 @@ class MLPipelineService {
                     activation: 'relu'
                 }),
                 tf.layers.dense({
-                    units: 2, // home_win, away_win
+                    units: classCount,
                     activation: 'softmax'
                 })
             ]
@@ -1031,6 +1034,14 @@ class MLPipelineService {
             })
         ));
 
+        if (this.logger && typeof this.logger.debug === 'function') {
+            this.logger.debug('Normalized training features', {
+                sampleCount: normalizedFeatures.length,
+                featureCount,
+                source: 'normalizeFeatures'
+            });
+        }
+
         return {
             features: normalizedFeatures,
             labels: engineeredData.labels,
@@ -1119,44 +1130,87 @@ class MLPipelineService {
                 const predictions = predictionTensor.arraySync();
                 const labels = valLabels.arraySync();
 
-                let truePositive = 0;
-                let trueNegative = 0;
-                let falsePositive = 0;
-                let falseNegative = 0;
+                const classCount = predictions[0]?.length || 0;
+                if (classCount > 0) {
+                    const confusionMatrix = Array.from({ length: classCount }, () => (
+                        new Array(classCount).fill(0)
+                    ));
 
-                predictions.forEach((prediction, index) => {
-                    const predictedIndex = prediction.indexOf(Math.max(...prediction));
-                    const actualIndex = labels[index].indexOf(Math.max(...labels[index]));
+                    predictions.forEach((prediction, index) => {
+                        const predictedIndex = prediction.reduce((maxIndex, value, currentIndex, arr) => (
+                            value > arr[maxIndex] ? currentIndex : maxIndex
+                        ), 0);
 
-                    if (predictedIndex === 0 && actualIndex === 0) {
-                        truePositive += 1;
-                    } else if (predictedIndex === 0 && actualIndex === 1) {
-                        falsePositive += 1;
-                    } else if (predictedIndex === 1 && actualIndex === 0) {
-                        falseNegative += 1;
-                    } else if (predictedIndex === 1 && actualIndex === 1) {
-                        trueNegative += 1;
+                        const labelVector = labels[index];
+                        let actualIndex = 0;
+                        if (Array.isArray(labelVector)) {
+                            const { index: bestIndex, value: bestValue } = labelVector.reduce((acc, value, idx) => {
+                                if (value > acc.value) {
+                                    return { index: idx, value };
+                                }
+                                return acc;
+                            }, { index: 0, value: Number.NEGATIVE_INFINITY });
+
+                            // If all label values are non-positive (e.g., pending games), skip metrics update
+                            if (!Number.isFinite(bestValue) || bestValue <= 0) {
+                                return;
+                            }
+                            actualIndex = bestIndex;
+                        } else {
+                            const numericLabel = Number(labelVector);
+                            actualIndex = Number.isFinite(numericLabel) ? Math.round(Math.max(0, numericLabel)) : 0;
+                            actualIndex = Math.min(actualIndex, classCount - 1);
+                        }
+
+                        if (predictedIndex < classCount && actualIndex < classCount) {
+                            confusionMatrix[actualIndex][predictedIndex] += 1;
+                        }
+                    });
+
+                    const totalSamples = confusionMatrix.reduce((sum, row) => (
+                        sum + row.reduce((rowSum, value) => rowSum + value, 0)
+                    ), 0);
+
+                    if (totalSamples > 0) {
+                        const diagonalSum = confusionMatrix.reduce((sum, row, index) => (
+                            sum + (row[index] || 0)
+                        ), 0);
+                        evaluation.accuracy = evaluation.accuracy ?? (diagonalSum / totalSamples);
+                        evaluation.confusionMatrix = confusionMatrix;
+
+                        const precisions = [];
+                        const recalls = [];
+                        const f1Scores = [];
+
+                        for (let classIndex = 0; classIndex < classCount; classIndex += 1) {
+                            const truePositive = confusionMatrix[classIndex][classIndex] || 0;
+                            const predictedPositive = confusionMatrix.reduce((sum, row) => sum + (row[classIndex] || 0), 0);
+                            const actualPositive = confusionMatrix[classIndex].reduce((sum, value) => sum + value, 0);
+
+                            const precisionScore = predictedPositive === 0
+                                ? 0
+                                : truePositive / predictedPositive;
+                            const recallScore = actualPositive === 0
+                                ? 0
+                                : truePositive / actualPositive;
+                            const f1Score = (precisionScore + recallScore) === 0
+                                ? 0
+                                : (2 * precisionScore * recallScore) / (precisionScore + recallScore);
+
+                            precisions.push(precisionScore);
+                            recalls.push(recallScore);
+                            f1Scores.push(f1Score);
+                        }
+
+                        const average = (values) => values.length
+                            ? values.reduce((sum, value) => sum + value, 0) / values.length
+                            : 0;
+
+                        evaluation.precision = average(precisions);
+                        evaluation.recall = average(recalls);
+                        evaluation.f1Score = average(f1Scores);
                     }
-                });
-
-                const precision = truePositive + falsePositive === 0
-                    ? 0
-                    : truePositive / (truePositive + falsePositive);
-                const recall = truePositive + falseNegative === 0
-                    ? 0
-                    : truePositive / (truePositive + falseNegative);
-                const accuracy = (truePositive + trueNegative)
-                    / Math.max(1, truePositive + trueNegative + falsePositive + falseNegative);
-                const f1 = precision + recall === 0 ? 0 : (2 * precision * recall) / (precision + recall);
-
-                evaluation.accuracy = evaluation.accuracy ?? accuracy;
-                evaluation.precision = precision;
-                evaluation.recall = recall;
-                evaluation.f1Score = f1;
-                evaluation.confusionMatrix = [
-                    [truePositive, falsePositive],
-                    [falseNegative, trueNegative]
-                ];
+                }
 
                 predictionTensor.dispose();
                 valLabels.dispose();
@@ -1319,6 +1373,14 @@ class MLPipelineService {
             return (value - means[index]) / std;
         });
 
+        if (this.logger && typeof this.logger.debug === 'function') {
+            this.logger.debug('Prepared inference feature vector', {
+                modelType,
+                featureCount: normalizedValues.length,
+                source: 'prepareFeatures'
+            });
+        }
+
         return {
             values: normalizedValues,
             rawValues,
@@ -1334,33 +1396,63 @@ class MLPipelineService {
         try {
             predictionTensor = model.predict(inputTensor);
             const predictionArray = predictionTensor.arraySync();
+            const config = this.modelConfigs[modelType] || {};
 
-            if (modelType === 'game_outcome') {
-                const [homeProbability, awayProbability] = predictionArray[0];
-                const predictedClass = homeProbability >= awayProbability ? 'home_win' : 'away_win';
-                const confidence = Math.max(homeProbability, awayProbability);
+            if (config.type === 'classification') {
+                const classLabels = Array.isArray(config.labels) && config.labels.length
+                    ? config.labels
+                    : predictionArray[0].map((_, index) => `class_${index}`);
 
-                return {
+                const classProbabilities = predictionArray[0];
+                let predictedIndex = 0;
+                let maxProbability = Number.NEGATIVE_INFINITY;
+
+                classProbabilities.forEach((probability, index) => {
+                    if (probability > maxProbability) {
+                        maxProbability = probability;
+                        predictedIndex = index;
+                    }
+                });
+
+                const predictedClass = classLabels[predictedIndex] || classLabels[0];
+                const probabilityMap = classLabels.reduce((acc, label, index) => {
+                    acc[label] = classProbabilities[index] ?? 0;
+                    return acc;
+                }, {});
+
+                const result = {
                     prediction: predictedClass,
-                    confidence,
-                    probabilities: {
-                        home_win: homeProbability,
-                        away_win: awayProbability
-                    },
+                    confidence: probabilityMap[predictedClass] ?? null,
+                    probabilities: probabilityMap,
                     featureNames: features.featureNames,
                     rawFeatures: features.rawValues,
                     context: features.context
                 };
+                if (this.logger && typeof this.logger.debug === 'function') {
+                    this.logger.debug('Model inference (classification)', {
+                        modelType,
+                        predictedClass,
+                        confidence: result.confidence
+                    });
+                }
+                return result;
             }
 
             const predictedValue = predictionArray[0][0];
-            return {
+            const result = {
                 prediction: predictedValue,
                 confidence: null,
                 featureNames: features.featureNames,
                 rawFeatures: features.rawValues,
                 context: features.context
             };
+            if (this.logger && typeof this.logger.debug === 'function') {
+                this.logger.debug('Model inference (regression)', {
+                    modelType,
+                    predictedValue
+                });
+            }
+            return result;
         } finally {
             inputTensor.dispose();
             if (predictionTensor) {
@@ -1636,11 +1728,22 @@ class MLPipelineService {
             }
 
             const modelVersion = this.modelVersions.get(modelType) || 'unknown';
+            const predictedValue = typeof prediction.prediction === 'number'
+                ? prediction.prediction
+                : (prediction.probabilities && typeof prediction.prediction === 'string'
+                    ? prediction.probabilities[prediction.prediction] ?? null
+                    : null);
+
             const featurePayload = {
                 feature_names: prediction.featureNames,
                 feature_values: prediction.rawFeatures,
                 context: prediction.context,
-                metadata
+                metadata: {
+                    ...metadata,
+                    predicted_class: typeof prediction.prediction === 'string'
+                        ? prediction.prediction
+                        : null
+                }
             };
 
             const query = `
@@ -1679,8 +1782,8 @@ class MLPipelineService {
                 modelType,
                 targetEntityType,
                 targetEntityId,
-                inputData.targetDate || inputData.gameDate || null,
-                typeof prediction.prediction === 'number' ? prediction.prediction : null,
+                inputData.targetDate || inputData.gameDate || prediction.context?.game_date || null,
+                predictedValue,
                 prediction.confidence,
                 probabilityDistribution,
                 JSON.stringify(featurePayload),
