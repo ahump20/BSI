@@ -27,6 +27,14 @@ export class SportsDataIOAdapter {
     this.baseUrl = 'https://api.sportsdata.io/v3/cbb/scores/json'; // College Baseball
   }
 
+  private slugify(value: string): string {
+    return value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .replace(/-{2,}/g, '-');
+  }
+
   /**
    * Fetch games for a specific date
    */
@@ -107,12 +115,19 @@ export class SportsDataIOAdapter {
       status = 'SCHEDULED'; // Default fallback
     }
 
+    const homeTeamName = game.HomeTeam ?? `Team ${game.HomeTeamID}`;
+    const awayTeamName = game.AwayTeam ?? `Team ${game.AwayTeamID}`;
+
     return {
       id: game.GameID.toString(),
       scheduledAt: game.DateTime,
       status,
       homeTeamId: game.HomeTeamID?.toString() || '',
       awayTeamId: game.AwayTeamID?.toString() || '',
+      homeTeamName,
+      awayTeamName,
+      homeTeamSlug: this.slugify(homeTeamName),
+      awayTeamSlug: this.slugify(awayTeamName),
       homeScore: game.HomeTeamScore ?? null,
       awayScore: game.AwayTeamScore ?? null,
       venueId: game.StadiumID?.toString(),

@@ -19,6 +19,7 @@ import type {
   ProviderGame,
   ProviderTeamStats
 } from '../../workers/ingest/types';
+import type { PrismaClient } from '@prisma/client/edge';
 
 interface CircuitBreakerState {
   failures: number;
@@ -38,7 +39,7 @@ export class ProviderManager {
   private static readonly FAILURE_THRESHOLD = 3; // Open circuit after 3 failures
   private static readonly RESET_TIMEOUT = 60000; // Reset after 60 seconds
 
-  constructor(env: Env) {
+  constructor(env: Env, private readonly prisma: PrismaClient) {
     this.sportsDataIO = new SportsDataIOAdapter(env.SPORTSDATA_API_KEY);
     this.ncaaAPI = new NCAAAPIAdapter(env.NCAA_API_KEY);
     this.espnAPI = new ESPNAPIAdapter(env.ESPN_API_KEY);
@@ -79,6 +80,7 @@ export class ProviderManager {
         this.recordSuccess(name);
 
         console.log(`[ProviderManager] Successfully fetched ${games.length} games from ${name}`);
+        await this.ensureTeamsForGames(games);
         return games;
       } catch (error) {
         console.error(`[ProviderManager] ${name} failed:`, error);
@@ -93,6 +95,98 @@ export class ProviderManager {
 
     // All providers failed
     throw new Error('[ProviderManager] All providers failed to fetch games');
+  }
+
+  /**
+   * Ensure teams referenced by provider games exist in the database.
+   * Returns a mapping of provider IDs to internal IDs (currently identical but future-proofed).
+   */
+  async ensureTeamsForGames(games: ProviderGame[]): Promise<Map<string, string>> {
+    const identifiers = new Map<string, { name: string; slug?: string }>();
+
+    for (const game of games) {
+      if (game.homeTeamId) {
+        identifiers.set(game.homeTeamId, {
+          name: game.homeTeamName || `Team ${game.homeTeamId}`,
+          slug: game.homeTeamSlug,
+        });
+      }
+      if (game.awayTeamId) {
+        identifiers.set(game.awayTeamId, {
+          name: game.awayTeamName || `Team ${game.awayTeamId}`,
+          slug: game.awayTeamSlug,
+        });
+      }
+    }
+
+    if (identifiers.size === 0) {
+      return new Map();
+    }
+
+    const providerIds = Array.from(identifiers.keys());
+
+    const existing = await this.prisma.team.findMany({
+      where: { id: { in: providerIds } },
+      select: { id: true },
+    });
+
+    const existingIds = new Set(existing.map((team) => team.id));
+    const resolved = new Map<string, string>();
+
+    await Promise.all(
+      providerIds.map(async (providerId) => {
+        const identity = identifiers.get(providerId)!;
+
+        if (existingIds.has(providerId)) {
+          resolved.set(providerId, providerId);
+          return;
+        }
+
+        const slug = identity.slug ?? this.generateSlug(identity.name, providerId);
+        const abbreviation = identity.name
+          .replace(/[^A-Z]/g, '')
+          .slice(0, 3)
+          .toUpperCase() || providerId.slice(0, 3).toUpperCase();
+
+        const record = await this.prisma.team.upsert({
+          where: { id: providerId },
+          update: {
+            name: identity.name,
+            slug,
+            abbreviation,
+            sport: 'BASEBALL',
+          },
+          create: {
+            id: providerId,
+            slug,
+            name: identity.name,
+            nickname: identity.name,
+            school: identity.name,
+            abbreviation,
+            sport: 'BASEBALL',
+            division: 'D1',
+          },
+        });
+
+        resolved.set(providerId, record.id);
+      })
+    );
+
+    return resolved;
+  }
+
+  private generateSlug(name: string, fallback: string): string {
+    const base = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .replace(/-{2,}/g, '-');
+
+    if (base.length === 0) {
+      return `team-${fallback.toLowerCase()}`;
+    }
+
+    return base;
   }
 
   /**
