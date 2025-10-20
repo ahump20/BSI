@@ -41,8 +41,9 @@ function App() {
     return (
       <div className="container">
         <header>
-          <h1>⚾ College Baseball Live</h1>
-          <p className="tagline">Real-time college baseball scores and updates</p>
+          <p className="tagline">Deep South Sports Authority</p>
+          <h1 className="headline">Blaze Sports Intel</h1>
+          <p className="subtitle">Mobile-first NCAA Division I baseball scoreboard built for staffs, scouts, and diehards.</p>
         </header>
         <div className="loading">
           <div className="spinner"></div>
@@ -56,7 +57,9 @@ function App() {
     return (
       <div className="container">
         <header>
-          <h1>⚾ College Baseball Live</h1>
+          <p className="tagline">Deep South Sports Authority</p>
+          <h1 className="headline">Blaze Sports Intel</h1>
+          <p className="subtitle">Mobile-first NCAA Division I baseball scoreboard built for staffs, scouts, and diehards.</p>
         </header>
         <div className="error">
           <p>⚠️ Failed to load live data</p>
@@ -74,8 +77,9 @@ function App() {
   return (
     <div className="container">
       <header>
-        <h1>⚾ College Baseball Live</h1>
-        <p className="tagline">Real-time scores with comprehensive game data</p>
+        <p className="tagline">Deep South Sports Authority</p>
+        <h1 className="headline">Blaze Sports Intel</h1>
+        <p className="subtitle">Mobile-first NCAA Division I baseball scoreboard built for staffs, scouts, and diehards.</p>
       </header>
 
       <main>
