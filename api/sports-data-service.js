@@ -14,6 +14,7 @@ import SportsAnalyticsModels from './models/sports-analytics-models.js';
 import MLPipelineService from './ml/ml-pipeline-service.js';
 import DatabaseConnectionService from './database/connection-service.js';
 import ConferenceStrengthService from './services/conferenceStrength.js';
+import ObjectStorageService from './services/object-storage-service.js';
 
 class SportsDataService {
     constructor(env, options = {}) {
@@ -53,6 +54,15 @@ class SportsDataService {
             maxConnections: 20
         }, this.logger);
 
+        this.objectStorage = new ObjectStorageService({
+            bucket: env.R2_MODEL_BUCKET,
+            accountId: env.R2_ACCOUNT_ID,
+            accessKeyId: env.R2_ACCESS_KEY_ID,
+            secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+            prefix: 'ml-artifacts',
+            localPath: options.modelStoragePath
+        }, this.logger);
+
         // Initialize ML pipeline
         this.mlPipeline = new MLPipelineService(this.logger, {
             host: env.DB_HOST,
@@ -63,7 +73,10 @@ class SportsDataService {
         }, {
             batchSize: 32,
             epochs: 100,
-            validationSplit: 0.2
+            validationSplit: 0.2,
+            objectStorage: this.objectStorage,
+            kvNamespace: this.cache?.kv,
+            aliasPrefix: env.MODEL_ALIAS_PREFIX
         });
 
         // API configuration
@@ -174,10 +187,14 @@ class SportsDataService {
                     });
 
                     analytics.mlPredictions = {
-                        seasonWins: seasonPrediction,
-                        model: 'TensorFlow Neural Network',
-                        confidence: seasonPrediction.confidence || 0.75,
-                        features: seasonPrediction.features || []
+                        seasonWins: {
+                            predictedValue: seasonPrediction.predictedValue,
+                            confidence: seasonPrediction.confidence,
+                            algorithm: seasonPrediction.algorithm || 'ridge_regression',
+                            modelVersion: seasonPrediction.modelVersion,
+                            featureNames: seasonPrediction.featureNames,
+                            rawFeatures: seasonPrediction.rawFeatures
+                        }
                     };
 
                     // Store prediction in database
@@ -189,13 +206,21 @@ class SportsDataService {
                         teamData.teamId,
                         seasonPrediction.predictedValue,
                         seasonPrediction.confidence,
-                        { features: seasonPrediction.features }
+                        {
+                            features: seasonPrediction.featureNames,
+                            rawFeatures: seasonPrediction.rawFeatures,
+                            modelMetrics: this.mlPipeline.modelMetadata?.get('season_wins')?.evaluation
+                        }
                     );
 
                     this.logger.info(`ML prediction generated for ${teamKey}`, {
                         predictedWins: seasonPrediction.predictedValue,
                         confidence: seasonPrediction.confidence
                     });
+
+                    if (sport === 'ncaa_baseball') {
+                        await this.captureNcaabArtifactSnapshot(analytics);
+                    }
                 }
             } catch (mlError) {
                 this.logger.warn(`ML prediction failed for ${teamKey}, using traditional analytics only`, {}, mlError);
@@ -203,6 +228,9 @@ class SportsDataService {
                     error: 'ML prediction unavailable',
                     fallback: 'Traditional statistical models only'
                 };
+                if (sport === 'ncaa_baseball') {
+                    await this.captureNcaabArtifactSnapshot(analytics);
+                }
             }
 
             // Generate composite rating (now includes ML predictions)
@@ -243,6 +271,26 @@ class SportsDataService {
                 calculatedAt: new Date().toISOString(),
                 dataSource: 'Error - No fake fallback data provided'
             };
+        }
+    }
+
+    async captureNcaabArtifactSnapshot(analytics) {
+        try {
+            const { artifact, artifactKey } = await this.mlPipeline.getArtifact('season_wins/latest');
+            analytics.modelArtifact = artifact;
+            await this.database.recordModelArtifactEvaluation({
+                modelKey: artifact.modelKey || 'season_wins',
+                sport: 'ncaa_baseball',
+                version: artifact.artifactVersion,
+                metrics: artifact.metrics,
+                calibration: artifact.calibration
+            });
+            this.logger.info('NCAA baseball artifact snapshot captured', {
+                artifactKey,
+                version: artifact.artifactVersion
+            });
+        } catch (error) {
+            this.logger.warn('Unable to capture NCAA baseball artifact snapshot', {}, error);
         }
     }
 
@@ -1020,10 +1068,16 @@ class SportsDataService {
 
             return {
                 prediction: {
-                    homeWinProbability: mlPrediction.homeWinProbability || mlPrediction.predictedValue,
-                    awayWinProbability: 1 - (mlPrediction.homeWinProbability || mlPrediction.predictedValue),
+                    homeWinProbability: mlPrediction.homeWinProbability
+                        ?? mlPrediction.probabilities?.home_win
+                        ?? mlPrediction.predictedValue,
+                    awayWinProbability: mlPrediction.awayWinProbability
+                        ?? mlPrediction.probabilities?.away_win
+                        ?? (1 - (mlPrediction.homeWinProbability
+                            ?? mlPrediction.probabilities?.home_win
+                            ?? mlPrediction.predictedValue)),
                     confidence: mlPrediction.confidence,
-                    modelType: 'TensorFlow Neural Network'
+                    modelType: mlPrediction.algorithm || 'multinomial_logistic_regression'
                 },
                 traditionalComparison: traditionalPrediction,
                 features: mlInput,
@@ -1039,7 +1093,7 @@ class SportsDataService {
                     predictedAt: new Date().toISOString(),
                     gameDate: gameDate.toISOString(),
                     dataSource: 'Machine Learning Pipeline + Real Statistical Models',
-                    methodology: 'Neural network trained on historical game data with feature engineering'
+                    methodology: 'Multinomial logistic regression with feature engineering and calibration'
                 }
             };
 
@@ -1100,7 +1154,11 @@ class SportsDataService {
                 playerId,
                 mlPrediction.predictedValue,
                 mlPrediction.confidence,
-                { features: mlInput }
+                {
+                    features: mlPrediction.featureNames,
+                    rawFeatures: mlPrediction.rawFeatures,
+                    modelMetrics: this.mlPipeline.modelMetadata?.get('player_performance')?.evaluation
+                }
             );
 
             timer.end({ confidence: mlPrediction.confidence });
@@ -1114,9 +1172,9 @@ class SportsDataService {
                 features: mlInput,
                 metadata: {
                     predictedAt: new Date().toISOString(),
-                    modelType: 'TensorFlow Neural Network',
+                    modelType: mlPrediction.algorithm || 'ridge_regression',
                     dataSource: 'Machine Learning Pipeline',
-                    methodology: 'Neural network trained on historical player performance data'
+                    methodology: 'Ridge regression with z-score normalization and calibration'
                 }
             };
 
@@ -1174,6 +1232,10 @@ class SportsDataService {
                 version: '2.0.0'
             };
         }
+    }
+
+    async getModelArtifact(modelKey) {
+        return this.mlPipeline.getArtifact(modelKey);
     }
 
     /**

@@ -10,6 +10,7 @@
     "deploy": "npm run build && wrangler pages deploy dist"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.714.0",
     "@sentry/node": "^10.20.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

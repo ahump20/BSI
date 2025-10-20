@@ -11,11 +11,10 @@
  * - Performance monitoring and drift detection
  */
 
-import * as tf from '@tensorflow/tfjs-node';
-import fs from 'fs';
-import path from 'path';
 import pkg from 'pg';
 const { Pool } = pkg;
+import path from 'path';
+import ObjectStorageService from '../services/object-storage-service.js';
 
 class MLPipelineService {
     constructor(logger, dbConfig, options = {}) {
@@ -37,9 +36,18 @@ class MLPipelineService {
         this.modelMetadata = new Map();
         this.activeTrainings = new Set();
 
-        this.modelStoragePath = options.modelStoragePath
-            || path.join(process.cwd(), 'storage', 'models');
-        this.metadataPath = path.join(this.modelStoragePath, 'metadata.json');
+        this.objectStorage = options.objectStorage || new ObjectStorageService({
+            bucket: options.objectStorageBucket || process.env.R2_MODEL_BUCKET,
+            accountId: options.objectStorageAccountId || process.env.R2_ACCOUNT_ID,
+            accessKeyId: options.objectStorageAccessKeyId || process.env.R2_ACCESS_KEY_ID,
+            secretAccessKey: options.objectStorageSecretAccessKey || process.env.R2_SECRET_ACCESS_KEY,
+            prefix: options.objectStoragePrefix || 'ml-artifacts',
+            localPath: options.modelStoragePath || path.join(process.cwd(), 'storage', 'models')
+        }, this.logger);
+
+        const kvNamespace = options.kvNamespace || options.aliasNamespace;
+        this.kv = kvNamespace || new Map();
+        this.aliasPrefix = options.aliasPrefix || 'ml:artifact';
 
         // Training configuration
         this.trainingConfig = {
@@ -96,6 +104,7 @@ class MLPipelineService {
         this.modelConfigs = {
             'game_outcome': {
                 type: 'classification',
+                algorithm: 'multinomial_logistic',
                 features: [
                     'home_elo_rating', 'away_elo_rating', 'elo_difference',
                     'home_recent_form', 'away_recent_form',
@@ -104,13 +113,13 @@ class MLPipelineService {
                     'strength_of_schedule_diff', 'rest_days_diff',
                     'home_field_advantage', 'weather_impact'
                 ],
-                labels: ['home_win', 'away_win'],
-                architecture: this.createGameOutcomeModel,
+                labels: ['home_win', 'away_win', 'draw'],
                 retrainFrequency: 'weekly'
             },
 
             'season_wins': {
                 type: 'regression',
+                algorithm: 'ridge_regression',
                 features: [
                     'preseason_elo', 'roster_strength', 'coaching_stability',
                     'injury_risk_score', 'schedule_difficulty',
@@ -118,12 +127,12 @@ class MLPipelineService {
                     'depth_chart_strength', 'recent_transactions'
                 ],
                 target: 'total_wins',
-                architecture: this.createSeasonWinsModel,
                 retrainFrequency: 'monthly'
             },
 
             'player_performance': {
                 type: 'regression',
+                algorithm: 'ridge_regression',
                 features: [
                     'career_stats', 'recent_form', 'age_factor',
                     'injury_history', 'matchup_difficulty',
@@ -131,7 +140,6 @@ class MLPipelineService {
                     'weather_performance', 'clutch_situations'
                 ],
                 target: 'performance_score',
-                architecture: this.createPlayerPerformanceModel,
                 retrainFrequency: 'daily'
             }
         };
@@ -176,41 +184,61 @@ class MLPipelineService {
             // Validate data quality
             await this.validateTrainingData(trainingData);
 
-            // Create and compile model
-            const model = config.architecture.call(this, trainingData.featureCount);
-
-            // Train model with callbacks
-            const history = await this.trainModelWithCallbacks(
-                model,
-                trainingData,
-                trainingRun,
-                config.type
-            );
+            // Fit regression-based model
+            const trainedModel = await this.fitModel(modelType, config, trainingData);
 
             // Evaluate model performance
-            const evaluation = await this.evaluateModel(model, trainingData, config.type);
+            const evaluation = this.evaluateModel(trainedModel, trainingData, config);
 
-            // Save model and update training run
-            const modelVersion = await this.saveModel(
-                model,
+            // Persist artifact and update tracking
+            const savedArtifact = await this.saveModelArtifact({
                 modelType,
+                trainedModel,
                 evaluation,
-                trainingRun?.model_version,
-                trainingData.normalizationParams,
-                trainingData.featureNames
-            );
-            await this.updateTrainingRun(trainingRun.id, 'completed', evaluation, modelVersion, null, modelType);
+                existingVersion: trainingRun?.model_version,
+                normalizationParams: trainingData.normalizationParams,
+                featureNames: trainingData.featureNames,
+                trainingSummary: {
+                    samples: trainingData.train.features.length,
+                    validationSamples: trainingData.validation.features.length
+                }
+            });
 
-            // Update active model
-            this.models.set(modelType, model);
-            this.modelVersions.set(modelType, modelVersion);
+            await this.updateTrainingRun(
+                trainingRun.id,
+                'completed',
+                evaluation,
+                savedArtifact.version,
+                null,
+                modelType,
+                savedArtifact.artifactKey
+            );
+
+            // Update active model cache
+            trainedModel.normalization = trainingData.normalizationParams;
+            trainedModel.featureNames = trainingData.featureNames;
+            trainedModel.version = savedArtifact.version;
+            trainedModel.artifactKey = savedArtifact.artifactKey;
+
+            this.models.set(modelType, trainedModel);
+            this.modelVersions.set(modelType, savedArtifact.version);
+            this.modelMetadata.set(modelType, {
+                version: savedArtifact.version,
+                evaluation,
+                normalization: trainingData.normalizationParams,
+                featureNames: trainingData.featureNames,
+                artifactKey: savedArtifact.artifactKey,
+                algorithm: trainedModel.algorithm,
+                classLabels: trainedModel.classLabels || null,
+                calibration: trainedModel.calibration
+            });
 
             const duration = Date.now() - startTime;
             this.metrics.modelRetrainings++;
 
             this.logger.info(`Model training completed`, {
                 modelType,
-                modelVersion,
+                modelVersion: savedArtifact.version,
                 duration_ms: duration,
                 accuracy: evaluation.accuracy,
                 loss: evaluation.loss
@@ -218,7 +246,8 @@ class MLPipelineService {
 
             return {
                 modelType,
-                modelVersion,
+                modelVersion: savedArtifact.version,
+                artifactKey: savedArtifact.artifactKey,
                 evaluation,
                 duration_ms: duration
             };
@@ -227,7 +256,7 @@ class MLPipelineService {
             this.metrics.errors++;
 
             if (trainingRun) {
-                await this.updateTrainingRun(trainingRun.id, 'failed', null, null, error.message, modelType);
+                await this.updateTrainingRun(trainingRun.id, 'failed', null, null, error.message, modelType, null);
             }
 
             this.logger.error(`Model training failed for ${modelType}`, {
@@ -295,119 +324,99 @@ class MLPipelineService {
         }
     }
 
-    /**
-     * Create game outcome prediction model architecture
-     */
-    createGameOutcomeModel(featureCount) {
-        const model = tf.sequential({
-            layers: [
-                tf.layers.dense({
-                    inputShape: [featureCount],
-                    units: 64,
-                    activation: 'relu',
-                    kernelRegularizer: tf.regularizers.l2({ l2: 0.001 })
-                }),
-                tf.layers.dropout({ rate: 0.3 }),
-                tf.layers.dense({
-                    units: 32,
-                    activation: 'relu',
-                    kernelRegularizer: tf.regularizers.l2({ l2: 0.001 })
-                }),
-                tf.layers.dropout({ rate: 0.2 }),
-                tf.layers.dense({
-                    units: 16,
-                    activation: 'relu'
-                }),
-                tf.layers.dense({
-                    units: 2, // home_win, away_win
-                    activation: 'softmax'
-                })
-            ]
-        });
-
-        model.compile({
-            optimizer: tf.train.adam(0.001),
-            loss: 'categoricalCrossentropy',
-            metrics: ['accuracy']
-        });
-
-        return model;
+    async fitModel(modelType, config, trainingData) {
+        if (config.type === 'classification') {
+            return this.fitMultinomialLogistic(modelType, config, trainingData);
+        }
+        return this.fitRidgeRegression(modelType, config, trainingData);
     }
 
-    /**
-     * Create season wins regression model
-     */
-    createSeasonWinsModel(featureCount) {
-        const model = tf.sequential({
-            layers: [
-                tf.layers.dense({
-                    inputShape: [featureCount],
-                    units: 128,
-                    activation: 'relu'
-                }),
-                tf.layers.dropout({ rate: 0.3 }),
-                tf.layers.dense({
-                    units: 64,
-                    activation: 'relu'
-                }),
-                tf.layers.dropout({ rate: 0.2 }),
-                tf.layers.dense({
-                    units: 32,
-                    activation: 'relu'
-                }),
-                tf.layers.dense({
-                    units: 1, // predicted wins
-                    activation: 'linear'
-                })
-            ]
-        });
+    fitMultinomialLogistic(modelType, config, trainingData) {
+        const features = trainingData.train.features;
+        const labels = this.ensureLabelMatrix(trainingData.train.labels, config.labels);
+        const classLabels = config.labels || labels[0].map((_, index) => `class_${index}`);
 
-        model.compile({
-            optimizer: tf.train.adam(0.001),
-            loss: 'meanSquaredError',
-            metrics: ['meanAbsoluteError']
-        });
+        const featureCount = features[0].length;
+        const classCount = classLabels.length;
+        const learningRate = 0.05;
+        const iterations = 1500;
+        const regularization = 0.01;
 
-        return model;
+        const biasFeatures = addBias(features);
+        const weightMatrix = Array.from({ length: classCount }, () => new Array(featureCount + 1).fill(0));
+
+        for (let iter = 0; iter < iterations; iter += 1) {
+            const gradients = Array.from({ length: classCount }, () => new Array(featureCount + 1).fill(0));
+
+            for (let i = 0; i < biasFeatures.length; i += 1) {
+                const sample = biasFeatures[i];
+                const probabilities = softmax(weightMatrix.map((weights) => dotProduct(weights, sample)));
+
+                for (let c = 0; c < classCount; c += 1) {
+                    const error = probabilities[c] - labels[i][c];
+                    for (let j = 0; j < sample.length; j += 1) {
+                        gradients[c][j] += (error * sample[j]);
+                    }
+                }
+            }
+
+            for (let c = 0; c < classCount; c += 1) {
+                for (let j = 0; j < weightMatrix[c].length; j += 1) {
+                    const regularizationTerm = j === 0 ? 0 : regularization * weightMatrix[c][j];
+                    const gradient = (gradients[c][j] / biasFeatures.length) + regularizationTerm;
+                    weightMatrix[c][j] -= learningRate * gradient;
+                }
+            }
+        }
+
+        const intercepts = weightMatrix.map((weights) => weights[0]);
+        const coefficients = weightMatrix.map((weights) => weights.slice(1));
+
+        const calibration = this.computeClassificationCalibration({
+            intercepts,
+            coefficients,
+            classLabels
+        }, trainingData.validation, config.labels);
+
+        return {
+            modelType,
+            type: 'classification',
+            algorithm: config.algorithm || 'multinomial_logistic',
+            intercepts,
+            coefficients,
+            classLabels,
+            calibration
+        };
     }
 
-    /**
-     * Create player performance model
-     */
-    createPlayerPerformanceModel(featureCount) {
-        const model = tf.sequential({
-            layers: [
-                tf.layers.dense({
-                    inputShape: [featureCount],
-                    units: 96,
-                    activation: 'relu'
-                }),
-                tf.layers.batchNormalization(),
-                tf.layers.dropout({ rate: 0.3 }),
-                tf.layers.dense({
-                    units: 48,
-                    activation: 'relu'
-                }),
-                tf.layers.batchNormalization(),
-                tf.layers.dropout({ rate: 0.2 }),
-                tf.layers.dense({
-                    units: 24,
-                    activation: 'relu'
-                }),
-                tf.layers.dense({
-                    units: 1,
-                    activation: 'sigmoid' // performance score 0-1
-                })
-            ]
-        });
+    fitRidgeRegression(modelType, config, trainingData) {
+        const features = trainingData.train.features;
+        const labels = trainingData.train.labels.map((value) => Number(value));
+        const lambda = config.regularization || 1;
 
-        model.compile({
-            optimizer: tf.train.adam(0.001),
-            loss: 'meanSquaredError',
-            metrics: ['meanAbsoluteError']
-        });
+        const biasFeatures = addBias(features);
+        const xt = transpose(biasFeatures);
+        const xtx = multiplyMatrices(xt, biasFeatures);
+        const regularized = addRegularization(xtx, lambda);
+        const xty = multiplyMatrixVector(xt, labels);
+        const weights = solveLinearSystem(regularized, xty);
 
-        return model;
+        const intercept = weights[0];
+        const coefficients = weights.slice(1);
+
+        const calibration = this.computeRegressionCalibration({
+            intercept,
+            coefficients
+        }, trainingData.validation);
+
+        return {
+            modelType,
+            type: 'regression',
+            algorithm: config.algorithm || 'ridge_regression',
+            intercept,
+            coefficients,
+            calibration
+        };
     }
 
     /**
@@ -1085,7 +1094,7 @@ class MLPipelineService {
         }
     }
 
-    async evaluateModel(model, trainingData, modelType) {
+    evaluateModel(model, trainingData, config) {
         const evaluation = {
             loss: null,
             accuracy: null,
@@ -1095,6 +1104,7 @@ class MLPipelineService {
             recall: null,
             f1Score: null,
             confusionMatrix: null,
+            logLoss: null,
             sampleCount: trainingData.validation.features.length
         };
 
@@ -1102,129 +1112,284 @@ class MLPipelineService {
             return evaluation;
         }
 
-        const valFeatures = tf.tensor2d(trainingData.validation.features);
+        if (config.type === 'classification') {
+            const classLabels = model.classLabels || config.labels || [];
+            const classCount = classLabels.length;
+            const confusionMatrix = Array.from({ length: classCount }, () => new Array(classCount).fill(0));
+            let correct = 0;
+            let logLoss = 0;
 
-        try {
-            if (modelType === 'classification') {
-                const valLabels = tf.tensor2d(trainingData.validation.labels);
-                const evalOutput = await model.evaluate(valFeatures, valLabels, { verbose: 0 });
-                const [lossTensor, accuracyTensor] = Array.isArray(evalOutput) ? evalOutput : [evalOutput, null];
+            const labelMatrix = this.ensureLabelMatrix(trainingData.validation.labels, classLabels);
 
-                evaluation.loss = lossTensor?.dataSync()[0] ?? null;
-                if (accuracyTensor) {
-                    evaluation.accuracy = accuracyTensor.dataSync()[0];
+            for (let i = 0; i < trainingData.validation.features.length; i += 1) {
+                const featureVector = trainingData.validation.features[i];
+                const probabilities = this.runClassification(model, featureVector, { applyCalibration: true });
+                const actualVector = labelMatrix[i];
+                const predictedIndex = probabilities.indexOf(Math.max(...probabilities));
+                const actualIndex = actualVector.indexOf(Math.max(...actualVector));
+
+                if (predictedIndex === actualIndex) {
+                    correct += 1;
                 }
 
-                const predictionTensor = model.predict(valFeatures);
-                const predictions = predictionTensor.arraySync();
-                const labels = valLabels.arraySync();
+                confusionMatrix[actualIndex][predictedIndex] += 1;
 
-                let truePositive = 0;
-                let trueNegative = 0;
-                let falsePositive = 0;
-                let falseNegative = 0;
+                for (let c = 0; c < classCount; c += 1) {
+                    const y = actualVector[c];
+                    const p = Math.max(1e-9, Math.min(1 - 1e-9, probabilities[c]));
+                    logLoss += -y * Math.log(p);
+                }
+            }
 
-                predictions.forEach((prediction, index) => {
-                    const predictedIndex = prediction.indexOf(Math.max(...prediction));
-                    const actualIndex = labels[index].indexOf(Math.max(...labels[index]));
+            const perClassMetrics = classLabels.map((_, index) => {
+                const tp = confusionMatrix[index][index];
+                const fp = confusionMatrix.reduce((sum, row, rowIndex) => rowIndex === index ? sum : sum + row[index], 0);
+                const fn = confusionMatrix[index].reduce((sum, value, colIndex) => colIndex === index ? sum : sum + value, 0);
 
-                    if (predictedIndex === 0 && actualIndex === 0) {
-                        truePositive += 1;
-                    } else if (predictedIndex === 0 && actualIndex === 1) {
-                        falsePositive += 1;
-                    } else if (predictedIndex === 1 && actualIndex === 0) {
-                        falseNegative += 1;
-                    } else if (predictedIndex === 1 && actualIndex === 1) {
-                        trueNegative += 1;
-                    }
-                });
-
-                const precision = truePositive + falsePositive === 0
-                    ? 0
-                    : truePositive / (truePositive + falsePositive);
-                const recall = truePositive + falseNegative === 0
-                    ? 0
-                    : truePositive / (truePositive + falseNegative);
-                const accuracy = (truePositive + trueNegative)
-                    / Math.max(1, truePositive + trueNegative + falsePositive + falseNegative);
+                const precision = tp + fp === 0 ? 0 : tp / (tp + fp);
+                const recall = tp + fn === 0 ? 0 : tp / (tp + fn);
                 const f1 = precision + recall === 0 ? 0 : (2 * precision * recall) / (precision + recall);
 
-                evaluation.accuracy = evaluation.accuracy ?? accuracy;
-                evaluation.precision = precision;
-                evaluation.recall = recall;
-                evaluation.f1Score = f1;
-                evaluation.confusionMatrix = [
-                    [truePositive, falsePositive],
-                    [falseNegative, trueNegative]
-                ];
+                return { precision, recall, f1 };
+            });
 
-                predictionTensor.dispose();
-                valLabels.dispose();
-            } else {
-                const valLabels = tf.tensor1d(trainingData.validation.labels);
-                const evalOutput = await model.evaluate(valFeatures, valLabels, { verbose: 0 });
-                const [lossTensor, maeTensor] = Array.isArray(evalOutput) ? evalOutput : [evalOutput, null];
+            const macroPrecision = perClassMetrics.reduce((sum, metric) => sum + metric.precision, 0) / Math.max(1, perClassMetrics.length);
+            const macroRecall = perClassMetrics.reduce((sum, metric) => sum + metric.recall, 0) / Math.max(1, perClassMetrics.length);
+            const macroF1 = perClassMetrics.reduce((sum, metric) => sum + metric.f1, 0) / Math.max(1, perClassMetrics.length);
 
-                evaluation.loss = lossTensor?.dataSync()[0] ?? null;
-                if (maeTensor) {
-                    evaluation.mae = maeTensor.dataSync()[0];
-                }
+            evaluation.accuracy = correct / trainingData.validation.features.length;
+            evaluation.precision = macroPrecision;
+            evaluation.recall = macroRecall;
+            evaluation.f1Score = macroF1;
+            evaluation.confusionMatrix = confusionMatrix;
+            evaluation.loss = logLoss / trainingData.validation.features.length;
+            evaluation.logLoss = evaluation.loss;
+        } else {
+            const predictions = [];
+            const actuals = trainingData.validation.labels.map((value) => Number(value));
 
-                const predictionTensor = model.predict(valFeatures);
-                const predictions = predictionTensor.dataSync();
-                const labels = trainingData.validation.labels;
-
-                const squaredErrors = [];
-                const absoluteErrors = [];
-                predictions.forEach((prediction, index) => {
-                    const actual = Number(labels[index]);
-                    const error = prediction - actual;
-                    squaredErrors.push(error * error);
-                    absoluteErrors.push(Math.abs(error));
-                });
-
-                const mse = squaredErrors.reduce((sum, value) => sum + value, 0) / Math.max(1, squaredErrors.length);
-                evaluation.rmse = Math.sqrt(mse);
-                evaluation.mae = evaluation.mae ?? (absoluteErrors.reduce((sum, value) => sum + value, 0) / Math.max(1, absoluteErrors.length));
-
-                predictionTensor.dispose();
-                valLabels.dispose();
+            for (const featureVector of trainingData.validation.features) {
+                const prediction = this.runRegression(model, featureVector, { applyCalibration: true });
+                predictions.push(prediction);
             }
-        } finally {
-            valFeatures.dispose();
+
+            const errors = predictions.map((prediction, index) => prediction - actuals[index]);
+            const absoluteErrors = errors.map((value) => Math.abs(value));
+            const squaredErrors = errors.map((value) => value * value);
+
+            const mae = absoluteErrors.reduce((sum, value) => sum + value, 0) / Math.max(1, absoluteErrors.length);
+            const mse = squaredErrors.reduce((sum, value) => sum + value, 0) / Math.max(1, squaredErrors.length);
+
+            evaluation.mae = mae;
+            evaluation.rmse = Math.sqrt(mse);
+            evaluation.loss = mse;
         }
 
         return evaluation;
     }
 
-    async saveModel(model, modelType, evaluation, existingVersion, normalizationParams, featureNames) {
+    computeClassificationCalibration(model, validationData, labels = []) {
+        const classLabels = model.classLabels || labels || [];
+        if (!validationData.features.length) {
+            return {
+                method: 'platt',
+                parameters: classLabels.map((label) => ({ classLabel: label, a: 1, b: 0 }))
+            };
+        }
+
+        const labelMatrix = this.ensureLabelMatrix(validationData.labels, classLabels);
+        const rawProbabilities = validationData.features.map((featureVector) => (
+            this.runClassification({ ...model, calibration: null }, featureVector, { applyCalibration: false })
+        ));
+
+        const parameters = classLabels.map((label, index) => (
+            fitPlattScaling(
+                rawProbabilities.map((probabilityVector) => probabilityVector[index]),
+                labelMatrix.map((row) => row[index])
+            )
+        ));
+
+        return {
+            method: 'platt',
+            parameters: parameters.map((params, index) => ({
+                classLabel: classLabels[index],
+                a: params.a,
+                b: params.b
+            }))
+        };
+    }
+
+    computeRegressionCalibration(model, validationData) {
+        if (!validationData.features.length) {
+            return {
+                method: 'linear',
+                parameters: { slope: 1, intercept: 0, residualStd: 0 }
+            };
+        }
+
+        const predictions = validationData.features.map((featureVector) => (
+            this.runRegression({ ...model, calibration: null }, featureVector, { applyCalibration: false })
+        ));
+        const actuals = validationData.labels.map((value) => Number(value));
+
+        const calibration = fitLinearCalibration(predictions, actuals);
+        return {
+            method: 'linear',
+            parameters: calibration
+        };
+    }
+
+    ensureLabelMatrix(labels, classLabels = []) {
+        if (!labels.length) {
+            return [];
+        }
+
+        if (Array.isArray(labels[0])) {
+            return labels.map((row) => row.map((value) => Number(value)));
+        }
+
+        const uniqueLabels = Array.from(new Set(labels));
+        const classes = classLabels.length ? classLabels : uniqueLabels;
+
+        return labels.map((value) => (
+            classes.map((label) => (value === label ? 1 : 0))
+        ));
+    }
+
+    runClassification(model, normalizedFeatureVector, options = {}) {
+        const intercepts = model.intercepts || [];
+        const coefficients = model.coefficients || [];
+        const classLabels = model.classLabels || coefficients.map((_, index) => `class_${index}`);
+
+        const scores = coefficients.map((coefficientVector, classIndex) => (
+            intercepts[classIndex] + dotProduct(coefficientVector, normalizedFeatureVector)
+        ));
+
+        let probabilities = softmax(scores);
+        if (options.applyCalibration !== false && model.calibration) {
+            probabilities = applyCalibration(probabilities, model.calibration, classLabels);
+        }
+
+        return probabilities;
+    }
+
+    runRegression(model, normalizedFeatureVector, options = {}) {
+        const rawPrediction = model.intercept + dotProduct(model.coefficients, normalizedFeatureVector);
+        if (options.applyCalibration !== false && model.calibration) {
+            const { slope = 1, intercept = 0 } = model.calibration.parameters || {};
+            return (slope * rawPrediction) + intercept;
+        }
+        return rawPrediction;
+    }
+
+    estimateRegressionConfidence(model) {
+        const residualStd = model.calibration?.parameters?.residualStd;
+        if (!Number.isFinite(residualStd)) {
+            return 0.75;
+        }
+        const score = 1 / (1 + residualStd);
+        return Math.max(0.05, Math.min(0.95, score));
+    }
+
+    async saveModelArtifact({
+        modelType,
+        trainedModel,
+        evaluation,
+        existingVersion,
+        normalizationParams,
+        featureNames,
+        trainingSummary = {}
+    }) {
         const version = existingVersion || `v${Date.now()}`;
-        const modelDirectory = path.join(this.modelStoragePath, modelType, version);
+        const artifactKey = `${modelType}/${version}.json`;
 
-        await fs.promises.mkdir(modelDirectory, { recursive: true });
-
-        await model.save(`file://${modelDirectory}`);
-
-        const metadata = {
-            version,
-            modelType,
-            evaluation,
-            normalization: normalizationParams,
+        const artifact = {
+            schemaVersion: '1.1',
+            modelKey: modelType,
+            artifactVersion: version,
+            algorithm: trainedModel.algorithm,
+            modelType: trainedModel.type,
+            trainedAt: new Date().toISOString(),
             featureNames,
-            modelPath: modelDirectory,
-            updatedAt: new Date().toISOString()
+            featureStats: normalizationParams,
+            coefficients: this.serializeCoefficients(trainedModel),
+            intercept: this.serializeIntercept(trainedModel),
+            calibration: trainedModel.calibration,
+            metrics: evaluation,
+            trainingSummary,
+            normalization: normalizationParams
         };
 
-        this.modelMetadata.set(modelType, metadata);
-        await this.persistMetadata();
+        await this.objectStorage.putJson(artifactKey, artifact);
+        await this.persistAlias(modelType, artifactKey, artifact);
 
-        this.logger.info('Model saved successfully', {
+        this.logger.info('Model artifact stored', {
             modelType,
             version,
-            modelDirectory
+            artifactKey
         });
 
-        return version;
+        return { version, artifactKey, artifact };
+    }
+
+    serializeCoefficients(trainedModel) {
+        if (trainedModel.type === 'classification') {
+            return (trainedModel.coefficients || []).map((values, index) => ({
+                classLabel: trainedModel.classLabels?.[index] || `class_${index}`,
+                values
+            }));
+        }
+        return trainedModel.coefficients;
+    }
+
+    serializeIntercept(trainedModel) {
+        if (trainedModel.type === 'classification') {
+            return (trainedModel.intercepts || []).map((value, index) => ({
+                classLabel: trainedModel.classLabels?.[index] || `class_${index}`,
+                value
+            }));
+        }
+        return trainedModel.intercept;
+    }
+
+    async persistAlias(modelType, artifactKey, artifact) {
+        const aliasKey = `${this.aliasPrefix}:${modelType}:latest`;
+        const payload = JSON.stringify({
+            artifactKey,
+            version: artifact.artifactVersion,
+            updatedAt: new Date().toISOString(),
+            metrics: artifact.metrics
+        });
+        await this.kvPut(aliasKey, payload);
+    }
+
+    async kvPut(key, value) {
+        if (!this.kv) {
+            return;
+        }
+        if (typeof this.kv.put === 'function') {
+            await this.kv.put(key, value);
+            return;
+        }
+        if (this.kv instanceof Map) {
+            this.kv.set(key, value);
+            return;
+        }
+        this.kv[key] = value;
+    }
+
+    async kvGet(key) {
+        if (!this.kv) {
+            return null;
+        }
+        if (typeof this.kv.get === 'function') {
+            const result = this.kv.get(key);
+            return result instanceof Promise ? await result : result;
+        }
+        if (this.kv instanceof Map) {
+            return this.kv.get(key) ?? null;
+        }
+        return this.kv[key] ?? null;
     }
 
     async prepareFeatures(modelType, inputData) {
@@ -1328,114 +1493,75 @@ class MLPipelineService {
     }
 
     async makePrediction(model, features, modelType) {
-        const inputTensor = tf.tensor2d([features.values]);
-        let predictionTensor;
+        const type = model.type || this.modelConfigs[modelType]?.type;
 
-        try {
-            predictionTensor = model.predict(inputTensor);
-            const predictionArray = predictionTensor.arraySync();
+        if (type === 'classification') {
+            const classLabels = model.classLabels || this.modelConfigs[modelType]?.labels || [];
+            const probabilities = this.runClassification(model, features.values, { applyCalibration: true });
+            const topIndex = probabilities.indexOf(Math.max(...probabilities));
+            const predictedClass = classLabels[topIndex] || `class_${topIndex}`;
+            const probabilityMap = {};
+            classLabels.forEach((label, index) => {
+                probabilityMap[label] = probabilities[index];
+            });
 
-            if (modelType === 'game_outcome') {
-                const [homeProbability, awayProbability] = predictionArray[0];
-                const predictedClass = homeProbability >= awayProbability ? 'home_win' : 'away_win';
-                const confidence = Math.max(homeProbability, awayProbability);
-
-                return {
-                    prediction: predictedClass,
-                    confidence,
-                    probabilities: {
-                        home_win: homeProbability,
-                        away_win: awayProbability
-                    },
-                    featureNames: features.featureNames,
-                    rawFeatures: features.rawValues,
-                    context: features.context
-                };
-            }
-
-            const predictedValue = predictionArray[0][0];
-            return {
-                prediction: predictedValue,
-                confidence: null,
+            const response = {
+                prediction: predictedClass,
+                predictedValue: probabilities[topIndex],
+                confidence: probabilities[topIndex],
+                probabilities: probabilityMap,
                 featureNames: features.featureNames,
                 rawFeatures: features.rawValues,
-                context: features.context
+                context: features.context,
+                modelVersion: model.version,
+                algorithm: model.algorithm
             };
-        } finally {
-            inputTensor.dispose();
-            if (predictionTensor) {
-                predictionTensor.dispose();
+
+            if (probabilityMap.home_win !== undefined) {
+                response.homeWinProbability = probabilityMap.home_win;
+                response.awayWinProbability = probabilityMap.away_win;
+                response.tieProbability = probabilityMap.draw ?? probabilityMap.tie;
             }
+
+            return response;
         }
+
+        const predictedValue = this.runRegression(model, features.values, { applyCalibration: true });
+        const confidence = this.estimateRegressionConfidence(model);
+
+        return {
+            prediction: predictedValue,
+            predictedValue,
+            confidence,
+            featureNames: features.featureNames,
+            rawFeatures: features.rawValues,
+            context: features.context,
+            modelVersion: model.version,
+            algorithm: model.algorithm
+        };
     }
 
-    /**
-     * Train model with monitoring callbacks
-     */
-    async trainModelWithCallbacks(model, trainingData, trainingRun, modelType) {
-        const trainTensor = tf.tensor2d(trainingData.train.features);
-        const trainLabelsTensor = modelType === 'classification'
-            ? tf.tensor2d(trainingData.train.labels)
-            : tf.tensor1d(trainingData.train.labels);
+    async getArtifact(modelKey) {
+        const [modelType, versionPart] = modelKey.includes('/')
+            ? modelKey.split('/')
+            : [modelKey, 'latest'];
 
-        const hasValidation = trainingData.validation.features.length > 0;
-        const valTensor = hasValidation ? tf.tensor2d(trainingData.validation.features) : null;
-        const valLabelsTensor = hasValidation
-            ? (modelType === 'classification'
-                ? tf.tensor2d(trainingData.validation.labels)
-                : tf.tensor1d(trainingData.validation.labels))
-            : null;
+        if (!modelType) {
+            throw new Error('modelKey is required');
+        }
 
-        const callbacks = {
-            onEpochEnd: async (epoch, logs) => {
-                this.logger.debug(`Epoch ${epoch + 1} completed`, {
-                    trainingRunId: trainingRun.id,
-                    loss: logs.loss,
-                    accuracy: logs.acc || logs.meanAbsoluteError,
-                    valLoss: logs.val_loss,
-                    valAccuracy: logs.val_acc || logs.val_meanAbsoluteError
-                });
-
-                // Update training run progress
-                await this.updateTrainingProgress(trainingRun.id, epoch + 1, logs);
-            },
-
-            onTrainEnd: () => {
-                // Clean up tensors
-                trainTensor.dispose();
-                trainLabelsTensor.dispose();
-                if (valTensor) {
-                    valTensor.dispose();
-                }
-                if (valLabelsTensor) {
-                    valLabelsTensor.dispose();
-                }
+        if (versionPart === 'latest' || !versionPart) {
+            const alias = await this.getLatestAlias(modelType);
+            if (!alias?.artifactKey) {
+                throw new Error(`No artifact available for ${modelType}`);
             }
-        };
-
-        // Early stopping callback
-        const callbackList = [callbacks];
-        if (hasValidation) {
-            callbackList.push(tf.callbacks.earlyStopping({
-                monitor: 'val_loss',
-                patience: this.trainingConfig.patience,
-                minDelta: this.trainingConfig.minDelta,
-                restoreBestWeights: true
-            }));
+            const artifact = await this.objectStorage.getJson(alias.artifactKey);
+            return { artifact, artifactKey: alias.artifactKey };
         }
 
-        const fitOptions = {
-            epochs: this.trainingConfig.epochs,
-            batchSize: this.trainingConfig.batchSize,
-            callbacks: callbackList,
-            verbose: 0
-        };
-
-        if (hasValidation) {
-            fitOptions.validationData = [valTensor, valLabelsTensor];
-        }
-
-        return await model.fit(trainTensor, trainLabelsTensor, fitOptions);
+        const artifactKey = `${modelType}/${versionPart}.json`;
+        const artifact = await this.objectStorage.getJson(artifactKey);
+        return { artifact, artifactKey };
     }
 
     /**
@@ -1491,35 +1617,26 @@ class MLPipelineService {
     // Additional helper methods...
     async loadModels() {
         try {
-            await fs.promises.mkdir(this.modelStoragePath, { recursive: true });
-
-            let metadataRaw;
-            try {
-                metadataRaw = await fs.promises.readFile(this.metadataPath, 'utf-8');
-            } catch (error) {
-                if (error.code === 'ENOENT') {
-                    this.logger.info('No persisted model metadata found; cold start expected');
-                    return;
-                }
-                throw error;
-            }
-
-            const metadataObject = JSON.parse(metadataRaw);
-            for (const [modelType, metadata] of Object.entries(metadataObject)) {
+            for (const modelType of Object.keys(this.modelConfigs || {})) {
                 try {
-                    const modelJsonPath = path.join(metadata.modelPath, 'model.json');
-                    const model = await tf.loadLayersModel(`file://${modelJsonPath}`);
-                    this.models.set(modelType, model);
-                    this.modelVersions.set(modelType, metadata.version);
-                    this.modelMetadata.set(modelType, metadata);
+                    const alias = await this.getLatestAlias(modelType);
+                    if (!alias?.artifactKey) {
+                        continue;
+                    }
+
+                    const artifact = await this.objectStorage.getJson(alias.artifactKey);
+                    const hydrated = this.hydrateModelFromArtifact(artifact, alias.artifactKey);
+
+                    this.models.set(modelType, hydrated.model);
+                    this.modelVersions.set(modelType, artifact.artifactVersion);
+                    this.modelMetadata.set(modelType, hydrated.metadata);
                     this.logger.info('Loaded persisted model', {
                         modelType,
-                        version: metadata.version
+                        version: artifact.artifactVersion
                     });
                 } catch (error) {
                     this.logger.error('Failed to load persisted model', {
-                        modelType,
-                        metadata
+                        modelType
                     }, error);
                 }
             }
@@ -1528,22 +1645,76 @@ class MLPipelineService {
         }
     }
 
-    async persistMetadata() {
-        const serialized = {};
-        for (const [modelType, metadata] of this.modelMetadata.entries()) {
-            serialized[modelType] = metadata;
+    async getLatestAlias(modelType) {
+        const aliasKey = `${this.aliasPrefix}:${modelType}:latest`;
+        const value = await this.kvGet(aliasKey);
+        if (!value) {
+            return null;
         }
-
-        await fs.promises.mkdir(this.modelStoragePath, { recursive: true });
-        await fs.promises.writeFile(this.metadataPath, JSON.stringify(serialized, null, 2), 'utf-8');
+        try {
+            return typeof value === 'string' ? JSON.parse(value) : value;
+        } catch (error) {
+            this.logger.warn('Failed to parse model alias payload', { modelType }, error);
+            return null;
+        }
     }
 
-    async updateTrainingRun(runId, status, evaluation = null, modelVersion = null, errorMessage = null, modelType = null) {
+    hydrateModelFromArtifact(artifact, artifactKey) {
+        const isClassification = artifact.modelType === 'classification';
+        const classLabels = isClassification
+            ? (artifact.coefficients || []).map((item) => (item.classLabel ?? item.label ?? null))
+            : null;
+
+        const coefficients = isClassification
+            ? (artifact.coefficients || []).map((item) => item.values ?? item)
+            : (Array.isArray(artifact.coefficients) ? artifact.coefficients : artifact.coefficients?.values || []);
+
+        const intercepts = isClassification
+            ? (artifact.intercept || []).map((item) => item.value ?? item)
+            : [];
+
+        const intercept = isClassification
+            ? null
+            : (Array.isArray(artifact.intercept) ? (artifact.intercept[0]?.value ?? 0) : artifact.intercept ?? 0);
+
+        const model = {
+            type: artifact.modelType,
+            algorithm: artifact.algorithm,
+            calibration: artifact.calibration,
+            coefficients,
+            intercept,
+            intercepts,
+            classLabels: classLabels && classLabels.every((label) => label !== null)
+                ? classLabels
+                : (this.modelConfigs[artifact.modelKey]?.labels || []),
+            featureNames: artifact.featureNames,
+            normalization: artifact.featureStats,
+            version: artifact.artifactVersion,
+            artifactKey
+        };
+
+        if (!isClassification) {
+            delete model.intercepts;
+        }
+
+        const metadata = {
+            version: artifact.artifactVersion,
+            evaluation: artifact.metrics,
+            normalization: artifact.featureStats,
+            featureNames: artifact.featureNames,
+            artifactKey,
+            algorithm: artifact.algorithm,
+            classLabels: model.classLabels || null,
+            calibration: artifact.calibration
+        };
+
+        return { model, metadata };
+    }
+
+    async updateTrainingRun(runId, status, evaluation = null, modelVersion = null, errorMessage = null, modelType = null, artifactKey = null) {
         const metrics = evaluation || {};
         const confusionMatrix = metrics.confusionMatrix ? JSON.stringify(metrics.confusionMatrix) : null;
-        const modelPath = modelVersion && modelType
-            ? path.join(this.modelStoragePath, modelType, modelVersion)
-            : null;
+        const modelPath = artifactKey || (modelVersion && modelType ? `${modelType}/${modelVersion}.json` : null);
 
         const query = `
             UPDATE model_training_runs
@@ -1592,29 +1763,6 @@ class MLPipelineService {
                 WHERE id = $1
             `;
             await this.db.query(metricsQuery, [runId, JSON.stringify({ evaluation: metrics })]);
-        }
-    }
-
-    async updateTrainingProgress(runId, epoch, logs) {
-        try {
-            const query = `
-                UPDATE model_training_runs
-                SET hyperparameters = jsonb_set(
-                    jsonb_set(
-                        COALESCE(hyperparameters, '{}'::jsonb),
-                        '{current_epoch}',
-                        to_jsonb($2::int),
-                        true
-                    ),
-                    '{last_logs}',
-                    $3::jsonb,
-                    true
-                )
-                WHERE id = $1
-            `;
-            await this.db.query(query, [runId, epoch, JSON.stringify(logs || {})]);
-        } catch (error) {
-            this.logger.error('Failed to update training progress', { runId, epoch }, error);
         }
     }
 
@@ -1752,7 +1900,7 @@ class MLPipelineService {
         return null;
     }
 
-    async createTrainingRun(modelType, options) {
+    async createTrainingRun(modelType, options = {}) {
         const query = `
             INSERT INTO model_training_runs (
                 model_name, model_version, algorithm, hyperparameters,
@@ -1762,10 +1910,11 @@ class MLPipelineService {
         `;
 
         const version = `v${Date.now()}`;
+        const config = this.modelConfigs[modelType] || {};
         const result = await this.db.query(query, [
             modelType,
             version,
-            'tensorflow_neural_network',
+            config.algorithm || 'ridge_regression',
             JSON.stringify(this.trainingConfig),
             options.startDate || '2020-01-01',
             options.endDate || new Date().toISOString().split('T')[0]
@@ -1874,6 +2023,178 @@ class SportsFeatureEngineer {
         const result = await this.db.query(query, [teamId, games]);
         return Number(result.rows[0]?.win_rate) || 0.5;
     }
+}
+
+function addBias(features) {
+    return features.map((row) => [1, ...row]);
+}
+
+function dotProduct(a, b) {
+    return a.reduce((sum, value, index) => sum + value * (b[index] ?? 0), 0);
+}
+
+function softmax(values) {
+    const max = Math.max(...values);
+    const exps = values.map((value) => Math.exp(value - max));
+    const sum = exps.reduce((total, value) => total + value, 0);
+    return exps.map((value) => value / (sum || 1));
+}
+
+function transpose(matrix) {
+    return matrix[0].map((_, columnIndex) => matrix.map((row) => row[columnIndex]));
+}
+
+function multiplyMatrices(a, b) {
+    const result = Array.from({ length: a.length }, () => new Array(b[0].length).fill(0));
+    for (let i = 0; i < a.length; i += 1) {
+        for (let k = 0; k < b.length; k += 1) {
+            for (let j = 0; j < b[0].length; j += 1) {
+                result[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+    return result;
+}
+
+function multiplyMatrixVector(matrix, vector) {
+    return matrix.map((row) => dotProduct(row, vector));
+}
+
+function addRegularization(matrix, lambda) {
+    return matrix.map((row, rowIndex) => (
+        row.map((value, columnIndex) => {
+            if (rowIndex === columnIndex && rowIndex !== 0) {
+                return value + lambda;
+            }
+            return value;
+        })
+    ));
+}
+
+function solveLinearSystem(matrix, vector) {
+    const size = matrix.length;
+    const augmented = matrix.map((row, index) => [...row, vector[index]]);
+
+    for (let i = 0; i < size; i += 1) {
+        let pivotRow = i;
+        for (let j = i + 1; j < size; j += 1) {
+            if (Math.abs(augmented[j][i]) > Math.abs(augmented[pivotRow][i])) {
+                pivotRow = j;
+            }
+        }
+
+        const pivotValue = augmented[pivotRow][i];
+        if (Math.abs(pivotValue) < 1e-9) {
+            throw new Error('Singular matrix encountered while solving linear system');
+        }
+
+        if (pivotRow !== i) {
+            const temp = augmented[i];
+            augmented[i] = augmented[pivotRow];
+            augmented[pivotRow] = temp;
+        }
+
+        for (let j = i; j <= size; j += 1) {
+            augmented[i][j] /= pivotValue;
+        }
+
+        for (let row = 0; row < size; row += 1) {
+            if (row === i) continue;
+            const factor = augmented[row][i];
+            for (let col = i; col <= size; col += 1) {
+                augmented[row][col] -= factor * augmented[i][col];
+            }
+        }
+    }
+
+    return augmented.map((row) => row[size]);
+}
+
+function fitPlattScaling(probabilities, outcomes, iterations = 400, learningRate = 0.01, lambda = 1e-4) {
+    if (!probabilities.length) {
+        return { a: 1, b: 0 };
+    }
+
+    let a = 1;
+    let b = 0;
+    const n = probabilities.length;
+
+    for (let iter = 0; iter < iterations; iter += 1) {
+        let gradA = 0;
+        let gradB = 0;
+
+        for (let i = 0; i < n; i += 1) {
+            const x = probabilities[i];
+            const y = outcomes[i];
+            const z = (a * x) + b;
+            const p = 1 / (1 + Math.exp(-z));
+            const error = p - y;
+            gradA += error * x;
+            gradB += error;
+        }
+
+        gradA = (gradA / n) + (lambda * a);
+        gradB = gradB / n;
+
+        a -= learningRate * gradA;
+        b -= learningRate * gradB;
+    }
+
+    return { a, b };
+}
+
+function fitLinearCalibration(predictions, actuals) {
+    if (!predictions.length) {
+        return { slope: 1, intercept: 0, residualStd: 0 };
+    }
+
+    const meanPrediction = predictions.reduce((sum, value) => sum + value, 0) / predictions.length;
+    const meanActual = actuals.reduce((sum, value) => sum + value, 0) / actuals.length;
+
+    let numerator = 0;
+    let denominator = 0;
+    for (let i = 0; i < predictions.length; i += 1) {
+        const predCentered = predictions[i] - meanPrediction;
+        const actualCentered = actuals[i] - meanActual;
+        numerator += predCentered * actualCentered;
+        denominator += predCentered * predCentered;
+    }
+
+    const slope = denominator === 0 ? 1 : numerator / denominator;
+    const intercept = meanActual - (slope * meanPrediction);
+
+    const residuals = predictions.map((prediction, index) => (
+        actuals[index] - ((slope * prediction) + intercept)
+    ));
+    const residualStd = Math.sqrt(residuals.reduce((sum, value) => sum + (value * value), 0) / Math.max(1, residuals.length));
+
+    return { slope, intercept, residualStd };
+}
+
+function applyCalibration(probabilities, calibration, classLabels) {
+    if (!calibration?.parameters) {
+        return probabilities;
+    }
+
+    const adjusted = probabilities.map((probability, index) => {
+        const label = classLabels[index] || `class_${index}`;
+        const params = calibration.parameters.find((entry) => entry.classLabel === label)
+            || calibration.parameters[index];
+        if (!params) {
+            return probability;
+        }
+        const a = Number.isFinite(params.a) ? params.a : 1;
+        const b = Number.isFinite(params.b) ? params.b : 0;
+        const calibrated = 1 / (1 + Math.exp(-((a * probability) + b)));
+        return Math.max(1e-9, Math.min(1 - 1e-9, calibrated));
+    });
+
+    const sum = adjusted.reduce((total, value) => total + value, 0);
+    if (sum <= 0) {
+        const equal = 1 / adjusted.length;
+        return adjusted.map(() => equal);
+    }
+    return adjusted.map((value) => value / sum);
 }
 
 export default MLPipelineService;
