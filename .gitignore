@@ -1,0 +1,43 @@
+# Node dependencies
+node_modules/
+apps/*/node_modules/
+
+# Production builds
+.next/
+dist/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env*
+.env.*
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Coverage
+coverage/
+*.lcov
+
+# Misc
+.idea/
+.sass-cache/
+.eslintcache
+
