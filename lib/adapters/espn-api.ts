@@ -12,6 +12,7 @@
  * Note: ESPN API is less reliable for college baseball than SportsDataIO
  */
 
+import { Division, FeedPrecision, GameStatus, Sport } from '@prisma/client';
 import type {
   GamesQueryParams,
   TeamStatsQueryParams,
@@ -61,7 +62,7 @@ export class ESPNAPIAdapter {
     const events = data?.events ?? [];
 
     // Transform to standard format
-    return events.map((event: any) => this.transformGame(event));
+    return events.map((event: any) => this.transformGame(event, params));
   }
 
   /**
@@ -97,7 +98,7 @@ export class ESPNAPIAdapter {
   /**
    * Transform ESPN API game format to standard format
    */
-  private transformGame(event: any): ProviderGame {
+  private transformGame(event: any, params: GamesQueryParams): ProviderGame {
     // ESPN uses competitions array
     const competition = event.competitions?.[0] || {};
     const competitors = competition.competitors || [];
@@ -108,25 +109,27 @@ export class ESPNAPIAdapter {
 
     // Map ESPN status to standard status
     const statusType = competition.status?.type?.name?.toLowerCase() || '';
-    let status: ProviderGame['status'];
+    let status: GameStatus;
     if (statusType.includes('scheduled') || statusType.includes('pre')) {
-      status = 'SCHEDULED';
+      status = GameStatus.SCHEDULED;
     } else if (statusType.includes('in progress') || statusType.includes('live')) {
-      status = 'LIVE';
+      status = GameStatus.LIVE;
     } else if (statusType.includes('final')) {
-      status = 'FINAL';
+      status = GameStatus.FINAL;
     } else if (statusType.includes('postponed')) {
-      status = 'POSTPONED';
+      status = GameStatus.POSTPONED;
     } else if (statusType.includes('canceled') || statusType.includes('cancelled')) {
-      status = 'CANCELLED';
+      status = GameStatus.CANCELED;
     } else {
-      status = 'SCHEDULED'; // Default fallback
+      status = GameStatus.SCHEDULED;
     }
 
     return {
       id: event.id?.toString() || '',
       scheduledAt: event.date,
       status,
+      sport: params.sport ?? Sport.BASEBALL,
+      division: params.division ?? Division.D1,
       homeTeamId: homeTeam.team?.id?.toString() || homeTeam.id?.toString() || '',
       awayTeamId: awayTeam.team?.id?.toString() || awayTeam.id?.toString() || '',
       homeScore: parseFloat(homeTeam.score) || null,
@@ -138,7 +141,7 @@ export class ESPNAPIAdapter {
       strikes: competition.situation?.strikes ?? undefined,
       outs: competition.situation?.outs ?? undefined,
       providerName: 'ESPN_API',
-      feedPrecision: 'EVENT' // ESPN provides event-level data
+      feedPrecision: FeedPrecision.EVENT,
     };
   }
 
@@ -167,12 +170,27 @@ export class ESPNAPIAdapter {
       awayLosses: findStat('awayLosses'),
       runsScored: findStat('runsScored'),
       runsAllowed: findStat('runsAllowed'),
+      hitsTotal: findStat('hits'),
+      doubles: findStat('doubles'),
+      triples: findStat('triples'),
+      homeRuns: findStat('homeRuns'),
+      stolenBases: findStat('stolenBases'),
+      caughtStealing: findStat('caughtStealing'),
       battingAvg: findStat('battingAverage'),
       era: findStat('earnedRunAverage'),
       fieldingPct: findStat('fieldingPercentage'),
-      rpi: undefined, // ESPN doesn't provide RPI directly
-      strengthOfSched: undefined, // ESPN doesn't provide SOS directly
-      pythagWins: undefined // Will be calculated separately
+      onBasePct: findStat('onBasePercentage') || undefined,
+      sluggingPct: findStat('sluggingPercentage') || undefined,
+      ops: findStat('onBasePlusSlugging') || undefined,
+      hitsAllowed: findStat('hitsAllowed') || undefined,
+      strikeouts: findStat('strikeouts') || undefined,
+      walks: findStat('walks') || undefined,
+      whip: findStat('whip') || undefined,
+      rpi: undefined,
+      strengthOfSched: undefined,
+      pythagWins: undefined,
+      recentForm: record.standingSummary || undefined,
+      injuryImpact: undefined,
     };
   }
 }

@@ -19,11 +19,58 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { Prisma, PrismaClient } from '@prisma/client';
+import {
+  Division,
+  FeedPrecision,
+  GameStatus,
+  InningHalf,
+  Prisma,
+  PrismaClient,
+  SeasonType,
+  Sport,
+} from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
-import type { Env } from './types';
+import type { Env, ProviderGame } from './types';
 
-const prisma = new PrismaClient();
+type IngestPrismaGlobal = {
+  __INGEST_PRISMA__?: PrismaClient;
+};
+
+const globalForPrisma = globalThis as unknown as IngestPrismaGlobal;
+
+const prisma =
+  globalForPrisma.__INGEST_PRISMA__ ??
+  new PrismaClient({
+    log: ['error'],
+  });
+
+if (!globalForPrisma.__INGEST_PRISMA__) {
+  globalForPrisma.__INGEST_PRISMA__ = prisma;
+}
+
+const GAME_STATUS_VALUES = new Set<GameStatus>(Object.values(GameStatus));
+
+function normalizeGameStatus(status: ProviderGame['status']): GameStatus {
+  if (status === 'CANCELLED') {
+    return GameStatus.CANCELED;
+  }
+
+  return GAME_STATUS_VALUES.has(status as GameStatus)
+    ? (status as GameStatus)
+    : GameStatus.SCHEDULED;
+}
+
+function normalizeInningHalf(half?: ProviderGame['currentInningHalf']): InningHalf | null {
+  if (!half) {
+    return null;
+  }
+
+  return half === 'TOP' ? InningHalf.TOP : InningHalf.BOTTOM;
+}
+
+function normalizeFeedPrecision(precision: ProviderGame['feedPrecision']): FeedPrecision {
+  return precision;
+}
 
 async function executeWithConstraintGuard<T>(
   operation: () => Promise<T>,
@@ -168,10 +215,10 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
   try {
     // Fetch live games for college baseball
     const games = await providerManager.getGames({
-      sport: 'baseball',
-      division: 'D1',
+      sport: Sport.BASEBALL,
+      division: Division.D1,
       date: currentDate,
-      status: ['SCHEDULED', 'LIVE', 'FINAL']
+      status: [GameStatus.SCHEDULED, GameStatus.LIVE, GameStatus.FINAL]
     });
 
     console.log(`[Ingest] Fetched ${games.length} games from provider`);
@@ -179,42 +226,50 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
     // Batch upsert games
     const upsertPromises = games.map((game) =>
       executeWithConstraintGuard(
-        () =>
-          prisma.game.upsert({
+        () => {
+          const inningHalf = normalizeInningHalf(game.currentInningHalf);
+
+          const createData = {
+            externalId: game.id,
+            sport: game.sport ?? Sport.BASEBALL,
+            division: game.division ?? Division.D1,
+            season,
+            seasonType: SeasonType.REGULAR,
+            scheduledAt: new Date(game.scheduledAt),
+            status: normalizeGameStatus(game.status),
+            homeTeamId: game.homeTeamId,
+            awayTeamId: game.awayTeamId,
+            homeScore: game.homeScore,
+            awayScore: game.awayScore,
+            venueId: game.venueId ?? null,
+            currentInning: game.currentInning ?? null,
+            currentInningHalf: inningHalf,
+            balls: game.balls ?? null,
+            strikes: game.strikes ?? null,
+            outs: game.outs ?? null,
+            providerName: game.providerName,
+            feedPrecision: normalizeFeedPrecision(game.feedPrecision),
+          } satisfies Prisma.GameUncheckedCreateInput;
+
+          const updateData = {
+            status: normalizeGameStatus(game.status),
+            homeScore: game.homeScore,
+            awayScore: game.awayScore,
+            currentInning: game.currentInning ?? null,
+            currentInningHalf: inningHalf ?? null,
+            balls: game.balls ?? null,
+            strikes: game.strikes ?? null,
+            outs: game.outs ?? null,
+            providerName: game.providerName,
+            feedPrecision: normalizeFeedPrecision(game.feedPrecision),
+          } satisfies Prisma.GameUncheckedUpdateInput;
+
+          return prisma.game.upsert({
             where: { externalId: game.id },
-            update: {
-              status: game.status,
-              homeScore: game.homeScore,
-              awayScore: game.awayScore,
-              currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
-              balls: game.balls,
-              strikes: game.strikes,
-              outs: game.outs,
-              lastUpdated: new Date()
-            },
-            create: {
-              externalId: game.id,
-              sport: 'BASEBALL',
-              division: 'D1',
-              season,
-              seasonType: 'REGULAR',
-              scheduledAt: new Date(game.scheduledAt),
-              status: game.status,
-              homeTeamId: game.homeTeamId,
-              awayTeamId: game.awayTeamId,
-              homeScore: game.homeScore,
-              awayScore: game.awayScore,
-              venueId: game.venueId,
-              currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
-              balls: game.balls,
-              strikes: game.strikes,
-              outs: game.outs,
-              providerName: game.providerName,
-              feedPrecision: game.feedPrecision
-            }
-          }),
+            update: updateData,
+            create: createData,
+          });
+        },
         `game upsert ${game.id}`
       )
     );
@@ -256,8 +311,8 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
     // Get all D1 teams
     const teams = await prisma.team.findMany({
       where: {
-        sport: 'BASEBALL',
-        division: 'D1'
+        sport: Sport.BASEBALL,
+        division: Division.D1,
       },
       select: {
         id: true,
@@ -281,54 +336,94 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
 
           // Upsert team stats
           return executeWithConstraintGuard(
-            () =>
-              prisma.teamStats.upsert({
+            () => {
+              const updateData = {
+                wins: stats.wins,
+                losses: stats.losses,
+                confWins: stats.confWins,
+                confLosses: stats.confLosses,
+                homeWins: stats.homeWins,
+                homeLosses: stats.homeLosses,
+                awayWins: stats.awayWins,
+                awayLosses: stats.awayLosses,
+                runsScored: stats.runsScored,
+                runsAllowed: stats.runsAllowed,
+                hitsTotal: stats.hitsTotal,
+                doubles: stats.doubles,
+                triples: stats.triples,
+                homeRuns: stats.homeRuns,
+                stolenBases: stats.stolenBases,
+                caughtStealing: stats.caughtStealing,
+                battingAvg: stats.battingAvg,
+                onBasePct: stats.onBasePct ?? null,
+                sluggingPct: stats.sluggingPct ?? null,
+                ops: stats.ops ?? null,
+                earnedRuns: stats.runsAllowed,
+                hitsAllowed: stats.hitsAllowed ?? 0,
+                strikeouts: stats.strikeouts ?? 0,
+                walks: stats.walks ?? 0,
+                era: stats.era,
+                whip: stats.whip ?? null,
+                fieldingPct: stats.fieldingPct,
+                rpi: stats.rpi ?? null,
+                strengthOfSched: stats.strengthOfSched ?? null,
+                pythagWins: stats.pythagWins ?? null,
+                recentForm: stats.recentForm ?? null,
+                injuryImpact: stats.injuryImpact ?? null,
+                lastUpdated: new Date(),
+              } satisfies Prisma.TeamSeasonStatUncheckedUpdateInput;
+
+              const createData = {
+                teamId: team.id,
+                sport: Sport.BASEBALL,
+                season,
+                seasonType: SeasonType.REGULAR,
+                wins: stats.wins,
+                losses: stats.losses,
+                confWins: stats.confWins,
+                confLosses: stats.confLosses,
+                homeWins: stats.homeWins,
+                homeLosses: stats.homeLosses,
+                awayWins: stats.awayWins,
+                awayLosses: stats.awayLosses,
+                runsScored: stats.runsScored,
+                runsAllowed: stats.runsAllowed,
+                hitsTotal: stats.hitsTotal,
+                doubles: stats.doubles,
+                triples: stats.triples,
+                homeRuns: stats.homeRuns,
+                stolenBases: stats.stolenBases,
+                caughtStealing: stats.caughtStealing,
+                battingAvg: stats.battingAvg,
+                onBasePct: stats.onBasePct ?? null,
+                sluggingPct: stats.sluggingPct ?? null,
+                ops: stats.ops ?? null,
+                earnedRuns: stats.runsAllowed,
+                hitsAllowed: stats.hitsAllowed ?? 0,
+                strikeouts: stats.strikeouts ?? 0,
+                walks: stats.walks ?? 0,
+                era: stats.era,
+                whip: stats.whip ?? null,
+                fieldingPct: stats.fieldingPct,
+                rpi: stats.rpi ?? null,
+                strengthOfSched: stats.strengthOfSched ?? null,
+                pythagWins: stats.pythagWins ?? null,
+                recentForm: stats.recentForm ?? null,
+                injuryImpact: stats.injuryImpact ?? null,
+              } satisfies Prisma.TeamSeasonStatUncheckedCreateInput;
+
+              return prisma.teamSeasonStat.upsert({
                 where: {
-                  teamId_season: {
+                  teamId_season_seasonType: {
                     teamId: team.id,
-                    season
-                  }
+                    season,
+                    seasonType: SeasonType.REGULAR,
+                  },
                 },
-                update: {
-                  wins: stats.wins,
-                  losses: stats.losses,
-                  confWins: stats.confWins,
-                  confLosses: stats.confLosses,
-                  homeWins: stats.homeWins,
-                  homeLosses: stats.homeLosses,
-                  awayWins: stats.awayWins,
-                  awayLosses: stats.awayLosses,
-                  runsScored: stats.runsScored,
-                  runsAllowed: stats.runsAllowed,
-                  battingAvg: stats.battingAvg,
-                  era: stats.era,
-                  fieldingPct: stats.fieldingPct,
-                  rpi: stats.rpi,
-                  strengthOfSched: stats.strengthOfSched,
-                  pythagWins: stats.pythagWins,
-                  lastUpdated: new Date()
-                },
-                create: {
-                  teamId: team.id,
-                  season,
-                  wins: stats.wins,
-                  losses: stats.losses,
-                  confWins: stats.confWins,
-                  confLosses: stats.confLosses,
-                  homeWins: stats.homeWins,
-                  homeLosses: stats.homeLosses,
-                  awayWins: stats.awayWins,
-                  awayLosses: stats.awayLosses,
-                  runsScored: stats.runsScored,
-                  runsAllowed: stats.runsAllowed,
-                  battingAvg: stats.battingAvg,
-                  era: stats.era,
-                  fieldingPct: stats.fieldingPct,
-                  rpi: stats.rpi,
-                  strengthOfSched: stats.strengthOfSched,
-                  pythagWins: stats.pythagWins
-                }
-              }),
+                update: updateData,
+                create: createData,
+              });
+            },
             `team stats upsert ${team.id}`
           );
         } catch (error) {
@@ -348,7 +443,7 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
     console.log(`[Ingest] Successfully ingested stats for ${teams.length} teams`);
 
     // Cache standings in KV (4hr TTL)
-    const standings = await prisma.teamStats.findMany({
+    const standings = await prisma.teamSeasonStat.findMany({
       where: { season },
       include: {
         team: {
@@ -487,8 +582,8 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
  */
 async function recalculateRPI(season: number): Promise<void> {
   // Get all teams with their records
-  const teams = await prisma.teamStats.findMany({
-    where: { season },
+  const teams = await prisma.teamSeasonStat.findMany({
+    where: { season, seasonType: SeasonType.REGULAR },
     include: {
       team: {
         include: {
@@ -525,14 +620,15 @@ async function recalculateRPI(season: number): Promise<void> {
 
     await executeWithConstraintGuard(
       () =>
-        prisma.teamStats.update({
+        prisma.teamSeasonStat.update({
           where: {
-            teamId_season: {
+            teamId_season_seasonType: {
               teamId: teamStat.teamId,
-              season
-            }
+              season,
+              seasonType: SeasonType.REGULAR,
+            },
           },
-          data: { rpi }
+          data: { rpi },
         }),
       `team stats rpi ${teamStat.teamId}`
     );
@@ -543,8 +639,8 @@ async function recalculateRPI(season: number): Promise<void> {
  * Recalculate Strength of Schedule
  */
 async function recalculateStrengthOfSchedule(season: number): Promise<void> {
-  const teams = await prisma.teamStats.findMany({
-    where: { season },
+  const teams = await prisma.teamSeasonStat.findMany({
+    where: { season, seasonType: SeasonType.REGULAR },
     include: {
       team: {
         include: {
@@ -592,14 +688,15 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
 
     await executeWithConstraintGuard(
       () =>
-        prisma.teamStats.update({
+        prisma.teamSeasonStat.update({
           where: {
-            teamId_season: {
+            teamId_season_seasonType: {
               teamId: teamStat.teamId,
-              season
-            }
+              season,
+              seasonType: SeasonType.REGULAR,
+            },
           },
-          data: { strengthOfSched: sos }
+          data: { strengthOfSched: sos },
         }),
       `team stats sos ${teamStat.teamId}`
     );
@@ -610,8 +707,8 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
  * Recalculate Pythagorean Win Expectation
  */
 async function recalculatePythagoreanWins(season: number): Promise<void> {
-  const teams = await prisma.teamStats.findMany({
-    where: { season }
+  const teams = await prisma.teamSeasonStat.findMany({
+    where: { season, seasonType: SeasonType.REGULAR }
   });
 
   // Baseball exponent: typically 1.83
@@ -628,14 +725,15 @@ async function recalculatePythagoreanWins(season: number): Promise<void> {
 
       await executeWithConstraintGuard(
         () =>
-          prisma.teamStats.update({
+          prisma.teamSeasonStat.update({
             where: {
-              teamId_season: {
+              teamId_season_seasonType: {
                 teamId: teamStat.teamId,
-                season
-              }
+                season,
+                seasonType: SeasonType.REGULAR,
+              },
             },
-            data: { pythagWins }
+            data: { pythagWins },
           }),
         `team stats pythag ${teamStat.teamId}`
       );

@@ -11,6 +11,7 @@
  * Rate Limits: No official documentation, conservative approach recommended
  */
 
+import { Division, FeedPrecision, GameStatus, InningHalf, Sport } from '@prisma/client';
 import type {
   GamesQueryParams,
   TeamStatsQueryParams,
@@ -31,7 +32,7 @@ export class NCAAAPIAdapter {
    * Fetch games for a specific date
    */
   async getGames(params: GamesQueryParams): Promise<ProviderGame[]> {
-    const { date, division = 'D1' } = params;
+    const { date, division = Division.D1 } = params;
 
     // NCAA API expects lowercase division and specific URL structure
     const divisionStr = division.toLowerCase();
@@ -62,7 +63,7 @@ export class NCAAAPIAdapter {
     const games = data?.scoreboard?.games ?? [];
 
     // Transform to standard format
-    return games.map((game: any) => this.transformGame(game));
+    return games.map((game: any) => this.transformGame(game, params));
   }
 
   /**
@@ -86,43 +87,53 @@ export class NCAAAPIAdapter {
   /**
    * Transform NCAA API game format to standard format
    */
-  private transformGame(game: any): ProviderGame {
-    // Map NCAA API status to standard status
-    let status: ProviderGame['status'];
-    if (game.gameState === 'pre') {
-      status = 'SCHEDULED';
-    } else if (game.gameState === 'live') {
-      status = 'LIVE';
-    } else if (game.gameState === 'final') {
-      status = 'FINAL';
-    } else if (game.gameState === 'postponed') {
-      status = 'POSTPONED';
-    } else if (game.gameState === 'canceled') {
-      status = 'CANCELLED';
-    } else {
-      status = 'SCHEDULED'; // Default fallback
+  private transformGame(game: any, params: GamesQueryParams): ProviderGame {
+    let status: GameStatus;
+    switch (game.gameState) {
+      case 'live':
+        status = GameStatus.LIVE;
+        break;
+      case 'final':
+        status = GameStatus.FINAL;
+        break;
+      case 'postponed':
+        status = GameStatus.POSTPONED;
+        break;
+      case 'canceled':
+        status = GameStatus.CANCELED;
+        break;
+      default:
+        status = GameStatus.SCHEDULED;
     }
 
-    // Extract team IDs from NCAA structure
     const home = game.game?.home || {};
     const away = game.game?.away || {};
+
+    let inningHalf: InningHalf | undefined;
+    if (game.currentPeriodHalf === 'top') {
+      inningHalf = InningHalf.TOP;
+    } else if (game.currentPeriodHalf === 'bottom') {
+      inningHalf = InningHalf.BOTTOM;
+    }
 
     return {
       id: game.game?.gameID?.toString() || game.id?.toString() || '',
       scheduledAt: game.game?.startDate || game.startDate,
       status,
+      sport: params.sport ?? Sport.BASEBALL,
+      division: params.division ?? Division.D1,
       homeTeamId: home.teamId?.toString() || home.id?.toString() || '',
       awayTeamId: away.teamId?.toString() || away.id?.toString() || '',
       homeScore: home.score ?? null,
       awayScore: away.score ?? null,
       venueId: game.game?.location?.venueId?.toString(),
       currentInning: game.currentPeriod ?? undefined,
-      currentInningHalf: game.currentPeriodHalf === 'top' ? 'TOP' : game.currentPeriodHalf === 'bottom' ? 'BOTTOM' : undefined,
+      currentInningHalf: inningHalf,
       balls: game.situation?.balls ?? undefined,
       strikes: game.situation?.strikes ?? undefined,
       outs: game.situation?.outs ?? undefined,
       providerName: 'NCAA_API',
-      feedPrecision: 'EVENT' // NCAA API provides event-level data
+      feedPrecision: FeedPrecision.EVENT,
     };
   }
 }
