@@ -1,18 +1,34 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SportSwitcher from './components/SportSwitcher'
 
 function App() {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [lastUpdated, setLastUpdated] = useState(null)
+  const isFirstFetchRef = useRef(true)
 
   useEffect(() => {
-    // Fetch live college baseball games from ESPN API
+    let isActive = true
+    let controller = null
+
     const fetchGames = async () => {
       try {
-        setLoading(true)
+        if (isFirstFetchRef.current) {
+          setLoading(true)
+        } else {
+          setIsRefreshing(true)
+        }
+
+        if (controller) {
+          controller.abort()
+        }
+        controller = new AbortController()
+
         const response = await fetch(
-          'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard'
+          'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard',
+          { signal: controller.signal }
         )
 
         if (!response.ok) {
@@ -20,22 +36,48 @@ function App() {
         }
 
         const data = await response.json()
+        if (!isActive) return
+
         setGames(data.events || [])
         setError(null)
+        setLastUpdated(new Date().toISOString())
       } catch (err) {
+        if (!isActive || err.name === 'AbortError') {
+          return
+        }
         console.error('Failed to fetch games:', err)
         setError(err.message)
       } finally {
-        setLoading(false)
+        if (!isActive) return
+
+        if (isFirstFetchRef.current) {
+          setLoading(false)
+          isFirstFetchRef.current = false
+        } else {
+          setIsRefreshing(false)
+        }
       }
     }
 
     fetchGames()
 
-    // Refresh every 30 seconds for live updates
     const interval = setInterval(fetchGames, 30000)
-    return () => clearInterval(interval)
+    return () => {
+      isActive = false
+      if (controller) {
+        controller.abort()
+      }
+      clearInterval(interval)
+    }
   }, [])
+
+  const formattedLastUpdated = lastUpdated
+    ? new Date(lastUpdated).toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      })
+    : null
 
   if (loading) {
     return (
@@ -52,7 +94,7 @@ function App() {
     )
   }
 
-  if (error) {
+  if (error && games.length === 0) {
     return (
       <div className="container">
         <header>
@@ -66,6 +108,11 @@ function App() {
             <br />
             Status: Temporarily unavailable
           </p>
+          {formattedLastUpdated && (
+            <p className="error-last-update">
+              Last successful update: {formattedLastUpdated}
+            </p>
+          )}
         </div>
       </div>
     )
@@ -80,7 +127,20 @@ function App() {
 
       <main>
         <section className="live-scores">
-          <h2>Live Scores</h2>
+          <div className="section-header">
+            <h2>Live Scores</h2>
+            {isRefreshing && (
+              <span className="refresh-indicator" role="status" aria-live="polite">
+                Refreshing…
+              </span>
+            )}
+          </div>
+          {error && (
+            <div className="inline-error" role="status" aria-live="polite">
+              <strong>Live feed delayed.</strong> Showing last update from{' '}
+              {formattedLastUpdated || '—'}.
+            </div>
+          )}
           {games.length === 0 ? (
             <p className="no-games">No games currently in progress</p>
           ) : (
@@ -125,11 +185,7 @@ function App() {
           <p>
             Data source: ESPN College Baseball API
             <br />
-            Last updated: {new Date().toLocaleString('en-US', {
-              timeZone: 'America/Chicago',
-              dateStyle: 'medium',
-              timeStyle: 'short'
-            })}
+            Last updated: {formattedLastUpdated || '—'}
           </p>
         </footer>
       </main>
