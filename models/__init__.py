@@ -2,6 +2,7 @@
 
 __all__ = [
     "backtest",
+    "baseball_analytics",
     "features",
     "repository",
     "training",
