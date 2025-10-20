@@ -5,6 +5,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import List
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException
 
 from api.cache import CacheClient
@@ -12,14 +14,16 @@ from api.schemas import AthleteValuationResponse, LeaderboardEntry, LeaderboardR
 from bsi_nil.config import load_config
 from models import repository
 
-app = FastAPI(title="Blaze Sports Intel NIL Valuations", version="1.0.0")
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """Ensure the backing database is ready before serving traffic."""
+    repository.initialize_database()
+    yield
+
+
+app = FastAPI(title="Blaze Sports Intel NIL Valuations", version="1.0.0", lifespan=lifespan)
 cache = CacheClient()
 config = load_config()
-
-
-@app.on_event("startup")
-def on_startup() -> None:
-    repository.initialize_database()
 
 
 @app.get("/athlete/{athlete_id}/value", response_model=AthleteValuationResponse)
