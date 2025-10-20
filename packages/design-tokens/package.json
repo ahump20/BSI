@@ -1,0 +1,10 @@
+{
+  "name": "@bsi/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tokens": "./src/index.ts",
+    ".": "./src/index.ts"
+  }
+}

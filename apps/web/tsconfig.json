@@ -5,7 +5,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -21,7 +21,13 @@
         "name": "next"
       }
     ],
-    "target": "ES2017"
+    "target": "ES2017",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@bsi/design-tokens": ["../../packages/design-tokens/src/index.ts"],
+      "@bsi/design-tokens/*": ["../../packages/design-tokens/src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",

@@ -1,42 +1,81 @@
-import { useState, useEffect } from 'react'
-import SportSwitcher from '../components/SportSwitcher'
+import { useEffect, useState } from 'react';
+import SportSwitcher from '../components/SportSwitcher';
 
-function FootballApp() {
-  const [games, setGames] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [currentWeek, setCurrentWeek] = useState('current')
+type FootballWeek = 'current' | 'previous' | 'next';
+
+interface FootballTeamDetails {
+  team: {
+    name?: string;
+  };
+  record?: string;
+  score?: number | string;
+  rank?: number;
+}
+
+interface FootballTeams {
+  home: FootballTeamDetails;
+  away: FootballTeamDetails;
+}
+
+interface FootballStatus {
+  completed?: boolean;
+  shortDetail?: string;
+}
+
+interface FootballOdds {
+  spread?: string;
+  overUnder?: string;
+}
+
+interface FootballVenue {
+  name?: string;
+}
+
+interface FootballGame {
+  id: string;
+  teams: FootballTeams;
+  status: FootballStatus;
+  venue?: FootballVenue;
+  broadcast?: string;
+  odds?: FootballOdds;
+}
+
+interface FootballApiResponse {
+  games?: FootballGame[];
+}
+
+function FootballApp(): JSX.Element {
+  const [games, setGames] = useState<FootballGame[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentWeek, setCurrentWeek] = useState<FootballWeek>('current');
 
   useEffect(() => {
-    // Fetch live college football games from our API
     const fetchGames = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(
-          `/api/football/scores?week=${currentWeek}`
-        )
+        setLoading(true);
+        const response = await fetch(`/api/football/scores?week=${currentWeek}`);
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json()
-        setGames(data.games || [])
-        setError(null)
+        const data = (await response.json()) as FootballApiResponse;
+        setGames(data.games ?? []);
+        setError(null);
       } catch (err) {
-        console.error('Failed to fetch football games:', err)
-        setError(err.message)
+        console.error('Failed to fetch football games:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchGames()
+    void fetchGames();
 
-    // Refresh every 30 seconds for live updates
-    const interval = setInterval(fetchGames, 30000)
-    return () => clearInterval(interval)
-  }, [currentWeek])
+    const interval = setInterval(fetchGames, 30000);
+    return () => clearInterval(interval);
+  }, [currentWeek]);
 
   if (loading) {
     return (
@@ -46,11 +85,11 @@ function FootballApp() {
           <p className="tagline">Real-time college football scores and updates</p>
         </header>
         <div className="loading">
-          <div className="spinner"></div>
+          <div className="spinner" />
           <p>Loading live scores...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -69,7 +108,7 @@ function FootballApp() {
           </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -97,54 +136,47 @@ function FootballApp() {
             <p className="no-games">No games currently in progress</p>
           ) : (
             <div className="games-grid">
-              {games.map((game) => {
-                const home = game.teams.home
-                const away = game.teams.away
+              {games.map(game => {
+                const { home, away } = game.teams;
 
                 return (
                   <div key={game.id} className="game-card football">
                     <div className="game-status">
-                      {game.status.completed ? 'Final' : game.status.shortDetail || 'Live'}
+                      {game.status.completed ? 'Final' : game.status.shortDetail ?? 'Live'}
                     </div>
 
-                    {/* Rankings */}
                     <div className="game-teams">
                       <div className="team">
                         <div className="team-info">
                           {away.rank && <span className="rank">#{away.rank}</span>}
-                          <span className="team-name">{away.team.name}</span>
+                          <span className="team-name">{away.team.name ?? 'Away'}</span>
                           <span className="team-record">{away.record}</span>
                         </div>
-                        <span className="team-score">{away.score || '0'}</span>
+                        <span className="team-score">{away.score ?? '0'}</span>
                       </div>
 
                       <div className="team">
                         <div className="team-info">
                           {home.rank && <span className="rank">#{home.rank}</span>}
-                          <span className="team-name">{home.team.name}</span>
+                          <span className="team-name">{home.team.name ?? 'Home'}</span>
                           <span className="team-record">{home.record}</span>
                         </div>
-                        <span className="team-score">{home.score || '0'}</span>
+                        <span className="team-score">{home.score ?? '0'}</span>
                       </div>
                     </div>
 
                     <div className="game-meta">
-                      <span className="venue">
-                        {game.venue?.name || 'TBD'}
-                      </span>
-                      {game.broadcast && (
-                        <span className="broadcast"> • {game.broadcast}</span>
-                      )}
+                      <span className="venue">{game.venue?.name ?? 'TBD'}</span>
+                      {game.broadcast && <span className="broadcast"> • {game.broadcast}</span>}
                     </div>
 
-                    {/* Betting odds if available */}
                     {game.odds && (
                       <div className="odds">
                         Spread: {game.odds.spread} • O/U: {game.odds.overUnder}
                       </div>
                     )}
                   </div>
-                )
+                );
               })}
             </div>
           )}
@@ -154,7 +186,8 @@ function FootballApp() {
           <p>
             Data source: ESPN College Football API
             <br />
-            Last updated: {new Date().toLocaleString('en-US', {
+            Last updated:{' '}
+            {new Date().toLocaleString('en-US', {
               timeZone: 'America/Chicago',
               dateStyle: 'medium',
               timeStyle: 'short'
@@ -163,10 +196,9 @@ function FootballApp() {
         </footer>
       </main>
 
-      {/* Sport Switcher FAB */}
       <SportSwitcher currentSport="football" />
     </div>
-  )
+  );
 }
 
-export default FootballApp
+export default FootballApp;

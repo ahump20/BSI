@@ -27,6 +27,7 @@ export interface Team {
   division: string;
   logo?: string;
   record: Record;
+  score?: number;
   ranking?: number;
   rpi?: number;
 }
