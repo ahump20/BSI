@@ -5,3 +5,14 @@ compatibility_date = "2025-06-01"
 [observability.logs]
 enabled = true
 head_sampling_rate = 0.2
+
+# Cloudflare KV for caching MCP data and live NCAA data
+[[kv_namespaces]]
+binding = "LONGHORNS_CACHE"
+id = "YOUR_KV_NAMESPACE_ID"
+preview_id = "YOUR_KV_PREVIEW_ID"
+
+# Cloudflare Images integration
+[env.production.vars]
+IMAGES_ACCOUNT_HASH = "YOUR_IMAGES_ACCOUNT_HASH"
+IMAGES_DELIVERY_URL = "https://imagedelivery.net"
