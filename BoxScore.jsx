@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './BoxScore.css';
 import AdvancedMetricsTable from './components/AdvancedMetricsTable';
+import BullpenInsights from './components/college-baseball/BullpenInsights';
 
 function BoxScore({ game, onBack }) {
   const [activeTab, setActiveTab] = useState('batting');
@@ -12,6 +13,11 @@ function BoxScore({ game, onBack }) {
     plan: 'free',
     error: null,
     features: [],
+  });
+  const [diamondInsights, setDiamondInsights] = useState({
+    loading: false,
+    data: null,
+    error: null,
   });
 
   useEffect(() => {
@@ -56,6 +62,51 @@ function BoxScore({ game, onBack }) {
 
     loadEntitlements();
   }, []);
+
+  useEffect(() => {
+    if (entitlements.loading || !entitlements.isPro) {
+      setDiamondInsights({ loading: false, data: null, error: null });
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    let isActive = true;
+
+    const loadDiamondProInsights = async () => {
+      setDiamondInsights((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const response = await fetch(`/api/analytics/baseball/games/${game.id}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error(`Diamond Pro analytics returned ${response.status}`);
+        }
+        const data = await response.json();
+        if (isActive) {
+          setDiamondInsights({ loading: false, data, error: null });
+        }
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          return;
+        }
+        console.error('Error fetching Diamond Pro analytics:', error);
+        if (isActive) {
+          setDiamondInsights({
+            loading: false,
+            data: null,
+            error: 'Unable to load Diamond Pro bullpen intel right now.',
+          });
+        }
+      }
+    };
+
+    loadDiamondProInsights();
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
+  }, [entitlements.loading, entitlements.isPro, game.id]);
 
   const fetchBoxScore = async () => {
     try {
@@ -327,7 +378,33 @@ function BoxScore({ game, onBack }) {
       );
     }
 
-    return <AdvancedMetricsTable data={boxScoreData.advanced} />;
+    const sections = [];
+
+    if (boxScoreData?.advanced) {
+      sections.push(
+        <AdvancedMetricsTable key="advanced-table" data={boxScoreData.advanced} />
+      );
+    }
+
+    if (diamondInsights.loading) {
+      sections.push(
+        <div key="advanced-loading" className="diamond-insights-loading">
+          Syncing Diamond Pro bullpen intel…
+        </div>
+      );
+    } else if (diamondInsights.error) {
+      sections.push(
+        <div key="advanced-error" className="advanced-error" role="alert">
+          {diamondInsights.error}
+        </div>
+      );
+    } else if (diamondInsights.data) {
+      sections.push(
+        <BullpenInsights key="bullpen-insights" data={diamondInsights.data} />
+      );
+    }
+
+    return <div className="advanced-stack">{sections}</div>;
   };
 
   return (
