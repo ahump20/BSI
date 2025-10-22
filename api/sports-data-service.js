@@ -13,6 +13,7 @@ import SportsDataAdapter from './adapters/sports-data-adapter.js';
 import SportsAnalyticsModels from './models/sports-analytics-models.js';
 import MLPipelineService from './ml/ml-pipeline-service.js';
 import DatabaseConnectionService from './database/connection-service.js';
+import { getBranchInsights } from '../config/branch-insights.js';
 
 class SportsDataService {
     constructor(env, options = {}) {
@@ -1107,6 +1108,23 @@ class SportsDataService {
             'ncaa_basketball': 0.64
         };
         return advantages[sport] || 0.54;
+    }
+
+    /**
+     * Enumerate unique differentiators and upgrade roadmap for the active branch.
+     */
+    getBranchDifferentiators(branchName = this.env.VERCEL_GIT_COMMIT_REF || this.env.GIT_BRANCH || this.env.BRANCH || 'main', options = {}) {
+        const includeExperimental =
+            options.includeExperimental === true ||
+            this.env.ENABLE_EXPERIMENTAL_FEATURES === 'true';
+
+        const insights = getBranchInsights(branchName, { includeExperimental });
+
+        return {
+            ...insights,
+            generatedAt: insights.generatedAt || new Date().toISOString(),
+            source: 'sports-data-service'
+        };
     }
 
     /**
