@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+}
+
+model User {
+  id                String         @id @default(cuid())
+  clerkId           String         @unique
+  email             String?
+  stripeCustomerId  String?        @unique
+  proSince          DateTime?
+  entitlements      Entitlement[]
+  subscriptions     Subscription[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model Entitlement {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  code       String
+  source     String?
+  active     Boolean  @default(true)
+  expiresAt  DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, code])
+  @@index([code, active])
+}
+
+model Subscription {
+  id                   String              @id @default(cuid())
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String
+  stripeSubscriptionId String              @unique
+  stripeCustomerId     String
+  stripePriceId        String?
+  status               SubscriptionStatus
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean             @default(false)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  @@index([userId, status])
+  @@index([stripeCustomerId])
+}

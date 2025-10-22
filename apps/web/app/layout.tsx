@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import ObservabilityProvider from './observability-provider';
 
@@ -31,12 +32,26 @@ export const viewport: Viewport = {
   themeColor: '#1a1a1a'
 };
 
+const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
+  if (!clerkPublishableKey) {
+    return (
+      <html lang="en">
+        <body>
+          <ObservabilityProvider>{children}</ObservabilityProvider>
+        </body>
+      </html>
+    );
+  }
+
   return (
-    <html lang="en">
-      <body>
-        <ObservabilityProvider>{children}</ObservabilityProvider>
-      </body>
-    </html>
+    <ClerkProvider publishableKey={clerkPublishableKey} signInUrl="/auth/sign-in" signUpUrl="/auth/sign-up">
+      <html lang="en">
+        <body>
+          <ObservabilityProvider>{children}</ObservabilityProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

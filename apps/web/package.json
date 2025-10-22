@@ -8,12 +8,16 @@
     "test:visual": "playwright test --config=playwright.config.ts"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.33.7",
     "@datadog/browser-logs": "^5.12.0",
     "@datadog/browser-rum": "^5.12.0",
+    "@prisma/client": "^6.17.1",
     "@sentry/nextjs": "^8.25.0",
     "next": "^15.0.0",
+    "prisma": "^6.17.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "stripe": "^19.1.0"
   },
   "devDependencies": {
     "@applitools/eyes-playwright": "^1.23.0",
