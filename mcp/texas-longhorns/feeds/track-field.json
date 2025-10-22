@@ -5,6 +5,70 @@
     {
       "program": "Women",
       "coach": "Edrick Floréal",
+      "programStats": {
+        "ncaaTeamChampionships": 14,
+        "ncaaIndividualChampions": 79,
+        "olympicGoldMedalists": 8,
+        "olympicMedals": 22,
+        "americanRecords": 12,
+        "allAmericans": 387,
+        "homeVenue": {
+          "name": "Mike A. Myers Stadium",
+          "capacity": 20000,
+          "surface": "Mondo track",
+          "opened": 1999
+        }
+      },
+      "ncaaChampionships": [
+        {"year": 2024, "type": "Outdoor", "points": 72, "coach": "Edrick Floréal"},
+        {"year": 2022, "type": "Outdoor", "points": 68, "coach": "Edrick Floréal"},
+        {"year": 2021, "type": "Outdoor", "points": 76, "coach": "Edrick Floréal"},
+        {"year": 2020, "type": "Indoor", "points": 58, "coach": "Edrick Floréal"},
+        {"year": 2019, "type": "Indoor", "points": 63, "coach": "Edrick Floréal"},
+        {"year": 2006, "type": "Outdoor", "points": 62, "coach": "Bev Kearney"},
+        {"year": 2005, "type": "Outdoor", "points": 64, "coach": "Bev Kearney"},
+        {"year": 1999, "type": "Outdoor", "points": 56, "coach": "Bev Kearney"},
+        {"year": 1998, "type": "Outdoor", "points": 69, "coach": "Bev Kearney"}
+      ],
+      "olympicAthletes": [
+        {
+          "name": "Julien Alfred",
+          "event": "100m/200m",
+          "olympics": "2024 Paris",
+          "medals": "Gold (100m), Silver (200m)",
+          "country": "Saint Lucia",
+          "notes": "First Olympic gold for Saint Lucia"
+        },
+        {
+          "name": "Sanya Richards-Ross",
+          "event": "400m",
+          "olympics": "2004 Athens, 2008 Beijing, 2012 London",
+          "medals": "4 Gold, 1 Bronze",
+          "country": "USA",
+          "notes": "5-time Olympic medalist, American record holder"
+        },
+        {
+          "name": "Courtney Okolo",
+          "event": "4x400m relay",
+          "olympics": "2016 Rio",
+          "medals": "Gold",
+          "country": "USA"
+        },
+        {
+          "name": "Tori Bowie",
+          "event": "100m, 4x100m relay",
+          "olympics": "2016 Rio",
+          "medals": "Gold (4x100m), Silver (100m), Bronze (200m)",
+          "country": "USA"
+        },
+        {
+          "name": "Carlette Guidry",
+          "event": "4x100m relay",
+          "olympics": "1992 Barcelona, 1996 Atlanta",
+          "medals": "Gold (1996)",
+          "country": "USA"
+        }
+      ],
       "seasons": [
         {
           "year": "2024 Outdoor",
@@ -82,7 +146,8 @@
           "personalBests": {
             "100m": 10.98,
             "200m": 22.11
-          }
+          },
+          "accolades": ["2024 NCAA 100m Champion", "2024 NCAA 200m Champion"]
         },
         {
           "id": "rosaline-amos",
@@ -91,13 +156,122 @@
           "personalBests": {
             "100mH": 12.28,
             "400mH": 54.44
+          },
+          "accolades": ["2024 NCAA 100m Hurdles Champion"]
+        }
+      ],
+      "legendaryAthletes": [
+        {
+          "name": "Sanya Richards-Ross",
+          "years": "2000-2002",
+          "event": "400m",
+          "accolades": ["5x Olympic medalist (4 Gold)", "9x NCAA Champion", "American record holder (48.70)"],
+          "personalBests": {
+            "400m": 48.70
           }
+        },
+        {
+          "name": "Julien Alfred",
+          "years": "2021-2024",
+          "event": "Sprints",
+          "accolades": ["2024 Olympic Gold 100m", "2024 Olympic Silver 200m", "NCAA Champion", "Bowerman Award Winner"],
+          "personalBests": {
+            "100m": 10.72,
+            "200m": 21.86
+          }
+        },
+        {
+          "name": "Courtney Okolo",
+          "years": "2013-2017",
+          "event": "400m",
+          "accolades": ["2016 Olympic Gold", "7x NCAA Champion", "9x All-American"],
+          "personalBests": {
+            "400m": 49.71
+          }
+        },
+        {
+          "name": "Tori Bowie",
+          "years": "2009-2011",
+          "event": "Sprints/Long Jump",
+          "accolades": ["3x Olympic medalist (1 Gold, 1 Silver, 1 Bronze)", "2017 World Champion 100m"],
+          "personalBests": {
+            "100m": 10.78,
+            "200m": 21.77,
+            "longJump": 6.95
+          }
+        },
+        {
+          "name": "Michelle Carter",
+          "years": "2001-2004",
+          "event": "Shot Put",
+          "accolades": ["2016 Olympic Gold", "3x NCAA Champion", "American record holder"],
+          "personalBests": {
+            "shotPut": 20.63
+          }
+        }
+      ],
+      "coaches": [
+        {
+          "name": "Edrick Floréal",
+          "years": "2018-present",
+          "ncaaTeamTitles": 7,
+          "accolades": ["7x NCAA Team Championships", "Multiple National Coach of the Year Awards"]
+        },
+        {
+          "name": "Bev Kearney",
+          "years": "1993-2012",
+          "ncaaTeamTitles": 7,
+          "accolades": ["7x NCAA Team Championships", "Hall of Fame Coach", "Winningest coach in Texas history"]
         }
       ]
     },
     {
       "program": "Men",
       "coach": "Edrick Floréal",
+      "programStats": {
+        "ncaaTeamChampionships": 2,
+        "ncaaIndividualChampions": 84,
+        "olympicGoldMedalists": 6,
+        "olympicMedals": 18,
+        "americanRecords": 5,
+        "allAmericans": 423
+      },
+      "ncaaChampionships": [
+        {"year": 1982, "type": "Outdoor", "coach": "Cleburne Price"},
+        {"year": 1981, "type": "Outdoor", "coach": "Cleburne Price"}
+      ],
+      "olympicAthletes": [
+        {
+          "name": "Leo Manzano",
+          "event": "1500m",
+          "olympics": "2012 London",
+          "medals": "Silver",
+          "country": "USA",
+          "notes": "First American to medal in 1500m since 1968"
+        },
+        {
+          "name": "Ryan Crouser",
+          "event": "Shot Put",
+          "olympics": "2016 Rio, 2020 Tokyo, 2024 Paris",
+          "medals": "3 Gold",
+          "country": "USA",
+          "notes": "3-time Olympic champion, world record holder (23.56m)"
+        },
+        {
+          "name": "Leonel Manzano",
+          "event": "800m/1500m",
+          "olympics": "2008 Beijing, 2012 London",
+          "medals": "Silver (1500m)",
+          "country": "USA"
+        },
+        {
+          "name": "Johnny Gray",
+          "event": "800m",
+          "olympics": "1992 Barcelona",
+          "medals": "Bronze",
+          "country": "USA"
+        }
+      ],
       "seasons": [
         {
           "year": "2024 Outdoor",
@@ -164,7 +338,8 @@
           "personalBests": {
             "800m": 1.45,
             "1500m": 3.35
-          }
+          },
+          "accolades": ["2024 NCAA 800m Champion"]
         },
         {
           "id": "logan-williams",
@@ -172,7 +347,76 @@
           "event": "Pole Vault",
           "personalBests": {
             "poleVault": 5.76
+          },
+          "accolades": ["2024 NCAA Pole Vault Champion"]
+        }
+      ],
+      "legendaryAthletes": [
+        {
+          "name": "Ryan Crouser",
+          "years": "2012-2016",
+          "event": "Shot Put",
+          "accolades": ["3x Olympic Gold medalist", "World record holder (23.56m)", "6x NCAA Champion"],
+          "personalBests": {
+            "shotPut": 23.56
           }
+        },
+        {
+          "name": "Leo Manzano",
+          "years": "2004-2007",
+          "event": "1500m",
+          "accolades": ["2012 Olympic Silver", "6x NCAA Champion", "Bowerman Award Finalist"],
+          "personalBests": {
+            "1500m": 3.34
+          }
+        },
+        {
+          "name": "Leonel Manzano",
+          "years": "2007-2009",
+          "event": "800m/1500m",
+          "accolades": ["2012 Olympic Silver 1500m", "4x NCAA Champion"],
+          "personalBests": {
+            "800m": 1.45,
+            "1500m": 3.36
+          }
+        },
+        {
+          "name": "Johnny Gray",
+          "years": "1981-1985",
+          "event": "800m",
+          "accolades": ["1992 Olympic Bronze", "4x NCAA Champion", "American record holder"],
+          "personalBests": {
+            "800m": 1.42
+          }
+        },
+        {
+          "name": "Kerron Clement",
+          "years": "2004-2005",
+          "event": "400m Hurdles",
+          "accolades": ["2x Olympic Gold", "2008 Olympic Silver", "World Champion"],
+          "personalBests": {
+            "400mH": 47.24
+          }
+        }
+      ],
+      "coaches": [
+        {
+          "name": "Edrick Floréal",
+          "years": "2018-present",
+          "ncaaTeamTitles": 0,
+          "accolades": ["Multiple individual NCAA champions", "National Coach of the Year"]
+        },
+        {
+          "name": "Bubba Thornton",
+          "years": "2000-2018",
+          "ncaaTeamTitles": 0,
+          "accolades": ["Developed multiple Olympians", "Hall of Fame Coach"]
+        },
+        {
+          "name": "Cleburne Price",
+          "years": "1976-1995",
+          "ncaaTeamTitles": 2,
+          "accolades": ["2x NCAA Team Championships (1981, 1982)", "Hall of Fame Coach"]
         }
       ]
     }
