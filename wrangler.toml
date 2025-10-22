@@ -4,12 +4,14 @@ compatibility_date = "2025-01-01"
 
 # KV namespace for caching (existing CACHE namespace from blazesportsintel)
 kv_namespaces = [
-  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" }
+  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" },
+  { binding = "FEATURE_FLAGS", id = "a53c3726fc3044be82e79d2d1e371d26" }
 ]
 
 # Environment variables
 [vars]
 ENVIRONMENT = "production"
+UE_UPSTREAM = "https://ue.blazesportsintel.com"
 
 # D1 database for storing historical sports data
 [[d1_databases]]
