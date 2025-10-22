@@ -3,7 +3,7 @@
 **Real-time 3D pose tracking + biomechanical analysis for elite athletic performance prediction**
 
 ## Mission
-Bridge computer vision and biomechanics to quantify the "unseen" micro-moves that predict elite upside. Integrates seamlessly with the Champion Enigma Engine to deliver actionable insights from multi-camera 3D pose data.
+Bridge computer vision and biomechanics to quantify the "unseen" micro-moves that predict elite upside. Integrates seamlessly with the Diamond Certainty Engine™ to deliver actionable insights from multi-camera 3D pose data.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ docker-compose up -d
 
 ### Core Pipeline
 ```
-Multi-Camera Feed → 3D Pose Extraction → Feature Computation → Enigma Mapping → Coach UX
+Multi-Camera Feed → 3D Pose Extraction → Feature Computation → Certainty Mapping → Coach UX
      ↓                    ↓                     ↓                    ↓              ↓
   Raw Video         Joint Angles          Biomech Metrics     Trait Scores    Clip Reels
 ```
@@ -39,7 +39,7 @@ Multi-Camera Feed → 3D Pose Extraction → Feature Computation → Enigma Mapp
 2. **Feature Extraction Engine**: Computes 30+ biomechanical features in real-time
 3. **Risk Assessment Module**: Identifies injury risk patterns and mechanical inefficiencies
 4. **Clip Generation System**: Auto-generates video segments tied to specific metrics
-5. **Champion Enigma Integration**: Maps biomechanics to trait dimensions
+5. **Diamond Certainty Integration**: Maps biomechanics to trait dimensions
 
 ## Measured Micro-Signals
 
@@ -244,24 +244,27 @@ Get comprehensive biomechanical analysis for an athlete.
 }
 ```
 
-#### Champion Enigma Trait Scores
+#### Diamond Certainty Trait Scores
 ```http
-GET /api/v1/enigma/{athlete_id}/scores
+GET /api/v1/diamond-certainty/{athlete_id}/scores
 ```
-Get Champion Enigma intelligence trait scores.
+Get Diamond Certainty Engine intelligence trait scores.
 
 **Response:**
 ```json
 {
   "athlete_id": "athlete_001",
-  "enigma_scores": {
-    "clutch_factor": 8.7,
-    "adaptability": 7.2,
-    "competitive_drive": 9.1,
-    "biomech_efficiency": 8.4,
-    "mental_resilience": 7.8
+  "diamond_certainty_scores": {
+    "clutch_gene": 92.1,
+    "killer_instinct": 88.4,
+    "flow_state": 84.6,
+    "mental_fortress": 90.2,
+    "predator_mindset": 87.3,
+    "champion_aura": 85.5,
+    "winner_dna": 89.7,
+    "beast_mode": 91.8
   },
-  "overall_rating": 8.24,
+  "overall_score": 88.9,
   "projection": "elite_upside"
 }
 ```
