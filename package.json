@@ -2,12 +2,14 @@
   "name": "college-baseball-tracker",
   "version": "1.0.0",
   "type": "module",
-  "description": "Mobile-first college baseball live tracker with full box scores",
+  "private": true,
+  "description": "Blaze Sports Intel - College sports analytics platform",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist",
+    "dev": "pnpm --filter @bsi/web dev",
+    "build": "pnpm --filter @bsi/web build && pnpm run build:opennext",
+    "build:opennext": "cd apps/web && npx open-next@latest build",
+    "preview": "pnpm --filter @bsi/web start",
+    "deploy": "pnpm build && wrangler pages deploy apps/web/.open-next",
     "test": "vitest run"
   },
   "dependencies": {
@@ -22,6 +24,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^4.7.0",
+    "open-next": "^3.1.3",
     "vite": "^7.1.10",
     "vitest": "^2.1.4",
     "wrangler": "^3.22.0"
