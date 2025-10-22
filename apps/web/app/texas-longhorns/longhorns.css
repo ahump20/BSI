@@ -1,0 +1,449 @@
+/* Texas Longhorns Page Styles */
+
+/* Championship Grid */
+.di-championship-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.di-championship-card {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(251, 191, 36, 0.05));
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.di-championship-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(251, 191, 36, 0.6);
+}
+
+.di-championship-year {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--di-font-heading);
+  color: var(--di-accent);
+  line-height: 1;
+}
+
+.di-championship-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.di-championship-details .di-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--di-text-muted);
+}
+
+.di-championship-details .di-value {
+  font-weight: 600;
+  color: var(--di-text);
+}
+
+.di-championship-coach {
+  font-size: 0.9rem;
+  color: var(--di-text);
+  font-weight: 500;
+}
+
+.di-championship-note {
+  font-size: 0.85rem;
+  color: var(--di-text-muted);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Player Grid */
+.di-player-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.di-player-card {
+  background: var(--di-surface);
+  border: 1px solid var(--di-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.di-player-card:hover {
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.1);
+}
+
+.di-player-name {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--di-text);
+  font-family: var(--di-font-heading);
+}
+
+.di-player-position {
+  font-size: 0.85rem;
+  color: var(--di-accent);
+  font-weight: 500;
+}
+
+.di-player-accolades {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.di-accolade {
+  font-size: 0.85rem;
+  color: var(--di-text-muted);
+  line-height: 1.4;
+  padding-left: 0.75rem;
+  position: relative;
+}
+
+.di-accolade::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--di-accent);
+}
+
+.di-player-draft {
+  font-size: 0.8rem;
+  color: var(--di-text-muted);
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+/* Stats Row */
+.di-stats-row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.di-stat-card {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.95));
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.di-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--di-font-heading);
+  color: var(--di-accent);
+  line-height: 1;
+}
+
+.di-stat-label {
+  font-size: 0.85rem;
+  color: var(--di-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Stat Badge */
+.di-stat-badge {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: var(--di-font-heading);
+  color: var(--di-accent);
+  line-height: 1;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.di-card--highlight {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08), rgba(251, 191, 36, 0.08));
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.di-years {
+  font-size: 0.95rem;
+  color: var(--di-accent);
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+/* Heisman Grid */
+.di-heisman-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.di-heisman-card {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(220, 38, 38, 0.1));
+  border: 2px solid rgba(251, 191, 36, 0.4);
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  text-align: center;
+}
+
+.di-heisman-trophy {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 4px 8px rgba(251, 191, 36, 0.3));
+}
+
+.di-heisman-year {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--di-font-heading);
+  color: var(--di-accent);
+}
+
+.di-heisman-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: var(--di-font-heading);
+  color: var(--di-text);
+}
+
+.di-heisman-position {
+  font-size: 0.9rem;
+  color: var(--di-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.di-heisman-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  font-size: 0.9rem;
+  color: var(--di-text-muted);
+}
+
+.di-heisman-nfl {
+  font-size: 0.85rem;
+  color: var(--di-text-muted);
+  font-style: italic;
+}
+
+/* Section Header */
+.di-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Program Stats */
+.di-program-header {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: rgba(17, 24, 39, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.di-program-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.di-program-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--di-font-heading);
+  color: var(--di-accent);
+  line-height: 1;
+}
+
+.di-program-stat-label {
+  font-size: 0.75rem;
+  color: var(--di-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Championship Highlight */
+.di-championship-highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(220, 38, 38, 0.15));
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.di-championship-year-large {
+  font-size: 4rem;
+  font-weight: 700;
+  font-family: var(--di-font-heading);
+  color: var(--di-accent);
+  line-height: 1;
+}
+
+.di-championship-record {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--di-text);
+}
+
+/* Olympic Stats */
+.di-olympic-stats {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.di-olympic-medal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: rgba(17, 24, 39, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.di-medal-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.di-medal-count {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--di-font-heading);
+  color: var(--di-accent);
+  line-height: 1;
+}
+
+.di-medal-label {
+  font-size: 0.8rem;
+  color: var(--di-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+/* Athlete Grid */
+.di-athlete-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.di-athlete-card {
+  background: var(--di-surface);
+  border: 1px solid var(--di-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: border-color 0.2s ease;
+}
+
+.di-athlete-card:hover {
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.di-athlete-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--di-text);
+  font-family: var(--di-font-heading);
+}
+
+.di-athlete-event {
+  font-size: 0.85rem;
+  color: var(--di-accent);
+  font-weight: 500;
+}
+
+.di-athlete-accolades {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Card Subtitle */
+.di-card-subtitle {
+  color: var(--di-text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+/* CTA Card */
+.di-card--cta {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.12), rgba(251, 191, 36, 0.12));
+  border: 2px solid rgba(251, 191, 36, 0.35);
+  text-align: center;
+  align-items: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.di-card--cta h2 {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.di-card--cta .di-actions {
+  margin-top: 1.5rem;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 640px) {
+  .di-championship-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  .di-player-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+
+  .di-heisman-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .di-stats-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

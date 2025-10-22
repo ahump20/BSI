@@ -380,7 +380,6 @@ export default function BaseballGamesPage() {
         </p>
       </section>
       <Suspense fallback={<ScoreboardFallback />}>
-        {/* @ts-expect-error Async Server Component */}
         <ScoreboardSection />
       </Suspense>
       <section className="di-section">
