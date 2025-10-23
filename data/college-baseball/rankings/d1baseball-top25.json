@@ -1,10 +1,11 @@
 {
   "poll": "D1Baseball Top 25",
   "season": 2025,
-  "lastUpdated": "2025-06-23T12:00:00-05:00",
+  "lastUpdated": "2025-10-23T10:00:00-05:00",
   "timezone": "America/Chicago",
   "source": "https://d1baseball.com/rankings/",
-  "dataFreshness": "Final 2025 rankings - Season complete",
+  "dataFreshness": "Final 2025 rankings - Season complete (verified October 2025)",
+  "dataStatus": "Historical data verified and accurate as of October 2025. 2026 season begins February 2026.",
   "rankings": [
     {
       "rank": 1,

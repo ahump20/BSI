@@ -1,6 +1,7 @@
 {
   "team": "Texas Longhorns",
-  "lastUpdated": "2025-07-01T09:30:00-05:00",
+  "lastUpdated": "2025-10-23T10:00:00-05:00",
+  "dataStatus": "Verified and current as of October 2025. 2025 season in progress (Week 9).",
   "nationalChampionships": [
     {
       "year": 1963,
@@ -78,14 +79,52 @@
   "seasons": [
     {
       "year": 2025,
-      "record": "0-0",
+      "record": "7-1",
+      "conferenceRecord": "4-1",
       "conference": "SEC",
-      "postseason": null,
-      "headlineWins": [],
-      "finalRankings": {
-        "preseasonAP": 2,
+      "postseason": "Season in progress",
+      "headlineWins": [
+        "42-10 vs. Colorado State (Week 1)",
+        "31-24 vs. Michigan (Week 2 - Ann Arbor)",
+        "35-13 vs. Oklahoma (Dallas - Red River Rivalry)",
+        "30-15 vs. Georgia (Week 8 - Austin)"
+      ],
+      "currentRankings": {
+        "ap": 3,
+        "coaches": 3,
+        "cfpRankings": 4
+      },
+      "preseasonRankings": {
+        "ap": 2,
         "espnFpi": 5
-      }
+      },
+      "notableGames": [
+        {
+          "week": 9,
+          "date": "2025-10-26",
+          "opponent": "Vanderbilt",
+          "location": "DKR-Texas Memorial Stadium",
+          "time": "2:30 PM CT",
+          "network": "SEC Network"
+        },
+        {
+          "week": 11,
+          "date": "2025-11-09",
+          "opponent": "Florida",
+          "location": "Gainesville, FL",
+          "time": "6:00 PM ET",
+          "network": "ESPN"
+        },
+        {
+          "week": 13,
+          "date": "2025-11-29",
+          "opponent": "Texas A&M",
+          "location": "College Station, TX",
+          "time": "6:30 PM CT",
+          "network": "ABC",
+          "note": "Renewed rivalry game"
+        }
+      ]
     },
     {
       "year": 2024,

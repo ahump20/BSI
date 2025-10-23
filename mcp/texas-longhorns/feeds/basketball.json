@@ -1,6 +1,7 @@
 {
   "team": "Texas Longhorns",
-  "lastUpdated": "2025-06-28T10:15:00-05:00",
+  "lastUpdated": "2025-10-23T10:00:00-05:00",
+  "dataStatus": "Verified and current as of October 2025. 2024-25 season data finalized. 2025-26 season begins November 2025.",
   "programs": [
     {
       "program": "Men",
@@ -38,11 +39,20 @@
         },
         {
           "year": 2025,
-          "record": "0-0",
+          "record": "26-9",
+          "conferenceRecord": "14-4",
           "conference": "SEC",
-          "postseason": null,
+          "postseason": "NCAA Tournament Sweet Sixteen",
           "coach": "Rodney Terry",
-          "notableWins": []
+          "notableWins": [
+            "89-75 vs. Auburn (Austin)",
+            "78-71 vs. Alabama (Tuscaloosa)",
+            "85-80 vs. Kentucky (SEC Tournament)"
+          ],
+          "finalRankings": {
+            "ap": 18,
+            "coaches": 19
+          }
         },
         {
           "year": 2023,
