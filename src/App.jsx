@@ -1,10 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+
+const STATUS_FILTERS = [
+  { id: 'all', label: 'All games' },
+  { id: 'live', label: 'Live now' },
+  { id: 'upcoming', label: 'Upcoming' },
+  { id: 'final', label: 'Final' }
+]
 
 function App() {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [statusFilter, setStatusFilter] = useState('live')
+  const [rankedOnly, setRankedOnly] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [lastUpdated, setLastUpdated] = useState(null)
 
   useEffect(() => {
     // Fetch live college baseball games from ESPN API
@@ -22,6 +33,7 @@ function App() {
         const data = await response.json()
         setGames(data.events || [])
         setError(null)
+        setLastUpdated(new Date())
       } catch (err) {
         console.error('Failed to fetch games:', err)
         setError(err.message)
@@ -71,6 +83,138 @@ function App() {
     )
   }
 
+  const enhancedGames = useMemo(() => {
+    const toNumber = (value) => {
+      const parsed = Number(value)
+      return Number.isFinite(parsed) ? parsed : 0
+    }
+
+    return games.map((event) => {
+      const competition = event.competitions?.[0] || {}
+      const status = competition.status || event.status || {}
+      const homeTeam = competition.competitors?.find((c) => c.homeAway === 'home') || {}
+      const awayTeam = competition.competitors?.find((c) => c.homeAway === 'away') || {}
+
+      const startDate = competition.date ? new Date(competition.date) : null
+      const state = status?.type?.state
+      const isLive = state === 'in'
+      const isFinal = Boolean(status?.type?.completed)
+      const gameState = isLive ? 'live' : isFinal ? 'final' : 'upcoming'
+
+      const getRank = (team) => {
+        const curatedRank = team?.curatedRank?.current
+        const altRank = team?.curatedRank?.rank || team?.curatedRank?.default
+        const fallbackRank = team?.team?.rank
+        return curatedRank ?? altRank ?? fallbackRank ?? null
+      }
+
+      const homeRank = getRank(homeTeam)
+      const awayRank = getRank(awayTeam)
+      const isRanked = [homeRank, awayRank].some((rank) => Number(rank) && Number(rank) <= 25)
+
+      const homeScore = toNumber(homeTeam?.score)
+      const awayScore = toNumber(awayTeam?.score)
+      const scoreMargin = Math.abs(homeScore - awayScore)
+      const inningNumber = toNumber(status?.period) || 0
+      const baseRunners = competition?.situation?.onBase?.occupied?.length || 0
+      const outs = toNumber(competition?.situation?.outs)
+
+      let momentumPulse = null
+      if (isLive) {
+        const rawPulse = 6 - scoreMargin * 1.25 + inningNumber * 0.35 + baseRunners - outs * 0.3
+        momentumPulse = Math.max(2, Math.min(10, Number(rawPulse.toFixed(1))))
+      }
+
+      const statusText =
+        status?.type?.shortDetail || status?.type?.detail || status?.displayClock || 'Scheduled'
+
+      const lastPlay = competition?.situation?.lastPlay?.text || competition?.details?.[0]?.text
+
+      return {
+        id: event.id,
+        gameState,
+        statusText,
+        isRanked,
+        homeTeam: {
+          name: homeTeam?.team?.displayName || 'Home',
+          abbreviation: homeTeam?.team?.abbreviation,
+          score: homeScore,
+          record: homeTeam?.records?.[0]?.summary,
+          rank: homeRank
+        },
+        awayTeam: {
+          name: awayTeam?.team?.displayName || 'Away',
+          abbreviation: awayTeam?.team?.abbreviation,
+          score: awayScore,
+          record: awayTeam?.records?.[0]?.summary,
+          rank: awayRank
+        },
+        venue: competition?.venue?.fullName || 'Venue TBA',
+        startDate,
+        momentumPulse,
+        lastPlay,
+        conferenceName: competition?.conference?.name || event?.group?.name,
+        neutralSite: Boolean(competition?.venue?.indoor)
+      }
+    })
+  }, [games])
+
+  const filteredGames = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase()
+
+    return enhancedGames
+      .filter((game) => {
+        if (statusFilter !== 'all' && game.gameState !== statusFilter) {
+          return false
+        }
+
+        if (rankedOnly && !game.isRanked) {
+          return false
+        }
+
+        if (query) {
+          const haystack = [
+            game.homeTeam.name,
+            game.homeTeam.abbreviation,
+            game.awayTeam.name,
+            game.awayTeam.abbreviation,
+            game.conferenceName
+          ]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase()
+
+          return haystack.includes(query)
+        }
+
+        return true
+      })
+      .sort((a, b) => {
+        const order = { live: 0, upcoming: 1, final: 2 }
+        if (a.gameState !== b.gameState) {
+          return order[a.gameState] - order[b.gameState]
+        }
+
+        if (a.startDate && b.startDate) {
+          return a.startDate - b.startDate
+        }
+
+        return a.homeTeam.name.localeCompare(b.homeTeam.name)
+      })
+  }, [enhancedGames, rankedOnly, searchTerm, statusFilter])
+
+  const renderedTimestamp = lastUpdated
+    ? lastUpdated.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      })
+    : new Date().toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      })
+
   return (
     <div className="container">
       <header>
@@ -80,56 +224,163 @@ function App() {
 
       <main>
         <section className="live-scores">
-          <h2>Live Scores</h2>
-          {games.length === 0 ? (
-            <p className="no-games">No games currently in progress</p>
+          <div className="section-heading">
+            <h2>Live Scores</h2>
+            <p className="section-subtitle">
+              Dial into every D1 matchup, filter for Top 25, and track the hottest leverage moments.
+            </p>
+          </div>
+
+          <div className="score-controls" aria-label="Scoreboard filters">
+            <div className="filter-group" role="tablist">
+              {STATUS_FILTERS.map((filter) => (
+                <button
+                  key={filter.id}
+                  className={`filter-chip ${statusFilter === filter.id ? 'active' : ''}`}
+                  onClick={() => setStatusFilter(filter.id)}
+                  type="button"
+                  role="tab"
+                  aria-selected={statusFilter === filter.id}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="control-row">
+              <label className="toggle" htmlFor="top25-toggle">
+                <input
+                  id="top25-toggle"
+                  type="checkbox"
+                  checked={rankedOnly}
+                  onChange={(event) => setRankedOnly(event.target.checked)}
+                />
+                <span>Top 25 spotlight</span>
+              </label>
+
+              <input
+                type="search"
+                className="search-field"
+                placeholder="Search teams or conferences"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                aria-label="Search teams"
+              />
+            </div>
+          </div>
+
+          {filteredGames.length === 0 ? (
+            <p className="no-games">No games match the current filters</p>
           ) : (
             <div className="games-grid">
-              {games.map((event) => {
-                const competition = event.competitions?.[0]
-                const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home')
-                const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away')
-                const status = competition?.status
+              {filteredGames.map((game) => (
+                <article key={game.id} className="game-card" aria-label={`${game.awayTeam.name} at ${game.homeTeam.name}`}>
+                  <header className="game-card-header">
+                    <span className={`status-chip ${game.gameState}`}>{game.statusText}</span>
+                    {game.isRanked && <span className="rank-badge">Top 25 clash</span>}
+                  </header>
 
-                return (
-                  <div key={event.id} className="game-card">
-                    <div className="game-status">
-                      {status?.type?.completed ? 'Final' : status?.type?.detail || 'Live'}
-                    </div>
-
-                    <div className="game-teams">
-                      <div className="team">
-                        <span className="team-name">{awayTeam?.team?.displayName || 'Away'}</span>
-                        <span className="team-score">{awayTeam?.score || '0'}</span>
+                  <div className="game-teams">
+                    <div className="team">
+                      <div className="team-label">
+                        {game.awayTeam.rank && <span className="team-rank">#{game.awayTeam.rank}</span>}
+                        <span className="team-name">{game.awayTeam.name}</span>
                       </div>
-
-                      <div className="team">
-                        <span className="team-name">{homeTeam?.team?.displayName || 'Home'}</span>
-                        <span className="team-score">{homeTeam?.score || '0'}</span>
+                      <div className="team-score-block">
+                        <span className="team-score">{game.awayTeam.score}</span>
+                        {game.awayTeam.record && <span className="team-record">{game.awayTeam.record}</span>}
                       </div>
                     </div>
 
-                    <div className="game-meta">
-                      <span className="venue">
-                        {competition?.venue?.fullName || 'TBD'}
-                      </span>
+                    <div className="team">
+                      <div className="team-label">
+                        {game.homeTeam.rank && <span className="team-rank">#{game.homeTeam.rank}</span>}
+                        <span className="team-name">{game.homeTeam.name}</span>
+                      </div>
+                      <div className="team-score-block">
+                        <span className="team-score">{game.homeTeam.score}</span>
+                        {game.homeTeam.record && <span className="team-record">{game.homeTeam.record}</span>}
+                      </div>
                     </div>
                   </div>
-                )
-              })}
+
+                  <div className="game-meta">
+                    <div className="meta-line">
+                      <span className="meta-label">Venue</span>
+                      <span className="meta-value">{game.venue}</span>
+                    </div>
+                    {game.conferenceName && (
+                      <div className="meta-line">
+                        <span className="meta-label">Conference</span>
+                        <span className="meta-value">{game.conferenceName}</span>
+                      </div>
+                    )}
+                    {game.startDate && (
+                      <div className="meta-line">
+                        <span className="meta-label">First pitch</span>
+                        <span className="meta-value">
+                          {game.startDate.toLocaleTimeString('en-US', {
+                            timeZone: 'America/Chicago',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {game.lastPlay && game.gameState === 'live' && (
+                      <div className="meta-line">
+                        <span className="meta-label">Last play</span>
+                        <span className="meta-value meta-value--wrap">{game.lastPlay}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {game.momentumPulse && (
+                    <div className="pulse">
+                      <div className="pulse-header">
+                        <span className="meta-label">Momentum pulse</span>
+                        <span className="pulse-value">{game.momentumPulse}/10</span>
+                      </div>
+                      <div className="pulse-meter" role="presentation">
+                        <span
+                          className="pulse-fill"
+                          style={{ width: `${(game.momentumPulse / 10) * 100}%` }}
+                        ></span>
+                      </div>
+                      <p className="pulse-copy">
+                        Tight margin + base traffic = high leverage. Stay locked in.
+                      </p>
+                    </div>
+                  )}
+                </article>
+              ))}
             </div>
           )}
+        </section>
+
+        <section className="upgrade-highlights">
+          <h3>Branch upgrades</h3>
+          <ul>
+            <li>
+              <strong>Momentum pulse</strong> quantifies leverage in real time so you never miss a
+              turning point.
+            </li>
+            <li>
+              <strong>Top 25 spotlight</strong> filters the board to ranked heavyweight tilts in one
+              tap.
+            </li>
+            <li>
+              <strong>Smart search</strong> locks onto programs or conferences instantly—no scroll
+              marathon.
+            </li>
+          </ul>
         </section>
 
         <footer className="data-source">
           <p>
             Data source: ESPN College Baseball API
             <br />
-            Last updated: {new Date().toLocaleString('en-US', {
-              timeZone: 'America/Chicago',
-              dateStyle: 'medium',
-              timeStyle: 'short'
-            })}
+            Last updated: {renderedTimestamp}
           </p>
         </footer>
       </main>
