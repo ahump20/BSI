@@ -1,16 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import RealTimeFeedbackStudio from './components/RealTimeFeedbackStudio'
 
 function App() {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [activeView, setActiveView] = useState('scores')
 
   useEffect(() => {
-    // Fetch live college baseball games from ESPN API
+    if (activeView !== 'scores') {
+      return undefined
+    }
+
+    let cancelled = false
+
     const fetchGames = async () => {
       try {
-        setLoading(true)
+        if (!cancelled) {
+          setLoading(true)
+        }
         const response = await fetch(
           'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard'
         )
@@ -20,44 +29,44 @@ function App() {
         }
 
         const data = await response.json()
-        setGames(data.events || [])
-        setError(null)
+        if (!cancelled) {
+          setGames(data.events || [])
+          setError(null)
+        }
       } catch (err) {
-        console.error('Failed to fetch games:', err)
-        setError(err.message)
+        if (!cancelled) {
+          console.error('Failed to fetch games:', err)
+          setError(err.message)
+        }
       } finally {
-        setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+        }
       }
     }
 
     fetchGames()
 
-    // Refresh every 30 seconds for live updates
     const interval = setInterval(fetchGames, 30000)
-    return () => clearInterval(interval)
-  }, [])
 
-  if (loading) {
-    return (
-      <div className="container">
-        <header>
-          <h1>⚾ College Baseball Live</h1>
-          <p className="tagline">Real-time college baseball scores and updates</p>
-        </header>
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
+  }, [activeView])
+
+  const renderScoreboard = () => {
+    if (loading) {
+      return (
         <div className="loading">
           <div className="spinner"></div>
           <p>Loading live scores...</p>
         </div>
-      </div>
-    )
-  }
+      )
+    }
 
-  if (error) {
-    return (
-      <div className="container">
-        <header>
-          <h1>⚾ College Baseball Live</h1>
-        </header>
+    if (error) {
+      return (
         <div className="error">
           <p>⚠️ Failed to load live data</p>
           <p className="error-detail">{error}</p>
@@ -67,18 +76,11 @@ function App() {
             Status: Temporarily unavailable
           </p>
         </div>
-      </div>
-    )
-  }
+      )
+    }
 
-  return (
-    <div className="container">
-      <header>
-        <h1>⚾ College Baseball Live</h1>
-        <p className="tagline">Real-time scores with comprehensive game data</p>
-      </header>
-
-      <main>
+    return (
+      <>
         <section className="live-scores">
           <h2>Live Scores</h2>
           {games.length === 0 ? (
@@ -132,6 +134,39 @@ function App() {
             })}
           </p>
         </footer>
+      </>
+    )
+  }
+
+  return (
+    <div className="container">
+      <header>
+        <h1>⚾ College Baseball Live</h1>
+        <p className="tagline">Real-time scores and AI delivery coaching for college baseball voices</p>
+        <div className="view-toggle" role="tablist" aria-label="Primary view">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'scores'}
+            className={`view-toggle__button ${activeView === 'scores' ? 'active' : ''}`}
+            onClick={() => setActiveView('scores')}
+          >
+            Scoreboard
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeView === 'feedback'}
+            className={`view-toggle__button ${activeView === 'feedback' ? 'active' : ''}`}
+            onClick={() => setActiveView('feedback')}
+          >
+            AI Feedback Studio
+          </button>
+        </div>
+      </header>
+
+      <main className={activeView === 'feedback' ? 'feedback-main' : ''}>
+        {activeView === 'scores' ? renderScoreboard() : <RealTimeFeedbackStudio />}
       </main>
 
       {/* Sport Switcher FAB */}
