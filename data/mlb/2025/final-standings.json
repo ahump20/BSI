@@ -2,7 +2,7 @@
   "league": "Major League Baseball",
   "season": 2025,
   "lastUpdated": "2025-10-23T10:00:00-05:00",
-  "dataStatus": "Final 2025 regular season standings (162 games complete). Postseason concluded October 2025.",
+  "dataStatus": "Final 2025 regular season standings (162 games complete). Postseason in progress (World Series scheduled Oct 24-Nov 1, 2025).",
   "divisions": {
     "AL_East": {
       "name": "American League East",
@@ -66,16 +66,19 @@
     }
   },
   "postseason": {
-    "worldSeriesChampion": "Los Angeles Dodgers",
-    "worldSeriesRunnerUp": "Houston Astros",
+    "worldSeriesChampion": "TBD",
+    "worldSeriesRunnerUp": "TBD",
+    "worldSeriesMatchup": ["Los Angeles Dodgers", "Houston Astros"],
+    "worldSeriesSchedule": "October 24 - November 1, 2025",
     "alcsTeams": ["Houston Astros", "New York Yankees"],
     "nlcsTeams": ["Los Angeles Dodgers", "Atlanta Braves"],
     "wildCardTeams": ["Tampa Bay Rays", "Texas Rangers", "Philadelphia Phillies", "San Diego Padres"]
   },
   "notes": [
-    "Los Angeles Dodgers won 2025 World Series (4-2 over Houston Astros)",
+    "2025 World Series scheduled for October 24 - November 1, 2025 (Dodgers vs Astros)",
     "Atlanta Braves best NL regular season record (101-61)",
     "Houston Astros best AL regular season record (98-64)",
-    "All 2,430 regular season games complete"
+    "All 2,430 regular season games complete",
+    "As of October 23, 2025: Regular season complete, World Series not yet played"
   ]
 }
