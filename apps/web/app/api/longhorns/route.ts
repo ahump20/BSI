@@ -1,22 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import baseballData from '../../../../mcp/texas-longhorns/feeds/baseball.json';
-import footballData from '../../../../mcp/texas-longhorns/feeds/football.json';
-import basketballData from '../../../../mcp/texas-longhorns/feeds/basketball.json';
-import trackFieldData from '../../../../mcp/texas-longhorns/feeds/track-field.json';
+import '../../../lib/cloudflare-types';
+import baseballData from '../../../../../mcp/texas-longhorns/feeds/baseball.json';
+import footballData from '../../../../../mcp/texas-longhorns/feeds/football.json';
+import basketballData from '../../../../../mcp/texas-longhorns/feeds/basketball.json';
+import trackFieldData from '../../../../../mcp/texas-longhorns/feeds/track-field.json';
 
 /**
  * Texas Longhorns MCP Data API with Cloudflare KV Caching
  * Serves MCP data with edge caching for optimal performance
  */
-
-interface KVNamespace {
-  get(key: string): Promise<string | null>;
-  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
-}
-
-declare global {
-  const LONGHORNS_CACHE: KVNamespace | undefined;
-}
 
 const CACHE_TTL = 3600; // 1 hour for static MCP data
 

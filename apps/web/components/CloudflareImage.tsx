@@ -1,15 +1,14 @@
 'use client';
 
-import Image from 'next/image';
 import { getCloudflareImageUrl, getCloudflareImageSrcSet, CloudflareImageProps } from '../lib/cloudflare-images';
 
 /**
  * CloudflareImage Component
- * Drop-in replacement for Next.js Image with Cloudflare Images optimization
+ * Optimized image component using Cloudflare Images
  *
  * Features:
  * - Automatic format selection (WebP, AVIF)
- * - Responsive image generation
+ * - Responsive image generation with srcSet
  * - Edge CDN delivery
  * - Lazy loading support
  *
@@ -45,21 +44,16 @@ export function CloudflareImage({
 
   const srcSet = getCloudflareImageSrcSet(imageId);
 
-  // Calculate aspect ratio for proper sizing
-  const aspectRatio = height && width ? height / width : undefined;
-
   return (
-    <Image
+    <img
       src={imageUrl}
       alt={alt}
       width={width}
-      height={height || (aspectRatio ? width * aspectRatio : width)}
+      height={height}
       srcSet={srcSet}
       className={className}
-      priority={priority}
-      loading={loading}
-      quality={quality}
-      unoptimized // Cloudflare Images handles optimization
+      loading={priority ? 'eager' : loading}
+      style={{ maxWidth: '100%', height: 'auto' }}
     />
   );
 }

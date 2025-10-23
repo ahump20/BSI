@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import '../../../../lib/cloudflare-types';
 
 /**
  * NCAA Baseball Live Data API
@@ -15,16 +16,6 @@ interface NCAAGame {
   awayScore: number;
   inning: string;
   status: 'scheduled' | 'live' | 'final';
-}
-
-interface KVNamespace {
-  get(key: string): Promise<string | null>;
-  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
-}
-
-declare global {
-  // Cloudflare KV namespace available in production
-  const LONGHORNS_CACHE: KVNamespace | undefined;
 }
 
 const NCAA_STATS_API = 'https://stats.ncaa.org/rankings/change_sport_year_div';
