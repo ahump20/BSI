@@ -10,6 +10,7 @@ coverage/
 .vercel/
 *.local
 .next/
+.open-next/
 .vscode/
 .idea/
 __pycache__/
