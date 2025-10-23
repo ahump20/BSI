@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import SportSwitcher from './components/SportSwitcher'
 import GameCard from './components/GameCard'
+import BranchHighlights from './components/BranchHighlights'
 import {
   groupGamesByBucket,
   mapEspnEventsToGames,
@@ -179,6 +180,8 @@ function App() {
             </div>
           )}
         </section>
+
+        <BranchHighlights />
 
         <footer className="data-source">
           <p>
