@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import ObservabilityProvider from './observability-provider';
+import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://blazesportsintel.com'),
@@ -35,7 +36,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <ObservabilityProvider>{children}</ObservabilityProvider>
+        <ObservabilityProvider>
+          {children}
+          <Footer />
+        </ObservabilityProvider>
       </body>
     </html>
   );

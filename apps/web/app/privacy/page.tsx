@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-const effectiveDate = 'September 28, 2025';
+const effectiveDate = 'October 23, 2025';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — Blaze Sports Intel',
@@ -37,51 +37,56 @@ export default function PrivacyPolicyPage() {
 
       <section>
         <h2>2. Information We Collect</h2>
-        <h3>2.1 Information You Provide</h3>
+        <p><strong>Minimal Data Collection Philosophy:</strong> Blaze Sports Intel is designed as a read-only, public information platform. We collect minimal personal information necessary to operate and improve the Service.</p>
+
+        <h3>2.1 Information You Provide Directly</h3>
+        <p><strong>Current Status:</strong> We currently collect minimal user-provided information:</p>
         <ul>
           <li>
-            <strong>Account Data:</strong> Email address, username, password (encrypted)
+            <strong>Contact Form Submissions:</strong> When you contact us, we temporarily receive your message content. This data is not stored in our databases long-term.
           </li>
           <li>
-            <strong>Profile Information:</strong> Sports preferences, favorite teams, notification settings
+            <strong>Feedback:</strong> Voluntary feedback submissions you choose to provide
           </li>
           <li>
-            <strong>Communications:</strong> Support tickets, feedback, survey responses
+            <strong>No Account Data:</strong> We do NOT currently collect email addresses, usernames, passwords, or any account registration information (no user accounts exist)
           </li>
         </ul>
+
         <h3>2.2 Automatically Collected Information</h3>
         <ul>
           <li>
-            <strong>Usage Data:</strong> Pages viewed, features used, time spent, click patterns
+            <strong>Analytics Data (Cloudflare Analytics Engine):</strong> Anonymized page views, basic usage patterns, and performance metrics
           </li>
           <li>
-            <strong>Device Information:</strong> IP address, browser type, operating system, device identifiers
+            <strong>Technical Information:</strong> IP address (anonymized), browser type, operating system, device type (collected by Cloudflare for security and analytics)
           </li>
           <li>
-            <strong>Location Data:</strong> General geographic location based on IP address
+            <strong>Session Data:</strong> Temporary session identifiers for Service functionality (not linked to personal identity)
           </li>
           <li>
-            <strong>Cookies:</strong> Session cookies, preference cookies, analytics cookies (see Cookie Policy)
+            <strong>Cookies:</strong> Essential cookies for Service functionality and analytics cookies (with consent) - see Cookie Policy for details
           </li>
         </ul>
-        <h3>2.3 Sports Data Services</h3>
+
+        <h3>2.3 Data We Do NOT Collect (Current Platform)</h3>
         <ul>
-          <li>
-            <strong>API Interactions:</strong> Queries made to sports data providers
-          </li>
-          <li>
-            <strong>Saved Preferences:</strong> Teams followed, leagues monitored, custom alerts
-          </li>
-          <li>
-            <strong>Historical Searches:</strong> Past queries for personalization (retained 90 days)
-          </li>
+          <li><strong>No Personal Accounts:</strong> No email addresses, usernames, or passwords</li>
+          <li><strong>No Payment Information:</strong> No credit cards, billing addresses, or financial data (completely free service)</li>
+          <li><strong>No Precise Location:</strong> No GPS coordinates or precise geolocation tracking</li>
+          <li><strong>No Persistent User Profiles:</strong> No saved preferences, favorite teams, or personalized settings (stored locally in browser only)</li>
+          <li><strong>No Behavioral Tracking:</strong> No cross-site tracking, advertising pixels, or third-party advertising cookies</li>
+          <li><strong>No Biometric Data:</strong> Despite biomechanics analysis features, we do not collect or store personal biometric information</li>
+          <li><strong>No Sensitive Data:</strong> No government IDs, health information, financial data, or social security numbers</li>
         </ul>
-        <h3>2.4 Information We Do Not Collect</h3>
+
+        <h3>2.4 Future Data Collection (If User Accounts Are Introduced)</h3>
+        <p>If we introduce user account features in the future, we will:</p>
         <ul>
-          <li>Payment information (processed by third-party providers)</li>
-          <li>Biometric data</li>
-          <li>Government identification numbers</li>
-          <li>Health or medical information</li>
+          <li>Provide clear notice before implementing account registration</li>
+          <li>Update this Privacy Policy with at least 30 days advance notice</li>
+          <li>Obtain explicit consent for any additional data collection</li>
+          <li>Allow users to continue using the Service without an account (where possible)</li>
         </ul>
       </section>
 
@@ -119,62 +124,114 @@ export default function PrivacyPolicyPage() {
 
       <section>
         <h2>4. How We Use Your Information</h2>
-        <h3>4.1 Primary Uses</h3>
+        <p>Given our minimal data collection, we use information only for the following limited purposes:</p>
+
+        <h3>4.1 Service Delivery</h3>
         <ul>
-          <li>Provide sports data, scores, and analytics services</li>
-          <li>Personalize content based on your preferences</li>
-          <li>Send service updates and notifications</li>
-          <li>Respond to support requests</li>
-          <li>Improve Service functionality and user experience</li>
+          <li><strong>Provide Sports Data:</strong> Deliver real-time scores, statistics, analytics, and visualizations</li>
+          <li><strong>API Functionality:</strong> Process API requests and return sports data</li>
+          <li><strong>Session Management:</strong> Maintain temporary sessions for Service functionality</li>
+          <li><strong>Browser Preferences:</strong> Store user preferences locally in browser (not on our servers)</li>
         </ul>
-        <h3>4.2 Analytics and Performance</h3>
+
+        <h3>4.2 Service Improvement and Analytics</h3>
         <ul>
-          <li>Monitor Service performance and uptime</li>
-          <li>Analyze usage patterns to improve features</li>
-          <li>Conduct A/B testing for optimization</li>
-          <li>Generate aggregated, non-identifiable statistics</li>
+          <li><strong>Performance Monitoring:</strong> Track Service uptime, response times, and technical performance</li>
+          <li><strong>Usage Analytics:</strong> Understand which features are most used to prioritize development (anonymized, aggregated data only)</li>
+          <li><strong>Error Detection:</strong> Identify and fix bugs, crashes, and technical issues</li>
+          <li><strong>Feature Development:</strong> Analyze aggregated usage patterns to improve user experience</li>
         </ul>
-        <h3>4.3 Legal and Safety</h3>
+
+        <h3>4.3 Security and Fraud Prevention</h3>
         <ul>
-          <li>Comply with legal obligations</li>
-          <li>Enforce Terms of Service</li>
-          <li>Prevent fraud and abuse</li>
-          <li>Protect rights and safety of users</li>
+          <li><strong>DDoS Protection:</strong> Prevent denial-of-service attacks via Cloudflare</li>
+          <li><strong>Rate Limiting:</strong> Enforce API rate limits to prevent abuse</li>
+          <li><strong>Security Monitoring:</strong> Detect unauthorized access attempts and malicious activity</li>
+          <li><strong>Terms Enforcement:</strong> Identify and prevent violations of our Terms of Service</li>
+        </ul>
+
+        <h3>4.4 Legal Compliance and Safety</h3>
+        <ul>
+          <li>Comply with applicable laws and regulations</li>
+          <li>Respond to valid legal requests (subpoenas, court orders)</li>
+          <li>Protect our legal rights and interests</li>
+          <li>Ensure user safety and platform integrity</li>
+        </ul>
+
+        <h3>4.5 What We Do NOT Do With Your Data</h3>
+        <ul>
+          <li><strong>No Selling:</strong> We never sell, rent, or trade your information to third parties</li>
+          <li><strong>No Advertising Profiles:</strong> We do not build advertising profiles or share data with ad networks</li>
+          <li><strong>No Cross-Site Tracking:</strong> We do not track you across other websites</li>
+          <li><strong>No Marketing (Currently):</strong> We do not send marketing emails or promotional communications</li>
         </ul>
       </section>
 
       <section>
         <h2>5. Data Sharing and Disclosure</h2>
-        <h3>5.1 Service Providers</h3>
-        <p>We share data with carefully selected providers:</p>
+        <p>We share minimal anonymized data with essential service providers only. We never sell your personal information.</p>
+
+        <h3>5.1 Third-Party Service Providers</h3>
+        <p><strong>Cloudflare (Infrastructure & Security):</strong></p>
         <ul>
-          <li>
-            <strong>Cloudflare:</strong> Content delivery, DDoS protection, analytics
-          </li>
-          <li>
-            <strong>Sports Data Providers:</strong> MLB Stats API, NCAA, licensed data sources
-          </li>
-          <li>
-            <strong>Analytics:</strong> Google Analytics (anonymized)
-          </li>
+          <li><strong>Purpose:</strong> Hosting, content delivery, DDoS protection, analytics, caching, serverless functions</li>
+          <li><strong>Data Shared:</strong> Anonymized IP addresses, browser information, page views, request metadata</li>
+          <li><strong>Services Used:</strong> Cloudflare Pages, Workers, D1, KV, R2, Analytics Engine, Workers AI</li>
+          <li><strong>Privacy Policy:</strong> https://www.cloudflare.com/privacypolicy/</li>
         </ul>
-        <h3>5.2 Legal Requirements</h3>
-        <p>We may disclose information when required by:</p>
+
+        <p><strong>Sports Data Providers:</strong></p>
         <ul>
-          <li>Court orders or subpoenas</li>
-          <li>Government requests</li>
-          <li>Legal proceedings</li>
-          <li>Protection of our rights or safety</li>
+          <li><strong>SportsDataIO:</strong> Commercial API for MLB, NFL, NCAA data (no personal data shared)</li>
+          <li><strong>MLB Advanced Media:</strong> Official MLB statistics (public API, no user data shared)</li>
+          <li><strong>ESPN:</strong> Live scores and game data (public endpoints, no user data shared)</li>
+          <li><strong>NCAA/Perfect Game/MaxPreps:</strong> College and youth sports data (no user data shared)</li>
         </ul>
-        <h3>5.3 Business Transfers</h3>
-        <p>In case of merger, acquisition, or sale, user information may be transferred with appropriate notice.</p>
-        <h3>5.4 No Sale of Personal Information</h3>
-        <p>We do not sell, rent, or trade your personal information to third parties.</p>
+
+        <p><strong>AI Service Providers:</strong></p>
+        <ul>
+          <li><strong>Anthropic Claude:</strong> AI chatbot and content generation (no personal data shared beyond chat queries)</li>
+          <li><strong>Cloudflare Workers AI:</strong> Embeddings and LLM inference (processed within Cloudflare infrastructure)</li>
+          <li><strong>OpenAI (Future):</strong> May be used for advanced AI features (text analysis, not personal data)</li>
+        </ul>
+
+        <h3>5.2 What We Do NOT Share</h3>
+        <ul>
+          <li><strong>No Advertising Networks:</strong> We do not share data with Google Ads, Facebook Pixel, or other ad platforms</li>
+          <li><strong>No Data Brokers:</strong> We do not sell or share data with data brokers or marketing companies</li>
+          <li><strong>No Social Media Tracking:</strong> No Facebook, Twitter, or social media tracking pixels</li>
+          <li><strong>No Cross-Site Tracking:</strong> No third-party cookies for tracking across websites</li>
+        </ul>
+
+        <h3>5.3 Legal Requirements and Compliance</h3>
+        <p>We may disclose information when required by law:</p>
+        <ul>
+          <li>Valid court orders, subpoenas, or warrants</li>
+          <li>Government agency requests (with legal basis)</li>
+          <li>Legal proceedings or investigations</li>
+          <li>Protection of our rights, property, or safety</li>
+          <li>Prevention of fraud, abuse, or illegal activity</li>
+          <li>Compliance with DMCA, GDPR, CCPA, or other legal obligations</li>
+        </ul>
+        <p><strong>Transparency Commitment:</strong> Where legally permitted, we will notify users before disclosing their information to law enforcement or government agencies.</p>
+
+        <h3>5.4 Business Transfers</h3>
+        <p>In the event of a merger, acquisition, bankruptcy, or sale of assets, user information may be transferred to the acquiring entity. We will:</p>
+        <ul>
+          <li>Provide notice via email (if we have contact information) and prominent website notice</li>
+          <li>Require the acquiring entity to honor this Privacy Policy</li>
+          <li>Provide users the option to delete their data before transfer (if accounts exist)</li>
+        </ul>
+
+        <h3>5.5 No Sale of Personal Information</h3>
+        <p><strong>CCPA Compliance:</strong> We do not sell, rent, trade, or otherwise monetize your personal information. We have never sold personal information and have no plans to do so.</p>
       </section>
 
       <section>
         <h2>6. Data Retention</h2>
-        <table>
+        <p>We retain data only as long as necessary for the purposes outlined in this Privacy Policy.</p>
+
+        <table style={{width: '100%', marginTop: '1rem'}}>
           <thead>
             <tr>
               <th>Data Category</th>
@@ -184,32 +241,55 @@ export default function PrivacyPolicyPage() {
           </thead>
           <tbody>
             <tr>
-              <td>Account Data</td>
-              <td>Duration of account + 30 days</td>
-              <td>Service provision</td>
+              <td>Analytics Data (Cloudflare)</td>
+              <td>90 days (aggregated)</td>
+              <td>Performance monitoring and service improvement</td>
             </tr>
             <tr>
-              <td>Usage Logs</td>
-              <td>90 days</td>
-              <td>Performance monitoring</td>
+              <td>Server Logs</td>
+              <td>30 days</td>
+              <td>Security, debugging, abuse prevention</td>
             </tr>
             <tr>
-              <td>Marketing Preferences</td>
-              <td>Until withdrawn</td>
-              <td>Consent-based</td>
+              <td>Contact Form Submissions</td>
+              <td>Temporary (not persisted)</td>
+              <td>Response to inquiries only</td>
             </tr>
             <tr>
-              <td>Legal Records</td>
+              <td>Session Cookies</td>
+              <td>End of session</td>
+              <td>Service functionality</td>
+            </tr>
+            <tr>
+              <td>Analytics Cookies</td>
+              <td>13 months (if consented)</td>
+              <td>Usage analysis</td>
+            </tr>
+            <tr>
+              <td>Preference Cookies</td>
+              <td>12 months</td>
+              <td>User preferences (stored locally)</td>
+            </tr>
+            <tr>
+              <td>Legal/Compliance Records</td>
               <td>7 years</td>
-              <td>Legal requirements</td>
+              <td>Legal obligations</td>
             </tr>
             <tr>
-              <td>Cookies</td>
-              <td>See Cookie Policy</td>
-              <td>Various</td>
+              <td>Account Data</td>
+              <td>N/A (no accounts currently)</td>
+              <td>Not applicable - no user accounts</td>
             </tr>
           </tbody>
         </table>
+
+        <p style={{marginTop: '1rem'}}><strong>Data Deletion:</strong></p>
+        <ul>
+          <li>Automated deletion after retention period expires</li>
+          <li>Manual deletion upon user request (see Your Rights section)</li>
+          <li>Secure deletion methods to prevent data recovery</li>
+          <li>Archived backups deleted within 90 days of retention expiration</li>
+        </ul>
       </section>
 
       <section>
