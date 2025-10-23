@@ -114,10 +114,6 @@ export default function FeedbackDashboard({
           const videoElement = mediaCapture.getVideoElement();
           if (videoElement && videoPreviewRef.current) {
             videoPreviewRef.current.appendChild(videoElement);
-            videoElement.style.width = '100%';
-            videoElement.style.height = '100%';
-            videoElement.style.objectFit = 'cover';
-            videoElement.style.transform = 'scaleX(-1)'; // Mirror video
           }
         },
         onStreamStopped: () => {
@@ -180,139 +176,128 @@ export default function FeedbackDashboard({
   };
 
   /**
-   * Get score color based on value
+   * Get score level (high/medium/low)
    */
-  const getScoreColor = (score: number): string => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+  const getScoreLevel = (score: number): 'high' | 'medium' | 'low' => {
+    if (score >= 80) return 'high';
+    if (score >= 60) return 'medium';
+    return 'low';
   };
 
   /**
-   * Get priority color
+   * Get delta direction
    */
-  const getPriorityColor = (priority: string): string => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
-    }
+  const getDeltaDirection = (delta: number): 'up' | 'down' | 'neutral' => {
+    if (delta > 0) return 'up';
+    if (delta < 0) return 'down';
+    return 'neutral';
   };
 
   /**
    * Render score card
    */
-  const ScoreCard = ({ label, score, delta }: { label: string; score: number; delta?: number }) => (
-    <div className="bg-white rounded-lg p-4 shadow-md border border-gray-200">
-      <div className="text-sm text-gray-600 mb-2">{label}</div>
-      <div className={`text-3xl font-bold ${getScoreColor(score)}`}>
-        {Math.round(score)}
-      </div>
-      {delta !== undefined && delta !== 0 && (
-        <div className={`text-sm mt-1 ${delta > 0 ? 'text-green-600' : 'text-red-600'}`}>
-          {delta > 0 ? '↑' : '↓'} {Math.abs(delta)}
+  const ScoreCard = ({ label, score, delta }: { label: string; score: number; delta?: number }) => {
+    const level = getScoreLevel(score);
+    const direction = delta !== undefined ? getDeltaDirection(delta) : 'neutral';
+
+    return (
+      <div className="feedback-score-card">
+        <div className="feedback-score-label">{label}</div>
+        <div className="feedback-score-value" data-level={level}>
+          {Math.round(score)}
         </div>
-      )}
-      {/* Progress bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-        <div
-          className={`h-2 rounded-full transition-all duration-500 ${
-            score >= 80 ? 'bg-green-600' : score >= 60 ? 'bg-yellow-600' : 'bg-red-600'
-          }`}
-          style={{ width: `${score}%` }}
-        />
+        {delta !== undefined && delta !== 0 && (
+          <div className="feedback-score-delta" data-direction={direction}>
+            {delta > 0 ? '↑' : '↓'} {Math.abs(Math.round(delta))}
+          </div>
+        )}
+        <div className="feedback-score-progress">
+          <div
+            className="feedback-score-progress-fill"
+            data-level={level}
+            style={{ width: `${score}%` }}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="feedback-page">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Real-Time Communication Feedback</h1>
-            <p className="text-sm text-gray-600">Session ID: {sessionId}</p>
+      <header className="feedback-header">
+        <div className="feedback-header-content">
+          <div className="feedback-header-left">
+            <h1 className="feedback-header-title">Real-Time Communication Feedback</h1>
+            <p className="feedback-header-subtitle">Session: {sessionId.slice(0, 8)}</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className="text-sm text-gray-600">
-                {isConnected ? 'Connected' : 'Disconnected'}
-              </span>
+          <div className="feedback-header-right">
+            <div className="feedback-status" data-connected={isConnected}>
+              <span className="feedback-status-dot" />
+              <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
             </div>
-            <button
-              onClick={stopSession}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
+            <button onClick={stopSession} className="feedback-end-btn">
               End Session
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto p-6">
-        <div className="grid grid-cols-12 gap-6">
+      <main className="feedback-main">
+        <div className="feedback-container">
+
           {/* Left Column: Video Preview */}
-          <div className="col-span-4">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div
-                ref={videoPreviewRef}
-                className="relative aspect-video bg-gray-900"
-              >
+          <div className="feedback-video-section">
+            <div className="feedback-video-card">
+              <div ref={videoPreviewRef} className="feedback-video-preview">
                 {!isCapturing && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <div className="mb-4">
-                        <svg className="w-16 h-16 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <p className="text-lg">Initializing camera...</p>
-                    </div>
+                  <div className="feedback-video-placeholder">
+                    <svg className="feedback-video-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <p className="feedback-video-text">Initializing camera...</p>
                   </div>
                 )}
               </div>
 
-              {/* Stats */}
-              <div className="p-4 bg-gray-50 border-t border-gray-200">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Frames:</span>
-                    <span className="ml-2 font-semibold">{stats.framesProcessed}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Audio:</span>
-                    <span className="ml-2 font-semibold">{stats.audioChunksProcessed}</span>
-                  </div>
+              {/* Stats Footer */}
+              <div className="feedback-video-stats">
+                <div className="feedback-stat">
+                  <span className="feedback-stat-label">Frames</span>
+                  <span className="feedback-stat-value">{stats.framesProcessed}</span>
+                </div>
+                <div className="feedback-stat">
+                  <span className="feedback-stat-label">Audio</span>
+                  <span className="feedback-stat-value">{stats.audioChunksProcessed}</span>
                 </div>
               </div>
             </div>
 
             {/* Error Display */}
             {error && (
-              <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-start">
-                  <svg className="w-5 h-5 text-red-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-red-800">Error</h3>
-                    <p className="text-sm text-red-700 mt-1">{error}</p>
-                  </div>
+              <div className="feedback-error">
+                <svg className="feedback-error-icon" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <div className="feedback-error-content">
+                  <h3 className="feedback-error-title">Error</h3>
+                  <p className="feedback-error-message">{error}</p>
                 </div>
               </div>
             )}
           </div>
 
           {/* Right Column: Scores and Feedback */}
-          <div className="col-span-8 space-y-6">
-            {/* Scores Grid */}
+          <div className="feedback-scores-section">
+
+            {/* Performance Scores */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Performance Scores</h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="feedback-section-header">
+                <h2 className="feedback-section-title">Performance Scores</h2>
+              </div>
+
+              <div className="feedback-scores-grid">
                 <ScoreCard
                   label="Confidence"
                   score={scores.confidence}
@@ -340,51 +325,48 @@ export default function FeedbackDashboard({
             </div>
 
             {/* Suggestions */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Suggestions {suggestions.length > 0 && `(${suggestions.length})`}
-              </h2>
+            <div className="feedback-suggestions-section">
+              <div className="feedback-section-header">
+                <h2 className="feedback-section-title">Suggestions</h2>
+                {suggestions.length > 0 && (
+                  <span className="feedback-section-count">({suggestions.length})</span>
+                )}
+              </div>
 
               {suggestions.length === 0 ? (
-                <div className="bg-white rounded-lg p-8 shadow-md text-center">
-                  <svg className="w-12 h-12 mx-auto text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="feedback-suggestions-empty">
+                  <svg className="feedback-suggestions-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p className="text-gray-600">You're doing great! Keep it up.</p>
+                  <p className="feedback-suggestions-empty-text">You're doing great! Keep it up.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {suggestions.map((suggestion, index) => (
-                    <div
-                      key={index}
-                      className={`border rounded-lg p-4 ${getPriorityColor(suggestion.priority)}`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide">
-                              {suggestion.category}
-                            </span>
-                            <span className={`text-xs px-2 py-0.5 rounded ${
-                              suggestion.priority === 'high' ? 'bg-red-200' :
-                              suggestion.priority === 'medium' ? 'bg-yellow-200' :
-                              'bg-blue-200'
-                            }`}>
-                              {suggestion.priority}
-                            </span>
-                          </div>
-                          <p className="font-medium mb-1">{suggestion.message}</p>
-                          <p className="text-sm opacity-90">{suggestion.improvement}</p>
-                        </div>
-                      </div>
+                suggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className="feedback-suggestion-card"
+                    data-priority={suggestion.priority}
+                  >
+                    <div className="feedback-suggestion-header">
+                      <span className="feedback-suggestion-category">
+                        {suggestion.category}
+                      </span>
+                      <span
+                        className="feedback-suggestion-priority"
+                        data-level={suggestion.priority}
+                      >
+                        {suggestion.priority}
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <p className="feedback-suggestion-message">{suggestion.message}</p>
+                    <p className="feedback-suggestion-improvement">{suggestion.improvement}</p>
+                  </div>
+                ))
               )}
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
