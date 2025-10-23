@@ -2,7 +2,8 @@
   "league": "Major League Baseball",
   "season": 2025,
   "lastUpdated": "2025-10-23T10:00:00-05:00",
-  "dataStatus": "Final 2025 regular season standings (162 games complete). Postseason concluded October 2025.",
+  "dataStatus": "SAMPLE DATA STRUCTURE - Actual 2025 standings require MLB Stats API integration. This file shows the expected format for real-time data.",
+  "note": "This is a template showing data structure. Real standings available at statsapi.mlb.com",
   "divisions": {
     "AL_East": {
       "name": "American League East",
@@ -66,16 +67,12 @@
     }
   },
   "postseason": {
-    "worldSeriesChampion": "Los Angeles Dodgers",
-    "worldSeriesRunnerUp": "Houston Astros",
-    "alcsTeams": ["Houston Astros", "New York Yankees"],
-    "nlcsTeams": ["Los Angeles Dodgers", "Atlanta Braves"],
-    "wildCardTeams": ["Tampa Bay Rays", "Texas Rangers", "Philadelphia Phillies", "San Diego Padres"]
+    "note": "2025 postseason data available via MLB Stats API after completion"
   },
   "notes": [
-    "Los Angeles Dodgers won 2025 World Series (4-2 over Houston Astros)",
-    "Atlanta Braves best NL regular season record (101-61)",
-    "Houston Astros best AL regular season record (98-64)",
-    "All 2,430 regular season games complete"
+    "This is a SAMPLE data structure showing expected format",
+    "Real 2025 MLB data available via MLB Stats API: https://statsapi.mlb.com/api/v1/standings",
+    "Integrate with lib/adapters/mlb.ts for live data",
+    "All divisions show sample records for demonstration purposes"
   ]
 }

@@ -3,7 +3,8 @@
   "season": 2025,
   "week": 9,
   "lastUpdated": "2025-10-23T10:00:00-05:00",
-  "dataStatus": "2025 College Football season in progress. Standings current through Week 9 (approximately 650 games played).",
+  "dataStatus": "SAMPLE DATA STRUCTURE - Actual 2025 CFB standings require ESPN/NCAA API integration. This file shows the expected format.",
+  "note": "This is a template. Real standings available via lib/adapters/espn-api.ts and lib/adapters/ncaa-api.ts",
   "conferences": {
     "SEC": {
       "name": "Southeastern Conference",
@@ -93,10 +94,10 @@
     ]
   },
   "notes": [
-    "Approximately 650 games played through Week 9 of regular season",
-    "Ohio State remains only undefeated team in FBS (8-0)",
-    "SEC features 7 ranked teams in CFP Top 25",
-    "College Football Playoff selection scheduled for December 8, 2025",
-    "Regular season concludes late November, conference championships early December"
+    "This is a SAMPLE data structure showing expected format",
+    "Real 2025 CFB data available via ESPN API and NCAA API",
+    "Integrate with lib/adapters/espn-api.ts for live data",
+    "All team records and rankings are sample data for demonstration purposes",
+    "See lib/college-baseball/config.ts for caching strategy applicable to CFB"
   ]
 }

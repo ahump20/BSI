@@ -3,7 +3,8 @@
   "season": 2025,
   "week": 7,
   "lastUpdated": "2025-10-23T10:00:00-05:00",
-  "dataStatus": "2025 NFL season in progress. Standings current through Week 7 (56 games played of 272 regular season games).",
+  "dataStatus": "SAMPLE DATA STRUCTURE - Actual 2025 NFL standings require SportsDataIO/ESPN API integration. This file shows the expected format.",
+  "note": "This is a template. Real standings available via lib/adapters/nfl.ts integration with SportsDataIO API",
   "conferences": {
     "AFC": {
       "name": "American Football Conference",
@@ -97,9 +98,9 @@
     ]
   },
   "notes": [
-    "56 games played through Week 7 of 272 total regular season games",
-    "Baltimore Ravens (6-1) and Kansas City Chiefs (6-1) lead AFC",
-    "Detroit Lions (6-1) lead NFC North with best point differential (+57)",
-    "2025 NFL season runs through Week 18 (early January 2026)"
+    "This is a SAMPLE data structure showing expected format",
+    "Real 2025 NFL data available via SportsDataIO NFL API",
+    "Integrate with lib/adapters/nfl.ts for live data",
+    "All team records are sample data for demonstration purposes"
   ]
 }

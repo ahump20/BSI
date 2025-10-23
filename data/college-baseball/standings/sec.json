@@ -8,7 +8,7 @@
   "dataStatus": "Historical data verified and accurate as of October 2025. 2026 season begins February 2026.",
   "champion": {
     "team": "Texas Longhorns",
-    "record": "22-8 SEC, 42-11 overall",
+    "record": "22-8 SEC, 44-14 overall",
     "note": "First SEC regular season championship for Texas in inaugural SEC season"
   },
   "standings": [
@@ -19,13 +19,13 @@
       "confWins": 22,
       "confLosses": 8,
       "confPct": 0.733,
-      "overallWins": 42,
-      "overallLosses": 11,
-      "overallPct": 0.792,
+      "overallWins": 44,
+      "overallLosses": 14,
+      "overallPct": 0.759,
       "gamesBack": "0.0",
-      "streak": "W3",
-      "home": "21-3",
-      "away": "14-6",
+      "streak": "L1",
+      "home": "24-5",
+      "away": "13-7",
       "neutral": "7-2"
     },
     {
