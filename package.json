@@ -36,7 +36,7 @@
     "real:verify": "node test-real-implementation.js",
     "health": "node scripts/health-check.js",
     "migrate": "node scripts/run-migrations.js",
-    "seed": "node scripts/seed-data.js",
+    "seed": "node scripts/seed-data.js"
   },
   "keywords": [
     "sports-analytics",

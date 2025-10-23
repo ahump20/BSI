@@ -120,6 +120,26 @@ class BlazeIntelligenceAPIServer {
             }
         });
 
+        // Branch differentiators and upgrade roadmap
+        this.app.get('/api/v1/branch/insights', (req, res) => {
+            try {
+                const branch = (req.query.branch || req.headers['x-branch-name'] || this.env.VERCEL_GIT_COMMIT_REF || this.env.GIT_BRANCH || this.env.BRANCH || 'main').toString();
+                const includeExperimental = req.query.includeExperimental === 'true';
+                const insights = this.sportsService.getBranchDifferentiators(branch, { includeExperimental });
+
+                res.json({
+                    success: true,
+                    ...insights
+                });
+            } catch (error) {
+                this.logger.error('Branch insights request failed', { branch: req.query.branch }, error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Unable to enumerate branch differentiators at this time.'
+                });
+            }
+        });
+
         // Team analytics - now with real ML predictions
         this.app.get('/api/team/:sport/:teamKey/analytics', async (req, res) => {
             try {

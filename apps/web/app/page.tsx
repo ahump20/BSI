@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Script from 'next/script';
+import SiteHeader from '../components/site-header';
 
 const COOKIE_NAME = 'cookie_consent';
 const COOKIE_MAX_AGE_DAYS = 365;
@@ -177,29 +178,7 @@ export default function HoldingPage() {
         </div>
       </div>
 
-      <header role="banner">
-        <div className="header-container">
-          <Link href="/" className="logo" aria-label="Blaze Sports Intel Home">
-            Blaze <span>Sports Intel</span>™
-          </Link>
-          <nav role="navigation" aria-label="Main navigation">
-            <ul>
-              <li>
-                <Link href="/privacy">Privacy Policy</Link>
-              </li>
-              <li>
-                <Link href="/terms">Terms of Service</Link>
-              </li>
-              <li>
-                <Link href="/cookies">Cookie Policy</Link>
-              </li>
-              <li>
-                <Link href="/accessibility">Accessibility</Link>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main id="main-content" role="main">
         <section className="hero">
