@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { BaseballGamesResponse } from './types';
+import { validateQuery } from '../../../../../../../lib/validation/nextjs-validation';
+import { baseballGamesQuerySchema } from '../../../../../../../lib/validation/schemas/baseball.schema';
 
 export const runtime = 'edge';
 
@@ -73,6 +75,12 @@ function buildTargetUrl(baseUrl: string, request: NextRequest): string {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  // Validate query parameters
+  const validationResult = validateQuery(request, baseballGamesQuerySchema);
+  if (!validationResult.success) {
+    return validationResult.error;
+  }
+
   const baseUrl = resolveInferenceBaseUrl();
   if (!baseUrl) {
     return NextResponse.json(

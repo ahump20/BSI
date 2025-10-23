@@ -1,0 +1,253 @@
+===================================================================
+COMPREHENSIVE API ENDPOINT INVENTORY - EXECUTIVE SUMMARY
+===================================================================
+
+DOCUMENT LOCATION: /home/user/BSI/API_ENDPOINTS_INVENTORY.md
+
+TOTAL ENDPOINTS DISCOVERED: 28+ unique endpoints
+
+BREAKDOWN:
+
+1. EXPRESS SERVER ENDPOINTS (9 total)
+   File: /home/user/BSI/api/server.js
+   
+   GET /health (line 96)
+   GET /api/docs (line 345)
+   GET / (line 373)
+   GET /api/team/:sport/:teamKey (line 316)
+   GET /api/team/:sport/:teamKey/analytics (line 124)
+   POST /api/predict/game (line 161)
+   POST /api/predict/player (line 252)
+   POST /api/ml/train (line 291)
+   POST /api/v1/scheduling/optimizer (line 201)
+
+2. CLOUDFLARE PAGES FUNCTIONS (15+ unique endpoints)
+   
+   a) Health & Monitoring:
+      /home/user/BSI/functions/api/health.js
+      - GET /api/health
+      
+      /home/user/BSI/functions/api/metrics.js
+      - GET /api/metrics
+   
+   b) Chat & Basics:
+      /home/user/BSI/functions/api/chat.js
+      - POST /api/chat
+      
+      /home/user/BSI/functions/api/analytics.js
+      - GET /api/analytics
+      
+      /home/user/BSI/functions/api/championship.js
+      - GET /api/championship
+   
+   c) College Baseball:
+      /home/user/BSI/functions/api/college-baseball/games.js
+      - GET /api/college-baseball/games
+      
+      /home/user/BSI/functions/api/college-baseball/teams.js
+      - GET /api/college-baseball/teams
+   
+   d) Live Scores:
+      /home/user/BSI/functions/api/live-scores.js
+      - GET /api/live-scores
+   
+   e) Sports Scores (Individual):
+      /home/user/BSI/functions/api/mlb/scores.js
+      - GET /api/mlb/scores
+      
+      /home/user/BSI/functions/api/nfl/scores.js
+      - GET /api/nfl/scores
+      
+      /home/user/BSI/functions/api/nba/scores.js
+      - GET /api/nba/scores
+   
+   f) Analytics & Simulations:
+      /home/user/BSI/functions/api/monte-carlo.js
+      - GET /api/monte-carlo
+      
+      /home/user/BSI/functions/api/simulations/[sport].ts
+      - GET /api/simulations/:sport
+   
+   g) Live Data Multi-Route:
+      /home/user/BSI/functions/api/live/[[route]].ts
+      - GET /api/live/ncaa/football
+      - GET /api/live/ncaa/baseball
+      - GET /api/live/mlb/scores
+      - GET /api/live/nfl/scores
+      - GET /api/live/nba/scores
+      - GET /api/live/all/scores
+   
+   h) Copilot (AI/Search):
+      /home/user/BSI/functions/api/copilot/games.ts
+      - GET /api/copilot/games
+      
+      /home/user/BSI/functions/api/copilot/search.ts
+      - GET/POST /api/copilot/search
+      
+      /home/user/BSI/functions/api/copilot/health.ts
+      - GET /api/copilot/health
+      
+      /home/user/BSI/functions/api/copilot/teams.ts
+      - GET /api/copilot/teams
+      
+      /home/user/BSI/functions/api/copilot/insight.ts
+      - GET/POST /api/copilot/insight
+   
+   i) Sports Data Integration:
+      /home/user/BSI/functions/api/sports-data.js
+      - GET /api/sports-data/mlb
+      - GET /api/sports-data/nfl
+      - GET /api/sports-data/nba
+      - GET /api/sports-data/ncaa
+      - GET /api/sports-data/perfect-game
+      - GET /api/sports-data/texas-hs
+      - GET /api/sports-data/championship
+
+3. NEXT.JS APP ROUTES (1 endpoint)
+   /home/user/BSI/apps/web/app/api/v1/baseball/games/route.ts
+   - GET /api/v1/baseball/games
+
+===================================================================
+VALIDATION SUMMARY
+===================================================================
+
+WELL-VALIDATED (2 endpoints):
+  - /api/predict/game (required fields: homeTeam, awayTeam, sport)
+  - /api/v1/scheduling/optimizer (required fields: teamId, futureOpponents)
+
+PARTIALLY-VALIDATED (8 endpoints):
+  - /api/chat (required: message)
+  - /api/live-scores (enum: sport)
+  - /api/simulations/:sport (enum: sport)
+  - /api/copilot/search (required: query)
+  - /api/copilot/insight (required: question)
+  - /api/live/ncaa/baseball (required: gameId)
+  - Health endpoints
+  - Metrics endpoint
+
+NEEDS VALIDATION (18 endpoints):
+  - All team data endpoints (/api/team/*)
+  - All path parameters (sport, teamKey)
+  - Date/time format validation
+  - Query parameter validation
+  - Enum validation for sports, conferences, etc.
+
+===================================================================
+CRITICAL ENDPOINTS NEEDING IMMEDIATE ATTENTION
+===================================================================
+
+HIGH PRIORITY (frequently used, high impact):
+1. /api/team/:sport/:teamKey/analytics
+   - No path parameter validation
+   - No sport enum validation
+   
+2. /api/live-scores
+   - Sport parameter enumeration exists but incomplete
+   
+3. /api/copilot/games
+   - Multiple query parameters without validation
+   
+4. /api/copilot/search & /api/copilot/insight
+   - Partial validation, could be enhanced
+
+MEDIUM PRIORITY (important, moderate impact):
+5. /api/mlb/scores, /api/nfl/scores, /api/nba/scores
+   - Date format validation missing
+   - Team abbreviation validation incomplete
+   
+6. /api/live/* endpoints
+   - Year/week/season format validation missing
+   
+7. /api/college-baseball/* endpoints
+   - Conference/team filtering validation incomplete
+
+LOWER PRIORITY (less critical):
+8. /api/sports-data/* endpoints
+9. /api/analytics endpoint
+10. /api/championship endpoint
+
+===================================================================
+RECOMMENDED VALIDATION SCHEMA LIBRARY
+===================================================================
+
+For TypeScript/JavaScript projects:
+1. Zod - Lightweight, type-safe, excellent DX
+2. Joi - Powerful, widely adopted, feature-rich
+3. Yup - Simple, familiar to React developers
+
+For Cloudflare Workers:
+- Zod (no runtime dependencies, tree-shakable)
+- Custom validation middleware
+
+For Express Server:
+- Joi (with express-joi-validator)
+- Express Async Errors middleware
+
+===================================================================
+ENDPOINTS BY USAGE FREQUENCY (estimated)
+===================================================================
+
+VERY HIGH (likely used multiple times per minute):
+- /api/live-scores
+- /api/mlb/scores, /api/nfl/scores, /api/nba/scores
+- /api/copilot/games
+
+HIGH (used regularly):
+- /api/team/:sport/:teamKey
+- /api/live/ncaa/football
+- /api/copilot/search
+- /api/health (monitoring)
+
+MEDIUM (used daily):
+- /api/copilot/insight
+- /api/college-baseball/games
+- /api/predict/game
+- /api/metrics
+
+LOW (used occasionally):
+- /api/ml/train
+- /api/monte-carlo
+- /api/sports-data/*
+- /api/championship
+
+===================================================================
+DATA DEPENDENCIES
+===================================================================
+
+External APIs Required:
+- MLB Stats API (statsapi.mlb.com)
+- ESPN APIs (site.api.espn.com)
+- SportsDataIO (api.sportsdata.io)
+- CollegeFootballData API
+- Anthropic Claude API
+- Cloudflare Workers AI
+
+Internal Services Required:
+- Cloudflare D1 Database
+- Cloudflare Vectorize
+- Cloudflare KV Storage
+- Cloudflare R2 Bucket
+
+===================================================================
+NEXT STEPS FOR VALIDATION IMPLEMENTATION
+===================================================================
+
+PHASE 1 (Week 1):
+1. Create validation schemas for all query/body parameters
+2. Add path parameter validation middleware
+3. Create validation error response standardization
+4. Document all validation rules
+
+PHASE 2 (Week 2):
+1. Implement input sanitization
+2. Add rate limiting per endpoint
+3. Create validation testing suite
+4. Add API versioning headers
+
+PHASE 3 (Week 3):
+1. Generate OpenAPI/Swagger documentation
+2. Create request/response examples
+3. Add comprehensive error catalog
+4. Implement request logging
+
+===================================================================
