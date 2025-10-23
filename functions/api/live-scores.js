@@ -6,6 +6,9 @@
  * Deep South Sports Authority
  */
 
+import { withValidation, withRateLimit, createSuccessResponse, createErrorResponse } from './_validation.js';
+import { liveScoresQuerySchema } from './_schemas.js';
+
 const SUPPORTED_SPORTS = new Set(['all', 'mlb', 'nfl', 'nba', 'ncaa', 'ncaa-baseball']);
 const FETCH_TIMEOUT_MS = 8000;
 
@@ -14,41 +17,55 @@ const espnHeaders = {
   Accept: 'application/json',
 };
 
-export async function onRequestGet({ request, env, ctx }) {
-  const url = new URL(request.url);
-  const sport = url.searchParams.get('sport') || 'all';
-  const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
+// Rate limit: 100 requests per minute per IP
+const RATE_LIMIT_CONFIG = {
+    maxRequests: 100,
+    windowSeconds: 60,
+    namespace: 'live_scores'
+};
+
+async function handleLiveScores({ request, env, validated }) {
+  const { sport = 'all', date = new Date().toISOString().split('T')[0] } = validated.query || {};
 
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Cache-Control': 'public, max-age=60', // 1 minute cache for live data
-    'Content-Type': 'application/json',
   };
 
   if (!SUPPORTED_SPORTS.has(sport)) {
-    return new Response(
-      JSON.stringify({
-        error: 'Unsupported sport parameter. Supported values: all, mlb, nfl, nba, ncaa, ncaa-baseball',
-      }),
-      { status: 400, headers },
-    );
+    return createErrorResponse({
+      status: 400,
+      body: {
+        error: 'Unsupported sport parameter',
+        message: 'Supported values: all, mlb, nfl, nba, ncaa, ncaa-baseball'
+      }
+    });
   }
 
   try {
     const scores = await getLiveScores(sport, date, env);
-    return new Response(JSON.stringify(scores), { headers });
+    return createSuccessResponse(scores, {
+      headers,
+      cache: 'public, max-age=60'
+    });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Live scores fetch error',
-      message: error.message
-    }), {
+    return createErrorResponse({
       status: 500,
-      headers
+      body: {
+        error: 'Live scores fetch error',
+        message: error.message
+      }
     });
   }
 }
+
+// Apply validation and rate limiting
+export const onRequestGet = withRateLimit(
+    withValidation(handleLiveScores, { query: liveScoresQuerySchema }),
+    RATE_LIMIT_CONFIG
+);
 
 async function getLiveScores(sport, date, env) {
   const cacheKey = `live-scores-${sport}-${date}`;
