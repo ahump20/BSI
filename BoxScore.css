@@ -115,6 +115,47 @@
   margin-top: 20px;
 }
 
+.insights-panel {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.insights-panel h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.insights-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.insights-chip {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 140px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.insights-chip h4 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.insights-chip p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
 .team-stats {
   margin-bottom: 32px;
 }
@@ -227,6 +268,10 @@
   .stats-table td {
     font-size: 14px;
     padding: 14px 10px;
+  }
+
+  .insights-panel h3 {
+    font-size: 20px;
   }
 }
 

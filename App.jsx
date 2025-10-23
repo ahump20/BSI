@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LiveGameTracker from './components/LiveGameTracker';
 import BoxScore from './components/BoxScore';
 import Standings from './components/Standings';
+import BranchInsights from './BranchInsights';
 import './App.css';
 
 function App() {
@@ -55,6 +56,13 @@ function App() {
         );
       case 'standings':
         return <Standings />;
+      case 'insights':
+        return (
+          <BranchInsights
+            games={liveGames}
+            onGameSelect={handleGameSelect}
+          />
+        );
       default:
         return null;
     }
@@ -84,19 +92,26 @@ function App() {
           <span className="nav-icon">⚾</span>
           Live
         </button>
-        <button 
+        <button
           className={activeView === 'boxscore' ? 'active' : ''}
           onClick={() => setActiveView('boxscore')}
         >
           <span className="nav-icon">📊</span>
           Box Score
         </button>
-        <button 
+        <button
           className={activeView === 'standings' ? 'active' : ''}
           onClick={() => setActiveView('standings')}
         >
           <span className="nav-icon">🏆</span>
           Standings
+        </button>
+        <button
+          className={activeView === 'insights' ? 'active' : ''}
+          onClick={() => setActiveView('insights')}
+        >
+          <span className="nav-icon">✨</span>
+          Insights
         </button>
       </nav>
 
