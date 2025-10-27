@@ -1,3 +1,9 @@
+:root {
+  --font-display: 'Bebas Neue', 'Oswald', sans-serif;
+  --blaze-ember: #bf5700;
+  --text-tertiary: rgba(255, 255, 255, 0.65);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -35,9 +41,22 @@ header h1 {
 }
 
 .tagline {
-  font-size: 14px;
-  color: #a0a0a0;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--blaze-ember);
+  letter-spacing: 0.6px;
+  margin: 6px auto 0;
+  max-width: 320px;
+}
+
+.subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.2px;
+  margin: 6px auto 0;
+  max-width: 340px;
+  line-height: 1.5;
 }
 
 /* Main content */
