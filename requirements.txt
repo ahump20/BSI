@@ -52,6 +52,7 @@ structlog>=23.0.0
 
 # Cloud Storage
 boto3>=1.28.0
+cloudflare>=2.11.0
 minio>=7.1.0
 
 # Task Queue
