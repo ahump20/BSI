@@ -24,6 +24,18 @@ docker-compose up -d
 # API Docs: http://localhost:8000/docs
 ```
 
+## Developer Console (Next.js)
+
+The `/app` directory houses a lightweight Next.js console for developer-facing diagnostics. To install and run it locally:
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+Create a local `.env` from `.env.example` to wire up status feeds and feature flags before running `npm run build` for production bundles.
+
 ## Architecture
 
 ### Core Pipeline
