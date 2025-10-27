@@ -20,7 +20,18 @@ NC='\033[0m'
 
 TOTAL=0
 BROKEN=0
-declare -A CHECKED_URLS
+
+# Use a temporary file to track visited URLs so the script works on macOS's
+# default Bash 3.2 (no associative arrays) and modern Linux shells alike.
+if CHECKED_URLS_FILE=$(mktemp 2>/dev/null); then
+  :
+elif CHECKED_URLS_FILE=$(mktemp -t bsi-checked-urls.XXXXXX 2>/dev/null); then
+  :
+else
+  CHECKED_URLS_FILE="/tmp/bsi-checked-urls-${$}.txt"
+  : > "$CHECKED_URLS_FILE"
+fi
+trap 'rm -f "$CHECKED_URLS_FILE"' EXIT
 
 echo "🔥 BlazeSportsIntel 404 Checker"
 echo "==============================="
@@ -48,11 +59,11 @@ check_url() {
   local source="$2"
 
   # Skip if already checked
-  if [[ -n "${CHECKED_URLS[$url]:-}" ]]; then
+  if grep -Fxq "$url" "$CHECKED_URLS_FILE"; then
     return
   fi
 
-  CHECKED_URLS[$url]=1
+  printf '%s\n' "$url" >> "$CHECKED_URLS_FILE"
   TOTAL=$((TOTAL + 1))
 
   # Perform HEAD request
@@ -84,9 +95,11 @@ find . -name "*.html" \
   # Extract href and src attributes
   grep -oE 'href="[^"#]+"' "$file" 2>/dev/null | sed 's/href="//;s/"//' | while read -r link; do
     # Skip external links, anchors, mailto, tel, javascript
-    if [[ "$link" =~ ^(http|https|mailto|tel|javascript|#) ]]; then
-      continue
-    fi
+    case "$link" in
+      http://*|https://*|mailto:*|tel:*|javascript:*|\#*)
+        continue
+        ;;
+    esac
 
     # Convert relative links to absolute
     if [[ "$link" == /* ]]; then
@@ -99,9 +112,11 @@ find . -name "*.html" \
   done
 
   grep -oE 'src="[^"#]+"' "$file" 2>/dev/null | sed 's/src="//;s/"//' | while read -r link; do
-    if [[ "$link" =~ ^(http|https|data:|javascript:) ]]; then
-      continue
-    fi
+    case "$link" in
+      http://*|https://*|data:*|javascript:*)
+        continue
+        ;;
+    esac
 
     if [[ "$link" == /* ]]; then
       url="${DOMAIN}${link}"
