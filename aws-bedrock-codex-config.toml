@@ -1,0 +1,13 @@
+[mcp_servers.aws-bedrock]
+command = "npx"
+args = [ "-y", "@smithery/cli@latest", "run", "@pipedream/aws_bedrock", "--key", "YOUR_AWS_ACCESS_KEY_ID", "--secret", "YOUR_AWS_SECRET_ACCESS_KEY", "--region", "us-east-2" ]
+
+  [mcp_servers.aws-bedrock.env]
+  AWS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_ID"
+  AWS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET_ACCESS_KEY"
+  AWS_DEFAULT_REGION = "us-east-2"
+  AWS_BEDROCK_REGION = "us-east-2"
+  AWS_KMS_KEY_ID = "b27e1cdb-ed1e-4bb8-82fa-797c46c83aa4"
+  AWS_KMS_KEY_ALIAS = "AWS_Bedrock"
+  AWS_ACCOUNT_ID = "808701193278"
+  AWS_SESSION_TOKEN = "YOUR_AWS_SESSION_TOKEN_IF_USING_TEMPORARY_CREDENTIALS"
