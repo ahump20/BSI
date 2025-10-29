@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "pd": {
+      "transport": {
+        "type": "http",
+        "options": {
+          "url": "https://mcp.pipedream.net/e80548db-96eb-4a5c-9b73-cd866cc88bed/cloudflare_api_key"
+        }
+      }
+    }
+  }
+}
