@@ -168,7 +168,7 @@ export class FeedbackWebSocketClient {
     }
 
     // Convert Float32Array to base64
-    const buffer = audioData.buffer;
+    const buffer = audioData.buffer as ArrayBuffer;
     const base64Data = this.arrayBufferToBase64(buffer);
 
     const message = {

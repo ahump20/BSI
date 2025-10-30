@@ -9,7 +9,7 @@ import { z } from 'zod';
  * Baseball leagues enum
  */
 const baseballLeagueSchema = z.enum(['mlb', 'ncaab', 'milb'], {
-  errorMap: () => ({ message: 'League must be one of: mlb, ncaab, milb' })
+  message: 'League must be one of: mlb, ncaab, milb'
 });
 
 /**

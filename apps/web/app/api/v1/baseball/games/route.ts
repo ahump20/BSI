@@ -76,9 +76,9 @@ function buildTargetUrl(baseUrl: string, request: NextRequest): string {
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   // Validate query parameters
-  const validationResult = validateQuery(request, baseballGamesQuerySchema);
+  const validationResult = validateQuery(request as any, baseballGamesQuerySchema);
   if (!validationResult.success) {
-    return validationResult.error;
+    return validationResult.error as any;
   }
 
   const baseUrl = resolveInferenceBaseUrl();

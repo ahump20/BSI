@@ -21,7 +21,7 @@ export function useWebVitals() {
     if (typeof window === 'undefined') return;
 
     // Import all Core Web Vitals metrics
-    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB, onINP }) => {
+    import('web-vitals').then(({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
       const handleMetric = (metric: Metric) => {
         const formatted = formatMetric(metric);
 
@@ -34,7 +34,6 @@ export function useWebVitals() {
 
       // Track all Core Web Vitals
       onCLS(handleMetric);
-      onFID(handleMetric);
       onFCP(handleMetric);
       onLCP(handleMetric);
       onTTFB(handleMetric);

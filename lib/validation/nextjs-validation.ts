@@ -47,7 +47,7 @@ export function validateQuery<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = (error as any).errors.map((err: any) => ({
         field: err.path.join('.') || 'query',
         message: err.message,
         code: err.code
@@ -95,7 +95,7 @@ export async function validateBody<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = (error as any).errors.map((err: any) => ({
         field: err.path.join('.') || 'body',
         message: err.message,
         code: err.code
@@ -156,7 +156,7 @@ export function validateParams<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = (error as any).errors.map((err: any) => ({
         field: err.path.join('.') || 'params',
         message: err.message,
         code: err.code
