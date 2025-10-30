@@ -1,3 +1,6 @@
+/* Graphics Engine Styles */
+@import url('/css/graphics-engine.css');
+
 :root {
   --di-bg: #0b1120;
   --di-surface: #111827;
