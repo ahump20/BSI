@@ -6,10 +6,10 @@ import {
   formatTimeframeLabel,
 } from './lib/timeframeFormatter.js';
 
+import { formatNil } from './lib/formatNil.js';
+
 const MAP_CENTER = [37.8, -96.9];
 const MAP_ZOOM = 4;
-
-const formatNil = (value) => `$${value.toFixed(1)}M`;
 
 const formatDate = (iso) => {
   const date = new Date(iso);
