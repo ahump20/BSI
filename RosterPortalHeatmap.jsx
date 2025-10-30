@@ -1,6 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import {
+  buildTimeframeLabelMap,
+  formatTimeframeLabel,
+} from './lib/timeframeFormatter.js';
 
 import { formatNil } from './lib/formatNil.js';
 
@@ -94,8 +98,29 @@ function RosterPortalHeatmap() {
 
   const trendingPrograms = data?.trendingPrograms ?? [];
 
+  const timeframeOptions = useMemo(() => {
+    const rawOptions = data?.filters?.availableTimeframes ?? ['30d'];
+    return rawOptions
+      .map((option) =>
+        typeof option === 'string'
+          ? option
+          : option?.value ?? option?.key ?? option?.id ?? ''
+      )
+      .filter(Boolean);
+  }, [data?.filters?.availableTimeframes]);
+
+  const timeframeLabelLookup = useMemo(
+    () => buildTimeframeLabelMap(data?.filters?.availableTimeframes),
+    [data?.filters?.availableTimeframes]
+  );
+
+  const formatTimeframeOption = useCallback(
+    (option) => formatTimeframeLabel(option, timeframeLabelLookup),
+    [timeframeLabelLookup]
+  );
+
   const availableFilters = {
-    timeframes: data?.filters?.availableTimeframes ?? ['30d'],
+    timeframes: timeframeOptions,
     conferences: ['all', ...(data?.filters?.availableConferences ?? [])],
     positions: ['all', ...(data?.filters?.availablePositions ?? [])],
   };
@@ -132,11 +157,7 @@ function RosterPortalHeatmap() {
           >
             {availableFilters.timeframes.map((option) => (
               <option key={option} value={option}>
-                {option === '7d'
-                  ? 'Last 7 days'
-                  : option === '30d'
-                  ? 'Last 30 days'
-                  : 'Last 90 days'}
+                {formatTimeframeOption(option)}
               </option>
             ))}
           </select>
