@@ -13,6 +13,16 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true
   },
-  outputFileTracingRoot: path.join(__dirname, '..', '..')
+  outputFileTracingRoot: path.join(__dirname, '..', '..'),
+  experimental: {
+    externalDir: true,
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname),
+    };
+    return config;
+  },
 };
 export default withSentryConfig(nextConfig, { silent: true }, { hideSourceMaps: true, disableLogger: true });
