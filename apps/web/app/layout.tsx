@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import ObservabilityProvider from './observability-provider';
 import Footer from '../components/Footer';
+import { WebVitalsTracker } from '../components/WebVitalsTracker';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://blazesportsintel.com'),
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <WebVitalsTracker />
         <ObservabilityProvider>
           {children}
           <Footer />

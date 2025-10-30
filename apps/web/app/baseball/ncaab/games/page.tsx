@@ -7,6 +7,7 @@ import type {
   RegressionContributor,
   WinProbabilityPoint
 } from '../../../api/v1/baseball/games/types';
+import { DataFreshnessBadge } from '../../../../components/DataFreshnessIndicator';
 import './styles.css';
 
 const plannerLinks = [
@@ -331,6 +332,9 @@ async function ScoreboardSection() {
           Powered by Cloudflare Workers pulling Highlightly live state, cached for {data?.ttlSeconds ?? 45}s. Last sync{' '}
           {data ? formatUpdated(data.fetchedAt) : 'just now'}.
         </span>
+        {data?.fetchedAt && (
+          <DataFreshnessBadge timestamp={data.fetchedAt} className="ml-3" />
+        )}
       </div>
       {games.length === 0 ? (
         <div className="scoreboard-empty">
