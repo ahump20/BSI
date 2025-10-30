@@ -50,3 +50,5 @@ deployment-manifest-*.txt
 # Build artifacts
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+.next/
+out/
