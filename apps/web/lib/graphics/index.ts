@@ -61,3 +61,61 @@ export {
   useToggle,
   useLocalStorage,
 } from './hooks';
+
+// Advanced Animation Utilities
+export {
+  createSpring,
+  animateSequence,
+  animateParallel,
+  morphPath,
+  animateAlongPath,
+  createParallax,
+  makeDraggable,
+  createMagnetic,
+  animateNumber,
+  createRipple,
+} from './advanced-animations';
+
+export type {
+  SpringConfig,
+  SpringAnimation,
+  AnimationStep,
+  SequenceConfig,
+  ParallelAnimationConfig,
+  FollowPathConfig,
+  ParallaxConfig,
+  DragConfig,
+  MagneticConfig,
+} from './advanced-animations';
+
+// Advanced Animation Hooks
+export {
+  useSpring,
+  useParallax,
+  useDraggable,
+  useMagnetic,
+  useRipple,
+  useSequentialReveal,
+  useScrollProgress,
+  usePageTransition,
+  useMousePosition,
+  useAnimatedPresence,
+  useGesture,
+} from './advanced-hooks';
+
+// Real-Time Data Utilities
+export {
+  usePolling,
+  useWebSocket,
+  useLiveData,
+  useDataRefresh,
+  useDataFlash,
+  useOptimisticUpdate,
+  useBatchedUpdates,
+} from './realtime';
+
+export type {
+  PollingConfig,
+  WebSocketConfig,
+  LiveDataConfig,
+} from './realtime';
