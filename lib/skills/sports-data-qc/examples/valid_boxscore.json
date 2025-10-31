@@ -1,0 +1,262 @@
+{
+  "description": "Clean college baseball box score - Texas vs Oklahoma State (March 15, 2025)",
+  "games": [
+    {
+      "game_id": "ncaa-bb-2025-03-15-tex-okst",
+      "timestamp": "2025-03-15T14:00:00-05:00",
+      "season": 2025,
+      "home_team": "Texas Longhorns",
+      "away_team": "Oklahoma State Cowboys",
+      "home_score": 7,
+      "away_score": 4,
+      "final_score": "7-4",
+      "status": "FINAL",
+      "venue": "UFCU Disch-Falk Field",
+      "total_hits": 18,
+      "total_runs": 11,
+      "total_errors": 1,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.95,
+        "provider_name": "NCAA_API"
+      }
+    }
+  ],
+  "player_stats": [
+    {
+      "player_id": "tex-player-001",
+      "player_name": "Jace Jung",
+      "team_id": "texas",
+      "at_bats": 4,
+      "hits": 2,
+      "runs": 2,
+      "rbi": 3,
+      "walks": 1,
+      "strikeouts": 0,
+      "batting_avg": 0.500,
+      "exit_velocity": 98.4,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.98,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "tex-player-002",
+      "player_name": "Dylan Campbell",
+      "team_id": "texas",
+      "at_bats": 5,
+      "hits": 3,
+      "runs": 1,
+      "rbi": 2,
+      "walks": 0,
+      "strikeouts": 1,
+      "batting_avg": 0.600,
+      "exit_velocity": 102.1,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.97,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "tex-player-003",
+      "player_name": "Max Belyeu",
+      "team_id": "texas",
+      "at_bats": 3,
+      "hits": 1,
+      "runs": 1,
+      "rbi": 0,
+      "walks": 2,
+      "strikeouts": 0,
+      "batting_avg": 0.333,
+      "exit_velocity": 94.8,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.96,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "tex-pitcher-001",
+      "player_name": "Lebarron Johnson Jr.",
+      "team_id": "texas",
+      "innings_pitched": 6.0,
+      "earned_runs": 3,
+      "era": 4.50,
+      "pitches_thrown": 89,
+      "strikes": 58,
+      "balls": 31,
+      "pitch_velocity": 92.3,
+      "spin_rate": 2245,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.94,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "okst-player-001",
+      "player_name": "Nolan McLean",
+      "team_id": "oklahoma_state",
+      "at_bats": 4,
+      "hits": 2,
+      "runs": 1,
+      "rbi": 1,
+      "walks": 0,
+      "strikeouts": 2,
+      "batting_avg": 0.500,
+      "exit_velocity": 96.7,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.95,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "okst-player-002",
+      "player_name": "Carson Benge",
+      "team_id": "oklahoma_state",
+      "at_bats": 4,
+      "hits": 1,
+      "runs": 0,
+      "rbi": 0,
+      "walks": 0,
+      "strikeouts": 1,
+      "batting_avg": 0.250,
+      "exit_velocity": 89.2,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.93,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "okst-player-003",
+      "player_name": "Zach Ehrhard",
+      "team_id": "oklahoma_state",
+      "at_bats": 3,
+      "hits": 0,
+      "runs": 0,
+      "rbi": 0,
+      "walks": 1,
+      "strikeouts": 2,
+      "batting_avg": 0.000,
+      "exit_velocity": 85.3,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.92,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "okst-pitcher-001",
+      "player_name": "Carsten Finnvold",
+      "team_id": "oklahoma_state",
+      "innings_pitched": 5.1,
+      "earned_runs": 6,
+      "era": 10.13,
+      "pitches_thrown": 98,
+      "strikes": 61,
+      "balls": 37,
+      "pitch_velocity": 88.7,
+      "spin_rate": 2180,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.91,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "tex-player-004",
+      "player_name": "Will Gasparino",
+      "team_id": "texas",
+      "at_bats": 4,
+      "hits": 2,
+      "runs": 2,
+      "rbi": 1,
+      "walks": 0,
+      "strikeouts": 1,
+      "batting_avg": 0.500,
+      "exit_velocity": 100.3,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.96,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "okst-player-004",
+      "player_name": "Jake Thompson",
+      "team_id": "oklahoma_state",
+      "at_bats": 3,
+      "hits": 1,
+      "runs": 1,
+      "rbi": 2,
+      "walks": 1,
+      "strikeouts": 0,
+      "batting_avg": 0.333,
+      "exit_velocity": 91.5,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.94,
+        "provider_name": "NCAA_API"
+      }
+    },
+    {
+      "player_id": "tex-pitcher-002",
+      "player_name": "Andre Duplantier II",
+      "team_id": "texas",
+      "innings_pitched": 3.0,
+      "earned_runs": 1,
+      "era": 3.00,
+      "pitches_thrown": 42,
+      "strikes": 29,
+      "balls": 13,
+      "pitch_velocity": 94.8,
+      "spin_rate": 2310,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T18:30:00-05:00",
+        "confidence_score": 0.95,
+        "provider_name": "NCAA_API"
+      }
+    }
+  ],
+  "simulations": [
+    {
+      "simulation_id": "sim-tex-okst-20250315",
+      "game_id": "ncaa-bb-2025-03-15-tex-okst",
+      "timestamp": "2025-03-15T13:00:00-05:00",
+      "home_win_prob": 0.647,
+      "away_win_prob": 0.353,
+      "tie_prob": 0.000,
+      "score_distribution": [
+        { "home_score": 7, "away_score": 4, "probability": 0.089 },
+        { "home_score": 6, "away_score": 3, "probability": 0.112 },
+        { "home_score": 8, "away_score": 5, "probability": 0.076 },
+        { "home_score": 5, "away_score": 6, "probability": 0.054 },
+        { "home_score": 9, "away_score": 4, "probability": 0.045 }
+      ],
+      "num_simulations": 10000,
+      "random_seed": 42,
+      "metadata": {
+        "source_url": "https://stats.ncaa.org/game/baseball/2025-03-15-tex-okst",
+        "scrape_timestamp": "2025-03-15T12:00:00-05:00",
+        "confidence_score": 0.88,
+        "provider_name": "CUSTOM_SCRAPER"
+      }
+    }
+  ]
+}
