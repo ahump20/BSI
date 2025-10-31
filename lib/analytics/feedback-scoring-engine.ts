@@ -486,7 +486,7 @@ export class FeedbackScoringEngine {
 
     // High energy + high authenticity = charisma boost
     if (
-      input.vision?.body.energy_level > 70 &&
+      input.vision?.body?.energy_level && input.vision.body.energy_level > 70 &&
       scores.authenticity > 75
     ) {
       multiplier *= 1.15;
@@ -494,14 +494,14 @@ export class FeedbackScoringEngine {
 
     // Strong vocal variety + good eye contact = charisma boost
     if (
-      input.audio?.tone.pitch_variance > 15 &&
-      input.vision?.facial.eye_contact > 75
+      input.audio?.tone?.pitch_variance && input.audio.tone.pitch_variance > 15 &&
+      input.vision?.facial?.eye_contact && input.vision.facial.eye_contact > 75
     ) {
       multiplier *= 1.1;
     }
 
     // Genuine smile = charisma boost
-    if (input.vision?.facial.smile_genuineness > 0.7) {
+    if (input.vision?.facial?.smile_genuineness && input.vision.facial.smile_genuineness > 0.7) {
       multiplier *= 1.1;
     }
 

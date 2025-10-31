@@ -65,7 +65,7 @@ export class LLMProvider {
       throw new Error(`Anthropic API error (${response.status}): ${errorText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
 
     return {
       content: data.content[0].text,
@@ -112,7 +112,7 @@ export class LLMProvider {
       throw new Error(`OpenAI API error (${response.status}): ${errorText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
 
     return {
       content: data.choices[0].message.content,
@@ -161,7 +161,7 @@ export class LLMProvider {
       throw new Error(`Gemini API error (${response.status}): ${errorText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
 
     // Gemini response structure
     const content = data.candidates[0].content.parts[0].text;

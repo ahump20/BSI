@@ -4,8 +4,13 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "outDir": "./",
+    "outDir": "./dist",
     "rootDir": "./",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "types": ["@cloudflare/workers-types", "node"],
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -26,17 +31,23 @@
     "emitDecoratorMetadata": true
   },
   "include": [
-    "lib/**/*.ts",
-    "context7-enhanced/src/**/*.ts",
-    "mcp/**/*.ts",
-    "tests/**/*.ts"
+    "lib/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.spec.ts",
     "**/*.test.ts",
-    "apps/web/**/*"
+    "apps/web/**/*",
+    "lib/api/v1/**/*",
+    "lib/adapters/espn-api.ts",
+    "lib/adapters/ncaa-api.ts",
+    "lib/adapters/sports-data-io.ts",
+    "lib/adapters/provider-manager.ts",
+    "lib/nlg/fact-checker.ts",
+    "lib/nlg/prompt-templates.ts",
+    "lib/validation/nextjs-validation.ts",
+    "lib/skills/sports-data-qc/**/*"
   ],
   "ts-node": {
     "esm": true,
