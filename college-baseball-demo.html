@@ -223,6 +223,38 @@
       border-top: 1px solid #e5e7eb;
     }
 
+    .box-score-link {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+    }
+
+    .box-score-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    .box-score-btn:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .box-score-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+    }
+
     .refresh-button {
       width: 100%;
       margin-top: 1.5rem;
@@ -335,14 +367,14 @@
   <div class="container">
     <!-- Feature Banner -->
     <div class="feature-banner">
-      <h3>🎯 MVP Features</h3>
+      <h3>✅ Live Features Activated</h3>
       <ul class="feature-list">
+        <li>Real NCAA data via Cloudflare API</li>
         <li>Live game updates every 30 seconds</li>
-        <li>Full box scores with batting/pitching stats</li>
-        <li>Conference standings with RPI</li>
-        <li>Automated previews & recaps (NLG)</li>
-        <li>Push notifications for game alerts</li>
-        <li>Offline caching for no-signal scenarios</li>
+        <li>Full box scores with detailed stats</li>
+        <li>Offline caching with fallback support</li>
+        <li>Mobile-first responsive design</li>
+        <li>Conference filtering & game status tabs</li>
       </ul>
     </div>
 
@@ -376,65 +408,25 @@
   </div>
 
   <script>
-    // Sample game data (simulating API response)
-    const sampleGames = [
-      {
-        id: 'game-001',
-        status: 'live',
-        inning: 5,
-        inningHalf: 'bottom',
-        homeTeam: { id: 'lsu', name: 'LSU Tigers', shortName: 'LSU', conference: 'SEC', score: 4, record: { wins: 15, losses: 3 } },
-        awayTeam: { id: 'tennessee', name: 'Tennessee Volunteers', shortName: 'TENN', conference: 'SEC', score: 2, record: { wins: 18, losses: 2 } },
-        venue: 'Alex Box Stadium',
-        time: '7:00 PM ET',
-        tv: 'SEC Network'
-      },
-      {
-        id: 'game-002',
-        status: 'scheduled',
-        homeTeam: { id: 'texas', name: 'Texas Longhorns', shortName: 'TEX', conference: 'SEC', record: { wins: 16, losses: 4 } },
-        awayTeam: { id: 'arkansas', name: 'Arkansas Razorbacks', shortName: 'ARK', conference: 'SEC', record: { wins: 14, losses: 5 } },
-        venue: 'Disch-Falk Field',
-        time: '6:30 PM ET',
-        tv: 'ESPN+'
-      },
-      {
-        id: 'game-003',
-        status: 'live',
-        inning: 3,
-        inningHalf: 'top',
-        homeTeam: { id: 'vanderbilt', name: 'Vanderbilt Commodores', shortName: 'VANDY', conference: 'SEC', score: 1, record: { wins: 17, losses: 3 } },
-        awayTeam: { id: 'florida', name: 'Florida Gators', shortName: 'FLA', conference: 'SEC', score: 0, record: { wins: 13, losses: 6 } },
-        venue: 'Hawkins Field',
-        time: '7:00 PM ET',
-        tv: 'SEC Network+'
-      },
-      {
-        id: 'game-004',
-        status: 'final',
-        homeTeam: { id: 'stanford', name: 'Stanford Cardinal', shortName: 'STAN', conference: 'Pac-12', score: 8, record: { wins: 12, losses: 5 } },
-        awayTeam: { id: 'oregon-st', name: 'Oregon State Beavers', shortName: 'ORE ST', conference: 'Pac-12', score: 5, record: { wins: 14, losses: 4 } },
-        venue: 'Klein Field',
-        time: '2:00 PM ET',
-        tv: 'Pac-12 Network'
-      }
-    ];
+    /**
+     * College Baseball Demo - Real API Integration
+     * Connects to Cloudflare Functions API for live NCAA data
+     */
+
+    const API_BASE = '/api/college-baseball';
+    const REFRESH_INTERVAL = 30000; // 30 seconds for live games
 
     let currentFilter = 'all';
-    let games = [...sampleGames];
+    let games = [];
+    let refreshTimer = null;
 
     // Initialize
-    function init() {
+    async function init() {
       setupEventListeners();
-      loadGames();
-      updateLastUpdateTime();
-      
-      // Auto-refresh every 30 seconds (for live games)
-      setInterval(() => {
-        if (games.some(g => g.status === 'live')) {
-          loadGames(false);
-        }
-      }, 30000);
+      await loadGames();
+      startAutoRefresh();
+
+      console.log('[College Baseball Demo] Initialized with real NCAA API');
     }
 
     function setupEventListeners() {
@@ -454,39 +446,49 @@
       });
     }
 
-    function loadGames(showLoading = true) {
+    async function loadGames(showLoading = true) {
       if (showLoading) {
         document.getElementById('loading').style.display = 'block';
         document.getElementById('gameList').style.display = 'none';
         document.getElementById('emptyState').style.display = 'none';
       }
 
-      // Simulate API call with setTimeout
-      setTimeout(() => {
-        // In production, this would be: fetch('/api/college-baseball/games')
-        games = [...sampleGames];
-        
-        // Simulate score updates for live games
-        games.forEach(game => {
-          if (game.status === 'live' && Math.random() > 0.7) {
-            if (Math.random() > 0.5) {
-              game.homeTeam.score += 1;
-            } else {
-              game.awayTeam.score += 1;
-            }
-          }
-        });
+      try {
+        // Fetch from real API
+        const response = await fetch(`${API_BASE}/games`);
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          games = result.data;
+          console.log(`[API] Loaded ${games.length} games`, result.cached ? '(from cache)' : '(live)');
+        } else {
+          throw new Error(result.error || 'Failed to fetch games');
+        }
 
         renderGames();
         updateLastUpdateTime();
+
+      } catch (error) {
+        console.error('[API] Error loading games:', error);
+
+        // Try to load from cache
+        const cachedGames = await loadFromCache();
+        if (cachedGames) {
+          games = cachedGames;
+          renderGames();
+          showNotice('Showing cached data - Unable to reach server');
+        } else {
+          showError('Unable to load games. Please check your connection and try again.');
+        }
+      } finally {
         document.getElementById('loading').style.display = 'none';
-      }, showLoading ? 500 : 0);
+      }
     }
 
     function renderGames() {
       const gameList = document.getElementById('gameList');
       const emptyState = document.getElementById('emptyState');
-      
+
       // Filter games
       const filteredGames = games.filter(game => {
         if (currentFilter === 'all') return true;
@@ -496,6 +498,9 @@
       if (filteredGames.length === 0) {
         gameList.style.display = 'none';
         emptyState.style.display = 'block';
+        emptyState.querySelector('p').textContent = games.length === 0
+          ? 'No games available. This is currently college baseball off-season (October 2025). Games will return in February 2026!'
+          : `No ${currentFilter} games right now`;
         return;
       }
 
@@ -503,6 +508,9 @@
       emptyState.style.display = 'none';
 
       gameList.innerHTML = filteredGames.map(game => createGameCard(game)).join('');
+
+      // Add click handlers for box scores
+      attachBoxScoreHandlers();
     }
 
     function createGameCard(game) {
@@ -511,42 +519,52 @@
       const hasScore = isLive || isFinal;
 
       return `
-        <div class="game-card ${isLive ? 'live' : ''}" onclick="viewGame('${game.id}')">
+        <div class="game-card ${isLive ? 'live' : ''}" data-game-id="${game.id}">
           ${isLive ? `
             <div class="live-indicator">
               <span class="live-dot"></span>
               LIVE
             </div>
           ` : ''}
-          
+
           <div class="game-info">
             <div class="time-venue">
-              ${isFinal ? 'Final' : game.time} • ${game.venue}
+              ${isFinal ? 'Final' : game.time || 'TBD'} • ${game.venue || 'TBD'}
             </div>
             ${game.tv ? `<div>📺 ${game.tv}</div>` : ''}
-            <span class="conference-badge">${game.homeTeam.conference}</span>
+            ${game.homeTeam?.conference ? `<span class="conference-badge">${game.homeTeam.conference}</span>` : ''}
           </div>
 
           <div class="teams">
             <div class="team">
-              <div class="team-name">${game.awayTeam.shortName}</div>
-              <div class="team-record">(${game.awayTeam.record.wins}-${game.awayTeam.record.losses})</div>
-              ${hasScore ? `<div class="score">${game.awayTeam.score}</div>` : ''}
+              <div class="team-name">${game.awayTeam?.shortName || game.awayTeam?.name || 'Away'}</div>
+              ${game.awayTeam?.record ? `<div class="team-record">(${game.awayTeam.record.wins}-${game.awayTeam.record.losses})</div>` : ''}
+              ${hasScore ? `<div class="score">${game.awayTeam?.score ?? '-'}</div>` : ''}
             </div>
             <div class="team">
-              <div class="team-name">${game.homeTeam.shortName}</div>
-              <div class="team-record">(${game.homeTeam.record.wins}-${game.homeTeam.record.losses})</div>
-              ${hasScore ? `<div class="score">${game.homeTeam.score}</div>` : ''}
+              <div class="team-name">${game.homeTeam?.shortName || game.homeTeam?.name || 'Home'}</div>
+              ${game.homeTeam?.record ? `<div class="team-record">(${game.homeTeam.record.wins}-${game.homeTeam.record.losses})</div>` : ''}
+              ${hasScore ? `<div class="score">${game.homeTeam?.score ?? '-'}</div>` : ''}
             </div>
           </div>
 
-          ${isLive ? `
+          ${isLive && game.inning ? `
             <div class="inning-info">
               ${formatInning(game.inningHalf, game.inning)}
             </div>
           ` : ''}
+
+          ${hasScore ? `
+            <div class="box-score-link" onclick="viewGame('${game.id}', event)">
+              <button class="box-score-btn">View Box Score →</button>
+            </div>
+          ` : ''}
         </div>
       `;
+    }
+
+    function attachBoxScoreHandlers() {
+      // Handlers are inline in the HTML for simplicity
     }
 
     function formatInning(half, inning) {
@@ -563,12 +581,116 @@
 
     function updateLastUpdateTime() {
       const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      document.getElementById('lastUpdate').textContent = `Updated ${timeStr}`;
+      const timeStr = now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/Chicago'
+      });
+      document.getElementById('lastUpdate').textContent = `Updated ${timeStr} CT`;
     }
 
-    function viewGame(gameId) {
-      alert(`View game details for ${gameId}\n\nIn production, this would navigate to:\n/games/${gameId}`);
+    async function viewGame(gameId, event) {
+      if (event) event.stopPropagation();
+
+      console.log('[Box Score] Loading for game:', gameId);
+
+      try {
+        const response = await fetch(`${API_BASE}/boxscore?gameId=${gameId}`);
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          // For now, navigate to the full games page which has box score support
+          // In a future update, we can render box scores inline
+          window.location.href = `/college-baseball/games/#game-${gameId}`;
+        } else {
+          alert('Box score temporarily unavailable. The full games page has complete box scores!');
+        }
+      } catch (error) {
+        console.error('[Box Score] Error:', error);
+        alert('Unable to load box score. Try the full games page at /college-baseball/games/');
+      }
+    }
+
+    function startAutoRefresh() {
+      if (refreshTimer) clearInterval(refreshTimer);
+
+      refreshTimer = setInterval(() => {
+        const hasLiveGames = games.some(g => g.status === 'live');
+        if (hasLiveGames) {
+          console.log('[Auto-refresh] Updating live games...');
+          loadGames(false);
+        }
+      }, REFRESH_INTERVAL);
+    }
+
+    async function loadFromCache() {
+      if ('caches' in window) {
+        try {
+          const cache = await caches.open('college-baseball-v1');
+          const cached = await cache.match(`${API_BASE}/games`);
+          if (cached) {
+            const result = await cached.json();
+            return result.data || null;
+          }
+        } catch (err) {
+          console.warn('[Cache] Failed to load:', err);
+        }
+      }
+      return null;
+    }
+
+    function showNotice(message) {
+      const banner = document.createElement('div');
+      banner.className = 'notice-banner';
+      banner.textContent = message;
+      banner.style.cssText = `
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #f59e0b;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      `;
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 5000);
+    }
+
+    function showError(message) {
+      const emptyState = document.getElementById('emptyState');
+      emptyState.style.display = 'block';
+      emptyState.innerHTML = `
+        <div class="empty-state-icon">⚠️</div>
+        <p>${message}</p>
+        <button onclick="location.reload()" style="
+          margin-top: 1rem;
+          padding: 0.75rem 1.5rem;
+          background: #2563eb;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+        ">Retry</button>
+      `;
+    }
+
+    // Register service worker for offline support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/college-baseball-sw.js')
+          .then((registration) => {
+            console.log('[Service Worker] Registered successfully:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('[Service Worker] Registration failed:', error);
+          });
+      });
     }
 
     // Start the app
