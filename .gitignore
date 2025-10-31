@@ -52,3 +52,4 @@ tsconfig.tsbuildinfo
 *.tsbuildinfo
 .next/
 out/
+.wrangler/
