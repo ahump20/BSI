@@ -5,19 +5,36 @@
   "description": "Mobile-first college baseball live tracker with full box scores",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run build:functions",
+    "build:functions": "tsc -p tsconfig.functions.json && npm run copy:lib",
+    "copy:lib": "cp -r lib dist/",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist"
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy:production": "npm run build && wrangler pages deploy dist --project-name college-baseball-tracker --branch main --commit-dirty=true",
+    "deploy:preview": "npm run build && wrangler pages deploy dist --project-name college-baseball-tracker --branch preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "db:migrate:production": "wrangler d1 execute blazesports-historical --remote --file=schema/003_migration_drop_and_recreate.sql",
+    "db:seed:production": "wrangler d1 execute blazesports-historical --remote --file=scripts/insert-test-teams-fixed.sql"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251011.0",
+    "@prisma/client": "^6.18.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "jsdom": "^24.0.0",
+    "prisma": "^6.18.0",
+    "typescript": "^5.9.3",
     "vite": "^5.0.0",
+    "vitest": "^1.6.0",
     "wrangler": "^3.22.0"
   }
 }

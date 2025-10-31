@@ -3,10 +3,11 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
+    "types": ["@cloudflare/workers-types", "node"],
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "outDir": "./",
-    "rootDir": "./",
-    "strict": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
@@ -27,14 +28,16 @@
   },
   "include": [
     "lib/**/*.ts",
-    "context7-enhanced/src/**/*.ts"
+    "workers/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.spec.ts",
     "**/*.test.ts",
-    "apps/web/**/*"
+    "apps/web/**/*",
+    "lib/api/v1/**/*",
+    "workers/**/*"
   ],
   "ts-node": {
     "esm": true,
