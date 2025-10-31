@@ -1,0 +1,73 @@
+name = "sports-data-qc"
+main = "scripts/qc_analysis.ts"
+compatibility_date = "2025-03-01"
+node_compat = true
+
+# Worker configuration
+workers_dev = true
+route = ""
+
+# D1 Database binding for QC logs persistence
+[[d1_databases]]
+binding = "DB"
+database_name = "blaze-qc-logs"
+database_id = "" # Will be populated by setup.sh
+
+# KV Namespace for caching QC reports
+[[kv_namespaces]]
+binding = "QC_CACHE"
+id = "" # Will be populated by setup.sh
+
+# KV Namespace for whitelist (trusted sources that skip strict validation)
+[[kv_namespaces]]
+binding = "QC_WHITELIST"
+id = "" # Will be populated by setup.sh
+
+# R2 Bucket for storing detailed QC reports (optional)
+[[r2_buckets]]
+binding = "QC_REPORTS"
+bucket_name = "sports-qc-reports"
+
+# Environment variables
+[vars]
+# Validation mode: "permissive" or "strict"
+VALIDATION_MODE = "permissive"
+
+# MAD threshold for outlier detection (5.0 = permissive, 3.0 = strict)
+MAD_THRESHOLD = "5.0"
+
+# Minimum confidence score (0-1) to accept scraped data
+MIN_CONFIDENCE_SCORE = "0.7"
+
+# Auto-reject records that fail validation (true/false)
+AUTO_REJECT_FAILURES = "true"
+
+# Auto-reject outliers (false = flag for review, true = reject immediately)
+AUTO_REJECT_OUTLIERS = "false"
+
+# Maximum age for cached QC results (seconds)
+CACHE_TTL = "3600"
+
+# Sports data priority order (college baseball > MLB > NFL)
+SPORTS_PRIORITY = "college_baseball,mlb,nfl"
+
+# Timezone for timestamp validation
+TIMEZONE = "America/Chicago"
+
+[build]
+command = ""
+
+[build.upload]
+format = "service-worker"
+
+# Development configuration
+[env.development]
+vars = { VALIDATION_MODE = "permissive", MAD_THRESHOLD = "5.0" }
+
+# Production configuration
+[env.production]
+vars = { VALIDATION_MODE = "permissive", MAD_THRESHOLD = "4.0", MIN_CONFIDENCE_SCORE = "0.85" }
+
+# Staging configuration for testing stricter validation
+[env.staging]
+vars = { VALIDATION_MODE = "strict", MAD_THRESHOLD = "3.0", MIN_CONFIDENCE_SCORE = "0.9" }
