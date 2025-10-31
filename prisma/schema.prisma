@@ -1,0 +1,244 @@
+// Blaze Sports Intel - Prisma Schema
+// Database: Cloudflare D1 (SQLite-compatible)
+// Updated: 2025-10-31
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// CORE ENTITIES
+// ============================================================================
+
+model Team {
+  id          String   @id @default(uuid())
+  sport       String   // MLB, NFL, CFB, CBB
+  teamId      String   // External API team ID
+  key         String   // Team abbreviation (STL, KC, TEX)
+  name        String   // Full team name
+  city        String
+  conference  String?
+  division    String?
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  homeGames   Game[]   @relation("HomeTeam")
+  awayGames   Game[]   @relation("AwayTeam")
+  players     Player[]
+  standings   Standing[]
+
+  @@unique([sport, teamId])
+  @@index([sport])
+  @@index([key])
+}
+
+model Game {
+  id              String    @id @default(uuid())
+  sport           String
+  gameId          String    // External API game ID
+  season          Int
+  seasonType      String    // REG, POST
+  week            Int?
+  gameDate        DateTime
+  gameTime        String?
+  status          String
+
+  // Teams
+  homeTeamId      String
+  homeTeam        Team      @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  homeScore       Int?
+
+  awayTeamId      String
+  awayTeam        Team      @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  awayScore       Int?
+
+  // Metadata
+  stadiumName     String?
+  winningTeamId   String?
+  attendance      Int?
+  weather         String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([sport, gameId])
+  @@index([sport, gameDate])
+  @@index([homeTeamId])
+  @@index([awayTeamId])
+}
+
+model Player {
+  id              String    @id @default(uuid())
+  sport           String
+  playerId        String    // External API player ID
+  teamId          String
+  team            Team      @relation(fields: [teamId], references: [id])
+
+  // Basic Info
+  firstName       String
+  lastName        String
+  fullName        String
+  jersey          String?
+  position        String
+
+  // Physical
+  height          String?
+  weight          Int?
+  birthDate       DateTime?
+  age             Int?
+
+  // College/Draft
+  college         String?
+  draftYear       Int?
+  draftRound      Int?
+  draftPick       Int?
+
+  // Status
+  status          String    // Active, Injured, Inactive
+  injuryStatus    String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([sport, playerId])
+  @@index([teamId])
+  @@index([sport])
+}
+
+model Standing {
+  id              String    @id @default(uuid())
+  sport           String
+  season          Int
+  teamId          String
+  team            Team      @relation(fields: [teamId], references: [id])
+
+  // Record
+  wins            Int
+  losses          Int
+  ties            Int       @default(0)
+  winPercentage   Float
+
+  // Conference/Division
+  conferenceWins  Int?
+  conferenceLosses Int?
+  divisionWins    Int?
+  divisionLosses  Int?
+
+  // Standings Position
+  rank            Int?
+  gamesBack       Float?
+
+  // Scoring
+  pointsFor       Int?
+  pointsAgainst   Int?
+  pointDifferential Int?
+
+  // Streaks
+  streak          String?   // W3, L2, etc.
+
+  // Dates
+  asOfDate        DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([sport, season, teamId])
+  @@index([sport, season])
+  @@index([teamId])
+}
+
+// ============================================================================
+// ANALYTICS & PREDICTIONS
+// ============================================================================
+
+model Prediction {
+  id                String    @id @default(uuid())
+  sport             String
+  season            Int
+  teamId            String
+  predictionType    String    // pythagorean, montecarlo, ml_model
+
+  // Prediction Data
+  predictedWins     Float
+  predictedLosses   Float
+  confidence        Float
+  methodology       String
+  factors           String    // JSON string of factors
+
+  // Metadata
+  modelVersion      String?
+  generatedAt       DateTime  @default(now())
+  validUntil        DateTime?
+
+  createdAt         DateTime  @default(now())
+
+  @@index([sport, season, teamId])
+  @@index([predictionType])
+}
+
+// ============================================================================
+// USER & ENGAGEMENT
+// ============================================================================
+
+model User {
+  id              String      @id @default(uuid())
+  email           String      @unique
+  name            String?
+
+  // Preferences
+  favoriteTeams   String?     // JSON array of team IDs
+  favoriteSports  String?     // JSON array of sports
+  notifications   Boolean     @default(true)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  lastLoginAt     DateTime?
+
+  @@index([email])
+}
+
+model AnalyticsEvent {
+  id              String      @id @default(uuid())
+  eventType       String      // page_view, search, prediction_view
+  userId          String?
+  sessionId       String
+
+  // Event Data
+  eventData       String?     // JSON string
+  sport           String?
+  teamId          String?
+
+  // Technical
+  userAgent       String?
+  ipAddress       String?
+  referrer        String?
+
+  timestamp       DateTime    @default(now())
+
+  @@index([eventType])
+  @@index([sport])
+  @@index([timestamp])
+}
+
+// ============================================================================
+// CACHE & METADATA
+// ============================================================================
+
+model CacheEntry {
+  id              String      @id
+  key             String      @unique
+  value           String      // JSON string
+  ttl             Int         // Seconds
+  expiresAt       DateTime
+  createdAt       DateTime    @default(now())
+
+  @@index([key])
+  @@index([expiresAt])
+}
