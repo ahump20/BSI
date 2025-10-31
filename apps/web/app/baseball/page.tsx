@@ -6,6 +6,12 @@ export default async function BaseballLandingPage() {
 
   const focusAreas = [
     {
+      title: '3D Pitch Visualization',
+      href: '/baseball/visualization',
+      description: 'Physics-accurate 3D pitch tracking with real-time trajectory rendering at 60fps. Mobile-optimized broadcast-quality visuals.',
+      featured: true
+    },
+    {
       title: 'College Hub',
       href: '/baseball/ncaab/hub',
       description: 'Command center for live leverage alerts, scouting intel, and recruiting telemetry.'

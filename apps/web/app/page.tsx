@@ -3,6 +3,12 @@ import { recordRuntimeEvent } from '../lib/observability/datadog-runtime';
 
 const navigationLinks = [
   {
+    href: '/baseball/visualization',
+    title: '3D Pitch Visualization',
+    description: 'Physics-accurate 3D pitch tracking with real-time trajectory rendering. Mobile-optimized at 60fps.',
+    featured: true
+  },
+  {
     href: '/baseball/ncaab/hub',
     title: 'College Baseball Hub',
     description: 'Centralize live games, scouting intel, and portal updates in one command center.'
@@ -40,6 +46,10 @@ const navigationLinks = [
 ];
 
 const featureHighlights = [
+  {
+    title: 'Broadcast-Quality 3D Visualization',
+    body: 'Physics-accurate pitch trajectories with real-time rendering at 60fps. WebGPU-powered graphics that surpass ESPN StatCast on mobile.'
+  },
   {
     title: 'Live Diamond Engine',
     body: 'Edge-ready ingestion keeps live games, standings, and recruiting intel refreshed with sub-minute latency.'
