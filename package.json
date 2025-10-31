@@ -5,10 +5,12 @@
   "description": "Mobile-first college baseball live tracker with full box scores",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:lib": "tsc",
+    "build": "npm run build:lib && vite build",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy dist",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.714.0",
@@ -19,10 +21,15 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251014.0",
+    "@prisma/client": "^6.18.0",
     "@types/node": "^24.9.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^4.7.0",
+    "next": "^16.0.1",
+    "prisma": "^6.18.0",
+    "typescript": "^5.9.2",
     "vite": "^7.1.11",
     "vitest": "^4.0.1",
     "wrangler": "^3.22.0"

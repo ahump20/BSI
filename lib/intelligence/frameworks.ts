@@ -563,7 +563,7 @@ export function validateDecisionVelocitySnapshot(input: unknown): ValidationResu
   return {
     valid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? (snapshot as DecisionVelocitySnapshot) : undefined
+    data: errors.length === 0 ? (snapshot as unknown as DecisionVelocitySnapshot) : undefined
   }
 }
 
@@ -600,7 +600,7 @@ export function validatePatternRecognitionSnapshot(input: unknown): ValidationRe
   return {
     valid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? (snapshot as PatternRecognitionSnapshot) : undefined
+    data: errors.length === 0 ? (snapshot as unknown as PatternRecognitionSnapshot) : undefined
   }
 }
 
@@ -616,7 +616,7 @@ export function validateCognitiveLoadSnapshot(input: unknown): ValidationResult<
   if (typeof distribution !== 'object' || distribution === null) {
     errors.push('distribution must be an object.')
   } else {
-    const total = Object.values(distribution as Record<string, unknown>).reduce((sum, value) => {
+    const total = Object.values(distribution as Record<string, unknown>).reduce((sum: number, value) => {
       if (!Number.isFinite(value)) {
         errors.push('All distribution values must be numbers.')
         return sum
@@ -627,7 +627,7 @@ export function validateCognitiveLoadSnapshot(input: unknown): ValidationResult<
       return sum + (value as number)
     }, 0)
 
-    if (errors.length === 0 && Math.abs(total - 100) > 0.5) {
+    if (errors.length === 0 && Math.abs((total as number) - 100) > 0.5) {
       errors.push('Distribution percentages must total 100 ±0.5.')
     }
   }
@@ -647,7 +647,7 @@ export function validateCognitiveLoadSnapshot(input: unknown): ValidationResult<
   return {
     valid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? (snapshot as CognitiveLoadSnapshot) : undefined
+    data: errors.length === 0 ? (snapshot as unknown as CognitiveLoadSnapshot) : undefined
   }
 }
 
@@ -695,7 +695,7 @@ export function validateNilValuationSnapshot(input: unknown): ValidationResult<N
   return {
     valid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? (snapshot as NilValuationSnapshot) : undefined
+    data: errors.length === 0 ? (snapshot as unknown as NilValuationSnapshot) : undefined
   }
 }
 
@@ -750,7 +750,7 @@ export function validateBlazeBackyardSession(input: unknown): ValidationResult<B
   return {
     valid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? (session as BlazeBackyardSession) : undefined
+    data: errors.length === 0 ? (session as unknown as BlazeBackyardSession) : undefined
   }
 }
 
@@ -805,6 +805,6 @@ export function validateQuantumPerformanceSnapshot(input: unknown): ValidationRe
   return {
     valid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? (snapshot as QuantumPerformanceSnapshot) : undefined
+    data: errors.length === 0 ? (snapshot as unknown as QuantumPerformanceSnapshot) : undefined
   }
 }

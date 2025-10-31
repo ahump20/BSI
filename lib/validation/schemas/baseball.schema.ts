@@ -8,9 +8,7 @@ import { z } from 'zod';
 /**
  * Baseball leagues enum
  */
-const baseballLeagueSchema = z.enum(['mlb', 'ncaab', 'milb'], {
-  errorMap: () => ({ message: 'League must be one of: mlb, ncaab, milb' })
-});
+const baseballLeagueSchema = z.enum(['mlb', 'ncaab', 'milb'], 'League must be one of: mlb, ncaab, milb');
 
 /**
  * Date string schema (YYYY-MM-DD format)
