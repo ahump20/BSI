@@ -21,6 +21,9 @@
 
 import { Prisma, PrismaClient } from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
+import { runQCPipeline } from '../../lib/skills/sports-data-qc/scripts/qc_analysis';
+import { saveReportToKV, formatReportConsole } from '../../lib/skills/sports-data-qc/scripts/qc_reporting';
+import type { GameData, PlayerStats } from '../../lib/skills/sports-data-qc/scripts/qc_core';
 import type { Env } from './types';
 
 const prisma = new PrismaClient();
@@ -176,8 +179,78 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 
     console.log(`[Ingest] Fetched ${games.length} games from provider`);
 
+    // ========================================================================
+    // QC VALIDATION - Filter bad data before ingestion
+    // ========================================================================
+    console.log('[Ingest] Running QC validation on scraped data...');
+
+    // Transform provider games to QC format
+    const qcGames: GameData[] = games.map(game => ({
+      game_id: game.id,
+      timestamp: game.scheduledAt,
+      season,
+      home_team: game.homeTeamId,
+      away_team: game.awayTeamId,
+      home_score: game.homeScore ?? 0,
+      away_score: game.awayScore ?? 0,
+      status: game.status,
+      venue: game.venueId,
+      metadata: {
+        source_url: `https://api.provider/${game.id}`,
+        scrape_timestamp: new Date().toISOString(),
+        confidence_score: game.feedPrecision === 'PITCH' ? 0.95 : 0.8,
+        provider_name: game.providerName as any
+      }
+    }));
+
+    // Run QC pipeline
+    const { report, filtered_data } = await runQCPipeline({
+      games: qcGames,
+      data_source: `${games[0]?.providerName || 'UNKNOWN'}_API`
+    }, {
+      auto_reject_failures: true,
+      auto_reject_outliers: false,
+      mad_threshold: 5.0,
+      include_flagged: true,
+      min_confidence_score: 0.7
+    });
+
+    // Log QC report
+    console.log(formatReportConsole(report));
+
+    // Save QC report to KV
+    await saveReportToKV(report, env.CACHE, 86400); // 24hr TTL
+
+    // Check for high failure rate
+    const failureRate = report.records_rejected / report.total_records;
+    if (failureRate > 0.2) {
+      console.error(`[Ingest] QC failure rate too high: ${(failureRate * 100).toFixed(1)}%`);
+      console.error(`[Ingest] Rejecting batch. Review QC report: ${report.report_id}`);
+
+      // Track QC rejection in Analytics
+      if (env.ANALYTICS) {
+        env.ANALYTICS.writeDataPoint({
+          blobs: ['qc_rejection', 'live_games'],
+          doubles: [failureRate],
+          indexes: [report.report_id]
+        });
+      }
+
+      throw new Error(`QC validation failed: ${report.records_rejected}/${report.total_records} records rejected`);
+    }
+
+    // Filter to only use validated game IDs
+    const validatedGameIds = new Set(filtered_data.games?.map(g => g.game_id) || []);
+    const validatedGames = games.filter(game => validatedGameIds.has(game.id));
+
+    console.log(`[Ingest] QC passed: ${validatedGames.length}/${games.length} games validated`);
+    console.log(`[Ingest] QC Report ID: ${report.report_id}`);
+
+    // Use validated games for ingestion
+    const gamesToIngest = validatedGames;
+
     // Batch upsert games
-    const upsertPromises = games.map((game) =>
+    const upsertPromises = gamesToIngest.map((game) =>
       executeWithConstraintGuard(
         () =>
           prisma.game.upsert({
@@ -221,20 +294,32 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 
     await Promise.all(upsertPromises);
 
-    console.log(`[Ingest] Successfully upserted ${games.length} games`);
+    console.log(`[Ingest] Successfully upserted ${gamesToIngest.length} games`);
 
     // Cache live games in KV (60s TTL)
     const cacheKey = `live:games:${season}:${currentDate.toISOString().split('T')[0]}`;
-    await env.CACHE.put(cacheKey, JSON.stringify(games), {
+    await env.CACHE.put(cacheKey, JSON.stringify(gamesToIngest), {
       expirationTtl: 60
     });
 
-    // Track success in Analytics Engine
+    // Track success in Analytics Engine (with QC metrics)
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
         blobs: ['ingest_success', 'live_games'],
-        doubles: [games.length],
-        indexes: [season.toString()]
+        doubles: [gamesToIngest.length],
+        indexes: [season.toString(), report.report_id]
+      });
+
+      // Track QC metrics
+      env.ANALYTICS.writeDataPoint({
+        blobs: ['qc_metrics', 'live_games'],
+        doubles: [
+          report.records_passed,
+          report.records_flagged,
+          report.records_rejected,
+          report.total_records
+        ],
+        indexes: [season.toString(), report.report_id]
       });
     }
   } catch (error) {
