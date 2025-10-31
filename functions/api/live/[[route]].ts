@@ -389,7 +389,7 @@ async function streamNCAABaseball(url: URL, env: Env) {
   if (env.SPORTS_CACHE) {
     if (frames.length > 0) {
       const latestFrame = frames[frames.length - 1];
-      await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(latestFrame), { expirationTtl: 10 });
+      await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(latestFrame), { expirationTtl: 60 }); // KV minimum
     } else {
       const cachedFrame = (await env.SPORTS_CACHE.get(cacheKey, 'json')) as LiveFrame | null;
       if (cachedFrame && cachedFrame.sequence > sinceSequence) {
@@ -818,9 +818,9 @@ async function getMLBScores(url: URL, env: Env) {
       cacheKey,
       JSON.stringify({
         data: responseData,
-        expires: Date.now() + 30 * 1000,
+        expires: Date.now() + 60 * 1000,
       }),
-      { expirationTtl: 30 }
+      { expirationTtl: 60 } // KV minimum
     );
   }
 
@@ -828,7 +828,7 @@ async function getMLBScores(url: URL, env: Env) {
     headers: {
       ...corsHeaders,
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=30',
+      'Cache-Control': 'public, max-age=60',
     },
   });
 }
@@ -913,9 +913,9 @@ async function getNFLScores(url: URL, env: Env) {
       cacheKey,
       JSON.stringify({
         data: responseData,
-        expires: Date.now() + 30 * 1000,
+        expires: Date.now() + 60 * 1000,
       }),
-      { expirationTtl: 30 }
+      { expirationTtl: 60 } // KV minimum
     );
   }
 
@@ -923,7 +923,7 @@ async function getNFLScores(url: URL, env: Env) {
     headers: {
       ...corsHeaders,
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=30',
+      'Cache-Control': 'public, max-age=60',
     },
   });
 }
@@ -1006,9 +1006,9 @@ async function getNBAScores(url: URL, env: Env) {
       cacheKey,
       JSON.stringify({
         data: responseData,
-        expires: Date.now() + 30 * 1000,
+        expires: Date.now() + 60 * 1000,
       }),
-      { expirationTtl: 30 }
+      { expirationTtl: 60 } // KV minimum
     );
   }
 
@@ -1016,7 +1016,7 @@ async function getNBAScores(url: URL, env: Env) {
     headers: {
       ...corsHeaders,
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=30',
+      'Cache-Control': 'public, max-age=60',
     },
   });
 }

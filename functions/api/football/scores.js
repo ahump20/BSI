@@ -162,7 +162,7 @@ export async function onRequest({ request, env, ctx }) {
 
     // Determine cache TTL based on game status
     const allCompleted = transformedData.games.every(g => g.status.completed)
-    const ttl = allCompleted ? 300 : 30 // 5 minutes for completed, 30 seconds for live
+    const ttl = allCompleted ? 300 : 60 // 5 minutes for completed, 60 seconds for live (KV minimum)
 
     // Cache the result
     if (env.KV) {
