@@ -1,24 +1,17 @@
 name = "bsi-qc-worker"
 main = "index.ts"
 compatibility_date = "2025-03-01"
-node_compat = true
+compatibility_flags = ["nodejs_compat"]
 
-# Routes - Deploy to qc subdomain
-routes = [
-  { pattern = "qc.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
-]
-
-# KV Namespace for QC reports
+# KV Namespace for QC reports (using existing CACHE namespace)
 [[kv_namespaces]]
 binding = "CACHE"
-id = "YOUR_KV_NAMESPACE_ID"
-preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"
+id = "a53c3726fc3044be82e79d2d1e371d26"
 
 # R2 Bucket for report archival
 [[r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "bsi-qc-reports"
-preview_bucket_name = "bsi-qc-reports-preview"
 
 # Analytics Engine
 [[analytics_engine_datasets]]
@@ -39,15 +32,5 @@ crons = ["0 3 * * *"]  # Daily at 3am UTC
 [build]
 command = ""
 
-# Deployment
-[env.production]
-name = "bsi-qc-worker"
-routes = [
-  { pattern = "qc.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
-]
-
-[env.staging]
-name = "bsi-qc-worker-staging"
-routes = [
-  { pattern = "qc-staging.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
-]
+# Deployment environments removed for initial deployment
+# Will deploy to workers.dev subdomain first
