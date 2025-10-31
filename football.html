@@ -1,23 +1,853 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#1a1a1a" />
-    <meta name="description" content="Live college football scores, standings, and analytics" />
-    <title>College Football Live</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#BF5700">
+    <meta name="description" content="Championship-grade college football analytics. Live scores, rankings, and deep South observation. Practice to Play. Blaze Data Wins the Day.">
+    <meta name="keywords" content="college football, live scores, NCAA football, SEC football, Big 12 football, real-time scores, football analytics">
 
-    <!-- PWA Support -->
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
-  </head>
-  <body>
-    <div id="root">
-      <div class="loading-screen">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading...</div>
-      </div>
-    </div>
-    <script type="module" src="/src/football/main.jsx"></script>
-  </body>
+    <title>College Football Live • Blaze Sports Intel</title>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/football">
+    <meta property="og:title" content="College Football Live • Blaze Sports Intel">
+    <meta property="og:description" content="Championship-grade college football analytics. Live scores, rankings, and deep South observation.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://blazesportsintel.com/football">
+    <meta property="twitter:title" content="College Football Live • Blaze Sports Intel">
+    <meta property="twitter:description" content="Championship-grade college football analytics. Live scores, rankings, and deep South observation.">
+
+    <!-- Preconnect to optimize font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts: Bebas Neue (Display) + Inter (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js for Particle System -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+    <!-- Shared Championship Styles -->
+    <link rel="stylesheet" href="/public/css/championship-common.css">
+
+    <style>
+        /* ========================================
+           PAGE-SPECIFIC STYLES - FOOTBALL
+           Note: Common styles are in /public/css/championship-common.css
+           ======================================== */
+
+        /* ============================================
+           LIVE SCORES SECTION
+           ============================================ */
+        .scores-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--blaze-white);
+            letter-spacing: 2px;
+        }
+
+        .week-selector {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .week-btn {
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--glass-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--blaze-mist);
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .week-btn:hover,
+        .week-btn.active {
+            background: var(--gradient-primary);
+            color: var(--blaze-white);
+            border-color: var(--blaze-burnt-orange);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* ============================================
+           GAME CARDS GRID
+           ============================================ */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .game-card {
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-color: var(--blaze-burnt-orange);
+        }
+
+        .game-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .game-status {
+            display: inline-block;
+            background: var(--gradient-ember);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--blaze-white);
+            margin-bottom: var(--spacing-md);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .game-status.final {
+            background: var(--blaze-slate);
+        }
+
+        .game-teams {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .team {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            flex: 1;
+        }
+
+        .rank {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--blaze-white);
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--blaze-white);
+            flex: 1;
+        }
+
+        .team-record {
+            font-size: 0.9rem;
+            color: var(--blaze-smoke);
+            margin-left: auto;
+            margin-right: var(--spacing-md);
+        }
+
+        .team-score {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--blaze-burnt-orange);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .team.winner .team-score {
+            color: var(--blaze-amber);
+        }
+
+        .game-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            flex-wrap: wrap;
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+            color: var(--blaze-smoke);
+        }
+
+        .venue,
+        .broadcast {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .odds {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--glass-light);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            color: var(--blaze-cloud);
+            margin-top: var(--spacing-sm);
+        }
+
+        /* ============================================
+           LOADING & ERROR STATES
+           ============================================ */
+        .loading,
+        .error,
+        .no-games {
+            text-align: center;
+            padding: var(--spacing-xxl) var(--spacing-lg);
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--glass-border);
+            border-top-color: var(--blaze-burnt-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-md);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            font-size: 1.1rem;
+            color: var(--blaze-cloud);
+        }
+
+        .error {
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+
+        .error p {
+            font-size: 1.1rem;
+            color: var(--blaze-cloud);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .error-detail {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .error-hint {
+            font-size: 0.9rem;
+            color: var(--blaze-smoke);
+            line-height: 1.8;
+        }
+
+        .no-games {
+            font-size: 1.1rem;
+            color: var(--blaze-cloud);
+        }
+
+        /* ============================================
+           DATA SOURCE FOOTER
+           ============================================ */
+        .data-source {
+            text-align: center;
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            color: var(--blaze-smoke);
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: var(--spacing-xl) var(--spacing-md);
+            margin-top: var(--spacing-xxl);
+            position: relative;
+            z-index: var(--z-content);
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-tagline {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--blaze-burnt-orange);
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: 2px;
+        }
+
+        .footer-copyright {
+            font-size: 0.9rem;
+            color: var(--blaze-smoke);
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 768px) {
+            nav {
+                padding: var(--spacing-sm);
+            }
+
+            .nav-logo {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                gap: var(--spacing-xs);
+            }
+
+            .nav-link {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+
+            main {
+                padding: calc(70px + var(--spacing-md)) var(--spacing-sm) var(--spacing-lg);
+            }
+
+            .hero {
+                padding: var(--spacing-lg) 0;
+            }
+
+            .hero-badge {
+                font-size: 0.8rem;
+                padding: 6px var(--spacing-sm);
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+
+            .game-card {
+                padding: var(--spacing-md);
+            }
+
+            .team-name {
+                font-size: 1rem;
+            }
+
+            .team-score {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-logo {
+                font-size: 1.25rem;
+            }
+
+            .nav-links {
+                display: none; /* Hide on very small screens */
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .week-btn {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+
+            .game-teams {
+                gap: var(--spacing-sm);
+            }
+
+            .team-info {
+                gap: 8px;
+            }
+
+            .rank {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+
+            .team-name {
+                font-size: 0.95rem;
+            }
+
+            .team-record {
+                font-size: 0.8rem;
+            }
+
+            .team-score {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Particle Field Background -->
+    <canvas id="particle-field"></canvas>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo" aria-label="Blaze Sports Intel Home">BLAZE</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Baseball</a>
+                <a href="/football" class="nav-link active">Football</a>
+                <a href="/basketball" class="nav-link">Basketball</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content" data-aos="fade-up">
+                <div class="hero-badge">
+                    College Football Intelligence
+                </div>
+                <h1 class="hero-title">
+                    Practice to Play.<br>Blaze Data Wins the Day.
+                </h1>
+                <p class="hero-subtitle">
+                    Real-time college football scores with rankings, odds, and broadcast information. Championship analytics for coaches who decide faster.
+                </p>
+            </div>
+        </section>
+
+        <!-- Live Scores Section -->
+        <section class="scores-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">
+                    <i class="fas fa-football"></i> Live Scores
+                </h2>
+                <div class="week-selector">
+                    <button class="week-btn active" id="currentWeekBtn">
+                        <i class="fas fa-calendar-day"></i> Current Week
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading" data-aos="fade-up">
+                <div class="spinner"></div>
+                <p>Loading live scores...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="error" style="display: none;" data-aos="fade-up">
+                <p>⚠️ Failed to load live data</p>
+                <p class="error-detail" id="errorMessage"></p>
+                <p class="error-hint">
+                    Data source: ESPN College Football API<br>
+                    Status: Temporarily unavailable
+                </p>
+            </div>
+
+            <!-- No Games State -->
+            <div id="noGamesState" class="no-games" style="display: none;" data-aos="fade-up">
+                <p><i class="fas fa-calendar-xmark"></i> No games currently in progress</p>
+            </div>
+
+            <!-- Games Grid -->
+            <div id="gamesGrid" class="games-grid" style="display: none;">
+                <!-- Games will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Data Source Footer -->
+        <div class="data-source" data-aos="fade-up">
+            <p>
+                <i class="fas fa-database"></i> Data source: ESPN College Football API<br>
+                Last updated: <span id="lastUpdated"></span>
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container" data-aos="fade-up">
+            <div class="footer-tagline">
+                Deep South Sports Authority • Championship Analytics Platform
+            </div>
+            <div class="footer-copyright">
+                © 2025 Blaze Sports Intel. Built from Deep South observation.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize AOS
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100
+            });
+
+            // Initialize Three.js particle system
+            initParticleSystem();
+
+            // Fetch and display games
+            fetchGames('current');
+
+            // Set up auto-refresh every 30 seconds
+            setInterval(() => {
+                const currentWeek = document.getElementById('currentWeekBtn').classList.contains('active') ? 'current' : 'current';
+                fetchGames(currentWeek);
+            }, 30000);
+
+            // Update last updated timestamp
+            updateLastUpdated();
+            setInterval(updateLastUpdated, 60000); // Update every minute
+        });
+
+        // ============================================
+        // FETCH GAMES FROM API
+        // ============================================
+        async function fetchGames(week) {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const noGamesState = document.getElementById('noGamesState');
+            const gamesGrid = document.getElementById('gamesGrid');
+
+            // Show loading state
+            loadingState.style.display = 'block';
+            errorState.style.display = 'none';
+            noGamesState.style.display = 'none';
+            gamesGrid.style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/football/scores?week=${week}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const games = data.games || [];
+
+                // Hide loading state
+                loadingState.style.display = 'none';
+
+                if (games.length === 0) {
+                    noGamesState.style.display = 'block';
+                } else {
+                    gamesGrid.style.display = 'grid';
+                    renderGames(games);
+                }
+            } catch (error) {
+                console.error('Failed to fetch football games:', error);
+                loadingState.style.display = 'none';
+                errorState.style.display = 'block';
+                document.getElementById('errorMessage').textContent = error.message;
+            }
+        }
+
+        // ============================================
+        // RENDER GAME CARDS
+        // ============================================
+        function renderGames(games) {
+            const gamesGrid = document.getElementById('gamesGrid');
+            gamesGrid.innerHTML = '';
+
+            games.forEach(game => {
+                const home = game.teams?.home || {};
+                const away = game.teams?.away || {};
+                const homeScore = home.score || '0';
+                const awayScore = away.score || '0';
+                const isCompleted = game.status?.completed || false;
+                const statusText = isCompleted ? 'Final' : (game.status?.shortDetail || 'Live');
+
+                // Determine winner
+                const homeWinner = isCompleted && parseInt(homeScore) > parseInt(awayScore);
+                const awayWinner = isCompleted && parseInt(awayScore) > parseInt(homeScore);
+
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.setAttribute('data-aos', 'fade-up');
+
+                gameCard.innerHTML = `
+                    <div class="game-status ${isCompleted ? 'final' : ''}">
+                        ${statusText}
+                    </div>
+
+                    <div class="game-teams">
+                        <div class="team ${awayWinner ? 'winner' : ''}">
+                            <div class="team-info">
+                                ${away.rank ? `<span class="rank">#${away.rank}</span>` : ''}
+                                <span class="team-name">${away.team?.name || 'TBD'}</span>
+                                <span class="team-record">${away.record || '0-0'}</span>
+                            </div>
+                            <span class="team-score">${awayScore}</span>
+                        </div>
+
+                        <div class="team ${homeWinner ? 'winner' : ''}">
+                            <div class="team-info">
+                                ${home.rank ? `<span class="rank">#${home.rank}</span>` : ''}
+                                <span class="team-name">${home.team?.name || 'TBD'}</span>
+                                <span class="team-record">${home.record || '0-0'}</span>
+                            </div>
+                            <span class="team-score">${homeScore}</span>
+                        </div>
+                    </div>
+
+                    <div class="game-meta">
+                        <span class="venue">
+                            <i class="fas fa-location-dot"></i> ${game.venue?.name || 'TBD'}
+                        </span>
+                        ${game.broadcast ? `<span class="broadcast">• <i class="fas fa-tv"></i> ${game.broadcast}</span>` : ''}
+                    </div>
+
+                    ${game.odds ? `
+                        <div class="odds">
+                            <i class="fas fa-chart-line"></i> Spread: ${game.odds.spread} • O/U: ${game.odds.overUnder}
+                        </div>
+                    ` : ''}
+                `;
+
+                gamesGrid.appendChild(gameCard);
+            });
+        }
+
+        // ============================================
+        // UPDATE LAST UPDATED TIMESTAMP
+        // ============================================
+        function updateLastUpdated() {
+            const now = new Date();
+            const formatted = now.toLocaleString('en-US', {
+                timeZone: 'America/Chicago',
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+            document.getElementById('lastUpdated').textContent = formatted;
+        }
+
+        // ============================================
+        // THREE.JS PARTICLE SYSTEM
+        // ============================================
+        function initParticleSystem() {
+            const canvas = document.getElementById('particle-field');
+            if (!canvas || typeof THREE === 'undefined') {
+                console.warn('Three.js or canvas not available');
+                return;
+            }
+
+            try {
+                // Scene setup
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({
+                    canvas,
+                    alpha: true,
+                    antialias: true
+                });
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setClearColor(0x000000, 0);
+                camera.position.z = 500;
+
+                // Detect device type and set particle count
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const particleCount = isMobile ? 8000 : 150000;
+
+                // Create particles
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                const velocities = new Float32Array(particleCount * 3);
+
+                // Burnt orange color palette
+                const colorPalette = [
+                    new THREE.Color(0xBF5700), // Burnt orange
+                    new THREE.Color(0xCC6600), // Ember
+                    new THREE.Color(0xD97B38), // Copper
+                    new THREE.Color(0xE69551), // Sunset
+                    new THREE.Color(0xFFBF00), // Amber
+                ];
+
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    // Random position
+                    positions[i] = (Math.random() - 0.5) * 2000;
+                    positions[i + 1] = (Math.random() - 0.5) * 2000;
+                    positions[i + 2] = (Math.random() - 0.5) * 1000;
+
+                    // Random velocity
+                    velocities[i] = (Math.random() - 0.5) * 0.3;
+                    velocities[i + 1] = (Math.random() - 0.5) * 0.3;
+                    velocities[i + 2] = (Math.random() - 0.5) * 0.3;
+
+                    // Random burnt orange color
+                    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                    colors[i] = color.r;
+                    colors[i + 1] = color.g;
+                    colors[i + 2] = color.b;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                // Particle material
+                const material = new THREE.PointsMaterial({
+                    size: isMobile ? 1.5 : 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8,
+                    blending: THREE.AdditiveBlending,
+                    sizeAttenuation: true
+                });
+
+                const particles = new THREE.Points(geometry, material);
+                scene.add(particles);
+
+                // Mouse interaction
+                let mouseX = 0;
+                let mouseY = 0;
+
+                document.addEventListener('mousemove', (event) => {
+                    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+                });
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+
+                    const positions = particles.geometry.attributes.position.array;
+
+                    for (let i = 0; i < particleCount * 3; i += 3) {
+                        // Update position with velocity
+                        positions[i] += velocities[i];
+                        positions[i + 1] += velocities[i + 1];
+                        positions[i + 2] += velocities[i + 2];
+
+                        // Boundary check and wrap
+                        if (Math.abs(positions[i]) > 1000) positions[i] *= -1;
+                        if (Math.abs(positions[i + 1]) > 1000) positions[i + 1] *= -1;
+                        if (Math.abs(positions[i + 2]) > 500) positions[i + 2] *= -1;
+                    }
+
+                    particles.geometry.attributes.position.needsUpdate = true;
+
+                    // Rotate particles slowly
+                    particles.rotation.y += 0.0002;
+                    particles.rotation.x += 0.0001;
+
+                    // Mouse parallax effect
+                    camera.position.x += (mouseX * 50 - camera.position.x) * 0.05;
+                    camera.position.y += (mouseY * 50 - camera.position.y) * 0.05;
+
+                    renderer.render(scene, camera);
+                }
+
+                animate();
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            } catch (error) {
+                console.error('Particle system initialization failed:', error);
+            }
+        }
+    </script>
+</body>
 </html>

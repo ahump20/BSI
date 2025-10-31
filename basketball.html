@@ -1,15 +1,1019 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Blaze Sports Intel - NCAA Basketball analytics, live scores, standings, and tournament projections" />
-    <meta name="keywords" content="NCAA basketball, college basketball, basketball analytics, March Madness, basketball scores" />
-    <title>Blaze Sports Intel - Basketball</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/basketball/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- SEO & Social -->
+    <title>🏀 Blaze Sports Intel | Basketball Championship Analytics</title>
+    <meta name="description" content="Practice to Play. Blaze Data Wins the Day. NCAA Basketball championship analytics with real-time scores, conference standings, and player statistics. Deep South sports authority delivering data-driven basketball intelligence.">
+    <meta name="keywords" content="NCAA basketball, college basketball, basketball analytics, March Madness, basketball scores, SEC basketball, Big 12 basketball, conference standings, player statistics">
+    <meta name="author" content="Austin Humphrey - Blaze Sports Intel">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#BF5700">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/basketball">
+    <meta property="og:title" content="🏀 Blaze Sports Intel | Basketball Championship Analytics">
+    <meta property="og:description" content="Practice to Play. Blaze Data Wins the Day. NCAA Basketball analytics platform for coaches and scouts.">
+    <meta property="og:image" content="https://blazesportsintel.com/assets/og-basketball.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://blazesportsintel.com/basketball">
+    <meta property="twitter:title" content="🏀 Blaze Sports Intel | Basketball Championship Analytics">
+    <meta property="twitter:description" content="Practice to Play. Blaze Data Wins the Day. NCAA Basketball analytics.">
+    <meta property="twitter:image" content="https://blazesportsintel.com/assets/og-basketball.png">
+    <meta property="twitter:creator" content="@BISportsIntel">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Three.js for particle background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- AOS Animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <!-- Shared Championship Styles -->
+    <link rel="stylesheet" href="/public/css/championship-common.css">
+
+    <style>
+        /* ========================================
+           PAGE-SPECIFIC STYLES - BASKETBALL
+           Note: Common styles are in /public/css/championship-common.css
+           ======================================== */
+
+        /* ========================================
+           SCORES SECTION
+           ======================================== */
+
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .game-card {
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--blaze-copper);
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-status {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: var(--space-md);
+        }
+
+        .game-status.live {
+            color: var(--blaze-sunset);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .game-teams {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            background: var(--glass-light);
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            transition: all var(--transition-base);
+        }
+
+        .team.winner {
+            border-color: var(--blaze-copper);
+            background: var(--glass-medium);
+        }
+
+        .team-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .team-score {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-divider {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            margin: var(--space-sm) 0;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            gap: var(--space-md);
+        }
+
+        .game-venue,
+        .game-date,
+        .game-time {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        /* ========================================
+           STANDINGS SECTION
+           ======================================== */
+
+        .standings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: var(--space-2xl);
+        }
+
+        .conference-standings {
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all var(--transition-base);
+        }
+
+        .conference-standings:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .conference-name {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            margin-bottom: var(--space-lg);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table thead {
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .standings-table th {
+            text-align: left;
+            padding: var(--space-md);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .standings-table tbody tr {
+            border-bottom: 1px solid var(--glass-border);
+            transition: all var(--transition-base);
+        }
+
+        .standings-table tbody tr:hover {
+            background: var(--glass-light);
+        }
+
+        .standings-table td {
+            padding: var(--space-md);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .rank {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        /* ========================================
+           STATS SECTION
+           ======================================== */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-2xl);
+        }
+
+        .stat-category {
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all var(--transition-base);
+        }
+
+        .stat-category:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: var(--space-lg);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-list {
+            list-style: none;
+            counter-reset: stat-counter;
+        }
+
+        .stat-list li {
+            counter-increment: stat-counter;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            background: var(--glass-light);
+            border-radius: var(--radius-md);
+            position: relative;
+            padding-left: calc(var(--space-md) * 3);
+            transition: all var(--transition-base);
+        }
+
+        .stat-list li:hover {
+            background: var(--glass-medium);
+            transform: translateX(4px);
+        }
+
+        .stat-list li::before {
+            content: counter(stat-counter);
+            position: absolute;
+            left: var(--space-md);
+            width: 24px;
+            height: 24px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .player-team {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-left: var(--space-sm);
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-left: auto;
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+
+        .footer {
+            position: relative;
+            z-index: 1;
+            background: var(--glass-heavy);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: var(--space-3xl) var(--space-xl) var(--space-xl);
+            margin-top: var(--space-3xl);
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: var(--space-md);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-tagline {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--space-lg);
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-base);
+        }
+
+        .footer-link:hover {
+            color: var(--blaze-sunset);
+        }
+
+        .footer-copyright {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .scores-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .standings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-nav {
+                flex-direction: column;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: var(--space-md);
+            }
+
+            .hero {
+                padding: calc(60px + var(--space-2xl)) var(--space-md) var(--space-2xl);
+            }
+
+            .tabs-section {
+                padding: var(--space-xl) var(--space-md);
+            }
+
+            .game-card {
+                padding: var(--space-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Particle Background -->
+    <canvas id="particle-field"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="nav-icon">🏀</span>
+                <span>BLAZE SPORTS INTEL</span>
+            </a>
+
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/baseball" class="nav-link">Baseball</a></li>
+                <li><a href="/football" class="nav-link">Football</a></li>
+                <li><a href="/basketball" class="nav-link active">Basketball</a></li>
+                <li><a href="/analytics" class="nav-link">Analytics</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+            </ul>
+
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="hero-badge">
+                NCAA Basketball Intelligence
+            </div>
+            <h1 class="hero-title">
+                Practice to Play.<br>Blaze Data Wins the Day.
+            </h1>
+            <p class="hero-subtitle">
+                Real-time scores, conference standings, and player statistics. Championship analytics for coaches who decide faster.
+            </p>
+        </div>
+    </section>
+
+    <!-- Tabs Section -->
+    <section class="tabs-section">
+        <div class="tabs-container">
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav" data-aos="fade-up">
+                <button class="tab-btn active" data-tab="scores">
+                    <i class="fas fa-trophy"></i> Live Scores
+                </button>
+                <button class="tab-btn" data-tab="standings">
+                    <i class="fas fa-ranking-star"></i> Standings
+                </button>
+                <button class="tab-btn" data-tab="stats">
+                    <i class="fas fa-chart-line"></i> Player Leaders
+                </button>
+            </div>
+
+            <!-- Scores Tab -->
+            <div class="tab-content active" id="scores-tab" data-aos="fade-up">
+                <div class="scores-grid">
+                    <!-- Game Card 1 -->
+                    <div class="game-card">
+                        <div class="game-status">Final</div>
+                        <div class="game-teams">
+                            <div class="team away-team">
+                                <span class="team-name">Kentucky</span>
+                                <span class="team-score">78</span>
+                            </div>
+                            <div class="game-divider">@</div>
+                            <div class="team home-team winner">
+                                <span class="team-name">Tennessee</span>
+                                <span class="team-score">82</span>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <span class="game-venue"><i class="fas fa-location-dot"></i> Thompson-Boling Arena</span>
+                            <span class="game-date"><i class="fas fa-calendar"></i> October 15, 2025</span>
+                        </div>
+                    </div>
+
+                    <!-- Game Card 2 -->
+                    <div class="game-card">
+                        <div class="game-status live">Live - 2nd Half</div>
+                        <div class="game-teams">
+                            <div class="team away-team">
+                                <span class="team-name">Duke</span>
+                                <span class="team-score">45</span>
+                            </div>
+                            <div class="game-divider">@</div>
+                            <div class="team home-team">
+                                <span class="team-name">North Carolina</span>
+                                <span class="team-score">48</span>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <span class="game-venue"><i class="fas fa-location-dot"></i> Dean Smith Center</span>
+                            <span class="game-time"><i class="fas fa-clock"></i> 12:43 2H</span>
+                        </div>
+                    </div>
+
+                    <!-- Game Card 3 -->
+                    <div class="game-card">
+                        <div class="game-status">Final</div>
+                        <div class="game-teams">
+                            <div class="team away-team winner">
+                                <span class="team-name">Kansas</span>
+                                <span class="team-score">89</span>
+                            </div>
+                            <div class="game-divider">@</div>
+                            <div class="team home-team">
+                                <span class="team-name">Texas</span>
+                                <span class="team-score">85</span>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <span class="game-venue"><i class="fas fa-location-dot"></i> Moody Center</span>
+                            <span class="game-date"><i class="fas fa-calendar"></i> October 15, 2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standings Tab -->
+            <div class="tab-content" id="standings-tab" data-aos="fade-up">
+                <div class="standings-grid">
+                    <!-- SEC Standings -->
+                    <div class="conference-standings">
+                        <h4 class="conference-name">SEC</h4>
+                        <table class="standings-table">
+                            <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Conf</th>
+                                    <th>Overall</th>
+                                    <th>GB</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">1</span>
+                                        Tennessee
+                                    </td>
+                                    <td>12-2</td>
+                                    <td>18-3</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">2</span>
+                                        Kentucky
+                                    </td>
+                                    <td>11-3</td>
+                                    <td>17-4</td>
+                                    <td>1.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">3</span>
+                                        Auburn
+                                    </td>
+                                    <td>10-4</td>
+                                    <td>16-5</td>
+                                    <td>2.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">4</span>
+                                        Texas A&M
+                                    </td>
+                                    <td>9-5</td>
+                                    <td>15-6</td>
+                                    <td>3.0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Big 12 Standings -->
+                    <div class="conference-standings">
+                        <h4 class="conference-name">Big 12</h4>
+                        <table class="standings-table">
+                            <thead>
+                                <tr>
+                                    <th>Team</th>
+                                    <th>Conf</th>
+                                    <th>Overall</th>
+                                    <th>GB</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">1</span>
+                                        Kansas
+                                    </td>
+                                    <td>13-1</td>
+                                    <td>19-2</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">2</span>
+                                        Iowa State
+                                    </td>
+                                    <td>11-3</td>
+                                    <td>17-4</td>
+                                    <td>2.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">3</span>
+                                        Texas
+                                    </td>
+                                    <td>10-4</td>
+                                    <td>16-5</td>
+                                    <td>3.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="team-cell">
+                                        <span class="rank">4</span>
+                                        Baylor
+                                    </td>
+                                    <td>9-5</td>
+                                    <td>15-6</td>
+                                    <td>4.0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div class="tab-content" id="stats-tab" data-aos="fade-up">
+                <div class="stats-grid">
+                    <!-- Points Per Game -->
+                    <div class="stat-category">
+                        <h4 class="stat-title">Points Per Game</h4>
+                        <ol class="stat-list">
+                            <li>
+                                <div>
+                                    <span class="player-name">Zach Edey</span>
+                                    <span class="player-team">Purdue</span>
+                                </div>
+                                <span class="stat-value">24.5</span>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="player-name">Hunter Dickinson</span>
+                                    <span class="player-team">Kansas</span>
+                                </div>
+                                <span class="stat-value">23.8</span>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="player-name">Tyler Kolek</span>
+                                    <span class="player-team">Marquette</span>
+                                </div>
+                                <span class="stat-value">22.1</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Rebounds Per Game -->
+                    <div class="stat-category">
+                        <h4 class="stat-title">Rebounds Per Game</h4>
+                        <ol class="stat-list">
+                            <li>
+                                <div>
+                                    <span class="player-name">Zach Edey</span>
+                                    <span class="player-team">Purdue</span>
+                                </div>
+                                <span class="stat-value">12.4</span>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="player-name">Ryan Kalkbrenner</span>
+                                    <span class="player-team">Creighton</span>
+                                </div>
+                                <span class="stat-value">11.8</span>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="player-name">Coleman Hawkins</span>
+                                    <span class="player-team">Illinois</span>
+                                </div>
+                                <span class="stat-value">10.9</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Assists Per Game -->
+                    <div class="stat-category">
+                        <h4 class="stat-title">Assists Per Game</h4>
+                        <ol class="stat-list">
+                            <li>
+                                <div>
+                                    <span class="player-name">Tyler Kolek</span>
+                                    <span class="player-team">Marquette</span>
+                                </div>
+                                <span class="stat-value">8.7</span>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="player-name">Braden Smith</span>
+                                    <span class="player-team">Purdue</span>
+                                </div>
+                                <span class="stat-value">7.9</span>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="player-name">Caleb Love</span>
+                                    <span class="player-team">Arizona</span>
+                                </div>
+                                <span class="stat-value">7.5</span>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">BLAZE SPORTS INTEL</div>
+            <div class="footer-tagline">Deep South Sports Authority • Championship Analytics Platform</div>
+
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/baseball" class="footer-link">Baseball</a>
+                <a href="/football" class="footer-link">Football</a>
+                <a href="/basketball" class="footer-link">Basketball</a>
+                <a href="/analytics" class="footer-link">Analytics</a>
+                <a href="/about" class="footer-link">About</a>
+                <a href="/legal/privacy" class="footer-link">Privacy</a>
+                <a href="/legal/terms" class="footer-link">Terms</a>
+            </div>
+
+            <div class="footer-copyright">
+                © 2025 Blaze Sports Intel. All rights reserved. Built from Deep South observation.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // ========================================
+        // AOS INITIALIZATION
+        // ========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100,
+                easing: 'ease-out'
+            });
+        });
+
+        // ========================================
+        // NAVIGATION SCROLL EFFECT
+        // ========================================
+
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // ========================================
+        // TABS FUNCTIONALITY
+        // ========================================
+
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.getAttribute('data-tab');
+
+                // Remove active from all buttons and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                // Add active to clicked button and corresponding content
+                btn.classList.add('active');
+                document.getElementById(`${targetTab}-tab`).classList.add('active');
+            });
+        });
+
+        // ========================================
+        // THREE.JS PARTICLE SYSTEM
+        // ========================================
+
+        function initParticleSystem() {
+            const canvas = document.getElementById('particle-field');
+            if (!canvas || typeof THREE === 'undefined') {
+                console.warn('Three.js or canvas not available');
+                return;
+            }
+
+            try {
+                // Scene setup
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({
+                    canvas,
+                    alpha: true,
+                    antialias: true
+                });
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setClearColor(0x000000, 0);
+                camera.position.z = 500;
+
+                // Detect device type and set particle count
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const particleCount = isMobile ? 8000 : 150000;
+
+                // Create particles
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                const velocities = new Float32Array(particleCount * 3);
+
+                // Burnt orange color palette
+                const colorPalette = [
+                    new THREE.Color(0xBF5700), // Burnt orange
+                    new THREE.Color(0xCC6600), // Ember
+                    new THREE.Color(0xD97B38), // Copper
+                    new THREE.Color(0xE69551), // Sunset
+                    new THREE.Color(0xFFBF00), // Amber
+                ];
+
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    // Random position
+                    positions[i] = (Math.random() - 0.5) * 2000;
+                    positions[i + 1] = (Math.random() - 0.5) * 2000;
+                    positions[i + 2] = (Math.random() - 0.5) * 1000;
+
+                    // Random velocity
+                    velocities[i] = (Math.random() - 0.5) * 0.3;
+                    velocities[i + 1] = (Math.random() - 0.5) * 0.3;
+                    velocities[i + 2] = (Math.random() - 0.5) * 0.3;
+
+                    // Random burnt orange color
+                    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                    colors[i] = color.r;
+                    colors[i + 1] = color.g;
+                    colors[i + 2] = color.b;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                // Particle material
+                const material = new THREE.PointsMaterial({
+                    size: isMobile ? 1.5 : 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8,
+                    blending: THREE.AdditiveBlending,
+                    sizeAttenuation: true
+                });
+
+                const particles = new THREE.Points(geometry, material);
+                scene.add(particles);
+
+                // Mouse interaction
+                let mouseX = 0;
+                let mouseY = 0;
+
+                document.addEventListener('mousemove', (event) => {
+                    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+                });
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+
+                    const positions = particles.geometry.attributes.position.array;
+
+                    for (let i = 0; i < particleCount * 3; i += 3) {
+                        // Update position with velocity
+                        positions[i] += velocities[i];
+                        positions[i + 1] += velocities[i + 1];
+                        positions[i + 2] += velocities[i + 2];
+
+                        // Boundary check and wrap
+                        if (Math.abs(positions[i]) > 1000) positions[i] *= -1;
+                        if (Math.abs(positions[i + 1]) > 1000) positions[i + 1] *= -1;
+                        if (Math.abs(positions[i + 2]) > 500) positions[i + 2] *= -1;
+                    }
+
+                    particles.geometry.attributes.position.needsUpdate = true;
+
+                    // Rotate particles slowly
+                    particles.rotation.y += 0.0002;
+                    particles.rotation.x += 0.0001;
+
+                    // Mouse parallax effect
+                    camera.position.x += (mouseX * 50 - camera.position.x) * 0.05;
+                    camera.position.y += (mouseY * 50 - camera.position.y) * 0.05;
+
+                    renderer.render(scene, camera);
+                }
+
+                animate();
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            } catch (error) {
+                console.error('Particle system initialization failed:', error);
+            }
+        }
+
+        // Initialize particle system on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initParticleSystem);
+        } else {
+            initParticleSystem();
+        }
+    </script>
+</body>
 </html>
