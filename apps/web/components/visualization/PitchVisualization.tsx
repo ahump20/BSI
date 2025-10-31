@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { BlazeVisualizationEngine, PitchData, HeatMapData } from '../../lib/visualization/engine';
+import GameSelector from './GameSelector';
 
 interface PitchVisualizationProps {
   gameId: string;
@@ -138,6 +139,11 @@ export default function PitchVisualization({ gameId }: PitchVisualizationProps) 
         className="w-full h-full touch-none"
         style={{ display: 'block' }}
       />
+
+      {/* Game Selector */}
+      <div className="fixed top-5 right-5 z-10">
+        <GameSelector currentGameId={gameId} />
+      </div>
 
       {/* HUD Overlay */}
       {currentPitch && (
