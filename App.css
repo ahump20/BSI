@@ -729,3 +729,257 @@ body {
     padding-bottom: 0;
   }
 }
+
+.muted {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.panel {
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-burnt);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.panel-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.panel-footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.panel.error-panel,
+.panel.empty-panel {
+  align-items: center;
+  text-align: center;
+}
+
+.panel.error-panel {
+  border-color: rgba(220, 20, 60, 0.4);
+  background: rgba(220, 20, 60, 0.08);
+}
+
+.panel.empty-panel {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.timestamp-chip {
+  background: var(--brand-surface-soft);
+  color: var(--brand-tertiary);
+  border: 1px solid var(--border-strong);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.control-select {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.control-select:focus {
+  border-color: var(--brand-secondary);
+  box-shadow: 0 0 0 2px var(--brand-surface-soft), 0 0 0 4px var(--focus-ring-color);
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.game-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-burnt);
+}
+
+.game-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.status-live {
+  background: rgba(220, 20, 60, 0.2);
+  color: var(--blaze-powder);
+}
+
+.status-final {
+  background: rgba(0, 168, 107, 0.25);
+  color: #9ae6b4;
+}
+
+.team-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  gap: 8px;
+}
+
+.team-name {
+  font-weight: 500;
+}
+
+.team-score {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.game-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.standings-table {
+  display: grid;
+  gap: 8px;
+}
+
+.standings-header,
+.standings-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 90px 120px 70px;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.standings-header {
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.standings-row {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  align-items: center;
+}
+
+.team-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.insights-grid {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .insights-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.insight-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-primary {
+  font-weight: 600;
+}
+
+.stat-secondary {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.error-panel h2,
+.error-panel h3,
+.empty-panel h2 {
+  font-size: 20px;
+}
+
+.bottom-nav button {
+  font-size: 12px;
+}
+
+.bottom-nav button.active {
+  color: var(--brand-tertiary);
+  font-weight: 600;
+}
+
+
+.tv {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
