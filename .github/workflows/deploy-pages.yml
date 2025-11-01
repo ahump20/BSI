@@ -22,17 +22,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          version: 9
       
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       
       - name: Build project
-        run: npm run build
+        run: pnpm -w build
       
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
