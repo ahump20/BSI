@@ -63,8 +63,8 @@ cd ..
 # Build the frontend
 echo ""
 echo "🔨 Building frontend..."
-npm install
-npm run build
+pnpm install --frozen-lockfile
+pnpm -w build
 
 # Deploy to Cloudflare Pages
 echo ""
