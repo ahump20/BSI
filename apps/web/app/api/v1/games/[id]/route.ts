@@ -72,9 +72,10 @@ function mapGameDetail(game: GameDetailPayload) {
 
 export async function GET(
   _request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const gameId = context.params.id;
+  const params = await context.params;
+  const gameId = params.id;
   if (!gameId) {
     return NextResponse.json({ error: 'Missing game identifier.' }, { status: 400 });
   }
