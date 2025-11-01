@@ -248,7 +248,6 @@ export class GameCoordinator {
    */
   private async broadcastUpdate(simResult: SimOutput): Promise<void> {
     const encoder = new TextEncoder();
-    const data = encoder.encode(`data: ${JSON.stringify(simResult)}\n\n`);
 
     // Send to all connected clients
     const deadConnections: ReadableStreamDefaultController[] = [];
