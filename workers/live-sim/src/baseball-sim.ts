@@ -36,30 +36,6 @@ const BASE_OUTCOME_RATES: Record<string, BaseballOutcomes> = {
  * Baserunning transition matrix
  * Given hit type, advance probabilities for runners on base
  */
-interface BaserunningAdvance {
-  scorer: number; // Probability runner scores
-  advance2: number; // Advances 2 bases
-  advance1: number; // Advances 1 base
-  out: number; // Out on bases (thrown out)
-}
-
-const BASERUNNING_ADVANCES: Record<string, Record<number, BaserunningAdvance>> = {
-  single: {
-    1: { scorer: 0.38, advance2: 0.45, advance1: 0.15, out: 0.02 }, // Runner on 1st
-    2: { scorer: 0.62, advance2: 0.30, advance1: 0.06, out: 0.02 }, // Runner on 2nd
-    4: { scorer: 0.95, advance2: 0.03, advance1: 0.01, out: 0.01 }  // Runner on 3rd
-  },
-  double: {
-    1: { scorer: 0.78, advance2: 0.18, advance1: 0.02, out: 0.02 },
-    2: { scorer: 0.92, advance2: 0.06, advance1: 0.01, out: 0.01 },
-    4: { scorer: 0.98, advance2: 0.01, advance1: 0.00, out: 0.01 }
-  },
-  triple: {
-    1: { scorer: 0.97, advance2: 0.02, advance1: 0.00, out: 0.01 },
-    2: { scorer: 0.98, advance2: 0.01, advance1: 0.00, out: 0.01 },
-    4: { scorer: 0.99, advance2: 0.00, advance1: 0.00, out: 0.01 }
-  }
-};
 
 /**
  * Hash game state for cache key
