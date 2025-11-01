@@ -1,26 +1,84 @@
+# Cloudflare Pages Headers Configuration
+# Optimized for security, performance, and Cloudflare CDN
+
+# Global headers for all routes
 /*
+  # CORS Headers
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, POST, OPTIONS
-  Access-Control-Allow-Headers: Content-Type
+  Access-Control-Allow-Headers: Content-Type, Authorization
 
+  # Security Headers
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+
+  # Content Security Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.blazesportsintel.com wss://api.blazesportsintel.com;
+
+# HTML files - no cache, always revalidate
+/*.html
+  Content-Type: text/html; charset=utf-8
+  Cache-Control: public, max-age=0, must-revalidate
+
+# JavaScript - long cache with immutable
 /*.js
   Content-Type: application/javascript; charset=utf-8
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=31536000, immutable
 
+# CSS - long cache with immutable
 /*.css
   Content-Type: text/css; charset=utf-8
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=31536000, immutable
 
+# JSON - short cache
 /*.json
   Content-Type: application/json; charset=utf-8
   Cache-Control: public, max-age=300
 
-/*.html
-  Content-Type: text/html; charset=utf-8
-  Cache-Control: public, max-age=300
-  X-Frame-Options: SAMEORIGIN
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
+# Static Assets - long cache
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
 
+# Images - long cache
 /images/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.gif
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts - long cache
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.eot
+  Cache-Control: public, max-age=31536000, immutable
+
+# API Routes - no cache
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
