@@ -178,6 +178,19 @@ enum FeedPrecision { EVENT | PITCH }
 - `GET /api/v1/rankings` - Polls + RPI + strength metrics
 - `POST /api/stripe/webhook` - Payment processing
 
+### Cloudflare Workers – NCAA API Surface
+
+- **Location**: `workers/ncaa/api/src/api.ts`
+- **Bindings**: `DB` (D1), `HOT` (KV cache), `RAW` (R2 snapshots)
+- **Status**: ✅ Implemented via Hono router with ETag-aware responses
+- **Endpoints Wired**:
+  - `GET /api/college-baseball/games` (date/division/conference/status filters)
+  - `GET /api/college-baseball/games/:id` (box score + metadata)
+  - `GET /api/college-baseball/standings` (division/conference scoped)
+  - `GET /api/college-baseball/teams/:teamId/schedule?season=` (season schedule)
+- **Data Contracts**: Normalized statuses (`scheduled|live|final|postponed|canceled`), `source` + `fetched_at` audit fields, null-safe scoring for pregame states.
+- **Cache Policy**: `s-maxage` tuned per endpoint (5m scoreboard, 60s detail, 10m standings/schedule) with 60s `stale-while-revalidate`.
+
 ### Ingest Worker (Cloudflare)
 
 **Schedule**:
