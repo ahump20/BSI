@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Baseball API Status - Blaze Sports Intel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      color: #fff;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1.125rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+
+    .last-update {
+      text-align: center;
+      font-size: 0.875rem;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .stat-card h3 {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card .label {
+      font-size: 0.875rem;
+      opacity: 0.7;
+    }
+
+    .endpoints-list {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .endpoints-list h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .endpoint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      transition: all 0.3s;
+    }
+
+    .endpoint:hover {
+      background: rgba(0, 0, 0, 0.3);
+      transform: translateX(4px);
+    }
+
+    .endpoint-info {
+      flex: 1;
+    }
+
+    .endpoint-name {
+      font-weight: 600;
+      font-size: 1.125rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .endpoint-url {
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+
+    .endpoint-status {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .status-badge.loading {
+      background: rgba(156, 163, 175, 0.3);
+      color: #d1d5db;
+    }
+
+    .status-badge.success {
+      background: rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+
+    .status-badge.error {
+      background: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .status-badge.warning {
+      background: rgba(245, 158, 11, 0.3);
+      color: #f59e0b;
+    }
+
+    .response-time {
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+
+    .refresh-btn {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 2rem auto 0;
+      padding: 1rem 2rem;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinning {
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚾ College Baseball API Status</h1>
+    <p class="subtitle">Real-time monitoring of Blaze Sports Intel APIs</p>
+    <p class="last-update" id="lastUpdate">Last checked: Never</p>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Requests</h3>
+        <div class="value" id="totalRequests">--</div>
+        <div class="label">Since page load</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>Success Rate</h3>
+        <div class="value" id="successRate">--</div>
+        <div class="label">Successful responses</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>Avg Response Time</h3>
+        <div class="value" id="avgResponseTime">--</div>
+        <div class="label">Milliseconds</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>Cache Hit Rate</h3>
+        <div class="value" id="cacheHitRate">--</div>
+        <div class="label">Cached responses</div>
+      </div>
+    </div>
+
+    <!-- Endpoints List -->
+    <div class="endpoints-list">
+      <h2>API Endpoints</h2>
+
+      <div class="endpoint" data-endpoint="games">
+        <div class="endpoint-info">
+          <div class="endpoint-name">Games API</div>
+          <div class="endpoint-url">GET /api/college-baseball/games</div>
+        </div>
+        <div class="endpoint-status">
+          <div class="status-badge loading">Checking...</div>
+          <div class="response-time">--ms</div>
+        </div>
+      </div>
+
+      <div class="endpoint" data-endpoint="games-filtered">
+        <div class="endpoint-info">
+          <div class="endpoint-name">Games API (Filtered)</div>
+          <div class="endpoint-url">GET /api/college-baseball/games?conference=SEC&status=live</div>
+        </div>
+        <div class="endpoint-status">
+          <div class="status-badge loading">Checking...</div>
+          <div class="response-time">--ms</div>
+        </div>
+      </div>
+
+      <div class="endpoint" data-endpoint="boxscore">
+        <div class="endpoint-info">
+          <div class="endpoint-name">Box Score API</div>
+          <div class="endpoint-url">GET /api/college-baseball/boxscore?gameId=test</div>
+        </div>
+        <div class="endpoint-status">
+          <div class="status-badge loading">Checking...</div>
+          <div class="response-time">--ms</div>
+        </div>
+      </div>
+
+      <div class="endpoint" data-endpoint="boxscore-error">
+        <div class="endpoint-info">
+          <div class="endpoint-name">Box Score API (Error Handling)</div>
+          <div class="endpoint-url">GET /api/college-baseball/boxscore</div>
+        </div>
+        <div class="endpoint-status">
+          <div class="status-badge loading">Checking...</div>
+          <div class="response-time">--ms</div>
+        </div>
+      </div>
+
+      <div class="endpoint" data-endpoint="standings">
+        <div class="endpoint-info">
+          <div class="endpoint-name">Standings API</div>
+          <div class="endpoint-url">GET /api/college-baseball/standings?conference=SEC</div>
+        </div>
+        <div class="endpoint-status">
+          <div class="status-badge loading">Checking...</div>
+          <div class="response-time">--ms</div>
+        </div>
+      </div>
+
+      <div class="endpoint" data-endpoint="teams">
+        <div class="endpoint-info">
+          <div class="endpoint-name">Teams API</div>
+          <div class="endpoint-url">GET /api/college-baseball/teams</div>
+        </div>
+        <div class="endpoint-status">
+          <div class="status-badge loading">Checking...</div>
+          <div class="response-time">--ms</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="refresh-btn" id="refreshBtn" onclick="checkAllEndpoints()">
+      <span id="refreshIcon">🔄</span> Refresh Status
+    </button>
+  </div>
+
+  <script>
+    const stats = {
+      totalRequests: 0,
+      successfulRequests: 0,
+      cachedRequests: 0,
+      responseTimes: []
+    };
+
+    const endpoints = [
+      { id: 'games', url: '/api/college-baseball/games', expectSuccess: true },
+      { id: 'games-filtered', url: '/api/college-baseball/games?conference=SEC&status=live', expectSuccess: true },
+      { id: 'boxscore', url: '/api/college-baseball/boxscore?gameId=test', expectSuccess: false }, // May fail, that's OK
+      { id: 'boxscore-error', url: '/api/college-baseball/boxscore', expectSuccess: false }, // Should return 400
+      { id: 'standings', url: '/api/college-baseball/standings?conference=SEC', expectSuccess: true },
+      { id: 'teams', url: '/api/college-baseball/teams', expectSuccess: true }
+    ];
+
+    async function checkEndpoint(endpoint) {
+      const startTime = Date.now();
+      const endpointElement = document.querySelector(`[data-endpoint="${endpoint.id}"]`);
+      const statusBadge = endpointElement.querySelector('.status-badge');
+      const responseTimeEl = endpointElement.querySelector('.response-time');
+
+      try {
+        const response = await fetch(endpoint.url);
+        const duration = Date.now() - startTime;
+        const data = await response.json();
+
+        stats.totalRequests++;
+        stats.responseTimes.push(duration);
+
+        if (data.cached) {
+          stats.cachedRequests++;
+        }
+
+        // Update UI
+        responseTimeEl.textContent = `${duration}ms`;
+
+        if (response.ok && data.success) {
+          statusBadge.className = 'status-badge success';
+          statusBadge.textContent = '✓ Operational';
+          stats.successfulRequests++;
+        } else if (endpoint.id === 'boxscore-error' && response.status === 400) {
+          // Expected error for missing parameter
+          statusBadge.className = 'status-badge success';
+          statusBadge.textContent = '✓ Error Handling OK';
+          stats.successfulRequests++;
+        } else if (!endpoint.expectSuccess) {
+          // Expected failure (e.g., off-season)
+          statusBadge.className = 'status-badge warning';
+          statusBadge.textContent = '⚠ No Data (Expected)';
+          stats.successfulRequests++;
+        } else {
+          statusBadge.className = 'status-badge error';
+          statusBadge.textContent = `✗ Error (${response.status})`;
+        }
+
+      } catch (error) {
+        const duration = Date.now() - startTime;
+        stats.totalRequests++;
+        responseTimeEl.textContent = `${duration}ms`;
+        statusBadge.className = 'status-badge error';
+        statusBadge.textContent = '✗ Network Error';
+      }
+    }
+
+    async function checkAllEndpoints() {
+      const refreshBtn = document.getElementById('refreshBtn');
+      const refreshIcon = document.getElementById('refreshIcon');
+
+      // Reset stats
+      stats.totalRequests = 0;
+      stats.successfulRequests = 0;
+      stats.cachedRequests = 0;
+      stats.responseTimes = [];
+
+      // Disable button and show loading
+      refreshBtn.disabled = true;
+      refreshIcon.classList.add('spinning');
+
+      // Reset all badges to loading state
+      document.querySelectorAll('.status-badge').forEach(badge => {
+        badge.className = 'status-badge loading';
+        badge.textContent = 'Checking...';
+      });
+
+      document.querySelectorAll('.response-time').forEach(el => {
+        el.textContent = '--ms';
+      });
+
+      // Check all endpoints
+      await Promise.all(endpoints.map(endpoint => checkEndpoint(endpoint)));
+
+      // Update stats
+      updateStats();
+
+      // Update last checked time
+      document.getElementById('lastUpdate').textContent = `Last checked: ${new Date().toLocaleTimeString()}`;
+
+      // Re-enable button
+      refreshBtn.disabled = false;
+      refreshIcon.classList.remove('spinning');
+    }
+
+    function updateStats() {
+      // Total requests
+      document.getElementById('totalRequests').textContent = stats.totalRequests;
+
+      // Success rate
+      const successRate = stats.totalRequests > 0
+        ? Math.round((stats.successfulRequests / stats.totalRequests) * 100)
+        : 0;
+      document.getElementById('successRate').textContent = `${successRate}%`;
+
+      // Average response time
+      const avgTime = stats.responseTimes.length > 0
+        ? Math.round(stats.responseTimes.reduce((a, b) => a + b, 0) / stats.responseTimes.length)
+        : 0;
+      document.getElementById('avgResponseTime').textContent = `${avgTime}ms`;
+
+      // Cache hit rate
+      const cacheRate = stats.totalRequests > 0
+        ? Math.round((stats.cachedRequests / stats.totalRequests) * 100)
+        : 0;
+      document.getElementById('cacheHitRate').textContent = `${cacheRate}%`;
+    }
+
+    // Check endpoints on page load
+    window.addEventListener('load', () => {
+      checkAllEndpoints();
+
+      // Auto-refresh every 30 seconds
+      setInterval(checkAllEndpoints, 30000);
+    });
+  </script>
+</body>
+</html>
