@@ -30,15 +30,15 @@ jobs:
           cache: 'pnpm'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build application
-        run: pnpm run build
+        run: pnpm -w build
 
       - name: Deploy to Cloudflare Pages
         id: deploy

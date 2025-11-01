@@ -101,30 +101,28 @@ For production stability, set up branch protection rules for the `main` branch. 
 ### Prerequisites
 
 - Node.js 20 or higher
-- npm or pnpm (this project uses pnpm workspaces; however, the deployment workflow currently uses npm for installing dependencies. If you use pnpm locally, ensure compatibility with npm in CI/CD.)
+- pnpm (this project uses pnpm workspaces for managing multiple packages)
 
 ### Available Scripts
 
 ```bash
 # Install dependencies
-npm install
-# or
 pnpm install
 
 # Start development server (hot reload enabled)
-npm run dev
+pnpm run dev
 # Typically runs on http://localhost:3000 or http://localhost:5173
 
-# Build for production
-npm run build
-# Outputs to ./dist directory
+# Build for production (workspace-level build)
+pnpm -w build
+# Builds all workspace packages
 
 # Preview production build locally
-npm run preview
+pnpm run preview
 # Runs production build on local server
 
 # Deploy to Cloudflare Pages manually
-npm run deploy
+pnpm run deploy
 # Requires wrangler CLI configured with Cloudflare credentials
 ```
 
@@ -193,22 +191,13 @@ wrangler pages deploy dist --project-name=blazesportsintel --branch=main
 
 ## Troubleshooting
 
-### Issue: Build fails with "npm ci" error
+### Issue: Build fails with "pnpm install" error
 
 **Solution:**
-- Ensure `package-lock.json` is committed to the repository
-- If using pnpm, the workflow may need to be updated to use pnpm instead
-- Check Node.js version compatibility (workflow uses Node 20)
-
-**Workaround for pnpm workspaces:**
-Update the workflow to use pnpm:
-```yaml
-- uses: pnpm/action-setup@v3
-  with:
-    version: 9
-- run: pnpm install --frozen-lockfile
-- run: pnpm run build
-```
+- Ensure pnpm version 9 is used (as configured in the workflow)
+- Check that workspace packages are properly configured in `pnpm-workspace.yaml`
+- Verify Node.js version compatibility (workflow uses Node 20)
+- Clear pnpm cache if needed: `pnpm store prune`
 
 ### Issue: Deployment fails with "Authentication error"
 
