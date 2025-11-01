@@ -1,0 +1,40 @@
+# Local Development Configuration
+# Uses local storage for testing without Cloudflare account
+
+name = "blazesports-live-sim"
+compatibility_date = "2025-01-01"
+main = "src/index.ts"
+
+# Compatibility Flags
+compatibility_flags = ["nodejs_compat"]
+
+# Development
+[dev]
+port = 8788
+local_protocol = "http"
+
+# Static Assets (serve dashboard)
+[site]
+bucket = "./public"
+
+# Local D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "live-sim"
+database_id = "local"
+
+# Local KV (uses memory)
+[[kv_namespaces]]
+binding = "CACHE"
+id = "local-kv"
+preview_id = "local-kv-preview"
+
+# Durable Objects
+[[durable_objects.bindings]]
+name = "GAME_COORDINATOR"
+class_name = "GameCoordinator"
+script_name = "blazesports-live-sim"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["GameCoordinator"]
