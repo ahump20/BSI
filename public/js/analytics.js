@@ -3609,9 +3609,6 @@
 
             return (
                 <div className="analytics-container">
-                    {/* Babylon.js 3D Hero */}
-                    <canvas id="babylon-hero"></canvas>
-
                     {/* Header */}
                     <div className="header">
                         <div className="header-content">
