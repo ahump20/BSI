@@ -1,0 +1,19 @@
+name = "blaze-cfb-intelligence"
+main = "workers/cfb-intelligence.ts"
+compatibility_date = "2024-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blaze-cfb"
+database_id = "your-database-id"
+
+[[kv_namespaces]]
+binding = "CFB_CACHE"
+id = "your-kv-id"
+
+[[r2_buckets]]
+binding = "GAME_DATA"
+bucket_name = "blaze-game-archives"
+
+[triggers]
+crons = ["*/5 * * * *"]

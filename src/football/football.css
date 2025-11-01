@@ -77,6 +77,222 @@
   font-weight: 500;
 }
 
+.cfb-intel {
+  margin-top: 32px;
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(32, 32, 32, 0.9), rgba(12, 12, 12, 0.9));
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  color: #f8fafc;
+}
+
+.cfb-intel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.cfb-intel__subtitle {
+  margin-top: 4px;
+  color: #cbd5f5;
+  font-size: 14px;
+}
+
+.cfb-intel__timestamp {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.cfb-intel__state {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  text-align: center;
+}
+
+.cfb-intel__state--error {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(153, 27, 27, 0.25);
+}
+
+.cfb-intel__state-title {
+  font-weight: 600;
+  color: #fca5a5;
+}
+
+.cfb-intel__state-detail {
+  color: #fecaca;
+  margin-top: 4px;
+}
+
+.cfb-intel__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(226, 232, 240, 0.2);
+  border-top-color: #ff6b00;
+  border-radius: 50%;
+  margin: 0 auto 12px auto;
+  animation: spin 1s linear infinite;
+}
+
+.cfb-intel__content {
+  margin-top: 24px;
+  display: grid;
+  gap: 24px;
+}
+
+.cfb-intel__live,
+.cfb-intel__upsets {
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: 20px;
+}
+
+.cfb-intel__section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  color: #e2e8f0;
+}
+
+.cfb-intel__games,
+.cfb-intel__alerts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.cfb-intel__game {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(10, 12, 18, 0.8);
+  display: grid;
+  gap: 12px;
+}
+
+.cfb-intel__game--fcs-priority {
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3);
+}
+
+.cfb-intel__game--group-of-five {
+  border-color: rgba(250, 204, 21, 0.6);
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.2);
+}
+
+.cfb-intel__game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #e2e8f0;
+}
+
+.cfb-intel__upset {
+  font-weight: 600;
+  color: #f97316;
+}
+
+.cfb-intel__teams {
+  display: grid;
+  gap: 12px;
+}
+
+.cfb-intel__team {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.cfb-intel__team-name {
+  font-weight: 600;
+}
+
+.cfb-intel__team-meta {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.cfb-intel__score {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.cfb-intel__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  font-size: 13px;
+  color: #cbd5f5;
+}
+
+.cfb-intel__metrics dt {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #64748b;
+}
+
+.cfb-intel__empty {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.cfb-intel__alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(10, 12, 18, 0.8);
+  gap: 16px;
+}
+
+.cfb-intel__alert-matchup {
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.cfb-intel__alert-meta {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.cfb-intel__alert-prob {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.cfb-intel__alert-underdog {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .section-header {

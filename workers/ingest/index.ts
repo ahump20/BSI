@@ -4,7 +4,7 @@
  * Scheduled worker for data ingestion with provider failover.
  *
  * Cron Triggers:
- * - */5 * * * *  : Live games (every 5 minutes)
+ * - Every 5 minutes (cron: star-slash-5 space * * * *) : Live games
  * - 0 * * * *    : Team stats refresh (hourly)
  * - 0 2 * * *    : Historical aggregations (2am daily)
  *
