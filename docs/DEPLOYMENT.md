@@ -101,7 +101,7 @@ For production stability, set up branch protection rules for the `main` branch. 
 ### Prerequisites
 
 - Node.js 20 or higher
-- npm or pnpm (this project uses pnpm workspaces)
+- npm or pnpm (this project uses pnpm workspaces; however, the deployment workflow currently uses npm for installing dependencies. If you use pnpm locally, ensure compatibility with npm in CI/CD.)
 
 ### Available Scripts
 
