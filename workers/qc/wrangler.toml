@@ -1,0 +1,13 @@
+name = "sports-data-qc"
+main = "sports-data-qc.ts"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+kv_namespaces = [
+  { binding = "QC_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26" }
+]
+
+[[d1_databases]]
+binding = "QC_DB"
+database_name = "blazesports-historical"
+database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"

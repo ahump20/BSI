@@ -1,0 +1,23 @@
+{
+  "simulationId": "sim-20250320-texam-ark",
+  "gameId": "401885101",
+  "iterations": 20000,
+  "generatedAt": "2025-03-20T12:00:00Z",
+  "results": [
+    {
+      "outcome": "home_win",
+      "winProbability": 0.56,
+      "averageScore": { "home": 6.1, "away": 4.9 }
+    },
+    {
+      "outcome": "away_win",
+      "winProbability": 0.42,
+      "averageScore": { "home": 4.5, "away": 5.2 }
+    },
+    {
+      "outcome": "draw",
+      "winProbability": 0.02,
+      "averageScore": { "home": 5.0, "away": 5.0 }
+    }
+  ]
+}

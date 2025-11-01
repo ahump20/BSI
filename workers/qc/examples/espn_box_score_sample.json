@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "gameId": "401885001",
+    "timestamp": "2025-03-15T03:15:00Z",
+    "venue": "Blue Bell Park",
+    "season": 2025,
+    "homeTeam": "Texas A&M Aggies",
+    "awayTeam": "LSU Tigers",
+    "finalScore": {
+      "home": 7,
+      "away": 6
+    }
+  },
+  "batting": [
+    {
+      "playerId": "aggies-01",
+      "name": "Cole Johnson",
+      "team": "home",
+      "atBats": 4,
+      "hits": 2,
+      "rbi": 3,
+      "battingAverage": 0.500
+    },
+    {
+      "playerId": "aggies-02",
+      "name": "Mason Grant",
+      "team": "home",
+      "atBats": 3,
+      "hits": 1,
+      "rbi": 1,
+      "battingAverage": 0.333
+    },
+    {
+      "playerId": "lsu-08",
+      "name": "Jaden Hill",
+      "team": "away",
+      "atBats": 4,
+      "hits": 2,
+      "rbi": 2,
+      "battingAverage": 0.400
+    }
+  ],
+  "pitching": [
+    {
+      "playerId": "aggies-p1",
+      "name": "Dillon Langford",
+      "team": "home",
+      "inningsPitched": 6.1,
+      "earnedRuns": 3,
+      "era": 2.15
+    },
+    {
+      "playerId": "lsu-p2",
+      "name": "Hunter Dupré",
+      "team": "away",
+      "inningsPitched": 5.0,
+      "earnedRuns": 4,
+      "era": 3.88
+    }
+  ],
+  "pitchVelocities": [
+    {
+      "pitcherId": "aggies-p1",
+      "pitchType": "FB",
+      "velocity": 94.2
+    },
+    {
+      "pitcherId": "aggies-p1",
+      "pitchType": "SL",
+      "velocity": 84.6
+    },
+    {
+      "pitcherId": "lsu-p2",
+      "pitchType": "FB",
+      "velocity": 95.1
+    }
+  ],
+  "playByPlayTotals": {
+    "homeRuns": 7,
+    "awayRuns": 6,
+    "homeHits": 9,
+    "awayHits": 8,
+    "homeRbi": 7,
+    "awayRbi": 6
+  }
+}

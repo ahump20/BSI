@@ -29,6 +29,8 @@
     "lib/**/*.ts",
     "context7-enhanced/src/**/*.ts",
     "mcp/**/*.ts",
+    "mnt/**/*.ts",
+    "workers/**/*.ts",
     "tests/**/*.ts"
   ],
   "exclude": [

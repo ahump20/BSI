@@ -1,0 +1,29 @@
+{
+  "trackingProvider": "TrackMan",
+  "season": 2025,
+  "gameId": "401885001",
+  "pitches": [
+    {
+      "pitchId": "pitch-001",
+      "pitcherId": "aggies-p1",
+      "batterId": "lsu-08",
+      "pitchType": "FB",
+      "velocity": 95.4,
+      "spinRate": 2250,
+      "exitVelocity": 101.2,
+      "releasePoint": { "x": -1.2, "y": 5.9, "z": 6.3 },
+      "timestamp": "2025-03-15T03:16:05Z"
+    },
+    {
+      "pitchId": "pitch-002",
+      "pitcherId": "aggies-p1",
+      "batterId": "lsu-08",
+      "pitchType": "SL",
+      "velocity": 84.8,
+      "spinRate": 2450,
+      "exitVelocity": 0,
+      "releasePoint": { "x": -1.1, "y": 5.8, "z": 6.2 },
+      "timestamp": "2025-03-15T03:16:30Z"
+    }
+  ]
+}

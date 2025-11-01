@@ -1,0 +1,22 @@
+{
+  "season": 2025,
+  "conference": "SEC",
+  "teams": [
+    {
+      "teamId": "tam",
+      "teamName": "Texas A&M",
+      "overallRecord": { "wins": 18, "losses": 4 },
+      "conferenceRecord": { "wins": 4, "losses": 2 },
+      "battingAverage": 0.311,
+      "era": 3.12
+    },
+    {
+      "teamId": "lsu",
+      "teamName": "LSU",
+      "overallRecord": { "wins": 16, "losses": 6 },
+      "conferenceRecord": { "wins": 5, "losses": 4 },
+      "battingAverage": 0.298,
+      "era": 3.65
+    }
+  ]
+}
