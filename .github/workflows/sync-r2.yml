@@ -1,0 +1,35 @@
+name: Sync Assets to Cloudflare R2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/**'
+      - 'media/**'
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload assets directory
+        if: hashFiles('assets/**') != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put ${{ secrets.R2_BUCKET_NAME }} --file=./assets --recursive
+
+      - name: Upload media directory
+        if: hashFiles('media/**') != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put ${{ secrets.R2_BUCKET_NAME }} --file=./media --recursive

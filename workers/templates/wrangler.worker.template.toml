@@ -1,0 +1,24 @@
+name = "bsi-scores-api"
+main = "src/index.js"
+compatibility_date = "2025-11-01"
+
+[env.production]
+name = "bsi-scores-api"
+route = { pattern = "api.blazesportsintel.com/scores/*", zone_name = "blazesportsintel.com" }
+
+[env.staging]
+name = "bsi-scores-api-staging"
+route = { pattern = "staging-api.blazesportsintel.com/scores/*", zone_name = "blazesportsintel.com" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-scores"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "YOUR_KV_NAMESPACE_ID"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "bsi-media-prod"
