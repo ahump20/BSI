@@ -83,10 +83,6 @@ Under this section:
 - Prevents merge commits, keeping history clean
 - Only allows squash or rebase merging
 
-✅ **Enable:** "Do not allow bypassing the above settings"
-- Prevents even administrators from bypassing these rules
-- Highly recommended for production stability
-
 ### Step 6: Restrict Push Access
 
 ✅ **Enable:** "Restrict who can push to matching branches"
@@ -103,10 +99,19 @@ Under this section:
 
 ### Step 8: Apply Rules to Administrators
 
-⚠️ **Recommended:** "Do not allow bypassing the above settings"
-- Apply the same rules to repository administrators
-- Ensures consistency and prevents accidental mistakes
-- Can be temporarily disabled for emergency hotfixes if needed
+⚠️ **Important Decision:** "Do not allow bypassing the above settings"
+
+This setting determines whether administrators can bypass branch protection rules:
+
+- ✅ **Enable (Recommended):** Apply the same rules to repository administrators
+  - Ensures consistency and prevents accidental mistakes
+  - Best practice for production environments
+  - All team members, including admins, must follow the same process
+
+- ❌ **Disable (Not Recommended):** Allow administrators to bypass
+  - Useful for emergency hotfixes or special circumstances
+  - Can lead to inconsistent practices
+  - Only consider if you have a documented emergency access procedure
 
 ### Step 9: Save Configuration
 
