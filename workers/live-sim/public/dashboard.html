@@ -399,7 +399,7 @@
       if (!chart || chartData.timestamps.length === 0) return;
 
       const canvas = chart.canvas;
-      const width = canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
       const height = canvas.height = canvas.clientHeight * window.devicePixelRatio;
       chart.scale(window.devicePixelRatio, window.devicePixelRatio);
 
