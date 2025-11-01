@@ -219,6 +219,7 @@ export interface FootballOutcomes {
  * Baseball Simulation Context
  */
 export interface BaseballSimContext {
+  gameId: string;
   inning: number;
   inningHalf: 'top' | 'bottom';
   outs: number;

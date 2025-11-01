@@ -26,7 +26,8 @@ export class GameCoordinator {
 
     // Load game state from Durable Object storage on startup
     this.state.blockConcurrencyWhile(async () => {
-      this.gameState = await this.state.storage.get<GameState>('gameState');
+      const savedState = await this.state.storage.get<GameState>('gameState');
+      this.gameState = savedState || null;
     });
   }
 
@@ -288,12 +289,12 @@ export class GameCoordinator {
   private async flushToD1(): Promise<void> {
     if (this.pendingEvents.length === 0) return;
 
-    try {
-      const batch = [...this.pendingEvents];
-      this.pendingEvents = [];
+    const eventBatch = [...this.pendingEvents];
+    this.pendingEvents = [];
 
+    try {
       // Batch insert events
-      const insertPromises = batch.map(event =>
+      const insertPromises = eventBatch.map(event =>
         this.env.DB.prepare(`
           INSERT INTO events (
             game_id, sequence, timestamp, event_type, description,
@@ -378,12 +379,12 @@ export class GameCoordinator {
         ).run();
       }
 
-      console.log(`[GameCoordinator] Flushed ${batch.length} events to D1`);
+      console.log(`[GameCoordinator] Flushed ${eventBatch.length} events to D1`);
     } catch (error) {
       console.error('[GameCoordinator] Failed to flush to D1:', error);
 
       // Re-add events to queue for retry
-      this.pendingEvents.unshift(...batch);
+      this.pendingEvents.unshift(...eventBatch);
     }
   }
 }
