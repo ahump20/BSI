@@ -519,13 +519,51 @@ enum FeedPrecision { EVENT | PITCH }
 - Fact-checking system with database verification
 - Scheduled Workers with cron triggers
 
+### 2025-10-16 (Phase 2 Championship Leverage Service - Complete)
+- ✅ Cloudflare Worker for Leverage Equivalency Index exposed at `/api/lei`
+- ✅ Shared TypeScript module for cross-sport LEI calculations (`lib/lei/`)
+- ✅ D1 audit logging for requests with optional bearer token guard
+- ✅ Validation + rounding consistent with analytics dashboards
+
+**Files Implemented**:
+- `lib/lei/leverage-equivalency-index.ts` (181 lines) - Core LEI calculator + validation helpers
+- `lib/lei/types.ts` (39 lines) - Shared interfaces for LEI contexts
+- `lib/lei/index.ts` (2 lines) - Barrel export for worker + future use
+- `workers/lei/index.ts` (122 lines) - Cloudflare Worker HTTP handler with D1 logging
+- `workers/lei/types.ts` (20 lines) - Worker env + response typing
+- `workers/lei/wrangler.toml` (18 lines) - Worker configuration + D1 binding stub
+
+**Key Features**:
+- Championship-round weighting with scarcity multipliers tuned for baseball + football
+- Input validation with normalized probability parsing and helpful 422 responses
+- Health check endpoint for deployment probes
+- Structured audit logging for future analytics + QA review
+- JSON response rounded to fan-facing tenths (lei) and thousandths (components)
+
 **Next Steps**:
-- Deploy content worker to Cloudflare: `wrangler deploy` from `workers/content/`
-- Set environment secrets: DATABASE_URL, ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_GEMINI_API_KEY, CONTENT_SECRET
-- Test recap generation on completed games
-- Test preview generation for upcoming games
-- Manual review of first 100 generated articles
-- Monitor fact-check scores via Analytics Engine
+- Deploy LEI worker to Cloudflare: `wrangler deploy` from `workers/lei/`
+- Create D1 table `lei_requests` with columns (timestamp, sport, playoff_round, pre_win_prob, post_win_prob, lei_score, payload)
+- Configure `LEI_API_TOKEN` secret for production access control
+- Backfill 2023-2024 postseason plays for benchmarking data set
+- Validate scarcity multipliers against 100+ historical plays and adjust coefficients
+- Wire LEI output into `/api/v1/baseball/ncaab/game/[id]` response for live game center
+
+### 2025-10-16 (Phase 3 Visual Engine - In Progress)
+- ✅ Rebuilt the live scoreboard shell with design-system gradients, hero metrics, and responsive filtering (`src/App.jsx`, `App.css`, `src/index.css`, `src/main.jsx`)
+- ✅ Implemented cinematic game cards with inning-by-inning linescore, base-state visualizer, and microstat badges (`src/components/GameCard.jsx`, `src/components/GameCard.css`)
+- ✅ Added shimmer skeletons for perceived performance on initial loads (`src/components/GameCardSkeleton.jsx`)
+- ✅ Upgraded the floating sport switcher to match the new glassmorphism layer stack (`src/components/SportSwitcher.css`)
+
+**Highlights**:
+- Glass-layer background (`app-surface`) mirrors GRAPHICS-ENGINE-ARCHITECTURE lighting spec
+- Metric header cards surface total runs, live game counts, extra innings with live refresh cadence
+- Linescore grid dynamically expands for extras, includes R/H/E totals, and tracks base runners + B/S/O counts
+- ESPN feed normalized to America/Chicago with 30s polling + abort safe guards
+
+**Next Steps**:
+- Thread LEI outputs into live cards when API integration is complete
+- Layer in Chart.js sparklines on team rows once data service exposes last-10 form
+- Bind particle system (`public/js/blaze-particles.js`) after verifying Lighthouse performance budget on mobile
 
 ### 2025-10-13 (Phase 2 Provider Failover Testing Framework - Complete)
 - ✅ Comprehensive testing framework for provider failover validation
@@ -641,6 +679,6 @@ enum FeedPrecision { EVENT | PITCH }
 
 ---
 
-**Document Version**: 1.1.0
-**Last Updated**: 2025-10-13 22:30 CDT
+**Document Version**: 1.1.1
+**Last Updated**: 2025-10-16 09:45 CDT
 **Status**: Active Development - Phase 1 Complete, Phase 2 In Progress

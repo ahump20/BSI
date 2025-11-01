@@ -1,0 +1,18 @@
+name = "blazesports-lei"
+main = "index.ts"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Optional bearer token for protecting the endpoint
+# LEI_API_TOKEN = "set via wrangler secret put LEI_API_TOKEN"
+
+[[d1_databases]]
+binding = "LEI_LOGS"
+database_name = "bsi_lei_logs"
+# database_id is injected during deployment
+# database_id = "00000000-0000-0000-0000-000000000000"
+
+# Optional route configuration
+# routes = [
+#   { pattern = "api.blazesportsintel.com/api/lei", zone_name = "blazesportsintel.com" }
+# ]
