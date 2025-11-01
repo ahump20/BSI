@@ -1,0 +1,449 @@
+.cardContainer {
+  position: relative;
+  width: 380px;
+  height: 580px;
+  perspective: 1500px;
+  margin: 1rem;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.cardFront {
+  transform: rotateY(0deg);
+}
+
+.cardBack {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+}
+
+/* 3D variant */
+.cardContainer.3d .card {
+  transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y));
+  transition: transform 0.15s ease-out;
+}
+
+.cardContainer.3d:hover .card {
+  transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) translateZ(30px);
+}
+
+/* Holographic variant */
+.cardContainer.holographic .cardFront {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.1) 0%,
+    rgba(255, 0, 255, 0.1) 50%,
+    rgba(0, 255, 255, 0.1) 100%
+  );
+  animation: holographicShift 3s ease-in-out infinite;
+}
+
+@keyframes holographicShift {
+  0%,
+  100% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(20deg);
+  }
+}
+
+.cardBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 10;
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rankBadge {
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  z-index: 20;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 30px rgba(255, 215, 0, 0.6),
+    0 4px 15px rgba(0, 0, 0, 0.5);
+  animation: badgePulse 2s ease-in-out infinite;
+  border: 3px solid #fff;
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.rankNumber {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #1a1a1a;
+  font-family: 'Orbitron', monospace;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.holographicOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    calc(var(--mouse-x) * 360deg),
+    transparent 20%,
+    rgba(0, 255, 255, 0.1) 40%,
+    rgba(255, 0, 255, 0.1) 60%,
+    transparent 80%
+  );
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.3s ease;
+}
+
+.cardContainer:hover .holographicOverlay {
+  opacity: 1;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.sportIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+.season {
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.round {
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #00FFFF;
+  font-size: 0.75rem;
+}
+
+.playDescription {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.players {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playerName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #00FFFF;
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
+  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.leiDisplay {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+}
+
+.leiLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.5rem;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.leiScore {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Orbitron', monospace;
+  text-shadow: 0 0 30px var(--glow-color);
+  margin-bottom: 1rem;
+}
+
+.leiBar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.leiBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #06B6D4 0%, #10B981 25%, #F59E0B 50%, #EF4444 75%, #FFD700 100%);
+  border-radius: 4px;
+  box-shadow: 0 0 20px var(--glow-color);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: barShimmer 2s ease-in-out infinite;
+}
+
+@keyframes barShimmer {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.stat:hover {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: #00FFFF;
+  transform: translateY(-2px);
+}
+
+.statLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.5rem;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #00FFFF;
+  font-family: 'Orbitron', monospace;
+}
+
+.borderGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--glow-color), var(--glow-color)) padding-box,
+    linear-gradient(135deg, transparent 0%, var(--glow-color) 50%, transparent 100%) border-box;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.cardContainer:hover .borderGlow {
+  opacity: 1;
+}
+
+.cornerAccent {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #00FFFF;
+  z-index: 15;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.cornerAccent[data-corner='tl'] {
+  top: 10px;
+  left: 10px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.cornerAccent[data-corner='tr'] {
+  top: 10px;
+  right: 10px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.cornerAccent[data-corner='bl'] {
+  bottom: 10px;
+  left: 10px;
+  border-right: none;
+  border-top: none;
+}
+
+.cornerAccent[data-corner='br'] {
+  bottom: 10px;
+  right: 10px;
+  border-left: none;
+  border-top: none;
+}
+
+.cardContainer:hover .cornerAccent {
+  opacity: 1;
+  width: 30px;
+  height: 30px;
+}
+
+/* Card back */
+.cardBackContent {
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.backTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #00FFFF;
+  text-align: center;
+  margin: 0;
+  font-family: 'Orbitron', monospace;
+}
+
+.meterWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.context {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.flipBack {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #00FFFF 0%, #0099CC 100%);
+  color: #000;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+}
+
+.flipBack:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 255, 255, 0.5);
+}
+
+.particleCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cardContainer {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    min-height: 580px;
+  }
+}
