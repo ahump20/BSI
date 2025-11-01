@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import '../../../../styles/advanced-effects.css';
 
 const featuredVisualizations = [
   {
@@ -31,67 +32,93 @@ const sections = [
 export default function BaseballHubPage() {
   return (
     <main className="di-page">
-      <section className="di-section">
-        <span className="di-kicker">Diamond Insights · NCAA Division I Baseball</span>
-        <h1 className="di-page-title">College Baseball Command Center</h1>
-        <p className="di-page-subtitle">
-          Your single landing zone for live game telemetry, advanced scouting intel, and conference health across the
+      <section className="di-section" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-600/5 via-blue-600/5 to-purple-600/5 animated-gradient" style={{ opacity: 0.3 }} />
+        <span className="di-kicker pulse-ring" style={{
+          background: 'linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(255, 125, 60, 0.3))',
+          border: '1px solid rgba(191, 87, 0, 0.4)',
+        }}>Diamond Insights · NCAA Division I Baseball</span>
+        <h1 className="di-page-title neon-text" style={{ position: 'relative', zIndex: 1 }}>
+          College Baseball <span className="gradient-text">Command Center</span>
+        </h1>
+        <p className="di-page-subtitle" style={{ position: 'relative', zIndex: 1 }}>
+          Your single landing zone for <span className="gradient-text" style={{ fontWeight: 600 }}>live game telemetry</span>, advanced scouting intel, and conference health across the
           national landscape. Final visuals and data hooks are en route; this shell keeps navigation live while we finish
           the ingest plumbing.
         </p>
 
         {/* Featured 3D Visualizations */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))',
-          border: '1px solid rgba(59, 130, 246, 0.3)',
-          borderRadius: '16px',
-          padding: '24px',
-          marginBottom: '32px'
+        <div className="glass-dark hover-lift smooth-all" style={{
+          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15))',
+          border: '1px solid rgba(59, 130, 246, 0.4)',
+          borderRadius: '24px',
+          padding: '32px',
+          marginBottom: '48px',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 8px 32px rgba(59, 130, 246, 0.2)'
         }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 animated-gradient" style={{ opacity: 0.4 }} />
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            marginBottom: '20px'
+            gap: '16px',
+            marginBottom: '28px',
+            position: 'relative',
+            zIndex: 1
           }}>
             <span style={{
-              fontSize: '32px'
+              fontSize: '40px',
+              filter: 'drop-shadow(0 0 20px rgba(59, 130, 246, 0.6))'
             }}>⚡</span>
             <div>
-              <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>
+              <h2 className="neon-text" style={{ fontSize: '28px', fontWeight: '800', marginBottom: '6px', letterSpacing: '-0.02em' }}>
                 NEW: 3D Visualization Engine
               </h2>
-              <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)' }}>
-                Experience baseball analytics in stadium-quality 3D with WebGPU ray tracing
+              <p style={{ fontSize: '15px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                Experience baseball analytics in <span className="gradient-text" style={{ fontWeight: 600 }}>stadium-quality 3D</span> with WebGPU ray tracing
               </p>
             </div>
           </div>
-          <div className="di-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+          <div className="di-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', position: 'relative', zIndex: 1 }}>
             {featuredVisualizations.map((viz) => (
-              <article key={viz.href} className="di-card" style={{
-                background: 'rgba(0, 0, 0, 0.2)',
-                borderColor: 'rgba(59, 130, 246, 0.4)'
+              <article key={viz.href} className="di-card glass-dark hover-lift smooth-all" style={{
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderColor: 'rgba(59, 130, 246, 0.5)',
+                position: 'relative',
+                overflow: 'hidden',
+                boxShadow: '0 4px 20px rgba(59, 130, 246, 0.2)'
               }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-purple-600/5 to-pink-600/5 animated-gradient" style={{ opacity: 0.5 }} />
                 {viz.isNew && (
-                  <span style={{
+                  <span className="pulse-ring" style={{
                     display: 'inline-block',
                     padding: '4px 12px',
-                    background: 'rgba(34, 197, 94, 0.2)',
-                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(16, 185, 129, 0.35))',
+                    border: '1px solid rgba(34, 197, 94, 0.5)',
                     borderRadius: '12px',
                     fontSize: '12px',
-                    fontWeight: '600',
+                    fontWeight: '700',
                     color: '#10b981',
-                    marginBottom: '12px'
+                    marginBottom: '12px',
+                    position: 'relative',
+                    zIndex: 1
                   }}>
                     NEW
                   </span>
                 )}
-                <h2>{viz.label}</h2>
-                <p>{viz.summary}</p>
-                <Link className="di-inline-link" href={viz.href} style={{
+                <h2 style={{ position: 'relative', zIndex: 1 }}><span className="gradient-text">{viz.label}</span></h2>
+                <p style={{ position: 'relative', zIndex: 1 }}>{viz.summary}</p>
+                <Link className="di-inline-link hover-lift" href={viz.href} style={{
                   color: '#3b82f6',
-                  fontWeight: '600'
+                  fontWeight: '700',
+                  position: 'relative',
+                  zIndex: 1,
+                  display: 'inline-block',
+                  marginTop: '8px',
+                  padding: '6px 12px',
+                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
+                  borderRadius: '8px'
                 }}>
                   Launch Visualization →
                 </Link>
@@ -101,16 +128,28 @@ export default function BaseballHubPage() {
         </div>
 
         {/* Regular Sections */}
-        <h2 className="di-page-title" style={{ fontSize: '20px', marginBottom: '16px' }}>
-          Baseball Intelligence Hub
+        <h2 className="di-page-title neon-text" style={{ fontSize: '24px', marginBottom: '24px', position: 'relative', zIndex: 1 }}>
+          Baseball Intelligence <span className="gradient-text">Hub</span>
         </h2>
         <div className="di-card-grid">
           {sections.map((section) => (
-            <article key={section.href} className="di-card">
-              <h2>{section.label}</h2>
-              <p>{section.summary}</p>
-              <Link className="di-inline-link" href={section.href}>
-                Enter {section.label}
+            <article key={section.href} className="di-card glass hover-lift smooth-all" style={{
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-600/5 to-blue-600/5" style={{ opacity: 0.6 }} />
+              <h2 style={{ position: 'relative', zIndex: 1 }}><span className="gradient-text">{section.label}</span></h2>
+              <p style={{ position: 'relative', zIndex: 1 }}>{section.summary}</p>
+              <Link className="di-inline-link hover-lift" href={section.href} style={{
+                position: 'relative',
+                zIndex: 1,
+                display: 'inline-block',
+                marginTop: '8px',
+                padding: '6px 12px',
+                background: 'linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(255, 125, 60, 0.2))',
+                borderRadius: '8px'
+              }}>
+                Enter {section.label} →
               </Link>
             </article>
           ))}
