@@ -1,0 +1,16 @@
+name = "api-college-baseball"
+main = "src/api.ts"
+compatibility_date = "2025-11-01"
+
+[[kv_namespaces]]
+binding = "HOT"
+id = "<kv-id>"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blaze_ncaa"
+database_id = "<d1-id>"
+
+[[r2_buckets]]
+binding = "RAW"
+bucket_name = "blaze-ncaa-raw"

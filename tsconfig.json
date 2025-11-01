@@ -33,6 +33,7 @@
     "lib/**/*.ts",
     "context7-enhanced/src/**/*.ts",
     "api/**/*.ts",
+    "workers/**/*.ts",
     "index.ts",
     "src/**/*.ts",
     "src/**/*.tsx"
