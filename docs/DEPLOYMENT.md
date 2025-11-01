@@ -1,6 +1,6 @@
 # Deployment Guide
 
-**Last Updated**: November 1, 2025 (America/Chicago)
+**Last Updated**: November 1, 2025 14:43 CST (America/Chicago)
 
 This guide explains how deployments work for the BSI (Blaze Sports Intelligence) flagship site using GitHub Actions and Cloudflare Pages.
 
