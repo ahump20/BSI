@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SportSwitcher from '../components/SportSwitcher'
+import CFBIntelligenceWidget from './CFBIntelligenceWidget'
 
 function FootballApp() {
   const [games, setGames] = useState([])
@@ -157,6 +158,8 @@ function FootballApp() {
             </div>
           )}
         </section>
+
+        <CFBIntelligenceWidget />
 
         <footer className="data-source" role="contentinfo">
           <p>

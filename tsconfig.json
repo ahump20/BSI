@@ -31,7 +31,8 @@
     "emitDecoratorMetadata": true
   },
   "include": [
-    "lib/**/*.ts"
+    "lib/**/*.ts",
+    "workers/cfb-intelligence.ts"
   ],
   "exclude": [
     "node_modules",
