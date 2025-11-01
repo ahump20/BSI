@@ -220,7 +220,6 @@ export class GameCoordinator {
     const numSims = leverageIndex > 1.5 ? 2000 : leverageIndex > 1.0 ? 1000 : 500;
 
     // Check cache first
-    const stateHash = `${this.gameState.inning}${this.gameState.inningHalf?.[0]}${this.gameState.outs}${this.gameState.baseState}${this.gameState.homeScore}-${this.gameState.awayScore}`;
 
     // Run simulation
     const result = runBaseballSimulation(
