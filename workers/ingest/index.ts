@@ -4,9 +4,9 @@
  * Scheduled worker for data ingestion with provider failover.
  *
  * Cron Triggers:
- * - */5 * * * *  : Live games (every 5 minutes)
- * - 0 * * * *    : Team stats refresh (hourly)
- * - 0 2 * * *    : Historical aggregations (2am daily)
+ * - Cron every five minutes (pattern "star slash five star star star star") : Live games
+ * - Top of every hour (pattern "zero space star star star star")           : Team stats refresh
+ * - 02:00 Central daily (pattern "zero two space star star star")         : Historical aggregations
  *
  * Provider Failover:
  * 1. SportsDataIO (primary)
