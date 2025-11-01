@@ -231,10 +231,10 @@ Update the workflow to use pnpm:
 **Solution:**
 - Verify `npm run build` generates output in `dist` directory
 - Check `package.json` build script
-- For Next.js: output may be in `.next` or `.open-next` directory
-- Update workflow's `command` to point to correct output directory:
+- For Next.js: output should be in the `dist` directory (update your build script if necessary)
+- Update workflow's `command` to point to the correct output directory:
   ```yaml
-  command: pages deploy .next --project-name=...
+  command: pages deploy dist --project-name=...
   ```
 
 ### Issue: Environment variables not working in deployed app
