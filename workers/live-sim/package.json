@@ -1,0 +1,35 @@
+{
+  "name": "@blazesports/live-sim",
+  "version": "1.0.0",
+  "description": "Live in-game win probability simulation using Monte Carlo methods",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "tsc && wrangler deploy --dry-run",
+    "deploy": "wrangler deploy",
+    "deploy:prod": "wrangler deploy --env production",
+    "db:init": "wrangler d1 execute live-sim --file=./migrations/0001_init.sql",
+    "db:migrate": "wrangler d1 migrations apply live-sim",
+    "tail": "wrangler tail",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "sports",
+    "analytics",
+    "monte-carlo",
+    "simulation",
+    "win-probability",
+    "cloudflare-workers"
+  ],
+  "author": "Blaze Sports Intel",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251014.0",
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.1",
+    "wrangler": "^3.22.0"
+  }
+}

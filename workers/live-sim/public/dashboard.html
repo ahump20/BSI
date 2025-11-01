@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Win Probability - Blaze Sports Intel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #ff6b6b, #ffa500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .status.connected {
+      background: rgba(46, 213, 115, 0.2);
+      color: #2ed573;
+      border: 1px solid #2ed573;
+    }
+
+    .status.disconnected {
+      background: rgba(255, 107, 107, 0.2);
+      color: #ff6b6b;
+      border: 1px solid #ff6b6b;
+    }
+
+    .win-prob-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .prob-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .team-prob {
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .team-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #a8dadc;
+    }
+
+    .probability {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .home .probability {
+      color: #ffa500;
+    }
+
+    .away .probability {
+      color: #ff6b6b;
+    }
+
+    .score {
+      font-size: 1.5rem;
+      color: #ddd;
+      margin-top: 10px;
+    }
+
+    .chart-container {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      height: 400px;
+      position: relative;
+    }
+
+    #win-prob-chart {
+      width: 100%;
+      height: 100%;
+    }
+
+    .game-state {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .state-item {
+      text-align: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+
+    .state-label {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .state-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffa500;
+    }
+
+    .next-play {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .outcome-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .outcome-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+
+    .outcome-label {
+      flex: 1;
+      font-size: 0.95rem;
+      text-transform: capitalize;
+    }
+
+    .outcome-bar {
+      flex: 2;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 0 15px;
+    }
+
+    .outcome-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffa500, #ff6b6b);
+      transition: width 0.3s ease;
+    }
+
+    .outcome-pct {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #ffa500;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .metadata {
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 20px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .updating {
+      animation: pulse 1s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔥 Live Win Probability</h1>
+      <div id="status" class="status disconnected">Disconnected</div>
+    </header>
+
+    <div class="win-prob-card">
+      <div class="prob-container">
+        <div class="team-prob home">
+          <div class="team-name" id="home-team">Home Team</div>
+          <div class="probability" id="home-prob">--</div>
+          <div class="score" id="home-score">0</div>
+        </div>
+        <div class="team-prob away">
+          <div class="team-name" id="away-team">Away Team</div>
+          <div class="probability" id="away-prob">--</div>
+          <div class="score" id="away-score">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="win-prob-chart"></canvas>
+    </div>
+
+    <div class="game-state">
+      <h3>Game State</h3>
+      <div class="state-grid">
+        <div class="state-item">
+          <div class="state-label">Inning</div>
+          <div class="state-value" id="inning">--</div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">Outs</div>
+          <div class="state-value" id="outs">--</div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">Bases</div>
+          <div class="state-value" id="bases">---</div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">Leverage</div>
+          <div class="state-value" id="leverage">--</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-play">
+      <h3>Next Play Probabilities</h3>
+      <div id="next-play-list" class="outcome-list"></div>
+    </div>
+
+    <div class="metadata">
+      <div id="sim-info">Simulations: -- | Last updated: --</div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const WORKER_URL = window.location.origin;
+    const GAME_ID = new URLSearchParams(window.location.search).get('gameId') || 'demo-game-2025-11-01';
+
+    // State
+    let eventSource = null;
+    let chartData = {
+      timestamps: [],
+      homeWinProb: []
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      connectSSE();
+      initChart();
+    });
+
+    // Connect to SSE stream
+    function connectSSE() {
+      const url = `${WORKER_URL}/live/${GAME_ID}`;
+      eventSource = new EventSource(url);
+
+      eventSource.onopen = () => {
+        updateStatus(true);
+      };
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        updateDashboard(data);
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('SSE error:', error);
+        updateStatus(false);
+
+        // Reconnect after 5 seconds
+        setTimeout(connectSSE, 5000);
+      };
+    }
+
+    // Update connection status
+    function updateStatus(connected) {
+      const statusEl = document.getElementById('status');
+      if (connected) {
+        statusEl.textContent = '● Connected';
+        statusEl.className = 'status connected';
+      } else {
+        statusEl.textContent = '○ Disconnected';
+        statusEl.className = 'status disconnected';
+      }
+    }
+
+    // Update dashboard with new data
+    function updateDashboard(data) {
+      // Win probabilities
+      const homeProb = (data.winProb.home * 100).toFixed(1);
+      const awayProb = (data.winProb.away * 100).toFixed(1);
+
+      document.getElementById('home-prob').textContent = homeProb + '%';
+      document.getElementById('away-prob').textContent = awayProb + '%';
+
+      // Chart data
+      chartData.timestamps.push(new Date(data.timestamp));
+      chartData.homeWinProb.push(data.winProb.home * 100);
+
+      // Limit to last 50 data points
+      if (chartData.timestamps.length > 50) {
+        chartData.timestamps.shift();
+        chartData.homeWinProb.shift();
+      }
+
+      updateChart();
+
+      // Next play outcomes
+      if (data.nextPlay) {
+        const sorted = Object.entries(data.nextPlay)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8);
+
+        const listEl = document.getElementById('next-play-list');
+        listEl.innerHTML = sorted.map(([outcome, prob]) => `
+          <div class="outcome-item">
+            <div class="outcome-label">${outcome.replace(/([A-Z])/g, ' $1').trim()}</div>
+            <div class="outcome-bar">
+              <div class="outcome-fill" style="width: ${prob * 100}%"></div>
+            </div>
+            <div class="outcome-pct">${(prob * 100).toFixed(1)}%</div>
+          </div>
+        `).join('');
+      }
+
+      // Metadata
+      const simInfo = `Simulations: ${data.numSims.toLocaleString()} | Last updated: ${new Date(data.timestamp).toLocaleTimeString()}`;
+      document.getElementById('sim-info').textContent = simInfo;
+
+      // Leverage index
+      if (data.leverageIndex) {
+        document.getElementById('leverage').textContent = data.leverageIndex.toFixed(2);
+      }
+    }
+
+    // Chart rendering (simple canvas-based)
+    let chart = null;
+
+    function initChart() {
+      const canvas = document.getElementById('win-prob-chart');
+      chart = canvas.getContext('2d');
+    }
+
+    function updateChart() {
+      if (!chart || chartData.timestamps.length === 0) return;
+
+      const canvas = chart.canvas;
+      const width = canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      const height = canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      chart.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+
+      // Clear
+      chart.clearRect(0, 0, w, h);
+
+      // Draw grid
+      chart.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      chart.lineWidth = 1;
+
+      for (let i = 0; i <= 4; i++) {
+        const y = (h / 4) * i;
+        chart.beginPath();
+        chart.moveTo(0, y);
+        chart.lineTo(w, y);
+        chart.stroke();
+      }
+
+      // Draw 50% line (stronger)
+      chart.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      chart.lineWidth = 2;
+      chart.beginPath();
+      chart.moveTo(0, h / 2);
+      chart.lineTo(w, h / 2);
+      chart.stroke();
+
+      // Draw win probability line
+      if (chartData.homeWinProb.length > 1) {
+        chart.strokeStyle = '#ffa500';
+        chart.lineWidth = 3;
+        chart.beginPath();
+
+        chartData.homeWinProb.forEach((prob, i) => {
+          const x = (w / (chartData.homeWinProb.length - 1)) * i;
+          const y = h - (prob / 100) * h;
+
+          if (i === 0) {
+            chart.moveTo(x, y);
+          } else {
+            chart.lineTo(x, y);
+          }
+        });
+
+        chart.stroke();
+
+        // Fill area under curve
+        chart.fillStyle = 'rgba(255, 165, 0, 0.2)';
+        chart.lineTo(w, h);
+        chart.lineTo(0, h);
+        chart.closePath();
+        chart.fill();
+      }
+
+      // Draw labels
+      chart.fillStyle = '#fff';
+      chart.font = '12px sans-serif';
+      chart.textAlign = 'left';
+      chart.fillText('100%', 5, 15);
+      chart.fillText('50%', 5, h / 2 - 5);
+      chart.fillText('0%', 5, h - 5);
+    }
+
+    // Resize handler
+    window.addEventListener('resize', updateChart);
+  </script>
+</body>
+</html>
