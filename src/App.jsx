@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import SportSwitcher from './components/SportSwitcher'
+import HyperScorecard from './components/HyperScorecard'
 
 function App() {
   const [games, setGames] = useState([])
@@ -64,6 +65,77 @@ function App() {
     return buckets
   }, [games])
 
+  const scoreboardInsights = useMemo(() => {
+    if (!Array.isArray(games) || games.length === 0) {
+      return {
+        totalRuns: 0,
+        totalGames: 0,
+        extrasCount: 0,
+        nailBiters: 0,
+        walkoffWatch: 0,
+        highlight: null
+      }
+    }
+
+    let totalRuns = 0
+    let extrasCount = 0
+    let nailBiters = 0
+    let walkoffWatch = 0
+    let highlight = null
+
+    games.forEach((event) => {
+      const competition = event.competitions?.[0]
+      if (!competition) return
+
+      const homeTeam = competition.competitors?.find((c) => c.homeAway === 'home')
+      const awayTeam = competition.competitors?.find((c) => c.homeAway === 'away')
+
+      const homeScore = Number(homeTeam?.score ?? 0)
+      const awayScore = Number(awayTeam?.score ?? 0)
+      const runs = homeScore + awayScore
+      totalRuns += runs
+
+      const status = competition.status
+      const situation = competition.situation
+      const inning = Number(status?.period ?? situation?.inning ?? 0)
+      const isLive = status?.type?.state === 'in'
+      const detailText = (status?.type?.detail || '').toLowerCase()
+
+      if (inning > 9 || detailText.includes('extra')) {
+        extrasCount += 1
+      }
+
+      if (isLive && Math.abs(homeScore - awayScore) <= 1) {
+        nailBiters += 1
+      }
+
+      const isBottomFrame = situation?.isTopInning === false
+      const frameNumber = Number(situation?.inning ?? inning)
+      if (isLive && isBottomFrame && (frameNumber >= 9 || detailText.includes('9th')) && homeScore <= awayScore) {
+        walkoffWatch += 1
+      }
+
+      if (!highlight || runs > highlight.runs) {
+        const awayName = awayTeam?.team?.shortDisplayName || awayTeam?.team?.displayName || 'Away'
+        const homeName = homeTeam?.team?.shortDisplayName || homeTeam?.team?.displayName || 'Home'
+        highlight = {
+          runs,
+          matchup: `${awayName} @ ${homeName}`,
+          detail: status?.type?.shortDetail || status?.type?.detail || 'Pregame'
+        }
+      }
+    })
+
+    return {
+      totalRuns,
+      totalGames: games.length,
+      extrasCount,
+      nailBiters,
+      walkoffWatch,
+      highlight
+    }
+  }, [games])
+
   const lastUpdated = useMemo(() => {
     return new Date().toLocaleString('en-US', {
       timeZone: 'America/Chicago',
@@ -71,76 +143,6 @@ function App() {
       timeStyle: 'short'
     })
   }, [games])
-
-  const renderGameCard = (event) => {
-    const competition = event.competitions?.[0]
-    const homeTeam = competition?.competitors?.find((c) => c.homeAway === 'home')
-    const awayTeam = competition?.competitors?.find((c) => c.homeAway === 'away')
-    const status = competition?.status
-    const state = status?.type?.state
-
-    const statusLabel = status?.type?.completed
-      ? 'Final'
-      : status?.type?.shortDetail || status?.type?.detail || 'Scheduled'
-
-    const tone = status?.type?.completed
-      ? 'final'
-      : state === 'in'
-        ? 'live'
-        : state === 'pre'
-          ? 'upcoming'
-          : 'other'
-
-    const firstPitch = competition?.date || event.date
-    const formattedStart = firstPitch
-      ? new Date(firstPitch).toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: '2-digit',
-          timeZone: 'America/Chicago'
-        })
-      : 'TBD'
-
-    return (
-      <article key={event.id} className="game-card" role="listitem">
-        <div className={`game-status badge-${tone}`}>{statusLabel}</div>
-
-        <div className="game-teams">
-          <div className="team">
-            <div className="team-meta">
-              <span className="team-seed">{awayTeam?.records?.[0]?.summary || '—'}</span>
-              <span className="team-name">{awayTeam?.team?.displayName || 'Away'}</span>
-            </div>
-            <span className="team-score">{awayTeam?.score ?? '0'}</span>
-          </div>
-
-          <div className="team">
-            <div className="team-meta">
-              <span className="team-seed">{homeTeam?.records?.[0]?.summary || '—'}</span>
-              <span className="team-name">{homeTeam?.team?.displayName || 'Home'}</span>
-            </div>
-            <span className="team-score">{homeTeam?.score ?? '0'}</span>
-          </div>
-        </div>
-
-        <div className="game-meta">
-          <div className="meta-item">
-            <span className="meta-label">Venue</span>
-            <span className="meta-value">{competition?.venue?.fullName || 'TBD'}</span>
-          </div>
-          <div className="meta-item">
-            <span className="meta-label">First pitch</span>
-            <span className="meta-value">{formattedStart}</span>
-          </div>
-          {status?.type?.description && (
-            <div className="meta-item">
-              <span className="meta-label">Situation</span>
-              <span className="meta-value">{status.type.description}</span>
-            </div>
-          )}
-        </div>
-      </article>
-    )
-  }
 
   const renderLoading = (message) => (
     <div className="state-shell">
@@ -171,10 +173,10 @@ function App() {
         <header>
           <div className="header-content">
             <div className="title-block">
-              <p className="kicker">College Baseball Control Room</p>
-              <h1>Live Scoreboard</h1>
+              <p className="kicker">Diamond Matrix // Blaze Sports Intel</p>
+              <h1>College Baseball Signal Wall</h1>
             </div>
-            <p className="tagline">Burnt orange grit. Powder blue calm. Every pitch tracked in real time.</p>
+            <p className="tagline">Mobile-first, dark-mode war room translating live pitch data into clear marching orders.</p>
           </div>
         </header>
         {renderLoading('Pulling the latest scores...')}
@@ -188,10 +190,10 @@ function App() {
         <header>
           <div className="header-content">
             <div className="title-block">
-              <p className="kicker">College Baseball Control Room</p>
-              <h1>Live Scoreboard</h1>
+              <p className="kicker">Diamond Matrix // Blaze Sports Intel</p>
+              <h1>College Baseball Signal Wall</h1>
             </div>
-            <p className="tagline">Burnt orange grit. Powder blue calm. Every pitch tracked in real time.</p>
+            <p className="tagline">Mobile-first, dark-mode war room translating live pitch data into clear marching orders.</p>
           </div>
         </header>
         {renderError(error)}
@@ -204,10 +206,10 @@ function App() {
       <header>
         <div className="header-content">
           <div className="title-block">
-            <p className="kicker">College Baseball Control Room</p>
-            <h1>Live Scoreboard</h1>
+            <p className="kicker">Diamond Matrix // Blaze Sports Intel</p>
+            <h1>College Baseball Signal Wall</h1>
           </div>
-          <p className="tagline">Burnt orange grit. Powder blue calm. Every pitch tracked in real time.</p>
+          <p className="tagline">Mobile-first, dark-mode war room translating live pitch data into clear marching orders.</p>
         </div>
         <div className="header-metrics" role="status" aria-live="polite">
           <div className="metric">
@@ -223,14 +225,37 @@ function App() {
             <span className="metric-label">Upcoming</span>
           </div>
         </div>
+        <div className="insight-grid">
+          <div className="insight-card">
+            <span className="insight-label">Total Runs Logged</span>
+            <span className="insight-value">{scoreboardInsights.totalRuns}</span>
+            <span className="insight-caption">Across {scoreboardInsights.totalGames} tracked games</span>
+          </div>
+          <div className="insight-card">
+            <span className="insight-label">Live Nail-Biters</span>
+            <span className="insight-value">{scoreboardInsights.nailBiters}</span>
+            <span className="insight-caption">≤ 1 run margin right now</span>
+          </div>
+          <div className="insight-card">
+            <span className="insight-label">Walkoff Watch</span>
+            <span className="insight-value">{scoreboardInsights.walkoffWatch}</span>
+            <span className="insight-caption">Bottom-frame chaos brewing</span>
+          </div>
+          <div className="insight-card highlight">
+            <span className="insight-label">Highest Octane Game</span>
+            <span className="insight-value">{scoreboardInsights.highlight?.runs ?? 0}</span>
+            <span className="insight-caption">{scoreboardInsights.highlight?.matchup || 'Awaiting first pitch'}</span>
+            <span className="insight-detail">{scoreboardInsights.highlight?.detail || '—'}</span>
+          </div>
+        </div>
       </header>
 
       <main>
         <section className="live-scores">
           <div className="section-header">
             <div>
-              <h2>Scoreboard Pulse</h2>
-              <p className="section-subtitle">Track live counts, recent finals, and what’s next on the slate.</p>
+              <h2>Signal Streams</h2>
+              <p className="section-subtitle">Streaming college baseball telemetry with 60-second refresh loops and real-time base-state visuals.</p>
             </div>
             <div className="legend">
               <span className="legend-item">
@@ -249,7 +274,9 @@ function App() {
             <p className="no-games">No games currently in progress</p>
           ) : (
             <div className="games-grid" role="list">
-              {games.map((event) => renderGameCard(event))}
+              {games.map((event) => (
+                <HyperScorecard key={event.id} event={event} />
+              ))}
             </div>
           )}
         </section>
