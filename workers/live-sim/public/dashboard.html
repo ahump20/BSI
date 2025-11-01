@@ -400,7 +400,7 @@
 
       const canvas = chart.canvas;
       canvas.width = canvas.clientWidth * window.devicePixelRatio;
-      const height = canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
       chart.scale(window.devicePixelRatio, window.devicePixelRatio);
 
       const w = canvas.clientWidth;
