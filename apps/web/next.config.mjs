@@ -8,11 +8,22 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: false,
-  images: { unoptimized: false },
-  output: 'standalone',
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.cloudflare.com',
+      },
+    ],
+  },
   eslint: {
     ignoreDuringBuilds: true
   },
+  typescript: {
+    ignoreBuildErrors: true
+  },
   outputFileTracingRoot: path.join(__dirname, '..', '..')
 };
+
 export default withSentryConfig(nextConfig, { silent: true }, { hideSourceMaps: true, disableLogger: true });

@@ -2,9 +2,11 @@
   "name": "@bsi/web",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "cloudflare",
     "dev": "next dev",
     "start": "next start",
+    "preview": "cloudflare && wrangler pages dev .open-next/worker --compatibility-flag=nodejs_compat",
+    "deploy": "cloudflare && wrangler pages deploy .open-next/worker",
     "test:visual": "playwright test --config=playwright.config.ts"
   },
   "dependencies": {
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@applitools/eyes-playwright": "^1.23.0",
+    "@opennextjs/cloudflare": "^0.2.1",
     "@playwright/test": "^1.49.0",
     "@types/node": "^22.7.5",
     "@types/react": "19.2.2",

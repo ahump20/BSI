@@ -1,0 +1,20 @@
+name = "blazesportsintel"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next/worker"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "blazesports-historical"
+database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
+
+# KV namespace for caching
+[[kv_namespaces]]
+binding = "KV"
+id = "a53c3726fc3044be82e79d2d1e371d26"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+NODE_ENV = "production"

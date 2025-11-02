@@ -14,21 +14,14 @@ jobs:
         with:
           version: 9
       - run: pnpm i --frozen-lockfile
-      - run: pnpm -w build
+      - run: pnpm --filter @bsi/web build
       - name: Deploy Pages (OpenNext output)
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: blazesportsintel
-          directory: apps/web/.open-next
-          wranglerVersion: '3'
-      - name: Deploy Worker (edge headers/redirects)
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          workingDirectory: apps/api-worker
-          command: deploy
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/web
+          command: pages deploy .open-next/worker --project-name=blazesportsintel
 
       - name: Notify Sentry release
         if: success()
