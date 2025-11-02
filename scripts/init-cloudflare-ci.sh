@@ -33,7 +33,7 @@ for REPO in "${REPOS[@]}"; do
     --method PUT \
     -H "Accept: application/vnd.github+json" \
     "/repos/$REPO/branches/main/protection" \
-    -f required_status_checks='{"strict":true,"contexts":[]}' \
+    -f required_status_checks='{"strict":true,"checks":[]}' \
     -f enforce_admins=false \
     -f required_pull_request_reviews='{"required_approving_review_count":1}' \
     -f restrictions=null \
