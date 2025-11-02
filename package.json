@@ -4,13 +4,12 @@
   "type": "module",
   "description": "Mobile-first college baseball live tracker with full box scores",
   "scripts": {
-    "dev": "vite",
-    "build:lib": "tsc",
-    "build": "npm run build:lib && vite build",
-    "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "build:games": "pnpm --filter @bsi/phaser-bbp-web build && node scripts/copy-bbp-game.mjs",
+    "build:web": "pnpm --filter @bsi/web build",
+    "build": "pnpm run build:games && pnpm run build:web",
+    "dev:game": "pnpm --filter @bsi/phaser-bbp-web dev",
+    "lint:types": "pnpm --filter @bsi/web exec tsc --noEmit",
+    "ci:check-ip": "node scripts/check-blocklist.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.714.0",
@@ -25,6 +24,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251014.0",
+    "@lhci/cli": "^0.13.0",
     "@prisma/client": "^6.18.0",
     "@types/luxon": "^3.4.2",
     "@types/node": "^24.9.1",
@@ -38,5 +38,6 @@
     "vite": "^7.1.11",
     "vitest": "^4.0.1",
     "wrangler": "^3.22.0"
-  }
+  },
+  "packageManager": "pnpm@9.12.3"
 }

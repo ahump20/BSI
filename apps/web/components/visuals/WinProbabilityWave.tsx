@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import styles from './WinProbabilityWave.module.css';
 
@@ -128,13 +129,21 @@ export default function WinProbabilityWave({
     <div ref={containerRef} className={styles.container}>
       <div className={styles.header}>
         <div className={styles.teamInfo} style={{ color: awayTeam.color }}>
-          {awayTeam.logo && <img src={awayTeam.logo} alt={awayTeam.name} className={styles.logo} />}
+          {awayTeam.logo && (
+            <div className={styles.logoWrapper}>
+              <Image src={awayTeam.logo} alt={awayTeam.name} fill sizes="32px" style={{ objectFit: 'cover' }} />
+            </div>
+          )}
           <span>{awayTeam.name}</span>
         </div>
         <div className={styles.title}>Win Probability</div>
         <div className={styles.teamInfo} style={{ color: homeTeam.color }}>
           <span>{homeTeam.name}</span>
-          {homeTeam.logo && <img src={homeTeam.logo} alt={homeTeam.name} className={styles.logo} />}
+          {homeTeam.logo && (
+            <div className={styles.logoWrapper}>
+              <Image src={homeTeam.logo} alt={homeTeam.name} fill sizes="32px" style={{ objectFit: 'cover' }} />
+            </div>
+          )}
         </div>
       </div>
       <canvas

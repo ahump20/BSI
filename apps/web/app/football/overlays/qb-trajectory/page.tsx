@@ -10,9 +10,10 @@
  * - Real-time pass data integration
  */
 
-import React, { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import type { PassData } from '../../../../components/visuals/FootballQBTrajectory';
+import { shouldEnableAdvancedGraphics } from '../../../../lib/device/graphics';
 
 // Dynamic import with code splitting
 const FootballQBTrajectory = dynamic(
@@ -162,11 +163,17 @@ export default function QBTrajectoryPage() {
   const [cameraAutoRotate, setCameraAutoRotate] = useState(false);
   const [highlightPassId, setHighlightPassId] = useState<string | null>(null);
   const [selectedPass, setSelectedPass] = useState<PassData | null>(null);
+  const [graphicsEnabled, setGraphicsEnabled] = useState(false);
+  const [capabilityChecked, setCapabilityChecked] = useState(false);
 
   useEffect(() => {
     // Generate sample passes on mount
     // In production: fetch from API
     setPasses(generateSamplePasses());
+    if (shouldEnableAdvancedGraphics()) {
+      setGraphicsEnabled(true);
+    }
+    setCapabilityChecked(true);
   }, []);
 
   const handlePassClick = (pass: PassData) => {
@@ -243,21 +250,40 @@ export default function QBTrajectoryPage() {
       <div className="flex-1 flex">
         {/* 3D Visualization */}
         <div className="flex-1 relative">
-          <Suspense fallback={
-            <div className="h-full flex items-center justify-center bg-gray-900 text-white">
-              <p>Loading visualization...</p>
+          {graphicsEnabled ? (
+            <Suspense
+              fallback={
+                <div className="h-full flex items-center justify-center bg-gray-900 text-white">
+                  <p>Loading visualization...</p>
+                </div>
+              }
+            >
+              <FootballQBTrajectory
+                passes={passes}
+                showField={showField}
+                showRoutes={showRoutes}
+                showProbabilitySpheres={showProbabilitySpheres}
+                cameraAutoRotate={cameraAutoRotate}
+                highlightPassId={highlightPassId}
+                onPassClick={handlePassClick}
+              />
+            </Suspense>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-4 bg-gray-900 text-center text-gray-200">
+              <p className="max-w-sm text-sm text-gray-300">
+                We stage the Babylon.js pass lab off the main thread. Tap below to stream the advanced bundle when your device is ready.
+              </p>
+              <button
+                type="button"
+                onClick={() => setGraphicsEnabled(true)}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+                disabled={!capabilityChecked}
+              >
+                Enable 3D view
+              </button>
+              <p className="text-xs text-gray-400">Suggested: laptop/desktop viewport, WebGL/WebGPU support, ≥4GB memory.</p>
             </div>
-          }>
-            <FootballQBTrajectory
-              passes={passes}
-              showField={showField}
-              showRoutes={showRoutes}
-              showProbabilitySpheres={showProbabilitySpheres}
-              cameraAutoRotate={cameraAutoRotate}
-              highlightPassId={highlightPassId}
-              onPassClick={handlePassClick}
-            />
-          </Suspense>
+          )}
         </div>
 
         {/* Sidebar */}

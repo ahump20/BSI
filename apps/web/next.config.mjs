@@ -8,7 +8,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: false,
-  images: { unoptimized: false },
+  images: {
+    unoptimized: false,
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [360, 414, 640, 768, 1024, 1280],
+    imageSizes: [32, 48, 64, 96, 128, 256]
+  },
   output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true

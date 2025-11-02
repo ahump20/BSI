@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3]
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -160.0
+offset_right = 160.0
+offset_top = -40.0
+offset_bottom = 40.0
+text = "Backyard Blaze Ball Native"
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.6
+anchor_right = 0.5
+anchor_bottom = 0.6
+offset_left = -120.0
+offset_right = 120.0
+offset_top = -32.0
+offset_bottom = 32.0
+text = "Start Placeholder Game"
+
+[ext_resource type="Script" path="res://scenes/Menu.gd" id=1]

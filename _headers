@@ -24,3 +24,9 @@
 
 /images/*
   Cache-Control: public, max-age=86400
+
+/games/bbp-web/*.html
+  Cache-Control: public, max-age=300
+
+/games/bbp-web/*
+  Cache-Control: public, max-age=31536000, immutable

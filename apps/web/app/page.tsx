@@ -36,6 +36,11 @@ const navigationLinks = [
     href: '/baseball/ncaab/news',
     title: 'Newsroom',
     description: 'Verified recaps, portal updates, and strategic briefings for staffs and fans.'
+  },
+  {
+    href: '/games',
+    title: 'Games Lab',
+    description: 'Original BlazeSportsIntel sandlot experiences starting with Backyard Blaze Ball.'
   }
 ];
 

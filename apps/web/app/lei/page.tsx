@@ -1,10 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
-import LEIMeter from '../../components/lei/LEIMeter';
-import ClutchMomentCard from '../../components/lei/ClutchMomentCard';
-import ClutchLeaderboard from '../../components/lei/ClutchLeaderboard';
+
+const LEIMeter = dynamic(() => import('../../components/lei/LEIMeter'), {
+  ssr: false,
+  loading: () => <MeterSkeleton />,
+});
+
+const ClutchMomentCard = dynamic(() => import('../../components/lei/ClutchMomentCard'), {
+  ssr: false,
+  loading: () => <CardSkeleton />,
+});
+
+const ClutchLeaderboard = dynamic(() => import('../../components/lei/ClutchLeaderboard'), {
+  ssr: false,
+  loading: () => <LeaderboardSkeleton />,
+});
+
+const demoScores = [
+  { score: 65.0, label: 'Malcolm Butler INT (SB XLIX)', variant: 'legendary' as const },
+  { score: 50.7, label: 'David Freese Triple (2011 WS)', variant: 'championship' as const },
+  { score: 22.2, label: 'Aaron Boone HR (2003 ALCS)', variant: 'default' as const },
+];
+
+function MeterSkeleton() {
+  return <div className={styles.meterSkeleton} aria-hidden="true" />;
+}
+
+function CardSkeleton() {
+  return <div className={styles.cardSkeleton} aria-hidden="true" />;
+}
+
+function LeaderboardSkeleton() {
+  return (
+    <div className={styles.leaderboardSkeleton} aria-hidden="true">
+      <div />
+      <div />
+      <div />
+    </div>
+  );
+}
 
 /**
  * Leverage Equivalency Index (LEI) Showcase Page
@@ -18,9 +55,31 @@ import ClutchLeaderboard from '../../components/lei/ClutchLeaderboard';
 export default function LEIShowcasePage() {
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [interactiveUnlocked, setInteractiveUnlocked] = useState(false);
+  const interactiveRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Fetch famous moments from API
+    const node = interactiveRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setInteractiveUnlocked(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!interactiveUnlocked) return;
+
+    setLoading(true);
     fetch('/api/lei/examples')
       .then((res) => res.json())
       .then((data) => {
@@ -31,14 +90,7 @@ export default function LEIShowcasePage() {
         console.error('Error fetching LEI data:', error);
         setLoading(false);
       });
-  }, []);
-
-  // Demo LEI scores for the meters
-  const demoScores = [
-    { score: 65.0, label: 'Malcolm Butler INT (SB XLIX)', variant: 'legendary' as const },
-    { score: 50.7, label: 'David Freese Triple (2011 WS)', variant: 'championship' as const },
-    { score: 22.2, label: 'Aaron Boone HR (2003 ALCS)', variant: 'default' as const },
-  ];
+  }, [interactiveUnlocked]);
 
   return (
     <div className={styles.page}>
@@ -105,56 +157,72 @@ export default function LEIShowcasePage() {
       </section>
 
       {/* LEI Meters Showcase */}
-      <section className={styles.metersSection}>
+      <section ref={interactiveRef} className={styles.metersSection}>
         <h2 className={styles.sectionTitle}>Legendary Clutch Moments</h2>
+        {!interactiveUnlocked && (
+          <div className={styles.interactiveGate}>
+            <p>Interactive LEI widgets stay paused until you load them. Keeps mobile performance sharp.</p>
+            <button type="button" onClick={() => setInteractiveUnlocked(true)}>
+              Load interactive view
+            </button>
+          </div>
+        )}
         <div className={styles.metersGrid}>
           {demoScores.map((demo, idx) => (
             <div key={idx} className={styles.meterWrapper}>
-              <LEIMeter
-                score={demo.score}
-                label={demo.label}
-                variant={demo.variant}
-                animated={true}
-                showParticles={true}
-              />
+              {interactiveUnlocked ? (
+                <LEIMeter
+                  score={demo.score}
+                  label={demo.label}
+                  variant={demo.variant}
+                  animated={true}
+                  showParticles={true}
+                />
+              ) : (
+                <MeterSkeleton />
+              )}
             </div>
           ))}
         </div>
       </section>
 
       {/* Featured Cards Section */}
-      {leaderboardData.length > 0 && (
-        <section className={styles.cardsSection}>
-          <h2 className={styles.sectionTitle}>Top Clutch Performances</h2>
-          <div className={styles.featuredCards}>
-            {leaderboardData.slice(0, 4).map((play, idx) => (
-              <ClutchMomentCard
-                key={play.play_id}
-                play={play}
-                rank={idx + 1}
-                variant="holographic"
-                interactive={true}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      <section className={styles.cardsSection}>
+        <h2 className={styles.sectionTitle}>Top Clutch Performances</h2>
+        <div className={styles.featuredCards}>
+          {interactiveUnlocked && leaderboardData.length > 0
+            ? leaderboardData.slice(0, 4).map((play, idx) => (
+                <ClutchMomentCard
+                  key={play.play_id}
+                  play={play}
+                  rank={idx + 1}
+                  variant="holographic"
+                  interactive={true}
+                />
+              ))
+            : Array.from({ length: 4 }).map((_, idx) => <CardSkeleton key={idx} />)}
+        </div>
+      </section>
 
       {/* Leaderboard Section */}
       <section className={styles.leaderboardSection}>
-        {loading ? (
-          <div className={styles.loading}>
-            <div className={styles.loadingSpinner} />
-            <div className={styles.loadingText}>Loading clutch moments...</div>
-          </div>
+        {interactiveUnlocked ? (
+          loading ? (
+            <div className={styles.loading}>
+              <div className={styles.loadingSpinner} />
+              <div className={styles.loadingText}>Loading clutch moments...</div>
+            </div>
+          ) : (
+            <ClutchLeaderboard
+              data={leaderboardData}
+              title="ALL-TIME CLUTCH LEADERBOARD"
+              animated={true}
+              viewMode="table"
+              sortBy="lei"
+            />
+          )
         ) : (
-          <ClutchLeaderboard
-            data={leaderboardData}
-            title="ALL-TIME CLUTCH LEADERBOARD"
-            animated={true}
-            viewMode="table"
-            sortBy="lei"
-          />
+          <LeaderboardSkeleton />
         )}
       </section>
 

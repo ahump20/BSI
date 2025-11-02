@@ -1,0 +1,15 @@
+; Engine configuration file.
+; Documentation: https://docs.godotengine.org
+
+config_version=5
+
+[application]
+config/name="Backyard Blaze Ball Native"
+run/main_scene="res://scenes/Menu.tscn"
+config/features=PackedStringArray("4.0", "Mobile")
+
+[rendering]
+quality/driver/driver_name="opengl3"
+
+[input]
+SwingTap={"deadzone":0.5,"events":[{"type":"InputEventScreenTouch","index":0,"pressed":true}]}

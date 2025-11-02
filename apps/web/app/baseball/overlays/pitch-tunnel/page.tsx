@@ -10,9 +10,10 @@
  * - Interactive controls
  */
 
-import React, { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import type { PitchData } from '../../../../components/visuals/BaseballPitchTunnel';
+import { shouldEnableAdvancedGraphics } from '../../../../lib/device/graphics';
 
 // Dynamic import with code splitting
 const BaseballPitchTunnel = dynamic(
@@ -99,11 +100,17 @@ export default function PitchTunnelPage() {
   const [cameraAutoRotate, setCameraAutoRotate] = useState(false);
   const [highlightPitchId, setHighlightPitchId] = useState<string | null>(null);
   const [selectedPitch, setSelectedPitch] = useState<PitchData | null>(null);
+  const [graphicsEnabled, setGraphicsEnabled] = useState(false);
+  const [capabilityChecked, setCapabilityChecked] = useState(false);
 
   useEffect(() => {
     // Generate sample pitches on mount
     // In production: fetch from API
     setPitches(generateSamplePitches());
+    if (shouldEnableAdvancedGraphics()) {
+      setGraphicsEnabled(true);
+    }
+    setCapabilityChecked(true);
   }, []);
 
   const handlePitchClick = (pitch: PitchData) => {
@@ -170,20 +177,39 @@ export default function PitchTunnelPage() {
       <div className="flex-1 flex">
         {/* 3D Visualization */}
         <div className="flex-1 relative">
-          <Suspense fallback={
-            <div className="h-full flex items-center justify-center bg-gray-900 text-white">
-              <p>Loading visualization...</p>
+          {graphicsEnabled ? (
+            <Suspense
+              fallback={
+                <div className="h-full flex items-center justify-center bg-gray-900 text-white">
+                  <p>Loading visualization...</p>
+                </div>
+              }
+            >
+              <BaseballPitchTunnel
+                pitches={pitches}
+                showStrikeZone={showStrikeZone}
+                showVelocityColors={showVelocityColors}
+                cameraAutoRotate={cameraAutoRotate}
+                highlightPitchId={highlightPitchId}
+                onPitchClick={handlePitchClick}
+              />
+            </Suspense>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-4 bg-gray-900 text-center text-gray-200">
+              <p className="max-w-sm text-sm text-gray-300">
+                We hold the WebGPU/WebGL bundle until you opt in. This keeps mobile devices cool and improves LCP.
+              </p>
+              <button
+                type="button"
+                onClick={() => setGraphicsEnabled(true)}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+                disabled={!capabilityChecked}
+              >
+                Enable 3D view
+              </button>
+              <p className="text-xs text-gray-400">Requirements: wide viewport, WebGL/WebGPU support, device memory ≥ 4GB.</p>
             </div>
-          }>
-            <BaseballPitchTunnel
-              pitches={pitches}
-              showStrikeZone={showStrikeZone}
-              showVelocityColors={showVelocityColors}
-              cameraAutoRotate={cameraAutoRotate}
-              highlightPitchId={highlightPitchId}
-              onPitchClick={handlePitchClick}
-            />
-          </Suspense>
+          )}
         </div>
 
         {/* Sidebar */}

@@ -24,6 +24,33 @@ docker-compose up -d
 # API Docs: http://localhost:8000/docs
 ```
 
+## Mobile Performance Budgets
+
+- Largest Contentful Paint ≤ **2.5s** on cellular-first devices.
+- Cumulative Layout Shift ≤ **0.10** across every route.
+- Interaction to Next Paint must stay in the "good" band (<200 ms) for hero interactions.
+- Lighthouse CI enforces these budgets automatically in GitHub Actions via `lighthouserc.json`.
+
+Run locally before opening a PR:
+
+```bash
+pnpm install
+pnpm run build:games
+pnpm --filter @bsi/web build
+npx @lhci/cli autorun --config=lighthouserc.json
+```
+
+## Backyard Blaze Ball Build Steps
+
+```bash
+pnpm run build:games   # builds Phaser bundle + copies to public/games/bbp-web
+pnpm --filter @bsi/web dev  # start Next.js with game assets in place
+```
+
+- Static bundle lives at `public/games/bbp-web` and deploys with Cloudflare Pages caches from `_headers`.
+- Use `pnpm run ci:check-ip` to ensure no restricted sandlot character names land in source.
+- Read `docs/GAME_README.md` for deeper instructions plus native Godot track.
+
 ## Architecture
 
 ### Core Pipeline

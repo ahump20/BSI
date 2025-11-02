@@ -1,0 +1,10 @@
+{
+  "extends": "../../web/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist/types",
+    "baseUrl": "src",
+    "types": ["phaser"]
+  },
+  "include": ["src"]
+}
