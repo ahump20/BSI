@@ -24,6 +24,25 @@ docker-compose up -d
 # API Docs: http://localhost:8000/docs
 ```
 
+### New for the proxy + WebGPU demo
+
+- `worker/` — Cloudflare Worker that fronts the developer proxy endpoints and exposes the WebGPU manifest (`/proxy/*`, `/health`, `/webgpu/manifest`).
+- `app/` — Next.js developer console with `/dev` diagnostics, proxy playground, and WebGPU tooling.
+
+```bash
+# Cloudflare Worker (http://localhost:8787)
+cd worker
+npm install
+npm run dev
+
+# Next.js developer console (http://localhost:3000/dev)
+cd ../app
+npm install
+npm run dev
+```
+
+> Copy `app/.env.local.example` to `app/.env.local` to point the UI at a deployed worker or change the WebGPU demo origin.
+
 ## Architecture
 
 ### Core Pipeline
