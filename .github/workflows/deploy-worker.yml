@@ -31,10 +31,25 @@ jobs:
       - name: Determine environment
         id: deploy-env
         run: |
-          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
-            echo "value=production" >> "$GITHUB_OUTPUT"
+          # Determine environment based on event type and branch
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            # For PRs, use the base branch
+            if [ "${GITHUB_BASE_REF}" = "main" ]; then
+              echo "value=production" >> "$GITHUB_OUTPUT"
+            elif [ "${GITHUB_BASE_REF}" = "staging" ]; then
+              echo "value=staging" >> "$GITHUB_OUTPUT"
+            else
+              echo "value=staging" >> "$GITHUB_OUTPUT"
+            fi
           else
-            echo "value=staging" >> "$GITHUB_OUTPUT"
+            # For push events, use the ref
+            if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+              echo "value=production" >> "$GITHUB_OUTPUT"
+            elif [ "${GITHUB_REF}" = "refs/heads/staging" ]; then
+              echo "value=staging" >> "$GITHUB_OUTPUT"
+            else
+              echo "value=staging" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Run D1 migrations (production)
