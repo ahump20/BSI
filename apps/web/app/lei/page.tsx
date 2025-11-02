@@ -1,10 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import styles from './page.module.css';
-import LEIMeter from '../../components/lei/LEIMeter';
-import ClutchMomentCard from '../../components/lei/ClutchMomentCard';
-import ClutchLeaderboard from '../../components/lei/ClutchLeaderboard';
+import { useGraphicsCapability } from '../../lib/device/graphics-capability';
+
+const LEIMeter = dynamic(() => import('../../components/lei/LEIMeter'), {
+  ssr: false,
+  loading: () => <div className={styles.meterSkeleton} aria-hidden="true" />
+});
+
+const ClutchMomentCard = dynamic(() => import('../../components/lei/ClutchMomentCard'), {
+  ssr: false,
+  loading: () => <div className={styles.cardSkeleton} aria-hidden="true" />
+});
+
+const ClutchLeaderboard = dynamic(() => import('../../components/lei/ClutchLeaderboard'), {
+  ssr: false,
+  loading: () => <div className={styles.leaderboardSkeleton} role="status">Preparing leaderboard…</div>
+});
 
 /**
  * Leverage Equivalency Index (LEI) Showcase Page
@@ -16,22 +30,46 @@ import ClutchLeaderboard from '../../components/lei/ClutchLeaderboard';
  * - Real-time data from famous playoff moments
  */
 export default function LEIShowcasePage() {
+  const { evaluated, canEnable, suggestedMode, reason } = useGraphicsCapability();
+  const [interactiveEnabled, setInteractiveEnabled] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch famous moments from API
+    if (evaluated && canEnable) {
+      setInteractiveEnabled(true);
+    }
+  }, [evaluated, canEnable]);
+
+  useEffect(() => {
+    if (!interactiveEnabled) {
+      return;
+    }
+
+    let isMounted = true;
+    setLoading(true);
+
     fetch('/api/lei/examples')
       .then((res) => res.json())
       .then((data) => {
+        if (!isMounted) return;
         setLeaderboardData(data.plays || []);
         setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching LEI data:', error);
+        if (!isMounted) return;
         setLoading(false);
       });
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [interactiveEnabled]);
+
+  const handleEnableInteractive = () => {
+    setInteractiveEnabled(true);
+  };
 
   // Demo LEI scores for the meters
   const demoScores = [
@@ -104,26 +142,58 @@ export default function LEIShowcasePage() {
         </div>
       </section>
 
+      {!interactiveEnabled && (
+        <section className={styles.interactiveNotice} aria-live="polite">
+          <div>
+            <h2 className={styles.noticeTitle}>Interactive visuals are optional</h2>
+            <p>
+              We detected a mobile or low-power context, so advanced 3D animations are paused by default to
+              prioritize smooth scrolling. You can enable them manually at any time.
+            </p>
+            {evaluated && reason ? (
+              <p className={styles.noticeReason}>Current mode: {suggestedMode}. {reason}</p>
+            ) : null}
+          </div>
+          <button type="button" onClick={handleEnableInteractive} className={styles.interactiveButton}>
+            {canEnable ? 'Enable interactive mode' : 'Enable visuals anyway'}
+          </button>
+        </section>
+      )}
+
       {/* LEI Meters Showcase */}
       <section className={styles.metersSection}>
         <h2 className={styles.sectionTitle}>Legendary Clutch Moments</h2>
-        <div className={styles.metersGrid}>
-          {demoScores.map((demo, idx) => (
-            <div key={idx} className={styles.meterWrapper}>
-              <LEIMeter
-                score={demo.score}
-                label={demo.label}
-                variant={demo.variant}
-                animated={true}
-                showParticles={true}
-              />
-            </div>
-          ))}
-        </div>
+        {interactiveEnabled ? (
+          <div className={styles.metersGrid}>
+            {demoScores.map((demo, idx) => (
+              <div key={idx} className={styles.meterWrapper}>
+                <LEIMeter
+                  score={demo.score}
+                  label={demo.label}
+                  variant={demo.variant}
+                  animated={true}
+                  showParticles={suggestedMode === 'enhanced'}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.metersFallback}>
+            <p>Enable interactive mode to view animated LEI meters with particle effects.</p>
+            <ul>
+              {demoScores.map((demo) => (
+                <li key={demo.label}>
+                  <span className={styles.meterLabel}>{demo.label}</span>
+                  <span className={styles.meterValue}>{demo.score.toFixed(1)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       {/* Featured Cards Section */}
-      {leaderboardData.length > 0 && (
+      {interactiveEnabled && leaderboardData.length > 0 ? (
         <section className={styles.cardsSection}>
           <h2 className={styles.sectionTitle}>Top Clutch Performances</h2>
           <div className={styles.featuredCards}>
@@ -133,28 +203,46 @@ export default function LEIShowcasePage() {
                 play={play}
                 rank={idx + 1}
                 variant="holographic"
-                interactive={true}
+                interactive={suggestedMode === 'enhanced'}
               />
             ))}
           </div>
         </section>
-      )}
+      ) : null}
 
       {/* Leaderboard Section */}
       <section className={styles.leaderboardSection}>
-        {loading ? (
-          <div className={styles.loading}>
-            <div className={styles.loadingSpinner} />
-            <div className={styles.loadingText}>Loading clutch moments...</div>
-          </div>
+        {interactiveEnabled ? (
+          loading ? (
+            <div className={styles.loading}>
+              <div className={styles.loadingSpinner} />
+              <div className={styles.loadingText}>Loading clutch moments...</div>
+            </div>
+          ) : (
+            <ClutchLeaderboard
+              data={leaderboardData}
+              title="ALL-TIME CLUTCH LEADERBOARD"
+              animated={suggestedMode === 'enhanced'}
+              viewMode="table"
+              sortBy="lei"
+            />
+          )
         ) : (
-          <ClutchLeaderboard
-            data={leaderboardData}
-            title="ALL-TIME CLUTCH LEADERBOARD"
-            animated={true}
-            viewMode="table"
-            sortBy="lei"
-          />
+          <div className={styles.leaderboardSkeleton}>
+            <p>Leaderboard visuals are paused to keep the page light on mobile.</p>
+            <button
+              type="button"
+              onClick={handleEnableInteractive}
+              className={styles.interactiveButton}
+            >
+              {canEnable ? 'Enable interactive leaderboard' : 'Enable visuals anyway'}
+            </button>
+            {evaluated && reason ? (
+              <p className={styles.interactiveReason}>
+                {reason}
+              </p>
+            ) : null}
+          </div>
         )}
       </section>
 

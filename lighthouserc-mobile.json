@@ -77,6 +77,14 @@
         "max-potential-fid": [
           "warn",
           { "maxNumericValue": 300 }
+        ],
+        "interaction-to-next-paint": [
+          "error",
+          { "maxNumericValue": 200 }
+        ],
+        "server-response-time": [
+          "error",
+          { "maxNumericValue": 600 }
         ]
       }
     },
