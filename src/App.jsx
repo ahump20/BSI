@@ -139,12 +139,13 @@ function App() {
           <MetricCard
             title="Extra-inning games"
             value={aggregateMetrics.extraInnings}
-            detail=
+            detail={
               aggregateMetrics.extraInnings === 0
                 ? 'No extras yet'
                 : aggregateMetrics.extraInnings === 1
                   ? '1 game beyond 9'
                   : `${aggregateMetrics.extraInnings} games beyond 9`
+            }
           />
         </div>
 
