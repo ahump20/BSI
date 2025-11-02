@@ -6,7 +6,9 @@
  * Deep South Sports Authority
  */
 
-const SUPPORTED_SPORTS = new Set(['all', 'mlb', 'nfl', 'nba', 'ncaa', 'ncaa-baseball']);
+import { validateRequest } from './_validation.js';
+import { liveScoresQuerySchema } from './_schemas.js';
+
 const FETCH_TIMEOUT_MS = 8000;
 
 const espnHeaders = {
@@ -15,10 +17,6 @@ const espnHeaders = {
 };
 
 export async function onRequestGet({ request, env, ctx }) {
-  const url = new URL(request.url);
-  const sport = url.searchParams.get('sport') || 'all';
-  const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
-
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -27,14 +25,18 @@ export async function onRequestGet({ request, env, ctx }) {
     'Content-Type': 'application/json',
   };
 
-  if (!SUPPORTED_SPORTS.has(sport)) {
-    return new Response(
-      JSON.stringify({
-        error: 'Unsupported sport parameter. Supported values: all, mlb, nfl, nba, ncaa, ncaa-baseball',
-      }),
-      { status: 400, headers },
-    );
+  // Validate request parameters using Zod
+  const validation = await validateRequest(request, {
+    query: liveScoresQuerySchema
+  });
+
+  if (!validation.success) {
+    return validation.errorResponse;
   }
+
+  const { query } = validation.data;
+  const sport = query.sport || 'all';
+  const date = query.date || new Date().toISOString().split('T')[0];
 
   try {
     const scores = await getLiveScores(sport, date, env);

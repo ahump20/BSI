@@ -1,0 +1,87 @@
+{
+  "slug": "ole-miss-rebels",
+  "team_name": "Ole Miss Rebels",
+  "mascot": "Rebels",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Program resetting after missing postseason two straight years post-2022 title."
+  },
+  "location": {
+    "city": "Oxford",
+    "state": "Mississippi",
+    "campus": "University of Mississippi",
+    "ballpark": {
+      "name": "Oxford-University Stadium / Swayze Field",
+      "capacity": 10815,
+      "surface": "Natural grass",
+      "recent_upgrades": "Player lounge refresh and new indoor cages targeted for January 2025."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#14213D",
+    "secondary_color_hex": "#CE1126"
+  },
+  "head_coach": {
+    "name": "Mike Bianco",
+    "contract_through": "2026",
+    "base_salary_estimate": 1200000,
+    "staff_tenure": "Entering 25th season at Ole Miss; 2022 national champion.",
+    "playing_style": "Balanced offense with emphasis on bullpen leverage roles."
+  },
+  "support_staff": {
+    "pitching_coach": "Carl Lafferty",
+    "hitting_coach": "Mike Clement",
+    "recruiting_coordinator": "Marc MacMillan",
+    "director_of_operations": "B.J. Maack",
+    "analytics_lead": "Vacant",
+    "player_development_director": "Chris Cleary",
+    "video_coordinator": "Drew McCrory"
+  },
+  "nil_operations": {
+    "primary_collective": "The Grove Collective",
+    "lead_contact": "Walker Jones",
+    "contact_channels": [
+      "info@thegrovecollective.com",
+      "https://thegrovecollective.com/contact"
+    ],
+    "recent_initiatives": "Rolling out baseball mentorship dinners with Oxford business leaders (Sept 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Keith Carter",
+    "baseball_admin": "Jamie Holder",
+    "financial_points_of_contact": [
+      "rebelticketoffice@olemiss.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 1,
+    "sec_titles": 1,
+    "last_super_regional": "2022",
+    "program_trend": "Needs pitching overhaul; fan support/NIL remain strong."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-09T17:30:00-05:00",
+      "summary": "Oxford Eagle notes staff courting local junior college arm Logan Forsythe for bullpen depth.",
+      "source_hint": "Oxford Eagle fall ball notebook",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Confirm staff responsibilities and finalize roster depth chart."
+  }
+}

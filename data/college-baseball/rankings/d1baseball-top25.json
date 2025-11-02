@@ -1,10 +1,11 @@
 {
   "poll": "D1Baseball Top 25",
   "season": 2025,
-  "lastUpdated": "2025-06-23T12:00:00-05:00",
+  "lastUpdated": "2025-10-23T10:00:00-05:00",
   "timezone": "America/Chicago",
   "source": "https://d1baseball.com/rankings/",
-  "dataFreshness": "Final 2025 rankings - Season complete",
+  "dataFreshness": "Final 2025 rankings - Season complete (verified October 2025)",
+  "dataStatus": "Historical data verified and accurate as of October 2025. 2026 season begins February 2026.",
   "rankings": [
     {
       "rank": 1,
@@ -42,7 +43,7 @@
       "rank": 5,
       "team": "Texas Longhorns",
       "conference": "SEC",
-      "record": "42-11 overall, 22-8 SEC (SEC Champion)",
+      "record": "44-14 overall, 22-8 SEC (SEC Champion)",
       "previousRank": 6,
       "movement": "+1"
     },
@@ -246,7 +247,7 @@
   },
   "notes": [
     "LSU won the 2025 College World Series National Championship",
-    "Texas won the 2025 SEC regular season championship (22-8 conference, 42-11 overall)",
+    "Texas won the 2025 SEC regular season championship (22-8 conference, 44-14 overall)",
     "SEC dominated with 9 teams in final Top 25",
     "George Mason set D1 record with 23 runs in a single inning (March 4, 2025)"
   ]

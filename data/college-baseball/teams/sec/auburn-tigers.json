@@ -1,0 +1,88 @@
+{
+  "slug": "auburn-tigers",
+  "team_name": "Auburn Tigers",
+  "mascot": "Tigers",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Roster turning over after back-to-back portal heavy summers."
+  },
+  "location": {
+    "city": "Auburn",
+    "state": "Alabama",
+    "campus": "Auburn University",
+    "ballpark": {
+      "name": "Plainsman Park",
+      "capacity": 4096,
+      "surface": "Natural grass",
+      "recent_upgrades": "Phase II premium seating and performance lab targeted for completion before 2025 season."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#0C2340",
+    "secondary_color_hex": "#E87722"
+  },
+  "head_coach": {
+    "name": "Butch Thompson",
+    "contract_through": "2027",
+    "base_salary_estimate": 750000,
+    "staff_tenure": "Ninth season at Auburn after Mississippi State pitching coordinator run.",
+    "playing_style": "Pitch-to-contact staff with situational hitting; values defensive flexibility.",
+    "recent_quotes": "Shared with Opelika-Auburn News (Sept 2024) that new analytics coordinator will drive pitch design focus."
+  },
+  "support_staff": {
+    "pitching_coach": "Dameon Mason",
+    "hitting_coach": "Gabe Gross",
+    "recruiting_coordinator": "Karl Nonemaker",
+    "director_of_operations": "Hunter Vick",
+    "analytics_lead": "TBA (announced hire from driveline pipeline expected Oct 2024)",
+    "player_development_director": "Jeff Smith",
+    "video_coordinator": "Matt Schell"
+  },
+  "nil_operations": {
+    "primary_collective": "On To Victory",
+    "lead_contact": "Brett Whiteside",
+    "contact_channels": [
+      "hello@ontovictory.com",
+      "https://ontovictory.com/contact"
+    ],
+    "recent_initiatives": "Piloting diamond club hospitality tied to baseball-only giving levels (announced August 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "John Cohen",
+    "baseball_admin": "Ben Mims",
+    "financial_points_of_contact": [
+      "tix@auburn.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 0,
+    "sec_titles": 4,
+    "last_super_regional": "2022",
+    "program_trend": "Rebuilding after missing 2024 NCAA Tournament; emphasis on portal arms."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-10T15:00:00-05:00",
+      "summary": "Local boosters pushing for bullpen lounge expansion to aid NIL pitch.",
+      "source_hint": "The Auburn Plainsman donor feature on On To Victory capital drive",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Confirm staff role titles post-2024 turnover; compile roster status from fall camp notes."
+  }
+}

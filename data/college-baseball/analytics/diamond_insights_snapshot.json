@@ -1,0 +1,137 @@
+{
+  "generated_at": "2024-10-20T11:30:00Z",
+  "games": [
+    {
+      "game_id": "game-lsu-texas-2024-04-12",
+      "status": "live",
+      "venue": "Alex Box Stadium",
+      "conference": "SEC",
+      "teams": [
+        {
+          "team_slug": "lsu-tigers",
+          "team_name": "LSU Tigers",
+          "bullpen_ip_last3": 12.1,
+          "high_leverage_pitches": 74,
+          "rest_days": 1,
+          "starter_times_through": 2.8,
+          "starter_pitch_count": 92,
+          "starter_pitch_efficiency": 63,
+          "late_inning_ops_allowed": 0.286,
+          "win_probability_added": 0.41,
+          "leverage_index": 1.37,
+          "last_update": "2024-04-12T22:07:00Z",
+          "notes": [
+            "Skenes has sat 99-100 but slider feel fading third time through.",
+            "Griffin Herring threw 38 high-leverage pitches Thursday."
+          ]
+        },
+        {
+          "team_slug": "texas-longhorns",
+          "team_name": "Texas Longhorns",
+          "bullpen_ip_last3": 16.2,
+          "high_leverage_pitches": 91,
+          "rest_days": 0,
+          "starter_times_through": 2.2,
+          "starter_pitch_count": 83,
+          "starter_pitch_efficiency": 58,
+          "late_inning_ops_allowed": 0.318,
+          "win_probability_added": -0.17,
+          "leverage_index": 1.48,
+          "last_update": "2024-04-12T22:05:00Z",
+          "notes": [
+            "Bullpen asked for 9.2 IP over prior two games.",
+            "Closer Zane Morehouse pitched back-to-back and is red flagged."
+          ]
+        }
+      ]
+    },
+    {
+      "game_id": "game-vanderbilt-arkansas-2024-04-13",
+      "status": "scheduled",
+      "venue": "Hawkins Field",
+      "conference": "SEC",
+      "teams": [
+        {
+          "team_slug": "vanderbilt-commodores",
+          "team_name": "Vanderbilt Commodores",
+          "bullpen_ip_last3": 8.2,
+          "high_leverage_pitches": 41,
+          "rest_days": 2,
+          "starter_times_through": 2.4,
+          "starter_pitch_count": 86,
+          "starter_pitch_efficiency": 69,
+          "late_inning_ops_allowed": 0.244,
+          "win_probability_added": 0.22,
+          "leverage_index": 1.11,
+          "last_update": "2024-04-12T21:45:00Z",
+          "notes": [
+            "Freshman Devin Futrell limited to 75 pitches target.",
+            "Nick Maldonado rested and available for 4+ outs."
+          ]
+        },
+        {
+          "team_slug": "arkansas-razorbacks",
+          "team_name": "Arkansas Razorbacks",
+          "bullpen_ip_last3": 10.0,
+          "high_leverage_pitches": 57,
+          "rest_days": 1,
+          "starter_times_through": 3.1,
+          "starter_pitch_count": 105,
+          "starter_pitch_efficiency": 61,
+          "late_inning_ops_allowed": 0.301,
+          "win_probability_added": 0.09,
+          "leverage_index": 1.28,
+          "last_update": "2024-04-12T21:42:00Z",
+          "notes": [
+            "Hagen Smith expected 95 pitch cap, slider still dominant third time through.",
+            "Gage Wood threw 27 pitches Friday, light availability."
+          ]
+        }
+      ]
+    },
+    {
+      "game_id": "game-tennessee-florida-2024-04-14",
+      "status": "final",
+      "venue": "Lindsey Nelson Stadium",
+      "conference": "SEC",
+      "teams": [
+        {
+          "team_slug": "tennessee-volunteers",
+          "team_name": "Tennessee Volunteers",
+          "bullpen_ip_last3": 14.0,
+          "high_leverage_pitches": 64,
+          "rest_days": 0,
+          "starter_times_through": 2.9,
+          "starter_pitch_count": 99,
+          "starter_pitch_efficiency": 60,
+          "late_inning_ops_allowed": 0.257,
+          "win_probability_added": 0.31,
+          "leverage_index": 1.42,
+          "last_update": "2024-04-14T18:55:00Z",
+          "notes": [
+            "Bullpen leaning on AJ Russell (33 pitches yesterday).",
+            "Andrew Lindsey slider holding 44% whiff against Florida."
+          ]
+        },
+        {
+          "team_slug": "florida-gators",
+          "team_name": "Florida Gators",
+          "bullpen_ip_last3": 17.1,
+          "high_leverage_pitches": 96,
+          "rest_days": 0,
+          "starter_times_through": 3.3,
+          "starter_pitch_count": 112,
+          "starter_pitch_efficiency": 55,
+          "late_inning_ops_allowed": 0.334,
+          "win_probability_added": -0.28,
+          "leverage_index": 1.55,
+          "last_update": "2024-04-14T18:49:00Z",
+          "notes": [
+            "Caglianone at 112 pitches, velo dipped 3 mph 7th inning.",
+            "Closer Fisher has thrown 45 pitches across three straight days."
+          ]
+        }
+      ]
+    }
+  ]
+}

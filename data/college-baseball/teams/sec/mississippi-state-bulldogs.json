@@ -1,0 +1,87 @@
+{
+  "slug": "mississippi-state-bulldogs",
+  "team_name": "Mississippi State Bulldogs",
+  "mascot": "Bulldogs",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Chris Lemonis reshaping roster through portal after 2024 regional exit."
+  },
+  "location": {
+    "city": "Starkville",
+    "state": "Mississippi",
+    "campus": "Mississippi State University",
+    "ballpark": {
+      "name": "Dudy Noble Field",
+      "capacity": 13352,
+      "surface": "Natural grass",
+      "recent_upgrades": "Added new sports science wing to Palmeiro Center (Sept 2024)."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#660000",
+    "secondary_color_hex": "#FFFFFF"
+  },
+  "head_coach": {
+    "name": "Chris Lemonis",
+    "contract_through": "2028",
+    "base_salary_estimate": 1250000,
+    "staff_tenure": "Seventh season in Starkville; 2021 national champion.",
+    "playing_style": "Power arms and physical bats; seeks more defensive consistency."
+  },
+  "support_staff": {
+    "pitching_coach": "Justin Parker",
+    "hitting_coach": "Jake Gautreau",
+    "recruiting_coordinator": "Jake Gautreau",
+    "director_of_operations": "Blake Norton",
+    "analytics_lead": "Mike Murrah",
+    "player_development_director": "Will Coggin",
+    "video_coordinator": "Bryson LeBlanc"
+  },
+  "nil_operations": {
+    "primary_collective": "Bulldog Initiative",
+    "lead_contact": "Charlie Winfield",
+    "contact_channels": [
+      "info@bulldoginitiative.com",
+      "https://bulldoginitiative.com/contact"
+    ],
+    "recent_initiatives": "Launching Dudy Noble rooftop events for baseball donors fall 2024.",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Zac Selmon",
+    "baseball_admin": "Brent Rooker",
+    "financial_points_of_contact": [
+      "tickets@msstate.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 1,
+    "sec_titles": 11,
+    "last_super_regional": "2021",
+    "program_trend": "Trending upward again after back-to-back down years; portal reliance remains high."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-13T14:00:00-05:00",
+      "summary": "Local beat says bullpen hierarchy still unsettled; staff exploring sidearm specialist from Southland Conference.",
+      "source_hint": "Starkville Daily News fall scrimmage recap",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Confirm NIL contact title for Bulldog Initiative; gather roster attrition list."
+  }
+}

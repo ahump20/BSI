@@ -1,5 +1,5 @@
-import { apiCache, cacheMetrics } from '../utils/cache.js';
-import { ApiError, ErrorCode, ErrorHandler, CircuitBreaker, DEFAULT_FALLBACKS } from '../utils/errors.js';
+import { apiCache, cacheMetrics } from '../utils/cache';
+import { ApiError, ErrorCode, ErrorHandler, CircuitBreaker, DEFAULT_FALLBACKS } from '../utils/errors';
 
 const DEFAULT_TEAM_ID = '10'; // Tennessee Titans
 const CACHE_TTL = 30000; // 30 seconds for NFL data

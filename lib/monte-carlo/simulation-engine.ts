@@ -14,6 +14,7 @@ export interface TeamStats {
   sport: 'SEC' | 'NFL' | 'MLB';
   wins: number;
   losses: number;
+  ties?: number;
   pointsFor: number;
   pointsAgainst: number;
   homeWinPct?: number;

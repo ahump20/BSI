@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { recordRuntimeEvent } from '../lib/observability/datadog-runtime';
 
 const navigationLinks = [
   {
@@ -35,6 +36,11 @@ const navigationLinks = [
     href: '/baseball/ncaab/news',
     title: 'Newsroom',
     description: 'Verified recaps, portal updates, and strategic briefings for staffs and fans.'
+  },
+  {
+    href: '/games',
+    title: 'Games',
+    description: 'Play original baseball games with mobile-friendly controls and 100% original content.'
   }
 ];
 
@@ -54,6 +60,8 @@ const featureHighlights = [
 ];
 
 export default function HomePage() {
+  void recordRuntimeEvent('route_render', { route: '/', sport: 'baseball' });
+
   return (
     <div className="di-shell">
       <main className="di-container">

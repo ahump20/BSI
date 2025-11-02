@@ -21,7 +21,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         football: resolve(__dirname, 'football.html'),
-        basketball: resolve(__dirname, 'basketball.html')
+        basketball: resolve(__dirname, 'basketball.html'),
+        tools: resolve(__dirname, 'tools.html')
       },
       output: {
         manualChunks: {

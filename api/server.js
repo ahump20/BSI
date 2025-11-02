@@ -17,9 +17,48 @@ import dotenv from 'dotenv';
 
 import SportsDataService from './sports-data-service.js';
 import LoggerService from './services/logger-service.js';
+import { validate, validationErrorHandler } from './middleware/validation.js';
+import { validateEnv, checkEnvHealth } from './validation/env.schema.js';
+import {
+    predictGameSchema,
+    predictSeasonSchema,
+    liveScoresSchema
+} from './validation/schemas/index.js';
+import { schedulingOptimizerSchema } from './validation/schemas/scheduling.schemas.js';
+import { predictPlayerSchema } from './validation/schemas/player.schemas.js';
+import { teamAnalyticsSchema, teamInfoSchema } from './validation/schemas/team.schemas.js';
 
 // Load environment variables
 dotenv.config();
+
+// Validate environment variables on startup
+try {
+    const validatedEnv = validateEnv(process.env);
+    console.log('✓ Environment validation passed');
+
+    // Check environment health
+    const health = checkEnvHealth(process.env);
+    if (health.warnings.length > 0) {
+        console.warn('⚠ Environment warnings:');
+        health.warnings.forEach(w => console.warn(`  - ${w.field}: ${w.message}`));
+    }
+    if (health.criticalIssues.length > 0) {
+        console.error('✗ Critical environment issues found:');
+        health.criticalIssues.forEach(i => console.error(`  - ${i.field}: ${i.message}`));
+        if (process.env.NODE_ENV === 'production') {
+            console.error('Cannot start in production with critical environment issues');
+            process.exit(1);
+        }
+    }
+} catch (error) {
+    console.error('✗ Environment validation failed:');
+    console.error(error.message);
+    if (process.env.NODE_ENV === 'production') {
+        process.exit(1);
+    } else {
+        console.warn('⚠ Continuing in development mode despite validation errors');
+    }
+}
 
 class BlazeIntelligenceAPIServer {
     constructor() {
@@ -121,7 +160,7 @@ class BlazeIntelligenceAPIServer {
         });
 
         // Team analytics - now with real ML predictions
-        this.app.get('/api/team/:sport/:teamKey/analytics', async (req, res) => {
+        this.app.get('/api/team/:sport/:teamKey/analytics', validate(teamAnalyticsSchema), async (req, res) => {
             try {
                 const { sport, teamKey } = req.params;
                 const analytics = await this.sportsService.calculateTeamAnalytics(
@@ -158,17 +197,9 @@ class BlazeIntelligenceAPIServer {
         });
 
         // Game predictions using ML models
-        this.app.post('/api/predict/game', async (req, res) => {
+        this.app.post('/api/predict/game', validate(predictGameSchema), async (req, res) => {
             try {
                 const { homeTeam, awayTeam, sport, gameDate } = req.body;
-
-                if (!homeTeam || !awayTeam || !sport) {
-                    return res.status(400).json({
-                        success: false,
-                        error: 'Missing required parameters',
-                        required: ['homeTeam', 'awayTeam', 'sport']
-                    });
-                }
 
                 const prediction = await this.sportsService.predictGameOutcome(
                     homeTeam,
@@ -197,18 +228,53 @@ class BlazeIntelligenceAPIServer {
             }
         });
 
+        // Scheduling optimizer (RPI/SOR projection)
+        this.app.post('/api/v1/scheduling/optimizer', validate(schedulingOptimizerSchema), async (req, res) => {
+            const requestBody = req.body;
+            const { teamId, conference, currentMetrics, futureOpponents, userTier, iterations, deterministic } = requestBody;
+
+            const requestStarted = Date.now();
+
+            try {
+                const projection = await this.sportsService.optimizeSchedulingProjection({
+                    teamId,
+                    conference,
+                    currentMetrics,
+                    futureOpponents,
+                    userTier,
+                    iterations,
+                    deterministic,
+                });
+
+                const upgradeMessage = projection.tierAccess.advancedUnlocked
+                    ? null
+                    : 'Diamond Pro unlocks multi-thousand iteration Monte Carlo runs, percentile bands, and exportable scheduling packets.';
+
+                res.json({
+                    success: true,
+                    data: projection.forecast,
+                    tierAccess: projection.tierAccess,
+                    performance: {
+                        computeMs: projection.forecast.meta.durationMs,
+                        totalMs: Date.now() - requestStarted,
+                        cached: projection.forecast.meta.cached,
+                    },
+                    upgradeMessage,
+                });
+            } catch (error) {
+                this.logger.error('Scheduling optimizer failed', requestBody, error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Scheduling optimizer unavailable',
+                    message: error.message,
+                });
+            }
+        });
+
         // Player performance predictions
-        this.app.post('/api/predict/player', async (req, res) => {
+        this.app.post('/api/predict/player', validate(predictPlayerSchema), async (req, res) => {
             try {
                 const { playerId, sport, gameContext } = req.body;
-
-                if (!playerId || !sport) {
-                    return res.status(400).json({
-                        success: false,
-                        error: 'Missing required parameters',
-                        required: ['playerId', 'sport']
-                    });
-                }
 
                 const prediction = await this.sportsService.predictPlayerPerformance(
                     playerId,
@@ -262,7 +328,7 @@ class BlazeIntelligenceAPIServer {
         });
 
         // Get team data with enhanced analytics
-        this.app.get('/api/team/:sport/:teamKey', async (req, res) => {
+        this.app.get('/api/team/:sport/:teamKey', validate(teamInfoSchema), async (req, res) => {
             try {
                 const { sport, teamKey } = req.params;
                 const teamData = await this.sportsService.getEnhancedTeamData(teamKey, sport);
@@ -302,7 +368,8 @@ class BlazeIntelligenceAPIServer {
                     'POST /api/predict/game': 'ML-powered game outcome predictions',
                     'POST /api/predict/player': 'ML-powered player performance predictions',
                     'POST /api/ml/train': 'Initiate ML model training',
-                    'GET /api/team/:sport/:teamKey': 'Enhanced team data'
+                    'GET /api/team/:sport/:teamKey': 'Enhanced team data',
+                    'POST /api/v1/scheduling/optimizer': 'Project RPI/SOR deltas for proposed non-conference schedules'
                 },
                 supportedSports: ['mlb', 'nfl', 'nba', 'ncaa_football', 'ncaa_baseball'],
                 features: [
@@ -330,6 +397,9 @@ class BlazeIntelligenceAPIServer {
     }
 
     setupErrorHandling() {
+        // Validation error handler (handles Zod validation errors)
+        this.app.use(validationErrorHandler);
+
         // 404 handler
         this.app.use('*', (req, res) => {
             res.status(404).json({

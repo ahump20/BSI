@@ -3,7 +3,7 @@
 **Real-time 3D pose tracking + biomechanical analysis for elite athletic performance prediction**
 
 ## Mission
-Bridge computer vision and biomechanics to quantify the "unseen" micro-moves that predict elite upside. Integrates seamlessly with the Champion Enigma Engine to deliver actionable insights from multi-camera 3D pose data.
+Bridge computer vision and biomechanics to quantify the "unseen" micro-moves that predict elite upside. Integrates seamlessly with the Diamond Certainty Engine™ to deliver actionable insights from multi-camera 3D pose data.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ docker-compose up -d
 
 ### Core Pipeline
 ```
-Multi-Camera Feed → 3D Pose Extraction → Feature Computation → Enigma Mapping → Coach UX
+Multi-Camera Feed → 3D Pose Extraction → Feature Computation → Certainty Mapping → Coach UX
      ↓                    ↓                     ↓                    ↓              ↓
   Raw Video         Joint Angles          Biomech Metrics     Trait Scores    Clip Reels
 ```
@@ -39,7 +39,7 @@ Multi-Camera Feed → 3D Pose Extraction → Feature Computation → Enigma Mapp
 2. **Feature Extraction Engine**: Computes 30+ biomechanical features in real-time
 3. **Risk Assessment Module**: Identifies injury risk patterns and mechanical inefficiencies
 4. **Clip Generation System**: Auto-generates video segments tied to specific metrics
-5. **Champion Enigma Integration**: Maps biomechanics to trait dimensions
+5. **Diamond Certainty Integration**: Maps biomechanics to trait dimensions
 
 ## Measured Micro-Signals
 
@@ -244,24 +244,27 @@ Get comprehensive biomechanical analysis for an athlete.
 }
 ```
 
-#### Champion Enigma Trait Scores
+#### Diamond Certainty Trait Scores
 ```http
-GET /api/v1/enigma/{athlete_id}/scores
+GET /api/v1/diamond-certainty/{athlete_id}/scores
 ```
-Get Champion Enigma intelligence trait scores.
+Get Diamond Certainty Engine intelligence trait scores.
 
 **Response:**
 ```json
 {
   "athlete_id": "athlete_001",
-  "enigma_scores": {
-    "clutch_factor": 8.7,
-    "adaptability": 7.2,
-    "competitive_drive": 9.1,
-    "biomech_efficiency": 8.4,
-    "mental_resilience": 7.8
+  "diamond_certainty_scores": {
+    "clutch_gene": 92.1,
+    "killer_instinct": 88.4,
+    "flow_state": 84.6,
+    "mental_fortress": 90.2,
+    "predator_mindset": 87.3,
+    "champion_aura": 85.5,
+    "winner_dna": 89.7,
+    "beast_mode": 91.8
   },
-  "overall_rating": 8.24,
+  "overall_score": 88.9,
   "projection": "elite_upside"
 }
 ```
@@ -494,3 +497,145 @@ MIT License - See LICENSE file for details
 - Documentation: https://docs.blazesportsintel.com/biomech
 - API Status: https://status.blazesportsintel.com
 - Contact: biomech@blazesportsintel.com
+
+---
+
+## 🎮 Games Feature
+
+### Baseball Batting Game (MVP)
+
+An original, mobile-first baseball game built with Phaser 3 and integrated into the main site.
+
+**Quick Start:**
+```bash
+# Build the game
+pnpm run build:games
+
+# Builds to apps/web/public/games/bbp-web/
+```
+
+**Features:**
+- ⚾ 3-inning batting game with timing-based mechanics
+- 📱 Touch-first controls (tap to swing)
+- 🎯 Multiple pitch types (fastball, changeup, curveball)
+- 🏆 Score tracking and CPU opponent
+- 🎨 100% original content (no third-party IP)
+
+**Routes:**
+- `/games` - Games landing page
+- `/games/bbp` - Baseball game (iframe embed)
+- `/games/bbp/legal` - Legal compliance page
+
+**Documentation:**
+- `docs/GAME_README.md` - Development guide
+- `LEGAL_COMPLIANCE.md` - IP compliance requirements
+- `assets/LICENSES.md` - Asset manifest
+- `docs/ai-assets/prompts-and-guidelines.md` - AI asset guidelines
+
+**Legal Compliance:**
+- All game content is 100% original
+- No use of Backyard Baseball or other licensed IP
+- CI blocklist check prevents prohibited terms
+- See `LEGAL_COMPLIANCE.md` for full details
+
+---
+
+## 📊 Mobile Performance Optimizations
+
+### Core Web Vitals Targets (Mobile)
+
+- **LCP (Largest Contentful Paint)**: ≤ 2.5s
+- **CLS (Cumulative Layout Shift)**: ≤ 0.1
+- **INP (Interaction to Next Paint)**: ≤ 200ms
+- **TTFB (Time to First Byte)**: ≤ 600ms
+
+### Performance Features
+
+**1. Lazy Loading**
+- Heavy components load on-demand (3D visualizations, charts, LEI)
+- Uses `apps/web/components/LazyLoadWrapper.tsx`
+- Skeleton loading states prevent layout shifts
+
+**2. Font Optimization**
+- System fonts on mobile (< 768px) for zero latency
+- `font-display: swap` prevents FOIT
+- See `apps/web/app/font-optimization.css`
+
+**3. Image Optimization**
+- Cloudflare Image Resizing enabled
+- Responsive image sizes
+- `stale-while-revalidate` caching
+
+**4. Static Asset Caching**
+- Game assets: 1 year immutable cache
+- Next.js static: 1 year immutable
+- Images: 1 day cache
+- See `apps/web/public/_headers`
+
+**5. Lighthouse CI**
+- Automated performance checks on PRs
+- Mobile-specific config: `lighthouserc-mobile.json`
+- Desktop config: `lighthouserc.json`
+- GitHub Action: `.github/workflows/lighthouse-ci.yml`
+
+**6. Web Vitals Tracking**
+- Real-time monitoring at `/performance`
+- Tracks LCP, FID, CLS, FCP, TTFB, INP
+- Analytics endpoint: `/api/analytics/web-vitals`
+
+### Build Commands
+
+```bash
+# Build everything (games + site)
+pnpm install
+pnpm run build:games  # Build Phaser game
+cd apps/web && pnpm build  # Build Next.js site
+
+# Deploy to Cloudflare
+cd apps/web
+wrangler pages deploy .next --project-name blazesportsintel
+```
+
+### Performance Monitoring
+
+**Lighthouse CI:**
+```bash
+# Run Lighthouse CI locally
+npm install -g @lhci/cli
+lhci autorun --config=lighthouserc-mobile.json
+```
+
+**Manual Testing:**
+1. Open Chrome DevTools
+2. Lighthouse tab
+3. Select "Mobile" device
+4. Check "Performance" category
+5. Run audit
+
+**Web Vitals Dashboard:**
+- Visit `/performance` on the live site
+- Shows real user metrics (RUM)
+- Historical trends and percentiles
+
+### Performance Best Practices
+
+1. **Images**: Use Next.js `<Image>` component with priority for above-fold images
+2. **JS Bundles**: Dynamic imports for heavy components
+3. **CSS**: Tailwind with proper purge configuration
+4. **Fonts**: System fonts on mobile, web fonts on desktop
+5. **Caching**: Leverage Cloudflare CDN for static assets
+6. **Analytics**: Respect DNT (Do Not Track) headers
+
+### CI/CD Checks
+
+**Automated on Pull Requests:**
+- ✅ Lighthouse CI (mobile performance thresholds)
+- ✅ Content blocklist (prevents IP violations)
+- ✅ Build verification (games + site)
+- ✅ Type checking (TypeScript)
+
+**Performance Budget:**
+- Initial JS: < 500KB gzipped
+- Game bundle: < 350KB gzipped
+- LCP: < 2.5s on 4G mobile
+- CLS: < 0.1 globally

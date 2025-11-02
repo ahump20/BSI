@@ -1,6 +1,6 @@
 """
 Comprehensive tests for Blaze Biomechanics Vision System
-Tests pose ingestion, feature extraction, and Enigma integration
+Tests pose ingestion, feature extraction, and Diamond Certainty integration
 """
 
 import pytest
@@ -268,18 +268,18 @@ class TestBiomechAnalysis:
         response = client.get("/api/v1/analysis/track_test_001/biomech?sport=track")
         assert response.status_code in [200, 404]
 
-class TestEnigmaIntegration:
-    """Test Champion Enigma Engine integration"""
+class TestDiamondCertaintyIntegration:
+    """Test Diamond Certainty Engine integration"""
     
-    def test_get_enigma_scores(self):
-        """Test getting Enigma scores"""
-        response = client.get("/api/v1/enigma/test_athlete_001/scores")
+    def test_get_diamond_certainty_scores(self):
+        """Test getting Diamond Certainty scores"""
+        response = client.get("/api/v1/diamond-certainty/test_athlete_001/scores")
         
         # Will fail without proper setup, but should not error
         assert response.status_code in [200, 404, 500]
     
-    def test_enigma_trait_mapping(self):
-        """Test that biomech features map to Enigma traits"""
+    def test_diamond_certainty_trait_mapping(self):
+        """Test that biomech features map to Diamond Certainty traits"""
         # This would test the mapping logic
         features = BiomechFeatures(
             hip_shoulder_separation=45.0,
@@ -420,7 +420,7 @@ class TestFullPipeline:
             assert "risk_factors" in analysis
             assert "recommendations" in analysis
         
-        # 3. Get Enigma scores
+        # 3. Get Diamond Certainty scores
         response = client.get(f"/api/v1/enigma/{athlete_id}/scores")
         if response.status_code == 200:
             scores = response.json()

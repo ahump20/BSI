@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-const effectiveDate = 'September 28, 2025';
+const effectiveDate = 'October 23, 2025';
 
 export const metadata: Metadata = {
   title: 'Terms of Service — Blaze Sports Intel',
@@ -29,100 +29,149 @@ export default function TermsOfServicePage() {
       <section>
         <h2>2. Service Description</h2>
         <h3>2.1 What We Provide</h3>
+        <p>Blaze Sports Intel is a free, public sports analytics platform providing:</p>
         <ul>
-          <li>Real-time scores and statistics</li>
-          <li>Historical sports data</li>
-          <li>Power rankings and analytics</li>
-          <li>API integration services</li>
-          <li>Custom data visualizations</li>
+          <li>Real-time live scores and game updates (MLB, NFL, NBA, NCAA, Texas HS Football)</li>
+          <li>Historical sports data and statistics</li>
+          <li>Advanced analytics (bullpen fatigue, clutch performance, QB pressure analysis)</li>
+          <li>Game predictions and Monte Carlo simulations</li>
+          <li>3D visualizations and interactive graphics</li>
+          <li>AI-powered sports insights via chatbot</li>
+          <li>Public API endpoints for data access</li>
+          <li>Biomechanics analysis and player performance metrics</li>
         </ul>
-        <h3>2.2 Eligibility</h3>
+        <h3>2.2 Current Service Status</h3>
+        <p>The Service is currently provided:</p>
         <ul>
-          <li>You must be at least 13 years old</li>
-          <li>If under 18, parental consent required</li>
-          <li>Not prohibited from using the Service under applicable law</li>
+          <li><strong>Free of charge</strong> - No subscriptions, payments, or premium features</li>
+          <li><strong>Read-only access</strong> - No user account registration required</li>
+          <li><strong>Public data only</strong> - Minimal personal data collection (see Privacy Policy)</li>
+          <li><strong>As-is basis</strong> - Features may change without notice as we develop the platform</li>
+        </ul>
+        <h3>2.3 Eligibility</h3>
+        <ul>
+          <li>You must be at least 13 years old to use the Service</li>
+          <li>If under 18, parental consent is required</li>
+          <li>You must not be prohibited from using the Service under applicable law</li>
+          <li>You agree to comply with all applicable laws when using the Service</li>
         </ul>
       </section>
 
       <section>
-        <h2>3. Account Responsibilities</h2>
-        <h3>3.1 Registration</h3>
+        <h2>3. Acceptable Use</h2>
+        <h3>3.1 User Accounts</h3>
+        <p><strong>No Account Registration:</strong> The Service currently does not require or offer user account registration. All features are publicly accessible without login credentials.</p>
+        <p><strong>Future Accounts:</strong> If we introduce user accounts in the future, you will be required to:</p>
         <ul>
           <li>Provide accurate, current information</li>
-          <li>Maintain security of credentials</li>
-          <li>Notify us of unauthorized access</li>
-          <li>Responsible for all account activity</li>
+          <li>Maintain security of your credentials</li>
+          <li>Notify us immediately of any unauthorized access</li>
+          <li>Accept responsibility for all activity under your account</li>
         </ul>
         <h3>3.2 Prohibited Activities</h3>
         <p>You agree NOT to:</p>
         <ul>
-          <li>Violate any laws or regulations</li>
-          <li>Infringe intellectual property rights</li>
-          <li>Scrape data without authorization</li>
-          <li>Circumvent rate limits or access controls</li>
-          <li>Distribute malware or harmful code</li>
-          <li>Impersonate others</li>
-          <li>Use for gambling where prohibited</li>
-          <li>Resell or sublicense without permission</li>
+          <li>Violate any applicable laws or regulations</li>
+          <li>Infringe on intellectual property rights of Blaze Sports Intel or third parties</li>
+          <li>Scrape, harvest, or collect data through automated means without written authorization</li>
+          <li>Circumvent API rate limits, access controls, or security measures</li>
+          <li>Distribute malware, viruses, or harmful code</li>
+          <li>Impersonate any person or entity</li>
+          <li>Use the Service for illegal gambling or betting where prohibited by law</li>
+          <li>Resell, sublicense, or commercially exploit the Service without permission</li>
+          <li>Overload or interfere with the proper functioning of the Service</li>
+          <li>Reverse engineer or attempt to extract source code</li>
         </ul>
       </section>
 
       <section>
         <h2>4. Sports Data and Content</h2>
-        <h3>4.1 Data Sources</h3>
-        <p>
-          Sports data provided through licensed agreements with official league statistics providers, authorized data aggregators,
-          and public domain sources.
-        </p>
-        <h3>4.2 Accuracy Disclaimer</h3>
+        <h3>4.1 Data Sources and Attribution</h3>
+        <p>Our sports data is sourced from multiple providers, each with specific terms:</p>
         <ul>
-          <li>Data provided "as-is" without warranty</li>
-          <li>Not responsible for third-party data errors</li>
-          <li>Updates subject to source availability</li>
-          <li>Live scores may have delays</li>
+          <li><strong>SportsDataIO:</strong> Primary provider for MLB, NFL, NCAA Football, and NCAA Basketball (licensed commercial API)</li>
+          <li><strong>MLB Advanced Media:</strong> Official MLB statistics and game data</li>
+          <li><strong>ESPN API:</strong> Live scores and game information (public endpoints)</li>
+          <li><strong>NCAA Official Stats:</strong> College sports data and statistics</li>
+          <li><strong>Perfect Game:</strong> Youth baseball tournament data</li>
+          <li><strong>MaxPreps:</strong> High school sports data and coverage</li>
         </ul>
-        <h3>4.3 Intellectual Property</h3>
+        <p>For detailed attribution requirements, see our <a href="/attribution">Data Attribution</a> page.</p>
+        <h3>4.2 Data Accuracy and Timing</h3>
+        <p><strong>Important Disclaimers:</strong></p>
         <ul>
-          <li>All content © 2025 Blaze Sports Intel unless noted</li>
-          <li>Team names and logos belong to respective owners</li>
-          <li>User-generated content remains yours with license to us</li>
-          <li>No unauthorized commercial use</li>
+          <li><strong>Live Score Delays:</strong> Real-time scores have a 15-60 second delay from official sources</li>
+          <li><strong>"As-Is" Provision:</strong> All data provided without warranty of accuracy, completeness, or timeliness</li>
+          <li><strong>Provider Dependency:</strong> Data quality and availability depend on third-party provider performance</li>
+          <li><strong>Not Official:</strong> Our Service is not affiliated with or endorsed by any league, team, or official statistics provider</li>
+          <li><strong>Historical Data:</strong> Accuracy subject to provider updates and corrections</li>
+          <li><strong>Predictions:</strong> Game predictions and analytics are for informational and entertainment purposes only</li>
+        </ul>
+        <h3>4.3 Intellectual Property Rights</h3>
+        <ul>
+          <li><strong>Platform Content:</strong> All original content, analytics, visualizations, and code © 2025 Blaze Sports Intel</li>
+          <li><strong>Sports Data:</strong> Remains property of respective data providers and leagues</li>
+          <li><strong>Team Names & Logos:</strong> Trademarks and service marks belong to respective teams and leagues</li>
+          <li><strong>User Content:</strong> Currently no user-generated content features (read-only platform)</li>
+          <li><strong>Commercial Use:</strong> No unauthorized commercial use of platform content without written permission</li>
+          <li><strong>Fair Use:</strong> Sports statistics, scores, and facts used under fair use doctrine for news and information purposes</li>
+        </ul>
+        <h3>4.4 AI-Generated Content</h3>
+        <ul>
+          <li>Predictions, insights, and chatbot responses are generated using AI models (Anthropic Claude, Cloudflare Workers AI)</li>
+          <li>AI-generated content is for informational purposes only and should not be relied upon for betting or financial decisions</li>
+          <li>We do not guarantee the accuracy or reliability of AI predictions</li>
         </ul>
       </section>
 
       <section>
         <h2>5. API Usage Terms</h2>
         <h3>5.1 Rate Limits</h3>
+        <p>To ensure fair access and platform stability, the following rate limits apply:</p>
         <ul>
-          <li>1,000 requests per hour (standard tier)</li>
-          <li>10,000 requests per hour (premium tier)</li>
-          <li>Automatic throttling for exceeded limits</li>
-          <li>Exponential backoff required</li>
+          <li><strong>Global Rate Limit:</strong> 100 requests per 15 minutes per IP address</li>
+          <li><strong>Live Scores:</strong> Cached with 30-second refresh intervals</li>
+          <li><strong>Sports Data:</strong> Cached with 5-minute refresh intervals</li>
+          <li><strong>AI Copilot Queries:</strong> Cached with 3-5 minute refresh intervals</li>
+          <li><strong>Automatic Throttling:</strong> Requests exceeding limits will receive HTTP 429 (Too Many Requests)</li>
+          <li><strong>Exponential Backoff:</strong> Required when retrying failed requests</li>
         </ul>
-        <h3>5.2 Acceptable Use</h3>
+        <p><strong>Future Tiers:</strong> We may introduce tiered access levels in the future with higher rate limits for premium users.</p>
+        <h3>5.2 Acceptable API Use</h3>
         <ul>
-          <li>Personal or internal business use</li>
-          <li>Attribution required: "Data from Blaze Sports Intel"</li>
-          <li>No high-frequency trading applications</li>
-          <li>Comply with data provider restrictions</li>
+          <li><strong>Personal & Research Use:</strong> Free for personal projects, academic research, and non-commercial applications</li>
+          <li><strong>Attribution Required:</strong> Must display "Data powered by Blaze Sports Intel" or equivalent attribution</li>
+          <li><strong>Commercial Use:</strong> Contact us at legal@blazesportsintel.com for commercial licensing</li>
+          <li><strong>Prohibited Uses:</strong> No high-frequency trading, gambling platforms (where illegal), or unauthorized resale</li>
+          <li><strong>Provider Compliance:</strong> You must comply with all third-party data provider terms and restrictions</li>
+          <li><strong>Caching:</strong> You may cache API responses for up to 24 hours; live data must be refreshed appropriately</li>
         </ul>
+        <h3>5.3 API Access Keys</h3>
+        <p><strong>Current Status:</strong> Public API endpoints do not require authentication. Internal trigger endpoints require bearer token authentication.</p>
+        <p><strong>Future Authentication:</strong> We may require API keys for access in the future. Registered users will receive notice before any authentication requirements are implemented.</p>
       </section>
 
       <section>
-        <h2>6. Payment Terms (When Applicable)</h2>
-        <h3>6.1 Subscription Services</h3>
+        <h2>6. Payment Terms (Future Use)</h2>
+        <p><strong>Current Status:</strong> Blaze Sports Intel is currently <strong>completely free</strong> with no payment processing, subscriptions, or premium features.</p>
+        <p><strong>Future Paid Features:</strong> If we introduce paid services in the future, the following terms will apply:</p>
+        <h3>6.1 Subscription Services (When Available)</h3>
         <ul>
-          <li>Monthly/annual billing cycles</li>
-          <li>Automatic renewal unless cancelled</li>
-          <li>Pro-rata refunds at our discretion</li>
-          <li>Price changes with 30-day notice</li>
+          <li>Monthly or annual billing cycles will be clearly disclosed</li>
+          <li>Automatic renewal unless cancelled before the renewal date</li>
+          <li>30-day advance notice for any price changes</li>
+          <li>Payment processed through secure third-party payment processors (we do not store payment information)</li>
+          <li>Pro-rata refunds may be offered at our discretion</li>
         </ul>
-        <h3>6.2 Refund Policy</h3>
+        <h3>6.2 Refund Policy (When Applicable)</h3>
         <ul>
-          <li>14-day money-back guarantee</li>
-          <li>No refunds for API overages</li>
-          <li>Disputed charges subject to investigation</li>
+          <li>14-day money-back guarantee for new subscriptions</li>
+          <li>No refunds for API usage overages or add-on features</li>
+          <li>Disputed charges subject to investigation and verification</li>
+          <li>Refunds processed within 10 business days to original payment method</li>
         </ul>
+        <h3>6.3 Tax Compliance</h3>
+        <p>Prices exclude applicable taxes. You are responsible for all sales, use, and excise taxes, and any other similar taxes, duties, and charges of any kind imposed by any governmental authority on any amounts payable by you.</p>
       </section>
 
       <section>

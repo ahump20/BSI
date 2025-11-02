@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import LiveGameTracker from './components/LiveGameTracker';
-import BoxScore from './components/BoxScore';
-import Standings from './components/Standings';
+import LiveGameTracker from './LiveGameTracker';
+import BoxScore from './BoxScore';
+import Standings from './Standings';
+import MLBAnalyticsEngine from './components/mlb-analytics';
 import './App.css';
 
 function App() {
@@ -55,6 +56,8 @@ function App() {
         );
       case 'standings':
         return <Standings />;
+      case 'analytics':
+        return <MLBAnalyticsEngine />;
       default:
         return null;
     }
@@ -84,19 +87,26 @@ function App() {
           <span className="nav-icon">⚾</span>
           Live
         </button>
-        <button 
+        <button
           className={activeView === 'boxscore' ? 'active' : ''}
           onClick={() => setActiveView('boxscore')}
         >
           <span className="nav-icon">📊</span>
           Box Score
         </button>
-        <button 
+        <button
           className={activeView === 'standings' ? 'active' : ''}
           onClick={() => setActiveView('standings')}
         >
           <span className="nav-icon">🏆</span>
           Standings
+        </button>
+        <button
+          className={activeView === 'analytics' ? 'active' : ''}
+          onClick={() => setActiveView('analytics')}
+        >
+          <span className="nav-icon">📈</span>
+          Analytics
         </button>
       </nav>
 

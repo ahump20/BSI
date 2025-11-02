@@ -5,7 +5,7 @@ import './SportSwitcher.css'
  * Floating Action Button for Sport Switching
  *
  * Mobile-first component positioned in bottom-right corner
- * Allows users to switch between Baseball, Football, and Basketball
+ * Allows users to switch between Baseball, Football, Basketball, and Tools
  */
 function SportSwitcher({ currentSport = 'baseball' }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,6 +28,12 @@ function SportSwitcher({ currentSport = 'baseball' }) {
       icon: '🏀',
       path: '/basketball',
       color: '#ff8c00'
+    },
+    {
+      name: 'Tools',
+      icon: '🔧',
+      path: '/tools',
+      color: '#bf5700'
     }
   ]
 
@@ -43,7 +49,8 @@ function SportSwitcher({ currentSport = 'baseball' }) {
           {sports.map((sport) => {
             const isCurrent = (currentSport === 'baseball' && sport.path === '/') ||
                               (currentSport === 'football' && sport.path === '/football') ||
-                              (currentSport === 'basketball' && sport.path === '/basketball')
+                              (currentSport === 'basketball' && sport.path === '/basketball') ||
+                              (currentSport === 'tools' && sport.path === '/tools')
 
             return (
               <button

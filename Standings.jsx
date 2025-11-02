@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Standings.css';
+import SchedulingOptimizerPanel from './components/SchedulingOptimizerPanel';
 
 function Standings() {
   const [conference, setConference] = useState('sec');
@@ -31,8 +32,8 @@ function Standings() {
     <div className="standings">
       <div className="standings-header">
         <h2>Conference Standings</h2>
-        <select 
-          value={conference} 
+        <select
+          value={conference}
           onChange={(e) => setConference(e.target.value)}
           className="conference-select"
         >
@@ -99,6 +100,8 @@ function Standings() {
           </tbody>
         </table>
       </div>
+
+      <SchedulingOptimizerPanel conference={conference} teams={standingsData.teams} />
 
       <div className="standings-legend">
         <span className="tournament-indicator">■</span> NCAA Tournament Position

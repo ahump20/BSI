@@ -124,41 +124,29 @@ const NFL_DIVISIONS = {
  * Process and validate standings data
  */
 function processStandingsData(data, filterDivision) {
-    const conferences = {};
+    const allTeams = [];
 
     // ESPN standings structure: children array contains conferences
     const standingsData = data.children || [];
 
     standingsData.forEach(conference => {
-        const confName = conference.name; // 'American Football Conference' or 'National Football Conference'
         const confAbbr = conference.abbreviation; // 'AFC' or 'NFC'
-
-        conferences[confAbbr] = {
-            name: confName,
-            abbreviation: confAbbr,
-            divisions: []
-        };
 
         // Process divisions within conference
         const divisions = conference.standings?.entries || [];
-        const divisionMap = {};
 
         divisions.forEach(entry => {
             const team = entry.team;
             const stats = entry.stats || [];
 
             // Get division name using team ID mapping
-            const divisionName = NFL_DIVISIONS[team.id] || 'Unknown';
+            const fullDivisionName = NFL_DIVISIONS[team.id] || 'Unknown';
 
-            if (filterDivision && !divisionName.includes(filterDivision)) {
+            // Extract simple division name (e.g., "East" from "AFC East")
+            const simpleDivisionName = fullDivisionName.split(' ')[1] || fullDivisionName;
+
+            if (filterDivision && !fullDivisionName.includes(filterDivision)) {
                 return; // Skip if filtering by division
-            }
-
-            if (!divisionMap[divisionName]) {
-                divisionMap[divisionName] = {
-                    name: divisionName,
-                    teams: []
-                };
             }
 
             // Extract team statistics
@@ -169,51 +157,49 @@ function processStandingsData(data, filterDivision) {
             const winPercent = getStatValue(stats, 'winPercent');
             const pointsFor = getStatValue(stats, 'pointsFor');
             const pointsAgainst = getStatValue(stats, 'pointsAgainst');
-            const streak = getStatDisplay(stats, 'streak');
-            const divisionRecord = getStatDisplay(stats, 'vsDiv');
-            const conferenceRecord = getStatDisplay(stats, 'vsConf');
 
             const teamData = {
-                id: team.id,
-                name: team.displayName,
-                abbreviation: team.abbreviation,
-                logo: team.logos?.[0]?.href,
-                currentWins: wins,
-                gamesPlayed,
-                games: 17,
-                record: {
-                    wins,
-                    losses,
-                    ties,
-                    winPercent: (winPercent || 0).toFixed(3),
-                    displayRecord: ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`
-                },
-                division: divisionName,
+                teamName: team.displayName,
+                wins,
+                losses,
+                ties,
+                winPercentage: parseFloat((winPercent || 0).toFixed(3)),
+                division: simpleDivisionName,
                 conference: confAbbr,
-                stats: {
-                    pointsFor,
-                    pointsAgainst,
-                    pointDifferential: pointsFor - pointsAgainst,
-                    streak,
-                    divisionRecord,
-                    conferenceRecord
-                }
+                pointsFor,
+                pointsAgainst
             };
 
             // Validate record
-            const validation = validateNFLRecord(teamData);
+            const validation = validateNFLRecord({
+                currentWins: wins,
+                gamesPlayed,
+                games: 17,
+                name: team.displayName
+            });
             if (!validation.valid) {
                 console.warn(`Invalid record for ${team.displayName}:`, validation.errors);
             }
 
-            divisionMap[divisionName].teams.push(teamData);
+            allTeams.push(teamData);
         });
-
-        // Convert division map to array
-        conferences[confAbbr].divisions = Object.values(divisionMap);
     });
 
-    return Object.values(conferences);
+    // Sort by conference, division, then wins
+    return allTeams.sort((a, b) => {
+        // Sort by conference (AFC first)
+        if (a.conference !== b.conference) {
+            return a.conference === 'AFC' ? -1 : 1;
+        }
+        // Then by division
+        const divOrder = ['East', 'North', 'South', 'West'];
+        const divCompare = divOrder.indexOf(a.division) - divOrder.indexOf(b.division);
+        if (divCompare !== 0) {
+            return divCompare;
+        }
+        // Then by wins (descending)
+        return b.wins - a.wins;
+    });
 }
 
 /**

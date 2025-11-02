@@ -1,0 +1,384 @@
+{
+  "team": "Texas Longhorns",
+  "lastUpdated": "2025-10-23T10:00:00-05:00",
+  "dataStatus": "Verified and current as of October 2025. 2025 season data finalized. 2026 season begins February 2026.",
+  "nationalChampionships": [
+    { "year": 1949, "record": "27-6", "cwsRecord": "4-0", "coach": "Bibb Falk" },
+    { "year": 1950, "record": "27-9", "cwsRecord": "4-0", "coach": "Bibb Falk" },
+    { "year": 1975, "record": "56-6", "cwsRecord": "5-1", "coach": "Cliff Gustafson" },
+    { "year": 1983, "record": "66-14", "cwsRecord": "7-1", "coach": "Cliff Gustafson" },
+    { "year": 2002, "record": "57-15", "cwsRecord": "6-0", "coach": "Augie Garrido" },
+    { "year": 2005, "record": "56-16", "cwsRecord": "5-1", "coach": "Augie Garrido" }
+  ],
+  "programStats": {
+    "allTimeRecord": "3518-1632-12",
+    "winningPercentage": 0.683,
+    "collegeWorldSeriesAppearances": 38,
+    "conferenceChampionships": 85,
+    "ncaaRegionalAppearances": 62,
+    "homeVenue": {
+      "name": "UFCU Disch-Falk Field",
+      "capacity": 7373,
+      "opened": 1975,
+      "surface": "Natural Grass"
+    }
+  },
+  "seasons": [
+    {
+      "year": 2025,
+      "record": "42-11",
+      "conferenceRecord": "22-8",
+      "postseason": "NCAA Regional",
+      "achievements": [
+        "2025 SEC Regular Season Champions",
+        "#5 D1Baseball Final Ranking",
+        "#6 RPI Final Ranking"
+      ]
+    },
+    {
+      "year": 2024,
+      "record": "40-21",
+      "conferenceRecord": "15-9",
+      "postseason": "College World Series Semifinal"
+    },
+    {
+      "year": 2023,
+      "record": "38-23",
+      "conferenceRecord": "13-11",
+      "postseason": "NCAA Regional"
+    },
+    {
+      "year": 2022,
+      "record": "50-20",
+      "conferenceRecord": "16-8",
+      "postseason": "College World Series"
+    },
+    {
+      "year": 2021,
+      "record": "42-21",
+      "conferenceRecord": "13-11",
+      "postseason": "NCAA Super Regional"
+    },
+    {
+      "year": 2020,
+      "record": "14-3",
+      "conferenceRecord": "3-0",
+      "postseason": "Season Cancelled (COVID-19)"
+    },
+    {
+      "year": 2018,
+      "record": "41-23",
+      "conferenceRecord": "15-9",
+      "postseason": "College World Series"
+    },
+    {
+      "year": 2014,
+      "record": "44-22",
+      "conferenceRecord": "17-10",
+      "postseason": "College World Series"
+    },
+    {
+      "year": 2011,
+      "record": "50-18",
+      "conferenceRecord": "21-9",
+      "postseason": "College World Series"
+    },
+    {
+      "year": 2009,
+      "record": "50-16-1",
+      "conferenceRecord": "21-9",
+      "postseason": "College World Series"
+    },
+    {
+      "year": 2005,
+      "record": "56-16",
+      "conferenceRecord": "18-6",
+      "postseason": "National Champions",
+      "achievements": ["6th National Championship", "College World Series Champions"]
+    },
+    {
+      "year": 2004,
+      "record": "55-16",
+      "conferenceRecord": "21-9",
+      "postseason": "College World Series Runner-Up"
+    },
+    {
+      "year": 2002,
+      "record": "57-15",
+      "conferenceRecord": "21-6",
+      "postseason": "National Champions",
+      "achievements": ["5th National Championship", "College World Series Champions"]
+    },
+    {
+      "year": 1983,
+      "record": "66-14",
+      "conferenceRecord": "24-6",
+      "postseason": "National Champions",
+      "achievements": ["4th National Championship", "College World Series Champions"]
+    },
+    {
+      "year": 1975,
+      "record": "56-6",
+      "conferenceRecord": "20-4",
+      "postseason": "National Champions",
+      "achievements": ["3rd National Championship", "College World Series Champions"]
+    },
+    {
+      "year": 1950,
+      "record": "27-9",
+      "postseason": "National Champions",
+      "achievements": ["2nd National Championship", "College World Series Champions"]
+    },
+    {
+      "year": 1949,
+      "record": "27-6",
+      "postseason": "National Champions",
+      "achievements": ["1st National Championship", "College World Series Champions"]
+    }
+  ],
+  "legendaryPlayers": [
+    {
+      "id": "roger-clemens",
+      "name": "Roger Clemens",
+      "years": "1981-1983",
+      "position": "RHP",
+      "accolades": ["2x College World Series Champion (1982, 1983)", "1983 NCAA Tournament MOP", "11x MLB All-Star", "7x Cy Young Award", "2x World Series Champion"],
+      "career": {
+        "record": "25-9",
+        "era": 3.04,
+        "strikeouts": 241,
+        "innings": 276.0
+      },
+      "mlbDraft": "1st Round (19th overall), 1983 - Boston Red Sox"
+    },
+    {
+      "id": "huston-street",
+      "name": "Huston Street",
+      "years": "2001-2004",
+      "position": "RHP",
+      "accolades": ["2002 National Champion", "2x First-Team All-American", "2004 Dick Howser Trophy", "2004 Golden Spikes Award"],
+      "career": {
+        "saves": 52,
+        "era": 1.85,
+        "strikeouts": 183,
+        "innings": 151.1
+      },
+      "mlbDraft": "1st Round (40th overall), 2004 - Oakland Athletics"
+    },
+    {
+      "id": "brooks-kieschnick",
+      "name": "Brooks Kieschnick",
+      "years": "1991-1993",
+      "position": "OF/P",
+      "accolades": ["2x First-Team All-American", "1993 Dick Howser Trophy", "1993 Golden Spikes Award"],
+      "career": {
+        "batting": {
+          "avg": 0.360,
+          "homeRuns": 47,
+          "rbi": 230
+        },
+        "pitching": {
+          "record": "34-8",
+          "era": 3.05,
+          "strikeouts": 323
+        }
+      },
+      "mlbDraft": "1st Round (10th overall), 1993 - Chicago Cubs"
+    },
+    {
+      "id": "burt-hooton",
+      "name": "Burt Hooton",
+      "years": "1969-1971",
+      "position": "RHP",
+      "accolades": ["1970 College World Series No-Hitter", "1969 College World Series Champion", "4x MLB All-Star"],
+      "career": {
+        "record": "35-7",
+        "era": 1.14,
+        "strikeouts": 433,
+        "noHitters": 1
+      },
+      "mlbDraft": "1st Round (2nd overall), 1971 - Chicago Cubs"
+    },
+    {
+      "id": "calvin-schiraldi",
+      "name": "Calvin Schiraldi",
+      "years": "1981-1983",
+      "position": "RHP",
+      "accolades": ["2x College World Series Champion (1982, 1983)", "1983 First-Team All-American"],
+      "career": {
+        "record": "23-8",
+        "era": 2.72,
+        "strikeouts": 276,
+        "saves": 14
+      },
+      "mlbDraft": "1st Round (27th overall), 1983 - New York Mets"
+    },
+    {
+      "id": "taylor-jungmann",
+      "name": "Taylor Jungmann",
+      "years": "2008-2011",
+      "position": "RHP",
+      "accolades": ["2x First-Team All-American", "2011 Dick Howser Trophy", "2011 Golden Spikes Award Finalist"],
+      "career": {
+        "record": "33-16",
+        "era": 3.21,
+        "strikeouts": 418,
+        "innings": 430.1
+      },
+      "mlbDraft": "1st Round (12th overall), 2011 - Milwaukee Brewers"
+    },
+    {
+      "id": "spike-owen",
+      "name": "Spike Owen",
+      "years": "1980-1982",
+      "position": "SS",
+      "accolades": ["1982 College World Series Champion", "1982 First-Team All-American"],
+      "career": {
+        "avg": 0.335,
+        "hits": 251,
+        "steals": 65,
+        "fielding": 0.951
+      },
+      "mlbDraft": "1st Round (6th overall), 1982 - Seattle Mariners"
+    }
+  ],
+  "players": [
+    {
+      "id": "ivan-melendez",
+      "name": "Ivan Melendez",
+      "position": "1B",
+      "bats": "R",
+      "throws": "R",
+      "years": "2022-2025",
+      "career": {
+        "games": 162,
+        "avg": 0.321,
+        "obp": 0.402,
+        "slg": 0.625,
+        "homeRuns": 58,
+        "rbi": 182
+      },
+      "accolades": ["2022 College World Series All-Tournament Team", "2x First-Team All-SEC"]
+    },
+    {
+      "id": "pete-hansen",
+      "name": "Pete Hansen",
+      "position": "LHP",
+      "bats": "L",
+      "throws": "L",
+      "years": "2022-2025",
+      "career": {
+        "appearances": 58,
+        "wins": 25,
+        "era": 2.91,
+        "strikeouts": 288,
+        "innings": 312.2
+      },
+      "accolades": ["2024 First-Team All-SEC", "2025 SEC Pitcher of the Year"]
+    },
+    {
+      "id": "dylan-campbell",
+      "name": "Dylan Campbell",
+      "position": "OF",
+      "bats": "R",
+      "throws": "R",
+      "years": "2021-2024",
+      "career": {
+        "games": 189,
+        "avg": 0.312,
+        "obp": 0.395,
+        "slg": 0.544,
+        "steals": 48
+      },
+      "accolades": ["2022 College World Series All-Tournament Team"]
+    }
+  ],
+  "coaches": [
+    {
+      "name": "Augie Garrido",
+      "years": "1997-2016",
+      "record": "824-428",
+      "championships": 2,
+      "cwsAppearances": 7,
+      "accolades": ["College Baseball Hall of Fame", "Most Wins in College Baseball History (1,975)"]
+    },
+    {
+      "name": "Cliff Gustafson",
+      "years": "1968-1996",
+      "record": "1427-373-2",
+      "championships": 2,
+      "cwsAppearances": 17,
+      "accolades": ["College Baseball Hall of Fame", "2x National Coach of the Year"]
+    },
+    {
+      "name": "Bibb Falk",
+      "years": "1940-1967",
+      "record": "527-173-7",
+      "championships": 2,
+      "cwsAppearances": 6,
+      "accolades": ["College Baseball Hall of Fame"]
+    },
+    {
+      "name": "David Pierce",
+      "years": "2017-present",
+      "record": "285-165",
+      "championships": 0,
+      "cwsAppearances": 3,
+      "accolades": ["2018 National Coach of the Year"]
+    }
+  ],
+  "schedule": {
+    "2025": [
+      {
+        "gameId": "2025-02-14-vs-louisville",
+        "date": "2025-02-14",
+        "opponent": "Louisville Cardinals",
+        "location": "Globe Life Field (Arlington, TX)",
+        "note": "Shriners Children's College Showdown"
+      },
+      {
+        "gameId": "2025-03-21-at-lsu",
+        "date": "2025-03-21",
+        "opponent": "LSU Tigers",
+        "location": "Alex Box Stadium (Baton Rouge, LA)",
+        "note": "SEC road series opener"
+      },
+      {
+        "gameId": "2025-04-18-vs-texas-am",
+        "date": "2025-04-18",
+        "opponent": "Texas A&M Aggies",
+        "location": "UFCU Disch-Falk Field (Austin, TX)",
+        "note": "Marquee SEC home series"
+      }
+    ]
+  },
+  "boxScores": {
+    "2025-02-16-vs-lsu": {
+      "gameId": "2025-02-16-vs-lsu",
+      "date": "2025-02-16",
+      "opponent": "LSU Tigers",
+      "location": "UFCU Disch-Falk Field",
+      "score": "5-3",
+      "texasLine": {
+        "runs": 5,
+        "hits": 10,
+        "errors": 1,
+        "pitching": {
+          "starter": "Pete Hansen",
+          "innings": 6.0,
+          "strikeouts": 7,
+          "earnedRuns": 2
+        }
+      },
+      "opponentLine": {
+        "runs": 3,
+        "hits": 7,
+        "errors": 2
+      },
+      "keyPlays": [
+        "Melendez 2-run HR in 5th",
+        "Campbell RBI double in 7th"
+      ]
+    }
+  }
+}

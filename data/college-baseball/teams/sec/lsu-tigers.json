@@ -1,0 +1,88 @@
+{
+  "slug": "lsu-tigers",
+  "team_name": "LSU Tigers",
+  "mascot": "Tigers",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Jay Johnson reloading after 2023 national title and 2024 Super Regional exit."
+  },
+  "location": {
+    "city": "Baton Rouge",
+    "state": "Louisiana",
+    "campus": "Louisiana State University",
+    "ballpark": {
+      "name": "Alex Box Stadium, Skip Bertman Field",
+      "capacity": 10826,
+      "surface": "Natural grass",
+      "recent_upgrades": "Installed new Hawkeye camera suite for pitch design (July 2024)."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#461D7C",
+    "secondary_color_hex": "#FDD023"
+  },
+  "head_coach": {
+    "name": "Jay Johnson",
+    "contract_through": "2031",
+    "base_salary_estimate": 1500000,
+    "staff_tenure": "Fourth season at LSU after Arizona tenure.",
+    "playing_style": "Elite on-base percentage with pro-style development; heavy on scouting and data blending.",
+    "recent_quotes": "Told The Advocate (Oct 2024) they want two portal-ready lefties to complement returning rotation."
+  },
+  "support_staff": {
+    "pitching_coach": "Nate Yeskie",
+    "hitting_coach": "Marc Wanaka",
+    "recruiting_coordinator": "Josh Jordan",
+    "director_of_operations": "Tyler Nordgren",
+    "analytics_lead": "Jamie Tutko",
+    "player_development_director": "Anthony Ranaudo",
+    "video_coordinator": "TBD"
+  },
+  "nil_operations": {
+    "primary_collective": "Bayou Traditions",
+    "lead_contact": "Brandon Naquin",
+    "contact_channels": [
+      "info@bayoutraditions.com",
+      "https://www.bayoutraditions.com/contact"
+    ],
+    "recent_initiatives": "Launched 'Box Club' premium experience for baseball donors with player meetups (Sept 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Scott Woodward",
+    "baseball_admin": "Brandon Buteaux",
+    "financial_points_of_contact": [
+      "tickets@lsu.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 7,
+    "sec_titles": 17,
+    "last_super_regional": "2024",
+    "program_trend": "Title-or-bust expectations; NIL remains national benchmark."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-15T09:00:00-05:00",
+      "summary": "Tiger Athletic Foundation exploring baseball-only dorm option near Nicholson Drive.",
+      "source_hint": "WBRZ investigative report on athletics facilities",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Populate roster retention data; verify analytics staff assignments."
+  }
+}

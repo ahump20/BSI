@@ -1,0 +1,128 @@
+name: Content Blocklist Check
+
+on:
+  pull_request:
+    paths:
+      - 'apps/games/**'
+      - 'assets/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/games/**'
+      - 'assets/**'
+
+jobs:
+  check-blocklist:
+    name: Check for Prohibited Content
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better diff checking
+
+      - name: Check for prohibited terms
+        run: |
+          echo "🔍 Checking for prohibited IP terms..."
+
+          # Read blocklist (skip comments and empty lines)
+          BLOCKLIST_FILE=".github/content-blocklist.txt"
+          if [ ! -f "$BLOCKLIST_FILE" ]; then
+            echo "❌ Blocklist file not found: $BLOCKLIST_FILE"
+            exit 1
+          fi
+
+          # Extract non-comment, non-empty lines
+          BLOCKED_TERMS=$(grep -v '^#' "$BLOCKLIST_FILE" | grep -v '^$' || true)
+
+          if [ -z "$BLOCKED_TERMS" ]; then
+            echo "⚠️  Blocklist is empty"
+            exit 0
+          fi
+
+          echo "📋 Loaded $(echo "$BLOCKED_TERMS" | wc -l) blocked terms"
+
+          # Files to check (game code and assets)
+          FILES_TO_CHECK=$(find apps/games -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.png" -o -name "*.jpg" -o -name "*.svg" -o -name "*.md" \) || true)
+          FILES_TO_CHECK="$FILES_TO_CHECK $(find assets -type f 2>/dev/null || true)"
+
+          if [ -z "$FILES_TO_CHECK" ]; then
+            echo "ℹ️  No game files to check"
+            exit 0
+          fi
+
+          echo "🔎 Checking $(echo "$FILES_TO_CHECK" | wc -w) files..."
+
+          # Check each file for blocked terms
+          VIOLATIONS_FOUND=false
+          VIOLATIONS_LIST=""
+
+          while IFS= read -r term; do
+            # Skip empty lines
+            [ -z "$term" ] && continue
+
+            # Search for term in files (case-sensitive)
+            MATCHES=$(echo "$FILES_TO_CHECK" | xargs grep -l -F "$term" 2>/dev/null || true)
+
+            if [ ! -z "$MATCHES" ]; then
+              VIOLATIONS_FOUND=true
+              echo ""
+              echo "❌ BLOCKED TERM FOUND: '$term'"
+              echo "   Files:"
+              echo "$MATCHES" | while read -r file; do
+                echo "     - $file"
+                # Show context (line with match)
+                grep -n -F "$term" "$file" | head -3 | sed 's/^/       /'
+              done
+
+              VIOLATIONS_LIST="$VIOLATIONS_LIST\n- Term: '$term' in files: $(echo $MATCHES | tr '\n' ' ')"
+            fi
+          done <<< "$BLOCKED_TERMS"
+
+          if [ "$VIOLATIONS_FOUND" = true ]; then
+            echo ""
+            echo "════════════════════════════════════════════════════════════════"
+            echo "❌ CONTENT BLOCKLIST CHECK FAILED"
+            echo "════════════════════════════════════════════════════════════════"
+            echo ""
+            echo "Prohibited terms from copyrighted content were detected."
+            echo ""
+            echo "Violations:"
+            echo -e "$VIOLATIONS_LIST"
+            echo ""
+            echo "Action required:"
+            echo "1. Remove or rename the flagged content"
+            echo "2. Ensure all content is original or properly licensed"
+            echo "3. Review LEGAL_COMPLIANCE.md for guidelines"
+            echo ""
+            echo "If this is a false positive (e.g., term in documentation):"
+            echo "- Move explanation to separate doc file"
+            echo "- Or update .github/content-blocklist.txt to be more specific"
+            echo ""
+            exit 1
+          else
+            echo ""
+            echo "✅ Content blocklist check passed"
+            echo "   No prohibited terms detected"
+          fi
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "### ✅ Content Blocklist Check: PASSED" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No prohibited IP terms were detected in game files." >> $GITHUB_STEP_SUMMARY
+
+      - name: Failure Summary
+        if: failure()
+        run: |
+          echo "### ❌ Content Blocklist Check: FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Prohibited terms were detected. See job logs for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Action Required:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Remove copyrighted content" >> $GITHUB_STEP_SUMMARY
+          echo "- Use only original or properly licensed assets" >> $GITHUB_STEP_SUMMARY
+          echo "- Review \`LEGAL_COMPLIANCE.md\`" >> $GITHUB_STEP_SUMMARY

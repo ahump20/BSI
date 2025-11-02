@@ -1,0 +1,87 @@
+{
+  "slug": "tennessee-volunteers",
+  "team_name": "Tennessee Volunteers",
+  "mascot": "Volunteers",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Reigning 2024 national champions with heavy MLB departures."
+  },
+  "location": {
+    "city": "Knoxville",
+    "state": "Tennessee",
+    "campus": "University of Tennessee",
+    "ballpark": {
+      "name": "Lindsey Nelson Stadium",
+      "capacity": 4700,
+      "surface": "Artificial turf",
+      "recent_upgrades": "Major renovation project under construction with expanded seating for 2025."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#FF8200",
+    "secondary_color_hex": "#58595B"
+  },
+  "head_coach": {
+    "name": "Tony Vitello",
+    "contract_through": "2029",
+    "base_salary_estimate": 2000000,
+    "staff_tenure": "Entering eighth season; delivered 2024 national title.",
+    "playing_style": "High-velo pitching and home-run heavy offense with swagger-driven culture."
+  },
+  "support_staff": {
+    "pitching_coach": "Frank Anderson",
+    "hitting_coach": "Josh Elander",
+    "recruiting_coordinator": "Josh Elander",
+    "director_of_operations": "Chad Zerbe",
+    "analytics_lead": "Luke Bonfield",
+    "player_development_director": "Ross Kivett",
+    "video_coordinator": "TBD"
+  },
+  "nil_operations": {
+    "primary_collective": "Spyre Sports Group",
+    "lead_contact": "Hunter Baddour",
+    "contact_channels": [
+      "info@spyresports.com",
+      "https://www.spyresports.com/contact"
+    ],
+    "recent_initiatives": "Expanding baseball-specific 'BaseVols Club' experiences with player Q&As (Sept 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Danny White",
+    "baseball_admin": "Adam Gotsis",
+    "financial_points_of_contact": [
+      "volstix@utk.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 1,
+    "sec_titles": 5,
+    "last_super_regional": "2024",
+    "program_trend": "Elite national power with top-tier NIL and facility investments underway."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-12T10:15:00-04:00",
+      "summary": "VolQuest reports staff expects sophomore LHP Drew Beam to anchor rotation with expanded workload.",
+      "source_hint": "VolQuest premium update",
+      "confidence": "medium",
+      "status": "pending"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Collect updated roster after MLB departures; verify NIL initiative details."
+  }
+}

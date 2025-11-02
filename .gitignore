@@ -51,3 +51,5 @@ deployment-manifest-*.txt
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 .wrangler/
+.next/
+out/

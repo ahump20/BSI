@@ -5,9 +5,10 @@
   "description": "Mobile-first college baseball live tracker with full box scores",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run build:functions",
+    "build:lib": "tsc",
     "build:functions": "tsc -p tsconfig.functions.json && npm run copy:lib",
     "copy:lib": "cp -r lib dist/",
+    "build": "vite build && npm run build:functions",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy dist",
     "deploy:production": "npm run build && wrangler pages deploy dist --project-name college-baseball-tracker --branch main --commit-dirty=true",
@@ -15,26 +16,38 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit",
     "db:migrate:production": "wrangler d1 execute blazesports-historical --remote --file=schema/003_migration_drop_and_recreate.sql",
     "db:seed:production": "wrangler d1 execute blazesports-historical --remote --file=scripts/insert-test-teams-fixed.sql"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@aws-sdk/client-s3": "^3.714.0",
+    "@sentry/node": "^10.20.0",
+    "lucide-react": "^0.546.0",
+    "luxon": "^3.4.4",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.11.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251011.0",
+    "@cloudflare/workers-types": "^4.20251014.0",
     "@prisma/client": "^6.18.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^24.9.1",
+    "@types/pg": "^8.10.9",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^4.7.0",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",
     "jsdom": "^24.0.0",
+    "next": "^16.0.1",
     "prisma": "^6.18.0",
-    "typescript": "^5.9.3",
-    "vite": "^5.0.0",
-    "vitest": "^1.6.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.11",
+    "vitest": "^4.0.1",
     "wrangler": "^3.22.0"
   }
 }

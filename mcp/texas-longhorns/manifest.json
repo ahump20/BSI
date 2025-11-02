@@ -1,0 +1,145 @@
+{
+  "name": "texas-longhorns",
+  "version": "0.1.0",
+  "description": "Texas Longhorns multi-sport MCP server prioritizing baseball, then football, basketball, and track & field data for Blaze Sports Intel.",
+  "contact": "diamond-insights@blazesportsintel.com",
+  "timezone": "America/Chicago",
+  "sport_order": ["baseball", "football", "basketball", "track_field"],
+  "tools": [
+    {
+      "name": "get_team_seasons",
+      "description": "Return Longhorns season summaries with baseball-first ordering and CDT citations.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track_field"],
+            "description": "Optional sport filter. Defaults to all sports in baseball→football→basketball→track_field order."
+          },
+          "team": {
+            "type": "string",
+            "description": "Optional team override. Only \"Texas Longhorns\" is supported."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_season_schedule",
+      "description": "Return a season schedule for the requested Longhorns sport with CDT-formatted timestamps and citations.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "season"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track_field"],
+            "description": "Sport to fetch. Soccer is explicitly rejected."
+          },
+          "season": {
+            "type": "string",
+            "description": "Season or meet year (e.g., '2025', '2025-26', '2025 Outdoor')."
+          },
+          "program": {
+            "type": "string",
+            "description": "Basketball/track program discriminator (e.g., 'Men', 'Women')."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_game_box_score",
+      "description": "Return a structured box score for a given Longhorns game with CDT citations and cache metadata.",
+      "input_schema": {
+        "type": "object",
+        "required": ["sport", "gameId"],
+        "properties": {
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track_field"],
+            "description": "Sport bucket for the game. Soccer and other sports are rejected."
+          },
+          "gameId": {
+            "type": "string",
+            "description": "Stable identifier for the game or meet."
+          },
+          "program": {
+            "type": "string",
+            "description": "Program discriminator for basketball/track if needed."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_player_career",
+      "description": "Return curated career information for a featured Longhorn with CDT citation trail and cache metadata.",
+      "input_schema": {
+        "type": "object",
+        "required": ["playerId"],
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "description": "Slug identifier used across feeds (e.g., 'ivan-melendez')."
+          },
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track_field"],
+            "description": "Optional sport hint to speed up lookups."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_rankings_context",
+      "description": "Return rankings and advanced context in baseball→football→basketball→track & field order.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "season": {
+            "type": "string",
+            "description": "Optional season key (e.g., '2024', '2025Preseason')."
+          },
+          "sport": {
+            "type": "string",
+            "enum": ["baseball", "football", "basketball", "track_field"],
+            "description": "Optional filter."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_archive",
+      "description": "Search Blaze Sports Intel's vetted Texas Longhorns archive. Soccer queries are rejected by policy.",
+      "input_schema": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query. Queries referencing soccer will be rejected."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "default": 5,
+            "description": "Maximum number of entries to return."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "policies": {
+    "soccer": {
+      "status": "rejected",
+      "message": "The Texas Longhorns MCP server does not cover soccer. Please choose baseball, football, basketball, or track & field."
+    }
+  },
+  "documentation": "README.md"
+}

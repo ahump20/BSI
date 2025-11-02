@@ -1,0 +1,86 @@
+{
+  "slug": "texas-longhorns",
+  "team_name": "Texas Longhorns",
+  "mascot": "Longhorns",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "First season in SEC arrives spring 2025; Jim Schlossnagle takes over program."
+  },
+  "location": {
+    "city": "Austin",
+    "state": "Texas",
+    "campus": "University of Texas",
+    "ballpark": {
+      "name": "UFCU Disch-Falk Field",
+      "capacity": 7000,
+      "surface": "Artificial turf",
+      "recent_upgrades": "Pitching lab expansion and player dorm renovations slated for winter 2024."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#BF5700",
+    "secondary_color_hex": "#FFFFFF"
+  },
+  "head_coach": {
+    "name": "Jim Schlossnagle",
+    "contract_through": "2031",
+    "base_salary_estimate": 1900000,
+    "staff_tenure": "First season after moving from Texas A&M; 2024 national runner-up."
+  },
+  "support_staff": {
+    "pitching_coach": "Michael Earley (interim until staff finalized)",
+    "hitting_coach": "Nate Yeskie (expected hire)",
+    "recruiting_coordinator": "Troy Tulowitzki",
+    "director_of_operations": "April Phillips",
+    "analytics_lead": "Vacant",
+    "player_development_director": "Phil Haig",
+    "video_coordinator": "Nick Pierce"
+  },
+  "nil_operations": {
+    "primary_collective": "Texas One Fund",
+    "lead_contact": "Neill Woelk",
+    "contact_channels": [
+      "support@texasonefund.org",
+      "https://texasonefund.org/contact"
+    ],
+    "recent_initiatives": "Launching SEC-era baseball donor tour across Texas (Oct 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Chris Del Conte",
+    "baseball_admin": "Drew Martin",
+    "financial_points_of_contact": [
+      "ticketquestions@utexas.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 6,
+    "sec_titles": 0,
+    "last_super_regional": "2024",
+    "program_trend": "National power with fresh leadership aiming to adapt to SEC grind quickly."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-17T08:30:00-05:00",
+      "summary": "Austin American-Statesman reports staff evaluating full operations overhaul, including analytics hires.",
+      "source_hint": "Austin American-Statesman feature",
+      "confidence": "medium",
+      "status": "pending"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Await official staff announcements; update roster once SEC transition finalized."
+  }
+}

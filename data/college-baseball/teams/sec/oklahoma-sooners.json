@@ -1,0 +1,87 @@
+{
+  "slug": "oklahoma-sooners",
+  "team_name": "Oklahoma Sooners",
+  "mascot": "Sooners",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "First SEC campaign coming in 2025 after final Big 12 run."
+  },
+  "location": {
+    "city": "Norman",
+    "state": "Oklahoma",
+    "campus": "University of Oklahoma",
+    "ballpark": {
+      "name": "L. Dale Mitchell Park",
+      "capacity": 3500,
+      "surface": "Natural grass",
+      "recent_upgrades": "New performance lab and indoor cages scheduled to finish before SEC debut."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#841617",
+    "secondary_color_hex": "#FDF9D8"
+  },
+  "head_coach": {
+    "name": "Skip Johnson",
+    "contract_through": "2026",
+    "base_salary_estimate": 750000,
+    "staff_tenure": "Eighth season leading Oklahoma; 2022 national runner-up.",
+    "playing_style": "Aggressive baserunning with balanced pitching; heavy use of JUCO transfers."
+  },
+  "support_staff": {
+    "pitching_coach": "Clay Overcash",
+    "hitting_coach": "Russell Raley",
+    "recruiting_coordinator": "Clay Overcash",
+    "director_of_operations": "Brittany Harlan",
+    "analytics_lead": "Vacant",
+    "player_development_director": "Reggie Willits",
+    "video_coordinator": "Chase Loper"
+  },
+  "nil_operations": {
+    "primary_collective": "1Oklahoma Collective",
+    "lead_contact": "Jason Siegel",
+    "contact_channels": [
+      "info@1okcollective.com",
+      "https://1oklahoma.com/contact"
+    ],
+    "recent_initiatives": "Launched baseball-specific membership tier tied to SEC move marketing (Sept 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Joe Castiglione",
+    "baseball_admin": "Eddie Radosevich",
+    "financial_points_of_contact": [
+      "soonerstickets@ou.edu"
+    ]
+  },
+  "historical_context": {
+    "college_world_series_titles": 2,
+    "sec_titles": 0,
+    "last_super_regional": "2022",
+    "program_trend": "Momentum trending up; facilities still mid-pack relative to SEC peers."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-11T09:00:00-05:00",
+      "summary": "SoonerScoop indicates staff targeting additional left-handed bullpen arm from Mountain West portal.",
+      "source_hint": "SoonerScoop premium update",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Confirm support staff roles post-SEC transition; gather roster movement after Big 12 tournament."
+  }
+}

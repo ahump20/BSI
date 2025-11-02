@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import './BoxScore.css';
+import AdvancedMetricsTable from './components/AdvancedMetricsTable';
+import BullpenInsights from './components/college-baseball/BullpenInsights';
 
 function BoxScore({ game, onBack }) {
   const [activeTab, setActiveTab] = useState('batting');
   const [boxScoreData, setBoxScoreData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [entitlements, setEntitlements] = useState({
+    loading: true,
+    isPro: false,
+    plan: 'free',
+    error: null,
+    features: [],
+  });
+  const [diamondInsights, setDiamondInsights] = useState({
+    loading: false,
+    data: null,
+    error: null,
+  });
 
   useEffect(() => {
     fetchBoxScore();
@@ -14,6 +28,85 @@ function BoxScore({ game, onBack }) {
       return () => clearInterval(interval);
     }
   }, [game.id]);
+
+  useEffect(() => {
+    const loadEntitlements = async () => {
+      try {
+        const userId =
+          (typeof window !== 'undefined' && window.__APP_USER?.id) ||
+          (typeof window !== 'undefined' && window.localStorage?.getItem('bsi:userId')) ||
+          null;
+        const query = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+        const response = await fetch(`/api/billing/entitlements${query}`, {
+          credentials: 'include',
+        });
+        const data = await response.json();
+        setEntitlements({
+          loading: false,
+          isPro: Boolean(data.isPro),
+          plan: data.plan || 'free',
+          error: null,
+          features: data.features || [],
+        });
+      } catch (error) {
+        console.error('Error loading entitlements:', error);
+        setEntitlements({
+          loading: false,
+          isPro: false,
+          plan: 'free',
+          error: 'Unable to verify Diamond Pro status. Showing limited view.',
+          features: [],
+        });
+      }
+    };
+
+    loadEntitlements();
+  }, []);
+
+  useEffect(() => {
+    if (entitlements.loading || !entitlements.isPro) {
+      setDiamondInsights({ loading: false, data: null, error: null });
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    let isActive = true;
+
+    const loadDiamondProInsights = async () => {
+      setDiamondInsights((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const response = await fetch(`/api/analytics/baseball/games/${game.id}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error(`Diamond Pro analytics returned ${response.status}`);
+        }
+        const data = await response.json();
+        if (isActive) {
+          setDiamondInsights({ loading: false, data, error: null });
+        }
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          return;
+        }
+        console.error('Error fetching Diamond Pro analytics:', error);
+        if (isActive) {
+          setDiamondInsights({
+            loading: false,
+            data: null,
+            error: 'Unable to load Diamond Pro bullpen intel right now.',
+          });
+        }
+      }
+    };
+
+    loadDiamondProInsights();
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
+  }, [entitlements.loading, entitlements.isPro, game.id]);
 
   const fetchBoxScore = async () => {
     try {
@@ -240,6 +333,80 @@ function BoxScore({ game, onBack }) {
     );
   };
 
+  const handleUpgradeClick = () => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/auth/sign-up?plan=diamond-pro';
+    }
+  };
+
+  const renderAdvancedStats = () => {
+    if (!boxScoreData?.advanced) {
+      return (
+        <div className="advanced-placeholder">
+          Advanced tracking feeds are syncing. Check back soon for Diamond Pro metrics.
+        </div>
+      );
+    }
+
+    if (entitlements.loading) {
+      return <div className="loading-state">Confirming Diamond Pro access…</div>;
+    }
+
+    if (entitlements.error) {
+      return (
+        <div className="advanced-error" role="alert">
+          {entitlements.error}
+        </div>
+      );
+    }
+
+    if (!entitlements.isPro) {
+      return (
+        <div className="advanced-upgrade">
+          <h3>Diamond Pro Exclusive</h3>
+          <p>
+            Unlock xBA, xSLG, Stuff+, defender range, and signed highlight breakdowns with a Diamond Pro
+            subscription.
+          </p>
+          <button className="upgrade-button" onClick={handleUpgradeClick}>
+            Upgrade with Stripe
+          </button>
+          <p className="upgrade-helper">
+            Already subscribed? <a href="/auth/sign-in">Sign in</a> to refresh your Stripe entitlements.
+          </p>
+        </div>
+      );
+    }
+
+    const sections = [];
+
+    if (boxScoreData?.advanced) {
+      sections.push(
+        <AdvancedMetricsTable key="advanced-table" data={boxScoreData.advanced} />
+      );
+    }
+
+    if (diamondInsights.loading) {
+      sections.push(
+        <div key="advanced-loading" className="diamond-insights-loading">
+          Syncing Diamond Pro bullpen intel…
+        </div>
+      );
+    } else if (diamondInsights.error) {
+      sections.push(
+        <div key="advanced-error" className="advanced-error" role="alert">
+          {diamondInsights.error}
+        </div>
+      );
+    } else if (diamondInsights.data) {
+      sections.push(
+        <BullpenInsights key="bullpen-insights" data={diamondInsights.data} />
+      );
+    }
+
+    return <div className="advanced-stack">{sections}</div>;
+  };
+
   return (
     <div className="box-score">
       <div className="box-score-header">
@@ -253,22 +420,32 @@ function BoxScore({ game, onBack }) {
       {renderLineScore()}
 
       <div className="stats-tabs">
-        <button 
+        <button
           className={activeTab === 'batting' ? 'active' : ''}
           onClick={() => setActiveTab('batting')}
         >
           Batting
         </button>
-        <button 
+        <button
           className={activeTab === 'pitching' ? 'active' : ''}
           onClick={() => setActiveTab('pitching')}
         >
           Pitching
         </button>
+        <button
+          className={`${activeTab === 'advanced' ? 'active' : ''} ${entitlements.isPro ? 'pro-active' : 'pro-locked'}`}
+          onClick={() => setActiveTab('advanced')}
+          title="Diamond Pro unlocks advanced tracking metrics and signed highlights"
+        >
+          Advanced
+          <span className="pro-badge" aria-hidden="true">PRO</span>
+        </button>
       </div>
 
       <div className="stats-content">
-        {activeTab === 'batting' ? renderBattingStats() : renderPitchingStats()}
+        {activeTab === 'batting' && renderBattingStats()}
+        {activeTab === 'pitching' && renderPitchingStats()}
+        {activeTab === 'advanced' && renderAdvancedStats()}
       </div>
     </div>
   );

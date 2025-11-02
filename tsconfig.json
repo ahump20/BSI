@@ -6,7 +6,11 @@
     "types": ["@cloudflare/workers-types", "node"],
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "strict": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -37,7 +41,14 @@
     "**/*.test.ts",
     "apps/web/**/*",
     "lib/api/v1/**/*",
-    "workers/**/*"
+    "lib/adapters/espn-api.ts",
+    "lib/adapters/ncaa-api.ts",
+    "lib/adapters/sports-data-io.ts",
+    "lib/adapters/provider-manager.ts",
+    "lib/nlg/fact-checker.ts",
+    "lib/nlg/prompt-templates.ts",
+    "lib/validation/nextjs-validation.ts",
+    "lib/skills/sports-data-qc/**/*"
   ],
   "ts-node": {
     "esm": true,

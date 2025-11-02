@@ -307,6 +307,27 @@ class DatabaseConnectionService {
         return result.rows[0].id;
     }
 
+    async recordModelArtifactEvaluation({ modelKey, sport, version, metrics = {}, calibration = {} }) {
+        const query = `
+            INSERT INTO model_artifact_evaluations (
+                model_key, sport, artifact_version, metrics, calibration
+            ) VALUES ($1, $2, $3, $4::jsonb, $5::jsonb)
+            ON CONFLICT (model_key, artifact_version, sport)
+            DO UPDATE SET
+                metrics = EXCLUDED.metrics,
+                calibration = EXCLUDED.calibration,
+                captured_at = NOW()
+        `;
+
+        await this.query(query, [
+            modelKey,
+            sport || null,
+            version,
+            JSON.stringify(metrics || {}),
+            JSON.stringify(calibration || {})
+        ]);
+    }
+
     /**
      * Get team analytics with caching
      */

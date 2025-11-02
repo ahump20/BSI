@@ -13,6 +13,8 @@ import SportsDataAdapter from './adapters/sports-data-adapter.js';
 import SportsAnalyticsModels from './models/sports-analytics-models.js';
 import MLPipelineService from './ml/ml-pipeline-service.js';
 import DatabaseConnectionService from './database/connection-service.js';
+import ConferenceStrengthService from './services/conferenceStrength.js';
+import ObjectStorageService from './services/object-storage-service.js';
 
 class SportsDataService {
     constructor(env, options = {}) {
@@ -35,6 +37,11 @@ class SportsDataService {
 
         this.adapter = new SportsDataAdapter(this.cache, this.logger);
         this.analytics = new SportsAnalyticsModels(this.logger);
+        this.conferenceStrength = new ConferenceStrengthService(this.cache, this.logger, {
+            iterations: 600,
+            mode: 'advanced',
+            cacheTtlSeconds: 90,
+        });
 
         // Initialize database connection
         this.database = new DatabaseConnectionService({
@@ -47,6 +54,15 @@ class SportsDataService {
             maxConnections: 20
         }, this.logger);
 
+        this.objectStorage = new ObjectStorageService({
+            bucket: env.R2_MODEL_BUCKET,
+            accountId: env.R2_ACCOUNT_ID,
+            accessKeyId: env.R2_ACCESS_KEY_ID,
+            secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+            prefix: 'ml-artifacts',
+            localPath: options.modelStoragePath
+        }, this.logger);
+
         // Initialize ML pipeline
         this.mlPipeline = new MLPipelineService(this.logger, {
             host: env.DB_HOST,
@@ -57,7 +73,10 @@ class SportsDataService {
         }, {
             batchSize: 32,
             epochs: 100,
-            validationSplit: 0.2
+            validationSplit: 0.2,
+            objectStorage: this.objectStorage,
+            kvNamespace: this.cache?.kv,
+            aliasPrefix: env.MODEL_ALIAS_PREFIX
         });
 
         // API configuration
@@ -168,10 +187,14 @@ class SportsDataService {
                     });
 
                     analytics.mlPredictions = {
-                        seasonWins: seasonPrediction,
-                        model: 'TensorFlow Neural Network',
-                        confidence: seasonPrediction.confidence || 0.75,
-                        features: seasonPrediction.features || []
+                        seasonWins: {
+                            predictedValue: seasonPrediction.predictedValue,
+                            confidence: seasonPrediction.confidence,
+                            algorithm: seasonPrediction.algorithm || 'ridge_regression',
+                            modelVersion: seasonPrediction.modelVersion,
+                            featureNames: seasonPrediction.featureNames,
+                            rawFeatures: seasonPrediction.rawFeatures
+                        }
                     };
 
                     // Store prediction in database
@@ -183,13 +206,21 @@ class SportsDataService {
                         teamData.teamId,
                         seasonPrediction.predictedValue,
                         seasonPrediction.confidence,
-                        { features: seasonPrediction.features }
+                        {
+                            features: seasonPrediction.featureNames,
+                            rawFeatures: seasonPrediction.rawFeatures,
+                            modelMetrics: this.mlPipeline.modelMetadata?.get('season_wins')?.evaluation
+                        }
                     );
 
                     this.logger.info(`ML prediction generated for ${teamKey}`, {
                         predictedWins: seasonPrediction.predictedValue,
                         confidence: seasonPrediction.confidence
                     });
+
+                    if (sport === 'ncaa_baseball') {
+                        await this.captureNcaabArtifactSnapshot(analytics);
+                    }
                 }
             } catch (mlError) {
                 this.logger.warn(`ML prediction failed for ${teamKey}, using traditional analytics only`, {}, mlError);
@@ -197,6 +228,9 @@ class SportsDataService {
                     error: 'ML prediction unavailable',
                     fallback: 'Traditional statistical models only'
                 };
+                if (sport === 'ncaa_baseball') {
+                    await this.captureNcaabArtifactSnapshot(analytics);
+                }
             }
 
             // Generate composite rating (now includes ML predictions)
@@ -237,6 +271,26 @@ class SportsDataService {
                 calculatedAt: new Date().toISOString(),
                 dataSource: 'Error - No fake fallback data provided'
             };
+        }
+    }
+
+    async captureNcaabArtifactSnapshot(analytics) {
+        try {
+            const { artifact, artifactKey } = await this.mlPipeline.getArtifact('season_wins/latest');
+            analytics.modelArtifact = artifact;
+            await this.database.recordModelArtifactEvaluation({
+                modelKey: artifact.modelKey || 'season_wins',
+                sport: 'ncaa_baseball',
+                version: artifact.artifactVersion,
+                metrics: artifact.metrics,
+                calibration: artifact.calibration
+            });
+            this.logger.info('NCAA baseball artifact snapshot captured', {
+                artifactKey,
+                version: artifact.artifactVersion
+            });
+        } catch (error) {
+            this.logger.warn('Unable to capture NCAA baseball artifact snapshot', {}, error);
         }
     }
 
@@ -506,9 +560,85 @@ class SportsDataService {
                                 dataSource: "ESPN API",
                                 lastUpdated: new Date().toISOString()
                             };
-                        }
-                    }
-                }
+            }
+        }
+    }
+
+    async optimizeSchedulingProjection(request = {}) {
+        const {
+            teamId,
+            conference,
+            currentMetrics = {},
+            futureOpponents = [],
+            userTier = 'free',
+            iterations,
+            deterministic,
+        } = request;
+
+        if (!teamId) {
+            throw new Error('teamId is required for scheduling optimization');
+        }
+
+        const normalizedConference = conference || 'independent';
+        const currentRpi = this.normalizeNumber(currentMetrics.rpi, 0.5);
+        const currentSor = this.normalizeNumber(currentMetrics.sor, 0.5);
+        const currentWins = this.normalizeNumber(currentMetrics.wins, 0);
+        const currentLosses = this.normalizeNumber(currentMetrics.losses, 0);
+
+        const sanitizedOpponents = futureOpponents.map((opponent) => ({
+            teamId: opponent.teamId || opponent.id || `temp-${Math.random().toString(36).slice(2, 8)}`,
+            name: opponent.name || 'Opponent',
+            conference: opponent.conference || 'non-conference',
+            rpi: this.normalizeNumber(opponent.rpi, 0.5, 0, 1),
+            sor: this.normalizeNumber(opponent.sor, 0.5, 0, 1),
+            games: opponent.games && opponent.games > 0 ? opponent.games : 1,
+            winProbability:
+                typeof opponent.winProbability === 'number'
+                    ? Math.min(Math.max(opponent.winProbability, 0.01), 0.99)
+                    : undefined,
+            location: opponent.location === 'home' || opponent.location === 'away' ? opponent.location : 'neutral',
+        }));
+
+        const snapshot = {
+            teamId,
+            conference: normalizedConference,
+            currentRpi,
+            currentSor,
+            currentWins,
+            currentLosses,
+            futureOpponents: sanitizedOpponents,
+        };
+
+        const isDiamondPro = userTier === 'diamond-pro' || userTier === 'pro';
+        const resolvedIterations = isDiamondPro
+            ? Math.min(Math.max(iterations || 900, 400), 2500)
+            : 1;
+
+        const resolvedMode = isDiamondPro ? 'advanced' : 'basic';
+
+        const forecast = await this.conferenceStrength.forecastStrength(snapshot, {
+            mode: resolvedMode,
+            iterations: resolvedIterations,
+            deterministic: isDiamondPro ? deterministic ?? false : true,
+            cacheTtlSeconds: isDiamondPro ? 90 : 120,
+        });
+
+        return {
+            forecast,
+            tierAccess: {
+                userTier: isDiamondPro ? 'diamond-pro' : 'free',
+                advancedUnlocked: isDiamondPro,
+            },
+        };
+    }
+
+    normalizeNumber(value, fallback = 0, min = -Infinity, max = Infinity) {
+        const parsed = Number(value);
+        if (Number.isFinite(parsed)) {
+            return Math.min(Math.max(parsed, min), max);
+        }
+        return Math.min(Math.max(Number(fallback) || 0, min), max);
+    }
             }
 
             return this.getNFLFallbackData(teamKey);
@@ -563,7 +693,7 @@ class SportsDataService {
     /**
      * Get real NCAA football data (replacing hardcoded Longhorns data)
      */
-    async getNCAA FootballData(teamKey = 'TEX') {
+    async getNCAAFootballData(teamKey = 'TEX') {
         try {
             const response = await fetch(
                 `${this.baseUrls.espn}/football/college-football/standings`
@@ -595,11 +725,11 @@ class SportsDataService {
                 }
             }
 
-            return this.getNCAA FallbackData(teamKey);
+            return this.getNCAAFallbackData(teamKey);
 
         } catch (error) {
             console.error('Error fetching NCAA data:', error);
-            return this.getNCAA FallbackData(teamKey);
+            return this.getNCAAFallbackData(teamKey);
         }
     }
 
@@ -611,14 +741,14 @@ class SportsDataService {
             this.getMLBTeamData('STL'),
             this.getNFLTeamData('TEN'),
             this.getNBATeamData('MEM'),
-            this.getNCAA FootballData('TEX')
+            this.getNCAAFootballData('TEX')
         ]);
 
         return {
             cardinals: cardinals.status === 'fulfilled' ? cardinals.value : this.getMLBFallbackData('STL'),
             titans: titans.status === 'fulfilled' ? titans.value : this.getNFLFallbackData('TEN'),
             grizzlies: grizzlies.status === 'fulfilled' ? grizzlies.value : this.getNBAFallbackData('MEM'),
-            longhorns: longhorns.status === 'fulfilled' ? longhorns.value : this.getNCAA FallbackData('TEX')
+            longhorns: longhorns.status === 'fulfilled' ? longhorns.value : this.getNCAAFallbackData('TEX')
         };
     }
 
@@ -666,7 +796,7 @@ class SportsDataService {
         };
     }
 
-    getNCAA FallbackData(teamKey) {
+    getNCAAFallbackData(teamKey) {
         return {
             name: "Data Unavailable",
             sport: "ncaa-football",
@@ -938,10 +1068,16 @@ class SportsDataService {
 
             return {
                 prediction: {
-                    homeWinProbability: mlPrediction.homeWinProbability || mlPrediction.predictedValue,
-                    awayWinProbability: 1 - (mlPrediction.homeWinProbability || mlPrediction.predictedValue),
+                    homeWinProbability: mlPrediction.homeWinProbability
+                        ?? mlPrediction.probabilities?.home_win
+                        ?? mlPrediction.predictedValue,
+                    awayWinProbability: mlPrediction.awayWinProbability
+                        ?? mlPrediction.probabilities?.away_win
+                        ?? (1 - (mlPrediction.homeWinProbability
+                            ?? mlPrediction.probabilities?.home_win
+                            ?? mlPrediction.predictedValue)),
                     confidence: mlPrediction.confidence,
-                    modelType: 'TensorFlow Neural Network'
+                    modelType: mlPrediction.algorithm || 'multinomial_logistic_regression'
                 },
                 traditionalComparison: traditionalPrediction,
                 features: mlInput,
@@ -957,7 +1093,7 @@ class SportsDataService {
                     predictedAt: new Date().toISOString(),
                     gameDate: gameDate.toISOString(),
                     dataSource: 'Machine Learning Pipeline + Real Statistical Models',
-                    methodology: 'Neural network trained on historical game data with feature engineering'
+                    methodology: 'Multinomial logistic regression with feature engineering and calibration'
                 }
             };
 
@@ -1018,7 +1154,11 @@ class SportsDataService {
                 playerId,
                 mlPrediction.predictedValue,
                 mlPrediction.confidence,
-                { features: mlInput }
+                {
+                    features: mlPrediction.featureNames,
+                    rawFeatures: mlPrediction.rawFeatures,
+                    modelMetrics: this.mlPipeline.modelMetadata?.get('player_performance')?.evaluation
+                }
             );
 
             timer.end({ confidence: mlPrediction.confidence });
@@ -1032,9 +1172,9 @@ class SportsDataService {
                 features: mlInput,
                 metadata: {
                     predictedAt: new Date().toISOString(),
-                    modelType: 'TensorFlow Neural Network',
+                    modelType: mlPrediction.algorithm || 'ridge_regression',
                     dataSource: 'Machine Learning Pipeline',
-                    methodology: 'Neural network trained on historical player performance data'
+                    methodology: 'Ridge regression with z-score normalization and calibration'
                 }
             };
 
@@ -1092,6 +1232,10 @@ class SportsDataService {
                 version: '2.0.0'
             };
         }
+    }
+
+    async getModelArtifact(modelKey) {
+        return this.mlPipeline.getArtifact(modelKey);
     }
 
     /**

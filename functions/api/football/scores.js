@@ -6,12 +6,10 @@
  * with intelligent caching strategy (30s live, 5min final)
  */
 
-export async function onRequest({ request, env, ctx }) {
-  const url = new URL(request.url)
-  const week = url.searchParams.get('week') || 'current'
-  const conference = url.searchParams.get('conference')
-  const team = url.searchParams.get('team')
+import { validateRequest } from '../_validation.js';
+import { footballScoresQuerySchema } from '../_schemas.js';
 
+export async function onRequest({ request, env, ctx }) {
   // CORS headers for cross-origin requests
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -26,6 +24,20 @@ export async function onRequest({ request, env, ctx }) {
       headers: corsHeaders
     })
   }
+
+  // Validate request parameters using Zod
+  const validation = await validateRequest(request, {
+    query: footballScoresQuerySchema
+  });
+
+  if (!validation.success) {
+    return validation.errorResponse;
+  }
+
+  const { query } = validation.data;
+  const week = query.week || 'current';
+  const conference = query.conference;
+  const team = query.team;
 
   try {
     // Build ESPN API URL

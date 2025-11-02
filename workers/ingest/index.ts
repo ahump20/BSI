@@ -19,11 +19,35 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { ProviderManager } from '../../lib/adapters/provider-manager';
+import { runQCPipeline } from '../../lib/skills/sports-data-qc/scripts/qc_analysis';
+import { saveReportToKV, formatReportConsole } from '../../lib/skills/sports-data-qc/scripts/qc_reporting';
+import type { GameData, PlayerStats } from '../../lib/skills/sports-data-qc/scripts/qc_core';
 import type { Env } from './types';
 
 const prisma = new PrismaClient();
+
+async function executeWithConstraintGuard<T>(
+  operation: () => Promise<T>,
+  context: string
+): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      const target = Array.isArray(error.meta?.target)
+        ? error.meta?.target.join(', ')
+        : error.meta?.target;
+      const diagnostic = target ? ` (${target})` : '';
+      const message = `[Ingest] Unique constraint violation${diagnostic} while processing ${context}`;
+      console.error(message, error);
+      throw new Error(message);
+    }
+
+    throw error;
+  }
+}
 
 export default {
   /**
@@ -155,61 +179,147 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 
     console.log(`[Ingest] Fetched ${games.length} games from provider`);
 
-    // Batch upsert games
-    const upsertPromises = games.map(game => {
-      return prisma.game.upsert({
-        where: { externalId: game.id },
-        update: {
-          status: game.status,
-          homeScore: game.homeScore,
-          awayScore: game.awayScore,
-          currentInning: game.currentInning,
-          currentInningHalf: game.currentInningHalf,
-          balls: game.balls,
-          strikes: game.strikes,
-          outs: game.outs,
-          lastUpdated: new Date()
-        },
-        create: {
-          externalId: game.id,
-          sport: 'BASEBALL',
-          division: 'D1',
-          season,
-          seasonType: 'REGULAR',
-          scheduledAt: new Date(game.scheduledAt),
-          status: game.status,
-          homeTeamId: game.homeTeamId,
-          awayTeamId: game.awayTeamId,
-          homeScore: game.homeScore,
-          awayScore: game.awayScore,
-          venueId: game.venueId,
-          currentInning: game.currentInning,
-          currentInningHalf: game.currentInningHalf,
-          balls: game.balls,
-          strikes: game.strikes,
-          outs: game.outs,
-          providerName: game.providerName,
-          feedPrecision: game.feedPrecision
-        }
-      });
+    // ========================================================================
+    // QC VALIDATION - Filter bad data before ingestion
+    // ========================================================================
+    console.log('[Ingest] Running QC validation on scraped data...');
+
+    // Transform provider games to QC format
+    const qcGames: GameData[] = games.map(game => ({
+      game_id: game.id,
+      timestamp: game.scheduledAt,
+      season,
+      home_team: game.homeTeamId,
+      away_team: game.awayTeamId,
+      home_score: game.homeScore ?? 0,
+      away_score: game.awayScore ?? 0,
+      status: game.status,
+      venue: game.venueId,
+      metadata: {
+        source_url: `https://api.provider/${game.id}`,
+        scrape_timestamp: new Date().toISOString(),
+        confidence_score: game.feedPrecision === 'PITCH' ? 0.95 : 0.8,
+        provider_name: game.providerName as any
+      }
+    }));
+
+    // Run QC pipeline
+    const { report, filtered_data } = await runQCPipeline({
+      games: qcGames,
+      data_source: `${games[0]?.providerName || 'UNKNOWN'}_API`
+    }, {
+      auto_reject_failures: true,
+      auto_reject_outliers: false,
+      mad_threshold: 5.0,
+      include_flagged: true,
+      min_confidence_score: 0.7
     });
+
+    // Log QC report
+    console.log(formatReportConsole(report));
+
+    // Save QC report to KV
+    await saveReportToKV(report, env.CACHE, 86400); // 24hr TTL
+
+    // Check for high failure rate
+    const failureRate = report.records_rejected / report.total_records;
+    if (failureRate > 0.2) {
+      console.error(`[Ingest] QC failure rate too high: ${(failureRate * 100).toFixed(1)}%`);
+      console.error(`[Ingest] Rejecting batch. Review QC report: ${report.report_id}`);
+
+      // Track QC rejection in Analytics
+      if (env.ANALYTICS) {
+        env.ANALYTICS.writeDataPoint({
+          blobs: ['qc_rejection', 'live_games'],
+          doubles: [failureRate],
+          indexes: [report.report_id]
+        });
+      }
+
+      throw new Error(`QC validation failed: ${report.records_rejected}/${report.total_records} records rejected`);
+    }
+
+    // Filter to only use validated game IDs
+    const validatedGameIds = new Set(filtered_data.games?.map(g => g.game_id) || []);
+    const validatedGames = games.filter(game => validatedGameIds.has(game.id));
+
+    console.log(`[Ingest] QC passed: ${validatedGames.length}/${games.length} games validated`);
+    console.log(`[Ingest] QC Report ID: ${report.report_id}`);
+
+    // Use validated games for ingestion
+    const gamesToIngest = validatedGames;
+
+    // Batch upsert games
+    const upsertPromises = gamesToIngest.map((game) =>
+      executeWithConstraintGuard(
+        () =>
+          prisma.game.upsert({
+            where: { externalId: game.id },
+            update: {
+              status: game.status,
+              homeScore: game.homeScore,
+              awayScore: game.awayScore,
+              currentInning: game.currentInning,
+              currentInningHalf: game.currentInningHalf,
+              balls: game.balls,
+              strikes: game.strikes,
+              outs: game.outs,
+              lastUpdated: new Date()
+            },
+            create: {
+              externalId: game.id,
+              sport: 'BASEBALL',
+              division: 'D1',
+              season,
+              seasonType: 'REGULAR',
+              scheduledAt: new Date(game.scheduledAt),
+              status: game.status,
+              homeTeamId: game.homeTeamId,
+              awayTeamId: game.awayTeamId,
+              homeScore: game.homeScore,
+              awayScore: game.awayScore,
+              venueId: game.venueId,
+              currentInning: game.currentInning,
+              currentInningHalf: game.currentInningHalf,
+              balls: game.balls,
+              strikes: game.strikes,
+              outs: game.outs,
+              providerName: game.providerName,
+              feedPrecision: game.feedPrecision
+            }
+          }),
+        `game upsert ${game.id}`
+      )
+    );
 
     await Promise.all(upsertPromises);
 
-    console.log(`[Ingest] Successfully upserted ${games.length} games`);
+    console.log(`[Ingest] Successfully upserted ${gamesToIngest.length} games`);
 
     // Cache live games in KV (60s TTL)
     const cacheKey = `live:games:${season}:${currentDate.toISOString().split('T')[0]}`;
-    await env.CACHE.put(cacheKey, JSON.stringify(games), {
+    await env.CACHE.put(cacheKey, JSON.stringify(gamesToIngest), {
       expirationTtl: 60
     });
 
-    // Track success in Analytics Engine
+    // Track success in Analytics Engine (with QC metrics)
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
         blobs: ['ingest_success', 'live_games'],
-        doubles: [games.length],
-        indexes: [season.toString()]
+        doubles: [gamesToIngest.length],
+        indexes: [season.toString(), report.report_id]
+      });
+
+      // Track QC metrics
+      env.ANALYTICS.writeDataPoint({
+        blobs: ['qc_metrics', 'live_games'],
+        doubles: [
+          report.records_passed,
+          report.records_flagged,
+          report.records_rejected,
+          report.total_records
+        ],
+        indexes: [season.toString(), report.report_id]
       });
     }
   } catch (error) {
@@ -255,53 +365,57 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
           });
 
           // Upsert team stats
-          return prisma.teamStats.upsert({
-            where: {
-              teamId_season: {
-                teamId: team.id,
-                season
-              }
-            },
-            update: {
-              wins: stats.wins,
-              losses: stats.losses,
-              confWins: stats.confWins,
-              confLosses: stats.confLosses,
-              homeWins: stats.homeWins,
-              homeLosses: stats.homeLosses,
-              awayWins: stats.awayWins,
-              awayLosses: stats.awayLosses,
-              runsScored: stats.runsScored,
-              runsAllowed: stats.runsAllowed,
-              battingAvg: stats.battingAvg,
-              era: stats.era,
-              fieldingPct: stats.fieldingPct,
-              rpi: stats.rpi,
-              strengthOfSched: stats.strengthOfSched,
-              pythagWins: stats.pythagWins,
-              lastUpdated: new Date()
-            },
-            create: {
-              teamId: team.id,
-              season,
-              wins: stats.wins,
-              losses: stats.losses,
-              confWins: stats.confWins,
-              confLosses: stats.confLosses,
-              homeWins: stats.homeWins,
-              homeLosses: stats.homeLosses,
-              awayWins: stats.awayWins,
-              awayLosses: stats.awayLosses,
-              runsScored: stats.runsScored,
-              runsAllowed: stats.runsAllowed,
-              battingAvg: stats.battingAvg,
-              era: stats.era,
-              fieldingPct: stats.fieldingPct,
-              rpi: stats.rpi,
-              strengthOfSched: stats.strengthOfSched,
-              pythagWins: stats.pythagWins
-            }
-          });
+          return executeWithConstraintGuard(
+            () =>
+              prisma.teamStats.upsert({
+                where: {
+                  teamId_season: {
+                    teamId: team.id,
+                    season
+                  }
+                },
+                update: {
+                  wins: stats.wins,
+                  losses: stats.losses,
+                  confWins: stats.confWins,
+                  confLosses: stats.confLosses,
+                  homeWins: stats.homeWins,
+                  homeLosses: stats.homeLosses,
+                  awayWins: stats.awayWins,
+                  awayLosses: stats.awayLosses,
+                  runsScored: stats.runsScored,
+                  runsAllowed: stats.runsAllowed,
+                  battingAvg: stats.battingAvg,
+                  era: stats.era,
+                  fieldingPct: stats.fieldingPct,
+                  rpi: stats.rpi,
+                  strengthOfSched: stats.strengthOfSched,
+                  pythagWins: stats.pythagWins,
+                  lastUpdated: new Date()
+                },
+                create: {
+                  teamId: team.id,
+                  season,
+                  wins: stats.wins,
+                  losses: stats.losses,
+                  confWins: stats.confWins,
+                  confLosses: stats.confLosses,
+                  homeWins: stats.homeWins,
+                  homeLosses: stats.homeLosses,
+                  awayWins: stats.awayWins,
+                  awayLosses: stats.awayLosses,
+                  runsScored: stats.runsScored,
+                  runsAllowed: stats.runsAllowed,
+                  battingAvg: stats.battingAvg,
+                  era: stats.era,
+                  fieldingPct: stats.fieldingPct,
+                  rpi: stats.rpi,
+                  strengthOfSched: stats.strengthOfSched,
+                  pythagWins: stats.pythagWins
+                }
+              }),
+            `team stats upsert ${team.id}`
+          );
         } catch (error) {
           console.error(`[Ingest] Failed to fetch stats for team ${team.id}:`, error);
           return null;
@@ -408,15 +522,19 @@ async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<vo
       });
 
       // Mark games as archived
-      await prisma.game.updateMany({
-        where: {
-          id: { in: completedGames.map(g => g.id) }
-        },
-        data: {
-          archived: true,
-          archivedAt: new Date()
-        }
-      });
+      await executeWithConstraintGuard(
+        () =>
+          prisma.game.updateMany({
+            where: {
+              id: { in: completedGames.map(g => g.id) }
+            },
+            data: {
+              archived: true,
+              archivedAt: new Date()
+            }
+          }),
+        'game archive flag update'
+      );
 
       console.log(`[Ingest] Archived ${completedGames.length} games to R2: ${archiveKey}`);
     }
@@ -490,15 +608,19 @@ async function recalculateRPI(season: number): Promise<void> {
     // In production, this would require tracking all opponent relationships
     const rpi = wp * 0.25 + wp * 0.50 + wp * 0.25; // Simplified
 
-    await prisma.teamStats.update({
-      where: {
-        teamId_season: {
-          teamId: teamStat.teamId,
-          season
-        }
-      },
-      data: { rpi }
-    });
+    await executeWithConstraintGuard(
+      () =>
+        prisma.teamStats.update({
+          where: {
+            teamId_season: {
+              teamId: teamStat.teamId,
+              season
+            }
+          },
+          data: { rpi }
+        }),
+      `team stats rpi ${teamStat.teamId}`
+    );
   }
 }
 
@@ -553,15 +675,19 @@ async function recalculateStrengthOfSchedule(season: number): Promise<void> {
       ? opponents.reduce((sum, wp) => sum + wp, 0) / opponents.length
       : 0;
 
-    await prisma.teamStats.update({
-      where: {
-        teamId_season: {
-          teamId: teamStat.teamId,
-          season
-        }
-      },
-      data: { strengthOfSched: sos }
-    });
+    await executeWithConstraintGuard(
+      () =>
+        prisma.teamStats.update({
+          where: {
+            teamId_season: {
+              teamId: teamStat.teamId,
+              season
+            }
+          },
+          data: { strengthOfSched: sos }
+        }),
+      `team stats sos ${teamStat.teamId}`
+    );
   }
 }
 
@@ -585,15 +711,19 @@ async function recalculatePythagoreanWins(season: number): Promise<void> {
       const totalGames = teamStat.wins + teamStat.losses;
       const pythagWins = pythagPct * totalGames;
 
-      await prisma.teamStats.update({
-        where: {
-          teamId_season: {
-            teamId: teamStat.teamId,
-            season
-          }
-        },
-        data: { pythagWins }
-      });
+      await executeWithConstraintGuard(
+        () =>
+          prisma.teamStats.update({
+            where: {
+              teamId_season: {
+                teamId: teamStat.teamId,
+                season
+              }
+            },
+            data: { pythagWins }
+          }),
+        `team stats pythag ${teamStat.teamId}`
+      );
     }
   }
 }

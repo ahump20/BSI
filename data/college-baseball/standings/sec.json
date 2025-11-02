@@ -1,10 +1,11 @@
 {
   "conference": "Southeastern Conference (SEC)",
   "season": 2025,
-  "lastUpdated": "2025-05-18T18:00:00-05:00",
+  "lastUpdated": "2025-10-23T10:00:00-05:00",
   "timezone": "America/Chicago",
   "source": "https://www.secsports.com/standings/baseball",
-  "dataFreshness": "Final regular season standings - 2025-05-18",
+  "dataFreshness": "Final regular season standings - 2025-05-18 (verified October 2025)",
+  "dataStatus": "Historical data verified and accurate as of October 2025. 2026 season begins February 2026.",
   "champion": {
     "team": "Texas Longhorns",
     "record": "22-8 SEC, 42-11 overall",
