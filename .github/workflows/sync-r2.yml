@@ -32,4 +32,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: r2 object put ${{ secrets.R2_BUCKET_NAME }} --file=./media --recursive
+          command: r2 object put ${{ secrets.R2_BUCKET_NAME }}/media --file=./media --recursive
