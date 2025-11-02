@@ -210,6 +210,7 @@
       "home_win_prob": 0.9,
       "away_win_prob": 0.5,
       "tie_prob": 0.0,
+      "_validation_note": "Probabilities intentionally sum to 1.4 instead of 1.0 to test probability validation",
       "score_distribution": [
         { "home_score": 10, "away_score": 5, "probability": 1.5 },
         { "home_score": -3, "away_score": 8, "probability": 0.3 },

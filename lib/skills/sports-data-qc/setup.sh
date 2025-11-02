@@ -155,7 +155,6 @@ if [ -z "$CACHE_ID" ]; then
 fi
 
 echo "✅ QC_CACHE Namespace ID: $CACHE_ID"
-sed -i "s/id = \".*\" # Will be populated by setup.sh/id = \"$CACHE_ID\" # Populated by setup.sh/" wrangler.toml | head -1
 
 # QC Whitelist namespace
 echo "Creating QC_WHITELIST namespace..."
