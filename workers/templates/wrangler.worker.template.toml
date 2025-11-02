@@ -13,10 +13,12 @@ route = { pattern = "staging-api.blazesportsintel.com/scores/*", zone_name = "bl
 [[d1_databases]]
 binding = "DB"
 database_name = "bsi-scores"
+# To find your D1 database ID, run: `wrangler d1 list`
 database_id = "YOUR_D1_DATABASE_ID"
 
 [[kv_namespaces]]
 binding = "CACHE"
+# To find your KV namespace ID, run: `wrangler kv:namespace list`
 id = "YOUR_KV_NAMESPACE_ID"
 
 [[r2_buckets]]
