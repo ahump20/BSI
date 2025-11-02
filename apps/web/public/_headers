@@ -1,0 +1,50 @@
+# Cloudflare Pages Headers Configuration
+# Cache control and security headers for static assets
+
+# Game assets - long-lived cache for hashed files
+/games/bbp-web/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+# Game HTML - shorter cache, revalidate
+/games/bbp-web/*.html
+  Cache-Control: public, max-age=3600, must-revalidate
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+
+# Game root index
+/games/bbp-web/
+  Cache-Control: public, max-age=3600, must-revalidate
+  X-Frame-Options: SAMEORIGIN
+
+# Next.js static assets - long-lived cache
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Next.js images
+/_next/image/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# Public assets (images, etc.)
+/images/*
+  Cache-Control: public, max-age=86400
+  X-Content-Type-Options: nosniff
+
+# API routes - no cache
+/api/*
+  Cache-Control: no-store, no-cache, must-revalidate
+  X-Content-Type-Options: nosniff
+
+# HTML pages - short cache
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Security headers for all routes
+/*
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()

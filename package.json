@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build:lib": "tsc",
-    "build": "npm run build:lib && vite build",
+    "build:games": "cd apps/games/phaser-bbp-web && pnpm install && pnpm build && cd ../../.. && mkdir -p apps/web/public/games && cp -r apps/games/phaser-bbp-web/dist apps/web/public/games/bbp-web",
+    "build": "npm run build:lib && npm run build:games && vite build",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy dist",
     "test": "vitest run",
