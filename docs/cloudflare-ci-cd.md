@@ -60,7 +60,7 @@ chmod +x scripts/init-cloudflare-ci.sh
 ./scripts/init-cloudflare-ci.sh
 ```
 
-The script prompts for the API token and account ID, pushes them into repo secrets via `gh secret set`, then locks down `main` (1 review, required status checks, no admin override).
+The script prompts for the API token and account ID, pushes them into repo secrets via `gh secret set`, then locks down `main` (1 review, required status checks, admin override enabled).
 
 ## Worker Template
 
