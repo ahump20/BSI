@@ -13,11 +13,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Client } from 'pg';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const playerId = params.id;
+export async function GET(request: NextRequest, context: any) {
+  const playerId = context?.params?.id as string;
   const searchParams = request.nextUrl.searchParams;
 
   const season = searchParams.get('season') || getCurrentSeason();

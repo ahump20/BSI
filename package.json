@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build:lib": "tsc",
+    "build:games": "pnpm --filter @bsi/phaser-bbp-web build && node scripts/copy-bbp-game.mjs",
+    "dev:games": "pnpm --filter @bsi/phaser-bbp-web dev",
     "build:functions": "tsc -p tsconfig.functions.json && npm run copy:lib",
     "copy:lib": "cp -r lib dist/",
-    "build": "vite build && npm run build:functions",
+    "build": "pnpm run build:games && vite build && npm run build:functions",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy dist",
     "deploy:production": "npm run build && wrangler pages deploy dist --project-name college-baseball-tracker --branch main --commit-dirty=true",
