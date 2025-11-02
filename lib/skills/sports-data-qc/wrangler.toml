@@ -58,7 +58,7 @@ TIMEZONE = "America/Chicago"
 command = ""
 
 [build.upload]
-format = "service-worker"
+format = "modules"
 
 # Development configuration
 [env.development]
