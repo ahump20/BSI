@@ -497,3 +497,145 @@ MIT License - See LICENSE file for details
 - Documentation: https://docs.blazesportsintel.com/biomech
 - API Status: https://status.blazesportsintel.com
 - Contact: biomech@blazesportsintel.com
+
+---
+
+## 🎮 Games Feature
+
+### Baseball Batting Game (MVP)
+
+An original, mobile-first baseball game built with Phaser 3 and integrated into the main site.
+
+**Quick Start:**
+```bash
+# Build the game
+pnpm run build:games
+
+# Builds to apps/web/public/games/bbp-web/
+```
+
+**Features:**
+- ⚾ 3-inning batting game with timing-based mechanics
+- 📱 Touch-first controls (tap to swing)
+- 🎯 Multiple pitch types (fastball, changeup, curveball)
+- 🏆 Score tracking and CPU opponent
+- 🎨 100% original content (no third-party IP)
+
+**Routes:**
+- `/games` - Games landing page
+- `/games/bbp` - Baseball game (iframe embed)
+- `/games/bbp/legal` - Legal compliance page
+
+**Documentation:**
+- `docs/GAME_README.md` - Development guide
+- `LEGAL_COMPLIANCE.md` - IP compliance requirements
+- `assets/LICENSES.md` - Asset manifest
+- `docs/ai-assets/prompts-and-guidelines.md` - AI asset guidelines
+
+**Legal Compliance:**
+- All game content is 100% original
+- No use of Backyard Baseball or other licensed IP
+- CI blocklist check prevents prohibited terms
+- See `LEGAL_COMPLIANCE.md` for full details
+
+---
+
+## 📊 Mobile Performance Optimizations
+
+### Core Web Vitals Targets (Mobile)
+
+- **LCP (Largest Contentful Paint)**: ≤ 2.5s
+- **CLS (Cumulative Layout Shift)**: ≤ 0.1
+- **INP (Interaction to Next Paint)**: ≤ 200ms
+- **TTFB (Time to First Byte)**: ≤ 600ms
+
+### Performance Features
+
+**1. Lazy Loading**
+- Heavy components load on-demand (3D visualizations, charts, LEI)
+- Uses `apps/web/components/LazyLoadWrapper.tsx`
+- Skeleton loading states prevent layout shifts
+
+**2. Font Optimization**
+- System fonts on mobile (< 768px) for zero latency
+- `font-display: swap` prevents FOIT
+- See `apps/web/app/font-optimization.css`
+
+**3. Image Optimization**
+- Cloudflare Image Resizing enabled
+- Responsive image sizes
+- `stale-while-revalidate` caching
+
+**4. Static Asset Caching**
+- Game assets: 1 year immutable cache
+- Next.js static: 1 year immutable
+- Images: 1 day cache
+- See `apps/web/public/_headers`
+
+**5. Lighthouse CI**
+- Automated performance checks on PRs
+- Mobile-specific config: `lighthouserc-mobile.json`
+- Desktop config: `lighthouserc.json`
+- GitHub Action: `.github/workflows/lighthouse-ci.yml`
+
+**6. Web Vitals Tracking**
+- Real-time monitoring at `/performance`
+- Tracks LCP, FID, CLS, FCP, TTFB, INP
+- Analytics endpoint: `/api/analytics/web-vitals`
+
+### Build Commands
+
+```bash
+# Build everything (games + site)
+pnpm install
+pnpm run build:games  # Build Phaser game
+cd apps/web && pnpm build  # Build Next.js site
+
+# Deploy to Cloudflare
+cd apps/web
+wrangler pages deploy .next --project-name blazesportsintel
+```
+
+### Performance Monitoring
+
+**Lighthouse CI:**
+```bash
+# Run Lighthouse CI locally
+npm install -g @lhci/cli
+lhci autorun --config=lighthouserc-mobile.json
+```
+
+**Manual Testing:**
+1. Open Chrome DevTools
+2. Lighthouse tab
+3. Select "Mobile" device
+4. Check "Performance" category
+5. Run audit
+
+**Web Vitals Dashboard:**
+- Visit `/performance` on the live site
+- Shows real user metrics (RUM)
+- Historical trends and percentiles
+
+### Performance Best Practices
+
+1. **Images**: Use Next.js `<Image>` component with priority for above-fold images
+2. **JS Bundles**: Dynamic imports for heavy components
+3. **CSS**: Tailwind with proper purge configuration
+4. **Fonts**: System fonts on mobile, web fonts on desktop
+5. **Caching**: Leverage Cloudflare CDN for static assets
+6. **Analytics**: Respect DNT (Do Not Track) headers
+
+### CI/CD Checks
+
+**Automated on Pull Requests:**
+- ✅ Lighthouse CI (mobile performance thresholds)
+- ✅ Content blocklist (prevents IP violations)
+- ✅ Build verification (games + site)
+- ✅ Type checking (TypeScript)
+
+**Performance Budget:**
+- Initial JS: < 500KB gzipped
+- Game bundle: < 350KB gzipped
+- LCP: < 2.5s on 4G mobile
+- CLS: < 0.1 globally

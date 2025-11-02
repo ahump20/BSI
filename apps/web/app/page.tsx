@@ -36,6 +36,11 @@ const navigationLinks = [
     href: '/baseball/ncaab/news',
     title: 'Newsroom',
     description: 'Verified recaps, portal updates, and strategic briefings for staffs and fans.'
+  },
+  {
+    href: '/games',
+    title: 'Games',
+    description: 'Play original baseball games with mobile-friendly controls and 100% original content.'
   }
 ];
 

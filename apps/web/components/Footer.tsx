@@ -65,6 +65,21 @@ export default function Footer() {
         </div>
 
         <div className="footer-section">
+          <h3>Features</h3>
+          <ul>
+            <li>
+              <Link href="/games">Games</Link>
+            </li>
+            <li>
+              <Link href="/performance">Performance</Link>
+            </li>
+            <li>
+              <Link href="/about">About</Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="footer-section">
           <h3>Contact</h3>
           <ul>
             <li>
