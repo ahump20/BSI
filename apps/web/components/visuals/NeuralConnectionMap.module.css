@@ -1,0 +1,124 @@
+.container {
+  position: relative;
+  background: linear-gradient(135deg, rgba(10, 14, 26, 0.98), rgba(22, 48, 61, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  filter: brightness(1.05);
+}
+
+.tooltip {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(10, 14, 26, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  animation: tooltipSlide 0.2s ease-out;
+  z-index: 10;
+}
+
+@keyframes tooltipSlide {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tooltipName {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #BF5700;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 0 10px rgba(191, 87, 0, 0.5);
+}
+
+.tooltipPosition {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: monospace;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: monospace;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .tooltip {
+    position: fixed;
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .legend {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .tooltip {
+    animation: none;
+  }
+}

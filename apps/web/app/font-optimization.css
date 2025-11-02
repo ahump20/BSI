@@ -1,0 +1,91 @@
+/**
+ * Font Optimization for Mobile Performance
+ *
+ * Implements:
+ * - font-display: swap for custom fonts
+ * - System font fallbacks for mobile
+ * - Prefers system fonts on low-end devices
+ */
+
+/* System font stack (highest performance) */
+@font-face {
+  font-family: 'System-Fallback';
+  font-style: normal;
+  font-weight: 100 900;
+  src: local('system-ui'),
+       local('-apple-system'),
+       local('BlinkMacSystemFont'),
+       local('Segoe UI'),
+       local('Roboto'),
+       local('Helvetica Neue'),
+       local('Arial'),
+       local('sans-serif');
+  font-display: block; /* System fonts are instant */
+}
+
+/* Optimized font loading for custom fonts */
+@supports (font-display: swap) {
+  /* Use swap for custom fonts to prevent layout shift */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    /* Font files should be specified in next.config.mjs or imported via next/font */
+  }
+
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+}
+
+/* Mobile-first font strategy */
+@media (max-width: 768px) {
+  :root {
+    /* Prefer system fonts on mobile for instant rendering */
+    --di-font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    --di-font-heading: -apple-system-headline, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Georgia, serif;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --di-border: rgba(255, 255, 255, 0.4);
+    --di-text: #ffffff;
+  }
+}
+
+/* Font loading optimization class */
+.font-loading-optimized {
+  font-family: var(--di-font-body);
+  /* Prevent invisible text during web font load */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subset hint for critical text */
+.font-critical {
+  font-display: block; /* Block for critical content */
+}
+
+/* Defer non-critical fonts */
+.font-deferred {
+  font-display: optional; /* Only load if already cached */
+}

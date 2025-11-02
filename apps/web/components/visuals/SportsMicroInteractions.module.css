@@ -1,0 +1,450 @@
+/* Baseball Swing */
+.baseballSwing {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bat {
+  position: absolute;
+  font-size: 2rem;
+  transform-origin: bottom right;
+  transition: transform 0.3s ease;
+}
+
+.ball {
+  position: absolute;
+  font-size: 1.5rem;
+  left: 20px;
+  transition: all 0.3s ease;
+}
+
+.swinging .bat {
+  animation: swing 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.swinging .ball {
+  animation: hit 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes swing {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-90deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes hit {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(100px, -50px);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(200px, -100px);
+    opacity: 0;
+  }
+}
+
+/* Basketball Bounce */
+.basketballBounce {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.basketball {
+  font-size: 2rem;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-20px) scaleY(1.1);
+  }
+}
+
+.score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: #BF5700;
+  text-shadow: 0 0 10px rgba(191, 87, 0, 0.5);
+}
+
+/* Football Spiral */
+.footballSpiral {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.football {
+  font-size: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.footballSpiral.active .football {
+  animation: spiral 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes spiral {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(360deg) scale(1.2) translateY(-10px);
+  }
+  100% {
+    transform: rotate(720deg) scale(1) translateY(0);
+  }
+}
+
+/* Score Counter */
+.scoreCounter {
+  position: relative;
+  display: inline-block;
+}
+
+.scoreDigit {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--team-color, #BF5700);
+  text-shadow: 0 0 20px var(--team-color, #BF5700);
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  animation: scoreUpdate 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes scoreUpdate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.scoreRipple {
+  position: absolute;
+  inset: -10px;
+  border: 2px solid var(--team-color, #BF5700);
+  border-radius: 50%;
+  animation: ripple 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Win Celebration */
+.winCelebration {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  background: var(--color);
+  animation: confettiFall var(--duration) ease-in var(--delay) forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Live Pulse */
+.livePulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.liveText {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #FF0000;
+  letter-spacing: 0.1em;
+  font-family: monospace;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  background: #FF0000;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* Stat Change */
+.statChange {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.statValue {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.changeIndicator {
+  font-size: 1.25rem;
+  animation: changeFlash 0.6s ease-out;
+}
+
+.change-up {
+  color: #10B981;
+}
+
+.change-up .changeIndicator {
+  animation: changeUp 0.6s ease-out;
+}
+
+.change-down {
+  color: #EF4444;
+}
+
+.change-down .changeIndicator {
+  animation: changeDown 0.6s ease-out;
+}
+
+@keyframes changeUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes changeDown {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(5px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Sports Spinner */
+.sportsSpinner {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+}
+
+.spinnerIcon {
+  font-size: 2.5rem;
+  display: inline-block;
+  animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Team Hover Card */
+.teamHoverCard {
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.teamHoverCard:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--team-color);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    0 0 20px var(--team-color);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+/* Momentum Arrow */
+.momentumArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrowPath {
+  animation: arrowPulse 1s ease-in-out infinite;
+}
+
+.momentumArrow.up {
+  color: #10B981;
+}
+
+.momentumArrow.down {
+  color: #EF4444;
+}
+
+.momentumArrow.neutral {
+  color: #94A3B8;
+}
+
+@keyframes arrowPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Scoreboard Flip */
+.scoreboardFlip {
+  perspective: 1000px;
+}
+
+.flipCard {
+  width: 80px;
+  height: 100px;
+  position: relative;
+}
+
+.flipCardInner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flipCard:hover .flipCardInner {
+  transform: rotateX(180deg);
+}
+
+.flipCardFront,
+.flipCardBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  background: linear-gradient(135deg, #BF5700, #FF7D3C);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.flipCardBack {
+  transform: rotateX(180deg);
+  background: linear-gradient(135deg, #FF7D3C, #BF5700);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .bat,
+  .ball,
+  .basketball,
+  .football,
+  .scoreDigit,
+  .scoreRipple,
+  .confetti,
+  .liveDot,
+  .changeIndicator,
+  .spinnerIcon,
+  .arrowPath,
+  .flipCardInner,
+  .teamHoverCard {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .teamHoverCard:hover {
+    transform: none;
+  }
+}
