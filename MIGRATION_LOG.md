@@ -548,7 +548,7 @@ enum FeedPrecision { EVENT | PITCH }
 - Validate scarcity multipliers against 100+ historical plays and adjust coefficients
 - Wire LEI output into `/api/v1/baseball/ncaab/game/[id]` response for live game center
 
-### 2025-10-16 (Phase 3 Visual Engine - In Progress)
+### 2024-10-16 (Phase 3 Visual Engine - In Progress)
 - ✅ Rebuilt the live scoreboard shell with design-system gradients, hero metrics, and responsive filtering (`src/App.jsx`, `App.css`, `src/index.css`, `src/main.jsx`)
 - ✅ Implemented cinematic game cards with inning-by-inning linescore, base-state visualizer, and microstat badges (`src/components/GameCard.jsx`, `src/components/GameCard.css`)
 - ✅ Added shimmer skeletons for perceived performance on initial loads (`src/components/GameCardSkeleton.jsx`)
