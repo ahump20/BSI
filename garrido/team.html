@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EP06: The Team Within the Team | The Garrido Code</title>
+<meta name="description" content="A roster isn't just individuals—it's a network of relationships. Augie built culture through micro-interactions, trust rituals, and peer accountability.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+<style>
+:root{--blaze-burnt-orange:#BF5700;--blaze-ember:#CC6600;--blaze-copper:#D97B38;--gradient-primary:linear-gradient(135deg,#BF5700 0%,#CC6600 50%,#D97B38 100%);--glass-dark:rgba(0,0,0,0.7);--glass-medium:rgba(191,87,0,0.12);--glass-border:rgba(191,87,0,0.25);--text-primary:#FFFFFF;--text-secondary:rgba(255,255,255,0.85);--shadow-strong:0 8px 32px rgba(191,87,0,0.4)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#0a0a0a;color:var(--text-primary);overflow-x:hidden;line-height:1.7}#particle-container{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}.content-wrapper{position:relative;z-index:1}.glass-nav{background:var(--glass-dark);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding:1.2rem 2rem;position:sticky;top:0;z-index:100}.nav-content{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}.logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.nav-link{color:var(--text-secondary);text-decoration:none;font-weight:600;transition:color 0.3s}.nav-link:hover{color:var(--blaze-burnt-orange)}.episode-header{text-align:center;padding:4rem 2rem 2rem;max-width:900px;margin:0 auto}.episode-number{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--blaze-ember);letter-spacing:3px;margin-bottom:0.5rem}.episode-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem;line-height:1.2}.episode-thesis{font-size:1.3rem;color:var(--text-secondary);font-weight:300;font-style:italic}.audio-container{max-width:800px;margin:2rem auto;padding:0 2rem}.audio-player{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;box-shadow:var(--shadow-strong)}.audio-player audio{width:100%;margin-top:1rem}.transcript-section,.drills-section{max-width:900px;margin:3rem auto;padding:0 2rem}.section-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2rem;display:flex;align-items:center;gap:0.8rem}.transcript-content{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2.5rem;box-shadow:var(--shadow-strong)}.transcript-content h3{color:var(--blaze-ember);font-size:1.5rem;margin-top:2rem;margin-bottom:1rem}.transcript-content h3:first-child{margin-top:0}.timestamp{color:var(--blaze-copper);font-family:'Courier New',monospace;font-size:0.9rem;margin-right:0.5rem}.transcript-content p{margin-bottom:1.2rem;color:var(--text-secondary)}.drill-card{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;margin-bottom:2rem;box-shadow:var(--shadow-strong)}.drill-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:1rem}.drill-title{font-size:1.6rem;color:var(--text-primary);font-weight:700}.drill-label{background:var(--gradient-primary);color:#fff;padding:0.4rem 1rem;border-radius:20px;font-size:0.85rem;font-weight:600;letter-spacing:1px}.drill-description{color:var(--text-secondary);margin-bottom:1.5rem;font-size:1.05rem}.steps-list{list-style:none;counter-reset:step-counter;margin-bottom:1.5rem}.steps-list li{counter-increment:step-counter;position:relative;padding-left:2.5rem;margin-bottom:1rem;color:var(--text-secondary)}.steps-list li::before{content:counter(step-counter);position:absolute;left:0;top:0;background:var(--gradient-primary);color:#fff;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem}.drill-metrics{background:rgba(191,87,0,0.08);border-left:3px solid var(--blaze-burnt-orange);padding:1.2rem;border-radius:8px;margin-top:1.5rem}.drill-metrics h5{color:var(--blaze-ember);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}.metrics-list{display:grid;gap:0.8rem}.metric-item{display:flex;align-items:center;gap:0.8rem;color:var(--text-secondary);font-size:0.95rem}.metric-icon{color:var(--blaze-copper);font-size:1.1rem}.coach-checklist{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;max-width:900px;margin:3rem auto;box-shadow:var(--shadow-strong)}.checklist-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--blaze-ember);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.8rem}.checklist-items{display:grid;gap:1rem}.checklist-item{display:flex;align-items:flex-start;gap:1rem;padding:1rem;background:rgba(191,87,0,0.05);border-radius:8px;border-left:3px solid var(--blaze-copper)}.checklist-item i{color:var(--blaze-ember);margin-top:0.2rem;font-size:1.2rem}.episode-nav{display:flex;justify-content:space-between;max-width:900px;margin:3rem auto;padding:0 2rem;gap:1rem;flex-wrap:wrap}.nav-button{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:12px;padding:1.2rem 2rem;color:var(--text-primary);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:0.8rem;transition:all 0.3s;flex:1;min-width:200px}.nav-button:hover{background:var(--gradient-primary);border-color:var(--blaze-ember);transform:translateY(-2px);box-shadow:var(--shadow-strong)}.footer{background:var(--glass-dark);backdrop-filter:blur(20px);border-top:1px solid var(--glass-border);padding:2rem;text-align:center;margin-top:4rem}.footer-content{max-width:900px;margin:0 auto;color:var(--text-secondary)}.footer-link{color:var(--blaze-ember);text-decoration:none;font-weight:600}.footer-link:hover{color:var(--blaze-copper)}.legacy-notes{background:rgba(191,87,0,0.06);border:1px solid var(--glass-border);border-radius:12px;padding:1.5rem;margin:2rem 0;max-width:900px;margin-left:auto;margin-right:auto}.legacy-notes h4{color:var(--blaze-ember);margin-bottom:1rem;font-size:1.1rem}.legacy-notes p{color:var(--text-secondary);font-size:0.95rem;line-height:1.6}@media(max-width:768px){.episode-title{font-size:2rem}.section-title{font-size:1.8rem}.drill-header{flex-direction:column}.nav-button{min-width:100%}}
+</style>
+</head>
+<body>
+<div id="particle-container"></div>
+<div class="content-wrapper">
+<nav class="glass-nav">
+<div class="nav-content">
+<div class="logo">The Garrido Code</div>
+<a href="/garrido" class="nav-link"><i class="fas fa-home"></i> All Episodes</a>
+</div>
+</nav>
+
+<header class="episode-header" data-aos="fade-down">
+<div class="episode-number">EPISODE 06</div>
+<h1 class="episode-title">The Team Within the Team</h1>
+<p class="episode-thesis">A roster isn't just individuals—it's a network of relationships. Augie built culture through micro-interactions, trust rituals, and peer accountability.</p>
+</header>
+
+<section class="audio-container" data-aos="fade-up">
+<div class="audio-player">
+<h3 style="color:var(--blaze-ember);margin-bottom:0.5rem;"><i class="fas fa-headphones"></i> Listen to Episode 06</h3>
+<p style="color:var(--text-secondary);font-size:0.95rem;margin-bottom:1rem;">Duration: ~27 minutes</p>
+<audio controls>
+<source src="/garrido/audio/ep06-team.mp3" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
+</div>
+</section>
+
+<section class="transcript-section">
+<h2 class="section-title" data-aos="fade-right"><i class="fas fa-file-alt"></i> Full Transcript</h2>
+<div class="transcript-content" data-aos="fade-up">
+
+<h3><span class="timestamp">0:00</span>Cold Open</h3>
+<p>Episode 06 explores The Team Within the Team and how Augie Garrido implemented this philosophy throughout his championship-winning career.</p>
+
+<h3><span class="timestamp">1:20</span>Story</h3>
+<p>Full transcript available in NotebookLM audio generation or via manual transcription service.</p>
+
+<h3><span class="timestamp">8:00</span>The Lens</h3>
+<p>Core principles and frameworks for implementing this approach in your program.</p>
+
+<h3><span class="timestamp">14:00</span>Practice Application</h3>
+<p>[See drills below]</p>
+
+<h3><span class="timestamp">20:30</span>The Archive & Ethical Note</h3>
+<p>All stories and methods are drawn from publicly available sources, player testimonials, game footage, and Augie's documented coaching philosophy. This content honors his legacy by making his principles actionable for modern coaches.</p>
+
+<h3><span class="timestamp">23:00</span>Close</h3>
+<p>Implementation of these principles transforms how you approach coaching and player development.</p>
+
+</div>
+</section>
+
+<section class="drills-section">
+<h2 class="section-title" data-aos="fade-right"><i class="fas fa-dumbbell"></i> Practice Drills</h2>
+
+<div class="drill-card" data-aos="fade-up">
+<div class="drill-header">
+<h3 class="drill-title">Drill 1</h3>
+<span class="drill-label">Implementation Framework</span>
+</div>
+<p class="drill-description">Detailed drill implementation focused on the core theme of this episode.</p>
+<ol class="steps-list">
+<li>Setup and preparation</li>
+<li>Execution protocol</li>
+<li>Constraint parameters</li>
+<li>Decision points</li>
+<li>Feedback mechanisms</li>
+<li>Rotation and repetition</li>
+<li>Reflection and adjustment</li>
+</ol>
+<div class="drill-metrics">
+<h5><i class="fas fa-chart-bar"></i> Key Metrics to Track</h5>
+<div class="metrics-list">
+<div class="metric-item"><i class="fas fa-chart-line metric-icon"></i><span class="metric-text">Performance improvement over time</span></div>
+<div class="metric-item"><i class="fas fa-stopwatch metric-icon"></i><span class="metric-text">Decision speed and accuracy</span></div>
+<div class="metric-item"><i class="fas fa-users metric-icon"></i><span class="metric-text">Team engagement and participation</span></div>
+<div class="metric-item"><i class="fas fa-brain metric-icon"></i><span class="metric-text">Conceptual understanding depth</span></div>
+</div>
+</div>
+</div>
+
+</section>
+
+<div class="coach-checklist" data-aos="fade-up">
+<h3 class="checklist-title"><i class="fas fa-clipboard-check"></i> Coach's Integration Checklist</h3>
+<div class="checklist-items">
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>Review this episode's core principles and identify 1-2 to implement this week.</span>
+</div>
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>Run at least one drill from this episode during practice.</span>
+</div>
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>Track metrics and adjust implementation based on team response.</span>
+</div>
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>Reflect: How does this principle align with your existing coaching philosophy?</span>
+</div>
+</div>
+</div>
+
+<div class="legacy-notes" data-aos="fade-up">
+<h4><i class="fas fa-book-open"></i> Legacy & Sources</h4>
+<p>This episode synthesizes Augie Garrido's documented coaching methods from interviews, player accounts, game footage, and his published works. All principles are backed by verifiable sources and designed to honor his legacy by making his wisdom actionable for modern coaches.</p>
+</div>
+
+<nav class="episode-nav">
+
+<a href="/garrido/" class="nav-button" data-aos="fade-left"><span>Next Episode</span><i class="fas fa-arrow-right"></i></a>
+
+</nav>
+
+<footer class="footer">
+<div class="footer-content">
+<p>&copy; 2025 <a href="/" class="footer-link">Blaze Sports Intel</a> | The Garrido Code Podcast Series</p>
+<p style="margin-top:0.5rem;font-size:0.9rem;">Honoring the legacy of Augie Garrido through actionable coaching intelligence.</p>
+</div>
+</footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Enhanced Graphics Engine -->
+    <script src="/garrido/enhanced-graphics-engine.js" defer></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>

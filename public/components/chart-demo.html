@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blaze Chart Components Demo | Sports Intelligence Visualizations</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Blaze Chart Components -->
+  <script src="./chart-components.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #ffffff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.8;
+      margin-top: 10px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .button-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .chart-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-color: rgba(102, 126, 234, 0.5);
+    }
+
+    .chart-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #667eea;
+    }
+
+    .chart-description {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 350px;
+      margin-bottom: 15px;
+    }
+
+    .chart-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .chart-actions button {
+      padding: 8px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: white;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chart-actions button:hover {
+      background: rgba(102, 126, 234, 0.3);
+      border-color: #667eea;
+    }
+
+    .feature-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .feature-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #667eea;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 3px solid #667eea;
+    }
+
+    .feature-item h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #4ade80;
+    }
+
+    .feature-item p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    .code-example {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 15px;
+      overflow-x: auto;
+    }
+
+    .code-example pre {
+      color: #4ade80;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .status-live {
+      background: #4ade8020;
+      color: #4ade80;
+      border: 1px solid #4ade80;
+    }
+
+    .status-static {
+      background: #667eea20;
+      color: #667eea;
+      border: 1px solid #667eea;
+    }
+
+    @media (max-width: 768px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .chart-container {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚡ Blaze Chart Components</h1>
+      <p class="subtitle">Advanced Data Visualization Library for Sports Intelligence</p>
+      <p class="subtitle" style="margin-top: 5px; font-size: 0.95rem;">
+        Built on Chart.js 4.4.0 • Dark Theme Optimized • Real-time Updates • Interactive
+      </p>
+    </header>
+
+    <div class="controls">
+      <button class="button" onclick="updateAllCharts()">🔄 Update All Charts</button>
+      <button class="button button-secondary" onclick="animateAllCharts()">✨ Re-animate</button>
+      <button class="button button-secondary" onclick="exportAllCharts()">📸 Export All</button>
+      <button class="button-danger" onclick="resetAllCharts()">🔄 Reset</button>
+    </div>
+
+    <!-- Features Section -->
+    <div class="feature-section">
+      <h2>📊 Chart Types</h2>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <h3>Line Charts</h3>
+          <p>Perfect for trends, time series data, and comparisons over time. Supports gradient fills and smooth curves.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Bar Charts</h3>
+          <p>Ideal for comparing values across categories. Supports horizontal, vertical, and stacked layouts.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Pie/Doughnut Charts</h3>
+          <p>Great for showing proportions and percentages with interactive hover effects and percentage labels.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Area Charts</h3>
+          <p>Shows cumulative data and ranges between values with gradient fills under the line.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Scatter Plots</h3>
+          <p>Visualizes correlations and clusters in data. Perfect for player comparison matrices.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Radar Charts</h3>
+          <p>Multi-dimensional comparisons ideal for player stats and team metrics across multiple categories.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Demos -->
+    <div class="chart-grid">
+      <!-- Line Chart -->
+      <div class="chart-card">
+        <h2>Line Chart <span class="status-badge status-static">Static</span></h2>
+        <p class="chart-description">
+          Team performance trends over the season. Shows wins, losses, and run differential.
+        </p>
+        <div class="chart-container">
+          <canvas id="lineChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="charts.line.chart.downloadImage('line-chart')">Download</button>
+          <button onclick="updateLineChart()">Add Data Point</button>
+          <button onclick="charts.line.chart.chart.resetZoom()">Reset Zoom</button>
+        </div>
+      </div>
+
+      <!-- Bar Chart -->
+      <div class="chart-card">
+        <h2>Bar Chart <span class="status-badge status-static">Static</span></h2>
+        <p class="chart-description">
+          Player statistics comparison across multiple categories with color-coded bars.
+        </p>
+        <div class="chart-container">
+          <canvas id="barChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="charts.bar.chart.downloadImage('bar-chart')">Download</button>
+          <button onclick="toggleBarOrientation()">Toggle Horizontal</button>
+        </div>
+      </div>
+
+      <!-- Pie Chart -->
+      <div class="chart-card">
+        <h2>Pie Chart <span class="status-badge status-static">Static</span></h2>
+        <p class="chart-description">
+          Win distribution by division. Hover to see detailed percentages and values.
+        </p>
+        <div class="chart-container">
+          <canvas id="pieChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="charts.pie.chart.downloadImage('pie-chart')">Download</button>
+          <button onclick="toggleDoughnut()">Toggle Doughnut</button>
+        </div>
+      </div>
+
+      <!-- Area Chart -->
+      <div class="chart-card">
+        <h2>Area Chart <span class="status-badge status-static">Static</span></h2>
+        <p class="chart-description">
+          Cumulative statistics over time with gradient fills showing data ranges.
+        </p>
+        <div class="chart-container">
+          <canvas id="areaChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="charts.area.chart.downloadImage('area-chart')">Download</button>
+          <button onclick="updateAreaChart()">Update Data</button>
+        </div>
+      </div>
+
+      <!-- Scatter Plot -->
+      <div class="chart-card">
+        <h2>Scatter Plot <span class="status-badge status-static">Static</span></h2>
+        <p class="chart-description">
+          Player correlation analysis showing relationship between batting average and home runs.
+        </p>
+        <div class="chart-container">
+          <canvas id="scatterChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="charts.scatter.chart.downloadImage('scatter-chart')">Download</button>
+          <button onclick="updateScatterData()">Randomize</button>
+        </div>
+      </div>
+
+      <!-- Radar Chart -->
+      <div class="chart-card">
+        <h2>Radar Chart <span class="status-badge status-static">Static</span></h2>
+        <p class="chart-description">
+          Multi-dimensional player comparison across key performance indicators.
+        </p>
+        <div class="chart-container">
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="charts.radar.chart.downloadImage('radar-chart')">Download</button>
+          <button onclick="updateRadarData()">Compare New Players</button>
+        </div>
+      </div>
+
+      <!-- Real-time Line Chart -->
+      <div class="chart-card">
+        <h2>Real-time Line Chart <span class="status-badge status-live">Live</span></h2>
+        <p class="chart-description">
+          Live game score updates with automatic data refresh every 2 seconds.
+        </p>
+        <div class="chart-container">
+          <canvas id="realtimeChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="toggleRealtime()">
+            <span id="realtimeToggle">Pause</span>
+          </button>
+          <button onclick="speedUpRealtime()">Speed Up</button>
+          <button onclick="slowDownRealtime()">Slow Down</button>
+        </div>
+      </div>
+
+      <!-- Mixed Chart -->
+      <div class="chart-card">
+        <h2>Mixed Chart <span class="status-badge status-static">Static</span></h2>
+        <p class="chart-description">
+          Combined visualization showing multiple data types: bars for totals and lines for averages.
+        </p>
+        <div class="chart-container">
+          <canvas id="mixedChart"></canvas>
+        </div>
+        <div class="chart-actions">
+          <button onclick="charts.mixed.chart.downloadImage('mixed-chart')">Download</button>
+          <button onclick="updateMixedChart()">Update Data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage Examples -->
+    <div class="feature-section">
+      <h2>💻 Usage Examples</h2>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px;">Basic Line Chart</h3>
+      <div class="code-example">
+        <pre>// Create a simple line chart
+const data = {
+  labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+  datasets: [{
+    label: 'Team Wins',
+    data: [3, 5, 7, 6, 9]
+  }]
+};
+
+const chart = new LineChart('myCanvas', data);
+
+// Update data
+chart.updateData(newData);
+
+// Export as image
+chart.downloadImage('my-chart');
+
+// Destroy when done
+chart.destroy();</pre>
+      </div>
+
+      <h3 style="margin-top: 30px; margin-bottom: 10px;">Real-time Updates</h3>
+      <div class="code-example">
+        <pre>// Create real-time updating chart
+const dataFetcher = async () => {
+  const response = await fetch('/api/v1/live/scores');
+  return await response.json();
+};
+
+const { chart, updater } = ChartFactory.createRealTime(
+  'line',
+  'liveCanvas',
+  initialData,
+  dataFetcher,
+  { updateInterval: 2000 } // Update every 2 seconds
+);
+
+// Control updates
+updater.stop();
+updater.start(dataFetcher);
+updater.setInterval(5000);</pre>
+      </div>
+
+      <h3 style="margin-top: 30px; margin-bottom: 10px;">Chart Factory</h3>
+      <div class="code-example">
+        <pre>// Simplified chart creation
+const lineChart = ChartFactory.create('line', 'canvas1', data);
+const barChart = ChartFactory.create('bar', 'canvas2', data);
+const pieChart = ChartFactory.create('pie', 'canvas3', data);
+const radarChart = ChartFactory.create('radar', 'canvas4', data);
+
+// With custom options
+const chart = ChartFactory.create('bar', 'canvas5', data, {
+  horizontal: true,
+  stacked: true
+});</pre>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="feature-section">
+      <h2>✨ Features</h2>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <h3>Dark Theme</h3>
+          <p>Optimized for dark backgrounds with high contrast colors and readable text.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Responsive Design</h3>
+          <p>Automatically adapts to container size with mobile-friendly layouts.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Real-time Updates</h3>
+          <p>Built-in support for live data streams with configurable refresh rates.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Interactive Tooltips</h3>
+          <p>Hover over data points for detailed information with custom formatting.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Export Capabilities</h3>
+          <p>Download charts as PNG images with one click for reports and presentations.</p>
+        </div>
+        <div class="feature-item">
+          <h3>Animation Control</h3>
+          <p>Smooth animations with configurable duration and easing functions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Chart instances storage
+    const charts = {};
+
+    // Initialize all charts on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      initializeCharts();
+    });
+
+    function initializeCharts() {
+      // Line Chart
+      charts.line = {
+        chart: new LineChart('lineChart', {
+          labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'],
+          datasets: [
+            {
+              label: 'Cardinals Wins',
+              data: [3, 5, 7, 6, 9, 11, 10, 12],
+              borderColor: '#667eea'
+            },
+            {
+              label: 'Cubs Wins',
+              data: [2, 4, 6, 8, 7, 9, 11, 10],
+              borderColor: '#764ba2'
+            }
+          ]
+        })
+      };
+
+      // Bar Chart
+      charts.bar = {
+        chart: new BarChart('barChart', {
+          labels: ['Player A', 'Player B', 'Player C', 'Player D', 'Player E'],
+          datasets: [
+            {
+              label: 'Home Runs',
+              data: [28, 35, 42, 31, 39]
+            },
+            {
+              label: 'RBIs',
+              data: [85, 92, 105, 78, 88]
+            }
+          ]
+        })
+      };
+
+      // Pie Chart
+      charts.pie = {
+        chart: new PieChart('pieChart', {
+          labels: ['NL East', 'NL Central', 'NL West', 'AL East', 'AL Central', 'AL West'],
+          data: [45, 52, 48, 50, 46, 49]
+        }),
+        isDoughnut: false
+      };
+
+      // Area Chart
+      charts.area = {
+        chart: new AreaChart('areaChart', {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+          datasets: [
+            {
+              label: 'Cumulative Runs Scored',
+              data: [120, 250, 385, 520, 680, 845, 1020, 1180],
+              borderColor: '#4ade80'
+            },
+            {
+              label: 'Cumulative Runs Allowed',
+              data: [105, 225, 355, 490, 635, 795, 965, 1125],
+              borderColor: '#ef4444'
+            }
+          ]
+        })
+      };
+
+      // Scatter Plot
+      charts.scatter = {
+        chart: new ScatterChart('scatterChart', {
+          datasets: [
+            {
+              label: 'AL Players',
+              data: generateScatterData(15),
+              backgroundColor: '#667eea'
+            },
+            {
+              label: 'NL Players',
+              data: generateScatterData(15),
+              backgroundColor: '#764ba2'
+            }
+          ]
+        }, {
+          xAxisLabel: 'Batting Average',
+          yAxisLabel: 'Home Runs'
+        })
+      };
+
+      // Radar Chart
+      charts.radar = {
+        chart: new RadarChart('radarChart', {
+          labels: ['Power', 'Speed', 'Defense', 'Contact', 'Discipline', 'Clutch'],
+          datasets: [
+            {
+              label: 'Player A',
+              data: [85, 72, 90, 78, 82, 88],
+              borderColor: '#667eea'
+            },
+            {
+              label: 'Player B',
+              data: [78, 88, 75, 85, 90, 80],
+              borderColor: '#764ba2'
+            },
+            {
+              label: 'Player C',
+              data: [92, 65, 82, 88, 76, 85],
+              borderColor: '#4ade80'
+            }
+          ]
+        })
+      };
+
+      // Real-time Chart
+      let realtimeInning = 1;
+      const realtimeData = {
+        labels: ['1st', '2nd', '3rd'],
+        datasets: [
+          {
+            label: 'Home Team',
+            data: [0, 2, 2],
+            borderColor: '#667eea'
+          },
+          {
+            label: 'Away Team',
+            data: [1, 1, 3],
+            borderColor: '#ef4444'
+          }
+        ]
+      };
+
+      const realtimeDataFetcher = async () => {
+        // Simulate live score updates
+        realtimeInning++;
+        const inningLabel = `${realtimeInning}${getOrdinalSuffix(realtimeInning)}`;
+
+        const homeScore = realtimeData.datasets[0].data[realtimeData.datasets[0].data.length - 1] + Math.floor(Math.random() * 3);
+        const awayScore = realtimeData.datasets[1].data[realtimeData.datasets[1].data.length - 1] + Math.floor(Math.random() * 3);
+
+        realtimeData.labels.push(inningLabel);
+        realtimeData.datasets[0].data.push(homeScore);
+        realtimeData.datasets[1].data.push(awayScore);
+
+        // Keep only last 9 innings
+        if (realtimeData.labels.length > 9) {
+          realtimeData.labels.shift();
+          realtimeData.datasets[0].data.shift();
+          realtimeData.datasets[1].data.shift();
+        }
+
+        return { ...realtimeData };
+      };
+
+      const realtimeChart = ChartFactory.createRealTime(
+        'line',
+        'realtimeChart',
+        realtimeData,
+        realtimeDataFetcher,
+        { updateInterval: 2000 }
+      );
+
+      charts.realtime = realtimeChart;
+
+      // Mixed Chart (Bar + Line)
+      charts.mixed = {
+        chart: new BlazeChart('mixedChart', 'bar', {
+          labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+          datasets: [
+            {
+              type: 'bar',
+              label: 'Total Games',
+              data: [42, 40, 45, 38],
+              backgroundColor: '#667eea',
+              yAxisID: 'y'
+            },
+            {
+              type: 'line',
+              label: 'Win Rate',
+              data: [0.62, 0.58, 0.67, 0.55],
+              borderColor: '#4ade80',
+              backgroundColor: 'rgba(74, 222, 128, 0.1)',
+              yAxisID: 'y1'
+            }
+          ]
+        }, {
+          scales: {
+            y: {
+              type: 'linear',
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Games',
+                color: '#ffffff'
+              }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              title: {
+                display: true,
+                text: 'Win Rate',
+                color: '#ffffff'
+              },
+              grid: {
+                drawOnChartArea: false
+              }
+            }
+          }
+        })
+      };
+    }
+
+    // Helper functions
+    function generateScatterData(count) {
+      const data = [];
+      for (let i = 0; i < count; i++) {
+        data.push({
+          x: (Math.random() * 0.15 + 0.25).toFixed(3),
+          y: Math.floor(Math.random() * 40 + 10)
+        });
+      }
+      return data;
+    }
+
+    function getOrdinalSuffix(n) {
+      const s = ['th', 'st', 'nd', 'rd'];
+      const v = n % 100;
+      return s[(v - 20) % 10] || s[v] || s[0];
+    }
+
+    // Chart control functions
+    function updateAllCharts() {
+      Object.keys(charts).forEach(key => {
+        if (key !== 'realtime' && charts[key].chart) {
+          // Generate new random data
+          const chart = charts[key].chart;
+          if (chart.data && chart.data.datasets) {
+            chart.data.datasets.forEach(dataset => {
+              dataset.data = dataset.data.map(() => Math.floor(Math.random() * 100));
+            });
+            chart.chart.update();
+          }
+        }
+      });
+    }
+
+    function animateAllCharts() {
+      Object.keys(charts).forEach(key => {
+        if (charts[key].chart && charts[key].chart.chart) {
+          charts[key].chart.chart.update('active');
+        }
+      });
+    }
+
+    function exportAllCharts() {
+      Object.keys(charts).forEach(key => {
+        if (charts[key].chart) {
+          charts[key].chart.downloadImage(`${key}-chart`);
+        }
+      });
+    }
+
+    function resetAllCharts() {
+      Object.keys(charts).forEach(key => {
+        if (charts[key].chart) {
+          charts[key].chart.destroy();
+        }
+      });
+      charts = {};
+      initializeCharts();
+    }
+
+    // Individual chart controls
+    function updateLineChart() {
+      const newLabel = `Week ${charts.line.chart.data.labels.length + 1}`;
+      const newData = [
+        Math.floor(Math.random() * 5) + charts.line.chart.data.datasets[0].data[charts.line.chart.data.datasets[0].data.length - 1],
+        Math.floor(Math.random() * 5) + charts.line.chart.data.datasets[1].data[charts.line.chart.data.datasets[1].data.length - 1]
+      ];
+      charts.line.chart.addData(newLabel, newData);
+    }
+
+    function toggleBarOrientation() {
+      charts.bar.chart.destroy();
+      charts.bar.chart = new BarChart('barChart', {
+        labels: ['Player A', 'Player B', 'Player C', 'Player D', 'Player E'],
+        datasets: [
+          {
+            label: 'Home Runs',
+            data: [28, 35, 42, 31, 39]
+          },
+          {
+            label: 'RBIs',
+            data: [85, 92, 105, 78, 88]
+          }
+        ]
+      }, {
+        horizontal: !charts.bar.horizontal
+      });
+      charts.bar.horizontal = !charts.bar.horizontal;
+    }
+
+    function toggleDoughnut() {
+      charts.pie.isDoughnut = !charts.pie.isDoughnut;
+      charts.pie.chart.destroy();
+      charts.pie.chart = new PieChart('pieChart', {
+        labels: ['NL East', 'NL Central', 'NL West', 'AL East', 'AL Central', 'AL West'],
+        data: [45, 52, 48, 50, 46, 49]
+      }, {
+        doughnut: charts.pie.isDoughnut
+      });
+    }
+
+    function updateAreaChart() {
+      charts.area.chart.data.datasets.forEach(dataset => {
+        const lastValue = dataset.data[dataset.data.length - 1];
+        dataset.data.push(lastValue + Math.floor(Math.random() * 50) + 20);
+      });
+      charts.area.chart.data.labels.push(['Sep', 'Oct', 'Nov', 'Dec'][charts.area.chart.data.labels.length % 4]);
+      charts.area.chart.chart.update();
+    }
+
+    function updateScatterData() {
+      charts.scatter.chart.data.datasets[0].data = generateScatterData(15);
+      charts.scatter.chart.data.datasets[1].data = generateScatterData(15);
+      charts.scatter.chart.chart.update();
+    }
+
+    function updateRadarData() {
+      charts.radar.chart.data.datasets.forEach(dataset => {
+        dataset.data = dataset.data.map(() => Math.floor(Math.random() * 30) + 65);
+      });
+      charts.radar.chart.chart.update();
+    }
+
+    function toggleRealtime() {
+      if (charts.realtime.updater.isRunning) {
+        charts.realtime.updater.stop();
+        document.getElementById('realtimeToggle').textContent = 'Resume';
+      } else {
+        charts.realtime.updater.start(charts.realtime.updater.dataFetcher);
+        document.getElementById('realtimeToggle').textContent = 'Pause';
+      }
+    }
+
+    function speedUpRealtime() {
+      const currentInterval = charts.realtime.updater.updateInterval;
+      charts.realtime.updater.setInterval(Math.max(500, currentInterval - 500));
+    }
+
+    function slowDownRealtime() {
+      const currentInterval = charts.realtime.updater.updateInterval;
+      charts.realtime.updater.setInterval(Math.min(5000, currentInterval + 500));
+    }
+
+    function updateMixedChart() {
+      charts.mixed.chart.data.datasets[0].data = charts.mixed.chart.data.datasets[0].data.map(() => Math.floor(Math.random() * 20) + 35);
+      charts.mixed.chart.data.datasets[1].data = charts.mixed.chart.data.datasets[1].data.map(() => (Math.random() * 0.3 + 0.45).toFixed(2));
+      charts.mixed.chart.chart.update();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EP03: The Game Teaches the Game | The Garrido Code</title>
+<meta name="description" content="Augie Garrido believed the game itself is the best teacher. Learn to design practices that let situations instruct.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+<style>
+:root{--blaze-burnt-orange:#BF5700;--blaze-ember:#CC6600;--blaze-copper:#D97B38;--gradient-primary:linear-gradient(135deg,#BF5700 0%,#CC6600 50%,#D97B38 100%);--glass-dark:rgba(0,0,0,0.7);--glass-medium:rgba(191,87,0,0.12);--glass-border:rgba(191,87,0,0.25);--text-primary:#FFFFFF;--text-secondary:rgba(255,255,255,0.85);--shadow-strong:0 8px 32px rgba(191,87,0,0.4)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#0a0a0a;color:var(--text-primary);overflow-x:hidden;line-height:1.7}#particle-container{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}.content-wrapper{position:relative;z-index:1}.glass-nav{background:var(--glass-dark);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding:1.2rem 2rem;position:sticky;top:0;z-index:100}.nav-content{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}.logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.nav-link{color:var(--text-secondary);text-decoration:none;font-weight:600;transition:color 0.3s}.nav-link:hover{color:var(--blaze-burnt-orange)}.episode-header{text-align:center;padding:4rem 2rem 2rem;max-width:900px;margin:0 auto}.episode-number{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--blaze-ember);letter-spacing:3px;margin-bottom:0.5rem}.episode-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem;line-height:1.2}.episode-thesis{font-size:1.3rem;color:var(--text-secondary);font-weight:300;font-style:italic}.audio-container{max-width:800px;margin:2rem auto;padding:0 2rem}.audio-player{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;box-shadow:var(--shadow-strong)}.audio-player audio{width:100%;margin-top:1rem}.transcript-section,.drills-section{max-width:900px;margin:3rem auto;padding:0 2rem}.section-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2rem;display:flex;align-items:center;gap:0.8rem}.transcript-content{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2.5rem;box-shadow:var(--shadow-strong)}.transcript-content h3{color:var(--blaze-ember);font-size:1.5rem;margin-top:2rem;margin-bottom:1rem}.transcript-content h3:first-child{margin-top:0}.timestamp{color:var(--blaze-copper);font-family:'Courier New',monospace;font-size:0.9rem;margin-right:0.5rem}.transcript-content p{margin-bottom:1.2rem;color:var(--text-secondary)}.drill-card{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;margin-bottom:2rem;box-shadow:var(--shadow-strong)}.drill-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:1rem}.drill-title{font-size:1.6rem;color:var(--text-primary);font-weight:700}.drill-label{background:var(--gradient-primary);color:#fff;padding:0.4rem 1rem;border-radius:20px;font-size:0.85rem;font-weight:600;letter-spacing:1px}.drill-description{color:var(--text-secondary);margin-bottom:1.5rem;font-size:1.05rem}.steps-list{list-style:none;counter-reset:step-counter;margin-bottom:1.5rem}.steps-list li{counter-increment:step-counter;position:relative;padding-left:2.5rem;margin-bottom:1rem;color:var(--text-secondary)}.steps-list li::before{content:counter(step-counter);position:absolute;left:0;top:0;background:var(--gradient-primary);color:#fff;width:1.8rem;height:1.8rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem}.drill-metrics{background:rgba(191,87,0,0.08);border-left:3px solid var(--blaze-burnt-orange);padding:1.2rem;border-radius:8px;margin-top:1.5rem}.drill-metrics h5{color:var(--blaze-ember);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}.metrics-list{display:grid;gap:0.8rem}.metric-item{display:flex;align-items:center;gap:0.8rem;color:var(--text-secondary);font-size:0.95rem}.metric-icon{color:var(--blaze-copper);font-size:1.1rem}.coach-checklist{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;max-width:900px;margin:3rem auto;box-shadow:var(--shadow-strong)}.checklist-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--blaze-ember);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.8rem}.checklist-items{display:grid;gap:1rem}.checklist-item{display:flex;align-items:flex-start;gap:1rem;padding:1rem;background:rgba(191,87,0,0.05);border-radius:8px;border-left:3px solid var(--blaze-copper)}.checklist-item i{color:var(--blaze-ember);margin-top:0.2rem;font-size:1.2rem}.episode-nav{display:flex;justify-content:space-between;max-width:900px;margin:3rem auto;padding:0 2rem;gap:1rem;flex-wrap:wrap}.nav-button{background:var(--glass-dark);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:12px;padding:1.2rem 2rem;color:var(--text-primary);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:0.8rem;transition:all 0.3s;flex:1;min-width:200px}.nav-button:hover{background:var(--gradient-primary);border-color:var(--blaze-ember);transform:translateY(-2px);box-shadow:var(--shadow-strong)}.footer{background:var(--glass-dark);backdrop-filter:blur(20px);border-top:1px solid var(--glass-border);padding:2rem;text-align:center;margin-top:4rem}.footer-content{max-width:900px;margin:0 auto;color:var(--text-secondary)}.footer-link{color:var(--blaze-ember);text-decoration:none;font-weight:600}.footer-link:hover{color:var(--blaze-copper)}.legacy-notes{background:rgba(191,87,0,0.06);border:1px solid var(--glass-border);border-radius:12px;padding:1.5rem;margin:2rem 0;max-width:900px;margin-left:auto;margin-right:auto}.legacy-notes h4{color:var(--blaze-ember);margin-bottom:1rem;font-size:1.1rem}.legacy-notes p{color:var(--text-secondary);font-size:0.95rem;line-height:1.6}@media(max-width:768px){.episode-title{font-size:2rem}.section-title{font-size:1.8rem}.drill-header{flex-direction:column}.nav-button{min-width:100%}}
+</style>
+</head>
+<body>
+<div id="particle-container"></div>
+<div class="content-wrapper">
+<nav class="glass-nav">
+<div class="nav-content">
+<div class="logo">The Garrido Code</div>
+<a href="/garrido" class="nav-link"><i class="fas fa-home"></i> All Episodes</a>
+</div>
+</nav>
+
+<header class="episode-header" data-aos="fade-down">
+<div class="episode-number">EPISODE 03</div>
+<h1 class="episode-title">The Game Teaches the Game</h1>
+<p class="episode-thesis">Augie believed the game itself is the best teacher. You design practices that let situations instruct—then step back and let mastery emerge organically.</p>
+</header>
+
+<section class="audio-container" data-aos="fade-up">
+<div class="audio-player">
+<h3 style="color:var(--blaze-ember);margin-bottom:0.5rem;"><i class="fas fa-headphones"></i> Listen to Episode 03</h3>
+<p style="color:var(--text-secondary);font-size:0.95rem;margin-bottom:1rem;">Duration: ~27 minutes</p>
+<audio controls>
+<source src="/garrido/audio/ep03-teach.mp3" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
+</div>
+</section>
+
+<section class="transcript-section">
+<h2 class="section-title" data-aos="fade-right"><i class="fas fa-file-alt"></i> Full Transcript</h2>
+<div class="transcript-content" data-aos="fade-up">
+
+<h3><span class="timestamp">0:00</span>Cold Open</h3>
+<p>"The game teaches the game." Augie Garrido said this hundreds of times, maybe thousands. It wasn't a throwaway line—it was the core of his pedagogy. He didn't believe in lecturing players about what to do in every scenario. He believed in creating scenarios so clear, so well-designed, that the lesson taught itself. And if a player didn't get it the first time? The game would teach it again. And again. Until they did.</p>
+
+<h3><span class="timestamp">1:20</span>Story: The Rundown That Taught Itself</h3>
+<p>Picture this: mid-April practice at Disch-Falk Field. Texas is working on rundowns—baserunner caught between second and third. The infielders are crisp, mechanical. They execute the drill flawlessly. Augie watches for two minutes, then stops them.</p>
+<p>"Good," he says. "Now let's make it real."</p>
+<p>He tells the runner: "Your job is to get safe. I don't care how." He tells the fielders: "Your job is to tag him out in two throws or less." Then he adds one constraint: "Runner, you can dive, stop short, fake a dive—anything. Fielders, you adjust or you fail."</p>
+<p>The first attempt: chaos. The runner baits a throw, stops short, and the ball sails into the outfield. The fielders are frustrated. Augie doesn't lecture. He just says: "Again."</p>
+<p>By the tenth rep, the fielders learn to hold the ball longer, to crowd the runner, to communicate with their eyes instead of their voices. The runner learns when to commit versus when to bait. No one told them these lessons—they emerged from the situation itself. That's constraint-led coaching. That's "the game teaches the game."</p>
+
+<h3><span class="timestamp">8:00</span>The Lens: Three Principles for Situation-Led Learning</h3>
+<p><strong>1. Design Constraints That Force Decisions</strong><br>
+Traditional coaching: "Here's the right way to do X." Constraint-led coaching: "Here's a situation where you have to figure out X." The difference is agency. When you tell a player what to do, they execute a script. When you force them to solve a problem, they internalize a principle.</p>
+
+<p><strong>2. Let Failure Be Part of the Feedback Loop</strong><br>
+In the rundown drill, the fielders failed—repeatedly. Augie didn't step in to correct them. He let the situation correct them. The ball sailing into the outfield was the feedback. The runner getting safe was the feedback. The game was teaching. All Augie had to do was design the drill well enough that the lesson was obvious.</p>
+
+<p><strong>3. Minimize Coach Talk, Maximize Reps</strong><br>
+Augie had a rule: if he was talking for more than 30 seconds, he was talking too much. He believed in high-rep, low-explanation environments. The game speaks louder than any coach ever could. Your job isn't to narrate the lesson—it's to create the conditions where the lesson happens.</p>
+
+<h3><span class="timestamp">14:00</span>Practice Application: Three Drills That Let the Game Teach</h3>
+<p>[See drills below]</p>
+
+<h3><span class="timestamp">20:30</span>The Archive & Ethical Note</h3>
+<p>These stories are drawn from interviews, game footage, and accounts from former players and staff. Augie passed in 2018, but his methods live on in every coach who designs practices that respect the intelligence of their players. We're not advocating a hands-off approach—we're advocating a hands-wise approach. Design the situation. Trust the process. Let the game teach.</p>
+
+<h3><span class="timestamp">23:00</span>Close</h3>
+<p>Next episode: "Failure Is Information." Augie didn't fear failure—he weaponized it. We'll show you how to build a culture where mistakes accelerate learning instead of triggering shame. Until then: trust the game. It knows what it's doing.</p>
+
+</div>
+</section>
+
+<section class="drills-section">
+<h2 class="section-title" data-aos="fade-right"><i class="fas fa-dumbbell"></i> Practice Drills</h2>
+
+<div class="drill-card" data-aos="fade-up">
+<div class="drill-header">
+<h3 class="drill-title">Drill 1: Baserunning Decision Tree</h3>
+<span class="drill-label">Constraint-Led Learning</span>
+</div>
+<p class="drill-description">Forces runners to read live situations (ball in dirt, passed ball, wild pitch) and make real-time go/no-go decisions without coach instruction.</p>
+<ol class="steps-list">
+<li>Set up live batting practice with full defense and baserunners.</li>
+<li>Announce: "Every pitch, runners must decide: advance or hold." No coach signals allowed.</li>
+<li>Introduce variability: pitcher throws in the dirt, catcher blocks but ball rolls 10 feet away, etc.</li>
+<li>Runner must decide in real-time: go for next base or hold position.</li>
+<li>After each rep, ask the runner: "Why did you go?" or "Why did you hold?" They verbalize their read.</li>
+<li>Rotate runners through all bases (1st, 2nd, 3rd) so they experience different angles and distances.</li>
+<li>Track: Did the runner's decision match the situation? Over time, their reads get faster and more accurate.</li>
+</ol>
+<div class="drill-metrics">
+<h5><i class="fas fa-chart-bar"></i> Key Metrics to Track</h5>
+<div class="metrics-list">
+<div class="metric-item"><i class="fas fa-eye metric-icon"></i><span class="metric-text">Decision accuracy (correct read vs incorrect read)</span></div>
+<div class="metric-item"><i class="fas fa-stopwatch metric-icon"></i><span class="metric-text">Decision latency (how fast they commit)</span></div>
+<div class="metric-item"><i class="fas fa-check-circle metric-icon"></i><span class="metric-text">Safe/out ratio when they choose to advance</span></div>
+<div class="metric-item"><i class="fas fa-brain metric-icon"></i><span class="metric-text">Verbal explanation quality (can they articulate what they saw?)</span></div>
+</div>
+</div>
+</div>
+
+<div class="drill-card" data-aos="fade-up" data-aos-delay="100">
+<div class="drill-header">
+<h3 class="drill-title">Drill 2: Live Scrimmage with Zero Coach Interference</h3>
+<span class="drill-label">Self-Organizing Practice</span>
+</div>
+<p class="drill-description">Full 9-inning scrimmage where coaches observe but never intervene. Players must self-correct, communicate, and adjust on the fly—exactly like a real game.</p>
+<ol class="steps-list">
+<li>Split team into two squads. Set up full 9-inning scrimmage format.</li>
+<li>Announce: "Coaches will not call timeout, correct mistakes, or offer advice during play. You solve problems as they arise."</li>
+<li>Players are on their own: if the defense misaligns, they fix it. If baserunning breaks down, they adjust next inning.</li>
+<li>Coaches take notes on what breaks and what self-corrects. No intervention mid-game.</li>
+<li>After the scrimmage: debrief as a team. Ask: "What did you notice?" "What adjustments did you make?" Let players lead the reflection.</li>
+<li>Use video review to highlight moments where players self-organized effectively (or didn't).</li>
+<li>Repeat weekly. Over time, players develop game-management skills that don't require coach micromanagement.</li>
+</ol>
+<div class="drill-metrics">
+<h5><i class="fas fa-chart-bar"></i> Key Metrics to Track</h5>
+<div class="metrics-list">
+<div class="metric-item"><i class="fas fa-tools metric-icon"></i><span class="metric-text">Self-corrections made (defensive alignments, baserunning adjustments)</span></div>
+<div class="metric-item"><i class="fas fa-comments metric-icon"></i><span class="metric-text">In-game communication frequency (verbal cues, signals)</span></div>
+<div class="metric-item"><i class="fas fa-exclamation-triangle metric-icon"></i><span class="metric-text">Repeated errors (indicates lesson not yet internalized)</span></div>
+<div class="metric-item"><i class="fas fa-lightbulb metric-icon"></i><span class="metric-text">Quality of post-game reflections (depth of insight)</span></div>
+</div>
+</div>
+</div>
+
+<div class="drill-card" data-aos="fade-up" data-aos-delay="200">
+<div class="drill-header">
+<h3 class="drill-title">Drill 3: Small-Sided Games with Variable Outs</h3>
+<span class="drill-label">Decision Pressure</span>
+</div>
+<p class="drill-description">3v3 or 4v4 mini-games with modified rules (2 outs instead of 3, bases 60 feet instead of 90). Creates high-rep decision-making in compressed time.</p>
+<ol class="steps-list">
+<li>Set up two small diamonds (60-foot bases instead of 90). Use cones or bases.</li>
+<li>Teams of 3-4 players each. One team hits, one team fields. Rotate every 2 outs.</li>
+<li>Rule modification: only 2 outs per inning instead of 3. This increases urgency and decision density.</li>
+<li>No coach calls: players decide when to bunt, when to steal, when to throw to which base.</li>
+<li>Keep score. Winning team stays on offense. Creates competitive pressure.</li>
+<li>After each round, rotate teams. Every player experiences offense and defense multiple times.</li>
+<li>Debrief: "What situations forced the toughest decisions?" "What did you learn about reading the defense?"</li>
+</ol>
+<div class="drill-metrics">
+<h5><i class="fas fa-chart-bar"></i> Key Metrics to Track</h5>
+<div class="metrics-list">
+<div class="metric-item"><i class="fas fa-tachometer-alt metric-icon"></i><span class="metric-text">Decisions per minute (game speed indicator)</span></div>
+<div class="metric-item"><i class="fas fa-bullseye metric-icon"></i><span class="metric-text">Successful offensive plays (bunts, steals, hit-and-runs)</span></div>
+<div class="metric-item"><i class="fas fa-shield-alt metric-icon"></i><span class="metric-text">Defensive efficiency (outs recorded / opportunities)</span></div>
+<div class="metric-item"><i class="fas fa-users metric-icon"></i><span class="metric-text">Communication clarity (verbal calls, hand signals)</span></div>
+</div>
+</div>
+</div>
+
+</section>
+
+<div class="coach-checklist" data-aos="fade-up">
+<h3 class="checklist-title"><i class="fas fa-clipboard-check"></i> Coach's Integration Checklist</h3>
+<div class="checklist-items">
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>This week, run at least one drill where you don't give any instructions mid-rep—let the situation teach.</span>
+</div>
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>Track how many times you stop practice to explain vs how many reps players actually get. Aim for 80% reps, 20% talk.</span>
+</div>
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>After a drill, ask players to explain what they learned. If they can't articulate it, the drill wasn't clear enough.</span>
+</div>
+<div class="checklist-item">
+<i class="fas fa-check-circle"></i>
+<span>Review one practice on video. Note: How often do you intervene vs let the game unfold? Where could you step back more?</span>
+</div>
+</div>
+</div>
+
+<div class="legacy-notes" data-aos="fade-up">
+<h4><i class="fas fa-book-open"></i> Legacy & Sources</h4>
+<p>Augie Garrido coached at Cal State Fullerton and the University of Texas from 1973 to 2016, winning five College World Series titles. His philosophy of "the game teaches the game" is documented in interviews, player testimonials, and his book <em>Life Is Yours to Win</em> (2011). This episode synthesizes his constraint-led approach into actionable drills for modern coaches. All stories are drawn from publicly available sources, former player accounts, and game footage. Augie passed away in 2018, but his methods remain a cornerstone of player-centered coaching.</p>
+</div>
+
+<nav class="episode-nav">
+<a href="/garrido/respect" class="nav-button" data-aos="fade-right">
+<i class="fas fa-arrow-left"></i>
+<span>EP02: Respect</span>
+</a>
+<a href="/garrido/failure" class="nav-button" data-aos="fade-left">
+<span>EP04: Failure</span>
+<i class="fas fa-arrow-right"></i>
+</a>
+</nav>
+
+<footer class="footer">
+<div class="footer-content">
+<p>&copy; 2025 <a href="/" class="footer-link">Blaze Sports Intel</a> | The Garrido Code Podcast Series</p>
+<p style="margin-top:0.5rem;font-size:0.9rem;">Honoring the legacy of Augie Garrido through actionable coaching intelligence.</p>
+</div>
+</footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Enhanced Graphics Engine -->
+    <script src="/garrido/enhanced-graphics-engine.js" defer></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>

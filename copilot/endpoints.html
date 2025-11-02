@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copilot Endpoints Dashboard | Blaze Sports Intel</title>
+    <meta name="description" content="Comprehensive API endpoint management for Blaze Sports Intelligence copilot services. Test endpoints, monitor performance, track usage, and manage configurations.">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Burnt Orange Brand Colors */
+            --blaze-orange: #BF5700;
+            --blaze-ember: #CC6600;
+            --blaze-copper: #D97B38;
+            --blaze-sunset: #E69551;
+            --blaze-dark: #8B3A00;
+
+            /* Dark Theme Base */
+            --bg-primary: #0D0D12;
+            --bg-secondary: #1A1A24;
+            --bg-tertiary: #252532;
+            --bg-elevated: #2D2D3D;
+
+            /* Text Colors */
+            --text-primary: #FFFFFF;
+            --text-secondary: #B8B8C8;
+            --text-tertiary: #8888A0;
+            --text-muted: #606070;
+
+            /* Glass Morphism */
+            --glass-bg: rgba(26, 26, 36, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+
+            /* Semantic Colors */
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+
+            /* Shadows & Glows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+            --glow-orange: 0 0 20px rgba(191, 87, 0, 0.4);
+
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg,
+                var(--bg-primary) 0%,
+                var(--bg-secondary) 50%,
+                var(--bg-primary) 100%
+            );
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: var(--transition-base);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-sunset));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-orange);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--blaze-orange);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-sunset));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Endpoint Cards Grid */
+        .endpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .endpoint-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: var(--transition-base);
+        }
+
+        .endpoint-card:hover {
+            border-color: var(--blaze-orange);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .endpoint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .endpoint-title {
+            flex: 1;
+        }
+
+        .endpoint-title h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--blaze-orange);
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            background: var(--bg-tertiary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .endpoint-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-post {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .endpoint-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .endpoint-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .endpoint-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .endpoint-features li:last-child {
+            border-bottom: none;
+        }
+
+        .endpoint-features i {
+            color: var(--blaze-orange);
+            width: 20px;
+            text-align: center;
+        }
+
+        .endpoint-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* API Tester Section */
+        .api-tester {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .tester-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tester-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+        }
+
+        .endpoint-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-tertiary);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+
+        .endpoint-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .endpoint-tab.active {
+            background: var(--blaze-orange);
+            color: white;
+        }
+
+        .endpoint-tab:hover:not(.active) {
+            background: var(--bg-elevated);
+        }
+
+        /* Request Builder */
+        .request-builder {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .request-section, .response-section {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .section-label {
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--blaze-orange);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: var(--transition-fast);
+        }
+
+        .form-textarea {
+            font-family: 'Courier New', monospace;
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--blaze-orange);
+            box-shadow: 0 0 0 3px rgba(191, 87, 0, 0.1);
+        }
+
+        /* Response Display */
+        .response-display {
+            background: var(--bg-primary);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 1rem;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .response-display.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .response-json {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            color: var(--blaze-orange);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--bg-tertiary);
+            border-top-color: var(--blaze-orange);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Usage Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: var(--transition-base);
+        }
+
+        .metric-card:hover {
+            border-color: var(--blaze-orange);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .metric-icon {
+            font-size: 1.5rem;
+            color: var(--blaze-orange);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .metric-trend {
+            font-size: 0.875rem;
+            color: var(--success);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* History Table */
+        .history-table {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-tertiary);
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition-fast);
+        }
+
+        tbody tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+
+        .status-error {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .endpoints-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .request-builder {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .btn {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .endpoint-card, .api-tester, .metric-card, .history-table {
+                padding: 1.25rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span class="logo-icon">🤖</span>
+                <div class="logo-text">
+                    <h1>Copilot Endpoints</h1>
+                    <p>API Management Dashboard</p>
+                </div>
+            </a>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+                <button class="btn" onclick="clearHistory()">
+                    <i class="fas fa-trash"></i>
+                    Clear History
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-header">
+            <h2 class="section-title">Copilot API Endpoints</h2>
+            <p class="section-description">
+                Comprehensive API endpoint management for Blaze Sports Intelligence copilot services. Test endpoints, monitor performance, track usage, and manage configurations.
+            </p>
+        </div>
+
+        <!-- Endpoint Cards -->
+        <div class="endpoints-grid">
+            <!-- Enhanced Insights -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <h3>Enhanced Insights</h3>
+                        <code class="endpoint-path">/api/copilot/enhanced-insights</code>
+                    </div>
+                    <span class="endpoint-badge badge-post">POST</span>
+                </div>
+
+                <p class="endpoint-description">
+                    Multi-provider RAG (Retrieval-Augmented Generation) system with intelligent routing across Gemini 2.5, GPT-5, and Claude 4.5 for superior sports analytics insights.
+                </p>
+
+                <ul class="endpoint-features">
+                    <li><i class="fas fa-brain"></i> Intelligent AI provider selection</li>
+                    <li><i class="fas fa-search"></i> Semantic search with embeddings</li>
+                    <li><i class="fas fa-layer-group"></i> Multi-model routing (4 providers)</li>
+                    <li><i class="fas fa-chart-line"></i> Performance metrics tracking</li>
+                    <li><i class="fas fa-link"></i> Source citation with confidence scores</li>
+                </ul>
+
+                <div class="endpoint-actions">
+                    <button class="btn" onclick="selectEndpoint('insights')">
+                        <i class="fas fa-flask"></i>
+                        Test Endpoint
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Search -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <div class="endpoint-title">
+                        <h3>Enhanced Search</h3>
+                        <code class="endpoint-path">/api/copilot/enhanced-search</code>
+                    </div>
+                    <span class="endpoint-badge badge-post">POST</span>
+                </div>
+
+                <p class="endpoint-description">
+                    Advanced semantic search powered by Gemini 2.5 Flash for query enhancement and Workers AI for vector embeddings. Multi-variation search with relevance scoring.
+                </p>
+
+                <ul class="endpoint-features">
+                    <li><i class="fas fa-magic"></i> Query enhancement with Gemini</li>
+                    <li><i class="fas fa-layer-group"></i> Multi-variation semantic search</li>
+                    <li><i class="fas fa-star"></i> Advanced relevance scoring</li>
+                    <li><i class="fas fa-filter"></i> Sport-specific filtering</li>
+                    <li><i class="fas fa-clock"></i> Recency-based result boosting</li>
+                </ul>
+
+                <div class="endpoint-actions">
+                    <button class="btn" onclick="selectEndpoint('search')">
+                        <i class="fas fa-flask"></i>
+                        Test Endpoint
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Tester -->
+        <div class="api-tester">
+            <div class="tester-header">
+                <h3 class="tester-title">API Endpoint Tester</h3>
+                <div class="endpoint-selector">
+                    <button class="endpoint-tab active" data-endpoint="insights" onclick="switchEndpoint('insights')">
+                        Enhanced Insights
+                    </button>
+                    <button class="endpoint-tab" data-endpoint="search" onclick="switchEndpoint('search')">
+                        Enhanced Search
+                    </button>
+                </div>
+            </div>
+
+            <div class="request-builder">
+                <!-- Request Section -->
+                <div class="request-section">
+                    <div class="section-label">
+                        <i class="fas fa-arrow-up"></i>
+                        Request
+                    </div>
+
+                    <!-- Insights Form -->
+                    <div id="insightsForm" class="endpoint-form">
+                        <div class="form-group">
+                            <label class="form-label">Query *</label>
+                            <input type="text" class="form-input" id="insightsQuery" placeholder="e.g., Compare Chiefs offensive stats this season" value="Compare Chiefs offensive stats this season">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Sport (optional)</label>
+                            <select class="form-select" id="insightsSport">
+                                <option value="">All Sports</option>
+                                <option value="NFL">NFL</option>
+                                <option value="MLB">MLB</option>
+                                <option value="CFB">College Football</option>
+                                <option value="CBB">College Basketball</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">AI Provider (optional)</label>
+                            <select class="form-select" id="insightsProvider">
+                                <option value="">Auto-Select (Recommended)</option>
+                                <option value="gemini_pro">Gemini 2.5 Pro (Complex Analysis)</option>
+                                <option value="gemini_flash">Gemini 2.5 Flash (Quick Facts)</option>
+                                <option value="gpt5">GPT-5 (Conversational)</option>
+                                <option value="claude_sonnet_45">Claude 4.5 (Strategic Insights)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Search Form (hidden by default) -->
+                    <div id="searchForm" class="endpoint-form" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Query *</label>
+                            <input type="text" class="form-input" id="searchQuery" placeholder="e.g., close NFL games" value="close NFL games">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Sport (optional)</label>
+                            <select class="form-select" id="searchSport">
+                                <option value="">All Sports</option>
+                                <option value="NFL">NFL</option>
+                                <option value="MLB">MLB</option>
+                                <option value="CFB">College Football</option>
+                                <option value="CBB">College Basketball</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Result Limit</label>
+                            <input type="number" class="form-input" id="searchLimit" value="10" min="1" max="50">
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="testEndpoint()" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Request
+                    </button>
+                </div>
+
+                <!-- Response Section -->
+                <div class="response-section">
+                    <div class="section-label">
+                        <i class="fas fa-arrow-down"></i>
+                        Response
+                    </div>
+
+                    <div id="responseDisplay" class="response-display empty">
+                        Click "Send Request" to test the endpoint
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Metrics -->
+        <div class="section-header">
+            <h2 class="section-title">Usage Metrics</h2>
+            <p class="section-description">Real-time statistics and performance tracking for API endpoints</p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Total Requests</span>
+                    <i class="fas fa-chart-bar metric-icon"></i>
+                </div>
+                <div class="metric-value" id="totalRequests">0</div>
+                <div class="metric-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    This session
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Avg Response Time</span>
+                    <i class="fas fa-clock metric-icon"></i>
+                </div>
+                <div class="metric-value" id="avgResponseTime">-</div>
+                <div class="metric-trend">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Performance
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Success Rate</span>
+                    <i class="fas fa-check-circle metric-icon"></i>
+                </div>
+                <div class="metric-value" id="successRate">-</div>
+                <div class="metric-trend">
+                    <i class="fas fa-chart-line"></i>
+                    Reliability
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-label">Total Tokens</span>
+                    <i class="fas fa-coins metric-icon"></i>
+                </div>
+                <div class="metric-value" id="totalTokens">0</div>
+                <div class="metric-trend">
+                    <i class="fas fa-bolt"></i>
+                    Token usage
+                </div>
+            </div>
+        </div>
+
+        <!-- Request History -->
+        <div class="history-table">
+            <div class="table-header">
+                <h3 class="table-title">Request History</h3>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Endpoint</th>
+                            <th>Query</th>
+                            <th>Status</th>
+                            <th>Response Time</th>
+                            <th>Provider/Results</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+                                No requests yet. Test an endpoint to see history.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentEndpoint = 'insights';
+        let requestHistory = [];
+        let metrics = {
+            totalRequests: 0,
+            successfulRequests: 0,
+            totalResponseTime: 0,
+            totalTokens: 0
+        };
+
+        // Initialize from localStorage
+        function loadState() {
+            const savedHistory = localStorage.getItem('copilot-history');
+            const savedMetrics = localStorage.getItem('copilot-metrics');
+
+            if (savedHistory) {
+                requestHistory = JSON.parse(savedHistory);
+                renderHistory();
+            }
+
+            if (savedMetrics) {
+                metrics = JSON.parse(savedMetrics);
+                updateMetrics();
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('copilot-history', JSON.stringify(requestHistory));
+            localStorage.setItem('copilot-metrics', JSON.stringify(metrics));
+        }
+
+        // Switch Endpoint Tab
+        function switchEndpoint(endpoint) {
+            currentEndpoint = endpoint;
+
+            // Update tabs
+            document.querySelectorAll('.endpoint-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.endpoint === endpoint);
+            });
+
+            // Show/hide forms
+            document.getElementById('insightsForm').style.display = endpoint === 'insights' ? 'block' : 'none';
+            document.getElementById('searchForm').style.display = endpoint === 'search' ? 'block' : 'none';
+        }
+
+        // Select Endpoint (from cards)
+        function selectEndpoint(endpoint) {
+            switchEndpoint(endpoint);
+            document.querySelector('.api-tester').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Test Endpoint
+        async function testEndpoint() {
+            const responseDisplay = document.getElementById('responseDisplay');
+            responseDisplay.classList.remove('empty');
+            responseDisplay.innerHTML = '<div class="loading"><div class="spinner"></div><span>Sending request...</span></div>';
+
+            const startTime = Date.now();
+            let endpoint, requestBody;
+
+            try {
+                if (currentEndpoint === 'insights') {
+                    endpoint = '/api/copilot/enhanced-insights';
+                    requestBody = {
+                        query: document.getElementById('insightsQuery').value,
+                        sport: document.getElementById('insightsSport').value || undefined,
+                        provider: document.getElementById('insightsProvider').value || undefined
+                    };
+                } else {
+                    endpoint = '/api/copilot/enhanced-search';
+                    requestBody = {
+                        query: document.getElementById('searchQuery').value,
+                        sport: document.getElementById('searchSport').value || undefined,
+                        limit: parseInt(document.getElementById('searchLimit').value) || 10
+                    };
+                }
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const responseTime = Date.now() - startTime;
+                const data = await response.json();
+
+                // Display response
+                responseDisplay.innerHTML = `<pre class="response-json">${JSON.stringify(data, null, 2)}</pre>`;
+
+                // Update metrics
+                metrics.totalRequests++;
+                metrics.totalResponseTime += responseTime;
+                if (response.ok && data.success) {
+                    metrics.successfulRequests++;
+                }
+
+                // Track tokens for insights
+                if (currentEndpoint === 'insights' && data.performance?.tokenUsage) {
+                    const usage = data.performance.tokenUsage;
+                    metrics.totalTokens += (usage.promptTokens || 0) + (usage.completionTokens || 0);
+                }
+
+                // Add to history
+                requestHistory.unshift({
+                    timestamp: new Date().toISOString(),
+                    endpoint: currentEndpoint === 'insights' ? 'Enhanced Insights' : 'Enhanced Search',
+                    query: requestBody.query,
+                    status: response.ok && data.success ? 'success' : 'error',
+                    responseTime: `${responseTime}ms`,
+                    meta: currentEndpoint === 'insights'
+                        ? data.provider
+                        : `${data.count || 0} results`
+                });
+
+                // Keep only last 50 requests
+                if (requestHistory.length > 50) {
+                    requestHistory = requestHistory.slice(0, 50);
+                }
+
+                updateMetrics();
+                renderHistory();
+                saveState();
+
+            } catch (error) {
+                const responseTime = Date.now() - startTime;
+
+                responseDisplay.innerHTML = `<div style="color: var(--danger); padding: 1rem;">
+                    <strong>Error:</strong> ${error.message}
+                </div>`;
+
+                // Update metrics
+                metrics.totalRequests++;
+                metrics.totalResponseTime += responseTime;
+
+                // Add error to history
+                requestHistory.unshift({
+                    timestamp: new Date().toISOString(),
+                    endpoint: currentEndpoint === 'insights' ? 'Enhanced Insights' : 'Enhanced Search',
+                    query: requestBody.query,
+                    status: 'error',
+                    responseTime: `${responseTime}ms`,
+                    meta: error.message
+                });
+
+                updateMetrics();
+                renderHistory();
+                saveState();
+            }
+        }
+
+        // Update Metrics Display
+        function updateMetrics() {
+            document.getElementById('totalRequests').textContent = metrics.totalRequests;
+
+            const avgTime = metrics.totalRequests > 0
+                ? Math.round(metrics.totalResponseTime / metrics.totalRequests)
+                : 0;
+            document.getElementById('avgResponseTime').textContent = avgTime > 0 ? `${avgTime}ms` : '-';
+
+            const successRate = metrics.totalRequests > 0
+                ? ((metrics.successfulRequests / metrics.totalRequests) * 100).toFixed(1)
+                : 0;
+            document.getElementById('successRate').textContent = successRate > 0 ? `${successRate}%` : '-';
+
+            document.getElementById('totalTokens').textContent = metrics.totalTokens.toLocaleString();
+        }
+
+        // Render History Table
+        function renderHistory() {
+            const tbody = document.getElementById('historyBody');
+
+            if (requestHistory.length === 0) {
+                tbody.innerHTML = `<tr>
+                    <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+                        No requests yet. Test an endpoint to see history.
+                    </td>
+                </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = requestHistory.map(entry => {
+                const timestamp = new Date(entry.timestamp);
+                const timeStr = timestamp.toLocaleTimeString();
+                const dateStr = timestamp.toLocaleDateString();
+
+                return `<tr>
+                    <td>${dateStr} ${timeStr}</td>
+                    <td>${entry.endpoint}</td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${entry.query}
+                    </td>
+                    <td>
+                        <span class="status-badge ${entry.status === 'success' ? 'status-success' : 'status-error'}">
+                            ${entry.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td>${entry.responseTime}</td>
+                    <td>${entry.meta}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Clear History
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all history and metrics?')) {
+                requestHistory = [];
+                metrics = {
+                    totalRequests: 0,
+                    successfulRequests: 0,
+                    totalResponseTime: 0,
+                    totalTokens: 0
+                };
+
+                updateMetrics();
+                renderHistory();
+                saveState();
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+        });
+    </script>
+</body>
+</html>

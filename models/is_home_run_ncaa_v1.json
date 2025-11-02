@@ -1,0 +1,85 @@
+{
+  "schema_version": "2.0",
+  "model_key": "is_home_run_ncaa_v1",
+  "model_id": "is_home_run_ncaa_v1-20251020-003237",
+  "created_at": "2025-10-20T00:32:37.222336+00:00",
+  "sport": "baseball",
+  "league": "ncaa",
+  "algo": "logistic_l2",
+  "performance": {
+    "auc_roc": 0.5790142276422765,
+    "auc_pr": 0.029263706504507075,
+    "brier_score": 0.01578979656356488,
+    "ece": 0.006378598122589993
+  },
+  "features": [
+    {
+      "name": "bat_speed",
+      "mean": 67.96651109583463,
+      "std": 5.010734617274231
+    },
+    {
+      "name": "attack_angle",
+      "mean": 14.064497548571062,
+      "std": 6.00735216762046
+    },
+    {
+      "name": "on_plane_time_ms",
+      "mean": 29.96117686413444,
+      "std": 7.881281095660336
+    },
+    {
+      "name": "contact_depth_cm",
+      "mean": -10.19307858150233,
+      "std": 15.2294975139447
+    },
+    {
+      "name": "pitch_velo",
+      "mean": 88.05125271825585,
+      "std": 4.977801544664362
+    },
+    {
+      "name": "zone_x",
+      "mean": -0.0030261234574228955,
+      "std": 0.8623893693309602
+    },
+    {
+      "name": "zone_y",
+      "mean": 2.4937077621706965,
+      "std": 0.8592397023236077
+    },
+    {
+      "name": "leverage_index",
+      "mean": 1.2016857289659644,
+      "std": 1.2082627148733378
+    },
+    {
+      "name": "opponent_conf_strength",
+      "mean": 1499.2848068848257,
+      "std": 80.68539230872706
+    }
+  ],
+  "coefficients": {
+    "bat_speed": 0.47558750237489683,
+    "attack_angle": 0.15858565936439348,
+    "on_plane_time_ms": 0.165890177769093,
+    "contact_depth_cm": 0.040832640842566915,
+    "pitch_velo": 0.06524236583004604,
+    "zone_x": 0.11884482348259581,
+    "zone_y": 0.04783150380689468,
+    "leverage_index": 0.11963358561500127,
+    "opponent_conf_strength": -0.13651617197707913
+  },
+  "intercept": -0.1597990215979445,
+  "calibrator": {
+    "type": "platt",
+    "a": -0.8347924199253902,
+    "b": 3.7534173097508403
+  },
+  "metadata": {
+    "train_samples": 7000,
+    "val_samples": 2000,
+    "test_samples": 1000,
+    "notes": "Synthetic training data for demonstration. Replace with real NCAA play-by-play data in production."
+  }
+}

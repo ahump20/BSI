@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EP01: Chaos Is the Only Constant | The Garrido Code</title>
+    <meta name="description" content="Augie taught players to respond to chaos with attention, not panic. Every chaotic inning is instruction if you listen. Includes transcript, drills, and metrics.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://blazesportsintel.com/garrido/chaos">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Enhanced Graphics Engine -->
+    <script src="/garrido/enhanced-graphics-engine.js" defer></script>
+
+    <style>
+        :root {
+            --blaze-burnt-orange: #BF5700;
+            --blaze-ember: #CC6600;
+            --blaze-copper: #D97B38;
+            --gradient-primary: linear-gradient(135deg, #BF5700 0%, #CC6600 50%, #D97B38 100%);
+            --dark-charcoal: #0D0D12;
+            --dark-slate: #161620;
+            --dark-graphite: #1F1F2E;
+            --dark-border: rgba(191, 87, 0, 0.15);
+            --glass-medium: rgba(191, 87, 0, 0.12);
+            --glass-border: rgba(191, 87, 0, 0.25);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.92);
+            --text-tertiary: rgba(255, 235, 215, 0.75);
+            --text-quaternary: rgba(255, 235, 215, 0.55);
+            --font-primary: 'Inter', sans-serif;
+            --font-display: 'Bebas Neue', sans-serif;
+            --transition-base: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --glow-soft: 0 0 30px rgba(191, 87, 0, 0.4);
+            --radius-xl: 20px;
+            --radius-2xl: 28px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--dark-charcoal);
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(191, 87, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(204, 102, 0, 0.06) 0%, transparent 50%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        ::selection { background: var(--blaze-ember); color: var(--text-primary); }
+
+        #particle-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(13, 13, 18, 0.95) 0%, transparent 100%);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px 0 rgba(191, 87, 0, 0.1);
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            color: var(--text-quaternary);
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--text-tertiary);
+            text-decoration: none;
+            transition: color var(--transition-base);
+        }
+
+        .breadcrumb a:hover { color: var(--blaze-copper); }
+
+        .episode-header {
+            position: relative;
+            z-index: 10;
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+        }
+
+        .episode-badge {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            color: var(--blaze-ember);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .episode-number {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .episode-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            letter-spacing: 2px;
+        }
+
+        .episode-thesis {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--text-tertiary);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        .episode-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            color: var(--text-quaternary);
+            font-size: 0.95rem;
+        }
+
+        .episode-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .section-container {
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+        }
+
+        .section-title i {
+            color: var(--blaze-ember);
+            margin-right: 0.75rem;
+        }
+
+        .audio-player {
+            background: var(--dark-graphite);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .audio-placeholder {
+            text-align: center;
+            padding: 4rem 2rem;
+            border: 2px dashed var(--dark-border);
+            border-radius: var(--radius-xl);
+            color: var(--text-quaternary);
+        }
+
+        .audio-placeholder i {
+            font-size: 3rem;
+            color: var(--blaze-ember);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .transcript-section {
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .transcript-section h3 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            color: var(--blaze-copper);
+            margin: 2rem 0 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .transcript-section h4 {
+            font-size: 1.25rem;
+            color: var(--text-tertiary);
+            margin: 1.5rem 0 0.75rem;
+            font-weight: 600;
+        }
+
+        .transcript-section p {
+            margin-bottom: 1.25rem;
+        }
+
+        .timestamp {
+            display: inline-block;
+            background: var(--dark-graphite);
+            padding: 0.25rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--blaze-ember);
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .drill-card {
+            background: var(--dark-graphite);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .drill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .drill-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        .drill-label {
+            background: var(--gradient-primary);
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-xl);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .drill-description {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            color: var(--text-tertiary);
+        }
+
+        .drill-metrics {
+            background: var(--dark-slate);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .drill-metrics h5 {
+            color: var(--blaze-amber);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .metrics-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--dark-graphite);
+            border-radius: 8px;
+        }
+
+        .metric-icon {
+            color: var(--blaze-ember);
+            font-size: 1.25rem;
+        }
+
+        .metric-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .steps-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .steps-list li {
+            counter-increment: step-counter;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            background: var(--dark-slate);
+            border-left: 3px solid var(--blaze-ember);
+            border-radius: 8px;
+            position: relative;
+            padding-left: 3.5rem;
+        }
+
+        .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2rem;
+            height: 2rem;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .legacy-note {
+            background: var(--dark-graphite);
+            border-left: 4px solid var(--blaze-ember);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .legacy-note h4 {
+            color: var(--blaze-amber);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .legacy-note p {
+            color: var(--text-tertiary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 0.75rem;
+        }
+
+        .legacy-note ul {
+            margin-left: 1.5rem;
+            color: var(--text-tertiary);
+        }
+
+        .legacy-note ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: var(--gradient-primary);
+            color: var(--text-primary);
+            border-radius: var(--radius-xl);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-base);
+            border: 1px solid rgba(217, 123, 56, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow-soft);
+        }
+
+        .nav-episodes {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-episode-card {
+            flex: 1;
+            min-width: 250px;
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all var(--transition-base);
+        }
+
+        .nav-episode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--blaze-ember);
+        }
+
+        .nav-label {
+            color: var(--text-quaternary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-episode-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-episode-number {
+            color: var(--blaze-ember);
+            font-weight: 600;
+        }
+
+        .footer {
+            position: relative;
+            z-index: 10;
+            background: var(--dark-slate);
+            border-top: 1px solid var(--dark-border);
+            padding: 4rem 2rem 2rem;
+            margin-top: 6rem;
+            text-align: center;
+            color: var(--text-quaternary);
+        }
+
+        @media (max-width: 768px) {
+            .section-container { padding: 2rem 1.5rem; }
+            .drill-card { padding: 1.5rem; }
+            .nav-episodes { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-field"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="logo">🔥 BLAZE SPORTS INTEL</a>
+            <div class="breadcrumb">
+                <a href="/garrido">The Garrido Code</a>
+                <span>/</span>
+                <span>EP01</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Episode Header -->
+    <section class="episode-header">
+        <div class="episode-badge">The Garrido Code</div>
+        <div class="episode-number">EPISODE 01</div>
+        <h1 class="episode-title">Chaos Is the Only Constant</h1>
+        <p class="episode-thesis">
+            Augie taught players to respond to chaos with attention, not panic. Every chaotic inning is instruction if you listen.
+        </p>
+        <div class="episode-meta">
+            <div class="episode-meta-item">
+                <i class="far fa-clock"></i>
+                <span>~26 minutes</span>
+            </div>
+            <div class="episode-meta-item">
+                <i class="fas fa-dumbbell"></i>
+                <span>3 drills included</span>
+            </div>
+            <div class="episode-meta-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Metrics tracked</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+
+        <!-- Audio Section -->
+        <div class="section-container">
+            <h2 class="section-title"><i class="fas fa-play-circle"></i>Listen</h2>
+            <div class="audio-player">
+                <audio controls style="width: 100%;">
+                    <source src="/garrido/audio/ep01-chaos.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <p style="margin-top: 1rem; color: var(--text-quaternary); font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Audio files will be generated via NotebookLM. Player will activate once files are uploaded.
+                </p>
+            </div>
+            <div class="download-buttons">
+                <a href="#" class="download-btn">
+                    <i class="fas fa-download"></i>
+                    Download MP3
+                </a>
+                <a href="#" class="download-btn">
+                    <i class="fas fa-file-pdf"></i>
+                    Download Transcript PDF
+                </a>
+            </div>
+        </div>
+
+        <!-- Transcript Section -->
+        <div class="section-container">
+            <h2 class="section-title"><i class="fas fa-file-alt"></i>Transcript</h2>
+            <div class="transcript-section">
+
+                <h3><span class="timestamp">0:00</span>Cold Open</h3>
+                <p>"The game teaches the game." (paraphrase)</p>
+                <p>Every chaotic inning is instruction if you listen.</p>
+
+                <h3><span class="timestamp">0:20</span>Setup</h3>
+                <p>Why chaos moments define teams; today's three tools.</p>
+
+                <h3><span class="timestamp">1:20</span>Story: High-Leverage Inning</h3>
+                <p>
+                    Picture this: bottom of the seventh, two outs, bases loaded. Your ace has given up three straight hits. The crowd's on edge. Your shortstop's glancing at the dugout, wondering if the hook's coming.
+                </p>
+                <p>
+                    This isn't about the next pitch. It's about what happens in the ten seconds before it. The catcher trots to the mound. No clipboard, no analytics printout. Just one sentence: "We know what we practiced. Next pitch, your choice."
+                </p>
+                <p>
+                    That's Augie's fingerprint. In the chaos, give them agency. Not seventeen adjustments. One reminder: you've been here in practice. Trust your prep.
+                </p>
+                <p>
+                    The pitcher nods. Resets his feet. Finds his breath cadence—four counts in, four counts out. Glances at the line he scratched in the dirt during warmups, his physical anchor. Then he looks in for the sign.
+                </p>
+                <p>
+                    Next pitch: slider down and away. Batter swings over it. Inning over.
+                </p>
+                <p>
+                    What won that at-bat wasn't velocity or movement. It was the reset between pitches. The ten-second protocol they'd drilled for weeks. Turn chaos into a cue.
+                </p>
+
+                <h3><span class="timestamp">8:00</span>Lens: Three Teachable Tools</h3>
+
+                <h4>Tool A — Attention Switching</h4>
+                <p>
+                    Augie believed attention is a muscle. Most teams train it accidentally. His teams trained it deliberately. Play-to-play focus isn't abstract—it's a literal mental shift, triggered by cue words.
+                </p>
+                <p>
+                    Example cue: "Next pitch." Not "forget that error" or "stay locked in." Just: next pitch. It's directional. It pulls attention forward, not backward or sideways.
+                </p>
+                <p>
+                    Practice this: after every rep—success or failure—players say aloud, "Next pitch." Repeat until it's automatic. When chaos hits in-game, the cue fires. Attention switches. Panic dies.
+                </p>
+
+                <h4>Tool B — Ritualized Reset</h4>
+                <p>
+                    Breath cadence: four counts in, hold four, four counts out. Pair it with a physical anchor. Scratch a line in the dirt. Tap your glove twice. Touch the bill of your cap.
+                </p>
+                <p>
+                    The anchor doesn't have magical powers. It just gives the mind a handle. When chaos spirals, grab the handle. Breath + anchor = reset.
+                </p>
+                <p>
+                    Augie would script these resets into practice. Every ten reps, mandatory ten-second reset. Players who skipped it? They ran. Not as punishment—as a reminder that resets aren't optional. They're the infrastructure.
+                </p>
+
+                <h4>Tool C — Error-as-Data</h4>
+                <p>
+                    Most coaches moralize errors. "That was lazy." "You're not focused." Augie treated errors like broken code: factual, not moral.
+                </p>
+                <p>
+                    Within ten seconds of an error, give one factual cue. Not "you're better than that." Try: "Your front shoulder flew open. Next rep, keep it closed."
+                </p>
+                <p>
+                    Error-as-data removes shame. Shame blocks learning. Data opens it. Players who hear factual corrections adjust faster, because they're not defending their ego—they're just fixing the code.
+                </p>
+
+                <h3><span class="timestamp">14:00</span>Practice: Three Drills</h3>
+                <p><em>(See drill section below for full implementation details and metrics)</em></p>
+
+                <h3><span class="timestamp">20:30</span>Archive & Ethics</h3>
+                <p>
+                    Sources for this episode: paraphrased coaching philosophy from published interviews and public speeches. Composite game scenarios built from multiple documented instances, not single events. Where we cite Augie directly, quotes are 25 words or less per fair use guidelines.
+                </p>
+                <p>
+                    Full sources and timestamps posted at <strong>blazesportsintel.com/garrido/chaos</strong>.
+                </p>
+
+                <h3><span class="timestamp">23:00</span>Close & Call to Action</h3>
+                <p>
+                    <strong>Assignment:</strong> Run "Two-Strike Toggle" drill twice this week. Log reset count before and after. Track improvement.
+                </p>
+                <p>
+                    Come back Tuesday for Episode 02: <em>Respect the Game, Not the Result</em>. We'll talk about the control inventory—what's actually controllable, and what's theater.
+                </p>
+                <p>
+                    Full transcript, drill sheet, and metrics tracking template: <strong>blazesportsintel.com/garrido/chaos</strong>
+                </p>
+
+            </div>
+        </div>
+
+        <!-- Drills Section -->
+        <div class="section-container">
+            <h2 class="section-title"><i class="fas fa-dumbbell"></i>Practice Drills</h2>
+
+            <!-- Drill 1 -->
+            <div class="drill-card">
+                <div class="drill-header">
+                    <h3 class="drill-title">Drill 1: Two-Strike Toggle</h3>
+                    <span class="drill-label">Chaos Response</span>
+                </div>
+                <p class="drill-description">
+                    Simulates high-pressure deficit scenarios to train attention switching and reset protocols under stress. Players must complete resets without coach prompts.
+                </p>
+
+                <h4 style="color: var(--text-primary); margin-top: 1.5rem; margin-bottom: 1rem;">Implementation Steps:</h4>
+                <ol class="steps-list">
+                    <li>Set up batting practice with pitcher or machine delivering fastballs</li>
+                    <li>Announce: "Every at-bat starts 0-2 count. You get 3 swings only."</li>
+                    <li>Before each swing, player must execute full reset: breath cadence (4-in, 4-hold, 4-out) + physical anchor</li>
+                    <li>Coach observes silently—no reset reminders allowed</li>
+                    <li>Track: resets completed vs. attempted (target: 100% adherence)</li>
+                    <li>Run 10 at-bats, rest 2 minutes, repeat</li>
+                    <li>Debrief: which resets felt automatic? Which required conscious effort?</li>
+                </ol>
+
+                <div class="drill-metrics">
+                    <h5><i class="fas fa-chart-bar"></i> Key Metrics to Track</h5>
+                    <div class="metrics-list">
+                        <div class="metric-item">
+                            <i class="fas fa-redo metric-icon"></i>
+                            <span class="metric-text">Resets completed (target: 100%)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-exclamation-triangle metric-icon"></i>
+                            <span class="metric-text">Decision errors (rushed swings, chase rate)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-brain metric-icon"></i>
+                            <span class="metric-text">Composure rating (1-5 scale, coach-assessed)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-clock metric-icon"></i>
+                            <span class="metric-text">Reset duration (goal: under 10 seconds)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drill 2 -->
+            <div class="drill-card">
+                <div class="drill-header">
+                    <h3 class="drill-title">Drill 2: 10-Second Reset Rule</h3>
+                    <span class="drill-label">Attention Control</span>
+                </div>
+                <p class="drill-description">
+                    After each rep (fielding, batting, pitching), enforce a silent 10-second reset before the next action. Coach provides one factual cue only.
+                </p>
+
+                <h4 style="color: var(--text-primary); margin-top: 1.5rem; margin-bottom: 1rem;">Implementation Steps:</h4>
+                <ol class="steps-list">
+                    <li>Choose any repetitive drill (ground balls, soft toss, bullpen)</li>
+                    <li>After each rep, start 10-second timer (visible stopwatch or countdown)</li>
+                    <li>During those 10 seconds: player executes breath + anchor reset, no talking</li>
+                    <li>At second 9, coach gives ONE factual cue (e.g., "Glove lower," "Front shoulder closed")</li>
+                    <li>At second 10, next rep begins immediately</li>
+                    <li>Track: cues absorbed vs. cues that led to adjustment next rep</li>
+                    <li>Run for 20 reps minimum, gradually reduce coach cues as resets become automatic</li>
+                </ol>
+
+                <div class="drill-metrics">
+                    <h5><i class="fas fa-chart-bar"></i> Key Metrics to Track</h5>
+                    <div class="metrics-list">
+                        <div class="metric-item">
+                            <i class="fas fa-check metric-icon"></i>
+                            <span class="metric-text">Cue adherence (immediate adjustment %)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-volume-mute metric-icon"></i>
+                            <span class="metric-text">Silent reset completion (no talking during 10s)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-repeat metric-icon"></i>
+                            <span class="metric-text">Carryover rate (cue applied to next 3 reps)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-graduation-cap metric-icon"></i>
+                            <span class="metric-text">Self-correction attempts (no cue needed)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drill 3 -->
+            <div class="drill-card">
+                <div class="drill-header">
+                    <h3 class="drill-title">Drill 3: One-Minute Postmortem</h3>
+                    <span class="drill-label">Error-as-Data</span>
+                </div>
+                <p class="drill-description">
+                    Immediately after an error or failed rep, player has 60 seconds to identify one controllable factor and state next-inning intent. No judgment, only data.
+                </p>
+
+                <h4 style="color: var(--text-primary); margin-top: 1.5rem; margin-bottom: 1rem;">Implementation Steps:</h4>
+                <ol class="steps-list">
+                    <li>When error occurs (missed ball, bad swing, wild pitch), stop immediately</li>
+                    <li>Start 60-second timer</li>
+                    <li>Player answers two questions aloud: "What was controllable?" and "What's my next-inning intent?"</li>
+                    <li>Example: "Controllable: I stepped toward first base instead of the ball. Intent: Next ground ball, step to the ball first."</li>
+                    <li>Coach writes down the stated intent verbatim</li>
+                    <li>Next opportunity (within same session), check: did player execute the stated intent?</li>
+                    <li>Track intent-to-execution rate across 10 errors</li>
+                </ol>
+
+                <div class="drill-metrics">
+                    <h5><i class="fas fa-chart-bar"></i> Key Metrics to Track</h5>
+                    <div class="metrics-list">
+                        <div class="metric-item">
+                            <i class="fas fa-bullseye metric-icon"></i>
+                            <span class="metric-text">Controllable identification accuracy</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-tasks metric-icon"></i>
+                            <span class="metric-text">Intent-to-execution rate (goal: 70%+)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-stopwatch metric-icon"></i>
+                            <span class="metric-text">Response time (goal: under 60 seconds)</span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-ban metric-icon"></i>
+                            <span class="metric-text">Zero-blame language (no "should have")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legacy Note -->
+            <div class="legacy-note">
+                <h4><i class="fas fa-info-circle"></i> Legacy Note: Sources & Disclaimers</h4>
+                <p><strong>What We Know vs. What We Infer:</strong></p>
+                <ul>
+                    <li><strong>Paraphrased:</strong> Cold open quote, coaching philosophy statements</li>
+                    <li><strong>Composite:</strong> High-leverage inning story (built from multiple documented game situations)</li>
+                    <li><strong>Direct Sources:</strong> Leadership Case Studies PDF, Texas Longhorns Baseball doc, Daily Texan article, ESPN tribute</li>
+                    <li><strong>Drill Design:</strong> Informed by constraint-led practice principles and published interviews with Garrido assistants</li>
+                </ul>
+                <p><strong>Rights & Attribution:</strong></p>
+                <ul>
+                    <li>All direct Augie Garrido quotes kept under 25 words (fair use)</li>
+                    <li>Game scenarios are composites, not verbatim play-by-play</li>
+                    <li>Drill protocols are original implementations of documented coaching principles</li>
+                </ul>
+                <p><strong>Counterexample:</strong> This approach can break when time pressure is extreme (e.g., bases-loaded balk call with umpire rushing). In those moments, rituals compress to micro-anchors (one breath, one touch). The principle scales down, not away.</p>
+            </div>
+
+        </div>
+
+        <!-- Coach Checklist -->
+        <div class="section-container">
+            <h2 class="section-title"><i class="fas fa-clipboard-check"></i>Coach Checklist</h2>
+            <div class="drill-description" style="margin-bottom: 2rem;">
+                <p>Print this one-page checklist and post in your dugout or office. Track implementation weekly.</p>
+            </div>
+            <div class="drill-card" style="background: var(--dark-slate);">
+                <h4 style="color: var(--blaze-amber); margin-bottom: 1.5rem;">Episode 01 Implementation Checklist</h4>
+                <ol class="steps-list" style="counter-reset: none;">
+                    <li style="border-left-color: var(--blaze-ember);">Choose one cue word/phrase for attention switching ("Next pitch," "Reset," etc.)</li>
+                    <li style="border-left-color: var(--blaze-ember);">Implement Two-Strike Toggle drill twice this week (minimum 10 at-bats per session)</li>
+                    <li style="border-left-color: var(--blaze-ember);">Track reset adherence percentage (goal: 90%+ by week 2)</li>
+                    <li style="border-left-color: var(--blaze-ember);">Run 10-Second Reset Rule in at least one position drill (ground balls, soft toss, bullpen)</li>
+                    <li style="border-left-color: var(--blaze-ember);">Execute One-Minute Postmortem after first 3 errors this week</li>
+                    <li style="border-left-color: var(--blaze-ember);">Measure intent-to-execution rate (document in practice log)</li>
+                    <li style="border-left-color: var(--blaze-ember);">Debrief with team: "Which reset felt most automatic? Which needs more reps?"</li>
+                </ol>
+            </div>
+            <div class="download-buttons">
+                <a href="#" class="download-btn">
+                    <i class="fas fa-file-pdf"></i>
+                    Download Checklist PDF
+                </a>
+                <a href="#" class="download-btn">
+                    <i class="fas fa-table"></i>
+                    Download Metrics Spreadsheet
+                </a>
+            </div>
+        </div>
+
+        <!-- Episode Navigation -->
+        <div class="nav-episodes">
+            <a href="/garrido" class="nav-episode-card">
+                <div class="nav-label">← Back to</div>
+                <div class="nav-episode-title">Series Hub</div>
+                <div class="nav-episode-number">All Episodes</div>
+            </a>
+            <a href="/garrido/respect" class="nav-episode-card">
+                <div class="nav-label">Next Episode →</div>
+                <div class="nav-episode-title">Respect the Game, Not the Result</div>
+                <div class="nav-episode-number">Episode 02</div>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 Blaze Sports Intel. Built with <span class="text-gradient" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🔥</span> in Boerne, Texas.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">The Garrido Code • Episode 01 • blazesportsintel.com/garrido</p>
+    </footer>
+
+    <!-- Enhanced particle system is loaded via enhanced-graphics-engine.js -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+        // Additional page-specific interactions can go here
+        document.addEventListener('DOMContentLoaded', () => {
+            // Smooth scroll for internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

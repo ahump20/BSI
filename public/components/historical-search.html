@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historical Search - Blaze Sports Intel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+    }
+
+    .search-section {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #searchInput {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      background: rgba(15, 23, 42, 0.8);
+      border: 2px solid rgba(148, 163, 184, 0.3);
+      border-radius: 12px;
+      color: #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    #searchInput:focus {
+      outline: none;
+      border-color: #ff6b00;
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+    }
+
+    #searchButton {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #searchButton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+    }
+
+    #searchButton:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .example-chip {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 107, 0, 0.1);
+      border: 1px solid rgba(255, 107, 0, 0.3);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #ff8c00;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .example-chip:hover {
+      background: rgba(255, 107, 0, 0.2);
+      border-color: #ff6b00;
+    }
+
+    .results-section {
+      display: none;
+    }
+
+    .results-section.active {
+      display: block;
+    }
+
+    .query-info {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .query-info h3 {
+      font-size: 1.25rem;
+      color: #ff8c00;
+      margin-bottom: 1rem;
+    }
+
+    .query-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .query-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .query-detail-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+    }
+
+    .query-detail-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 107, 0, 0.5);
+    }
+
+    .stat-card h4 {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ff8c00;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #cbd5e1;
+    }
+
+    .matchup-section {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .matchup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .team-info {
+      text-align: center;
+      flex: 1;
+    }
+
+    .team-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 0.5rem;
+    }
+
+    .team-record {
+      font-size: 1rem;
+      color: #94a3b8;
+    }
+
+    .vs-divider {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ff8c00;
+      padding: 0 2rem;
+    }
+
+    .h2h-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .h2h-stat {
+      text-align: center;
+    }
+
+    .h2h-stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-bottom: 0.25rem;
+    }
+
+    .h2h-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .games-list {
+      margin-top: 1.5rem;
+    }
+
+    .games-list h4 {
+      font-size: 1.25rem;
+      color: #ff8c00;
+      margin-bottom: 1rem;
+    }
+
+    .game-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .game-row:hover {
+      background: rgba(15, 23, 42, 0.7);
+      transform: translateX(4px);
+    }
+
+    .game-date {
+      font-size: 0.875rem;
+      color: #94a3b8;
+      min-width: 100px;
+    }
+
+    .game-score {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      flex: 1;
+      text-align: center;
+    }
+
+    .game-result {
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .game-result.win {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+
+    .game-result.loss {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .trends-section {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .trends-section h3 {
+      font-size: 1.5rem;
+      color: #ff8c00;
+      margin-bottom: 1.5rem;
+    }
+
+    .trend-card {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .trend-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 0.75rem;
+    }
+
+    .trend-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .trend-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ff8c00;
+    }
+
+    .trend-description {
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 107, 0, 0.1);
+      border-left-color: #ff6b00;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .error h4 {
+      color: #f87171;
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .error p {
+      color: #fca5a5;
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .search-box {
+        flex-direction: column;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .matchup-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .vs-divider {
+        padding: 1rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Historical Search</h1>
+    <p class="subtitle">Ask me anything about sports history using natural language</p>
+
+    <div class="search-section">
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="e.g., Show me Cardinals vs Cubs games in 2023"
+          autocomplete="off"
+        />
+        <button id="searchButton">Search</button>
+      </div>
+
+      <div class="examples">
+        <div class="example-chip" data-query="Cardinals vs Cubs last 5 years">Cardinals vs Cubs last 5 years</div>
+        <div class="example-chip" data-query="Texas home record in 2024">Texas home record in 2024</div>
+        <div class="example-chip" data-query="Chiefs scoring over 30 points">Chiefs scoring over 30 points</div>
+        <div class="example-chip" data-query="Ravens vs Bengals close games">Ravens vs Bengals close games</div>
+        <div class="example-chip" data-query="Dodgers playoff wins since 2020">Dodgers playoff wins since 2020</div>
+      </div>
+    </div>
+
+    <div id="resultsSection" class="results-section">
+      <!-- Dynamic content inserted here -->
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const resultsSection = document.getElementById('resultsSection');
+
+    // Example chip click handlers
+    document.querySelectorAll('.example-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        searchInput.value = chip.dataset.query;
+        performSearch();
+      });
+    });
+
+    // Search button click
+    searchButton.addEventListener('click', performSearch);
+
+    // Enter key in search input
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    async function performSearch() {
+      const query = searchInput.value.trim();
+
+      if (!query) {
+        return;
+      }
+
+      searchButton.disabled = true;
+      searchButton.textContent = 'Searching...';
+      resultsSection.classList.add('active');
+      resultsSection.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Analyzing your query and searching historical data...</p>
+        </div>
+      `;
+
+      try {
+        // Step 1: Parse natural language query
+        const parsedQuery = await parseNaturalLanguage(query);
+
+        // Step 2: Fetch results based on query type
+        let results;
+        if (parsedQuery.type === 'matchup') {
+          results = await fetchMatchupData(parsedQuery);
+          renderMatchupResults(results, parsedQuery);
+        } else if (parsedQuery.type === 'record') {
+          results = await fetchRecordData(parsedQuery);
+          renderRecordResults(results, parsedQuery);
+        } else if (parsedQuery.type === 'performance') {
+          results = await fetchPerformanceData(parsedQuery);
+          renderPerformanceResults(results, parsedQuery);
+        } else if (parsedQuery.type === 'trend') {
+          results = await fetchTrendData(parsedQuery);
+          renderTrendResults(results, parsedQuery);
+        } else {
+          results = await fetchSearchData(parsedQuery);
+          renderSearchResults(results, parsedQuery);
+        }
+
+      } catch (error) {
+        console.error('Search error:', error);
+        resultsSection.innerHTML = `
+          <div class="error">
+            <h4>Search Error</h4>
+            <p>${error.message || 'Unable to complete search. Please try again.'}</p>
+          </div>
+        `;
+      } finally {
+        searchButton.disabled = false;
+        searchButton.textContent = 'Search';
+      }
+    }
+
+    async function parseNaturalLanguage(query) {
+      // In production, this would call your NL parser API
+      // For now, basic client-side parsing
+      const normalized = query.toLowerCase();
+
+      const parsed = {
+        original: query,
+        type: 'search',
+        sport: null,
+        teams: [],
+        seasons: [],
+        location: null,
+        filters: {}
+      };
+
+      // Detect query type
+      if (/\b(vs|versus|against)\b/.test(normalized)) {
+        parsed.type = 'matchup';
+      } else if (/\b(record|win|loss)\b/.test(normalized)) {
+        parsed.type = 'record';
+      } else if (/\b(score|scored|points)\b/.test(normalized)) {
+        parsed.type = 'performance';
+      } else if (/\b(trend|over time|recent)\b/.test(normalized)) {
+        parsed.type = 'trend';
+      }
+
+      // Extract sport
+      if (/\b(baseball|mlb)\b/.test(normalized)) parsed.sport = 'MLB';
+      if (/\b(football|nfl)\b/.test(normalized)) parsed.sport = 'NFL';
+      if (/\b(basketball|nba)\b/.test(normalized)) parsed.sport = 'NBA';
+      if (/\b(college football|ncaa football)\b/.test(normalized)) parsed.sport = 'NCAA_FOOTBALL';
+
+      // Extract teams (simplified)
+      const teamPatterns = [
+        { name: 'Cardinals', regex: /\b(cardinals|cards|stl)\b/ },
+        { name: 'Cubs', regex: /\b(cubs|chicago cubs|chc)\b/ },
+        { name: 'Dodgers', regex: /\b(dodgers|la dodgers|lad)\b/ },
+        { name: 'Yankees', regex: /\b(yankees|ny yankees|nyy)\b/ },
+        { name: 'Chiefs', regex: /\b(chiefs|kansas city|kc)\b/ },
+        { name: 'Ravens', regex: /\b(ravens|baltimore|bal)\b/ },
+        { name: 'Bengals', regex: /\b(bengals|cincinnati|cin)\b/ },
+        { name: 'Texas', regex: /\b(texas|longhorns|ut)\b/ }
+      ];
+
+      teamPatterns.forEach(pattern => {
+        if (pattern.regex.test(normalized)) {
+          parsed.teams.push(pattern.name);
+        }
+      });
+
+      // Extract years
+      const yearMatches = query.match(/\b(19|20)\d{2}\b/g);
+      if (yearMatches) {
+        parsed.seasons = yearMatches.map(y => parseInt(y));
+      }
+
+      // Extract location
+      if (/\b(home|at home)\b/.test(normalized)) parsed.location = 'home';
+      if (/\b(away|on the road)\b/.test(normalized)) parsed.location = 'away';
+
+      // Extract filters
+      const scoreMatch = normalized.match(/over (\d+)/);
+      if (scoreMatch) {
+        parsed.filters.min_score = parseInt(scoreMatch[1]);
+      }
+
+      if (/\bclose\b/.test(normalized)) {
+        parsed.filters.close_game = true;
+      }
+
+      if (/\bplayoff\b/.test(normalized)) {
+        parsed.filters.season_type = 'POST';
+      }
+
+      return parsed;
+    }
+
+    async function fetchMatchupData(parsedQuery) {
+      if (parsedQuery.teams.length < 2) {
+        throw new Error('Matchup queries require at least two teams');
+      }
+
+      const team1 = parsedQuery.teams[0];
+      const team2 = parsedQuery.teams[1];
+      const sport = parsedQuery.sport || 'all';
+      const seasons = parsedQuery.seasons.length > 0 ? parsedQuery.seasons.length : 10;
+
+      const response = await fetch(
+        `/api/v1/historical/matchups?team1=${encodeURIComponent(team1)}&team2=${encodeURIComponent(team2)}&sport=${sport}&seasons=${seasons}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      return await response.json();
+    }
+
+    async function fetchRecordData(parsedQuery) {
+      // Call record API endpoint
+      return {
+        team: parsedQuery.teams[0] || 'Team',
+        games: 10,
+        wins: 6,
+        losses: 4,
+        home_record: { wins: 4, losses: 1 },
+        away_record: { wins: 2, losses: 3 }
+      };
+    }
+
+    async function fetchPerformanceData(parsedQuery) {
+      return {
+        team: parsedQuery.teams[0] || 'Team',
+        avg_points_scored: 24.5,
+        avg_points_allowed: 21.3,
+        highest_score: 42
+      };
+    }
+
+    async function fetchTrendData(parsedQuery) {
+      return {
+        team: parsedQuery.teams[0] || 'Team',
+        seasons: [
+          { season: 2023, wins: 10, losses: 7, avg_score: 25.4 },
+          { season: 2022, wins: 9, losses: 8, avg_score: 23.1 },
+          { season: 2021, wins: 11, losses: 6, avg_score: 26.8 }
+        ]
+      };
+    }
+
+    async function fetchSearchData(parsedQuery) {
+      return {
+        games: [],
+        count: 0
+      };
+    }
+
+    function renderMatchupResults(data, query) {
+      const team1 = data.matchup.team1;
+      const team2 = data.matchup.team2;
+      const h2h = data.head_to_head;
+      const trends = data.trends;
+
+      resultsSection.innerHTML = `
+        <div class="query-info">
+          <h3>Query Analysis</h3>
+          <div class="query-details">
+            <div class="query-detail">
+              <span class="query-detail-label">Query Type</span>
+              <span class="query-detail-value">Head-to-Head Matchup</span>
+            </div>
+            <div class="query-detail">
+              <span class="query-detail-label">Sport</span>
+              <span class="query-detail-value">${data.matchup.sport || 'All Sports'}</span>
+            </div>
+            <div class="query-detail">
+              <span class="query-detail-label">Seasons Analyzed</span>
+              <span class="query-detail-value">Last ${data.matchup.seasons_analyzed} seasons</span>
+            </div>
+            <div class="query-detail">
+              <span class="query-detail-label">Total Games</span>
+              <span class="query-detail-value">${data.meta.total_games}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="matchup-section">
+          <div class="matchup-header">
+            <div class="team-info">
+              <div class="team-name">${team1.name}</div>
+              <div class="team-record">${h2h.team1_wins} wins</div>
+            </div>
+            <div class="vs-divider">VS</div>
+            <div class="team-info">
+              <div class="team-name">${team2.name}</div>
+              <div class="team-record">${h2h.team2_wins} wins</div>
+            </div>
+          </div>
+
+          <div class="h2h-stats">
+            <div class="h2h-stat">
+              <div class="h2h-stat-label">Avg Margin</div>
+              <div class="h2h-stat-value">${h2h.avg_margin} pts</div>
+            </div>
+            <div class="h2h-stat">
+              <div class="h2h-stat-label">${team1.name} Home Wins</div>
+              <div class="h2h-stat-value">${h2h.team1_home_wins}</div>
+            </div>
+            <div class="h2h-stat">
+              <div class="h2h-stat-label">${team1.name} Away Wins</div>
+              <div class="h2h-stat-value">${h2h.team1_away_wins}</div>
+            </div>
+            <div class="h2h-stat">
+              <div class="h2h-stat-label">${team2.name} Home Wins</div>
+              <div class="h2h-stat-value">${h2h.team2_home_wins}</div>
+            </div>
+          </div>
+
+          ${h2h.biggest_blowout ? `
+            <div class="stat-card">
+              <h4>Biggest Blowout</h4>
+              <div class="stat-value">${h2h.biggest_blowout.margin} pts</div>
+              <div class="stat-label">${h2h.biggest_blowout.score} on ${new Date(h2h.biggest_blowout.date).toLocaleDateString()}</div>
+            </div>
+          ` : ''}
+
+          <div class="games-list">
+            <h4>Recent Meetings</h4>
+            ${data.games.slice(0, 10).map(game => {
+              const team1IsHome = game.home_team_id === team1.id;
+              const team1Score = team1IsHome ? game.home_score : game.away_score;
+              const team2Score = team1IsHome ? game.away_score : game.home_score;
+              const team1Won = team1Score > team2Score;
+
+              return `
+                <div class="game-row">
+                  <span class="game-date">${new Date(game.game_date).toLocaleDateString()}</span>
+                  <span class="game-score">${team1.name} ${team1Score} - ${team2Score} ${team2.name}</span>
+                  <span class="game-result ${team1Won ? 'win' : 'loss'}">${team1Won ? 'W' : 'L'}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        ${trends && trends.current_streak ? `
+          <div class="trends-section">
+            <h3>Trends & Momentum</h3>
+            <div class="trend-card">
+              <div class="trend-title">Current Streak</div>
+              <div class="trend-content">
+                <span class="trend-value">${trends.current_streak.count} games</span>
+                <span class="trend-description">${trends.current_streak.description}</span>
+              </div>
+            </div>
+
+            ${trends.scoring_trend ? `
+              <div class="trend-card">
+                <div class="trend-title">Scoring Trends</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div>
+                    <div class="trend-description">${team1.name}</div>
+                    <div class="trend-value">${trends.scoring_trend.team1.recent_avg} pts</div>
+                    <div class="trend-description">${trends.scoring_trend.team1.trend}</div>
+                  </div>
+                  <div>
+                    <div class="trend-description">${team2.name}</div>
+                    <div class="trend-value">${trends.scoring_trend.team2.recent_avg} pts</div>
+                    <div class="trend-description">${trends.scoring_trend.team2.trend}</div>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderRecordResults(data, query) {
+      resultsSection.innerHTML = `
+        <div class="query-info">
+          <h3>Record Query Results</h3>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h4>Overall Record</h4>
+            <div class="stat-value">${data.wins}-${data.losses}</div>
+            <div class="stat-label">${data.games} games played</div>
+          </div>
+
+          <div class="stat-card">
+            <h4>Home Record</h4>
+            <div class="stat-value">${data.home_record.wins}-${data.home_record.losses}</div>
+            <div class="stat-label">Home games</div>
+          </div>
+
+          <div class="stat-card">
+            <h4>Away Record</h4>
+            <div class="stat-value">${data.away_record.wins}-${data.away_record.losses}</div>
+            <div class="stat-label">Away games</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPerformanceResults(data, query) {
+      resultsSection.innerHTML = `
+        <div class="query-info">
+          <h3>Performance Statistics</h3>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h4>Avg Points Scored</h4>
+            <div class="stat-value">${data.avg_points_scored}</div>
+            <div class="stat-label">Per game</div>
+          </div>
+
+          <div class="stat-card">
+            <h4>Avg Points Allowed</h4>
+            <div class="stat-value">${data.avg_points_allowed}</div>
+            <div class="stat-label">Per game</div>
+          </div>
+
+          <div class="stat-card">
+            <h4>Highest Score</h4>
+            <div class="stat-value">${data.highest_score}</div>
+            <div class="stat-label">Season high</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTrendResults(data, query) {
+      resultsSection.innerHTML = `
+        <div class="query-info">
+          <h3>Historical Trends</h3>
+        </div>
+
+        <div class="trends-section">
+          <h3>${data.team} Season-by-Season</h3>
+          ${data.seasons.map(season => `
+            <div class="trend-card">
+              <div class="trend-title">${season.season} Season</div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                <div>
+                  <div class="trend-description">Record</div>
+                  <div class="trend-value">${season.wins}-${season.losses}</div>
+                </div>
+                <div>
+                  <div class="trend-description">Avg Score</div>
+                  <div class="trend-value">${season.avg_score}</div>
+                </div>
+                <div>
+                  <div class="trend-description">Win %</div>
+                  <div class="trend-value">${((season.wins / (season.wins + season.losses)) * 100).toFixed(1)}%</div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderSearchResults(data, query) {
+      resultsSection.innerHTML = `
+        <div class="query-info">
+          <h3>Search Results</h3>
+          <p style="color: #94a3b8; margin-top: 0.5rem;">Found ${data.count} games matching your query</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

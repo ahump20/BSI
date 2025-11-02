@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictions Analytics Engine | Blaze Sports Intel</title>
+    <meta name="description" content="Comprehensive predictive analytics platform with win probability modeling, betting line analysis, and model performance tracking.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Burnt Orange Brand Colors */
+            --blaze-orange: #BF5700;
+            --blaze-ember: #CC6600;
+            --blaze-copper: #D97B38;
+            --blaze-sunset: #E69551;
+
+            /* Dark Theme */
+            --bg-primary: #0D0D12;
+            --bg-secondary: #1A1A24;
+            --bg-tertiary: #252532;
+
+            /* Text */
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
+
+            /* Status Colors */
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+
+            /* Glass Morphism */
+            --glass-bg: rgba(26, 26, 36, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+
+            /* Shadows & Glows */
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --glow-orange: 0 0 20px rgba(191, 87, 0, 0.3);
+
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(191, 87, 0, 0.08), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(204, 102, 0, 0.06), transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-sunset));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: var(--glow-orange);
+            letter-spacing: -0.5px;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            color: white;
+            box-shadow: 0 4px 12px rgba(191, 87, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(191, 87, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Section */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-tertiary);
+            line-height: 1.5;
+        }
+
+        /* API Modules Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--blaze-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(191, 87, 0, 0.2);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .module-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .module-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-get {
+            background: rgba(23, 162, 184, 0.2);
+            color: var(--info);
+            border: 1px solid var(--info);
+        }
+
+        .badge-post {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .module-description {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .module-features li i {
+            color: var(--blaze-orange);
+            font-size: 0.75rem;
+        }
+
+        /* Prediction Interface */
+        .prediction-interface {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .interface-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .panel-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .panel-label i {
+            color: var(--blaze-orange);
+        }
+
+        /* Module Tabs */
+        .module-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.5rem;
+            border-radius: 10px;
+        }
+
+        .module-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: center;
+        }
+
+        .module-tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .module-tab.active {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(191, 87, 0, 0.3);
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+            margin-left: 0.25rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all var(--transition-base);
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--blaze-orange);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 3px rgba(191, 87, 0, 0.1);
+        }
+
+        .form-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Response Display */
+        .response-display {
+            min-height: 200px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .response-display.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-style: italic;
+        }
+
+        .response-json {
+            color: #ABB2BF;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            min-height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--glass-border);
+            border-top-color: var(--blaze-orange);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading span {
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all var(--transition-base);
+        }
+
+        .metric-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-icon {
+            font-size: 1.5rem;
+            color: var(--blaze-orange);
+            opacity: 0.6;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-trend {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .metric-trend i {
+            color: var(--success);
+        }
+
+        /* Results Display */
+        .results-container {
+            margin-top: 1.5rem;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .result-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-high {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .badge-medium {
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge-low {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .result-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .result-item-label {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            font-weight: 600;
+        }
+
+        .result-item-value {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* Probability Bar */
+        .probability-bar {
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: flex;
+        }
+
+        .prob-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all var(--transition-base);
+        }
+
+        .prob-home {
+            background: linear-gradient(90deg, var(--blaze-orange), var(--blaze-copper));
+        }
+
+        .prob-away {
+            background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary));
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .prediction-interface {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">BLAZE</div>
+                <div class="header-title">
+                    <h1>Predictions Analytics Engine</h1>
+                    <p class="header-subtitle">
+                        Win Probability Modeling • Betting Line Analysis • Model Performance Tracking
+                    </p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </div>
+        </header>
+
+        <!-- Introduction Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-brain" style="color: var(--blaze-orange); margin-right: 0.5rem;"></i>
+                    Predictive Analytics Platform
+                </h2>
+                <p class="section-subtitle">
+                    Comprehensive machine learning system for real-time win probability calculations,
+                    betting line analysis with value opportunity detection, and rigorous model performance
+                    tracking with calibration analysis. Powered by neural networks, Elo ratings, and
+                    statistical modeling across MLB, NFL, NBA, and NCAA sports.
+                </p>
+            </div>
+
+            <!-- API Modules -->
+            <div class="modules-grid">
+                <!-- Win Probability Module -->
+                <div class="module-card" onclick="selectModule('win-probability')">
+                    <div class="module-header">
+                        <div>
+                            <div class="module-icon">📊</div>
+                            <h3 class="module-title">Win Probability</h3>
+                        </div>
+                        <span class="module-badge badge-get">GET</span>
+                    </div>
+                    <p class="module-description">
+                        Real-time win probability calculations with trend analysis, confidence intervals,
+                        and key moment identification using game state and team strength models.
+                    </p>
+                    <ul class="module-features">
+                        <li><i class="fas fa-check-circle"></i> Live game state modeling</li>
+                        <li><i class="fas fa-check-circle"></i> Probability trend over game</li>
+                        <li><i class="fas fa-check-circle"></i> Sport-specific factors (down, possession, inning)</li>
+                        <li><i class="fas fa-check-circle"></i> Confidence intervals & error bounds</li>
+                    </ul>
+                </div>
+
+                <!-- Betting Lines Module -->
+                <div class="module-card" onclick="selectModule('betting-lines')">
+                    <div class="module-header">
+                        <div>
+                            <div class="module-icon">💰</div>
+                            <h3 class="module-title">Betting Lines</h3>
+                        </div>
+                        <span class="module-badge badge-get">GET</span>
+                    </div>
+                    <p class="module-description">
+                        Analyzes betting lines (moneyline, spread, totals) for value opportunities by
+                        comparing model predictions against market odds with Kelly Criterion sizing.
+                    </p>
+                    <ul class="module-features">
+                        <li><i class="fas fa-check-circle"></i> Model vs market comparison</li>
+                        <li><i class="fas fa-check-circle"></i> Edge calculation & Kelly sizing</li>
+                        <li><i class="fas fa-check-circle"></i> Line movement tracking</li>
+                        <li><i class="fas fa-check-circle"></i> Closing line value (CLV) analysis</li>
+                    </ul>
+                </div>
+
+                <!-- Accuracy Tracking Module -->
+                <div class="module-card" onclick="selectModule('accuracy')">
+                    <div class="module-header">
+                        <div>
+                            <div class="module-icon">🎯</div>
+                            <h3 class="module-title">Model Accuracy</h3>
+                        </div>
+                        <span class="module-badge badge-get">GET</span>
+                        <span class="module-badge badge-post">POST</span>
+                    </div>
+                    <p class="module-description">
+                        Rigorous model performance tracking with calibration analysis, accuracy metrics,
+                        trend visualization, and cross-sport comparison dashboards.
+                    </p>
+                    <ul class="module-features">
+                        <li><i class="fas fa-check-circle"></i> Calibration curve analysis</li>
+                        <li><i class="fas fa-check-circle"></i> Brier score & log loss metrics</li>
+                        <li><i class="fas fa-check-circle"></i> Accuracy trends over time</li>
+                        <li><i class="fas fa-check-circle"></i> Multi-sport performance comparison</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction Interface -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-rocket" style="color: var(--blaze-orange); margin-right: 0.5rem;"></i>
+                    Live Prediction Interface
+                </h2>
+                <p class="section-subtitle">
+                    Test prediction APIs with real game data or demo scenarios. Select a module below
+                    to begin generating predictions and analyzing results.
+                </p>
+            </div>
+
+            <!-- Module Tabs -->
+            <div class="module-tabs">
+                <button class="module-tab active" data-module="win-probability" onclick="switchModule('win-probability')">
+                    📊 Win Probability
+                </button>
+                <button class="module-tab" data-module="betting-lines" onclick="switchModule('betting-lines')">
+                    💰 Betting Lines
+                </button>
+                <button class="module-tab" data-module="accuracy" onclick="switchModule('accuracy')">
+                    🎯 Model Accuracy
+                </button>
+            </div>
+
+            <!-- Prediction Interface -->
+            <div class="prediction-interface">
+                <!-- Request Panel -->
+                <div class="interface-panel">
+                    <div class="panel-label">
+                        <i class="fas fa-arrow-up"></i> Request Parameters
+                    </div>
+
+                    <!-- Win Probability Form -->
+                    <div id="winProbabilityForm" style="display: block;">
+                        <div class="form-group">
+                            <label class="form-label">Sport <span class="required">*</span></label>
+                            <select id="wpSport" class="form-select">
+                                <option value="NFL">NFL</option>
+                                <option value="MLB">MLB</option>
+                                <option value="NBA">NBA</option>
+                                <option value="NCAA_FOOTBALL">NCAA Football</option>
+                                <option value="NCAA_BASEBALL">NCAA Baseball</option>
+                                <option value="NCAA_BASKETBALL">NCAA Basketball</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Game ID (optional for demo)</label>
+                            <input type="text" id="wpGameId" class="form-input" placeholder="e.g., 123456">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Mode</label>
+                            <select id="wpMode" class="form-select">
+                                <option value="current">Current Probability</option>
+                                <option value="trend">Probability Trend</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Betting Lines Form -->
+                    <div id="bettingLinesForm" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Sport <span class="required">*</span></label>
+                            <select id="blSport" class="form-select">
+                                <option value="NFL">NFL</option>
+                                <option value="MLB">MLB</option>
+                                <option value="NBA">NBA</option>
+                                <option value="NCAA_FOOTBALL">NCAA Football</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Game ID (optional for demo)</label>
+                            <input type="text" id="blGameId" class="form-input" placeholder="e.g., 123456">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Analysis Mode</label>
+                            <select id="blMode" class="form-select">
+                                <option value="analysis">Line Analysis</option>
+                                <option value="movement">Line Movement</option>
+                                <option value="clv">Closing Line Value</option>
+                            </select>
+                        </div>
+
+                        <div id="clvFields" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Bet Type</label>
+                                <select id="blBetType" class="form-select">
+                                    <option value="moneyline">Moneyline</option>
+                                    <option value="spread">Spread</option>
+                                    <option value="total">Total</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Side</label>
+                                <select id="blSide" class="form-select">
+                                    <option value="home">Home</option>
+                                    <option value="away">Away</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Odds Taken</label>
+                                <input type="number" id="blOdds" class="form-input" placeholder="e.g., -150" value="-150">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accuracy Form -->
+                    <div id="accuracyForm" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Sport (optional for all sports)</label>
+                            <select id="accSport" class="form-select">
+                                <option value="">All Sports</option>
+                                <option value="NFL">NFL</option>
+                                <option value="MLB">MLB</option>
+                                <option value="NBA">NBA</option>
+                                <option value="NCAA_FOOTBALL">NCAA Football</option>
+                                <option value="NCAA_BASEBALL">NCAA Baseball</option>
+                                <option value="NCAA_BASKETBALL">NCAA Basketball</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Analysis Type</label>
+                            <select id="accMode" class="form-select">
+                                <option value="metrics">Accuracy Metrics</option>
+                                <option value="calibration">Calibration Analysis</option>
+                                <option value="trend">Accuracy Trend</option>
+                                <option value="comparison">Multi-Sport Comparison</option>
+                                <option value="dashboard">Performance Dashboard</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Time Period (for trends)</label>
+                            <select id="accDays" class="form-select">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30">Last 30 Days</option>
+                                <option value="90">Last 90 Days</option>
+                                <option value="365">Last Year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="generatePrediction()">
+                        <i class="fas fa-paper-plane"></i> Generate Prediction
+                    </button>
+                </div>
+
+                <!-- Response Panel -->
+                <div class="interface-panel">
+                    <div class="panel-label">
+                        <i class="fas fa-arrow-down"></i> Prediction Results
+                    </div>
+                    <div id="resultsDisplay" class="response-display empty">
+                        Select a module and click "Generate Prediction" to see results
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Metrics -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line" style="color: var(--blaze-orange); margin-right: 0.5rem;"></i>
+                    System Performance Metrics
+                </h2>
+                <p class="section-subtitle">
+                    Real-time monitoring of prediction system performance and accuracy across all modules.
+                </p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Overall Accuracy</span>
+                        <i class="fas fa-bullseye metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="overallAccuracy">-</div>
+                    <div class="metric-trend">
+                        <i class="fas fa-arrow-up"></i> Tracking since 2025
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Predictions Made</span>
+                        <i class="fas fa-chart-bar metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="predictionsMade">-</div>
+                    <div class="metric-trend">
+                        <i class="fas fa-arrow-up"></i> All sports combined
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Brier Score</span>
+                        <i class="fas fa-crosshairs metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="brierScore">-</div>
+                    <div class="metric-trend">
+                        <i class="fas fa-arrow-down"></i> Lower is better
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">Calibration</span>
+                        <i class="fas fa-balance-scale metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="calibration">-</div>
+                    <div class="metric-trend">
+                        <i class="fas fa-check"></i> Well-calibrated models
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global State
+        let currentModule = 'win-probability';
+
+        // Switch Module
+        function switchModule(module) {
+            currentModule = module;
+
+            // Update tabs
+            document.querySelectorAll('.module-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.module === module);
+            });
+
+            // Update forms
+            document.getElementById('winProbabilityForm').style.display =
+                module === 'win-probability' ? 'block' : 'none';
+            document.getElementById('bettingLinesForm').style.display =
+                module === 'betting-lines' ? 'block' : 'none';
+            document.getElementById('accuracyForm').style.display =
+                module === 'accuracy' ? 'block' : 'none';
+
+            // Clear results
+            const resultsDisplay = document.getElementById('resultsDisplay');
+            resultsDisplay.classList.add('empty');
+            resultsDisplay.innerHTML = 'Select a module and click "Generate Prediction" to see results';
+        }
+
+        // Select Module from Card
+        function selectModule(module) {
+            switchModule(module);
+            document.querySelector('.prediction-interface').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Handle CLV mode toggle
+        document.getElementById('blMode')?.addEventListener('change', (e) => {
+            const clvFields = document.getElementById('clvFields');
+            clvFields.style.display = e.target.value === 'clv' ? 'block' : 'none';
+        });
+
+        // Generate Prediction
+        async function generatePrediction() {
+            const resultsDisplay = document.getElementById('resultsDisplay');
+            resultsDisplay.classList.remove('empty');
+            resultsDisplay.innerHTML = '<div class="loading"><div class="spinner"></div><span>Generating prediction...</span></div>';
+
+            const startTime = Date.now();
+
+            try {
+                let endpoint, queryParams;
+
+                if (currentModule === 'win-probability') {
+                    const sport = document.getElementById('wpSport').value;
+                    const gameId = document.getElementById('wpGameId').value;
+                    const mode = document.getElementById('wpMode').value;
+
+                    queryParams = new URLSearchParams({ sport, mode });
+                    if (gameId) queryParams.append('gameId', gameId);
+
+                    endpoint = `/api/v1/predictions/win-probability?${queryParams}`;
+
+                } else if (currentModule === 'betting-lines') {
+                    const sport = document.getElementById('blSport').value;
+                    const gameId = document.getElementById('blGameId').value;
+                    const mode = document.getElementById('blMode').value;
+
+                    queryParams = new URLSearchParams({ sport, mode });
+                    if (gameId) queryParams.append('gameId', gameId);
+
+                    if (mode === 'clv') {
+                        queryParams.append('betType', document.getElementById('blBetType').value);
+                        queryParams.append('side', document.getElementById('blSide').value);
+                        queryParams.append('odds', document.getElementById('blOdds').value);
+                    }
+
+                    endpoint = `/api/v1/predictions/betting-lines?${queryParams}`;
+
+                } else if (currentModule === 'accuracy') {
+                    const sport = document.getElementById('accSport').value;
+                    const mode = document.getElementById('accMode').value;
+                    const days = document.getElementById('accDays').value;
+
+                    queryParams = new URLSearchParams({ mode });
+                    if (sport) queryParams.append('sport', sport);
+                    if (mode === 'trend') queryParams.append('days', days);
+
+                    endpoint = `/api/v1/predictions/accuracy/${mode}?${queryParams}`;
+                }
+
+                const response = await fetch(endpoint);
+                const responseTime = Date.now() - startTime;
+                const data = await response.json();
+
+                // Display formatted results
+                if (response.ok) {
+                    displayResults(data, responseTime);
+                } else {
+                    resultsDisplay.innerHTML = `
+                        <div style="color: var(--danger); padding: 1rem;">
+                            <strong>Error:</strong> ${data.message || 'Failed to generate prediction'}
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                const responseTime = Date.now() - startTime;
+                resultsDisplay.innerHTML = `
+                    <div style="color: var(--danger); padding: 1rem;">
+                        <strong>Network Error:</strong> ${error.message}
+                        <br><small>Response time: ${responseTime}ms</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Display Results
+        function displayResults(data, responseTime) {
+            const resultsDisplay = document.getElementById('resultsDisplay');
+            resultsDisplay.classList.remove('empty');
+
+            if (currentModule === 'win-probability') {
+                displayWinProbability(data, responseTime);
+            } else if (currentModule === 'betting-lines') {
+                displayBettingLines(data, responseTime);
+            } else if (currentModule === 'accuracy') {
+                displayAccuracy(data, responseTime);
+            }
+        }
+
+        // Display Win Probability Results
+        function displayWinProbability(data, responseTime) {
+            const homeProb = (data.homeWinProbability * 100).toFixed(1);
+            const awayProb = (data.awayWinProbability * 100).toFixed(1);
+
+            document.getElementById('resultsDisplay').innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-title">${data.homeTeam} vs ${data.awayTeam}</div>
+                        <div class="result-badge badge-${data.confidence.level}">${data.confidence.level.toUpperCase()}</div>
+                    </div>
+
+                    <div class="probability-bar">
+                        <div class="prob-segment prob-home" style="width: ${homeProb}%">${data.homeTeam} ${homeProb}%</div>
+                        <div class="prob-segment prob-away" style="width: ${awayProb}%">${data.awayTeam} ${awayProb}%</div>
+                    </div>
+
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <div class="result-item-label">Confidence Interval</div>
+                            <div class="result-item-value">
+                                ${(data.confidence.interval.lower * 100).toFixed(1)}% - ${(data.confidence.interval.upper * 100).toFixed(1)}%
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-label">Standard Error</div>
+                            <div class="result-item-value">${(data.confidence.standardError * 100).toFixed(1)}%</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-label">Response Time</div>
+                            <div class="result-item-value">${responseTime}ms</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--text-secondary);">Key Factors</h4>
+                        ${Object.entries(data.factors).map(([key, factor]) => `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                                <span style="color: var(--text-tertiary);">${factor.description || key}</span>
+                                <span style="color: var(--blaze-orange); font-weight: 600;">
+                                    ${factor.impact > 0 ? '+' : ''}${(factor.impact * 100).toFixed(1)}%
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${data.disclaimer ? `
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255, 193, 7, 0.1); border-left: 3px solid var(--warning); border-radius: 6px; font-size: 0.85rem; color: var(--text-tertiary);">
+                            <strong>Note:</strong> ${data.disclaimer}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Display Betting Lines Results
+        function displayBettingLines(data, responseTime) {
+            document.getElementById('resultsDisplay').innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-title">${data.homeTeam} vs ${data.awayTeam}</div>
+                        <div class="result-badge ${data.bestOpportunity?.found ? 'badge-high' : 'badge-low'}">
+                            ${data.bestOpportunity?.found ? 'VALUE FOUND' : 'NO VALUE'}
+                        </div>
+                    </div>
+
+                    ${data.bestOpportunity?.found ? `
+                        <div style="padding: 1rem; background: rgba(40, 167, 69, 0.1); border: 1px solid var(--success); border-radius: 8px; margin-bottom: 1rem;">
+                            <strong style="color: var(--success);">Best Opportunity:</strong> ${data.bestOpportunity.message}
+                        </div>
+                    ` : `
+                        <div style="padding: 1rem; background: rgba(108, 117, 125, 0.1); border: 1px solid var(--text-tertiary); border-radius: 8px; margin-bottom: 1rem;">
+                            ${data.bestOpportunity?.message || 'No value opportunities identified'}
+                        </div>
+                    `}
+
+                    <h4 style="margin-bottom: 0.75rem; color: var(--text-secondary);">Market Lines</h4>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <div class="result-item-label">Moneyline</div>
+                            <div class="result-item-value">
+                                ${data.marketLines.moneyline.home} / ${data.marketLines.moneyline.away}
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-label">Spread</div>
+                            <div class="result-item-value">
+                                ${data.marketLines.spread.line} (${data.marketLines.spread.homeOdds}/${data.marketLines.spread.awayOdds})
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-label">Total</div>
+                            <div class="result-item-value">
+                                ${data.marketLines.total.line} (O/U ${data.marketLines.total.overOdds}/${data.marketLines.total.underOdds})
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--text-secondary);">Model Probabilities</h4>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <div class="result-item-label">Home Win</div>
+                                <div class="result-item-value">${(data.modelProbability.home * 100).toFixed(1)}%</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-item-label">Away Win</div>
+                                <div class="result-item-value">${(data.modelProbability.away * 100).toFixed(1)}%</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-item-label">Confidence</div>
+                                <div class="result-item-value">${data.modelProbability.confidence.toUpperCase()}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${data.disclaimer ? `
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(220, 53, 69, 0.1); border-left: 3px solid var(--danger); border-radius: 6px; font-size: 0.85rem; color: var(--text-tertiary);">
+                            <strong>Disclaimer:</strong> ${data.disclaimer}
+                        </div>
+                    ` : ''}
+
+                    <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-tertiary);">
+                        Response time: ${responseTime}ms
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display Accuracy Results
+        function displayAccuracy(data, responseTime) {
+            document.getElementById('resultsDisplay').innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-title">Model Performance Dashboard</div>
+                    </div>
+
+                    <div style="padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 8px; margin-bottom: 1rem;">
+                        <pre class="response-json">${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+
+                    <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-tertiary);">
+                        Response time: ${responseTime}ms • Last updated: ${data.lastUpdated || 'N/A'}
+                    </div>
+                </div>
+            `;
+
+            // Update metrics if available
+            if (data.accuracy) {
+                document.getElementById('overallAccuracy').textContent = `${(data.accuracy * 100).toFixed(1)}%`;
+            }
+            if (data.totalPredictions) {
+                document.getElementById('predictionsMade').textContent = data.totalPredictions.toLocaleString();
+            }
+            if (data.brierScore) {
+                document.getElementById('brierScore').textContent = data.brierScore.toFixed(4);
+            }
+            if (data.calibrationScore) {
+                document.getElementById('calibration').textContent = `${(data.calibrationScore * 100).toFixed(1)}%`;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default module
+            switchModule('win-probability');
+        });
+    </script>
+</body>
+</html>

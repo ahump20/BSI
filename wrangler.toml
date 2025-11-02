@@ -16,3 +16,12 @@ ENVIRONMENT = "production"
 binding = "DB"
 database_name = "blazesports-historical"
 database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
+
+# Durable Object binding (references Worker deployment)
+[[durable_objects.bindings]]
+name = "GAME_MONITOR"
+class_name = "GameMonitorDO"
+script_name = "blazesports-game-monitor"
+
+# Note: Durable Objects are deployed separately as a Worker
+# See wrangler.worker.toml for Durable Object configuration
