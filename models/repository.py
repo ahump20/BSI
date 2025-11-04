@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Iterable
+from typing import Iterable, Sequence
 
 import pandas as pd
-from sqlalchemy import delete
+from sqlalchemy import delete, tuple_
 
 from .database import get_engine, session_scope
 from .schema import (
@@ -40,38 +40,77 @@ def upsert_athletes(df: pd.DataFrame) -> None:
                     setattr(athlete, key, value)
 
 
+def _bulk_replace(
+    session,
+    model: type[Base],
+    frame: pd.DataFrame,
+    key_fields: Sequence[str],
+) -> None:
+    """Replace rows matching the provided keys with the given frame."""
+
+    if frame.empty:
+        return
+
+    keys = tuple(key_fields)
+    key_columns = frame.loc[:, keys]
+    if key_columns.empty:
+        return
+
+    values = list(dict.fromkeys(key_columns.itertuples(index=False, name=None)))
+    if values:
+        stmt = delete(model).where(
+            tuple_(*(getattr(model, key) for key in keys)).in_(values)
+        )
+        session.execute(stmt)
+
+    session.bulk_insert_mappings(model, frame.to_dict(orient="records"))
+
+
 def load_box_scores(df: pd.DataFrame) -> None:
     with session_scope() as session:
-        session.execute(delete(BoxScore))
-        session.bulk_insert_mappings(BoxScore, df.to_dict(orient="records"))
+        _bulk_replace(session, BoxScore, df, ("athlete_id", "game_date", "opponent"))
 
 
 def load_social_stats(df: pd.DataFrame) -> None:
     with session_scope() as session:
-        session.execute(delete(SocialStat))
-        payload = df.rename(columns={"date": "stat_date"}).to_dict(orient="records")
-        session.bulk_insert_mappings(SocialStat, payload)
+        payload = df.rename(columns={"date": "stat_date"})
+        _bulk_replace(
+            session,
+            SocialStat,
+            payload,
+            ("athlete_id", "channel", "stat_date"),
+        )
 
 
 def load_search_interest(df: pd.DataFrame) -> None:
     with session_scope() as session:
-        session.execute(delete(SearchInterest))
-        payload = df.rename(columns={"date": "stat_date"}).to_dict(orient="records")
-        session.bulk_insert_mappings(SearchInterest, payload)
+        payload = df.rename(columns={"date": "stat_date"})
+        _bulk_replace(
+            session,
+            SearchInterest,
+            payload,
+            ("athlete_id", "stat_date"),
+        )
 
 
 def store_features(df: pd.DataFrame) -> None:
     with session_scope() as session:
-        session.execute(delete(AthleteFeature))
-        records = df.to_dict(orient="records")
-        session.bulk_insert_mappings(AthleteFeature, records)
+        _bulk_replace(
+            session,
+            AthleteFeature,
+            df,
+            ("athlete_id", "as_of"),
+        )
 
 
 def store_valuations(df: pd.DataFrame) -> None:
     with session_scope() as session:
-        session.execute(delete(AthleteValuation))
-        records = df.to_dict(orient="records")
-        session.bulk_insert_mappings(AthleteValuation, records)
+        _bulk_replace(
+            session,
+            AthleteValuation,
+            df,
+            ("athlete_id", "as_of"),
+        )
 
 
 def fetch_leaderboard(limit: int = 100) -> list[dict]:
