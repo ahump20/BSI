@@ -96,12 +96,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   try {
-    // Check KV cache first (30 second TTL for live games)
+    // Check KV cache first (60 second TTL for live games)
     const cacheKey = `live_game:${gameId}`;
     const cached = await env.KV.get<LiveGameResponse>(cacheKey, 'json');
 
     if (cached) {
-      // Verify cache freshness (must be < 30 seconds old)
+      // Verify cache freshness (must be < 60 seconds old)
       const cacheAge = Date.now() - new Date(cached.metadata.lastUpdated).getTime();
       if (cacheAge < 60000) {
         return Response.json({
