@@ -105,7 +105,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     if (cached) {
       // Verify cache freshness (must be < 30 seconds old)
       const cacheAge = Date.now() - new Date(cached.metadata.lastUpdated).getTime();
-      if (cacheAge < 30000) {
+      if (cacheAge < 60000) {
         return Response.json({
           ...cached,
           metadata: {
