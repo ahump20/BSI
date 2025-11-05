@@ -452,7 +452,7 @@ function formatLastUpdated(dateValue: string, timezone?: string): string {
     return formatter.format(date).replace(' at ', ' · ');
   } catch (error) {
     console.warn('[baseball-rankings] Failed to format date', error);
-    return date.toISOString();
+    return escapeHtml(date.toISOString());
   }
 }
 
