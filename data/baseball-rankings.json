@@ -1,0 +1,55 @@
+{
+  "lastUpdated": "2025-10-17T00:00:00Z",
+  "rankings": [
+    {
+      "rank": 1,
+      "team": "Los Angeles Dodgers",
+      "record": "104-58"
+    },
+    {
+      "rank": 2,
+      "team": "Atlanta Braves",
+      "record": "101-61"
+    },
+    {
+      "rank": 3,
+      "team": "New York Yankees",
+      "record": "98-64"
+    },
+    {
+      "rank": 4,
+      "team": "Houston Astros",
+      "record": "96-66"
+    },
+    {
+      "rank": 5,
+      "team": "Seattle Mariners",
+      "record": "94-68"
+    },
+    {
+      "rank": 6,
+      "team": "Baltimore Orioles",
+      "record": "92-70"
+    },
+    {
+      "rank": 7,
+      "team": "Philadelphia Phillies",
+      "record": "90-72"
+    },
+    {
+      "rank": 8,
+      "team": "Texas Rangers",
+      "record": "88-74"
+    },
+    {
+      "rank": 9,
+      "team": "Chicago Cubs",
+      "record": "86-76"
+    },
+    {
+      "rank": 10,
+      "team": "San Diego Padres",
+      "record": "84-78"
+    }
+  ]
+}
