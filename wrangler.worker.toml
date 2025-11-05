@@ -13,11 +13,19 @@ database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
 binding = "KV"
 id = "a53c3726fc3044be82e79d2d1e371d26"
 
+[[kv_namespaces]]
+binding = "RANKINGS_CACHE"
+id = "a53c3726fc3044be82e79d2d1e371d26"
+
 # Durable Object definition
 [[durable_objects.bindings]]
 name = "GAME_MONITOR"
 class_name = "GameMonitorDO"
 script_name = "blazesports-game-monitor"
+
+[vars]
+BASEBALL_RANKINGS_SOURCE_URL = "https://raw.githubusercontent.com/BlazeSportsIntel/BSI/main/data/college-baseball/rankings/d1baseball-top25.json"
+BASEBALL_RANKINGS_CACHE_TTL = "21600"
 
 # Durable Object migrations (free plan uses new_sqlite_classes)
 [[migrations]]

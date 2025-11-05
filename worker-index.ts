@@ -5,6 +5,8 @@
 
 export { GameMonitorDO } from './lib/reconstruction/GameMonitorDO';
 
+import baseballRankingsWorker from './workers/baseball-rankings';
+
 /**
  * Default export for ES Module Worker
  * Handles HTTP requests to the worker
@@ -23,6 +25,10 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
+    }
+
+    if (url.pathname === '/baseball/rankings') {
+      return baseballRankingsWorker.fetch(request, env);
     }
 
     // All other requests return 404

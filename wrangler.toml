@@ -4,12 +4,15 @@ compatibility_date = "2025-01-01"
 
 # KV namespace for caching (existing CACHE namespace from blazesportsintel)
 kv_namespaces = [
-  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" }
+  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" },
+  { binding = "RANKINGS_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26" }
 ]
 
 # Environment variables
 [vars]
 ENVIRONMENT = "production"
+BASEBALL_RANKINGS_SOURCE_URL = "https://raw.githubusercontent.com/BlazeSportsIntel/BSI/main/data/college-baseball/rankings/d1baseball-top25.json"
+BASEBALL_RANKINGS_CACHE_TTL = "21600"
 
 # D1 database for storing historical sports data
 [[d1_databases]]
