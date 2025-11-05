@@ -8,7 +8,7 @@
  * - Expected metrics for at-bats (xBA, xSLG, xWOBA)
  * - Pitch tunneling analysis for pitcher matchups
  * - WebSocket connection for live updates
- * - KV caching with 30-second TTL for live games
+ * - KV caching with 60-second TTL for live games
  *
  * Integration Points:
  * - WinProbabilityChart.tsx (live visualization)
