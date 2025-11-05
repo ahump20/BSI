@@ -2,10 +2,15 @@ name = "college-baseball-tracker"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-01-01"
 
-# KV namespace for caching (existing CACHE namespace from blazesportsintel)
-kv_namespaces = [
-  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" }
-]
+# KV namespaces
+[[kv_namespaces]]
+binding = "KV"
+id = "a53c3726fc3044be82e79d2d1e371d26"
+
+[[kv_namespaces]]
+binding = "BSI_KV"
+id = "b1d2f4e8c5a8471c9a4f01d2e9b7c815"
+preview_id = "4c5d7e9a1b2c3d4e5f6a7b8c9d0e1f20"
 
 # Environment variables
 [vars]
@@ -25,3 +30,11 @@ script_name = "blazesports-game-monitor"
 
 # Note: Durable Objects are deployed separately as a Worker
 # See wrangler.worker.toml for Durable Object configuration
+
+# Dedicated worker environment for baseball rankings API
+[env.baseball_rankings]
+name = "bsi-baseball-rankings"
+main = "workers/baseball-rankings/index.ts"
+
+[env.baseball_rankings.vars]
+ENVIRONMENT = "production"
