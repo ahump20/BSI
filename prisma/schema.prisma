@@ -1,6 +1,6 @@
 // Blaze Sports Intel - Prisma Schema
 // Database: Cloudflare D1 (SQLite-compatible)
-// Updated: 2025-10-31
+// Updated: 2025-11-01
 
 generator client {
   provider = "prisma-client-js"
