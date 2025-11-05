@@ -449,11 +449,18 @@ function formatLastUpdated(dateValue: string, timezone?: string): string {
       timeZone: timezone ?? 'UTC',
       timeZoneName: 'short'
     });
-    return formatter.format(date).replace(' at ', ' · ');
-  } catch (error) {
-    console.warn('[baseball-rankings] Failed to format date', error);
-    return escapeHtml(date.toISOString());
-  }
+    // Use formatToParts to reliably insert ' · ' between date and time
+    const parts = formatter.formatToParts(date);
+    // Find the index where the time part starts (first 'hour' part)
+    const hourIndex = parts.findIndex(part => part.type === 'hour');
+    if (hourIndex > 0) {
+      const before = parts.slice(0, hourIndex).map(p => p.value).join('');
+      const after = parts.slice(hourIndex).map(p => p.value).join('');
+      return before.trimEnd() + ' · ' + after.trimStart();
+    } else {
+      // fallback: just join all parts
+      return parts.map(p => p.value).join('');
+    }
 }
 
 function extractHostname(url: string): string {
