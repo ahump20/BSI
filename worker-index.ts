@@ -3,7 +3,18 @@
  * Exports Durable Objects and handles worker-level routing
  */
 
+import baseballRankings from './data/baseball-rankings.json' assert { type: 'json' };
+
 export { GameMonitorDO } from './lib/reconstruction/GameMonitorDO';
+
+type BaseballRankingsPayload = {
+  lastUpdated: string;
+  rankings: Array<{
+    rank: number;
+    team: string;
+    record: string;
+  }>;
+};
 
 /**
  * Default export for ES Module Worker
@@ -22,6 +33,17 @@ export default {
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (url.pathname === '/baseball/rankings') {
+      const payload = baseballRankings as BaseballRankingsPayload;
+      return new Response(JSON.stringify(payload), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=1800, stale-while-revalidate=900'
+        }
       });
     }
 
