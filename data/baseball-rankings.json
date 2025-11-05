@@ -1,0 +1,132 @@
+{
+  "lastUpdated": "2025-05-27T07:00Z",
+  "source": "https://site.web.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings",
+  "poll": "D1Baseball.com Top 25",
+  "rankings": [
+    {
+      "rank": 1,
+      "team": "North Carolina Tar Heels",
+      "record": "42-12"
+    },
+    {
+      "rank": 2,
+      "team": "Vanderbilt Commodores",
+      "record": "42-16"
+    },
+    {
+      "rank": 3,
+      "team": "LSU Tigers",
+      "record": "43-14"
+    },
+    {
+      "rank": 4,
+      "team": "Texas Longhorns",
+      "record": "42-12"
+    },
+    {
+      "rank": 5,
+      "team": "Oregon Ducks",
+      "record": "42-14"
+    },
+    {
+      "rank": 6,
+      "team": "Arkansas Razorbacks",
+      "record": "43-13"
+    },
+    {
+      "rank": 7,
+      "team": "Florida State Seminoles",
+      "record": "38-14"
+    },
+    {
+      "rank": 8,
+      "team": "Oregon State Beavers",
+      "record": "41-12-1"
+    },
+    {
+      "rank": 9,
+      "team": "Auburn Tigers",
+      "record": "38-18"
+    },
+    {
+      "rank": 10,
+      "team": "Georgia Bulldogs",
+      "record": "42-15"
+    },
+    {
+      "rank": 11,
+      "team": "Coastal Carolina Chanticleers",
+      "record": "48-11"
+    },
+    {
+      "rank": 12,
+      "team": "Southern Miss Golden Eagles",
+      "record": "44-14"
+    },
+    {
+      "rank": 13,
+      "team": "UCLA Bruins",
+      "record": "42-16"
+    },
+    {
+      "rank": 14,
+      "team": "Clemson Tigers",
+      "record": "44-16"
+    },
+    {
+      "rank": 15,
+      "team": "Ole Miss Rebels",
+      "record": "40-19"
+    },
+    {
+      "rank": 16,
+      "team": "Tennessee Volunteers",
+      "record": "43-16"
+    },
+    {
+      "rank": 17,
+      "team": "Florida Gators",
+      "record": "38-20"
+    },
+    {
+      "rank": 18,
+      "team": "Georgia Tech Yellow Jackets",
+      "record": "40-17"
+    },
+    {
+      "rank": 19,
+      "team": "Northeastern Huskies",
+      "record": "48-9"
+    },
+    {
+      "rank": 20,
+      "team": "Rutgers Scarlet Knights",
+      "record": "40-16"
+    },
+    {
+      "rank": 21,
+      "team": "Arizona Wildcats",
+      "record": "39-18"
+    },
+    {
+      "rank": 22,
+      "team": "TCU Horned Frogs",
+      "record": "39-18"
+    },
+    {
+      "rank": 23,
+      "team": "UC Irvine Anteaters",
+      "record": "41-15"
+    },
+    {
+      "rank": 24,
+      "team": "Alabama Crimson Tide",
+      "record": "41-16"
+    },
+    {
+      "rank": 25,
+      "team": "Kansas Jayhawks",
+      "record": "43-15"
+    }
+  ]
+}
