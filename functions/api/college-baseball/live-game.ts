@@ -22,7 +22,6 @@
  */
 
 import { LiveWinProbabilityEngine } from '../../../lib/analytics/baseball/win-probability-engine';
-import { ExpectedMetricsCalculator } from '../../../lib/analytics/baseball/expected-metrics-calculator';
 import type {
   GameState,
   WinProbability,
