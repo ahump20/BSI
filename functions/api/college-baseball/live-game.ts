@@ -17,7 +17,7 @@
  * - ExpectedMetricsCalculator (batted ball analysis)
  *
  * Data Sources: NCAA Stats API, D1Baseball, Conference APIs
- * Last Updated: October 19, 2025
+ * Last Updated: November 1, 2025
  * Timezone: America/Chicago
  */
 
