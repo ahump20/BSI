@@ -1,7 +1,12 @@
 const DEFAULT_CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://blazesportsintel.com',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Accept',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
 };
 
 export const corsHeaders = {
@@ -68,7 +73,7 @@ export const cache = async (env, key, fetcher, ttl = 300) => {
       }
     }
   } catch (error) {
-    console.warn(`Cache read miss for key ${key}:`, error);
+    // Cache miss - fetch fresh data
   }
 
   const fresh = await fetcher();
@@ -83,7 +88,7 @@ export const cache = async (env, key, fetcher, ttl = 300) => {
       { expirationTtl: ttl },
     );
   } catch (error) {
-    console.warn(`Cache write failed for key ${key}:`, error);
+    // Cache write failure - non-critical, continue with fresh data
   }
 
   return fresh;
@@ -179,7 +184,6 @@ export const validateNFLRecord = (team) => {
   }
 
   if (errors.length > 0) {
-    console.warn(`Record validation failed for team:`, team.name || 'Unknown', errors);
     return { valid: false, errors };
   }
 
@@ -192,6 +196,77 @@ export const validateNFLRecord = (team) => {
       displayRecord: `${currentWins}-${currentLosses}`
     }
   };
+};
+
+/**
+ * Rate limiting middleware using KV storage
+ * @param {Object} env - Cloudflare environment bindings
+ * @param {Request} request - Request object
+ * @param {number} maxRequests - Maximum requests per window (default 100)
+ * @param {number} windowMs - Time window in milliseconds (default 60000 = 1 minute)
+ * @returns {Object} { allowed: boolean, remaining: number, resetAt: Date }
+ */
+export const rateLimit = async (env, request, maxRequests = 100, windowMs = 60000) => {
+  const store = getCacheBinding(env);
+  if (!store) {
+    return { allowed: true, remaining: maxRequests, resetAt: null };
+  }
+
+  const ip = request.headers.get('CF-Connecting-IP') ||
+             request.headers.get('X-Forwarded-For') ||
+             'unknown';
+
+  const now = Date.now();
+  const windowKey = Math.floor(now / windowMs);
+  const rateLimitKey = `ratelimit:${ip}:${windowKey}`;
+
+  try {
+    const current = await store.get(rateLimitKey);
+    const count = current ? parseInt(current) : 0;
+
+    if (count >= maxRequests) {
+      const resetAt = new Date((windowKey + 1) * windowMs);
+      return {
+        allowed: false,
+        remaining: 0,
+        resetAt,
+        retryAfter: Math.ceil((resetAt - now) / 1000)
+      };
+    }
+
+    await store.put(rateLimitKey, String(count + 1), {
+      expirationTtl: Math.ceil(windowMs / 1000) + 10
+    });
+
+    return {
+      allowed: true,
+      remaining: maxRequests - count - 1,
+      resetAt: new Date((windowKey + 1) * windowMs)
+    };
+  } catch (error) {
+    return { allowed: true, remaining: maxRequests, resetAt: null };
+  }
+};
+
+/**
+ * Rate limit error response
+ */
+export const rateLimitError = (resetAt, retryAfter) => {
+  return new Response(
+    JSON.stringify({
+      error: 'Too Many Requests',
+      message: 'Rate limit exceeded. Please try again later.',
+      retryAfter: retryAfter || 60
+    }),
+    {
+      status: 429,
+      headers: {
+        ...corsHeaders,
+        'Retry-After': String(retryAfter || 60),
+        'X-RateLimit-Reset': resetAt ? resetAt.toISOString() : ''
+      }
+    }
+  );
 };
 
 /**
@@ -239,7 +314,6 @@ export const validateMLBRecord = (team) => {
   }
 
   if (errors.length > 0) {
-    console.warn(`MLB record validation failed for team:`, team.name || 'Unknown', errors);
     return { valid: false, errors };
   }
 
@@ -288,7 +362,6 @@ export const validateNBARecord = (team) => {
   }
 
   if (errors.length > 0) {
-    console.warn(`NBA record validation failed for team:`, team.name || 'Unknown', errors);
     return { valid: false, errors };
   }
 

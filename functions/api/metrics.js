@@ -3,6 +3,8 @@
  * GET /api/metrics
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+
 // In-memory metrics storage (reset on worker restart)
 let metrics = {
     requests: {
@@ -37,6 +39,17 @@ const MAX_RESPONSE_TIME_SAMPLES = 1000;
 export async function onRequest(context) {
     const { request, env } = context;
     const url = new URL(request.url);
+
+    // Handle OPTIONS request
+    if (request.method === 'OPTIONS') {
+        return new Response(null, { headers: corsHeaders });
+    }
+
+    // Rate limiting: 200 requests per minute per IP (higher threshold for monitoring)
+    const limit = await rateLimit(env, request, 200, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
+    }
 
     // Allow resetting metrics with ?reset=true (requires auth in production)
     if (url.searchParams.get('reset') === 'true') {

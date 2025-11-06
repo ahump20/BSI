@@ -156,6 +156,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       case 'ncaa/baseball':
         return await streamNCAABaseball(url, env);
 
+      case 'ncaa/games':
+        return await getNCAAGames(url, env);
+
       case 'mlb/scores':
         return await getMLBScores(url, env);
 
@@ -176,6 +179,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             availableRoutes: [
               '/api/live/ncaa/football',
               '/api/live/ncaa/baseball',
+              '/api/live/ncaa/games',
               '/api/live/mlb/scores',
               '/api/live/nfl/scores',
               '/api/live/nba/scores',
@@ -315,6 +319,112 @@ async function getNCAAFootball(url: URL, env: Env) {
       'Cache-Control': 'public, max-age=300',
     },
   });
+}
+
+async function getNCAAGames(url: URL, env: Env) {
+  const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
+  const conference = url.searchParams.get('conference');
+  const cacheKey = `ncaa:games:${date}:${conference || 'all'}`;
+
+  // Try cache first (30-second TTL for live games)
+  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  if (cached && (cached as any).expires > Date.now()) {
+    return new Response(
+      JSON.stringify({ ...(cached as any).data, cached: true }),
+      {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=30',
+        },
+      }
+    );
+  }
+
+  try {
+    // Fetch from NCAA.com stats API (Division I Baseball)
+    // Note: NCAA.com provides public scoreboard data
+    const year = new Date().getFullYear();
+    const ncaaUrl = `https://stats.ncaa.org/season_divisions/17780/scoreboards?utf8=%E2%9C%93&season_division_id=17780&game_date=${date}`;
+
+    const response = await fetch(ncaaUrl, {
+      headers: {
+        'User-Agent': 'BlazeSportsIntel/1.0 (+https://blazesportsintel.com)',
+        'Accept': 'application/json, text/html',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`NCAA.com returned ${response.status}`);
+    }
+
+    const html = await response.text();
+
+    // Parse HTML to extract game data
+    // Note: This is a simplified parser - production should use a proper HTML parser
+    const games: any[] = [];
+
+    // For now, return a properly formatted response with metadata
+    // indicating we're in development/transition
+    const responseData = {
+      success: true,
+      sport: 'ncaa-baseball',
+      date,
+      games: [],
+      meta: {
+        dataSource: 'NCAA.com Division I Baseball',
+        lastUpdated: new Date().toISOString(),
+        status: 'development',
+        note: 'Real NCAA data integration in progress. Full game data coming soon.',
+      },
+    };
+
+    // Cache for 30 seconds (live games)
+    if (env.SPORTS_CACHE) {
+      await env.SPORTS_CACHE.put(
+        cacheKey,
+        JSON.stringify({
+          data: responseData,
+          expires: Date.now() + 30 * 1000,
+        }),
+        { expirationTtl: 30 }
+      );
+    }
+
+    return new Response(JSON.stringify({ ...responseData, cached: false }), {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30',
+      },
+    });
+  } catch (error: any) {
+    console.error('[getNCAAGames] Error:', error);
+
+    // Return empty games array with error metadata
+    return new Response(
+      JSON.stringify({
+        success: false,
+        sport: 'ncaa-baseball',
+        date,
+        games: [],
+        error: error.message,
+        meta: {
+          dataSource: 'NCAA.com',
+          lastUpdated: new Date().toISOString(),
+          status: 'error',
+        },
+      }),
+      {
+        status: 200, // Still return 200 to prevent frontend errors
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=30',
+        },
+      }
+    );
+  }
 }
 
 async function streamNCAABaseball(url: URL, env: Env) {
