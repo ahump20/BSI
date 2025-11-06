@@ -235,6 +235,48 @@
         color: var(--white);
       }
 
+      /* Checkbox Filter */
+      .filter-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-sm);
+        transition: all 0.3s ease;
+      }
+
+      .filter-checkbox:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 107, 0, 0.3);
+      }
+
+      .filter-checkbox input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+        accent-color: var(--burnt-orange);
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+      }
+
+      .checkbox-label i {
+        color: var(--burnt-orange);
+        font-size: 1rem;
+      }
+
       /* Games Grid */
       .games-container {
         max-width: 1400px;
@@ -573,6 +615,103 @@
         min-width: 600px;
       }
 
+      /* Box Score Loading State */
+      .box-score-loading {
+        text-align: center;
+        padding: 3rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .box-score-loading i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--burnt-orange);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      /* Box Score Error State */
+      .box-score-error {
+        text-align: center;
+        padding: 3rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .box-score-error i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #ff4444;
+      }
+
+      .retry-btn {
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--burnt-orange);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .retry-btn:hover {
+        background: #d65900;
+        transform: translateY(-2px);
+      }
+
+      /* Position and Decision Tags */
+      .position-tag,
+      .decision-tag {
+        display: inline-block;
+        margin-left: 0.5rem;
+        padding: 0.125rem 0.5rem;
+        background: rgba(191, 87, 0, 0.2);
+        border: 1px solid var(--burnt-orange);
+        border-radius: var(--radius-xs);
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--burnt-orange);
+        letter-spacing: 0.05em;
+      }
+
+      .decision-tag {
+        background: rgba(76, 175, 80, 0.2);
+        border-color: #4caf50;
+        color: #4caf50;
+      }
+
+      /* Sortable Table Styling */
+      .sortable-table th.sortable {
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+      }
+
+      .sortable-table th.sortable:hover {
+        background: rgba(191, 87, 0, 0.3);
+      }
+
+      .sortable-table th.sortable::after {
+        content: '⇅';
+        opacity: 0.3;
+        margin-left: 0.25rem;
+      }
+
+      .sortable-table th.sortable.sorted-asc::after {
+        content: '↑';
+        opacity: 1;
+      }
+
+      .sortable-table th.sortable.sorted-desc::after {
+        content: '↓';
+        opacity: 1;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         .nav-links {
@@ -681,6 +820,15 @@
             <option value="scheduled">Scheduled</option>
           </select>
         </div>
+
+        <div class="filter-group">
+          <label class="filter-checkbox">
+            <input type="checkbox" id="ranked-filter" aria-label="Show only Top 25 ranked teams" />
+            <span class="checkbox-label">
+              <i class="fas fa-trophy"></i> Top 25 Teams Only
+            </span>
+          </label>
+        </div>
       </div>
     </section>
 
@@ -727,12 +875,23 @@
       const today = new Date().toISOString().split('T')[0];
       dateInput.value = today;
 
+      // Parse URL parameters to check for ranked=true
+      const urlParams = new URLSearchParams(window.location.search);
+      const rankedFromURL = urlParams.get('ranked') === 'true';
+
       // State
       let currentFilters = {
         date: today,
         conference: '',
-        status: ''
+        status: '',
+        ranked: rankedFromURL
       };
+
+      // Set ranked checkbox based on URL parameter
+      const rankedCheckbox = document.getElementById('ranked-filter');
+      if (rankedFromURL) {
+        rankedCheckbox.checked = true;
+      }
 
       // Event Listeners
       dateInput.addEventListener('change', e => {
@@ -747,6 +906,11 @@
 
       document.getElementById('status-filter').addEventListener('change', e => {
         currentFilters.status = e.target.value;
+        loadGames();
+      });
+
+      rankedCheckbox.addEventListener('change', e => {
+        currentFilters.ranked = e.target.checked;
         loadGames();
       });
 
@@ -765,6 +929,7 @@
           if (currentFilters.date) params.append('date', currentFilters.date);
           if (currentFilters.conference) params.append('conference', currentFilters.conference);
           if (currentFilters.status) params.append('status', currentFilters.status);
+          if (currentFilters.ranked) params.append('ranked', 'true');
 
           const response = await fetch(`/api/college-baseball/scoreboard?${params}`);
           const data = await response.json();
@@ -865,6 +1030,12 @@
                 View Full Box Score
                 <i class="fas fa-chevron-down" aria-hidden="true"></i>
               </button>
+              <a href="/college-baseball/games/detail.html?id=${game.id}" class="toggle-btn recap-link" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; margin-left: 0.5rem;">
+                <i class="fas fa-trophy" aria-hidden="true"></i>
+                View Full Recap
+                <span class="espn-killer-mini" style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: linear-gradient(135deg, #dc3545 0%, #ff6b00 100%); border-radius: 1rem; color: white; font-weight: 700;">ESPN KILLER</span>
+                <i class="fas fa-arrow-right" aria-hidden="true"></i>
+              </a>
               <div id="box-score-${game.id}" class="box-score-content" aria-hidden="true">
                 ${createBoxScore(game)}
               </div>
@@ -873,8 +1044,40 @@
         `;
       }
 
-      // Create box score HTML (placeholder for detailed stats)
-      function createBoxScore(game) {
+      // Create box score HTML with real data
+      function createBoxScore(boxScoreData) {
+        if (!boxScoreData) {
+          return `
+            <div class="box-score-loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading box score...</p>
+            </div>
+          `;
+        }
+
+        const { lineScore, teams } = boxScoreData;
+        const awayTeam = teams[0];
+        const homeTeam = teams[1];
+
+        // Build innings columns (handle extra innings)
+        const maxInnings = Math.max(
+          lineScore.away.innings.length,
+          lineScore.home.innings.length,
+          9
+        );
+
+        const inningHeaders = Array.from({ length: maxInnings }, (_, i) => `
+          <th scope="col" abbr="Inning ${i + 1}">${i + 1}</th>
+        `).join('');
+
+        const awayInnings = Array.from({ length: maxInnings }, (_, i) =>
+          lineScore.away.innings[i] || '-'
+        ).join('</td><td>');
+
+        const homeInnings = Array.from({ length: maxInnings }, (_, i) =>
+          lineScore.home.innings[i] || '-'
+        ).join('</td><td>');
+
         return `
           <div class="box-score-section">
             <div class="box-score-title">
@@ -886,15 +1089,7 @@
                 <thead>
                   <tr>
                     <th scope="col" abbr="Team">Team</th>
-                    <th scope="col" abbr="Inning 1">1</th>
-                    <th scope="col" abbr="Inning 2">2</th>
-                    <th scope="col" abbr="Inning 3">3</th>
-                    <th scope="col" abbr="Inning 4">4</th>
-                    <th scope="col" abbr="Inning 5">5</th>
-                    <th scope="col" abbr="Inning 6">6</th>
-                    <th scope="col" abbr="Inning 7">7</th>
-                    <th scope="col" abbr="Inning 8">8</th>
-                    <th scope="col" abbr="Inning 9">9</th>
+                    ${inningHeaders}
                     <th scope="col" abbr="Runs">R</th>
                     <th scope="col" abbr="Hits">H</th>
                     <th scope="col" abbr="Errors">E</th>
@@ -902,156 +1097,163 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>${game.awayTeam.name}</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td><strong>${game.awayTeam.score}</strong></td>
-                    <td>-</td>
-                    <td>-</td>
+                    <td><strong>${lineScore.away.team.displayName}</strong></td>
+                    <td>${awayInnings}</td>
+                    <td><strong>${lineScore.away.runs}</strong></td>
+                    <td>${lineScore.away.hits}</td>
+                    <td>${lineScore.away.errors}</td>
                   </tr>
                   <tr>
-                    <td>${game.homeTeam.name}</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td><strong>${game.homeTeam.score}</strong></td>
-                    <td>-</td>
-                    <td>-</td>
+                    <td><strong>${lineScore.home.team.displayName}</strong></td>
+                    <td>${homeInnings}</td>
+                    <td><strong>${lineScore.home.runs}</strong></td>
+                    <td>${lineScore.home.hits}</td>
+                    <td>${lineScore.home.errors}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
+          ${createBattingTable(awayTeam)}
+          ${createBattingTable(homeTeam)}
+          ${createPitchingTable(awayTeam)}
+          ${createPitchingTable(homeTeam)}
+        `;
+      }
+
+      // Create batting stats table for a team
+      function createBattingTable(team) {
+        if (!team.batting || !team.batting.players.length) {
+          return `
+            <div class="box-score-section">
+              <div class="box-score-title">
+                <i class="fas fa-baseball-ball"></i>
+                ${team.team.displayName} Batting
+              </div>
+              <table class="stats-table">
+                <tbody>
+                  <tr>
+                    <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                      <i class="fas fa-info-circle"></i> Batting stats not available
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+
+        const playerRows = team.batting.players.map(p => `
+          <tr>
+            <td>
+              ${p.starter ? '★ ' : ''}${p.shortName}
+              ${p.position ? `<span class="position-tag">${p.position}</span>` : ''}
+            </td>
+            <td>${p.ab}</td>
+            <td>${p.r}</td>
+            <td>${p.h}</td>
+            <td>${p.rbi}</td>
+            <td>${p.bb}</td>
+            <td>${p.so}</td>
+            <td>${p.avg}</td>
+          </tr>
+        `).join('');
+
+        return `
           <div class="box-score-section">
             <div class="box-score-title">
               <i class="fas fa-baseball-ball"></i>
-              ${game.awayTeam.name} Batting
+              ${team.team.displayName} Batting
             </div>
-            <table class="stats-table">
+            <table class="stats-table sortable-table">
               <thead>
                 <tr>
-                  <th>Player</th>
-                  <th>AB</th>
-                  <th>R</th>
-                  <th>H</th>
-                  <th>RBI</th>
-                  <th>BB</th>
-                  <th>SO</th>
-                  <th>AVG</th>
+                  <th class="sortable" data-column="player">Player</th>
+                  <th class="sortable" data-column="ab">AB</th>
+                  <th class="sortable" data-column="r">R</th>
+                  <th class="sortable" data-column="h">H</th>
+                  <th class="sortable" data-column="rbi">RBI</th>
+                  <th class="sortable" data-column="bb">BB</th>
+                  <th class="sortable" data-column="so">SO</th>
+                  <th class="sortable" data-column="avg">AVG</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
-                    <i class="fas fa-info-circle"></i> Detailed box scores available during/after game
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="box-score-section">
-            <div class="box-score-title">
-              <i class="fas fa-baseball-ball"></i>
-              ${game.homeTeam.name} Batting
-            </div>
-            <table class="stats-table">
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>AB</th>
-                  <th>R</th>
-                  <th>H</th>
-                  <th>RBI</th>
-                  <th>BB</th>
-                  <th>SO</th>
-                  <th>AVG</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
-                    <i class="fas fa-info-circle"></i> Detailed box scores available during/after game
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="box-score-section">
-            <div class="box-score-title">
-              <i class="fas fa-chart-bar"></i>
-              ${game.awayTeam.name} Pitching
-            </div>
-            <table class="stats-table">
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>IP</th>
-                  <th>H</th>
-                  <th>R</th>
-                  <th>ER</th>
-                  <th>BB</th>
-                  <th>SO</th>
-                  <th>ERA</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
-                    <i class="fas fa-info-circle"></i> Detailed pitching stats available during/after game
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="box-score-section">
-            <div class="box-score-title">
-              <i class="fas fa-chart-bar"></i>
-              ${game.homeTeam.name} Pitching
-            </div>
-            <table class="stats-table">
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>IP</th>
-                  <th>H</th>
-                  <th>R</th>
-                  <th>ER</th>
-                  <th>BB</th>
-                  <th>SO</th>
-                  <th>ERA</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
-                    <i class="fas fa-info-circle"></i> Detailed pitching stats available during/after game
-                  </td>
-                </tr>
+                ${playerRows}
               </tbody>
             </table>
           </div>
         `;
       }
 
-      // Toggle box score visibility
-      function toggleBoxScore(gameId) {
+      // Create pitching stats table for a team
+      function createPitchingTable(team) {
+        if (!team.pitching || !team.pitching.players.length) {
+          return `
+            <div class="box-score-section">
+              <div class="box-score-title">
+                <i class="fas fa-chart-bar"></i>
+                ${team.team.displayName} Pitching
+              </div>
+              <table class="stats-table">
+                <tbody>
+                  <tr>
+                    <td colspan="8" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                      <i class="fas fa-info-circle"></i> Pitching stats not available
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+
+        const playerRows = team.pitching.players.map(p => `
+          <tr>
+            <td>
+              ${p.starter ? '★ ' : ''}${p.shortName}
+              ${p.decision ? `<span class="decision-tag">${p.decision}</span>` : ''}
+            </td>
+            <td>${p.ip}</td>
+            <td>${p.h}</td>
+            <td>${p.r}</td>
+            <td>${p.er}</td>
+            <td>${p.bb}</td>
+            <td>${p.so}</td>
+            <td>${p.era}</td>
+          </tr>
+        `).join('');
+
+        return `
+          <div class="box-score-section">
+            <div class="box-score-title">
+              <i class="fas fa-chart-bar"></i>
+              ${team.team.displayName} Pitching
+            </div>
+            <table class="stats-table sortable-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-column="player">Player</th>
+                  <th class="sortable" data-column="ip">IP</th>
+                  <th class="sortable" data-column="h">H</th>
+                  <th class="sortable" data-column="r">R</th>
+                  <th class="sortable" data-column="er">ER</th>
+                  <th class="sortable" data-column="bb">BB</th>
+                  <th class="sortable" data-column="so">SO</th>
+                  <th class="sortable" data-column="era">ERA</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${playerRows}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      // Toggle box score visibility and fetch data
+      async function toggleBoxScore(gameId) {
         const content = document.getElementById(`box-score-${gameId}`);
         const isActive = content.classList.contains('active');
 
@@ -1063,7 +1265,157 @@
         // Toggle current box score
         if (!isActive) {
           content.classList.add('active');
+
+          // Check if box score data is already loaded
+          if (!content.dataset.loaded) {
+            // Show loading state
+            content.innerHTML = createBoxScore(null);
+
+            try {
+              // Fetch box score data from API
+              const response = await fetch(`/api/college-baseball/boxscore?gameId=${gameId}`);
+              const result = await response.json();
+
+              if (result.success && result.data) {
+                // Update with real data
+                content.innerHTML = createBoxScore(result.data);
+                content.dataset.loaded = 'true';
+
+                // Initialize table sorting for the newly created tables
+                initializeTableSorting(content);
+              } else {
+                throw new Error(result.error || 'Failed to load box score');
+              }
+            } catch (error) {
+              console.error('Box score fetch error:', error);
+              content.innerHTML = `
+                <div class="box-score-error">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  <p>Failed to load box score. Please try again.</p>
+                  <button class="retry-btn" onclick="retryBoxScore('${gameId}')">
+                    <i class="fas fa-redo"></i> Retry
+                  </button>
+                </div>
+              `;
+            }
+          }
         }
+      }
+
+      // Retry loading box score
+      function retryBoxScore(gameId) {
+        const content = document.getElementById(`box-score-${gameId}`);
+        content.dataset.loaded = '';  // Reset loaded flag
+        toggleBoxScore(gameId);  // Try again
+      }
+
+      // Initialize table sorting for box score tables
+      function initializeTableSorting(container) {
+        const sortableTables = container.querySelectorAll('.sortable-table');
+
+        sortableTables.forEach(table => {
+          const headers = table.querySelectorAll('th.sortable');
+
+          headers.forEach((header, index) => {
+            header.addEventListener('click', () => {
+              sortTable(table, index, header);
+            });
+          });
+        });
+      }
+
+      // Sort table by column index
+      function sortTable(table, columnIndex, header) {
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        // Get current sort direction
+        const currentDirection = header.classList.contains('sorted-asc') ? 'asc' :
+                                 header.classList.contains('sorted-desc') ? 'desc' :
+                                 'none';
+
+        // Determine new sort direction
+        const newDirection = currentDirection === 'none' ? 'asc' :
+                            currentDirection === 'asc' ? 'desc' :
+                            'asc';
+
+        // Clear all sort indicators in this table
+        table.querySelectorAll('th.sortable').forEach(th => {
+          th.classList.remove('sorted-asc', 'sorted-desc');
+        });
+
+        // Add new sort indicator
+        if (newDirection === 'asc') {
+          header.classList.add('sorted-asc');
+        } else {
+          header.classList.add('sorted-desc');
+        }
+
+        // Get column name for specialized parsing
+        const columnName = header.dataset.column;
+
+        // Sort rows
+        rows.sort((a, b) => {
+          const aCell = a.cells[columnIndex];
+          const bCell = b.cells[columnIndex];
+
+          let aValue = getCellValue(aCell, columnName);
+          let bValue = getCellValue(bCell, columnName);
+
+          // Sort comparison
+          let comparison = 0;
+          if (typeof aValue === 'number' && typeof bValue === 'number') {
+            comparison = aValue - bValue;
+          } else {
+            comparison = String(aValue).localeCompare(String(bValue));
+          }
+
+          return newDirection === 'asc' ? comparison : -comparison;
+        });
+
+        // Reorder DOM elements
+        rows.forEach(row => tbody.appendChild(row));
+      }
+
+      // Extract and parse cell value for sorting
+      function getCellValue(cell, columnName) {
+        const text = cell.textContent.trim();
+
+        // Remove starter indicator and tags
+        let cleanText = text.replace(/^★\s*/, '')
+                            .replace(/<[^>]*>/g, '');
+
+        // Extract just the player name if there are tags
+        if (columnName === 'player') {
+          const tagMatch = cleanText.match(/^([^\u{1F3C6}\u{1F3C5}\u{2B50}\u{1F451}]+?)(?:\s|$)/u);
+          if (tagMatch) {
+            cleanText = tagMatch[1].trim();
+          }
+          return cleanText.toLowerCase();
+        }
+
+        // Handle innings pitched format (e.g., "6.1", "7.0")
+        if (columnName === 'ip') {
+          const parts = cleanText.split('.');
+          if (parts.length === 2) {
+            const innings = parseFloat(parts[0]) || 0;
+            const thirds = parseFloat(parts[1]) || 0;
+            return innings + (thirds / 3);
+          }
+          return parseFloat(cleanText) || 0;
+        }
+
+        // Handle batting average format (e.g., ".324")
+        if (columnName === 'avg' || columnName === 'era') {
+          return parseFloat(cleanText) || 0;
+        }
+
+        // Handle numeric columns
+        if (['ab', 'r', 'h', 'rbi', 'bb', 'so', 'er'].includes(columnName)) {
+          return parseInt(cleanText, 10) || 0;
+        }
+
+        return cleanText;
       }
 
       // Initial load
