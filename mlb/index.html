@@ -216,6 +216,357 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
+      .control-panel {
+        margin-bottom: 40px;
+        display: grid;
+        gap: 20px;
+      }
+
+      .control-panel form {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        align-items: end;
+      }
+
+      .control-panel label {
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-tertiary);
+        margin-bottom: 8px;
+      }
+
+      .control-panel input,
+      .control-panel select,
+      .control-panel textarea {
+        width: 100%;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-family: 'Inter', system-ui, sans-serif;
+        transition: border-color 0.2s;
+      }
+
+      .control-panel input:focus,
+      .control-panel select:focus,
+      .control-panel textarea:focus {
+        border-color: var(--blaze-ember);
+        outline: none;
+      }
+
+      .control-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .primary-btn {
+        background: linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-copper));
+        border: none;
+        color: #fff;
+        padding: 12px 26px;
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .primary-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 30px rgba(191, 87, 0, 0.35);
+      }
+
+      .ghost-btn {
+        background: transparent;
+        border: 1px solid var(--blaze-ember);
+        color: var(--blaze-ember);
+        padding: 12px 24px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+      }
+
+      .ghost-btn:hover {
+        background: rgba(191, 87, 0, 0.15);
+        color: #fff;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+      }
+
+      .metric-card {
+        background: var(--dark-slate, rgba(15, 23, 42, 0.85));
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .metric-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-tertiary);
+      }
+
+      .metric-value {
+        font-size: 1.65rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .metric-hint {
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+      }
+
+      .player-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .player-header img {
+        width: 120px;
+        height: 120px;
+        border-radius: 24px;
+        object-fit: cover;
+        border: 2px solid var(--blaze-burnt-orange);
+        box-shadow: 0 10px 30px rgba(191, 87, 0, 0.25);
+      }
+
+      .team-emblem {
+        width: 72px;
+        height: 72px;
+        object-fit: contain;
+        filter: drop-shadow(0 8px 24px rgba(191, 87, 0, 0.25));
+      }
+
+      .player-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .player-meta h2 {
+        font-size: 2rem;
+        font-weight: 800;
+      }
+
+      .player-meta span {
+        font-size: 0.95rem;
+        color: var(--text-tertiary);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: 1px solid rgba(191, 87, 0, 0.3);
+        color: var(--blaze-ember);
+        background: rgba(191, 87, 0, 0.12);
+      }
+
+      .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .chart-shell {
+        background: var(--dark-slate, rgba(15, 23, 42, 0.85));
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .chart-shell h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--blaze-copper);
+      }
+
+      .chart-shell svg {
+        width: 100%;
+        height: 220px;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+      }
+
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .legend i {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--glass-border);
+        text-align: left;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+      }
+
+      .status-elite {
+        background: rgba(34, 197, 94, 0.15);
+        color: #34d399;
+      }
+
+      .status-above-average {
+        background: rgba(74, 222, 128, 0.15);
+        color: #4ade80;
+      }
+
+      .status-average {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fbbf24;
+      }
+
+      .status-below-average {
+        background: rgba(248, 113, 113, 0.15);
+        color: #f87171;
+      }
+
+      .status-neutral {
+        background: rgba(148, 163, 184, 0.15);
+        color: #cbd5f5;
+      }
+
+      .snapshot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+      }
+
+      .snapshot-card {
+        background: var(--dark-slate, rgba(15, 23, 42, 0.85));
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .snapshot-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+
+      .leaderboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .split-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+
+      .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+
+      .schedule-card {
+        background: var(--dark-slate, rgba(15, 23, 42, 0.85));
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .api-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+
+      .export-block {
+        background: var(--dark-slate, rgba(15, 23, 42, 0.85));
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .export-block textarea {
+        width: 100%;
+        min-height: 160px;
+        background: rgba(8, 13, 23, 0.85);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-family: 'Source Code Pro', 'Courier New', monospace;
+        font-size: 0.85rem;
+        padding: 12px;
+        resize: vertical;
+      }
+
       .card:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 48px 0 rgba(191, 87, 0, 0.15);
@@ -400,7 +751,7 @@
 
     <div class="container">
       <div class="hero">
-        <h1>⚾ MLB Intelligence</h1>
+        <h1>⚾ Advanced MLB Intelligence Lab</h1>
         <p
           style="
             font-size: 1.1rem;
@@ -413,862 +764,14 @@
           Practice to Play. Blaze Data Wins the Day.
         </p>
         <p class="hero-subtitle">
-          Real-time MLB standings, player statistics, and advanced analytics powered by SportsDataIO
+          Build professional player dossiers, real-time dashboards, Statcast deep dives, and batch-ready reports for every club in the league.
         </p>
       </div>
 
       <div id="root"></div>
     </div>
 
-    <!-- Advanced Analytics Module -->
-    <script type="module">
-      // Import advanced analytics (ES6 module)
-      import MLBAnalytics from '/lib/analytics/baseball/mlb-advanced-analytics.js';
-      window.MLBAnalytics = MLBAnalytics;
-    </script>
-
-    <script type="text/babel">
-      const { useState, useEffect } = React;
-
-      function MLBDashboard() {
-        const [activeTab, setActiveTab] = useState('standings');
-        const [standings, setStandings] = useState([]);
-        const [advancedAnalytics, setAdvancedAnalytics] = useState([]);
-        const [teams, setTeams] = useState([]);
-        const [selectedTeam, setSelectedTeam] = useState(null);
-        const [teamRoster, setTeamRoster] = useState([]);
-        const [schedule, setSchedule] = useState([]);
-        const [loading, setLoading] = useState(true);
-        const [error, setError] = useState(null);
-
-        useEffect(() => {
-          fetchMLBData();
-        }, []);
-
-        useEffect(() => {
-          if (activeTab === 'teams' && teams.length === 0) {
-            fetchTeams();
-          } else if (activeTab === 'schedule' && schedule.length === 0) {
-            fetchSchedule();
-          }
-        }, [activeTab]);
-
-        const fetchMLBData = async () => {
-          setLoading(true);
-          setError(null);
-
-          try {
-            const standingsRes = await fetch('/api/mlb/standings?season=2025');
-            if (!standingsRes.ok) throw new Error('Failed to fetch standings');
-            const standingsData = await standingsRes.json();
-
-            // Parse the actual API structure: { records: [{ division, teams: [...] }] }
-            const teams = [];
-            if (standingsData.records) {
-              standingsData.records.forEach((record) => {
-                if (record.teams) {
-                  record.teams.forEach((teamData) => {
-                    teams.push({
-                      TeamID: teamData.team?.id,
-                      City: teamData.team?.name?.split(' ').slice(0, -1).join(' ') || '',
-                      Name: teamData.team?.name?.split(' ').slice(-1)[0] || teamData.team?.name,
-                      Division: record.division?.name || 'Unknown',
-                      Wins: teamData.wins || 0,
-                      Losses: teamData.losses || 0,
-                      Percentage: parseFloat(teamData.winningPercentage) || 0,
-                      GamesBack: teamData.gamesBack || '-',
-                      // Extract run data for advanced analytics
-                      runsScored: teamData.runsScored || 0,
-                      runsAllowed: teamData.runsAllowed || 0,
-                      gamesPlayed: (teamData.wins || 0) + (teamData.losses || 0),
-                      // Split records
-                      HomeWins: teamData.records?.splitRecords?.find((r) => r.type === 'home')?.wins || 0,
-                      HomeLosses: teamData.records?.splitRecords?.find((r) => r.type === 'home')?.losses || 0,
-                      AwayWins: teamData.records?.splitRecords?.find((r) => r.type === 'away')?.wins || 0,
-                      AwayLosses: teamData.records?.splitRecords?.find((r) => r.type === 'away')?.losses || 0,
-                      Last10Wins: teamData.records?.splitRecords?.find((r) => r.type === 'lastTen')?.wins || 0,
-                      Last10Losses: teamData.records?.splitRecords?.find((r) => r.type === 'lastTen')?.losses || 0,
-                      Streak: teamData.streak?.streakCode || '-',
-                      // Additional fields for analytics
-                      id: teamData.team?.id,
-                      name: teamData.team?.name,
-                      division: record.division?.name,
-                      wins: teamData.wins || 0,
-                      losses: teamData.losses || 0,
-                      percentage: parseFloat(teamData.winningPercentage) || 0,
-                    });
-                  });
-                }
-              });
-            }
-
-            setStandings(teams);
-
-            // Calculate advanced analytics if module is available
-            if (window.MLBAnalytics && teams.length > 0) {
-              try {
-                const analytics = window.MLBAnalytics.generateLeagueAdvancedAnalytics(teams);
-                console.log('📊 Advanced Analytics Generated:', analytics);
-                setAdvancedAnalytics(analytics.teams || []);
-              } catch (analyticsError) {
-                console.warn('⚠️ Advanced analytics calculation failed:', analyticsError);
-                setAdvancedAnalytics([]);
-              }
-            }
-
-            setLoading(false);
-          } catch (err) {
-            console.error('Error fetching MLB data:', err);
-            setError(err.message);
-            setLoading(false);
-          }
-        };
-
-        const fetchTeams = async () => {
-          setLoading(true);
-          setError(null);
-          try {
-            const response = await fetch('/api/mlb/teams');
-            if (!response.ok) throw new Error('Failed to fetch teams');
-            const data = await response.json();
-            setTeams(data.teams || []);
-            setLoading(false);
-          } catch (err) {
-            console.error('Error fetching teams:', err);
-            setError(err.message);
-            setLoading(false);
-          }
-        };
-
-        const fetchTeamRoster = async (teamId) => {
-          try {
-            const response = await fetch(`/api/mlb/teams/${teamId}`);
-            if (!response.ok) throw new Error('Failed to fetch roster');
-            const data = await response.json();
-            setTeamRoster(data.roster || []);
-            setSelectedTeam(data.team);
-          } catch (err) {
-            console.error('Error fetching roster:', err);
-            setTeamRoster([]);
-          }
-        };
-
-        const fetchSchedule = async () => {
-          setLoading(true);
-          setError(null);
-          try {
-            // Fetch last 3 days and next 3 days of games
-            const dates = [];
-            for (let i = -3; i <= 3; i++) {
-              const date = new Date();
-              date.setDate(date.getDate() + i);
-              dates.push(date.toISOString().split('T')[0]);
-            }
-
-            const responses = await Promise.all(
-              dates.map((date) => fetch(`/api/mlb/scoreboard?date=${date}`).then((r) => r.json()))
-            );
-
-            const allGames = [];
-            responses.forEach((data) => {
-              if (data.games) {
-                allGames.push(...data.games.map((game) => ({ ...game, date: data.date })));
-              }
-            });
-
-            allGames.sort((a, b) => new Date(b.gameDate) - new Date(a.gameDate));
-            setSchedule(allGames);
-            setLoading(false);
-          } catch (err) {
-            console.error('Error fetching schedule:', err);
-            setError(err.message);
-            setLoading(false);
-          }
-        };
-
-        const renderStandings = () => {
-          if (loading) {
-            return (
-              <div className="loading">
-                <i className="fas fa-baseball-ball"></i>
-                <p style={{ marginTop: '20px' }}>Loading MLB standings...</p>
-              </div>
-            );
-          }
-
-          if (error) {
-            return (
-              <div className="error">
-                <strong>⚠️ Data Unavailable</strong>
-                <p>{error}</p>
-              </div>
-            );
-          }
-
-          const divisions = {};
-          standings.forEach((team) => {
-            const div = team.Division || 'Unknown';
-            if (!divisions[div]) divisions[div] = [];
-            divisions[div].push(team);
-          });
-
-          Object.keys(divisions).forEach((div) => {
-            divisions[div].sort((a, b) => (b.Wins || 0) - (a.Wins || 0));
-          });
-
-          return (
-            <div>
-              {Object.keys(divisions)
-                .sort()
-                .map((division) => (
-                  <div key={division} className="card">
-                    <h2 className="card-title">
-                      <i className="fas fa-trophy"></i>
-                      {division}
-                    </h2>
-                    <table className="standings-table">
-                      <thead>
-                        <tr>
-                          <th>Rank</th>
-                          <th>Team</th>
-                          <th>W</th>
-                          <th>L</th>
-                          <th>PCT</th>
-                          <th>GB</th>
-                          <th>Home</th>
-                          <th>Away</th>
-                          <th>L10</th>
-                          <th>Streak</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {divisions[division].map((team, idx) => (
-                          <tr key={team.TeamID || idx}>
-                            <td className="stat-highlight">{idx + 1}</td>
-                            <td className="team-name">
-                              {team.City} {team.Name}
-                            </td>
-                            <td>{team.Wins || 0}</td>
-                            <td>{team.Losses || 0}</td>
-                            <td>{team.Percentage ? team.Percentage.toFixed(3) : '.000'}</td>
-                            <td>{team.GamesBack || '-'}</td>
-                            <td>
-                              {team.HomeWins || 0}-{team.HomeLosses || 0}
-                            </td>
-                            <td>
-                              {team.AwayWins || 0}-{team.AwayLosses || 0}
-                            </td>
-                            <td>
-                              {team.Last10Wins || 0}-{team.Last10Losses || 0}
-                            </td>
-                            <td>{team.Streak || '-'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <div className="data-source">
-                      <i className="fas fa-database"></i> Data Source: MLB Stats API via blazesportsintel.com/api • Last
-                      Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT
-                    </div>
-                  </div>
-                ))}
-            </div>
-          );
-        };
-
-        const renderTeams = () => {
-          if (loading) {
-            return (
-              <div className="loading">
-                <i className="fas fa-baseball-ball"></i>
-                <p style={{ marginTop: '20px' }}>Loading MLB teams...</p>
-              </div>
-            );
-          }
-
-          if (error) {
-            return (
-              <div className="error">
-                <strong>⚠️ Data Unavailable</strong>
-                <p>{error}</p>
-              </div>
-            );
-          }
-
-          // Group teams by division
-          const divisions = {};
-          teams.forEach((team) => {
-            const div = team.division || 'Unknown';
-            if (!divisions[div]) divisions[div] = [];
-            divisions[div].push(team);
-          });
-
-          return (
-            <div>
-              {selectedTeam && teamRoster.length > 0 ? (
-                <div className="card">
-                  <h2 className="card-title">
-                    <button
-                      onClick={() => {
-                        setSelectedTeam(null);
-                        setTeamRoster([]);
-                      }}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--blaze-ember)',
-                        cursor: 'pointer',
-                        marginRight: '10px',
-                      }}
-                    >
-                      <i className="fas fa-arrow-left"></i>
-                    </button>
-                    {selectedTeam.name} Roster
-                  </h2>
-                  <table className="standings-table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Player</th>
-                        <th>Position</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {teamRoster
-                        .sort((a, b) => {
-                          const posOrder = {
-                            P: 1,
-                            C: 2,
-                            '1B': 3,
-                            '2B': 4,
-                            '3B': 5,
-                            SS: 6,
-                            LF: 7,
-                            CF: 8,
-                            RF: 9,
-                            OF: 7,
-                            DH: 10,
-                          };
-                          return (posOrder[a.position] || 99) - (posOrder[b.position] || 99);
-                        })
-                        .map((player, idx) => (
-                          <tr key={player.id || idx}>
-                            <td className="stat-highlight">{player.jerseyNumber || '-'}</td>
-                            <td className="team-name">{player.name}</td>
-                            <td>{player.position || '-'}</td>
-                            <td style={{ color: player.status === 'Active' ? '#10b981' : '#f59e0b' }}>
-                              {player.status || 'Unknown'}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                  <div className="data-source">
-                    <i className="fas fa-database"></i> Data Source: MLB Stats API via blazesportsintel.com/api • Last
-                    Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT
-                  </div>
-                </div>
-              ) : (
-                Object.keys(divisions)
-                  .sort()
-                  .map((division) => (
-                    <div key={division} className="card">
-                      <h2 className="card-title">
-                        <i className="fas fa-baseball-ball"></i>
-                        {division}
-                      </h2>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                          gap: '15px',
-                        }}
-                      >
-                        {divisions[division]
-                          .sort((a, b) => a.name.localeCompare(b.name))
-                          .map((team) => (
-                            <div
-                              key={team.id}
-                              onClick={() => fetchTeamRoster(team.id)}
-                              style={{
-                                background: 'var(--dark-slate)',
-                                padding: '20px',
-                                borderRadius: '8px',
-                                border: '1px solid var(--glass-border)',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={(e) => (e.currentTarget.style.borderColor = 'var(--blaze-ember)')}
-                              onMouseOut={(e) => (e.currentTarget.style.borderColor = 'var(--glass-border)')}
-                            >
-                              <div className="team-name" style={{ fontSize: '1.1rem', marginBottom: '5px' }}>
-                                {team.name}
-                              </div>
-                              <div style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
-                                {team.abbreviation} • {team.venue}
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  ))
-              )}
-            </div>
-          );
-        };
-
-        const renderPlayers = () => {
-          return (
-            <div className="card">
-              <h2 className="card-title">
-                <i className="fas fa-star"></i>
-                Player Statistics
-              </h2>
-              <p style={{ color: 'var(--text-tertiary)', marginBottom: '20px' }}>
-                View player rosters by clicking on teams in the <strong>Teams</strong> tab
-              </p>
-              <div
-                style={{ background: 'var(--dark-slate)', padding: '30px', borderRadius: '8px', textAlign: 'center' }}
-              >
-                <i
-                  className="fas fa-users"
-                  style={{ fontSize: '3rem', color: 'var(--blaze-ember)', marginBottom: '15px' }}
-                ></i>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  Advanced player statistics and performance metrics coming soon
-                </p>
-              </div>
-            </div>
-          );
-        };
-
-        const renderSchedule = () => {
-          if (loading) {
-            return (
-              <div className="loading">
-                <i className="fas fa-calendar"></i>
-                <p style={{ marginTop: '20px' }}>Loading MLB schedule...</p>
-              </div>
-            );
-          }
-
-          if (error) {
-            return (
-              <div className="error">
-                <strong>⚠️ Data Unavailable</strong>
-                <p>{error}</p>
-              </div>
-            );
-          }
-
-          // Group games by date
-          const gamesByDate = {};
-          schedule.forEach((game) => {
-            if (!gamesByDate[game.date]) gamesByDate[game.date] = [];
-            gamesByDate[game.date].push(game);
-          });
-
-          return (
-            <div>
-              {Object.keys(gamesByDate)
-                .sort((a, b) => new Date(b) - new Date(a))
-                .map((date) => (
-                  <div key={date} className="card">
-                    <h2 className="card-title">
-                      <i className="fas fa-calendar-day"></i>
-                      {new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        timeZone: 'UTC',
-                      })}
-                    </h2>
-                    <div style={{ display: 'grid', gap: '15px' }}>
-                      {gamesByDate[date].map((game, idx) => {
-                        const isComplete = game.status?.abstractGameState === 'Final';
-                        const isLive = game.status?.abstractGameState === 'Live';
-
-                        return (
-                          <div
-                            key={game.id || idx}
-                            style={{
-                              background: 'var(--dark-slate)',
-                              padding: '20px',
-                              borderRadius: '8px',
-                              border: `1px solid ${isLive ? '#10b981' : 'var(--glass-border)'}`,
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <div style={{ flex: 1 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                                <span className="team-name">{game.teams.away.team.name}</span>
-                                {isComplete && game.teams.away.isWinner && (
-                                  <i className="fas fa-check-circle" style={{ color: '#10b981' }}></i>
-                                )}
-                                <span className="stat-highlight" style={{ marginLeft: 'auto' }}>
-                                  {game.teams.away.score ?? '-'}
-                                </span>
-                              </div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <span className="team-name">{game.teams.home.team.name}</span>
-                                {isComplete && game.teams.home.isWinner && (
-                                  <i className="fas fa-check-circle" style={{ color: '#10b981' }}></i>
-                                )}
-                                <span className="stat-highlight" style={{ marginLeft: 'auto' }}>
-                                  {game.teams.home.score ?? '-'}
-                                </span>
-                              </div>
-                            </div>
-                            <div style={{ marginLeft: '30px', textAlign: 'right' }}>
-                              <div
-                                style={{
-                                  color: isLive
-                                    ? '#10b981'
-                                    : isComplete
-                                      ? 'var(--text-tertiary)'
-                                      : 'var(--blaze-ember)',
-                                  fontWeight: '600',
-                                  marginBottom: '5px',
-                                }}
-                              >
-                                {game.status?.detailedState || 'Scheduled'}
-                              </div>
-                              <div style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
-                                {game.venue?.name || 'TBD'}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="data-source">
-                      <i className="fas fa-database"></i> Data Source: MLB Stats API via blazesportsintel.com/api • Last
-                      Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT
-                    </div>
-                  </div>
-                ))}
-            </div>
-          );
-        };
-
-        const renderAdvancedAnalytics = () => {
-          if (loading) {
-            return (
-              <div className="loading">
-                <i className="fas fa-chart-line"></i>
-                <p style={{ marginTop: '20px' }}>Calculating advanced analytics...</p>
-              </div>
-            );
-          }
-
-          if (error) {
-            return (
-              <div className="error">
-                <strong>⚠️ Data Unavailable</strong>
-                <p>{error}</p>
-              </div>
-            );
-          }
-
-          if (!advancedAnalytics || advancedAnalytics.length === 0) {
-            return (
-              <div className="card">
-                <h2 className="card-title">
-                  <i className="fas fa-chart-line"></i>
-                  Advanced Analytics
-                </h2>
-                <div
-                  style={{ background: 'var(--dark-slate)', padding: '30px', borderRadius: '8px', textAlign: 'center' }}
-                >
-                  <i
-                    className="fas fa-calculator"
-                    style={{ fontSize: '3rem', color: 'var(--blaze-ember)', marginBottom: '15px' }}
-                  ></i>
-                  <p style={{ color: 'var(--text-secondary)' }}>
-                    Advanced analytics will be available once run data is populated.
-                  </p>
-                </div>
-              </div>
-            );
-          }
-
-          // Group by division
-          const divisions = {};
-          advancedAnalytics.forEach((teamAnalytics) => {
-            const div = teamAnalytics.team?.division || 'Unknown';
-            if (!divisions[div]) divisions[div] = [];
-            divisions[div].push(teamAnalytics);
-          });
-
-          return (
-            <div>
-              <div className="card" style={{ marginBottom: '30px', background: 'rgba(191, 87, 0, 0.05)' }}>
-                <h2 className="card-title">
-                  <i className="fas fa-info-circle"></i>
-                  Advanced Analytics Overview
-                </h2>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                    gap: '20px',
-                    marginBottom: '20px',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: 'var(--dark-slate)',
-                      padding: '15px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--glass-border)',
-                    }}
-                  >
-                    <div style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginBottom: '5px' }}>
-                      Pythagorean Win %
-                    </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--blaze-ember)' }}>
-                      <i className="fas fa-percentage" style={{ fontSize: '1rem', marginRight: '5px' }}></i>
-                      Based on Runs
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '5px' }}>
-                      Bill James Formula (1.83 exponent)
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      background: 'var(--dark-slate)',
-                      padding: '15px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--glass-border)',
-                    }}
-                  >
-                    <div style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginBottom: '5px' }}>
-                      Run Differential
-                    </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--blaze-ember)' }}>
-                      <i className="fas fa-chart-bar" style={{ fontSize: '1rem', marginRight: '5px' }}></i>
-                      Per Game
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '5px' }}>
-                      Normalized by games played
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      background: 'var(--dark-slate)',
-                      padding: '15px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--glass-border)',
-                    }}
-                  >
-                    <div style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginBottom: '5px' }}>
-                      Luck Factor
-                    </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--blaze-ember)' }}>
-                      <i className="fas fa-dice" style={{ fontSize: '1rem', marginRight: '5px' }}></i>
-                      Wins vs Expected
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '5px' }}>
-                      Actual wins minus Pythagorean wins
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      background: 'var(--dark-slate)',
-                      padding: '15px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--glass-border)',
-                    }}
-                  >
-                    <div style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginBottom: '5px' }}>
-                      Strength of Schedule
-                    </div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--blaze-ember)' }}>
-                      <i className="fas fa-shield-alt" style={{ fontSize: '1rem', marginRight: '5px' }}></i>
-                      Division-Based
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '5px' }}>
-                      Opponent win percentage proxy
-                    </div>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    fontSize: '0.85rem',
-                    color: 'var(--text-tertiary)',
-                    padding: '15px',
-                    background: 'var(--dark-slate)',
-                    borderRadius: '8px',
-                  }}
-                >
-                  <i className="fas fa-lightbulb" style={{ color: 'var(--blaze-ember)', marginRight: '8px' }}></i>
-                  <strong>Methodology:</strong> Pythagorean expectation uses runs scored and allowed to estimate "true"
-                  team quality. Luck Factor shows teams over/underperforming their run differential. Positive luck often
-                  regresses to the mean.
-                </div>
-              </div>
-
-              {Object.keys(divisions)
-                .sort()
-                .map((division) => (
-                  <div key={division} className="card">
-                    <h2 className="card-title">
-                      <i className="fas fa-trophy"></i>
-                      {division}
-                    </h2>
-                    <div style={{ overflowX: 'auto' }}>
-                      <table className="standings-table">
-                        <thead>
-                          <tr>
-                            <th>Rank</th>
-                            <th>Team</th>
-                            <th>W-L</th>
-                            <th title="Pythagorean Expected Wins">Pyth W</th>
-                            <th title="Luck Factor: Actual Wins - Expected Wins" style={{ cursor: 'help' }}>
-                              Luck <i className="fas fa-info-circle" style={{ fontSize: '0.8rem', opacity: 0.6 }}></i>
-                            </th>
-                            <th title="Run Differential per Game">Run Diff/G</th>
-                            <th title="Strength of Schedule Rating (50 = average)">SOS</th>
-                            <th title="Playoff Probability (if available)">Playoff %</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {divisions[division].map((analytics, idx) => {
-                            const team = analytics.team;
-                            const pythag = analytics.pythagorean;
-                            const runDiff = analytics.runDifferential;
-                            const sos = analytics.strengthOfSchedule;
-                            const playoff = analytics.playoffProbability;
-
-                            return (
-                              <tr key={team?.id || idx}>
-                                <td className="stat-highlight">{idx + 1}</td>
-                                <td className="team-name">{team?.name || 'Unknown'}</td>
-                                <td>
-                                  {analytics.record?.wins || 0}-{analytics.record?.losses || 0}
-                                </td>
-                                <td style={{ color: 'var(--blaze-copper)' }}>
-                                  {pythag?.expectedWins?.toFixed(1) || 'N/A'}
-                                </td>
-                                <td>
-                                  <span
-                                    style={{
-                                      color: pythag?.luckColor || '#94a3b8',
-                                      fontWeight: '600',
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      gap: '4px',
-                                    }}
-                                    title={pythag?.interpretation || ''}
-                                  >
-                                    {pythag?.luckFactor !== undefined ? (
-                                      <>
-                                        {pythag.luckFactor > 0 ? '+' : ''}
-                                        {pythag.luckFactor.toFixed(1)}
-                                        {pythag.luckFactor > 1.5 && (
-                                          <i className="fas fa-arrow-up" style={{ fontSize: '0.7rem' }}></i>
-                                        )}
-                                        {pythag.luckFactor < -1.5 && (
-                                          <i className="fas fa-arrow-down" style={{ fontSize: '0.7rem' }}></i>
-                                        )}
-                                      </>
-                                    ) : (
-                                      'N/A'
-                                    )}
-                                  </span>
-                                </td>
-                                <td>
-                                  <span style={{ color: runDiff?.color || '#94a3b8' }}>
-                                    {runDiff?.perGameDifferential !== undefined ? (
-                                      <>
-                                        {runDiff.perGameDifferential > 0 ? '+' : ''}
-                                        {runDiff.perGameDifferential.toFixed(2)}
-                                      </>
-                                    ) : (
-                                      'N/A'
-                                    )}
-                                  </span>
-                                </td>
-                                <td title={sos?.interpretation || ''}>
-                                  <span
-                                    style={{
-                                      color:
-                                        sos?.sosRating > 52 ? '#10b981' : sos?.sosRating < 48 ? '#ef4444' : '#94a3b8',
-                                    }}
-                                  >
-                                    {sos?.sosRating || 50}
-                                  </span>
-                                </td>
-                                <td style={{ color: playoff?.playoffProbability > 50 ? '#10b981' : '#94a3b8' }}>
-                                  {playoff?.playoffProbability ? `${playoff.playoffProbability.toFixed(1)}%` : '-'}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div className="data-source">
-                      <i className="fas fa-database"></i> Data Source: MLB Stats API + Blaze Intelligence Analytics •
-                      Last Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT •
-                      <span style={{ marginLeft: '10px' }}>
-                        <i className="fas fa-book" style={{ marginRight: '5px' }}></i>
-                        Methodology: Bill James (1980), Baseball Prospectus, FiveThirtyEight
-                      </span>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          );
-        };
-
-        return (
-          <div>
-            <div className="tabs">
-              <button
-                className={`tab ${activeTab === 'standings' ? 'active' : ''}`}
-                onClick={() => setActiveTab('standings')}
-              >
-                <i className="fas fa-list-ol"></i> Standings
-              </button>
-              <button
-                className={`tab ${activeTab === 'advanced' ? 'active' : ''}`}
-                onClick={() => setActiveTab('advanced')}
-              >
-                <i className="fas fa-chart-line"></i> Advanced Analytics
-              </button>
-              <button className={`tab ${activeTab === 'teams' ? 'active' : ''}`} onClick={() => setActiveTab('teams')}>
-                <i className="fas fa-users"></i> Teams
-              </button>
-              <button
-                className={`tab ${activeTab === 'players' ? 'active' : ''}`}
-                onClick={() => setActiveTab('players')}
-              >
-                <i className="fas fa-user"></i> Players
-              </button>
-              <button
-                className={`tab ${activeTab === 'schedule' ? 'active' : ''}`}
-                onClick={() => setActiveTab('schedule')}
-              >
-                <i className="fas fa-calendar"></i> Schedule
-              </button>
-            </div>
-
-            {activeTab === 'standings' && renderStandings()}
-            {activeTab === 'advanced' && renderAdvancedAnalytics()}
-            {activeTab === 'teams' && renderTeams()}
-            {activeTab === 'players' && renderPlayers()}
-            {activeTab === 'schedule' && renderSchedule()}
-          </div>
-        );
-      }
-
-      ReactDOM.render(<MLBDashboard />, document.getElementById('root'));
-    </script>
+    <script type="text/babel" src="/mlb/advanced-dashboard.jsx"></script>
 
     <!-- Blaze Advanced Graphics System V4 -->
     <script>
