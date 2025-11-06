@@ -33,6 +33,11 @@ const navigationLinks = [
     description: 'Data-backed Diamond Index and curated polls with movement tracking.'
   },
   {
+    href: '/CFP',
+    title: 'CFP Control Center',
+    description: 'Composite Top 25 board and playoff scenario intelligence for the College Football Playoff.'
+  },
+  {
     href: '/baseball/ncaab/news',
     title: 'Newsroom',
     description: 'Verified recaps, portal updates, and strategic briefings for staffs and fans.'
