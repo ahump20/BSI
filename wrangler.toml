@@ -1,10 +1,22 @@
 name = "college-baseball-tracker"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-01-01"
+main = "workers/baseball-rankings/index.ts"
 
 # KV namespace for caching (existing CACHE namespace from blazesportsintel)
-kv_namespaces = [
-  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" }
+[[kv_namespaces]]
+binding = "KV"
+id = "a53c3726fc3044be82e79d2d1e371d26"
+
+# BSI-wide KV cache for worker-side data hydration
+[[kv_namespaces]]
+binding = "BSI_KV"
+id = "b666864ae6fe4576a7cb94277d6ef4f"
+preview_id = "314e25f60fbd436e8ba3af4d34b8351c"
+
+# Route binding to expose the rankings worker on production
+routes = [
+  { pattern = "blazesportsintel.com/baseball/rankings*", zone_name = "blazesportsintel.com" }
 ]
 
 # Environment variables
