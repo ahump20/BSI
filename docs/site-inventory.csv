@@ -37,5 +37,5 @@ route,page_purpose,primary_cta,owner,data_dependencies,status
 "/legal/copyright",Copyright statement,"Read Copyright",Legal,Static html,Needs update
 "/legal/ai-disclosure",AI disclosure policy,"Read AI Disclosure",Legal,Static html,Current
 "/historicalcomparisons/faq",FAQ for historical comparisons,"Read FAQ",Support,Static html,Planned (stub)
-"/robots.txt",Robots manifest,"View Robots",Platform,Static file,Needs generation
+"/robots.txt",Robots manifest,"View Robots",Platform,Static file,Current
 "/sitemap.xml",XML sitemap,"View Sitemap",Platform,Generated file,Needs regeneration
