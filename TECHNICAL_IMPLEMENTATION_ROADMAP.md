@@ -865,11 +865,19 @@ const MLPredictionEngine = dynamic(
 // sentry.server.config.ts
 import * as Sentry from '@sentry/nextjs';
 
+function getSampleRate(envVar: string | undefined, fallback: number): number {
+  const value = parseFloat(envVar ?? '');
+  if (!isNaN(value) && value >= 0 && value <= 1) {
+    return value;
+  }
+  return fallback;
+}
+
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.SENTRY_ENVIRONMENT,
-  tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '0.2'),
-  profilesSampleRate: parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE || '0.1'),
+  tracesSampleRate: getSampleRate(process.env.SENTRY_TRACES_SAMPLE_RATE, 0.2),
+  profilesSampleRate: getSampleRate(process.env.SENTRY_PROFILES_SAMPLE_RATE, 0.1),
 
   beforeSend(event, hint) {
     // Filter out known errors
