@@ -1,0 +1,29 @@
+# Blaze Sports Intel - robots.txt
+# Updated: 2025-11-06
+
+User-agent: *
+Allow: /
+
+# Disallow account/auth pages
+Disallow: /account/
+Disallow: /auth/
+
+# Disallow data request/deletion pages
+Disallow: /data-request
+Disallow: /delete-account
+Disallow: /opt-out
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Disallow internal tools
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow public assets
+Allow: /images/
+Allow: /css/
+Allow: /js/
+
+# Sitemap
+Sitemap: https://blazesportsintel.com/sitemap.xml

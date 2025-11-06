@@ -1,0 +1,81 @@
+Route,Page Purpose,Primary CTA,Owner,Data Dependencies,Status
+/,Homepage - Multi-sport analytics platform hub,View Analytics + Launch Copilot,Web App,"Workers (live-sim, cfp, baseball-rankings), D1, KV",Active - Needs Update (currently baseball-only)
+/about,Company background and founder bio,Contact / Book Demo,Web App,None,Active
+/accessibility,WCAG 2.2 AA accessibility statement,Report Issue,Web App,None,Active
+/account,User account dashboard,Manage Settings,Web App,"Auth, D1 user data",Active
+/account/settings,User settings management,Save Changes,Web App,"Auth, D1 user data",Active
+/analytics,Analytics platform overview (LEGACY HTML),View Features,Legacy,None,Deprecated - Migrate to /features
+/api-docs,API documentation and integration guides,Try API,Web App,None,Active
+/attribution,Data source attribution,View Transparency,Web App,None,Active
+/auth/sign-in,User authentication - sign in,Sign In,Web App,Auth provider,Active
+/auth/sign-up,User authentication - registration,Create Account,Web App,Auth provider,Active
+/baseball,Baseball hub - redirects to ncaab,Enter Baseball Hub,Web App,None,Active
+/baseball/ncaab,College baseball landing,View Games,Web App,"D1 (games, standings), NCAA.com API",Active
+/baseball/ncaab/conferences,Conference standings and stats,View Conference,Web App,D1 conference data,Active
+/baseball/ncaab/games,Live college baseball games,View Game Details,Web App,"D1 games, NCAA.com API, live-score Workers",Active
+/baseball/ncaab/games/[gameSlug],Individual game detail page,View Play-by-Play,Web App,"D1 game data, real-time WebSocket",Active
+/baseball/ncaab/hub,College baseball command center,View Live Games,Web App,"D1, Workers, KV cache",Active
+/baseball/ncaab/news,College baseball news and updates,Read Article,Web App,"Content Worker, D1",Active
+/baseball/ncaab/players,Player profiles and statistics,View Player Details,Web App,"D1 player data, TrackMan API",Active
+/baseball/ncaab/rankings,Rankings and polls,View Full Rankings,Web App,"baseball-rankings Worker, D1",Active
+/baseball/ncaab/standings,Conference and national standings,View Conference,Web App,"D1 standings, RPI calculations",Active
+/baseball/ncaab/teams,Team profiles and rosters,View Team,Web App,"D1 team data, NCAA.com API",Active
+/baseball/mlb,MLB analytics landing,View Dashboard,Web App,"ESPN API, FanGraphs",Active
+/baseball/mlb/dashboard,MLB analytics dashboard,View Player,Web App,"ESPN API, Statcast, FanGraphs",Active
+/baseball/mlb/leaderboards,MLB statistical leaderboards,View Player,Web App,"FanGraphs API, Statcast",Active
+/baseball/mlb/players,MLB player listing,View Player Profile,Web App,"ESPN API, Statcast",Active
+/baseball/mlb/players/[playerId],Individual MLB player profile,View Stats,Web App,"ESPN API, Statcast, FanGraphs",Active
+/baseball/mlb/players/[playerId]/statcast,Statcast metrics for player,View Advanced Metrics,Web App,Statcast API,Active
+/baseball/mlb/standings,MLB division standings,View Division,Web App,ESPN API,Active
+/baseball/overlays/pitch-tunnel,Pitch tunneling 3D visualization,Download Overlay,Web App,"Babylon.js, Statcast data",Active
+/baseball/sabermetrics,Advanced baseball analytics,View Metrics,Web App,"Statcast, FanGraphs",Active
+/basketball,Basketball hub,View Games,Web App,None,Active - Needs Content
+/ccpa,California Consumer Privacy Act compliance,Submit Request,Web App,None,Active
+/CFP,College Football Playoff control center,Run Scenario,Web App,"cfp Worker, CollegeFootballData.com API, Monte Carlo engine",Active
+/cbb,College basketball hub (LEGACY HTML),View Games,Legacy,None,Deprecated - Migrate to /basketball
+/cfb,College football hub (LEGACY HTML),View Games,Legacy,None,Deprecated - Create /football/cfb
+/college-baseball/*,Legacy college baseball pages,Various,Legacy,"D1, static JSON",Deprecated - Migrated to /baseball/ncaab/*
+/command-center,Multi-sport command center,Select Sport,Web App,"All Workers, D1, KV",Active
+/contact,Contact form (LEGACY HTML),Send Message,Legacy,None,Missing - Create in Next.js
+/cookies,Cookie policy,Accept Cookies,Web App,None,Active - Needs Canonical
+/copilot,AI Copilot interface (LEGACY HTML),Ask Question,Legacy,"Gemini API, GPT-5, Claude",Missing - Create in Next.js
+/copilot/endpoints,Copilot API endpoints (LEGACY HTML),Try Endpoint,Legacy,AI providers,Deprecated - Integrate into /copilot
+/copilot/insights,AI-generated insights (LEGACY HTML),View Insights,Legacy,AI providers,Deprecated - Integrate into /copilot
+/copilot/search,Copilot search interface (LEGACY HTML),Search,Legacy,AI providers,Deprecated - Integrate into /copilot
+/dashboards/championship,Championship dashboard (LEGACY HTML),View Live Data,Legacy,"Workers, D1",Deprecated - Migrate to /command-center
+/dashboards/manager,Manager dashboard (LEGACY HTML),View Dashboard,Legacy,"Workers, D1, KV",Deprecated - Integrate into /account
+/data-request,GDPR data request form,Submit Request,Web App,D1 compliance logs,Active
+/data-transparency,Data sources and methodology,View Source Details,Web App,"All Workers, external APIs metadata",Active - Needs Per-Sport Cards
+/delete-account,Account deletion request,Confirm Deletion,Web App,"Auth, D1",Active
+/dmca,DMCA copyright policy,File Complaint,Web App,None,Active
+/dpa,Data Processing Agreement,Download PDF,Web App,None,Active
+/feedback/practice,Practice feedback interface,Submit Feedback,Web App,"D1, Whoop API",Active
+/features,Feature comparison and pricing,Try Free / Contact Sales,Web App,None,Missing - Create with Product Schema
+/football,Football hub,View NFL,Web App,None,Active - Needs CFB Content
+/football/nfl/standings,NFL division standings,View Division,Web App,ESPN API,Active
+/football/overlays/qb-trajectory,QB throw trajectory 3D overlay,Download Overlay,Web App,Babylon.js,Active
+/games,Games hub - original sports games,Play Game,Web App,None,Active
+/games/bbp,Baseball Batting Practice game,Play Now,Web App,Phaser 3 engine,Active
+/games/bbp/legal,BBP game legal terms,Accept,Web App,None,Active
+/gdpr,GDPR compliance information,View Policy,Web App,None,Active
+/graphics-demo,3D graphics showcase,View Demo,Web App,"Babylon.js, Three.js, WebGPU",Active
+/historical-comparisons,Historical data comparisons,Run Comparison,Web App,"D1 historical data, static JSON",Active - Needs Filterable UI
+/HistoricalData,Historical research engine,Search Historical Data,Web App,"D1 historical archive, KV cache",Missing - May be /historical-comparisons
+/lei,Leverage and Intensity (LEI) metrics,View Leaderboard,Web App,"D1, Whoop API, game telemetry",Active
+/live/data,Live data stream (LEGACY HTML),Subscribe,Legacy,"WebSocket, Workers",Deprecated - Migrate to Workers endpoints
+/live/scores,Live scores dashboard (LEGACY HTML),View Game,Legacy,live-sim Worker,Deprecated - Integrate into sport hubs
+/mlb,MLB hub (LEGACY HTML),View Analytics,Legacy,ESPN API,Deprecated - Use /baseball/mlb
+/nfl,NFL hub (LEGACY HTML),View Analytics,Legacy,ESPN API,Deprecated - Use /football/nfl
+/opt-out,Marketing opt-out,Confirm Opt-Out,Web App,D1 marketing preferences,Active
+/performance,Performance benchmark page,View Metrics,Web App,RUM data,Active
+/players/[id]/clutch,Player clutch performance,View Moments,Web App,"D1, Whoop API, LEI engine",Active
+/predictions/analytics-engine,Prediction analytics (LEGACY HTML),View Predictions,Legacy,"Monte Carlo engine, Workers",Deprecated - Integrate into /CFP or sport hubs
+/predictions/stream,Live prediction stream (LEGACY HTML),Subscribe,Legacy,WebSocket Workers,Deprecated - Integrate into sport hubs
+/privacy,Privacy policy,Read Policy,Web App,None,Active - Needs Canonical to /legal/privacy
+/terms,Terms of service,Accept Terms,Web App,None,Active - Needs Canonical to /legal/terms
+/visuals-showcase,Visual design showcase,View Visuals,Web App,"Babylon.js, Three.js, WebGPU",Active
+/legal/accessibility/,Accessibility statement (LEGACY HTML),Report Issue,Legacy,None,Duplicate - Canonical is /accessibility
+/legal/cookies/,Cookie policy (LEGACY HTML),Accept,Legacy,None,Duplicate - Canonical is /cookies
+/legal/copyright/,Copyright policy (LEGACY HTML),File Complaint,Legacy,None,Duplicate - Canonical is /dmca
+/legal/privacy/,Privacy policy (LEGACY HTML),Read Policy,Legacy,None,Duplicate - Canonical is /privacy
+/legal/terms/,Terms of service (LEGACY HTML),Accept Terms,Legacy,None,Duplicate - Canonical is /terms

@@ -1,0 +1,200 @@
+graph TB
+    Home["/"]
+
+    %% Primary Navigation
+    Sports[Sports]
+    Analytics[Analytics]
+    Historical[Historical Data]
+    Copilot[AI Copilot]
+    About[About]
+    Contact[Contact]
+
+    %% Sports Breakdown
+    Baseball[Baseball]
+    Football[Football]
+    Basketball[Basketball]
+
+    %% Baseball Sub-routes
+    NCAAB[College Baseball]
+    MLB[MLB]
+
+    %% College Baseball Pages
+    NCAABHub[Hub]
+    NCAABGames[Live Games]
+    NCAABTeams[Teams]
+    NCAABPlayers[Players]
+    NCAABStandings[Standings]
+    NCAABRankings[Rankings]
+    NCAABNews[News]
+    NCAABConferences[Conferences]
+
+    %% MLB Pages
+    MLBDashboard[Dashboard]
+    MLBStandings[Standings]
+    MLBLeaderboards[Leaderboards]
+    MLBPlayers[Players]
+
+    %% Football Sub-routes
+    NFL[NFL]
+    CFB[College Football]
+
+    %% NFL Pages
+    NFLStandings[Standings]
+    NFLAnalytics[Analytics]
+
+    %% CFB Pages
+    CFP[CFP Control Center]
+    CFBGames[Games]
+    CFBTeams[Teams]
+
+    %% Basketball Sub-routes
+    CBB[College Basketball]
+    NBA[NBA]
+
+    %% Analytics Section
+    Features[Features]
+    DataTransparency[Data Transparency]
+    CommandCenter[Command Center]
+    Performance[Performance]
+
+    %% Historical Section
+    HistoricalComparisons[Historical Comparisons]
+    HistoricalResearch[Historical Research Engine]
+
+    %% Platform Products
+    Platform[Platform]
+    Games[Games]
+    Visuals[Visuals Showcase]
+    Graphics[Graphics Demo]
+    LEI[Leverage & Intensity]
+    Overlays[Overlays]
+
+    %% User & Account
+    Account[Account]
+    AccountSettings[Settings]
+    Auth[Authentication]
+    SignIn[Sign In]
+    SignUp[Sign Up]
+
+    %% Legal & Compliance
+    Legal[Legal]
+    Privacy[Privacy Policy]
+    Terms[Terms of Service]
+    Cookies[Cookie Policy]
+    Accessibility[Accessibility]
+    DMCA[DMCA/Copyright]
+    GDPR[GDPR]
+    CCPA[CCPA]
+    DPA[Data Processing Agreement]
+    DataRequest[Data Request]
+    DeleteAccount[Delete Account]
+    OptOut[Opt Out]
+
+    %% Documentation
+    Docs[Documentation]
+    APIDocs[API Documentation]
+    Attribution[Attribution]
+
+    %% Main Navigation Structure
+    Home --> Sports
+    Home --> Analytics
+    Home --> Historical
+    Home --> Copilot
+    Home --> Platform
+    Home --> About
+    Home --> Contact
+
+    %% Sports Navigation
+    Sports --> Baseball
+    Sports --> Football
+    Sports --> Basketball
+
+    %% Baseball Structure
+    Baseball --> NCAAB
+    Baseball --> MLB
+
+    NCAAB --> NCAABHub
+    NCAAB --> NCAABGames
+    NCAAB --> NCAABTeams
+    NCAAB --> NCAABPlayers
+    NCAAB --> NCAABStandings
+    NCAAB --> NCAABRankings
+    NCAAB --> NCAABNews
+    NCAAB --> NCAABConferences
+
+    MLB --> MLBDashboard
+    MLB --> MLBStandings
+    MLB --> MLBLeaderboards
+    MLB --> MLBPlayers
+
+    %% Football Structure
+    Football --> NFL
+    Football --> CFB
+
+    NFL --> NFLStandings
+    NFL --> NFLAnalytics
+
+    CFB --> CFP
+    CFB --> CFBGames
+    CFB --> CFBTeams
+
+    %% Basketball Structure
+    Basketball --> CBB
+    Basketball --> NBA
+
+    %% Analytics Structure
+    Analytics --> Features
+    Analytics --> DataTransparency
+    Analytics --> CommandCenter
+    Analytics --> Performance
+
+    %% Historical Structure
+    Historical --> HistoricalComparisons
+    Historical --> HistoricalResearch
+
+    %% Platform Structure
+    Platform --> Games
+    Platform --> Visuals
+    Platform --> Graphics
+    Platform --> LEI
+    Platform --> Overlays
+
+    %% Account Structure
+    Home --> Account
+    Account --> AccountSettings
+
+    Home --> Auth
+    Auth --> SignIn
+    Auth --> SignUp
+
+    %% Legal Structure
+    Home --> Legal
+    Legal --> Privacy
+    Legal --> Terms
+    Legal --> Cookies
+    Legal --> Accessibility
+    Legal --> DMCA
+    Legal --> GDPR
+    Legal --> CCPA
+    Legal --> DPA
+    Legal --> DataRequest
+    Legal --> DeleteAccount
+    Legal --> OptOut
+
+    %% Documentation
+    Home --> Docs
+    Docs --> APIDocs
+    Docs --> Attribution
+
+    %% Styling
+    classDef primary fill:#ff6b35,stroke:#333,stroke-width:3px,color:#fff
+    classDef sport fill:#004e98,stroke:#333,stroke-width:2px,color:#fff
+    classDef feature fill:#3a86ff,stroke:#333,stroke-width:2px,color:#fff
+    classDef legal fill:#8b8c89,stroke:#333,stroke-width:1px,color:#fff
+    classDef user fill:#06a77d,stroke:#333,stroke-width:2px,color:#fff
+
+    class Home primary
+    class Sports,Baseball,Football,Basketball sport
+    class Analytics,Platform,Historical,Copilot feature
+    class Legal,Privacy,Terms,Cookies,Accessibility,DMCA,GDPR,CCPA legal
+    class Account,Auth user
