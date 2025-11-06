@@ -7,22 +7,22 @@
  */
 
 import { fetchGames as fetchNCAAGames } from './_ncaa-adapter.js';
+import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 
 const CACHE_KEY_PREFIX = 'college-baseball:games';
 
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
-  
-  // CORS headers
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
 
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   try {
@@ -94,8 +94,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    console.error('College baseball games API error:', error);
-    
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to fetch college baseball games',

@@ -6,7 +6,7 @@
  * For production: Consider using pdf-lib library for enhanced formatting
  */
 
-import { err } from '../../../_utils.js';
+import { err, rateLimit, rateLimitError, corsHeaders } from '../../../_utils.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
@@ -15,12 +15,14 @@ export async function onRequest(context) {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      }
+      headers: corsHeaders
     });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const playerId = url.searchParams.get('player_id');

@@ -14,7 +14,7 @@
  * @returns {EnsembleOutput} Complete scouting report with component scores
  */
 
-import { ok, err, cache, fetchWithTimeout } from '../_utils.js';
+import { ok, err, cache, fetchWithTimeout, rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 
 const CACHE_TTL = 300; // 5 minutes
 
@@ -28,12 +28,14 @@ export async function onRequest(context) {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      }
+      headers: corsHeaders
     });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const playerId = url.searchParams.get('player_id');
@@ -108,7 +110,6 @@ export async function onRequest(context) {
           .bind(playerId, JSON.stringify(result), new Date().toISOString())
           .run();
       } catch (dbError) {
-        console.warn('Failed to save to D1:', dbError);
         // Non-blocking - continue with response
       }
     }
@@ -120,7 +121,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    console.error('Scouting engine error:', error);
     return err(error, 500);
   }
 }
@@ -263,7 +263,7 @@ async function runChampionEnigmaEngine(playerId, env) {
         };
       }
     } catch (dbError) {
-      console.warn('Enigma Engine DB lookup failed:', dbError);
+      // Fallback to baseline scores on DB failure
     }
   }
 
@@ -396,7 +396,6 @@ async function fetchLatestGameData(playerId, env) {
         stats: data.statistics?.[0] || {}
       };
     } catch (error) {
-      console.warn('ESPN game fetch failed, using fallback:', error);
       return { plays: [], stats: {} };
     }
   }, 60); // 1 min cache for live data
@@ -426,7 +425,6 @@ async function fetchHistoricalStats(playerId, env) {
       games: result.results || []
     };
   } catch (error) {
-    console.warn('Failed to fetch historical stats:', error);
     return { games: [] };
   }
 }
@@ -461,7 +459,6 @@ async function fetchScoutNotes(playerId, env) {
       created_at: result.created_at
     };
   } catch (error) {
-    console.warn('Failed to fetch scout notes:', error);
     return { notes: '', rubric: {} };
   }
 }

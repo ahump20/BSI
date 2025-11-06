@@ -1,7 +1,7 @@
 // MLB Live Scores API - Cloudflare Pages Function
 // Fetches real-time MLB game scores with 30-second cache for live games
 
-import { ok, err, cache, withRetry, fetchWithTimeout } from '../_utils.js';
+import { ok, err, cache, withRetry, fetchWithTimeout, rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 
 /**
  * MLB Live Scores endpoint
@@ -9,6 +9,18 @@ import { ok, err, cache, withRetry, fetchWithTimeout } from '../_utils.js';
  */
 export async function onRequestGet(context) {
     const { request, env } = context;
+
+    // Handle OPTIONS request
+    if (request.method === 'OPTIONS') {
+        return new Response(null, { headers: corsHeaders });
+    }
+
+    // Rate limiting: 100 requests per minute per IP
+    const limit = await rateLimit(env, request, 100, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
+    }
+
     const url = new URL(request.url);
 
     const date = url.searchParams.get('date') || getCurrentDateString();

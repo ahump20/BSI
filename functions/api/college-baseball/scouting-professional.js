@@ -16,7 +16,7 @@
  * Data: ESPN + Perfect Game + MLB Pipeline + Proprietary Models
  */
 
-import { ok, err, cache, fetchWithTimeout } from '../_utils.js';
+import { ok, err, cache, fetchWithTimeout, rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 
 const CACHE_TTL = 300; // 5 minutes
 
@@ -30,12 +30,14 @@ export async function onRequest(context) {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      }
+      headers: corsHeaders
     });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const playerId = url.searchParams.get('player_id');
@@ -182,7 +184,7 @@ export async function onRequest(context) {
           )
           .run();
       } catch (dbError) {
-        console.warn('Failed to save to D1:', dbError);
+        // Non-blocking - continue with response
       }
     }
 
@@ -195,7 +197,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    console.error('Professional scouting engine error:', error);
     return err(error, 500);
   }
 }
@@ -325,7 +326,7 @@ async function findMLBComparisons(velocityScore, historicalStats, env) {
         style_notes: generateStyleNotes(comp)
       })) || [];
     } catch (error) {
-      console.warn('MLB comp lookup failed:', error);
+      // Fallback to rule-based comparisons on DB failure
     }
   }
 
@@ -749,7 +750,7 @@ async function fetchVideoLibrary(playerId, env) {
         full_games_url: `/video/player/${playerId}/games`
       };
     } catch (error) {
-      console.warn('Video library fetch failed:', error);
+      // Fallback to demo data on video library failure
     }
   }
 
@@ -972,7 +973,6 @@ async function fetchBiometrics(playerId, env) {
       notes: result.notes
     };
   } catch (error) {
-    console.warn('Biometrics fetch failed:', error);
     return null;
   }
 }

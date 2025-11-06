@@ -1,7 +1,7 @@
 // MLB Standings API - Cloudflare Pages Function
 // Fetches real-time MLB standings with validation and caching
 
-import { ok, err, cache, withRetry, validateMLBRecord, fetchWithTimeout } from '../_utils.js';
+import { ok, err, cache, withRetry, validateMLBRecord, fetchWithTimeout, rateLimit, rateLimitError } from '../_utils.js';
 
 /**
  * MLB Standings endpoint
@@ -10,6 +10,12 @@ import { ok, err, cache, withRetry, validateMLBRecord, fetchWithTimeout } from '
 export async function onRequestGet(context) {
     const { request, env } = context;
     const url = new URL(request.url);
+
+    // Rate limiting: 100 requests per minute per IP
+    const limit = await rateLimit(env, request, 100, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
+    }
 
     const division = url.searchParams.get('division');
     const league = url.searchParams.get('league'); // 'AL' or 'NL'

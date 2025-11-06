@@ -1,4 +1,4 @@
-import { createTimeoutSignal, err, ok, preflight } from '../_utils.js';
+import { createTimeoutSignal, err, ok, preflight, rateLimit, rateLimitError } from '../_utils.js';
 
 const BASE_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard';
 const FETCH_TIMEOUT_MS = 6000;
@@ -11,10 +11,16 @@ const defaultHeaders = {
 };
 
 export async function onRequest(context) {
-  const { request, waitUntil } = context;
+  const { request, waitUntil, env } = context;
 
   if (request.method === 'OPTIONS') {
     return preflight();
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const url = new URL(request.url);

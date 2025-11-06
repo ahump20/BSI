@@ -28,11 +28,9 @@ export async function fetchGames(date, filters = {}) {
     }
 
     // Fallback to sample data if no API data available
-    console.warn('No live data available, using fallback data');
     return getFallbackGames(date, filters);
 
   } catch (error) {
-    console.error('NCAA games fetch error:', error);
     return getFallbackGames(date, filters);
   }
 }
@@ -52,11 +50,9 @@ export async function fetchStandings(conference, division = 'D1') {
     }
 
     // Fallback to sample data
-    console.warn('No live standings available, using fallback data');
     return getFallbackStandings(conference);
 
   } catch (error) {
-    console.error('NCAA standings fetch error:', error);
     return getFallbackStandings(conference);
   }
 }
@@ -80,7 +76,6 @@ export async function fetchBoxScore(gameId) {
     return normalizeBoxScore(data);
 
   } catch (error) {
-    console.error('Box score fetch error:', error);
     throw error;
   }
 }
@@ -99,11 +94,9 @@ export async function fetchTeams(filters = {}) {
     }
 
     // Fallback to sample data
-    console.warn('No live teams data available, using fallback data');
     return getFallbackTeams(filters);
 
   } catch (error) {
-    console.error('NCAA teams fetch error:', error);
     return getFallbackTeams(filters);
   }
 }
@@ -122,11 +115,9 @@ export async function fetchPlayers(filters = {}) {
     }
 
     // Fallback to sample data
-    console.warn('No live players data available, using fallback data');
     return getFallbackPlayers(filters);
 
   } catch (error) {
-    console.error('NCAA players fetch error:', error);
     return getFallbackPlayers(filters);
   }
 }
@@ -146,7 +137,6 @@ async function fetchESPNGames(date, filters = {}) {
     });
 
     if (!response.ok) {
-      console.warn(`ESPN API returned ${response.status}`);
       return null;
     }
 
@@ -181,7 +171,6 @@ async function fetchESPNGames(date, filters = {}) {
     return games;
 
   } catch (error) {
-    console.error('ESPN games fetch failed:', error);
     return null;
   }
 }
@@ -197,7 +186,6 @@ async function fetchESPNStandings(conference) {
     });
 
     if (!response.ok) {
-      console.warn(`ESPN teams API returned ${response.status}`);
       return null;
     }
 
@@ -223,7 +211,6 @@ async function fetchESPNStandings(conference) {
     return standings;
 
   } catch (error) {
-    console.error('ESPN standings fetch failed:', error);
     return null;
   }
 }
@@ -309,13 +296,87 @@ function normalizeESPNTeamStanding(team) {
 }
 
 function normalizeBoxScore(data) {
-  // Box score normalization - implement when needed
+  if (!data.boxscore) {
+    throw new Error('No box score data available');
+  }
+
+  // Extract teams from box score
+  const teams = data.boxscore.teams || [];
+
+  // Extract player data for both teams
+  const playersData = data.boxscore.players || [];
+
   return {
     gameId: data.header?.id,
-    status: data.header?.status,
-    lineScore: data.boxscore?.teams,
-    battingStats: data.boxscore?.players?.[0]?.statistics,
-    pitchingStats: data.boxscore?.players?.[1]?.statistics
+    status: data.header?.competitions?.[0]?.status?.type?.name || 'unknown',
+
+    // Line score - inning-by-inning runs
+    lineScore: {
+      away: {
+        team: teams[0]?.team || {},
+        innings: teams[0]?.linescores?.map(ls => ls.displayValue) || [],
+        runs: teams[0]?.score || '0',
+        hits: teams[0]?.hits || '0',
+        errors: teams[0]?.errors || '0'
+      },
+      home: {
+        team: teams[1]?.team || {},
+        innings: teams[1]?.linescores?.map(ls => ls.displayValue) || [],
+        runs: teams[1]?.score || '0',
+        hits: teams[1]?.hits || '0',
+        errors: teams[1]?.errors || '0'
+      }
+    },
+
+    // Team batting and pitching stats
+    teams: playersData.map(teamData => {
+      const battingStats = teamData.statistics?.find(s => s.type === 'batting');
+      const pitchingStats = teamData.statistics?.find(s => s.type === 'pitching');
+
+      return {
+        team: teamData.team,
+
+        // Batting stats with individual players
+        batting: battingStats ? {
+          totals: battingStats.totals || [],
+          players: (battingStats.athletes || []).map(athlete => ({
+            name: athlete.athlete?.displayName || '',
+            shortName: athlete.athlete?.shortName || '',
+            position: athlete.position?.abbreviation || '',
+            batOrder: athlete.batOrder,
+            starter: athlete.starter,
+            // Stats array: [H-AB, AB, R, H, RBI, HR, BB, K, P, AVG, OBP, SLG]
+            ab: athlete.stats?.[1] || '0',
+            r: athlete.stats?.[2] || '0',
+            h: athlete.stats?.[3] || '0',
+            rbi: athlete.stats?.[4] || '0',
+            bb: athlete.stats?.[6] || '0',
+            so: athlete.stats?.[7] || '0',
+            avg: athlete.stats?.[9] || '.000'
+          }))
+        } : null,
+
+        // Pitching stats with individual pitchers
+        pitching: pitchingStats ? {
+          totals: pitchingStats.totals || [],
+          players: (pitchingStats.athletes || []).map(athlete => ({
+            name: athlete.athlete?.displayName || '',
+            shortName: athlete.athlete?.shortName || '',
+            position: athlete.position?.abbreviation || '',
+            starter: athlete.starter,
+            decision: athlete.notes?.find(n => n.type === 'pitchingDecision')?.text || '',
+            // Stats array: [IP, H, R, ER, BB, K, HR, PC-ST, ERA, PC]
+            ip: athlete.stats?.[0] || '0.0',
+            h: athlete.stats?.[1] || '0',
+            r: athlete.stats?.[2] || '0',
+            er: athlete.stats?.[3] || '0',
+            bb: athlete.stats?.[4] || '0',
+            so: athlete.stats?.[5] || '0',
+            era: athlete.stats?.[8] || '0.00'
+          }))
+        } : null
+      };
+    })
   };
 }
 
@@ -470,7 +531,6 @@ async function fetchESPNTeams(filters = {}) {
     });
 
     if (!response.ok) {
-      console.warn(`ESPN teams API returned ${response.status}`);
       return null;
     }
 
@@ -500,7 +560,6 @@ async function fetchESPNTeams(filters = {}) {
     return teams;
 
   } catch (error) {
-    console.error('ESPN teams fetch failed:', error);
     return null;
   }
 }
@@ -578,11 +637,9 @@ async function fetchESPNPlayers(filters = {}) {
     // ESPN doesn't have a comprehensive players endpoint for college baseball
     // We'll need to aggregate from team rosters
     // For now, return fallback data with note about off-season
-    console.warn('ESPN players API not available - returning fallback data');
     return null;
 
   } catch (error) {
-    console.error('ESPN players fetch failed:', error);
     return null;
   }
 }

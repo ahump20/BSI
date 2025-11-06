@@ -6,19 +6,21 @@
  * with 5-minute cache for efficiency
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
 export async function onRequest({ request, env, ctx }) {
   const url = new URL(request.url)
   const conference = url.searchParams.get('conference') || 'all'
   const division = url.searchParams.get('division') || 'fbs'
 
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  }
-
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   try {

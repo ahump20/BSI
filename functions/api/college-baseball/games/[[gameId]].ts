@@ -343,7 +343,7 @@ function generateSummary(
 
   // Add leader context
   if (winner.leaders && winner.leaders.length > 0) {
-    const hitting Leader = winner.leaders.find((l: any) => l.name === 'hittingLeader');
+    const hittingLeader = winner.leaders.find((l: any) => l.name === 'hittingLeader');
     if (hittingLeader && hittingLeader.leaders && hittingLeader.leaders[0]) {
       const leader = hittingLeader.leaders[0];
       narrative += ` ${leader.athlete.displayName} led ${winnerName} with ${leader.displayValue} hits.`;

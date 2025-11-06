@@ -5,20 +5,21 @@
  * No caching - direct fetch each time (like NBA API)
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
 export async function onRequest(context) {
-  const { request, params } = context
+  const { request, params, env } = context
   const route = params.route || []
   const endpoint = route[0] || 'scores'
 
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  }
-
   if (request.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   try {

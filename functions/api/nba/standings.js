@@ -1,7 +1,7 @@
 // NBA Standings API - Cloudflare Pages Function
 // Fetches real-time NBA standings with validation and caching
 
-import { ok, err, cache, withRetry, validateNBARecord, fetchWithTimeout } from '../_utils.js';
+import { ok, err, cache, withRetry, validateNBARecord, fetchWithTimeout, rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 
 /**
  * NBA Standings endpoint
@@ -9,6 +9,18 @@ import { ok, err, cache, withRetry, validateNBARecord, fetchWithTimeout } from '
  */
 export async function onRequestGet(context) {
     const { request, env } = context;
+
+    // Handle OPTIONS request
+    if (request.method === 'OPTIONS') {
+        return new Response(null, { headers: corsHeaders });
+    }
+
+    // Rate limiting: 100 requests per minute per IP
+    const limit = await rateLimit(env, request, 100, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
+    }
+
     const url = new URL(request.url);
 
     const conference = url.searchParams.get('conference'); // 'Eastern' or 'Western'

@@ -1,4 +1,4 @@
-import { cache, createTimeoutSignal, err, ok, preflight } from '../_utils.js';
+import { cache, createTimeoutSignal, err, ok, preflight, rateLimit, rateLimitError } from '../_utils.js';
 
 const SPORT_PATHS = {
   football: {
@@ -25,6 +25,12 @@ export async function onRequest(context) {
 
   if (request.method === 'OPTIONS') {
     return preflight();
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const url = new URL(request.url);
