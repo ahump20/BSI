@@ -6,7 +6,7 @@
     <title>🎓 CFB Analytics | Blaze Sports Intel</title>
     <meta
       name="description"
-      content="Practice to Play. Blaze Data Wins the Day. Real-time College Football standings, team statistics, and SEC-focused analytics powered by ESPN."
+      content="Practice to Play. Blaze Data Wins the Day. Real-time College Football standings, team statistics, and SEC-focused analytics powered by College Football Data API."
     />
 
     <!-- Design Tokens (Canonical) -->
@@ -452,7 +452,7 @@
           setLoading(true);
           setError(null);
           try {
-            const response = await fetch('/api/cfb/teams');
+            const response = await fetch('/api/college-football/teams/all');
             if (!response.ok) throw new Error('Failed to fetch teams');
             const data = await response.json();
             setTeams(data.teams || []);
@@ -468,8 +468,9 @@
           setLoading(true);
           setError(null);
           try {
-            // Fetch current week games
-            const response = await fetch('/api/cfb/scoreboard?week=1');
+            // Fetch current week games using CFBD scoreboard
+            const currentYear = new Date().getFullYear();
+            const response = await fetch(`/api/college-football/scoreboard?year=${currentYear}`);
             if (!response.ok) throw new Error('Failed to fetch schedule');
             const data = await response.json();
             setSchedule(data.games || []);
@@ -614,7 +615,7 @@
               )}
               <div className="card">
                 <div className="data-source">
-                  <i className="fas fa-database"></i> Data Source: ESPN CFB API via blazesportsintel.com/api • Last
+                  <i className="fas fa-database"></i> Data Source: College Football Data API (api.collegefootballdata.com) • Last
                   Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT
                 </div>
               </div>
@@ -738,7 +739,7 @@
                 })}
               </div>
               <div className="data-source">
-                <i className="fas fa-database"></i> Data Source: ESPN CFB API via blazesportsintel.com/api • Last
+                <i className="fas fa-database"></i> Data Source: College Football Data API (api.collegefootballdata.com) • Last
                 Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT
               </div>
             </div>
