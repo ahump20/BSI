@@ -86,12 +86,10 @@ export async function getMlbTeam(
   const cached = apiCache.get(cacheKey);
   if (cached !== null) {
     cacheMetrics.recordHit();
-    console.log(`[Cache HIT] MLB team ${teamId}`);
     return cached;
   }
 
   cacheMetrics.recordMiss();
-  console.log(`[Cache MISS] MLB team ${teamId}`);
 
   // Use circuit breaker and error handler
   return ErrorHandler.handleWithFallback(
@@ -154,12 +152,10 @@ export async function getMlbStandings(
   const cached = apiCache.get<MlbStandingsResponse>(cacheKey);
   if (cached !== null) {
     cacheMetrics.recordHit();
-    console.log('[Cache HIT] MLB standings');
     return cached;
   }
 
   cacheMetrics.recordMiss();
-  console.log('[Cache MISS] MLB standings');
 
   // Use circuit breaker and error handler
   return ErrorHandler.handleWithFallback(

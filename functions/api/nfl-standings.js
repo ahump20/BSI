@@ -4,17 +4,17 @@
  * ENFORCED BY BLAZE REALITY: All data sources verified
  */
 
-export async function onRequest({ request }) {
-  // CORS headers
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
 
+export async function onRequest({ request, env }) {
   if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const headers = {
@@ -56,7 +56,6 @@ export async function onRequest({ request }) {
           playoffSeed: null
         };
       } catch (error) {
-        console.error(`Failed to fetch team ${teamId}:`, error);
         return null;
       }
     });
@@ -95,7 +94,6 @@ export async function onRequest({ request }) {
       status: 200
     });
   } catch (error) {
-    console.error('NFL Standings Error:', error);
     return new Response(JSON.stringify({
       error: 'Failed to fetch NFL standings',
       message: error.message,

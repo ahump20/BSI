@@ -129,12 +129,10 @@ export async function getNflTeam(
   const cached = apiCache.get<NflTeamResponse>(cacheKey);
   if (cached !== null) {
     cacheMetrics.recordHit();
-    console.log(`[Cache HIT] NFL team ${teamId}`);
     return cached;
   }
 
   cacheMetrics.recordMiss();
-  console.log(`[Cache MISS] NFL team ${teamId}`);
 
   // Use circuit breaker and error handler
   return ErrorHandler.handleWithFallback(
@@ -204,12 +202,10 @@ export async function getNflStandings(
   const cached = apiCache.get<NflStandingsResponse>(cacheKey);
   if (cached !== null) {
     cacheMetrics.recordHit();
-    console.log('[Cache HIT] NFL standings');
     return cached;
   }
 
   cacheMetrics.recordMiss();
-  console.log('[Cache MISS] NFL standings');
 
   // Use circuit breaker and error handler
   return ErrorHandler.handleWithFallback(

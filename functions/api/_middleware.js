@@ -156,6 +156,5 @@ async function trackMetrics(data) {
 
   } catch (e) {
     // Don't let analytics failures affect the API response
-    console.error('[ANALYTICS] ❌ Failed to write metrics:', e);
   }
 }
