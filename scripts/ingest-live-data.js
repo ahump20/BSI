@@ -18,6 +18,13 @@ const SPORTSDATA_API_KEY = process.env.SPORTSDATA_API_KEY;
 const WRANGLER_PATH = process.env.WRANGLER_PATH || '/Users/AustinHumphrey/.npm-global/bin/wrangler';
 const DATABASE_NAME = 'blazesports-db';
 
+// Validate required environment variables
+if (!SPORTSDATA_API_KEY) {
+  console.error('❌ Error: SPORTSDATA_API_KEY environment variable is required');
+  console.error('Usage: SPORTSDATA_API_KEY=xxx node scripts/ingest-live-data.js');
+  process.exit(1);
+}
+
 // Current season years
 const CURRENT_SEASON = {
   NFL: 2024,    // 2024 season (Sep 2024 - Feb 2025)
