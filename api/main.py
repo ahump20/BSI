@@ -1,4 +1,4 @@
-"""FastAPI service exposing NIL valuations."""
+"""FastAPI service exposing NIL valuations and MLB Analytics."""
 
 from __future__ import annotations
 
@@ -22,9 +22,19 @@ from api.schemas import (
 from bsi_nil.config import load_config
 from models import baseball_analytics, repository
 
-app = FastAPI(title="Blaze Sports Intel NIL Valuations", version="1.0.0")
+# Import MLB routes
+from api.mlb.routes import router as mlb_router
+
+app = FastAPI(
+    title="Blaze Sports Intel API",
+    description="NIL Valuations and MLB Analytics API",
+    version="2.0.0"
+)
 cache = CacheClient()
 config = load_config()
+
+# Include MLB routes
+app.include_router(mlb_router)
 
 
 @app.on_event("startup")
