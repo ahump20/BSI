@@ -38,13 +38,15 @@ class TestCacheServiceOptimizations:
         
         start_time = time.time()
         
-        # Optimized approach using reduce
-        entries = list(cache_entries.items())
-        oldest = min(entries, key=lambda x: x[1]['lastAccessed'])
+        # Optimized approach using a simple loop (matching new implementation)
+        oldest = {'key': None, 'entry': None}
+        for key, entry in cache_entries.items():
+            if not oldest['key'] or entry['lastAccessed'] < oldest['entry']['lastAccessed']:
+                oldest = {'key': key, 'entry': entry}
         
         elapsed = time.time() - start_time
         
-        assert oldest[0] == 'key_0', "Should find the oldest entry"
+        assert oldest['key'] == 'key_0', "Should find the oldest entry"
         assert elapsed < 0.01, f"Eviction should be fast, took {elapsed}s"
 
 

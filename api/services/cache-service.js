@@ -267,12 +267,19 @@ class CacheService {
     
     // Find the entry with the oldest lastAccessed time
     const entries = Array.from(this.memoryCache.entries());
-    const oldest = entries.reduce((min, [key, entry]) => {
-      return entry.lastAccessed < min.entry.lastAccessed ? { key, entry } : min;
-    }, { key: entries[0][0], entry: entries[0][1] });
+    
+    // Safe reduce with proper initial value handling
+    let oldest = { key: null, entry: null };
+    for (const [key, entry] of entries) {
+      if (!oldest.key || entry.lastAccessed < oldest.entry.lastAccessed) {
+        oldest = { key, entry };
+      }
+    }
 
-    this.memoryCache.delete(oldest.key);
-    this.logger?.debug(`Evicted oldest cache entry: ${oldest.key}`);
+    if (oldest.key) {
+      this.memoryCache.delete(oldest.key);
+      this.logger?.debug(`Evicted oldest cache entry: ${oldest.key}`);
+    }
   }
 
   /**
@@ -299,8 +306,11 @@ class CacheService {
       const decompressed = await gunzipAsync(buffer);
       return decompressed.toString('utf-8');
     } catch (error) {
-      this.logger?.warn('Decompression error, returning as-is:', error);
-      return value; // Return as-is if not compressed or error
+      // Log at error level for potential data corruption issues
+      this.logger?.error('Decompression error - potential data corruption:', error);
+      // Return as-is for backward compatibility with uncompressed data
+      // In production, consider throwing for critical cache failures
+      return value;
     }
   }
 
