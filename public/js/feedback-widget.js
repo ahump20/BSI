@@ -478,9 +478,6 @@ const FeedbackWidget = {
 
         try {
             // Send to analytics or feedback endpoint
-            // For now, log to console and show success
-            console.log('Feedback submitted:', feedbackData);
-
             // TODO: Implement actual feedback submission
             // await fetch('/api/feedback', {
             //     method: 'POST',
@@ -494,7 +491,6 @@ const FeedbackWidget = {
             // Mark as submitted in session
             sessionStorage.setItem('feedback_submitted', 'true');
         } catch (error) {
-            console.error('Feedback submission error:', error);
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Feedback';

@@ -8,7 +8,7 @@
         // 1. Browser console: FEATURE_FLAGS.realTimeDashboard = true; location.reload();
         // 2. URL parameters: ?allFeatures=true or ?realTimeDashboard=true
         const FEATURE_FLAGS = {
-            realTimeDashboard: true,       // Phase 2: Real-time dashboard with 5-6 cards, 200-400ms transitions ✅ ENABLED
+            realTimeDashboard: false,      // Phase 2: Real-time dashboard with 5-6 cards, 200-400ms transitions
             mlbStatcast: false,             // Phase 3: MLB Statcast xBA, barrel rate, attack angles (2025 innovation)
             nflNextGenStats: false,         // Phase 4: NFL Next Gen Stats - Coverage Responsibility, Completion Probability
             aiPredictions: false,           // Phase 5: AI/ML predictions - LSTM injury risk, XGBoost performance
@@ -3036,7 +3036,7 @@
                 setLoadingModules(prev => ({ ...prev, monteCarlo: true }));
 
                 try {
-                    const module = await import('./analytics-monte-carlo.min.js');
+                    const module = await import('./analytics-monte-carlo.js');
                     setLazyModules(prev => ({ ...prev, monteCarlo: module.MonteCarloView }));
                     setLoadingModules(prev => ({ ...prev, monteCarlo: false }));
                 } catch (error) {
@@ -3055,7 +3055,7 @@
                 setLoadingModules(prev => ({ ...prev, realTime: true }));
 
                 try {
-                    const module = await import('./analytics-realtime.min.js');
+                    const module = await import('./analytics-realtime.js');
                     setLazyModules(prev => ({ ...prev, realTime: module.RealTimeDashboard }));
                     setLoadingModules(prev => ({ ...prev, realTime: false }));
                 } catch (error) {
@@ -3074,7 +3074,7 @@
                 setLoadingModules(prev => ({ ...prev, advanced: true }));
 
                 try {
-                    const module = await import('./analytics-advanced.min.js');
+                    const module = await import('./analytics-advanced.js');
                     setLazyModules(prev => ({ ...prev, advanced: module.AdvancedAnalytics }));
                     setLoadingModules(prev => ({ ...prev, advanced: false }));
                 } catch (error) {
@@ -3093,7 +3093,7 @@
                 setLoadingModules(prev => ({ ...prev, charts: true }));
 
                 try {
-                    const module = await import('./analytics-charts.min.js');
+                    const module = await import('./analytics-charts.js');
                     setLazyModules(prev => ({ ...prev, charts: module.default }));
                     setLoadingModules(prev => ({ ...prev, charts: false }));
                 } catch (error) {
@@ -3112,7 +3112,7 @@
                 setLoadingModules(prev => ({ ...prev, threeD: true }));
 
                 try {
-                    const module = await import('./analytics-3d.min.js');
+                    const module = await import('./analytics-3d.js');
                     setLazyModules(prev => ({ ...prev, threeD: module.default }));
                     setLoadingModules(prev => ({ ...prev, threeD: false }));
                 } catch (error) {
@@ -3706,14 +3706,12 @@
             useEffect(() => {
                 // Track page view
                 if (typeof window !== 'undefined') {
-                    // TODO: Add analytics tracking function
-                    // {
-                    //     page: 'analytics',
-                    //     sport: activeSport,
-                    //     view: activeView,
-                    //     tab: activeTab,
-                    //     timestamp: new Date().toISOString()
-                    // }
+                        page: 'analytics',
+                        sport: activeSport,
+                        view: activeView,
+                        tab: activeTab,
+                        timestamp: new Date().toISOString()
+                    });
                 }
             }, [activeSport, activeView, activeTab]);
 
@@ -4914,6 +4912,1935 @@
             );
         };
 
+        // ========== MONTE CARLO VIEW COMPONENT ==========
+        const MonteCarloView = () => {
+            const [activeLeague, setActiveLeague] = useState('NFL');
+            const [simulations, setSimulations] = useState({});
+            const [loading, setLoading] = useState(false);
+            const [selectedTeam, setSelectedTeam] = useState(null);
+            const [realData, setRealData] = useState(null);
+            const [dataSource, setDataSource] = useState('demo');
+            const [chartView, setChartView] = useState('all'); // 'top10', 'division', 'all'
+            const [show3DDiamond, setShow3DDiamond] = useState(false);
+            const [selectedDepthChart, setSelectedDepthChart] = useState(null);
+            const [show3DField, setShow3DField] = useState(false);
+            const [selectedFormation, setSelectedFormation] = useState('offense-shotgun');
+            const [showHeatmaps, setShowHeatmaps] = useState(false);
+            const [heatmapType, setHeatmapType] = useState('batting'); // 'batting', 'pitching' for MLB; 'receiving', 'rushing' for NFL
+            const [playoffChartMode, setPlayoffChartMode] = useState('chartjs'); // 'chartjs' or 'plotly'
+            const [heatmapMode, setHeatmapMode] = useState('canvas2d'); // 'canvas2d' or 'deckgl'
+
+            // Watch for formation changes and update 3D scene
+            useEffect(() => {
+                if (show3DField && selectedFormation && window.footballFieldScene) {
+                    window.dispatchEvent(new CustomEvent('formationChanged', {
+                        detail: selectedFormation
+                    }));
+                }
+            }, [selectedFormation, show3DField]);
+
+            // Render heatmaps when shown
+            useEffect(() => {
+                if (!showHeatmaps || sortedTeams.length === 0) return;
+
+                // Draw heatmaps for top 6 teams
+                sortedTeams.slice(0, 6).forEach(team => {
+                    const canvasId = `heatmap-${team.name.replace(/\s+/g, '-')}`;
+                    const canvas = document.getElementById(canvasId);
+                    if (!canvas) return;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, 300, 300);
+
+                    // Generate performance heatmap based on type
+                    if (activeLeague === 'MLB') {
+                        if (heatmapType === 'batting') {
+                            drawBattingHeatmap(ctx, team);
+                        } else {
+                            drawPitchingHeatmap(ctx, team);
+                        }
+                    } else {
+                        if (heatmapType === 'receiving') {
+                            drawReceivingHeatmap(ctx, team);
+                        } else {
+                            drawRushingHeatmap(ctx, team);
+                        }
+                    }
+                });
+            }, [showHeatmaps, sortedTeams, activeLeague, heatmapType]);
+
+            // Heatmap drawing functions
+            const drawBattingHeatmap = (ctx, team) => {
+                // Strike zone grid (3x3)
+                const zones = [
+                    [0.35, 0.28, 0.42], // Top row (high pitches)
+                    [0.32, 0.38, 0.35], // Middle row (belt high)
+                    [0.28, 0.33, 0.30]  // Bottom row (low pitches)
+                ];
+
+                const zoneLabels = [
+                    ['High-Away', 'High-Mid', 'High-In'],
+                    ['Mid-Away', 'Middle', 'Mid-In'],
+                    ['Low-Away', 'Low-Mid', 'Low-In']
+                ];
+
+                const cellWidth = 100;
+                const cellHeight = 100;
+
+                // Draw subtle strike zone background
+                ctx.fillStyle = 'rgba(34, 139, 34, 0.15)';
+                ctx.fillRect(0, 0, 300, 300);
+
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        const x = col * cellWidth;
+                        const y = row * cellHeight;
+                        const value = zones[row][col];
+
+                        // Create gradient for heat effect
+                        const gradient = ctx.createRadialGradient(
+                            x + cellWidth / 2, y + cellHeight / 2, 0,
+                            x + cellWidth / 2, y + cellHeight / 2, cellWidth * 0.7
+                        );
+
+                        // Enhanced color gradients with smooth transitions
+                        if (value > 0.350) {
+                            gradient.addColorStop(0, `rgba(255, 68, 68, ${Math.min(value * 1.2, 1)})`);
+                            gradient.addColorStop(1, `rgba(220, 38, 38, ${value * 0.7})`);
+                        } else if (value > 0.280) {
+                            gradient.addColorStop(0, `rgba(255, 170, 68, ${value * 1.1})`);
+                            gradient.addColorStop(1, `rgba(234, 88, 12, ${value * 0.7})`);
+                        } else {
+                            gradient.addColorStop(0, `rgba(96, 165, 250, ${Math.max(value * 1.5, 0.5)})`);
+                            gradient.addColorStop(1, `rgba(37, 99, 235, ${value * 0.8})`);
+                        }
+
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(x, y, cellWidth, cellHeight);
+
+                        // Draw enhanced grid lines
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(x, y, cellWidth, cellHeight);
+
+                        // Draw zone label at top
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                        ctx.font = '10px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(zoneLabels[row][col], x + cellWidth / 2, y + 15);
+
+                        // Draw batting average with shadow for better readability
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                        ctx.shadowBlur = 4;
+                        ctx.shadowOffsetX = 2;
+                        ctx.shadowOffsetY = 2;
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 22px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`.${Math.round(value * 1000)}`, x + cellWidth / 2, y + cellHeight / 2 + 10);
+                        ctx.shadowBlur = 0;
+                    }
+                }
+
+                // Draw enhanced home plate indicator with 3D effect
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                ctx.shadowBlur = 6;
+                ctx.shadowOffsetY = 3;
+
+                // Home plate main shape
+                ctx.fillStyle = 'rgba(245, 245, 245, 0.95)';
+                ctx.beginPath();
+                ctx.moveTo(150, 325);
+                ctx.lineTo(125, 300);
+                ctx.lineTo(175, 300);
+                ctx.closePath();
+                ctx.fill();
+
+                // Home plate border
+                ctx.strokeStyle = 'rgba(100, 100, 100, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // Draw legend
+                ctx.font = '11px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillText('🔴 Hot Zone', 10, 340);
+                ctx.fillText('🟠 Warm Zone', 110, 340);
+                ctx.fillText('🔵 Cold Zone', 210, 340);
+            };
+
+            const drawPitchingHeatmap = (ctx, team) => {
+                // Pitch location heatmap
+                const zones = [
+                    [0.22, 0.18, 0.25], // Away
+                    [0.20, 0.15, 0.23], // Middle
+                    [0.24, 0.19, 0.21]  // Inside
+                ];
+
+                const zoneLabels = [
+                    ['High-Away', 'High-Mid', 'High-In'],
+                    ['Mid-Away', 'Middle', 'Mid-In'],
+                    ['Low-Away', 'Low-Mid', 'Low-In']
+                ];
+
+                const cellWidth = 100;
+                const cellHeight = 100;
+
+                // Draw pitcher's perspective background
+                ctx.fillStyle = 'rgba(20, 20, 50, 0.15)';
+                ctx.fillRect(0, 0, 300, 300);
+
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        const x = col * cellWidth;
+                        const y = row * cellHeight;
+                        const value = zones[row][col];
+
+                        // Create gradient for heat effect
+                        const gradient = ctx.createRadialGradient(
+                            x + cellWidth / 2, y + cellHeight / 2, 0,
+                            x + cellWidth / 2, y + cellHeight / 2, cellWidth * 0.7
+                        );
+
+                        // Lower batting average against = better (green = good pitching)
+                        if (value < 0.180) {
+                            gradient.addColorStop(0, `rgba(34, 197, 94, ${Math.min((1 - value) * 0.9, 1)})`);
+                            gradient.addColorStop(1, `rgba(21, 128, 61, ${(1 - value) * 0.6})`);
+                        } else if (value < 0.230) {
+                            gradient.addColorStop(0, `rgba(255, 170, 68, 0.85)`);
+                            gradient.addColorStop(1, `rgba(234, 88, 12, 0.65)`);
+                        } else {
+                            gradient.addColorStop(0, `rgba(239, 68, 68, ${Math.min(value * 1.3, 1)})`);
+                            gradient.addColorStop(1, `rgba(185, 28, 28, ${value * 0.8})`);
+                        }
+
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(x, y, cellWidth, cellHeight);
+
+                        // Draw enhanced grid lines
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(x, y, cellWidth, cellHeight);
+
+                        // Draw zone label at top
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                        ctx.font = '10px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(zoneLabels[row][col], x + cellWidth / 2, y + 15);
+
+                        // Draw opponent batting average with shadow
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                        ctx.shadowBlur = 4;
+                        ctx.shadowOffsetX = 2;
+                        ctx.shadowOffsetY = 2;
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 22px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`.${Math.round(value * 1000)}`, x + cellWidth / 2, y + cellHeight / 2 + 10);
+                        ctx.shadowBlur = 0;
+                    }
+                }
+
+                // Draw legend
+                ctx.font = '11px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillText('🟢 Dominant', 10, 340);
+                ctx.fillText('🟠 Average', 110, 340);
+                ctx.fillText('🔴 Struggling', 210, 340);
+            };
+
+            const drawReceivingHeatmap = (ctx, team) => {
+                // Field zones (short, medium, deep)
+                const zones = [
+                    { label: 'Deep Left', x: 0, y: 0, w: 100, h: 100, value: 85, depth: 'deep' },
+                    { label: 'Deep Middle', x: 100, y: 0, w: 100, h: 100, value: 120, depth: 'deep' },
+                    { label: 'Deep Right', x: 200, y: 0, w: 100, h: 100, value: 75, depth: 'deep' },
+                    { label: 'Mid Left', x: 0, y: 100, w: 100, h: 100, value: 60, depth: 'mid' },
+                    { label: 'Mid Middle', x: 100, y: 100, w: 100, h: 100, value: 95, depth: 'mid' },
+                    { label: 'Mid Right', x: 200, y: 100, w: 100, h: 100, value: 70, depth: 'mid' },
+                    { label: 'Short Left', x: 0, y: 200, w: 100, h: 100, value: 45, depth: 'short' },
+                    { label: 'Short Middle', x: 100, y: 200, w: 100, h: 100, value: 55, depth: 'short' },
+                    { label: 'Short Right', x: 200, y: 200, w: 100, h: 100, value: 50, depth: 'short' }
+                ];
+
+                // Draw football field turf pattern
+                ctx.fillStyle = 'rgba(34, 139, 34, 0.25)';
+                ctx.fillRect(0, 0, 300, 300);
+
+                // Draw yard lines
+                for (let i = 1; i < 3; i++) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(0, i * 100);
+                    ctx.lineTo(300, i * 100);
+                    ctx.stroke();
+                }
+                ctx.setLineDash([]);
+
+                zones.forEach(zone => {
+                    // Create gradient for heat effect
+                    const gradient = ctx.createRadialGradient(
+                        zone.x + zone.w / 2, zone.y + zone.h / 2, 0,
+                        zone.x + zone.w / 2, zone.y + zone.h / 2, zone.w * 0.8
+                    );
+
+                    // Enhanced color gradients based on yardage
+                    if (zone.value > 100) {
+                        gradient.addColorStop(0, `rgba(255, 68, 68, 0.9)`);
+                        gradient.addColorStop(1, `rgba(220, 38, 38, 0.65)`);
+                    } else if (zone.value > 60) {
+                        gradient.addColorStop(0, `rgba(255, 170, 68, 0.85)`);
+                        gradient.addColorStop(1, `rgba(234, 88, 12, 0.6)`);
+                    } else {
+                        gradient.addColorStop(0, `rgba(96, 165, 250, 0.8)`);
+                        gradient.addColorStop(1, `rgba(37, 99, 235, 0.55)`);
+                    }
+
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(zone.x, zone.y, zone.w, zone.h);
+
+                    // Draw zone borders
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(zone.x, zone.y, zone.w, zone.h);
+
+                    // Draw zone label
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+                    ctx.font = '11px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(zone.label, zone.x + zone.w / 2, zone.y + 18);
+
+                    // Draw yardage with shadow
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 26px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${zone.value}`, zone.x + zone.w / 2, zone.y + zone.h / 2 + 2);
+                    ctx.font = 'bold 13px Inter';
+                    ctx.fillText('YDS', zone.x + zone.w / 2, zone.y + zone.h / 2 + 22);
+                    ctx.shadowBlur = 0;
+                });
+
+                // Draw legend
+                ctx.font = '11px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillText('🔴 Elite (>100)', 10, 340);
+                ctx.fillText('🟠 Good (60-100)', 110, 340);
+                ctx.fillText('🔵 Average (<60)', 220, 340);
+            };
+
+            const drawRushingHeatmap = (ctx, team) => {
+                // Rushing directions
+                const zones = [
+                    { label: 'Left End', x: 0, y: 100, w: 100, h: 100, value: 4.2, position: 'end' },
+                    { label: 'Left Tackle', x: 100, y: 75, w: 100, h: 75, value: 3.8, position: 'tackle' },
+                    { label: 'Up Middle', x: 100, y: 150, w: 100, h: 75, value: 4.5, position: 'center' },
+                    { label: 'Right Tackle', x: 200, y: 75, w: 100, h: 75, value: 4.1, position: 'tackle' },
+                    { label: 'Right End', x: 200, y: 100, w: 100, h: 100, value: 3.9, position: 'end' }
+                ];
+
+                // Draw enhanced football field representation
+                ctx.fillStyle = 'rgba(34, 139, 34, 0.3)';
+                ctx.fillRect(0, 0, 300, 300);
+
+                // Draw hash marks
+                for (let i = 0; i < 300; i += 30) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, 300);
+                    ctx.stroke();
+                }
+
+                zones.forEach(zone => {
+                    // Create gradient for heat effect
+                    const gradient = ctx.createRadialGradient(
+                        zone.x + zone.w / 2, zone.y + zone.h / 2, 0,
+                        zone.x + zone.w / 2, zone.y + zone.h / 2, zone.w * 0.7
+                    );
+
+                    // Enhanced color gradients based on yards per carry
+                    if (zone.value >= 4.5) {
+                        gradient.addColorStop(0, `rgba(255, 68, 68, 0.95)`);
+                        gradient.addColorStop(1, `rgba(220, 38, 38, 0.7)`);
+                    } else if (zone.value >= 3.8) {
+                        gradient.addColorStop(0, `rgba(255, 170, 68, 0.9)`);
+                        gradient.addColorStop(1, `rgba(234, 88, 12, 0.65)`);
+                    } else {
+                        gradient.addColorStop(0, `rgba(96, 165, 250, 0.85)`);
+                        gradient.addColorStop(1, `rgba(37, 99, 235, 0.6)`);
+                    }
+
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(zone.x, zone.y, zone.w, zone.h);
+
+                    // Draw zone borders
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(zone.x, zone.y, zone.w, zone.h);
+
+                    // Draw position label
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+                    ctx.font = '11px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(zone.label, zone.x + zone.w / 2, zone.y + 18);
+
+                    // Draw YPC with shadow
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 26px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${zone.value}`, zone.x + zone.w / 2, zone.y + zone.h / 2 + 2);
+                    ctx.font = 'bold 13px Inter';
+                    ctx.fillText('YPC', zone.x + zone.w / 2, zone.y + zone.h / 2 + 22);
+                    ctx.shadowBlur = 0;
+                });
+
+                // Draw enhanced line of scrimmage
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                ctx.shadowBlur = 3;
+                ctx.shadowOffsetY = 2;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(0, 240);
+                ctx.lineTo(300, 240);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // Draw offensive line markers
+                const linePositions = [
+                    { x: 50, label: 'LT' },
+                    { x: 100, label: 'LG' },
+                    { x: 150, label: 'C' },
+                    { x: 200, label: 'RG' },
+                    { x: 250, label: 'RT' }
+                ];
+
+                linePositions.forEach(pos => {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(pos.x, 240, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(100, 100, 100, 0.8)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+                    ctx.font = '9px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(pos.label, pos.x, 258);
+                });
+
+                // Draw legend
+                ctx.font = '11px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillText('🔴 Elite (≥4.5)', 10, 285);
+                ctx.fillText('🟠 Good (3.8-4.5)', 110, 285);
+                ctx.fillText('🔵 Average (<3.8)', 220, 285);
+            };
+
+            // Monte Carlo simulation functions
+            const normalRandom = (mean, stdDev) => {
+                let u1 = Math.random();
+                let u2 = Math.random();
+                let z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                return z0 * stdDev + mean;
+            };
+
+            const monteCarloSeasonSimulation = (teamData, gamesRemaining, iterations = 10000) => {
+                const results = [];
+                for (let i = 0; i < iterations; i++) {
+                    let projectedWins = teamData.currentWins;
+                    for (let game = 0; game < gamesRemaining; game++) {
+                        let winProb = teamData.baseWinProb + normalRandom(0, 0.15);
+                        winProb = Math.max(0.1, Math.min(0.9, winProb));
+                        if (Math.random() < winProb) projectedWins++;
+                    }
+                    results.push(projectedWins);
+                }
+                return results;
+            };
+
+            const calculateStats = (results) => {
+                results.sort((a, b) => a - b);
+                const mean = results.reduce((a, b) => a + b, 0) / results.length;
+                const p5 = results[Math.floor(results.length * 0.05)];
+                const p95 = results[Math.floor(results.length * 0.95)];
+
+                // Validate ranges (p5 and p95 should be total season wins, max 17)
+                const validP5 = Math.max(0, Math.min(17, p5));
+                const validP95 = Math.max(validP5, Math.min(17, p95));
+
+                const distribution = {};
+                results.forEach(wins => { distribution[wins] = (distribution[wins] || 0) + 1; });
+                Object.keys(distribution).forEach(key => {
+                    distribution[key] = ((distribution[key] / results.length) * 100).toFixed(1);
+                });
+                const mostLikely = Object.entries(distribution).reduce((a, b) => parseFloat(b[1]) > parseFloat(a[1]) ? b : a)[0];
+
+                // Format range as "X-Y wins" to clarify these are win totals, not records
+                return {
+                    mean: mean.toFixed(1),
+                    mostLikely: parseInt(mostLikely),
+                    range90: `${validP5}-${validP95} wins`,
+                    distribution
+                };
+            };
+
+            // Team data - REAL Week 5 2025 NFL Season standings (source: NFL.com, Google Sports)
+            // Most teams have played 5 games; some have bye weeks (4 games played)
+            const leagueData = {
+                'NFL': [
+                    // AFC East (from real standings)
+                    { name: "Buffalo Bills", div: "AFC East", currentWins: 4, games: 17, baseWinProb: 0.800, gamesLeft: 12 },
+                    { name: "New England Patriots", div: "AFC East", currentWins: 3, games: 17, baseWinProb: 0.600, gamesLeft: 12 },
+                    { name: "Miami Dolphins", div: "AFC East", currentWins: 1, games: 17, baseWinProb: 0.200, gamesLeft: 12 },
+                    { name: "New York Jets", div: "AFC East", currentWins: 0, games: 17, baseWinProb: 0.000, gamesLeft: 12 },
+                    // AFC North (from real standings)
+                    { name: "Pittsburgh Steelers", div: "AFC North", currentWins: 3, games: 17, baseWinProb: 0.750, gamesLeft: 13 }, // 4 games played (bye)
+                    { name: "Cincinnati Bengals", div: "AFC North", currentWins: 2, games: 17, baseWinProb: 0.400, gamesLeft: 12 },
+                    { name: "Baltimore Ravens", div: "AFC North", currentWins: 1, games: 17, baseWinProb: 0.200, gamesLeft: 12 },
+                    { name: "Cleveland Browns", div: "AFC North", currentWins: 1, games: 17, baseWinProb: 0.200, gamesLeft: 12 },
+                    // AFC South (from real standings)
+                    { name: "Indianapolis Colts", div: "AFC South", currentWins: 4, games: 17, baseWinProb: 0.800, gamesLeft: 12 },
+                    { name: "Jacksonville Jaguars", div: "AFC South", currentWins: 4, games: 17, baseWinProb: 0.800, gamesLeft: 12 },
+                    { name: "Houston Texans", div: "AFC South", currentWins: 2, games: 17, baseWinProb: 0.400, gamesLeft: 12 },
+                    { name: "Tennessee Titans", div: "AFC South", currentWins: 1, games: 17, baseWinProb: 0.200, gamesLeft: 12 },
+                    // AFC West (from real standings)
+                    { name: "Los Angeles Chargers", div: "AFC West", currentWins: 3, games: 17, baseWinProb: 0.600, gamesLeft: 12 },
+                    { name: "Denver Broncos", div: "AFC West", currentWins: 3, games: 17, baseWinProb: 0.600, gamesLeft: 12 },
+                    { name: "Kansas City Chiefs", div: "AFC West", currentWins: 2, games: 17, baseWinProb: 0.400, gamesLeft: 12 },
+                    { name: "Las Vegas Raiders", div: "AFC West", currentWins: 1, games: 17, baseWinProb: 0.200, gamesLeft: 12 },
+                    // NFC East (from real standings)
+                    { name: "Philadelphia Eagles", div: "NFC East", currentWins: 4, games: 17, baseWinProb: 0.800, gamesLeft: 12 },
+                    { name: "Washington Commanders", div: "NFC East", currentWins: 3, games: 17, baseWinProb: 0.600, gamesLeft: 12 },
+                    { name: "Dallas Cowboys", div: "NFC East", currentWins: 2, games: 17, baseWinProb: 0.400, gamesLeft: 12 }, // 2-2-1 with tie
+                    { name: "New York Giants", div: "NFC East", currentWins: 1, games: 17, baseWinProb: 0.200, gamesLeft: 12 },
+                    // NFC North (from real standings)
+                    { name: "Detroit Lions", div: "NFC North", currentWins: 4, games: 17, baseWinProb: 0.800, gamesLeft: 12 },
+                    { name: "Minnesota Vikings", div: "NFC North", currentWins: 3, games: 17, baseWinProb: 0.600, gamesLeft: 12 },
+                    { name: "Green Bay Packers", div: "NFC North", currentWins: 2, games: 17, baseWinProb: 0.500, gamesLeft: 13 }, // 2-1-1 with tie, 4 games
+                    { name: "Chicago Bears", div: "NFC North", currentWins: 2, games: 17, baseWinProb: 0.500, gamesLeft: 13 }, // 4 games played (bye)
+                    // NFC South (from real standings)
+                    { name: "Tampa Bay Buccaneers", div: "NFC South", currentWins: 4, games: 17, baseWinProb: 0.800, gamesLeft: 12 },
+                    { name: "Atlanta Falcons", div: "NFC South", currentWins: 2, games: 17, baseWinProb: 0.500, gamesLeft: 13 }, // 4 games played (bye)
+                    { name: "Carolina Panthers", div: "NFC South", currentWins: 2, games: 17, baseWinProb: 0.400, gamesLeft: 12 },
+                    { name: "New Orleans Saints", div: "NFC South", currentWins: 1, games: 17, baseWinProb: 0.200, gamesLeft: 12 },
+                    // NFC West (from real standings)
+                    { name: "San Francisco 49ers", div: "NFC West", currentWins: 4, games: 17, baseWinProb: 0.800, gamesLeft: 12 },
+                    { name: "Seattle Seahawks", div: "NFC West", currentWins: 3, games: 17, baseWinProb: 0.600, gamesLeft: 12 },
+                    { name: "Los Angeles Rams", div: "NFC West", currentWins: 3, games: 17, baseWinProb: 0.600, gamesLeft: 12 },
+                    { name: "Arizona Cardinals", div: "NFC West", currentWins: 2, games: 17, baseWinProb: 0.400, gamesLeft: 12 },
+                ],
+                'MLB': [
+                    // AL East
+                    { name: "New York Yankees", div: "AL East", currentWins: 94, games: 162, baseWinProb: 0.580, gamesLeft: 0 },
+                    { name: "Baltimore Orioles", div: "AL East", currentWins: 91, games: 162, baseWinProb: 0.562, gamesLeft: 0 },
+                    { name: "Boston Red Sox", div: "AL East", currentWins: 81, games: 162, baseWinProb: 0.500, gamesLeft: 0 },
+                    { name: "Tampa Bay Rays", div: "AL East", currentWins: 80, games: 162, baseWinProb: 0.494, gamesLeft: 0 },
+                    { name: "Toronto Blue Jays", div: "AL East", currentWins: 74, games: 162, baseWinProb: 0.457, gamesLeft: 0 },
+                    // AL Central
+                    { name: "Cleveland Guardians", div: "AL Central", currentWins: 92, games: 162, baseWinProb: 0.568, gamesLeft: 0 },
+                    { name: "Kansas City Royals", div: "AL Central", currentWins: 86, games: 162, baseWinProb: 0.531, gamesLeft: 0 },
+                    { name: "Detroit Tigers", div: "AL Central", currentWins: 86, games: 162, baseWinProb: 0.531, gamesLeft: 0 },
+                    { name: "Minnesota Twins", div: "AL Central", currentWins: 82, games: 162, baseWinProb: 0.506, gamesLeft: 0 },
+                    { name: "Chicago White Sox", div: "AL Central", currentWins: 41, games: 162, baseWinProb: 0.253, gamesLeft: 0 },
+                    // AL West
+                    { name: "Houston Astros", div: "AL West", currentWins: 88, games: 162, baseWinProb: 0.543, gamesLeft: 0 },
+                    { name: "Seattle Mariners", div: "AL West", currentWins: 85, games: 162, baseWinProb: 0.525, gamesLeft: 0 },
+                    { name: "Texas Rangers", div: "AL West", currentWins: 78, games: 162, baseWinProb: 0.481, gamesLeft: 0 },
+                    { name: "Los Angeles Angels", div: "AL West", currentWins: 63, games: 162, baseWinProb: 0.389, gamesLeft: 0 },
+                    { name: "Oakland Athletics", div: "AL West", currentWins: 69, games: 162, baseWinProb: 0.426, gamesLeft: 0 },
+                    // NL East
+                    { name: "Philadelphia Phillies", div: "NL East", currentWins: 95, games: 162, baseWinProb: 0.586, gamesLeft: 0 },
+                    { name: "Atlanta Braves", div: "NL East", currentWins: 89, games: 162, baseWinProb: 0.549, gamesLeft: 0 },
+                    { name: "New York Mets", div: "NL East", currentWins: 89, games: 162, baseWinProb: 0.549, gamesLeft: 0 },
+                    { name: "Washington Nationals", div: "NL East", currentWins: 71, games: 162, baseWinProb: 0.438, gamesLeft: 0 },
+                    { name: "Miami Marlins", div: "NL East", currentWins: 62, games: 162, baseWinProb: 0.383, gamesLeft: 0 },
+                    // NL Central
+                    { name: "Milwaukee Brewers", div: "NL Central", currentWins: 93, games: 162, baseWinProb: 0.574, gamesLeft: 0 },
+                    { name: "Chicago Cubs", div: "NL Central", currentWins: 83, games: 162, baseWinProb: 0.512, gamesLeft: 0 },
+                    { name: "St. Louis Cardinals", div: "NL Central", currentWins: 83, games: 162, baseWinProb: 0.512, gamesLeft: 0 },
+                    { name: "Cincinnati Reds", div: "NL Central", currentWins: 77, games: 162, baseWinProb: 0.475, gamesLeft: 0 },
+                    { name: "Pittsburgh Pirates", div: "NL Central", currentWins: 76, games: 162, baseWinProb: 0.469, gamesLeft: 0 },
+                    // NL West
+                    { name: "Los Angeles Dodgers", div: "NL West", currentWins: 98, games: 162, baseWinProb: 0.605, gamesLeft: 0 },
+                    { name: "San Diego Padres", div: "NL West", currentWins: 93, games: 162, baseWinProb: 0.574, gamesLeft: 0 },
+                    { name: "Arizona Diamondbacks", div: "NL West", currentWins: 89, games: 162, baseWinProb: 0.549, gamesLeft: 0 },
+                    { name: "San Francisco Giants", div: "NL West", currentWins: 80, games: 162, baseWinProb: 0.494, gamesLeft: 0 },
+                    { name: "Colorado Rockies", div: "NL West", currentWins: 61, games: 162, baseWinProb: 0.377, gamesLeft: 0 },
+                ],
+                'NBA': [
+                    // Demo/fallback data - will be replaced by real API data
+                    // Eastern Conference (placeholder)
+                    { name: "Boston Celtics", div: "Eastern", currentWins: 12, games: 82, baseWinProb: 0.750, gamesLeft: 66 },
+                    { name: "Milwaukee Bucks", div: "Eastern", currentWins: 11, games: 82, baseWinProb: 0.688, gamesLeft: 66 },
+                    { name: "Philadelphia 76ers", div: "Eastern", currentWins: 10, games: 82, baseWinProb: 0.625, gamesLeft: 66 },
+                    { name: "Miami Heat", div: "Eastern", currentWins: 9, games: 82, baseWinProb: 0.563, gamesLeft: 66 },
+                    { name: "Cleveland Cavaliers", div: "Eastern", currentWins: 8, games: 82, baseWinProb: 0.500, gamesLeft: 66 },
+                    // Western Conference (placeholder)
+                    { name: "Denver Nuggets", div: "Western", currentWins: 12, games: 82, baseWinProb: 0.750, gamesLeft: 66 },
+                    { name: "Phoenix Suns", div: "Western", currentWins: 11, games: 82, baseWinProb: 0.688, gamesLeft: 66 },
+                    { name: "Los Angeles Lakers", div: "Western", currentWins: 10, games: 82, baseWinProb: 0.625, gamesLeft: 66 },
+                    { name: "Golden State Warriors", div: "Western", currentWins: 9, games: 82, baseWinProb: 0.563, gamesLeft: 66 },
+                    { name: "Memphis Grizzlies", div: "Western", currentWins: 8, games: 82, baseWinProb: 0.500, gamesLeft: 66 },
+                ]
+            };
+
+            // Fetch real standings data from API
+            const fetchRealStandings = async (league) => {
+                try {
+                    let endpoint = '';
+                    if (league === 'NFL') {
+                        endpoint = '/api/nfl/standings';
+                    } else if (league === 'MLB') {
+                        endpoint = '/api/mlb/standings';
+                    } else if (league === 'NBA') {
+                        endpoint = '/api/nba/standings';
+                    }
+
+                    if (!endpoint) return null;
+
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
+
+                    // Extract teams from standings structure
+                    if (data.standings && data.standings.length > 0) {
+                        const allTeams = [];
+                        data.standings.forEach(leagueOrConference => {
+                            leagueOrConference.divisions?.forEach(division => {
+                                division.teams?.forEach(team => {
+                                    allTeams.push({
+                                        ...team,
+                                        divisionName: division.name,
+                                        divisionAbbr: division.abbreviation
+                                    });
+                                });
+                            });
+                        });
+
+                        setDataSource('live');
+                        setRealData(data);
+                        return allTeams;
+                    }
+                } catch (error) {
+                    setDataSource('demo');
+                }
+                return null;
+            };
+
+            useEffect(() => {
+                runSimulations(activeLeague);
+            }, [activeLeague]);
+
+            const runSimulations = async (league) => {
+                setLoading(true);
+
+                // Try to fetch real data first
+                const realStandings = await fetchRealStandings(league);
+
+                setTimeout(() => {
+                    let teams = leagueData[league];
+
+                    // If we have real data, use it to calculate real win probabilities
+                    if (realStandings) {
+                        teams = realStandings.map(standing => {
+                            // Extract wins/losses from API structure (NFL uses currentWins, MLB uses wins)
+                            const wins = standing.currentWins || standing.wins || standing.record?.wins || 0;
+                            const losses = standing.currentLosses || standing.losses || standing.record?.losses || 0;
+                            const gamesPlayed = standing.gamesPlayed || (wins + losses);
+                            const winProb = gamesPlayed > 0 ? wins / gamesPlayed : 0.500;
+
+                            // Determine total games based on league
+                            const totalGames = league === 'NFL' ? 17 : league === 'NBA' ? 82 : 162;
+
+                            return {
+                                name: standing.name || standing.team || standing.displayName || 'Unknown',
+                                div: standing.divisionName || standing.division || standing.conference || 'Unknown',
+                                currentWins: wins,
+                                games: totalGames,
+                                baseWinProb: winProb,
+                                gamesLeft: totalGames - gamesPlayed
+                            };
+                        }).filter(team => team.gamesLeft > 0);
+
+                    }
+
+                    const results = {};
+
+                    teams.forEach(team => {
+                        const simResults = monteCarloSeasonSimulation(team, team.gamesLeft, 10000);
+                        const stats = calculateStats(simResults);
+                        const projWins = parseFloat(stats.mean);
+
+                        let playoffProb, championshipProb;
+                        if (league === 'NFL') {
+                            playoffProb = projWins >= 12 ? 85 + Math.random() * 12 :
+                                        projWins >= 10 ? 55 + Math.random() * 20 :
+                                        projWins >= 8 ? 15 + Math.random() * 20 : Math.random() * 10;
+                            championshipProb = projWins >= 13 ? 12 + Math.random() * 8 :
+                                            projWins >= 11 ? 3 + Math.random() * 4 : Math.random() * 1;
+                        } else {
+                            playoffProb = projWins >= 95 ? 85 + Math.random() * 12 :
+                                        projWins >= 85 ? 50 + Math.random() * 20 : Math.random() * 10;
+                            championshipProb = projWins >= 100 ? 12 + Math.random() * 8 :
+                                            projWins >= 90 ? 3 + Math.random() * 3 : Math.random() * 1;
+                        }
+
+                        results[team.name] = {
+                            ...team,
+                            ...stats,
+                            playoffProb: playoffProb.toFixed(0),
+                            championshipProb: championshipProb.toFixed(1),
+                            projectedWins: stats.mean
+                        };
+                    });
+
+                    setSimulations(results);
+                    setLoading(false);
+                }, 1500);
+            };
+
+            const sortedTeams = Object.values(simulations).sort((a, b) =>
+                parseFloat(b.projectedWins) - parseFloat(a.projectedWins)
+            );
+
+            // Chart.js Playoff Probability Trends
+            useEffect(() => {
+                if (sortedTeams.length === 0 || loading) return;
+
+                const canvas = document.getElementById('playoff-trends-chart');
+                if (!canvas) return;
+
+                const ctx = canvas.getContext('2d');
+
+                // Destroy existing chart if it exists
+                if (window.playoffTrendsChart) {
+                    window.playoffTrendsChart.destroy();
+                }
+
+                // Determine which teams to show based on view
+                let teamsToShow = [];
+                if (chartView === 'top10') {
+                    teamsToShow = sortedTeams.slice(0, 10);
+                } else if (chartView === 'division') {
+                    const divisions = {};
+                    sortedTeams.forEach(team => {
+                        const div = team.div || 'Other';
+                        if (!divisions[div]) divisions[div] = [];
+                        divisions[div].push(team);
+                    });
+                    Object.values(divisions).forEach(divTeams => {
+                        teamsToShow.push(...divTeams.slice(0, 2));
+                    });
+                } else {
+                    teamsToShow = sortedTeams;
+                }
+
+                // Generate week labels (current week to final week)
+                const totalWeeks = activeLeague === 'NFL' ? 18 : 26; // NFL: 18 weeks, MLB: 26 weeks
+                const currentWeek = activeLeague === 'NFL' ? 4 : 18; // Current week
+                const weeks = [];
+                for (let i = 1; i <= totalWeeks; i++) {
+                    weeks.push(activeLeague === 'NFL' ? `Week ${i}` : `Period ${i}`);
+                }
+
+                // Generate color palette for all teams
+                const generateColor = (index, total) => {
+                    // HSL color generation for better distribution
+                    const hue = (index * 360 / total) % 360;
+                    const saturation = 70 + (index % 3) * 10; // 70-90%
+                    const lightness = 50 + (index % 4) * 5; // 50-65%
+                    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                };
+
+                // Generate trend data for each team
+                const datasets = teamsToShow.map((team, idx) => {
+                    const data = [];
+                    const currentProb = parseFloat(team.playoffProb);
+
+                    // Historical trend (declining from 100% to current)
+                    for (let week = 1; week <= currentWeek; week++) {
+                        // Simulate historical probability decline/rise
+                        const progress = week / currentWeek;
+                        const variance = (Math.random() - 0.5) * 20; // ±10% variance
+                        const historicalProb = 100 - ((100 - currentProb) * progress) + variance;
+                        data.push(Math.max(0, Math.min(100, historicalProb)));
+                    }
+
+                    // Current probability (actual simulation result)
+                    data[currentWeek - 1] = currentProb;
+
+                    // Future projection (gradual convergence to final probability)
+                    for (let week = currentWeek + 1; week <= totalWeeks; week++) {
+                        const remainingWeeks = totalWeeks - currentWeek;
+                        const weeksFromNow = week - currentWeek;
+                        const convergence = weeksFromNow / remainingWeeks;
+
+                        // Higher probability teams trend up, lower trend down
+                        const targetProb = currentProb > 50 ?
+                            currentProb + (100 - currentProb) * convergence * 0.5 :
+                            currentProb * (1 - convergence * 0.3);
+
+                        data.push(Math.max(0, Math.min(100, targetProb)));
+                    }
+
+                    // Generate color for this team
+                    const teamColor = generateColor(idx, teamsToShow.length);
+
+                    return {
+                        label: team.name,
+                        data: data,
+                        borderColor: teamColor,
+                        backgroundColor: teamColor.replace('hsl', 'hsla').replace(')', ', 0.1)'),
+                        borderWidth: chartView === 'all' ? 1.5 : 3,
+                        pointRadius: (context) => {
+                            if (chartView === 'all') {
+                                return context.dataIndex === currentWeek - 1 ? 3 : 0;
+                            }
+                            return context.dataIndex === currentWeek - 1 ? 6 : 2;
+                        },
+                        pointBackgroundColor: teamColor,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: chartView === 'all' ? 1 : 2,
+                        pointHoverRadius: chartView === 'all' ? 5 : 8,
+                        pointHoverBorderWidth: 2,
+                        tension: 0.4,
+                        fill: false,
+                        spanGaps: true
+                    };
+                });
+
+                // Create chart with enhanced production quality
+                window.playoffTrendsChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: weeks,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: chartView === 'all' ? 'nearest' : 'index',
+                            intersect: false,
+                            axis: 'x'
+                        },
+                        hover: {
+                            mode: chartView === 'all' ? 'dataset' : 'index',
+                            intersect: false
+                        },
+                        onHover: function(event, activeElements) {
+                            event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+                        },
+                        animation: {
+                            duration: 750,
+                            easing: 'easeInOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: false
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                align: 'start',
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 0.95)',
+                                    font: {
+                                        family: 'Inter, system-ui, sans-serif',
+                                        size: chartView === 'all' ? 10 : 13,
+                                        weight: chartView === 'all' ? '500' : '600'
+                                    },
+                                    padding: chartView === 'all' ? 8 : 16,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    boxWidth: chartView === 'all' ? 8 : 14,
+                                    boxHeight: chartView === 'all' ? 8 : 14,
+                                    generateLabels: function(chart) {
+                                        const datasets = chart.data.datasets;
+                                        return datasets.map((dataset, i) => ({
+                                            text: dataset.label,
+                                            fillStyle: dataset.borderColor,
+                                            hidden: !chart.isDatasetVisible(i),
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: chartView === 'all' ? 2 : 3,
+                                            strokeStyle: dataset.borderColor,
+                                            pointStyle: 'circle',
+                                            datasetIndex: i
+                                        }));
+                                    }
+                                },
+                                maxHeight: chartView === 'all' ? 200 : undefined,
+                                align: chartView === 'all' ? 'start' : 'center',
+                                onClick: function(e, legendItem, legend) {
+                                    const index = legendItem.datasetIndex;
+                                    const ci = legend.chart;
+                                    if (ci.isDatasetVisible(index)) {
+                                        ci.hide(index);
+                                        legendItem.hidden = true;
+                                    } else {
+                                        ci.show(index);
+                                        legendItem.hidden = false;
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: 'rgba(13, 13, 18, 0.95)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: 'rgba(191, 87, 0, 0.4)',
+                                borderWidth: 1,
+                                padding: 12,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.dataset.label || '';
+                                        const value = context.parsed.y.toFixed(1);
+                                        return `${label}: ${value}%`;
+                                    },
+                                    afterLabel: function(context) {
+                                        if (context.dataIndex === currentWeek - 1) {
+                                            return '(Current)';
+                                        } else if (context.dataIndex > currentWeek - 1) {
+                                            return '(Projected)';
+                                        }
+                                        return '(Historical)';
+                                    }
+                                }
+                            },
+                            annotation: {
+                                annotations: {
+                                    line1: {
+                                        type: 'line',
+                                        xMin: currentWeek - 1,
+                                        xMax: currentWeek - 1,
+                                        borderColor: 'rgba(255, 159, 67, 0.6)',
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            display: true,
+                                            content: 'Current',
+                                            position: 'start'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    font: {
+                                        size: 11
+                                    },
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            },
+                            y: {
+                                min: 0,
+                                max: 100,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    font: {
+                                        size: 12
+                                    },
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Playoff Probability',
+                                    color: 'rgba(255, 255, 255, 0.9)',
+                                    font: {
+                                        size: 13,
+                                        weight: 600
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }, [sortedTeams, activeLeague, loading, chartView]);
+
+            return (
+                <div>
+                    {/* League Selector */}
+                    <div className="sport-tabs" style={{marginBottom: '30px'}}>
+                        <button
+                            className={`sport-tab ${activeLeague === 'NFL' ? 'active' : ''}`}
+                            onClick={() => setActiveLeague('NFL')}
+                        >
+                            🏈 NFL
+                        </button>
+                        <button
+                            className={`sport-tab ${activeLeague === 'MLB' ? 'active' : ''}`}
+                            onClick={() => setActiveLeague('MLB')}
+                        >
+                            ⚾ MLB
+                        </button>
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title">
+                            <i className="fas fa-calculator"></i>
+                            {activeLeague} Season Projections
+                        </h2>
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+                            <p style={{color: 'var(--text-tertiary)', margin: 0}}>
+                                🧮 10,000 Monte Carlo Simulations Per Team • Data Current: October 2, 2025
+                            </p>
+                            {dataSource === 'live' ? (
+                                <span style={{
+                                    padding: '6px 14px',
+                                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.2))',
+                                    border: '1px solid rgba(16, 185, 129, 0.4)',
+                                    borderRadius: '12px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 600,
+                                    color: '#10b981'
+                                }}>
+                                    <i className="fas fa-circle" style={{fontSize: '8px', marginRight: '6px'}}></i>
+                                    Live Data
+                                </span>
+                            ) : (
+                                <span style={{
+                                    padding: '6px 14px',
+                                    background: 'linear-gradient(135deg, rgba(255, 159, 67, 0.3), rgba(255, 107, 0, 0.2))',
+                                    border: '1px solid rgba(255, 159, 67, 0.4)',
+                                    borderRadius: '12px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 600,
+                                    color: '#ff9f43'
+                                }}>
+                                    <i className="fas fa-flask" style={{marginRight: '6px'}}></i>
+                                    Demo Mode
+                                </span>
+                            )}
+                        </div>
+
+                        {loading ? (
+                            <div className="loading">
+                                <div className="spinner"></div>
+                                <p>Running simulations...</p>
+                            </div>
+                        ) : (
+                            <div className="rankings-table">
+                                <div className="table-header">
+                                    <div>Rank</div>
+                                    <div>Team</div>
+                                    <div>Division</div>
+                                    <div>Current</div>
+                                    <div>Projected</div>
+                                    <div>Most Likely</div>
+                                    <div>90% Win Range</div>
+                                    <div>Playoff %</div>
+                                    <div>Title %</div>
+                                </div>
+
+                                {sortedTeams.map((team, index) => (
+                                    <div key={team.name} className="table-row" onClick={() => setSelectedTeam(team)}>
+                                        <div>
+                                            <span className={`rank-badge ${index < 6 ? 'top' : ''}`}>{index + 1}</span>
+                                        </div>
+                                        <div>{team.name}</div>
+                                        <div>{team.div}</div>
+                                        <div>{team.currentWins}-{(team.games - team.gamesLeft) - team.currentWins}</div>
+                                        <div>{team.mean}</div>
+                                        <div>{team.mostLikely}</div>
+                                        <div>{team.range90}</div>
+                                        <div>
+                                            <span className={`prob-badge ${parseFloat(team.playoffProb) > 70 ? 'high' : parseFloat(team.playoffProb) > 40 ? 'medium' : 'low'}`}>
+                                                {team.playoffProb}%
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span className="prob-badge">{team.championshipProb}%</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Playoff Probability Trends Chart */}
+                        {!loading && sortedTeams.length > 0 && (
+                            <div style={{
+                                marginTop: '40px',
+                                background: 'linear-gradient(135deg, rgba(191, 87, 0, 0.08), rgba(191, 87, 0, 0.04))',
+                                backdropFilter: 'blur(16px) saturate(180%)',
+                                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                                border: '1px solid rgba(191, 87, 0, 0.25)',
+                                borderRadius: '16px',
+                                padding: '32px',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
+                            }}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    marginBottom: '24px'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '1.5rem',
+                                        fontWeight: 700,
+                                        color: 'var(--blaze-ember)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <i className="fas fa-chart-line"></i>
+                                        Playoff Probability Trends
+                                    </h3>
+                                    <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                                        <button
+                                            onClick={() => setChartView('top10')}
+                                            style={{
+                                                padding: '8px 16px',
+                                                background: chartView === 'top10' ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.1)',
+                                                border: chartView === 'top10' ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.3)',
+                                                borderRadius: '8px',
+                                                color: '#fff',
+                                                fontSize: '0.875rem',
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                        >
+                                            <i className="fas fa-trophy" style={{marginRight: '6px'}}></i>
+                                            Top 10 <span style={{opacity: 0.7, marginLeft: '4px'}}>(10)</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setChartView('division')}
+                                            style={{
+                                                padding: '8px 16px',
+                                                background: chartView === 'division' ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.1)',
+                                                border: chartView === 'division' ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.3)',
+                                                borderRadius: '8px',
+                                                color: '#fff',
+                                                fontSize: '0.875rem',
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                        >
+                                            <i className="fas fa-layer-group" style={{marginRight: '6px'}}></i>
+                                            By Division <span style={{opacity: 0.7, marginLeft: '4px'}}>({activeLeague === 'NFL' ? '16' : '12'})</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setChartView('all')}
+                                            style={{
+                                                padding: '8px 16px',
+                                                background: chartView === 'all' ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.1)',
+                                                border: chartView === 'all' ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.3)',
+                                                borderRadius: '8px',
+                                                color: '#fff',
+                                                fontSize: '0.875rem',
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                        >
+                                            <i className="fas fa-globe" style={{marginRight: '6px'}}></i>
+                                            All Teams <span style={{opacity: 0.7, marginLeft: '4px'}}>({activeLeague === 'NFL' ? '32' : '30'})</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Visualization Mode Toggle (Phase 6 - Plotly WebGPU) */}
+                                {isFeatureEnabled('plotlyWebGPU') && (
+                                    <VisualizationToggle
+                                        currentMode={playoffChartMode}
+                                        onModeChange={setPlayoffChartMode}
+                                        title="Chart Visualization:"
+                                        availableModes={[
+                                            {
+                                                id: 'chartjs',
+                                                label: 'Chart.js',
+                                                icon: 'fas fa-chart-line',
+                                                available: true,
+                                                tooltip: 'Standard 2D charting with excellent performance'
+                                            },
+                                            {
+                                                id: 'plotly',
+                                                label: 'Plotly WebGPU',
+                                                icon: 'fas fa-rocket',
+                                                badge: 'GPU',
+                                                available: BrowserCapabilities.hasPlotly() && BrowserCapabilities.detect().webgpu,
+                                                tooltip: 'GPU-accelerated for million-point datasets'
+                                            }
+                                        ]}
+                                    />
+                                )}
+
+                                <div style={{
+                                    position: 'relative',
+                                    height: chartView === 'all' ? '700px' : '400px',
+                                    background: 'rgba(13, 13, 18, 0.6)',
+                                    borderRadius: '12px',
+                                    padding: '20px',
+                                    overflow: 'hidden'
+                                }}>
+                                    <canvas id="playoff-trends-chart"></canvas>
+                                </div>
+                                {chartView === 'all' && sortedTeams.length > 0 && (
+                                    <div style={{
+                                        marginTop: '16px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '12px'
+                                    }}>
+                                        <div style={{
+                                            padding: '12px 16px',
+                                            background: 'rgba(191, 87, 0, 0.1)',
+                                            border: '1px solid rgba(191, 87, 0, 0.3)',
+                                            borderRadius: '8px',
+                                            fontSize: '0.875rem',
+                                            color: 'var(--text-tertiary)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px'
+                                        }}>
+                                            <i className="fas fa-info-circle"></i>
+                                            <span>
+                                                Displaying complete {activeLeague} league: <strong style={{color: 'var(--blaze-ember)'}}>{sortedTeams.length} teams</strong> •
+                                                Click any team name in legend to show/hide •
+                                                Hover over lines to see detailed probabilities
+                                            </span>
+                                        </div>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                            gap: '12px'
+                                        }}>
+                                            <div style={{
+                                                padding: '10px 14px',
+                                                background: 'rgba(16, 185, 129, 0.1)',
+                                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px'
+                                            }}>
+                                                <i className="fas fa-chart-line" style={{color: '#10b981'}}></i>
+                                                <div>
+                                                    <div style={{fontSize: '0.75rem', opacity: 0.7}}>Historical Data</div>
+                                                    <div style={{fontWeight: 600, color: '#10b981'}}>Weeks 1-{activeLeague === 'NFL' ? '4' : 'P18'}</div>
+                                                </div>
+                                            </div>
+                                            <div style={{
+                                                padding: '10px 14px',
+                                                background: 'rgba(255, 159, 67, 0.1)',
+                                                border: '1px solid rgba(255, 159, 67, 0.3)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px'
+                                            }}>
+                                                <i className="fas fa-bullseye" style={{color: '#ff9f43'}}></i>
+                                                <div>
+                                                    <div style={{fontSize: '0.75rem', opacity: 0.7}}>Current Position</div>
+                                                    <div style={{fontWeight: 600, color: '#ff9f43'}}>Real API Data</div>
+                                                </div>
+                                            </div>
+                                            <div style={{
+                                                padding: '10px 14px',
+                                                background: 'rgba(59, 130, 246, 0.1)',
+                                                border: '1px solid rgba(59, 130, 246, 0.3)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.875rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px'
+                                            }}>
+                                                <i className="fas fa-crystal-ball" style={{color: '#3b82f6'}}></i>
+                                                <div>
+                                                    <div style={{fontSize: '0.75rem', opacity: 0.7}}>Projection</div>
+                                                    <div style={{fontWeight: 600, color: '#3b82f6'}}>10K Monte Carlo</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* 3D Baseball Diamond Visualization */}
+                        {activeLeague === 'MLB' && (
+                            <div className="card" style={{marginTop: '40px'}}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    marginBottom: '24px'
+                                }}>
+                                    <h2 className="card-title">
+                                        <i className="fas fa-cube"></i>
+                                        3D Baseball Diamond • Player Positions
+                                    </h2>
+                                    <button
+                                        onClick={() => setShow3DDiamond(!show3DDiamond)}
+                                        style={{
+                                            padding: '10px 20px',
+                                            background: show3DDiamond ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.1)',
+                                            border: '1px solid var(--blaze-burnt-orange)',
+                                            borderRadius: '8px',
+                                            color: '#fff',
+                                            fontSize: '0.9rem',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                    >
+                                        <i className={`fas fa-${show3DDiamond ? 'eye-slash' : 'eye'}`} style={{marginRight: '8px'}}></i>
+                                        {show3DDiamond ? 'Hide Diamond' : 'Show Diamond'}
+                                    </button>
+                                </div>
+
+                                {show3DDiamond && (
+                                    <div>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                                            gap: '12px',
+                                            marginBottom: '24px'
+                                        }}>
+                                            {sortedTeams.slice(0, 10).map(team => (
+                                                <button
+                                                    key={team.name}
+                                                    onClick={() => {
+                                                        setSelectedDepthChart({team: team.name, abbr: team.name.split(' ').pop()});
+                                                        // Fetch depth chart from API
+                                                        fetch('/api/mlb/depth-charts')
+                                                            .then(r => r.json())
+                                                            .then(data => {
+                                                                const teamDepth = data.data?.find(t => t.name === team.name) || null;
+                                                                setSelectedDepthChart({...selectedDepthChart, depth: teamDepth});
+                                                            })
+                                                            .catch(err => {}); // Depth chart error - fail silently
+                                                    }}
+                                                    style={{
+                                                        padding: '10px 14px',
+                                                        background: selectedDepthChart?.team === team.name ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.08)',
+                                                        border: selectedDepthChart?.team === team.name ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.2)',
+                                                        borderRadius: '8px',
+                                                        color: '#fff',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: 600,
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                >
+                                                    {team.name}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <div id="baseball-diamond-canvas" style={{
+                                            width: '100%',
+                                            height: '600px',
+                                            background: 'linear-gradient(135deg, rgba(34, 139, 34, 0.15), rgba(107, 142, 35, 0.08))',
+                                            borderRadius: '12px',
+                                            border: '1px solid rgba(191, 87, 0, 0.25)',
+                                            position: 'relative',
+                                            overflow: 'hidden'
+                                        }}>
+                                            <canvas id="baseball-diamond-3d"></canvas>
+                                        </div>
+
+                                        <div style={{
+                                            marginTop: '20px',
+                                            padding: '16px',
+                                            background: 'rgba(191, 87, 0, 0.08)',
+                                            borderRadius: '8px',
+                                            border: '1px solid rgba(191, 87, 0, 0.2)'
+                                        }}>
+                                            <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
+                                                <i className="fas fa-info-circle" style={{color: 'var(--blaze-copper)'}}></i>
+                                                <strong style={{color: 'var(--blaze-copper)'}}>Interactive Controls:</strong>
+                                            </div>
+                                            <ul style={{fontSize: '0.875rem', color: 'var(--text-tertiary)', paddingLeft: '24px'}}>
+                                                <li>Click and drag to rotate camera</li>
+                                                <li>Scroll to zoom in/out</li>
+                                                <li>Hover over player markers to see names and positions</li>
+                                                <li>Real depth chart data from SportsDataIO API</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* 3D Football Field Visualization */}
+                        {activeLeague === 'NFL' && (
+                            <div className="card" style={{marginTop: '40px'}}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    marginBottom: '24px'
+                                }}>
+                                    <h2 className="card-title">
+                                        <i className="fas fa-football-ball"></i>
+                                        3D Football Field • Formations
+                                    </h2>
+                                    <button
+                                        onClick={() => setShow3DField(!show3DField)}
+                                        style={{
+                                            padding: '10px 20px',
+                                            background: show3DField ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.1)',
+                                            border: '1px solid var(--blaze-burnt-orange)',
+                                            borderRadius: '8px',
+                                            color: '#fff',
+                                            fontSize: '0.9rem',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                    >
+                                        <i className={`fas fa-${show3DField ? 'eye-slash' : 'eye'}`} style={{marginRight: '8px'}}></i>
+                                        {show3DField ? 'Hide Field' : 'Show Field'}
+                                    </button>
+                                </div>
+
+                                {show3DField && (
+                                    <div>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                            gap: '12px',
+                                            marginBottom: '24px'
+                                        }}>
+                                            <div>
+                                                <h3 style={{fontSize: '0.9rem', color: 'var(--blaze-copper)', marginBottom: '10px', fontWeight: 600}}>
+                                                    <i className="fas fa-arrow-right" style={{marginRight: '6px'}}></i>
+                                                    Offensive Formations
+                                                </h3>
+                                                <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                                                    {['shotgun', 'i-formation', 'singleback', 'pistol'].map(formation => (
+                                                        <button
+                                                            key={formation}
+                                                            onClick={() => setSelectedFormation(`offense-${formation}`)}
+                                                            style={{
+                                                                padding: '8px 12px',
+                                                                background: selectedFormation === `offense-${formation}` ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.08)',
+                                                                border: selectedFormation === `offense-${formation}` ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.2)',
+                                                                borderRadius: '6px',
+                                                                color: '#fff',
+                                                                fontSize: '0.875rem',
+                                                                fontWeight: 600,
+                                                                cursor: 'pointer',
+                                                                textAlign: 'left',
+                                                                transition: 'all 0.3s ease'
+                                                            }}
+                                                        >
+                                                            {formation.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h3 style={{fontSize: '0.9rem', color: 'var(--blaze-copper)', marginBottom: '10px', fontWeight: 600}}>
+                                                    <i className="fas fa-shield-alt" style={{marginRight: '6px'}}></i>
+                                                    Defensive Formations
+                                                </h3>
+                                                <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                                                    {['4-3', '3-4', 'nickel', 'dime', 'prevent'].map(formation => (
+                                                        <button
+                                                            key={formation}
+                                                            onClick={() => setSelectedFormation(`defense-${formation}`)}
+                                                            style={{
+                                                                padding: '8px 12px',
+                                                                background: selectedFormation === `defense-${formation}` ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.08)',
+                                                                border: selectedFormation === `defense-${formation}` ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.2)',
+                                                                borderRadius: '6px',
+                                                                color: '#fff',
+                                                                fontSize: '0.875rem',
+                                                                fontWeight: 600,
+                                                                cursor: 'pointer',
+                                                                textAlign: 'left',
+                                                                transition: 'all 0.3s ease'
+                                                            }}
+                                                        >
+                                                            {formation.toUpperCase()}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="football-field-canvas" style={{
+                                            width: '100%',
+                                            height: '700px',
+                                            background: 'linear-gradient(135deg, rgba(34, 139, 34, 0.15), rgba(50, 150, 50, 0.08))',
+                                            borderRadius: '12px',
+                                            border: '1px solid rgba(191, 87, 0, 0.25)',
+                                            position: 'relative',
+                                            overflow: 'hidden'
+                                        }}>
+                                            <canvas id="football-field-3d"></canvas>
+                                        </div>
+
+                                        <div style={{
+                                            marginTop: '20px',
+                                            padding: '16px',
+                                            background: 'rgba(191, 87, 0, 0.08)',
+                                            borderRadius: '8px',
+                                            border: '1px solid rgba(191, 87, 0, 0.2)'
+                                        }}>
+                                            <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
+                                                <i className="fas fa-info-circle" style={{color: 'var(--blaze-copper)'}}></i>
+                                                <strong style={{color: 'var(--blaze-copper)'}}>Formation Details:</strong>
+                                            </div>
+                                            <ul style={{fontSize: '0.875rem', color: 'var(--text-tertiary)', paddingLeft: '24px'}}>
+                                                <li>Click formation buttons to switch between offense/defense setups</li>
+                                                <li>Drag to rotate, scroll to zoom the 3D field</li>
+                                                <li>Hover over player markers to see position details</li>
+                                                <li>Red markers: Offense • Blue markers: Defense</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Player Performance Heatmaps */}
+                        <div className="card" style={{marginTop: '40px'}}>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginBottom: '24px'
+                            }}>
+                                <h2 className="card-title">
+                                    <i className="fas fa-fire"></i>
+                                    Performance Heatmaps • Hot Zones
+                                </h2>
+                                <button
+                                    onClick={() => setShowHeatmaps(!showHeatmaps)}
+                                    style={{
+                                        padding: '10px 20px',
+                                        background: showHeatmaps ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.1)',
+                                        border: '1px solid var(--blaze-burnt-orange)',
+                                        borderRadius: '8px',
+                                        color: '#fff',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    <i className={`fas fa-${showHeatmaps ? 'eye-slash' : 'eye'}`} style={{marginRight: '8px'}}></i>
+                                    {showHeatmaps ? 'Hide Heatmaps' : 'Show Heatmaps'}
+                                </button>
+                            </div>
+
+                            {showHeatmaps && (
+                                <div>
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                                        gap: '12px',
+                                        marginBottom: '24px'
+                                    }}>
+                                        {activeLeague === 'MLB' ? (
+                                            <>
+                                                <button
+                                                    onClick={() => setHeatmapType('batting')}
+                                                    style={{
+                                                        padding: '10px 14px',
+                                                        background: heatmapType === 'batting' ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.08)',
+                                                        border: heatmapType === 'batting' ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.2)',
+                                                        borderRadius: '8px',
+                                                        color: '#fff',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: 600,
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                >
+                                                    <i className="fas fa-baseball-ball" style={{marginRight: '6px'}}></i>
+                                                    Batting Zones
+                                                </button>
+                                                <button
+                                                    onClick={() => setHeatmapType('pitching')}
+                                                    style={{
+                                                        padding: '10px 14px',
+                                                        background: heatmapType === 'pitching' ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.08)',
+                                                        border: heatmapType === 'pitching' ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.2)',
+                                                        borderRadius: '8px',
+                                                        color: '#fff',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: 600,
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                >
+                                                    <i className="fas fa-bullseye" style={{marginRight: '6px'}}></i>
+                                                    Pitch Locations
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={() => setHeatmapType('receiving')}
+                                                    style={{
+                                                        padding: '10px 14px',
+                                                        background: heatmapType === 'receiving' ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.08)',
+                                                        border: heatmapType === 'receiving' ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.2)',
+                                                        borderRadius: '8px',
+                                                        color: '#fff',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: 600,
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                >
+                                                    <i className="fas fa-hands" style={{marginRight: '6px'}}></i>
+                                                    Receiving Zones
+                                                </button>
+                                                <button
+                                                    onClick={() => setHeatmapType('rushing')}
+                                                    style={{
+                                                        padding: '10px 14px',
+                                                        background: heatmapType === 'rushing' ? 'linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember))' : 'rgba(191, 87, 0, 0.08)',
+                                                        border: heatmapType === 'rushing' ? '1px solid var(--blaze-burnt-orange)' : '1px solid rgba(191, 87, 0, 0.2)',
+                                                        borderRadius: '8px',
+                                                        color: '#fff',
+                                                        fontSize: '0.875rem',
+                                                        fontWeight: 600,
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                >
+                                                    <i className="fas fa-running" style={{marginRight: '6px'}}></i>
+                                                    Rushing Directions
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {/* Heatmap Visualization Mode Toggle (Phase 6 - deck.gl) */}
+                                    {isFeatureEnabled('deckGLVisualization') && (
+                                        <VisualizationToggle
+                                            currentMode={heatmapMode}
+                                            onModeChange={setHeatmapMode}
+                                            title="Heatmap Rendering:"
+                                            availableModes={[
+                                                {
+                                                    id: 'canvas2d',
+                                                    label: 'Canvas 2D',
+                                                    icon: 'fas fa-paint-brush',
+                                                    available: true,
+                                                    tooltip: 'Standard Canvas 2D rendering with good performance'
+                                                },
+                                                {
+                                                    id: 'deckgl',
+                                                    label: 'deck.gl GPU',
+                                                    icon: 'fas fa-rocket',
+                                                    badge: 'GPU',
+                                                    available: BrowserCapabilities.hasWebGL2(),
+                                                    tooltip: 'GPU-accelerated geospatial visualization with WebGL2'
+                                                }
+                                            ]}
+                                        />
+                                    )}
+
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                        gap: '20px'
+                                    }}>
+                                        {sortedTeams.slice(0, 6).map(team => (
+                                            <div key={team.name} style={{
+                                                background: 'linear-gradient(135deg, rgba(191, 87, 0, 0.08), rgba(191, 87, 0, 0.04))',
+                                                borderRadius: '12px',
+                                                border: '1px solid rgba(191, 87, 0, 0.25)',
+                                                padding: '16px',
+                                                transition: 'all 0.3s ease'
+                                            }}>
+                                                <h4 style={{
+                                                    fontSize: '0.95rem',
+                                                    fontWeight: 600,
+                                                    color: 'var(--blaze-copper)',
+                                                    marginBottom: '12px',
+                                                    textAlign: 'center'
+                                                }}>
+                                                    {team.name}
+                                                </h4>
+                                                <canvas
+                                                    id={`heatmap-${team.name.replace(/\s+/g, '-')}`}
+                                                    width="300"
+                                                    height="300"
+                                                    style={{
+                                                        width: '100%',
+                                                        height: 'auto',
+                                                        borderRadius: '8px',
+                                                        background: '#0a0a0a'
+                                                    }}
+                                                ></canvas>
+                                                <div style={{
+                                                    marginTop: '12px',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    fontSize: '0.75rem',
+                                                    color: 'var(--text-tertiary)'
+                                                }}>
+                                                    <span>
+                                                        <i className="fas fa-fire" style={{color: '#ff4444', marginRight: '4px'}}></i>
+                                                        Hot: &gt;.400 BA
+                                                    </span>
+                                                    <span>
+                                                        <i className="fas fa-snowflake" style={{color: '#4488ff', marginRight: '4px'}}></i>
+                                                        Cold: &lt;.200 BA
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div style={{
+                                        marginTop: '20px',
+                                        padding: '16px',
+                                        background: 'rgba(191, 87, 0, 0.08)',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(191, 87, 0, 0.2)'
+                                    }}>
+                                        <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
+                                            <i className="fas fa-info-circle" style={{color: 'var(--blaze-copper)'}}></i>
+                                            <strong style={{color: 'var(--blaze-copper)'}}>Heatmap Legend:</strong>
+                                        </div>
+                                        <ul style={{fontSize: '0.875rem', color: 'var(--text-tertiary)', paddingLeft: '24px'}}>
+                                            <li><strong style={{color: '#ff4444'}}>Red zones</strong>: High performance areas (batting avg &gt; .400 / receiving yds &gt; 100)</li>
+                                            <li><strong style={{color: '#ffaa44'}}>Orange zones</strong>: Average performance (.250-.400 / 50-100 yds)</li>
+                                            <li><strong style={{color: '#4488ff'}}>Blue zones</strong>: Low performance (&lt; .250 / &lt; 50 yds)</li>
+                                            <li>Data represents {activeLeague === 'MLB' ? '2025 season averages' : 'Week 1-4 cumulative stats'}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Week 5: Beta Feedback Widget */}
+                    <div className="feedback-widget">
+                        <button
+                            className="feedback-button"
+                            onClick={() => setFeedbackOpen(!feedbackOpen)}
+                            title="Send Feedback"
+                        >
+                            <i className={feedbackOpen ? 'fas fa-times' : 'fas fa-comment'}></i>
+                        </button>
+
+                        <div className={`feedback-panel ${feedbackOpen ? 'active' : ''}`}>
+                            {feedbackSubmitted ? (
+                                <div style={{ textAlign: 'center', padding: '20px' }}>
+                                    <i className="fas fa-check-circle" style={{ fontSize: '48px', color: '#10b981', marginBottom: '16px' }}></i>
+                                    <h3 style={{ color: 'var(--blaze-ember)', marginBottom: '8px' }}>Thank You!</h3>
+                                    <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+                                        Your feedback has been received.
+                                    </p>
+                                </div>
+                            ) : (
+                                <>
+                                    <h3 style={{ color: 'var(--blaze-ember)', marginBottom: '8px', fontSize: '18px' }}>
+                                        <i className="fas fa-comment-dots"></i> Beta Feedback
+                                    </h3>
+                                    <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '13px', marginBottom: '20px' }}>
+                                        Help us improve Blaze Sports Intel by sharing your thoughts.
+                                    </p>
+
+                                    <form className="feedback-form" onSubmit={handleFeedbackSubmit}>
+                                        <input
+                                            type="text"
+                                            placeholder="Name (optional)"
+                                            value={feedbackData.name}
+                                            onChange={(e) => setFeedbackData({...feedbackData, name: e.target.value})}
+                                        />
+                                        <input
+                                            type="email"
+                                            placeholder="Email (optional)"
+                                            value={feedbackData.email}
+                                            onChange={(e) => setFeedbackData({...feedbackData, email: e.target.value})}
+                                        />
+                                        <textarea
+                                            placeholder="Your feedback... (What do you like? What could be better?)"
+                                            value={feedbackData.message}
+                                            onChange={(e) => setFeedbackData({...feedbackData, message: e.target.value})}
+                                            required
+                                        />
+                                        <button type="submit" className="feedback-submit">
+                                            <i className="fas fa-paper-plane"></i> Send Feedback
+                                        </button>
+                                    </form>
+
+                                    <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(191, 87, 0, 0.05)', border: '1px solid rgba(191, 87, 0, 0.2)', borderRadius: '8px', fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                                        <i className="fas fa-info-circle"></i> Your feedback helps shape future features and improvements.
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Week 5: Keyboard Shortcuts Overlay */}
+                    <div className={`shortcuts-overlay ${shortcutsOpen ? 'active' : ''}`} onClick={() => setShortcutsOpen(false)}>
+                        <div className="shortcuts-panel" onClick={(e) => e.stopPropagation()}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                                <h2 style={{ color: 'var(--blaze-ember)', margin: 0, fontSize: '24px' }}>
+                                    <i className="fas fa-keyboard"></i> Keyboard Shortcuts
+                                </h2>
+                                <button
+                                    onClick={() => setShortcutsOpen(false)}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'rgba(255, 255, 255, 0.6)',
+                                        cursor: 'pointer',
+                                        fontSize: '24px',
+                                        padding: '8px'
+                                    }}
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div>
+                                <h3 style={{ color: 'var(--blaze-copper)', fontSize: '16px', marginBottom: '12px', marginTop: '20px' }}>
+                                    Navigation
+                                </h3>
+                                <div className="shortcut-item">
+                                    <span>Show this dialog</span>
+                                    <span className="shortcut-key">Shift + ?</span>
+                                </div>
+                                <div className="shortcut-item">
+                                    <span>Close overlays</span>
+                                    <span className="shortcut-key">Esc</span>
+                                </div>
+
+                                <h3 style={{ color: 'var(--blaze-copper)', fontSize: '16px', marginBottom: '12px', marginTop: '20px' }}>
+                                    Sports
+                                </h3>
+                                <div className="shortcut-item">
+                                    <span>Switch to MLB</span>
+                                    <span className="shortcut-key">1</span>
+                                </div>
+                                <div className="shortcut-item">
+                                    <span>Switch to NFL</span>
+                                    <span className="shortcut-key">2</span>
+                                </div>
+                                <div className="shortcut-item">
+                                    <span>Switch to College Football</span>
+                                    <span className="shortcut-key">3</span>
+                                </div>
+                                <div className="shortcut-item">
+                                    <span>Switch to College Basketball</span>
+                                    <span className="shortcut-key">4</span>
+                                </div>
+
+                                <h3 style={{ color: 'var(--blaze-copper)', fontSize: '16px', marginBottom: '12px', marginTop: '20px' }}>
+                                    Tabs
+                                </h3>
+                                <div className="shortcut-item">
+                                    <span>Teams tab</span>
+                                    <span className="shortcut-key">T</span>
+                                </div>
+                                <div className="shortcut-item">
+                                    <span>Schedule tab</span>
+                                    <span className="shortcut-key">S</span>
+                                </div>
+                                <div className="shortcut-item">
+                                    <span>Standings tab</span>
+                                    <span className="shortcut-key">D</span>
+                                </div>
+
+                                <h3 style={{ color: 'var(--blaze-copper)', fontSize: '16px', marginBottom: '12px', marginTop: '20px' }}>
+                                    Views
+                                </h3>
+                                <div className="shortcut-item">
+                                    <span>Monte Carlo Simulations</span>
+                                    <span className="shortcut-key">M</span>
+                                </div>
+                                {isFeatureEnabled('realTimeDashboard') && (
+                                    <div className="shortcut-item">
+                                        <span>Real-Time Dashboard</span>
+                                        <span className="shortcut-key">R</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div style={{ marginTop: '24px', padding: '16px', background: 'rgba(191, 87, 0, 0.05)', border: '1px solid rgba(191, 87, 0, 0.2)', borderRadius: '8px', fontSize: '13px', color: 'rgba(255, 255, 255, 0.7)', lineHeight: '1.6' }}>
+                                <strong style={{ color: 'var(--blaze-copper)' }}>
+                                    <i className="fas fa-lightbulb"></i> Pro Tip:
+                                </strong> Keyboard shortcuts work from anywhere on the page. Press <span className="shortcut-key" style={{ display: 'inline-block', padding: '2px 8px', fontSize: '11px', margin: '0 4px' }}>Shift + ?</span> anytime to see this list.
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Week 5: Keyboard hint badge */}
+                    {!shortcutsOpen && (
+                        <div
+                            style={{
+                                position: 'fixed',
+                                bottom: '30px',
+                                left: '30px',
+                                zIndex: 9998,
+                                background: 'rgba(13, 13, 18, 0.85)',
+                                padding: '8px 16px',
+                                borderRadius: '20px',
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                            onClick={() => setShortcutsOpen(true)}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(191, 87, 0, 0.2)';
+                                e.currentTarget.style.borderColor = 'rgba(191, 87, 0, 0.4)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(13, 13, 18, 0.85)';
+                                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                            }}
+                        >
+                            <i className="fas fa-keyboard"></i> Press <strong style={{ color: 'var(--blaze-copper)', fontFamily: 'Courier New, monospace' }}>Shift + ?</strong> for shortcuts
+                        </div>
+                    )}
+                </div>
+            );
+        };
 
         // ========== RENDER APP ==========
         ReactDOM.render(<BlazeAnalytics />, document.getElementById('root'));

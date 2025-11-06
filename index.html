@@ -25,6 +25,14 @@
     <meta name="theme-color" content="#BF5700">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Blaze Sports">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-192x192.png">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://blazesportsintel.com/">
@@ -1195,81 +1203,6 @@
         </div>
     </section>
 
-    <!-- Component Library -->
-    <section class="sports-section" style="background: linear-gradient(180deg, var(--dark-graphite) 0%, var(--dark-slate) 100%);">
-        <div class="section-container">
-            <div class="section-header" data-aos="fade-up">
-                <div class="section-badge">Component Library</div>
-                <h2 class="section-title">UI Components</h2>
-                <p class="section-subtitle">
-                    Production-ready components with design tokens, CSS modules, and accessibility standards.
-                </p>
-            </div>
-
-            <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
-                <a href="/components/Button.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">🔘</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Button</h3>
-                    <p class="sport-status">Primary, Secondary, Variants</p>
-                </a>
-
-                <a href="/components/Card.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">🃏</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Card</h3>
-                    <p class="sport-status">Glass Morphism, Borders</p>
-                </a>
-
-                <a href="/components/KPIWidget.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">📈</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">KPI Widget</h3>
-                    <p class="sport-status">Metrics, Trends, Sparklines</p>
-                </a>
-
-                <a href="/components/DataStamp.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">🕐</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Data Stamp</h3>
-                    <p class="sport-status">Freshness Indicators</p>
-                </a>
-
-                <a href="/components/LoadingSpinner.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">⏳</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Loading States</h3>
-                    <p class="sport-status">Spinners, Skeletons, Progress</p>
-                </a>
-
-                <a href="/components/ErrorBoundary.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">⚠️</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Error Handling</h3>
-                    <p class="sport-status">Boundaries, Messages, Recovery</p>
-                </a>
-
-                <a href="/components/Toast.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">📬</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Toast</h3>
-                    <p class="sport-status">Notifications, Alerts</p>
-                </a>
-
-                <a href="/components/Modal.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">🪟</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Modal</h3>
-                    <p class="sport-status">Dialogs, Overlays</p>
-                </a>
-
-                <a href="/components/Dropdown.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">📋</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Dropdown</h3>
-                    <p class="sport-status">Menus, Select, Multi-select</p>
-                </a>
-
-                <a href="/components/Tabs.html" class="sport-card" data-aos="zoom-in">
-                    <div class="sport-icon" style="font-size: 2.5rem;">📑</div>
-                    <h3 class="sport-name" style="font-size: 1.3rem;">Tabs</h3>
-                    <p class="sport-status">Navigation, Content Switching</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
@@ -1507,6 +1440,93 @@
             document.addEventListener('DOMContentLoaded', initParticleSystem);
         } else {
             initParticleSystem();
+        }
+    </script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('[PWA] Service Worker registered successfully:', registration.scope);
+
+                        // Check for updates every hour
+                        setInterval(() => {
+                            registration.update();
+                        }, 60 * 60 * 1000);
+
+                        // Handle updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New service worker available, show update prompt
+                                    if (confirm('New version available! Reload to update?')) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('[PWA] Service Worker registration failed:', error);
+                    });
+
+                // Handle controller change (when new SW takes over)
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    console.log('[PWA] New Service Worker activated');
+                });
+            });
+
+            // Listen for messages from service worker
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data.type === 'CACHE_UPDATED') {
+                    console.log('[PWA] Cache updated:', event.data.url);
+                }
+            });
+
+            // Handle offline/online status
+            window.addEventListener('online', () => {
+                console.log('[PWA] Back online');
+                document.body.classList.remove('offline');
+            });
+
+            window.addEventListener('offline', () => {
+                console.log('[PWA] Gone offline');
+                document.body.classList.add('offline');
+            });
+
+            // Install prompt for PWA
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                console.log('[PWA] Install prompt available');
+
+                // Show custom install button if you have one
+                const installButton = document.getElementById('pwa-install-button');
+                if (installButton) {
+                    installButton.style.display = 'block';
+                    installButton.addEventListener('click', async () => {
+                        if (deferredPrompt) {
+                            deferredPrompt.prompt();
+                            const { outcome } = await deferredPrompt.userChoice;
+                            console.log('[PWA] Install prompt outcome:', outcome);
+                            deferredPrompt = null;
+                            installButton.style.display = 'none';
+                        }
+                    });
+                }
+            });
+
+            // Track if app was installed
+            window.addEventListener('appinstalled', () => {
+                console.log('[PWA] App installed successfully');
+                deferredPrompt = null;
+            });
         }
     </script>
 </body>

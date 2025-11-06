@@ -98,15 +98,6 @@ const ErrorHandler = {
     logError(error, context = {}) {
         const errorDetails = this.getErrorDetails(error);
 
-        // Log to console in development
-        if (process.env.NODE_ENV !== 'production') {
-            console.error('[Error Handler]', {
-                ...errorDetails,
-                context,
-                stack: error.stack
-            });
-        }
-
         // Send to analytics/monitoring service
         if (typeof window !== 'undefined') {
             // Send to Analytics Engine (if available)

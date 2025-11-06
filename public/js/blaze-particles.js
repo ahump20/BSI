@@ -87,7 +87,6 @@ class BlazeParticleSystem {
   async init() {
     // Don't initialize if reduced motion is preferred
     if (this.reducedMotion) {
-      console.log('[Blaze Particles] Reduced motion detected - particles disabled');
       return;
     }
 
@@ -98,10 +97,8 @@ class BlazeParticleSystem {
     this.useWebGPU = await this.detectWebGPU();
 
     if (this.useWebGPU) {
-      console.log('[Blaze Particles] WebGPU detected - using compute shaders');
       await this.initWebGPU();
     } else {
-      console.log('[Blaze Particles] Using Canvas 2D fallback');
       this.initCanvas2D();
     }
 
@@ -110,8 +107,6 @@ class BlazeParticleSystem {
 
     // Start animation loop
     this.start();
-
-    console.log(`[Blaze Particles] Initialized with ${this.particleCount} particles`);
   }
 
   createCanvas() {
@@ -189,7 +184,6 @@ class BlazeParticleSystem {
 
       return true;
     } catch (error) {
-      console.warn('[Blaze Particles] WebGPU not available:', error);
       return false;
     }
   }
@@ -202,7 +196,6 @@ class BlazeParticleSystem {
     // WebGPU compute shader for particle physics
     // This would require extensive WGSL shader code
     // For now, fallback to Canvas 2D for compatibility
-    console.warn('[Blaze Particles] WebGPU compute shaders not yet implemented - using Canvas 2D');
     this.useWebGPU = false;
     this.initCanvas2D();
   }
@@ -428,8 +421,6 @@ class BlazeParticleSystem {
       this.currentTier++;
       const tier = this.qualityTiers[this.currentTier];
 
-      console.log(`[Blaze Particles] FPS low (${this.fps}) - reducing to ${tier.name} quality`);
-
       // Reduce particle count
       this.particleCount = tier.particles;
       this.repulsionRadius = tier.repulsionRadius;
@@ -448,8 +439,6 @@ class BlazeParticleSystem {
       } else if (performance.now() - this.highFpsStartTime > 10000) {
         this.currentTier--;
         const tier = this.qualityTiers[this.currentTier];
-
-        console.log(`[Blaze Particles] FPS high (${this.fps}) - increasing to ${tier.name} quality`);
 
         // Add more particles (use stored dimensions)
         const newCount = tier.particles;
@@ -490,7 +479,6 @@ class BlazeParticleSystem {
 
   setParticleCount(count) {
     if (count < 1000 || count > 200000) {
-      console.warn('[Blaze Particles] Particle count must be between 1,000 and 200,000');
       return;
     }
 
@@ -500,7 +488,6 @@ class BlazeParticleSystem {
 
   setRepulsionRadius(radius) {
     if (radius < 50 || radius > 300) {
-      console.warn('[Blaze Particles] Repulsion radius must be between 50 and 300');
       return;
     }
 
@@ -509,7 +496,6 @@ class BlazeParticleSystem {
 
   setRepulsionStrength(strength) {
     if (strength < 0 || strength > 2) {
-      console.warn('[Blaze Particles] Repulsion strength must be between 0 and 2');
       return;
     }
 
@@ -550,7 +536,6 @@ async function initBlazeParticles() {
   const disableParticles = urlParams.get('particles') === 'false';
 
   if (disableParticles) {
-    console.log('[Blaze Particles] Disabled via URL parameter');
     return;
   }
 
@@ -558,10 +543,6 @@ async function initBlazeParticles() {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const hasLowMemory = navigator.deviceMemory && navigator.deviceMemory < 4;
   const hasSaveData = navigator.connection && navigator.connection.saveData;
-
-  if (isMobile && (hasLowMemory || hasSaveData)) {
-    console.log('[Blaze Particles] Low-power device detected - starting with reduced quality');
-  }
 
   // Create and initialize particle system
   blazeParticles = new BlazeParticleSystem();
