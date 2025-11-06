@@ -641,6 +641,12 @@ enum FeedPrecision { EVENT | PITCH }
 
 ---
 
-**Document Version**: 1.1.0
-**Last Updated**: 2025-10-13 22:30 CDT
-**Status**: Active Development - Phase 1 Complete, Phase 2 In Progress
+### 2025-10-17 Update
+
+- Repointed configuration to environment-driven PostgreSQL DSNs with enforced SSL and connection pooling.
+- Landed Alembic baseline migrations for NIL warehouse tables.
+- Replaced local raw storage with S3/R2 client and documented Postgres/object storage bootstrap.
+
+**Document Version**: 1.1.1
+**Last Updated**: 2025-10-17 09:00 CDT
+**Status**: Active Development - Phase 2 Complete, Phase 3 Ready
