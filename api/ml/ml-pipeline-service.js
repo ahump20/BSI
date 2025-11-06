@@ -582,7 +582,7 @@ class MLPipelineService {
                         THEN 1.0 ELSE 0.0 END) AS recent_form,
                     MAX(sg.game_date) AS last_game_date
                 FROM (
-                    SELECT *
+                    SELECT game_id, sport, home_team_id, away_team_id, home_score, away_score, game_date
                     FROM games sg
                     WHERE sg.sport = g.sport
                       AND (sg.home_team_id = g.home_team_id OR sg.away_team_id = g.home_team_id)
@@ -599,7 +599,7 @@ class MLPipelineService {
                         THEN 1.0 ELSE 0.0 END) AS recent_form,
                     MAX(sg.game_date) AS last_game_date
                 FROM (
-                    SELECT *
+                    SELECT game_id, sport, home_team_id, away_team_id, home_score, away_score, game_date
                     FROM games sg
                     WHERE sg.sport = g.sport
                       AND (sg.home_team_id = g.away_team_id OR sg.away_team_id = g.away_team_id)
@@ -2011,7 +2011,7 @@ class SportsFeatureEngineer {
                     ELSE 0.0
                 END) AS win_rate
             FROM (
-                SELECT *
+                SELECT game_id, home_team_id, away_team_id, home_score, away_score, status, game_date
                 FROM games g
                 WHERE (g.home_team_id = $1 OR g.away_team_id = $1)
                   AND g.status = 'completed'

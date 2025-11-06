@@ -5,6 +5,12 @@
  * Multi-tier caching with compression, metrics, and cache warming
  */
 
+import { promisify } from 'util';
+import { gzip, gunzip } from 'zlib';
+
+const gzipAsync = promisify(gzip);
+const gunzipAsync = promisify(gunzip);
+
 class CacheService {
   constructor(env, logger) {
     this.kv = env.CACHE; // Cloudflare KV
@@ -254,42 +260,47 @@ class CacheService {
   }
 
   /**
-   * Memory management
+   * Memory management - Optimized eviction using entries iterator
    */
   evictOldest() {
-    let oldestKey = null;
-    let oldestTime = Date.now();
+    if (this.memoryCache.size === 0) return;
+    
+    // Find the entry with the oldest lastAccessed time
+    const entries = Array.from(this.memoryCache.entries());
+    const oldest = entries.reduce((min, [key, entry]) => {
+      return entry.lastAccessed < min.entry.lastAccessed ? { key, entry } : min;
+    }, { key: entries[0][0], entry: entries[0][1] });
 
-    for (const [key, entry] of this.memoryCache.entries()) {
-      if (entry.lastAccessed < oldestTime) {
-        oldestTime = entry.lastAccessed;
-        oldestKey = key;
-      }
-    }
-
-    if (oldestKey) {
-      this.memoryCache.delete(oldestKey);
-      this.logger?.debug(`Evicted oldest cache entry: ${oldestKey}`);
-    }
+    this.memoryCache.delete(oldest.key);
+    this.logger?.debug(`Evicted oldest cache entry: ${oldest.key}`);
   }
 
   /**
-   * Compression utilities
+   * Compression utilities - using gzip for better compression
    */
   shouldCompress(value) {
     return typeof value === 'string' && value.length > 1024; // Compress if > 1KB
   }
 
   async compress(value) {
-    // Simple compression - in production use gzip
-    return btoa(value);
+    try {
+      const buffer = Buffer.from(value, 'utf-8');
+      const compressed = await gzipAsync(buffer);
+      return compressed.toString('base64');
+    } catch (error) {
+      this.logger?.error('Compression error:', error);
+      return value; // Return uncompressed on error
+    }
   }
 
   async decompress(value) {
     try {
-      return atob(value);
-    } catch {
-      return value; // Return as-is if not compressed
+      const buffer = Buffer.from(value, 'base64');
+      const decompressed = await gunzipAsync(buffer);
+      return decompressed.toString('utf-8');
+    } catch (error) {
+      this.logger?.warn('Decompression error, returning as-is:', error);
+      return value; // Return as-is if not compressed or error
     }
   }
 

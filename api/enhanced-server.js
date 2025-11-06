@@ -64,7 +64,7 @@ class EnhancedAPIServer {
     this.app.get('/api/teams', async (req, res) => {
       try {
         const { sport, league, division } = req.query;
-        let query = 'SELECT * FROM teams';
+        let query = 'SELECT id, sport, team_id, global_team_id, key, city, name, school, conference, division, logo_url, primary_color, secondary_color, active, wins, losses FROM teams';
         let params = [];
         let conditions = [];
 
@@ -106,7 +106,7 @@ class EnhancedAPIServer {
       try {
         const { teamId } = req.params;
         const result = await this.db.query(
-          'SELECT * FROM teams WHERE external_id = $1 OR id = $2',
+          'SELECT id, sport, team_id, global_team_id, key, city, name, school, conference, division, stadium_name, stadium_capacity, logo_url, primary_color, secondary_color, active, wins, losses, conference_wins, conference_losses FROM teams WHERE external_id = $1 OR id = $2',
           [teamId, isNaN(teamId) ? 0 : parseInt(teamId)]
         );
 
@@ -121,7 +121,7 @@ class EnhancedAPIServer {
         
         // Get team analytics if available
         const analyticsResult = await this.db.query(
-          'SELECT * FROM analytics WHERE team_id = $1 ORDER BY created_at DESC LIMIT 1',
+          'SELECT id, team_id, pythagorean_wins, elo_rating, strength_of_schedule, offensive_rating, defensive_rating, created_at FROM analytics WHERE team_id = $1 ORDER BY created_at DESC LIMIT 1',
           [team.id]
         );
 
@@ -205,9 +205,9 @@ class EnhancedAPIServer {
 
         const player = result.rows[0];
         
-        // Get player stats if available
+        // Get player stats if available - selecting specific columns
         const statsResult = await this.db.query(
-          'SELECT * FROM game_stats WHERE player_id = $1 ORDER BY created_at DESC LIMIT 10',
+          'SELECT id, player_id, game_id, points, assists, rebounds, created_at FROM game_stats WHERE player_id = $1 ORDER BY created_at DESC LIMIT 10',
           [player.id]
         );
 
@@ -399,7 +399,7 @@ class EnhancedAPIServer {
         
         // Get team info
         const teamResult = await this.db.query(
-          'SELECT * FROM teams WHERE external_id = $1 OR id = $2',
+          'SELECT id, sport, team_id, key, city, name, school, conference, division FROM teams WHERE external_id = $1 OR id = $2',
           [teamId, isNaN(teamId) ? 0 : parseInt(teamId)]
         );
 
@@ -412,9 +412,9 @@ class EnhancedAPIServer {
 
         const team = teamResult.rows[0];
 
-        // Get analytics data
+        // Get analytics data - selecting specific columns
         const analyticsResult = await this.db.query(
-          'SELECT * FROM analytics WHERE team_id = $1 ORDER BY created_at DESC',
+          'SELECT id, team_id, pythagorean_wins, elo_rating, strength_of_schedule, offensive_rating, defensive_rating, created_at FROM analytics WHERE team_id = $1 ORDER BY created_at DESC',
           [team.id]
         );
 
