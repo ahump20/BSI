@@ -14,9 +14,16 @@
  * - Prepares data for embedding generation
  */
 
-const SPORTSDATA_API_KEY = process.env.SPORTSDATA_API_KEY || '6ca2adb39404482da5406f0a6cd7aa37';
+const SPORTSDATA_API_KEY = process.env.SPORTSDATA_API_KEY;
 const WRANGLER_PATH = process.env.WRANGLER_PATH || '/Users/AustinHumphrey/.npm-global/bin/wrangler';
 const DATABASE_NAME = 'blazesports-db';
+
+// Validate required environment variables
+if (!SPORTSDATA_API_KEY) {
+  console.error('❌ Error: SPORTSDATA_API_KEY environment variable is required');
+  console.error('Usage: SPORTSDATA_API_KEY=xxx node scripts/ingest-live-data.js');
+  process.exit(1);
+}
 
 // Current season years
 const CURRENT_SEASON = {

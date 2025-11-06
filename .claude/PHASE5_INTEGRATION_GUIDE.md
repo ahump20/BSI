@@ -71,7 +71,7 @@ MLB_STATS_API_BASE=https://statsapi.mlb.com/api/v1
 
 # SportsDataIO - requires API key
 # .claude/mcp-servers/sportsdataio/.env
-SPORTSDATA_API_KEY=6ca2adb39404482da5406f0a6cd7aa37
+SPORTSDATA_API_KEY=your_sportsdataio_api_key_here
 SPORTSDATA_BASE_URL=https://api.sportsdata.io/v3
 
 # Perfect Game - requires credentials (contact Perfect Game for access)
@@ -81,7 +81,7 @@ PERFECT_GAME_BASE_URL=https://api.perfectgame.org
 
 # Context7 Research - uses your existing Context7 credentials
 # .claude/mcp-servers/context7-research/.env
-CONTEXT7_API_KEY=ctx7sk-30e11e35-4b11-400c-9674-47d39d05aac5
+CONTEXT7_API_KEY=your_context7_api_key_here
 CONTEXT7_API_URL=context7.com/api/v1
 CONTEXT7_MCP_URL=mcp.context7.com/mcp
 ```
@@ -105,7 +105,7 @@ Edit `~/.claude/claude_desktop_config.json`:
       "command": "node",
       "args": ["/Users/AustinHumphrey/BSI/.claude/mcp-servers/sportsdataio/index.js"],
       "env": {
-        "SPORTSDATA_API_KEY": "6ca2adb39404482da5406f0a6cd7aa37",
+        "SPORTSDATA_API_KEY": "your_sportsdataio_api_key_here",
         "SPORTSDATA_BASE_URL": "https://api.sportsdata.io/v3"
       }
     },
@@ -121,7 +121,7 @@ Edit `~/.claude/claude_desktop_config.json`:
       "command": "node",
       "args": ["/Users/AustinHumphrey/BSI/.claude/mcp-servers/context7-research/index.js"],
       "env": {
-        "CONTEXT7_API_KEY": "ctx7sk-30e11e35-4b11-400c-9674-47d39d05aac5",
+        "CONTEXT7_API_KEY": "your_context7_api_key_here",
         "CONTEXT7_API_URL": "context7.com/api/v1",
         "CONTEXT7_MCP_URL": "mcp.context7.com/mcp"
       }

@@ -384,7 +384,7 @@ Add to `~/.claude/claude_desktop_config.json`:
       "command": "node",
       "args": ["/Users/AustinHumphrey/BSI/.claude/mcp-servers/sportsdataio/index.js"],
       "env": {
-        "SPORTSDATA_API_KEY": "6ca2adb39404482da5406f0a6cd7aa37"
+        "SPORTSDATA_API_KEY": "your_sportsdataio_api_key_here"
       }
     },
     "perfect-game": {
@@ -395,7 +395,7 @@ Add to `~/.claude/claude_desktop_config.json`:
       "command": "node",
       "args": ["/Users/AustinHumphrey/BSI/.claude/mcp-servers/context7-research/index.js"],
       "env": {
-        "CONTEXT7_API_KEY": "ctx7sk-30e11e35-4b11-400c-9674-47d39d05aac5"
+        "CONTEXT7_API_KEY": "your_context7_api_key_here"
       }
     }
   }
