@@ -6,8 +6,11 @@
       "startServerReadyPattern": "ready on",
       "url": [
         "http://localhost:3000/",
-        "http://localhost:3000/games",
-        "http://localhost:3000/games/bbp",
+        "http://localhost:3000/features",
+        "http://localhost:3000/copilot",
+        "http://localhost:3000/data-transparency",
+        "http://localhost:3000/baseball/mlb",
+        "http://localhost:3000/CFP",
         "http://localhost:3000/baseball/ncaab/hub"
       ],
       "settings": {
@@ -25,11 +28,11 @@
       "assertions": {
         "categories:performance": [
           "error",
-          { "minScore": 0.85 }
+          { "minScore": 0.9 }
         ],
         "categories:accessibility": [
           "error",
-          { "minScore": 0.9 }
+          { "minScore": 0.95 }
         ],
         "categories:best-practices": [
           "error",
