@@ -197,25 +197,28 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
         {/* Navigation Links */}
         <div className="bg-gray-900 rounded-lg p-8">
-          <h2 className="text-2xl font-bold mb-4">More Information</h2>
+          <h2 className="text-2xl font-bold mb-4">Advanced Analysis</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href={`/baseball/mlb/players/${params.playerId}/statcast`}
                className="bg-orange-600 hover:bg-orange-700 rounded-lg p-4 text-center font-semibold transition">
-              Statcast Data
+              📊 Statcast Data
             </a>
-            <a href={`/baseball/mlb/players/${params.playerId}/splits`}
+            <a href={`/baseball/mlb/players/${params.playerId}/visualizations`}
                className="bg-orange-600 hover:bg-orange-700 rounded-lg p-4 text-center font-semibold transition">
-              Detailed Splits
-            </a>
-            <a href={`/baseball/mlb/players/${params.playerId}/gamelog`}
-               className="bg-orange-600 hover:bg-orange-700 rounded-lg p-4 text-center font-semibold transition">
-              Game Log
+              📈 Visualizations
             </a>
             <a href={`/baseball/mlb/players/${params.playerId}/scouting`}
                className="bg-orange-600 hover:bg-orange-700 rounded-lg p-4 text-center font-semibold transition">
-              Scouting Report
+              📋 Scouting Report
+            </a>
+            <a href={`/baseball/mlb/compare`}
+               className="bg-orange-600 hover:bg-orange-700 rounded-lg p-4 text-center font-semibold transition">
+              ⚖️ Compare Players
             </a>
           </div>
+          <p className="text-sm text-gray-400 mt-4">
+            Explore spray charts, pitch movement plots, auto-generated scouting reports, and more
+          </p>
         </div>
       </div>
     </div>

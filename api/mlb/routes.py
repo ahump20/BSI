@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Query
 import logging
 
 from api.mlb.client import get_mlb_client
+from api.mlb.scouting import generate_scouting_report
 from api.mlb.schemas import (
     PlayerProfile,
     PlayerBio,
@@ -25,6 +26,7 @@ from api.mlb.schemas import (
     AdvancedMetrics,
     APIResponse,
     ErrorResponse,
+    ScoutingReport,
 )
 
 logger = logging.getLogger(__name__)
@@ -384,6 +386,25 @@ async def get_game_boxscore(game_pk: int):
         batting_stats=boxscore_data.get('teams', {}).get('home', {}).get('teamStats', {}).get('batting'),
         pitching_stats=boxscore_data.get('teams', {}).get('home', {}).get('teamStats', {}).get('pitching')
     )
+
+
+# Scouting Reports
+@router.get("/players/{player_id}/scouting", response_model=Dict[str, Any])
+async def get_scouting_report(
+    player_id: int,
+    season: int = Query(datetime.now().year)
+):
+    """Get auto-generated scouting report for a player."""
+    try:
+        report = generate_scouting_report(player_id, season)
+
+        if "error" in report:
+            raise HTTPException(status_code=404, detail=report["error"])
+
+        return report
+    except Exception as e:
+        logger.error(f"Error generating scouting report: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # Health check

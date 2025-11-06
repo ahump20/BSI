@@ -43,11 +43,11 @@ export default function MLBLandingPage() {
               <p className="text-gray-400 text-sm">League leaders in all major categories</p>
             </a>
 
-            <a href="/baseball/mlb/standings"
+            <a href="/baseball/mlb/compare"
                className="bg-gray-900 hover:bg-gray-800 rounded-lg p-6 transition-all transform hover:scale-105">
-              <div className="text-4xl mb-4">📈</div>
-              <h3 className="text-xl font-bold mb-2">Standings</h3>
-              <p className="text-gray-400 text-sm">Current division and league standings</p>
+              <div className="text-4xl mb-4">⚖️</div>
+              <h3 className="text-xl font-bold mb-2">Compare Players</h3>
+              <p className="text-gray-400 text-sm">Side-by-side statistical comparison</p>
             </a>
           </div>
         </div>
@@ -98,6 +98,50 @@ export default function MLBLandingPage() {
                 <li>• Situational hitting/pitching</li>
                 <li>• Historical comparisons</li>
               </ul>
+            </div>
+          </div>
+
+          {/* Phase 2 Features */}
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold text-center mb-8 text-orange-500">
+              Phase 2: Advanced Visualizations
+            </h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Spray Charts */}
+              <div className="bg-gray-900 rounded-lg p-8">
+                <div className="text-orange-500 text-5xl mb-4">📍</div>
+                <h3 className="text-2xl font-bold mb-4">Spray Charts</h3>
+                <ul className="space-y-3 text-gray-400">
+                  <li>• Visual hit location mapping</li>
+                  <li>• Color-coded by outcome</li>
+                  <li>• Exit velocity indicators</li>
+                  <li>• Field zone heat maps</li>
+                </ul>
+              </div>
+
+              {/* Pitch Movement */}
+              <div className="bg-gray-900 rounded-lg p-8">
+                <div className="text-orange-500 text-5xl mb-4">🎯</div>
+                <h3 className="text-2xl font-bold mb-4">Pitch Movement</h3>
+                <ul className="space-y-3 text-gray-400">
+                  <li>• Horizontal & vertical break plots</li>
+                  <li>• Pitch type comparison</li>
+                  <li>• Velocity distributions</li>
+                  <li>• Spin rate analysis</li>
+                </ul>
+              </div>
+
+              {/* Scouting Reports */}
+              <div className="bg-gray-900 rounded-lg p-8">
+                <div className="text-orange-500 text-5xl mb-4">📋</div>
+                <h3 className="text-2xl font-bold mb-4">Scouting Reports</h3>
+                <ul className="space-y-3 text-gray-400">
+                  <li>• Auto-generated analysis</li>
+                  <li>• 20-80 scouting grades</li>
+                  <li>• Strengths & weaknesses</li>
+                  <li>• Player recommendations</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
