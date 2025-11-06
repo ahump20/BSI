@@ -125,4 +125,8 @@
     <loc>https://blazesportsintel.com/legal/ai-disclosure</loc>
     <changefreq>yearly</changefreq>
   </url>
+  <url>
+    <loc>https://blazesportsintel.com/historicalcomparisons/methodology</loc>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>
