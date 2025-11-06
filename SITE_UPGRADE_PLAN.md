@@ -74,7 +74,7 @@ CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
   - `/betting/value` - AI-identified value bets
   - `/betting/insights` - AI analysis of betting trends
 - **API Integration**:
-  - TheOdds API: `THEODDS_API_KEY=930b17cbb3925fd07d3e2f752ff0f9f6`
+  - TheOdds API: `THEODDS_API_KEY=${THEODDS_API_KEY}`
   - Endpoints: `/v4/sports/{sport}/odds`, `/v4/sports/{sport}/events`
 - **Features**:
   - Real-time odds from 20+ sportsbooks
