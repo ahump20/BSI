@@ -550,7 +550,7 @@
         <!-- Data Source Footer -->
         <div class="data-source" data-aos="fade-up">
             <p>
-                <i class="fas fa-database"></i> Data source: ESPN College Football API<br>
+                <i class="fas fa-database"></i> Data source: College Football Data API (api.collegefootballdata.com)<br>
                 Last updated: <span id="lastUpdated"></span>
             </p>
         </div>
@@ -614,7 +614,9 @@
             gamesGrid.style.display = 'none';
 
             try {
-                const response = await fetch(`/api/football/scores?week=${week}`);
+                // Use CFBD scoreboard API
+                const currentYear = new Date().getFullYear();
+                const response = await fetch(`/api/college-football/scoreboard?year=${currentYear}`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -648,12 +650,17 @@
             gamesGrid.innerHTML = '';
 
             games.forEach(game => {
-                const home = game.teams?.home || {};
-                const away = game.teams?.away || {};
+                // CFBD data structure: homeTeam/awayTeam instead of teams.home/teams.away
+                const home = game.homeTeam || {};
+                const away = game.awayTeam || {};
                 const homeScore = home.score || '0';
                 const awayScore = away.score || '0';
-                const isCompleted = game.status?.completed || false;
-                const statusText = isCompleted ? 'Final' : (game.status?.shortDetail || 'Live');
+                const isCompleted = game.completed || false;
+
+                // Map CFBD status values: 'scheduled' | 'live' | 'final'
+                const statusText = game.status === 'final' ? 'Final' :
+                                  game.status === 'live' ? 'Live' :
+                                  'Scheduled';
 
                 // Determine winner
                 const homeWinner = isCompleted && parseInt(homeScore) > parseInt(awayScore);
@@ -672,8 +679,8 @@
                         <div class="team ${awayWinner ? 'winner' : ''}">
                             <div class="team-info">
                                 ${away.rank ? `<span class="rank">#${away.rank}</span>` : ''}
-                                <span class="team-name">${away.team?.name || 'TBD'}</span>
-                                <span class="team-record">${away.record || '0-0'}</span>
+                                <span class="team-name">${away.name || 'TBD'}</span>
+                                <span class="team-record">${away.record || ''}</span>
                             </div>
                             <span class="team-score">${awayScore}</span>
                         </div>
@@ -681,8 +688,8 @@
                         <div class="team ${homeWinner ? 'winner' : ''}">
                             <div class="team-info">
                                 ${home.rank ? `<span class="rank">#${home.rank}</span>` : ''}
-                                <span class="team-name">${home.team?.name || 'TBD'}</span>
-                                <span class="team-record">${home.record || '0-0'}</span>
+                                <span class="team-name">${home.name || 'TBD'}</span>
+                                <span class="team-record">${home.record || ''}</span>
                             </div>
                             <span class="team-score">${homeScore}</span>
                         </div>
@@ -690,7 +697,7 @@
 
                     <div class="game-meta">
                         <span class="venue">
-                            <i class="fas fa-location-dot"></i> ${game.venue?.name || 'TBD'}
+                            <i class="fas fa-location-dot"></i> ${game.venue || 'TBD'}
                         </span>
                         ${game.broadcast ? `<span class="broadcast">• <i class="fas fa-tv"></i> ${game.broadcast}</span>` : ''}
                     </div>
