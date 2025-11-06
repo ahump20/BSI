@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /workers/
+Sitemap: https://blazesportsintel.com/sitemap.xml

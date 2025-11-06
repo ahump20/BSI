@@ -1,0 +1,41 @@
+route,page_purpose,primary_cta,owner,data_dependencies,status
+"/",Home landing that orients visitors across analytics, copilot, and historical data,"View Analytics",Growth,Workers:live-scores-api; KV:hero-metrics-cache; External:MLB/CFB feeds,Needs refresh per v2 brief
+"/analytics",Overview of analytics products and dashboards,"Explore Dashboards",Product,Workers:dashboards-service; D1:dashboards_catalog,Needs refresh per v2 brief
+"/HistoricalData",Historical Research Engine access,"Browse Historical Data",Data Platform,D1:historical_games; KV:coverage-matrix-cache,In production
+"/historicalcomparisons",Comparative dataset explorer,"Compare Seasons",Data Platform,D1:historical_comparisons; KV:query-cache,Needs rebuild for filters
+"/features",Product/plan overview with differentiation,"Start Trial",Product,Github content; Workers:pricing-service,Scheduled for rewrite
+"/copilot",AI assistant entry point,"Launch Copilot",Applied AI,Workers:copilot-router; External:OpenAI/Gemini/Claude; KV:prompt-cache,Needs UX upgrade
+"/copilot/endpoints",API reference for Copilot endpoints,"Open API Docs",Applied AI,Workers:copilot-router; GitHub:openapi.json,Operational
+"/about",Company story and leadership,"Meet the Team",Operations,None (static),Current
+"/contact",Contact and sales handoff,"Book a Call",Growth,Workers:contact-form-handler; External:Calendly,Needs Calendly embed
+"/data-transparency",Source of truth for feeds & governance,"View Source Catalog",Data Governance,Workers:data-status-service; KV:status-cache,Needs per-sport cards
+"/features/dashboards",Dashboards marketing hub,"View Live Dashboards",Product,Workers:dashboards-service,Planned (stub)
+"/live/scores",Real-time live scoreboard,"Open Live Scores",Live Ops,Workers:live-scores-api; SSE channel,Operational
+"/live/standings",Real-time standings,"See Standings",Live Ops,Workers:standings-api; KV:standings-cache,Operational
+"/dashboards/championship",Championship analytics dashboard,"Open Championship Dashboard",Product,Workers:dashboards-service; D1:championship_metrics,Operational
+"/dashboards/manager",Team manager workflow dashboard,"Open Manager",Product,Workers:dashboards-service; KV:manager-cache,Needs UI unification
+"/predictions/analytics-engine",Predictive models overview,"View Predictions",Research,Workers:predictions-service; External:model registry,Needs perf tuning
+"/analytics-api-integrated",Legacy analytics landing,"Contact Sales",Legacy,Workers:legacy-api-proxy,Consolidate into /analytics
+"/historicalcomparisons/methodology",Methodology and sourcing,"Read Methodology",Data Governance,Static markdown,Current
+"/mlb",MLB sport hub,"Open MLB Hub",Sports Intelligence,Workers:mlb-feed; D1:mlb_games; KV:mlb-insights,Needs hero refresh
+"/nfl",NFL sport hub,"Open NFL Hub",Sports Intelligence,Workers:nfl-feed; D1:nfl_games; KV:nfl-insights,Needs hero refresh
+"/cfb",College football hub,"Open CFB Hub",Sports Intelligence,Workers:cfb-feed; D1:cfb_games; KV:cfb-insights,Needs hero refresh
+"/cbb",College basketball hub,"Open CBB Hub",Sports Intelligence,Workers:cbb-feed; D1:cbb_games; KV:cbb-insights,Needs hero refresh
+"/college-baseball",College baseball overview,"Explore College Baseball",College Baseball Pod,Workers:college-baseball-feed; D1:college_baseball_games,Current
+"/college-baseball/games",Game listings,"View Games",College Baseball Pod,D1:college_baseball_games; KV:games-cache,Needs live module
+"/college-baseball/standings",Standings view,"See Standings",College Baseball Pod,D1:college_baseball_standings; KV:standings-cache,Operational
+"/college-baseball/teams",Team index,"Explore Teams",College Baseball Pod,D1:college_baseball_teams,Needs cards refresh
+"/college-baseball/players",Player index,"Explore Players",College Baseball Pod,D1:college_baseball_players,Needs filters
+"/college-baseball/scouting",Scouting intel,"Request Scouting Report",College Baseball Pod,D1:scouting_reports; Workers:report-request,Needs CTA wiring
+"/privacy",Legacy privacy policy,"Read Privacy Policy",Legal,Static html,Redirect to /legal/privacy
+"/cookies",Legacy cookies policy,"Read Cookies Policy",Legal,Static html,Redirect to /legal/cookies
+"/terms",Legacy terms route,"Read Terms",Legal,Static html,Redirect to /legal/terms
+"/legal/privacy",Canonical privacy policy,"Read Privacy Policy",Legal,Static html,Current
+"/legal/cookies",Canonical cookies policy,"Read Cookies Policy",Legal,Static html,Current
+"/legal/terms",Canonical terms of service,"Read Terms",Legal,Static html,Current
+"/legal/accessibility",Accessibility statement,"Read Accessibility",Legal,Static html,Needs update for WCAG 2.2
+"/legal/copyright",Copyright statement,"Read Copyright",Legal,Static html,Needs update
+"/legal/ai-disclosure",AI disclosure policy,"Read AI Disclosure",Legal,Static html,Current
+"/historicalcomparisons/faq",FAQ for historical comparisons,"Read FAQ",Support,Static html,Planned (stub)
+"/robots.txt",Robots manifest,"View Robots",Platform,Static file,Needs generation
+"/sitemap.xml",XML sitemap,"View Sitemap",Platform,Generated file,Needs regeneration

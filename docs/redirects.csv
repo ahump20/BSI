@@ -1,0 +1,13 @@
+source,destination,type,notes
+"/privacy","/legal/privacy",301,"Canonicalize privacy policy"
+"/cookies","/legal/cookies",301,"Canonicalize cookies policy"
+"/terms","/legal/terms",301,"Legacy terms slug"
+"/legal/accessibility/index.html","/legal/accessibility",301,"Remove trailing index"
+"/legal/copyright/index.html","/legal/copyright",301,"Remove trailing index"
+"/legal/terms/index.html","/legal/terms",301,"Ensure canonical path"
+"/legal/privacy/index.html","/legal/privacy",301,"Ensure canonical path"
+"/legal/cookies/index.html","/legal/cookies",301,"Ensure canonical path"
+"/analytics-api-integrated","/analytics",301,"Consolidate analytics marketing"
+"/HistoricalData/index.html","/HistoricalData",301,"Normalize case-sensitive route"
+"/historicalComparisons","/historicalcomparisons",301,"Case normalization"
+"/nba","/",302,"Temporary until NBA hub ships"

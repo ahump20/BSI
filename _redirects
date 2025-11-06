@@ -1,2 +1,18 @@
 # Redirect www to non-www
 https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301!
+
+# Canonical legal routes
+/privacy /legal/privacy 301
+/cookies /legal/cookies 301
+/terms /legal/terms 301
+/legal/privacy/index.html /legal/privacy 301
+/legal/cookies/index.html /legal/cookies 301
+/legal/terms/index.html /legal/terms 301
+/legal/accessibility/index.html /legal/accessibility 301
+/legal/copyright/index.html /legal/copyright 301
+
+# Marketing consolidations
+/analytics-api-integrated /analytics 301
+/HistoricalData/index.html /HistoricalData 301
+/historicalComparisons /historicalcomparisons 301
+/nba / 302
