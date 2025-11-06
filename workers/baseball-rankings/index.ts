@@ -72,7 +72,7 @@ export default { fetch };
 
 async function loadRankings(env: Env): Promise<RankingsPayload> {
   const endpoint = env.BASEBALL_RANKINGS_URL ?? DEFAULT_RANKINGS_URL;
-  const response = await fetch(endpoint, {
+  const response = await globalThis.fetch(endpoint, {
     headers: { Accept: 'application/json' },
     cf: { cacheTtl: 600, cacheEverything: true },
   });
