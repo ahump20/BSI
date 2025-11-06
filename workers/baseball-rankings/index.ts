@@ -57,9 +57,9 @@ export const fetch = async (request: Request, env: Env): Promise<Response> => {
     console.error('[BaseballRankingsWorker] Failed to load rankings', error);
 
     return new Response(
-      `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Rankings Unavailable</title></head><body><main style="font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 48px; max-width: 640px; margin: auto; text-align: center; color: #0b132b;"><h1 style="font-size: 2rem; margin-bottom: 0.75rem;">Baseball Rankings Unavailable</h1><p style="margin-bottom: 1.5rem; color: #4b5563;">We could not retrieve the latest rankings right now. Please try again shortly.</p><pre style="background: #f3f4f6; border-radius: 12px; padding: 16px; font-size: 0.75rem; color: #6b7280; overflow-x: auto;">${
+      `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Rankings Unavailable</title></head><body><main style="font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 48px; max-width: 640px; margin: auto; text-align: center; color: #0b132b;"><h1 style="font-size: 2rem; margin-bottom: 0.75rem;">Baseball Rankings Unavailable</h1><p style="margin-bottom: 1.5rem; color: #4b5563;">We could not retrieve the latest rankings right now. Please try again shortly.</p><pre style="background: #f3f4f6; border-radius: 12px; padding: 16px; font-size: 0.75rem; color: #6b7280; overflow-x: auto;">${escapeHtml(
         error instanceof Error ? error.message : 'Unexpected error'
-      }</pre></main></body></html>`,
+      )}</pre></main></body></html>`,
       {
         status: 500,
         headers: { 'Content-Type': 'text/html; charset=UTF-8' },
