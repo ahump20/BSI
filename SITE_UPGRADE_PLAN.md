@@ -254,7 +254,7 @@ REDIS_URL=${REDIS_URL}
   - `/CFP/teams/[teamId]` - Team-specific CFP analytics
   - `/CFP/monte-carlo` - 10,000 simulation results
 - **API Integration**:
-  - CollegeFootballData API: `CFBDATA_API_KEY=hm0Hj86TobTT+xJb4mSCIhuWd0+FuRH/+S/J8Ck04/MmocJxm/zqGXjOL4eutKk8`
+  - CollegeFootballData API: `CFBDATA_API_KEY=${CFBDATA_API_KEY}`
   - Endpoints: `/rankings`, `/games`, `/teams`, `/stats/season`
 - **Features**:
   - **Live Rankings Updates**: Committee rankings with change tracking
