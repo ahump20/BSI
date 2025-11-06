@@ -61,3 +61,8 @@ flower>=2.0.0
 # Database
 alembic>=1.12.0
 asyncpg>=0.28.0
+
+# MLB Analytics
+pybaseball==2.2.7
+MLB-StatsAPI==1.9.0
+mplcursors==0.5.3
