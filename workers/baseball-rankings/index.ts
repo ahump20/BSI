@@ -109,7 +109,7 @@ function renderHtml(payload: RankingsPayload): string {
     .map((entry) => {
       const { rank, team, record } = entry;
       return `<tr>
-        <td>${rank}</td>
+        <td>${escapeHtml(String(rank))}</td>
         <td>${escapeHtml(team)}</td>
         <td>${escapeHtml(record)}</td>
       </tr>`;
