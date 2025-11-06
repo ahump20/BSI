@@ -50,7 +50,7 @@ crons = ["*/2 * * * *"]  # Every 2 minutes
 # KV for caching live data
 [[kv_namespaces]]
 binding = "LIVE_CACHE"
-id = "a53c3726fc3044be82e79d2d1e371d26"
+id = "your-kv-namespace-id"
 
 # D1 for game state
 [[d1_databases]]
