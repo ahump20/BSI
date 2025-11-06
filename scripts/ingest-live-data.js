@@ -14,7 +14,7 @@
  * - Prepares data for embedding generation
  */
 
-const SPORTSDATA_API_KEY = process.env.SPORTSDATA_API_KEY || '6ca2adb39404482da5406f0a6cd7aa37';
+const SPORTSDATA_API_KEY = process.env.SPORTSDATA_API_KEY;
 const WRANGLER_PATH = process.env.WRANGLER_PATH || '/Users/AustinHumphrey/.npm-global/bin/wrangler';
 const DATABASE_NAME = 'blazesports-db';
 
