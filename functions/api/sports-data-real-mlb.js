@@ -3,7 +3,9 @@
  * Fetches real data from MLB Stats API with query string support
  */
 
-export async function onRequest({ request }) {
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+
+export async function onRequest({ request, env }) {
   const url = new URL(request.url);
   const teamId = url.searchParams.get('teamId') || '138'; // Cardinals default
 
@@ -12,16 +14,14 @@ export async function onRequest({ request }) {
   const currentYear = new Date().getFullYear();
   const season = url.searchParams.get('season') || currentYear.toString();
 
-  // CORS headers
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
-
   if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   try {
@@ -31,7 +31,6 @@ export async function onRequest({ request }) {
       status: 200
     });
   } catch (error) {
-    console.error('MLB API Error:', error);
     return new Response(JSON.stringify({
       error: 'Failed to fetch MLB data',
       message: error.message

@@ -4,16 +4,10 @@
  * Integrates with Blaze MCP Server for real-time sports intelligence
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
 export async function onRequest(context) {
     const { request, env } = context;
-
-    // CORS headers for cross-origin requests
-    const corsHeaders = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Accept',
-        'Cache-Control': 'public, max-age=30, s-maxage=60'
-    };
 
     // Handle preflight
     if (request.method === 'OPTIONS') {
@@ -21,6 +15,12 @@ export async function onRequest(context) {
             status: 204,
             headers: corsHeaders
         });
+    }
+
+    // Rate limiting: 100 requests per minute per IP
+    const limit = await rateLimit(env, request, 100, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
     }
 
     try {

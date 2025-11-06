@@ -4,6 +4,8 @@
  * Cloudflare Function for sports data processing
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+
 export async function onRequest(context) {
     const { request, env } = context;
 
@@ -16,6 +18,12 @@ export async function onRequest(context) {
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization'
             }
         });
+    }
+
+    // Rate limiting: 100 requests per minute per IP
+    const limit = await rateLimit(env, request, 100, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
     }
 
     try {

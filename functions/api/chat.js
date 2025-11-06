@@ -1,15 +1,17 @@
 // Cloudflare Worker function to handle chat requests with Claude Sonnet 4.5
-export async function onRequest({ request, env }) {
-    // CORS headers
-    const corsHeaders = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-    };
 
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+
+export async function onRequest({ request, env }) {
     // Handle OPTIONS request
     if (request.method === 'OPTIONS') {
         return new Response(null, { headers: corsHeaders });
+    }
+
+    // Rate limiting: 100 requests per minute per IP
+    const limit = await rateLimit(env, request, 100, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
     }
 
     // Only allow POST
@@ -95,7 +97,6 @@ Keep responses concise (2-3 sentences max unless detailed explanation requested)
 
         if (!anthropicResponse.ok) {
             const error = await anthropicResponse.text();
-            console.error('Anthropic API error:', error);
             throw new Error('Failed to get response from AI');
         }
 
@@ -110,7 +111,6 @@ Keep responses concise (2-3 sentences max unless detailed explanation requested)
         });
 
     } catch (error) {
-        console.error('Chat error:', error);
         return new Response(JSON.stringify({
             error: 'Failed to process chat message',
             details: error.message

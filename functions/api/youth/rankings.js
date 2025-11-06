@@ -8,22 +8,24 @@
  * - Track & Field (Athletic.net, TFRRS)
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
 export async function onRequest({ request, env, params }) {
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
+  }
+
   const url = new URL(request.url);
   const sport = url.searchParams.get('sport') || 'baseball';
   const region = url.searchParams.get('region') || 'texas';
   const season = url.searchParams.get('season') || '2025-2026';
-
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
-
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
 
   try {
     const rankings = await fetchCompositeRankings(sport, region, season);
@@ -41,18 +43,23 @@ export async function onRequest({ request, env, params }) {
         updateFrequency: 'Daily during season'
       }
     }), {
-      headers: corsHeaders,
-      status: 200
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json'
+      }
     });
   } catch (error) {
-    console.error('Youth Rankings API Error:', error);
     return new Response(JSON.stringify({
       success: false,
       error: 'Failed to fetch rankings',
       message: error.message
     }), {
-      headers: corsHeaders,
-      status: 500
+      status: 500,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json'
+      }
     });
   }
 }

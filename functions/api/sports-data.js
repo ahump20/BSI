@@ -6,15 +6,21 @@
  * for MLB, NFL, NBA, NCAA, Perfect Game, and Texas HS Football
  */
 
+import { rateLimit, rateLimitError, corsHeaders as baseCorsHeaders } from './_utils.js';
+
 export async function onRequestGet({ request, env, ctx }) {
   const url = new URL(request.url);
   const path = url.pathname.replace('/api/sports-data', '');
 
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
+  }
+
   // CORS headers for Cloudflare Pages
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    ...baseCorsHeaders,
     'Cache-Control': 'public, max-age=300', // 5 minute cache
     'Content-Type': 'application/json',
   };

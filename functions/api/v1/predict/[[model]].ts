@@ -224,8 +224,7 @@ async function logPrediction(
       indexes: ['prediction'],
     });
   } catch (error) {
-    // Don't fail the prediction if logging fails
-    console.error('Failed to log prediction:', error);
+    // Don't fail the prediction if logging fails (non-blocking)
   }
 }
 
@@ -344,8 +343,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, params, env }
       }
     );
   } catch (error) {
-    console.error('Prediction error:', error);
-
     return new Response(
       JSON.stringify({
         error: (error as Error).message,

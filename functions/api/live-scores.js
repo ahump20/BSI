@@ -8,6 +8,7 @@
 
 import { validateRequest } from './_validation.js';
 import { liveScoresQuerySchema } from './_schemas.js';
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
 
 const FETCH_TIMEOUT_MS = 8000;
 
@@ -17,12 +18,20 @@ const espnHeaders = {
 };
 
 export async function onRequestGet({ request, env, ctx }) {
+  // Handle OPTIONS request
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
+  }
+
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    ...corsHeaders,
     'Cache-Control': 'public, max-age=60', // 1 minute cache for live data
-    'Content-Type': 'application/json',
   };
 
   // Validate request parameters using Zod

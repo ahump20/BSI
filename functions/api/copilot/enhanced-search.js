@@ -54,7 +54,7 @@ Focus on:
       }
     }
   } catch (error) {
-    console.error('Query enhancement failed:', error);
+    // Fallback: return original query on enhancement failure
   }
 
   // Fallback: return original query
@@ -90,7 +90,7 @@ async function performSemanticSearch(queries, sport, env) {
         })));
       }
     } catch (error) {
-      console.error(`Search failed for query "${query}":`, error);
+      // Continue with other query variations on search failure
     }
   }
 
@@ -147,21 +147,23 @@ function calculateRelevance(match, userQuery) {
   };
 }
 
+import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
 /**
  * Main handler - Enhanced semantic search
  */
 export async function onRequest(context) {
   const { request, env } = context;
 
-  // CORS
+  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      }
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   if (request.method !== 'POST') {
@@ -200,7 +202,7 @@ export async function onRequest(context) {
         message: 'No matching games found. Try different keywords or remove sport filter.'
       }, {
         headers: {
-          'Access-Control-Allow-Origin': '*',
+          ...corsHeaders,
           'Content-Type': 'application/json'
         }
       });
@@ -248,7 +250,7 @@ export async function onRequest(context) {
       timestamp: new Date().toISOString()
     }, {
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        ...corsHeaders,
         'Content-Type': 'application/json',
         'X-Search-Time': searchTime.toString(),
         'X-Results-Count': enhancedResults.length.toString()
@@ -256,7 +258,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    console.error('Enhanced search error:', error);
     return Response.json({
       success: false,
       error: error.message,
@@ -264,7 +265,7 @@ export async function onRequest(context) {
     }, {
       status: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        ...corsHeaders,
         'Content-Type': 'application/json'
       }
     });

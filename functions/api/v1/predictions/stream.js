@@ -22,21 +22,20 @@ import {
   stopPredictionStream,
   identifyKeyMoments
 } from '../../../../lib/ml/prediction-stream-manager.js';
+import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
 
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Accept',
-        'Access-Control-Max-Age': '86400'
-      }
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const url = new URL(request.url);
@@ -128,8 +127,8 @@ export async function onRequest(context) {
     return new Response(JSON.stringify(result), {
       status: 200,
       headers: {
+        ...corsHeaders,
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
         'Cache-Control': action === 'live' || action === 'poll'
           ? 'no-cache, no-store, must-revalidate'
           : 'public, max-age=60, s-maxage=120'
@@ -137,8 +136,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    console.error('Prediction stream API error:', error);
-
     return new Response(JSON.stringify({
       error: 'Failed to process prediction stream request',
       message: error.message,
@@ -146,8 +143,8 @@ export async function onRequest(context) {
     }), {
       status: error.message.includes('required') ? 400 : 500,
       headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        ...corsHeaders,
+        'Content-Type': 'application/json'
       }
     });
   }
@@ -169,8 +166,8 @@ async function handleSSEPolling(gameId, env) {
       }), {
         status: 404,
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          ...corsHeaders,
+          'Content-Type': 'application/json'
         }
       });
     }
@@ -186,10 +183,10 @@ async function handleSSEPolling(gameId, env) {
       return new Response(sseData, {
         status: 200,
         headers: {
+          ...corsHeaders,
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-          'Access-Control-Allow-Origin': '*'
+          'Connection': 'keep-alive'
         }
       });
     } else {
@@ -197,25 +194,23 @@ async function handleSSEPolling(gameId, env) {
       return new Response('data: {"type":"heartbeat"}\n\n', {
         status: 200,
         headers: {
+          ...corsHeaders,
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-          'Access-Control-Allow-Origin': '*'
+          'Connection': 'keep-alive'
         }
       });
     }
 
   } catch (error) {
-    console.error('SSE polling error:', error);
-
     return new Response(JSON.stringify({
       error: 'SSE polling failed',
       message: error.message
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        ...corsHeaders,
+        'Content-Type': 'application/json'
       }
     });
   }

@@ -10,21 +10,21 @@
  * This file fixes that with REAL API integration.
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+
 export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   const sport = url.pathname.split('/').pop();
 
-  // CORS headers for API access
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
-
   if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   try {
@@ -52,7 +52,6 @@ export async function onRequest(context) {
       status: 200
     });
   } catch (error) {
-    console.error('Error fetching real data:', error);
     return new Response(JSON.stringify({
       error: 'Failed to fetch real sports data',
       message: error.message

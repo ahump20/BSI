@@ -4,18 +4,23 @@
  * Advanced sports outcome prediction using Monte Carlo methods
  */
 
+import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+
 export async function onRequest(context) {
     const { request, env } = context;
 
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {
         return new Response(null, {
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-            }
+            status: 204,
+            headers: corsHeaders
         });
+    }
+
+    // Rate limiting: 100 requests per minute per IP
+    const limit = await rateLimit(env, request, 100, 60000);
+    if (!limit.allowed) {
+        return rateLimitError(limit.resetAt, limit.retryAfter);
     }
 
     try {

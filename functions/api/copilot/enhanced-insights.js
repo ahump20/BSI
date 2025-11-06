@@ -213,21 +213,23 @@ Provide nuanced, strategic insights that help coaches and analysts make better d
   };
 }
 
+import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
 /**
  * Main handler - Enhanced multi-provider RAG
  */
 export async function onRequest(context) {
   const { request, env } = context;
 
-  // CORS
+  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      }
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   if (request.method !== 'POST') {
@@ -313,7 +315,6 @@ export async function onRequest(context) {
           };
       }
     } catch (aiError) {
-      console.error(`Provider ${provider} failed:`, aiError);
       // Fallback to Workers AI on error
       const fallbackResult = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
         messages: [
@@ -347,7 +348,7 @@ export async function onRequest(context) {
       timestamp: new Date().toISOString()
     }, {
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        ...corsHeaders,
         'Content-Type': 'application/json',
         'X-Provider': result.provider,
         'X-Search-Time': totalTime.toString()
@@ -355,7 +356,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    console.error('Enhanced insights error:', error);
     return Response.json({
       success: false,
       error: error.message,
@@ -363,7 +363,7 @@ export async function onRequest(context) {
     }, {
       status: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        ...corsHeaders,
         'Content-Type': 'application/json'
       }
     });

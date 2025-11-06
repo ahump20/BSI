@@ -10,21 +10,20 @@
  */
 
 import { calculateWinProbability, calculateWinProbabilityTrend } from '../../../../lib/ml/win-probability-model.js';
+import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
 
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Max-Age': '86400'
-      }
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  // Rate limiting: 100 requests per minute per IP
+  const limit = await rateLimit(env, request, 100, 60000);
+  if (!limit.allowed) {
+    return rateLimitError(limit.resetAt, limit.retryAfter);
   }
 
   const url = new URL(request.url);
@@ -50,23 +49,21 @@ export async function onRequest(context) {
     return new Response(JSON.stringify(result), {
       status: 200,
       headers: {
+        ...corsHeaders,
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
         'Cache-Control': 'public, max-age=30, s-maxage=60' // Short cache for live data
       }
     });
 
   } catch (error) {
-    console.error('Win probability API error:', error);
-
     return new Response(JSON.stringify({
       error: 'Failed to calculate win probability',
       message: error.message
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        ...corsHeaders,
+        'Content-Type': 'application/json'
       }
     });
   }
@@ -147,7 +144,6 @@ async function fetchGameState(env, gameId, sport) {
     return gameState;
 
   } catch (error) {
-    console.error('Error fetching game state:', error);
     throw error;
   }
 }
