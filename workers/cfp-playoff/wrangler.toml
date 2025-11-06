@@ -1,0 +1,27 @@
+name = "blaze-cfp-playoff"
+main = "index.ts"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[vars]
+# CFP_API_KEY = ""
+
+[[kv_namespaces]]
+binding = "CFP_CACHE"
+id = "placeholder-kv"
+preview_id = "placeholder-kv-preview"
+
+[[r2_buckets]]
+binding = "CFP_ARCHIVE"
+bucket_name = "blaze-cfp-archive"
+
+[[d1_databases]]
+binding = "CFP_DB"
+database_name = "blaze-cfp"
+database_id = "placeholder-d1"
+
+[build]
+command = "echo 'Using shared CFP playoff simulation library'"
+
+[compatibility_flags]
+nodejs_compat = true
