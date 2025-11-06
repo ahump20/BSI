@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLB Statcast Deep Dive | Blaze Sports Intel</title>
+  <meta name="description" content="Advanced Statcast analytics with exit velocity, launch angle, barrel rate, sprint speed, and Outs Above Average (OAA) defensive metrics from Baseball Savant">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #ffffff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(0, 102, 204, 0.1));
+      padding: 30px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ff6b00, #0066cc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+    }
+
+    .controls {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .input-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+    }
+
+    input, select {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.3);
+      color: #ffffff;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #ff6b00;
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
+    }
+
+    button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #ff6b00, #0066cc);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .tab:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 107, 0, 0.5);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.3), rgba(0, 102, 204, 0.3));
+      border-color: #ff6b00;
+    }
+
+    .visualization-container {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .viz-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .viz-description {
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(255, 107, 0, 0.2);
+      border-color: rgba(255, 107, 0, 0.5);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff6b00, #0066cc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-tier {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 4px;
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-left-color: #ff6b00;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+    }
+
+    .data-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+    }
+
+    .legend-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .input-group {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔥 Statcast Deep Dive</h1>
+      <p class="subtitle">Advanced pitch-level and batted ball analytics powered by Baseball Savant</p>
+    </div>
+
+    <div class="controls">
+      <div class="input-group">
+        <div class="input-wrapper">
+          <label for="playerIdInput">Player ID</label>
+          <input type="number" id="playerIdInput" placeholder="Enter MLB Player ID (e.g., 660271)">
+        </div>
+
+        <div class="input-wrapper">
+          <label for="seasonSelect">Season</label>
+          <select id="seasonSelect">
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="typeSelect">Player Type</label>
+          <select id="typeSelect">
+            <option value="batter">Batter</option>
+            <option value="pitcher">Pitcher</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper">
+          <label>&nbsp;</label>
+          <button onclick="loadStatcastData()">Load Statcast Data</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading Statcast data...</p>
+    </div>
+
+    <div id="contentContainer" style="display: none;">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('overview')">Overview</div>
+        <div class="tab" onclick="switchTab('batted-balls')">Batted Balls</div>
+        <div class="tab" onclick="switchTab('spray-chart')">Spray Chart</div>
+        <div class="tab" onclick="switchTab('speed')">Sprint Speed</div>
+        <div class="tab" onclick="switchTab('defense')">Defense (OAA)</div>
+      </div>
+
+      <!-- Overview Tab -->
+      <div id="overviewTab" class="tab-content">
+        <div id="statsGrid" class="stats-grid"></div>
+      </div>
+
+      <!-- Batted Balls Tab -->
+      <div id="battedBallsTab" class="tab-content" style="display: none;">
+        <div class="visualization-container">
+          <h2 class="viz-title">Exit Velocity vs Launch Angle</h2>
+          <p class="viz-description">
+            Each dot represents a batted ball event. Red dots indicate barrels (ideal exit velocity + launch angle combination).
+            The "sweet spot" is 8-32 degrees launch angle.
+          </p>
+          <canvas id="exitVeloChart" width="800" height="500"></canvas>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-color" style="background: #ff4444;"></div>
+              <span class="legend-label">Barrel (98+ mph, optimal angle)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #ffaa00;"></div>
+              <span class="legend-label">Hard Hit (95+ mph)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: #4488ff;"></div>
+              <span class="legend-label">Other</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spray Chart Tab -->
+      <div id="sprayChartTab" class="tab-content" style="display: none;">
+        <div class="visualization-container">
+          <h2 class="viz-title">Batted Ball Spray Chart</h2>
+          <p class="viz-description">
+            Visual representation of where batted balls landed. Darker colors indicate higher exit velocity.
+          </p>
+          <canvas id="sprayChart" width="600" height="600"></canvas>
+        </div>
+      </div>
+
+      <!-- Sprint Speed Tab -->
+      <div id="speedTab" class="tab-content" style="display: none;">
+        <div class="visualization-container">
+          <h2 class="viz-title">Sprint Speed Metrics</h2>
+          <div id="sprintSpeedContent"></div>
+        </div>
+      </div>
+
+      <!-- Defense (OAA) Tab -->
+      <div id="defenseTab" class="tab-content" style="display: none;">
+        <div class="visualization-container">
+          <h2 class="viz-title">Outs Above Average (OAA)</h2>
+          <p class="viz-description">
+            Defensive value measured in outs saved above an average fielder at the same position.
+          </p>
+          <div id="oaaContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="data-source">
+        <span>📊 Data Source:</span>
+        <strong>Baseball Savant (MLB Statcast)</strong>
+      </div>
+      <p style="margin-top: 15px;">
+        Statcast™ is a state-of-the-art tracking technology that provides unprecedented insights into player performance
+      </p>
+      <p id="lastUpdated" style="margin-top: 10px;"></p>
+    </div>
+  </div>
+
+  <script>
+    let currentData = null;
+    let currentTab = 'overview';
+
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const defaultPlayerId = urlParams.get('id') || '';
+    const defaultSeason = urlParams.get('season') || '2025';
+
+    if (defaultPlayerId) {
+      document.getElementById('playerIdInput').value = defaultPlayerId;
+      document.getElementById('seasonSelect').value = defaultSeason;
+      loadStatcastData();
+    }
+
+    async function loadStatcastData() {
+      const playerId = document.getElementById('playerIdInput').value;
+      const season = document.getElementById('seasonSelect').value;
+      const type = document.getElementById('typeSelect').value;
+
+      if (!playerId) {
+        alert('Please enter a player ID');
+        return;
+      }
+
+      document.getElementById('loadingSpinner').style.display = 'block';
+      document.getElementById('contentContainer').style.display = 'none';
+
+      try {
+        const response = await fetch(
+          `/api/mlb/statcast/${playerId}?season=${season}&type=${type}&includeBattedBalls=true&includeSprintSpeed=true&includeOAA=true`
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        currentData = data;
+
+        renderOverview(data);
+        renderBattedBallsChart(data);
+        renderSprayChart(data);
+        renderSprintSpeed(data);
+        renderOAA(data);
+
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('contentContainer').style.display = 'block';
+
+        if (data.meta?.lastUpdated) {
+          const date = new Date(data.meta.lastUpdated);
+          document.getElementById('lastUpdated').textContent =
+            `Last Updated: ${date.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT`;
+        }
+      } catch (error) {
+        console.error('Error loading Statcast data:', error);
+        alert(`Failed to load Statcast data: ${error.message}`);
+        document.getElementById('loadingSpinner').style.display = 'none';
+      }
+    }
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Show/hide tab content
+      document.getElementById('overviewTab').style.display = tabName === 'overview' ? 'block' : 'none';
+      document.getElementById('battedBallsTab').style.display = tabName === 'batted-balls' ? 'block' : 'none';
+      document.getElementById('sprayChartTab').style.display = tabName === 'spray-chart' ? 'block' : 'none';
+      document.getElementById('speedTab').style.display = tabName === 'speed' ? 'block' : 'none';
+      document.getElementById('defenseTab').style.display = tabName === 'defense' ? 'block' : 'none';
+    }
+
+    function renderOverview(data) {
+      const stats = data.statcast?.seasonStats;
+      if (!stats) {
+        document.getElementById('statsGrid').innerHTML = '<p>No season stats available</p>';
+        return;
+      }
+
+      const statsCards = [
+        { label: 'Avg Exit Velocity', value: `${stats.avg_hit_speed?.toFixed(1)} mph`, tier: getExitVeloTier(stats.avg_hit_speed) },
+        { label: 'Max Exit Velocity', value: `${stats.max_hit_speed?.toFixed(1)} mph`, tier: '' },
+        { label: 'Barrel Rate', value: `${stats.brl_percent?.toFixed(1)}%`, tier: getBarrelRateTier(stats.brl_percent) },
+        { label: 'Hard Hit Rate', value: `${stats.hard_hit_percent?.toFixed(1)}%`, tier: stats.hard_hit_percent >= 40 ? 'Elite' : '' },
+        { label: 'xBA', value: stats.xba?.toFixed(3), tier: '' },
+        { label: 'xSLG', value: stats.xslg?.toFixed(3), tier: '' },
+        { label: 'xwOBA', value: stats.xwoba?.toFixed(3), tier: '' },
+        { label: 'Sweet Spot %', value: `${stats.sweet_spot_percent?.toFixed(1)}%`, tier: '' },
+      ];
+
+      const html = statsCards.map(stat => `
+        <div class="stat-card">
+          <div class="stat-label">${stat.label}</div>
+          <div class="stat-value">${stat.value || 'N/A'}</div>
+          ${stat.tier ? `<div class="stat-tier">${stat.tier}</div>` : ''}
+        </div>
+      `).join('');
+
+      document.getElementById('statsGrid').innerHTML = html;
+    }
+
+    function renderBattedBallsChart(data) {
+      const battedBalls = data.statcast?.battedBalls?.events;
+      if (!battedBalls || battedBalls.length === 0) return;
+
+      const canvas = document.getElementById('exitVeloChart');
+      const ctx = canvas.getContext('2d');
+
+      // Clear canvas
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw grid
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 1;
+
+      // Vertical grid lines (exit velocity)
+      for (let v = 60; v <= 120; v += 10) {
+        const x = ((v - 50) / 70) * (canvas.width - 100) + 50;
+        ctx.beginPath();
+        ctx.moveTo(x, 50);
+        ctx.lineTo(x, canvas.height - 50);
+        ctx.stroke();
+      }
+
+      // Horizontal grid lines (launch angle)
+      for (let a = -20; a <= 60; a += 10) {
+        const y = canvas.height - 50 - ((a + 20) / 80) * (canvas.height - 100);
+        ctx.beginPath();
+        ctx.moveTo(50, y);
+        ctx.lineTo(canvas.width - 50, y);
+        ctx.stroke();
+      }
+
+      // Draw axes
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(50, canvas.height - 50);
+      ctx.lineTo(canvas.width - 50, canvas.height - 50);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(50, 50);
+      ctx.lineTo(50, canvas.height - 50);
+      ctx.stroke();
+
+      // Draw axis labels
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Exit Velocity (mph)', canvas.width / 2, canvas.height - 10);
+
+      ctx.save();
+      ctx.translate(15, canvas.height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Launch Angle (degrees)', 0, 0);
+      ctx.restore();
+
+      // Plot batted balls
+      battedBalls.forEach(bb => {
+        if (bb.launch_speed === null || bb.launch_angle === null) return;
+
+        const x = ((bb.launch_speed - 50) / 70) * (canvas.width - 100) + 50;
+        const y = canvas.height - 50 - ((bb.launch_angle + 20) / 80) * (canvas.height - 100);
+
+        // Determine color
+        let color;
+        if (bb.barrel === 1) {
+          color = '#ff4444'; // Red for barrels
+        } else if (bb.launch_speed >= 95) {
+          color = '#ffaa00'; // Orange for hard hit
+        } else {
+          color = '#4488ff'; // Blue for others
+        }
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function renderSprayChart(data) {
+      const battedBalls = data.statcast?.battedBalls?.events;
+      if (!battedBalls || battedBalls.length === 0) return;
+
+      const canvas = document.getElementById('sprayChart');
+      const ctx = canvas.getContext('2d');
+
+      // Clear canvas
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw field
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height - 50;
+
+      // Draw dirt (infield)
+      ctx.fillStyle = 'rgba(139, 90, 43, 0.3)';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 100, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw grass (outfield)
+      ctx.fillStyle = 'rgba(34, 139, 34, 0.2)';
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, 250, Math.PI, 0);
+      ctx.fill();
+
+      // Draw foul lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(50, 50);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(canvas.width - 50, 50);
+      ctx.stroke();
+
+      // Plot batted balls
+      battedBalls.forEach(bb => {
+        if (bb.hc_x === null || bb.hc_y === null) return;
+
+        // Convert hit coordinates to canvas coordinates
+        const x = centerX + (bb.hc_x - 125.42) * 2;
+        const y = centerY - (251.84 - bb.hc_y) * 2;
+
+        // Color by exit velocity
+        const velo = bb.launch_speed || 0;
+        const intensity = Math.min(255, Math.max(0, (velo - 60) * 4));
+        const color = `rgba(${intensity}, ${255 - intensity}, 100, 0.6)`;
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function renderSprintSpeed(data) {
+      const sprintSpeed = data.statcast?.sprintSpeed;
+      const container = document.getElementById('sprintSpeedContent');
+
+      if (!sprintSpeed) {
+        container.innerHTML = '<p>No sprint speed data available</p>';
+        return;
+      }
+
+      const mph = (sprintSpeed.sprint_speed * 0.681818).toFixed(1);
+      const tier = getSprintSpeedTier(sprintSpeed.sprint_speed);
+
+      container.innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Sprint Speed</div>
+            <div class="stat-value">${sprintSpeed.sprint_speed?.toFixed(1)} ft/sec</div>
+            <div class="stat-tier">${mph} mph</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tier</div>
+            <div class="stat-value">${tier}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Competitive Runs</div>
+            <div class="stat-value">${sprintSpeed.competitive_runs}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderOAA(data) {
+      const oaa = data.statcast?.oaa;
+      const container = document.getElementById('oaaContent');
+
+      if (!oaa) {
+        container.innerHTML = '<p>No defensive metrics available</p>';
+        return;
+      }
+
+      const tier = getOAATier(oaa.outs_above_average);
+
+      container.innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Outs Above Average</div>
+            <div class="stat-value">${oaa.outs_above_average > 0 ? '+' : ''}${oaa.outs_above_average}</div>
+            <div class="stat-tier">${tier}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Success Rate</div>
+            <div class="stat-value">${(oaa.success_rate * 100).toFixed(1)}%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Attempts</div>
+            <div class="stat-value">${oaa.attempts}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Position</div>
+            <div class="stat-value">${oaa.primary_pos_formatted}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Helper functions
+    function getExitVeloTier(avgExitVelo) {
+      if (avgExitVelo >= 92) return 'Elite';
+      if (avgExitVelo >= 90) return 'Excellent';
+      if (avgExitVelo >= 88) return 'Above Average';
+      if (avgExitVelo >= 86) return 'Average';
+      return 'Below Average';
+    }
+
+    function getBarrelRateTier(barrelRate) {
+      if (barrelRate >= 15) return 'Elite';
+      if (barrelRate >= 10) return 'Excellent';
+      if (barrelRate >= 6) return 'Above Average';
+      if (barrelRate >= 4) return 'Average';
+      return 'Below Average';
+    }
+
+    function getSprintSpeedTier(speed) {
+      if (speed >= 30) return 'Elite';
+      if (speed >= 29) return 'Plus';
+      if (speed >= 28) return 'Above Average';
+      if (speed >= 27) return 'Average';
+      return 'Below Average';
+    }
+
+    function getOAATier(oaa) {
+      if (oaa >= 10) return 'Gold Glove Caliber';
+      if (oaa >= 5) return 'Excellent';
+      if (oaa >= 0) return 'Above Average';
+      if (oaa >= -5) return 'Below Average';
+      return 'Poor';
+    }
+  </script>
+</body>
+</html>
