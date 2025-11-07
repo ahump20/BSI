@@ -1,0 +1,26 @@
+From,To,Status Code,Reason,Priority
+/legal/accessibility/,/accessibility,301,Canonical accessibility statement in Next.js app,High
+/legal/cookies/,/cookies,301,Canonical cookie policy in Next.js app,High
+/legal/copyright/,/dmca,301,Canonical copyright/DMCA policy in Next.js app,High
+/legal/privacy/,/privacy,301,Canonical privacy policy in Next.js app,High
+/legal/terms/,/terms,301,Canonical terms of service in Next.js app,High
+/analytics,/features,301,Consolidate analytics features into main features page,High
+/mlb,/baseball/mlb,301,Standardize MLB routes under /baseball namespace,Medium
+/nfl,/football/nfl,301,Standardize NFL routes under /football namespace,Medium
+/cbb,/basketball,301,Consolidate college basketball under /basketball,Medium
+/cfb,/football/cfb,301,College football under /football namespace (once created),Medium
+/HistoricalData,/historical-comparisons,301,Unify historical data interfaces,Medium
+/historicalcomparisons,/historical-comparisons,301,URL consistency (kebab-case),Low
+/college-baseball/games,/baseball/ncaab/games,301,Migrate legacy college baseball routes,Medium
+/college-baseball/teams,/baseball/ncaab/teams,301,Migrate legacy college baseball routes,Medium
+/college-baseball/players,/baseball/ncaab/players,301,Migrate legacy college baseball routes,Medium
+/college-baseball/standings,/baseball/ncaab/standings,301,Migrate legacy college baseball routes,Medium
+/copilot/endpoints,/copilot,301,Consolidate copilot features into main interface,Medium
+/copilot/insights,/copilot,301,Consolidate copilot features into main interface,Medium
+/copilot/search,/copilot,301,Consolidate copilot features into main interface,Medium
+/dashboards/championship,/command-center,301,Unify dashboards into command center,Medium
+/dashboards/manager,/account,301,User dashboard functionality moved to account,Medium
+/live/scores,/command-center,301,Live scores integrated into command center,Low
+/live/data,/api-docs,301,Data access documented in API docs,Low
+/predictions/analytics-engine,/CFP,301,Prediction engine integrated into CFP,Low
+/predictions/stream,/command-center,301,Live predictions in command center,Low

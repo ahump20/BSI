@@ -303,6 +303,140 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
+.interactiveNotice {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 0 auto;
+  padding: 2rem;
+  max-width: 960px;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 255, 255, 0.25);
+  background: rgba(0, 20, 30, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(0, 255, 255, 0.1);
+}
+
+.noticeTitle {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.75rem;
+  letter-spacing: 0.08em;
+}
+
+.noticeReason {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+}
+
+.interactiveButton {
+  align-self: flex-start;
+  padding: 0.85rem 1.8rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #001016;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.interactiveButton:hover,
+.interactiveButton:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 15px 30px rgba(14, 165, 233, 0.35);
+}
+
+.interactiveReason {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.metersFallback {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 24px;
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  padding: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.08);
+}
+
+.metersFallback ul {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.metersFallback li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  background: rgba(14, 116, 144, 0.2);
+}
+
+.meterLabel {
+  font-weight: 600;
+}
+
+.meterValue {
+  font-family: 'Orbitron', monospace;
+  color: #38bdf8;
+}
+
+.meterSkeleton,
+.cardSkeleton,
+.leaderboardSkeleton {
+  width: 100%;
+  min-height: 220px;
+  border-radius: 24px;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.6) 50%, rgba(15, 23, 42, 0.6) 100%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s infinite;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  padding: 2rem;
+}
+
+.leaderboardSkeleton {
+  gap: 1rem;
+  padding: 3rem 2rem;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .interactiveNotice {
+    padding: 1.5rem;
+  }
+
+  .interactiveButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .metersFallback {
+    padding: 1.5rem;
+  }
+
+  .metersFallback li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
 .loading {
   text-align: center;
   padding: 4rem 2rem;

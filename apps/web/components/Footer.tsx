@@ -71,6 +71,9 @@ export default function Footer() {
               <Link href="/games">Games</Link>
             </li>
             <li>
+              <Link href="/CFP">CFP Intelligence</Link>
+            </li>
+            <li>
               <Link href="/performance">Performance</Link>
             </li>
             <li>

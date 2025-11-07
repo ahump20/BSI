@@ -42,9 +42,22 @@
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
 
+# HTML pages - optimized cache with stale-while-revalidate
+/*.html
+  Cache-Control: public, s-maxage=600, stale-while-revalidate=86400
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Next.js page routes - optimized SSR cache
+/
+  Cache-Control: public, s-maxage=600, stale-while-revalidate=86400
+
 # Security headers for all routes
 /*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
+  X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()

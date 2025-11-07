@@ -1,585 +1,502 @@
-// workers/baseball-rankings/index.ts
-/**
- * NCAA Men's Baseball Top 25 Rankings Worker
- *
- * This Cloudflare Worker serves a server-rendered HTML page displaying
- * the D1Baseball Top 25 rankings. Data is cached in KV for 12 hours
- * to minimize reads from the source JSON file.
- *
- * @see https://blazesportsintel.com/baseball/rankings
- */
+import rankingsData from '../../data/college-baseball/rankings/d1baseball-top25.json';
 
-export interface Env {
-  BSI_KV: KVNamespace;
-  ANALYTICS?: AnalyticsEngineDataset;
-}
-
-interface Ranking {
+interface RankingEntry {
   rank: number;
   team: string;
   conference: string;
   record: string;
-  previousRank: number | string;
+  previousRank?: number;
+  movement?: string;
 }
 
-interface RankingsData {
+interface RankingsPayload {
+  poll: string;
+  season: number;
   lastUpdated: string;
-  source: string;
-  season: string;
-  rankings: Ranking[];
+  timezone?: string;
+  source?: string;
+  dataFreshness?: string;
+  dataStatus?: string;
+  rankings: RankingEntry[];
 }
 
-const KV_KEY = 'baseball-rankings';
-const CACHE_TTL_SECONDS = 43200; // 12 hours
+type Env = Record<string, never>;
 
-export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const startTime = Date.now();
-    let cacheStatus = 'unknown';
-    let dataSource = 'unknown';
-    let success = true;
+const data = rankingsData as RankingsPayload;
 
-    try {
-      // Get rankings data from KV or fallback source
-      const data = await getRankingsData(env);
-
-      // Track cache status and data source from result
-      cacheStatus = data.source.includes('KV cache') ? 'hit' : 'miss';
-      dataSource = data.source.includes('Live') ? 'live_scrape' : 'fallback';
-
-      // Render HTML page
-      const html = renderPage(data);
-
-      const responseTime = Date.now() - startTime;
-
-      // Track analytics
-      if (env.ANALYTICS) {
-        ctx.waitUntil(
-          env.ANALYTICS.writeDataPoint({
-            blobs: ['rankings_view', cacheStatus, dataSource],
-            doubles: [responseTime],
-            indexes: ['baseball-rankings'],
-          })
-        );
-      }
-
-      return new Response(html, {
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'public, max-age=3600', // Cache in browser for 1 hour
-          'X-Cache-Status': cacheStatus,
-          'X-Data-Source': dataSource,
-          'X-Response-Time': `${responseTime}ms`,
-        },
-      });
-    } catch (error) {
-      success = false;
-      const responseTime = Date.now() - startTime;
-
-      console.error('Error fetching rankings:', error);
-
-      // Track error in analytics
-      if (env.ANALYTICS) {
-        ctx.waitUntil(
-          env.ANALYTICS.writeDataPoint({
-            blobs: ['rankings_error', error instanceof Error ? error.message : 'unknown'],
-            doubles: [responseTime],
-            indexes: ['baseball-rankings'],
-          })
-        );
-      }
-
-      return new Response('Error loading rankings. Please try again later.', {
-        status: 500,
-        headers: { 'Content-Type': 'text/plain' },
-      });
-    }
-  },
-};
-
-/**
- * Get rankings data from KV cache or fetch from D1Baseball
- */
-async function getRankingsData(env: Env): Promise<RankingsData> {
-  try {
-    // Try to get from KV first
-    const cachedText = await env.BSI_KV.get(KV_KEY);
-
-    if (cachedText) {
-      console.log('Serving rankings from KV cache');
-      return JSON.parse(cachedText) as RankingsData;
-    }
-
-    console.log('KV cache miss, fetching live rankings from D1Baseball');
-
-    // Fetch live rankings from D1Baseball
-    const data = await fetchLiveD1BaseballRankings();
-
-    // Try to store in KV with TTL, but don't fail if KV limit exceeded
-    try {
-      await env.BSI_KV.put(KV_KEY, JSON.stringify(data), {
-        expirationTtl: CACHE_TTL_SECONDS,
-      });
-    } catch (kvError) {
-      console.warn('KV write failed (possibly limit exceeded), returning data without caching:', kvError);
-      // Continue anyway - we still have the data
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Error in getRankingsData:', error);
-    // Return fallback data with error info for debugging
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    return {
-      ...getFallbackData(),
-      source: `D1Baseball Top 25 Rankings (Fallback) - Error: ${errorMessage}`
-    };
-  }
-}
-
-/**
- * Fetch and parse live rankings from D1Baseball website
- */
-async function fetchLiveD1BaseballRankings(): Promise<RankingsData> {
-  const response = await fetch('https://d1baseball.com/rankings/', {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Accept-Language': 'en-US,en;q=0.5',
-      'Referer': 'https://d1baseball.com/'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`D1Baseball fetch failed with status ${response.status}`);
+function formatCentralTimeTimestamp(isoDate: string): string {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) {
+    return 'Unavailable';
   }
 
-  const html = await response.text();
-
-  // Parse the HTML to extract rankings
-  const rankings: Ranking[] = [];
-
-  // Match D1Baseball's actual table structure:
-  // <td>1</td><td class="team"><a><img...>LSU<span...</span></a></td>
-  // Pattern uses [\s\S] to match across newlines (. doesn't match newlines by default)
-  const rankingPattern = /<td[^>]*>(\d+)<\/td>\s*<td[^>]*class="team"[^>]*>[\s\S]*?<img[^>]*>\s*(.*?)\s*<span/gi;
-
-  let match;
-  while ((match = rankingPattern.exec(html)) !== null) {
-    const rank = parseInt(match[1]);
-    const teamName = match[2].trim();
-
-    if (rank >= 1 && rank <= 25 && teamName) {
-      // Map team names to conferences (static mapping for now)
-      const conference = getTeamConference(teamName);
-
-      rankings.push({
-        rank,
-        team: teamName,
-        conference,
-        record: '0-0', // Preseason - no games played yet
-        previousRank: rank // No historical data available yet
-      });
-    }
-  }
-
-  if (rankings.length === 0) {
-    throw new Error('Failed to parse rankings from D1Baseball website - no teams found');
-  }
-
-  // Sort by rank to ensure correct order
-  rankings.sort((a, b) => a.rank - b.rank);
-
-  return {
-    lastUpdated: new Date().toISOString(),
-    source: 'D1Baseball Top 25 Rankings (Live)',
-    season: '2025 Season',
-    rankings: rankings.slice(0, 25)
-  };
-}
-
-/**
- * Map team names to their conferences
- * This is a static mapping - in future versions, fetch from NCAA API
- */
-function getTeamConference(teamName: string): string {
-  const conferenceMap: Record<string, string> = {
-    'LSU': 'SEC',
-    'Coastal Carolina': 'Sun Belt',
-    'Arkansas': 'SEC',
-    'Oregon State': 'Pac-12',
-    'UCLA': 'Pac-12',
-    'Wake Forest': 'ACC',
-    'Florida': 'SEC',
-    'Tennessee': 'SEC',
-    'Texas': 'SEC',
-    'Texas A&M': 'SEC',
-    'Ole Miss': 'SEC',
-    'Mississippi State': 'SEC',
-    'Vanderbilt': 'SEC',
-    'Kentucky': 'SEC',
-    'Auburn': 'SEC',
-    'Georgia': 'SEC',
-    'Alabama': 'SEC',
-    'South Carolina': 'SEC',
-    'Missouri': 'SEC',
-    'Clemson': 'ACC',
-    'Louisville': 'ACC',
-    'NC State': 'ACC',
-    'Duke': 'ACC',
-    'Virginia': 'ACC',
-    'Miami': 'ACC',
-    'Florida State': 'ACC',
-    'Georgia Tech': 'ACC',
-    'Stanford': 'Pac-12',
-    'Arizona': 'Pac-12',
-    'Arizona State': 'Pac-12',
-    'Oklahoma': 'SEC',
-    'Oklahoma State': 'Big 12',
-    'TCU': 'Big 12',
-    'Texas Tech': 'Big 12',
-    'West Virginia': 'Big 12',
-    'Baylor': 'Big 12'
-  };
-
-  return conferenceMap[teamName] || 'N/A';
-}
-
-/**
- * Fallback data when KV and source are unavailable
- */
-function getFallbackData(): RankingsData {
-  return {
-    lastUpdated: new Date().toISOString(),
-    source: "D1Baseball Top 25 Rankings (Fallback)",
-    season: "2025 Preseason",
-    rankings: []
-  };
-}
-
-/**
- * Render the HTML page
- */
-function renderPage(data: RankingsData): string {
-  const lastUpdatedDate = new Date(data.lastUpdated).toLocaleDateString('en-US', {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    timeZone: 'America/Chicago',
-  });
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  }).format(date);
+}
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="NCAA Men's Baseball Top 25 rankings from D1Baseball. Stay updated on the best college baseball teams in the nation.">
-  <title>NCAA Baseball Top 25 Rankings | Blaze Sports Intel</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+function renderMovement(entry: RankingEntry): { label: string; direction: 'up' | 'down' | 'steady'; } {
+  const raw = entry.movement?.trim();
+  if (!raw || raw === '0' || raw === '—' || raw === '-') {
+    return { label: '—', direction: 'steady' };
+  }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      color: #f5f5f5;
-      line-height: 1.6;
-      min-height: 100vh;
-      padding: 20px;
-    }
+  const numeric = Number.parseInt(raw, 10);
+  if (Number.isNaN(numeric) || numeric === 0) {
+    return { label: '—', direction: 'steady' };
+  }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
+  if (numeric > 0) {
+    return { label: `▲ ${numeric}`, direction: 'up' };
+  }
 
-    header {
-      text-align: center;
-      margin-bottom: 32px;
-      padding-bottom: 24px;
-      border-bottom: 2px solid #ff6b00;
-    }
+  return { label: `▼ ${Math.abs(numeric)}`, direction: 'down' };
+}
 
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #ff6b00;
-      margin-bottom: 12px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
+function buildSummaryCards(entries: RankingEntry[]): string {
+  const secTeams = entries.filter((team) => team.conference.toUpperCase() === 'SEC').length;
+  const accTeams = entries.filter((team) => team.conference.toUpperCase() === 'ACC').length;
+  const topFive = entries
+    .filter((team) => team.rank <= 5)
+    .map((team) => team.team)
+    .join(', ');
 
-    .subtitle {
-      font-size: 1.1rem;
-      color: #b0b0b0;
-      margin-bottom: 8px;
-    }
+  return `
+    <section class="metrics">
+      <div class="metric-card">
+        <span class="metric-label">SEC Teams</span>
+        <span class="metric-value">${secTeams}</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">ACC Teams</span>
+        <span class="metric-value">${accTeams}</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Top 5</span>
+        <span class="metric-value">${topFive}</span>
+      </div>
+    </section>
+  `;
+}
 
-    .last-updated {
-      font-size: 0.9rem;
-      color: #888;
-      font-style: italic;
-    }
+function buildRankingsTable(entries: RankingEntry[]): string {
+  const rows = entries
+    .map((entry) => {
+      const movement = renderMovement(entry);
+      const previous = entry.previousRank ?? '—';
 
-    .source-badge {
-      display: inline-block;
-      background: rgba(255, 107, 0, 0.2);
-      color: #ff6b00;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-top: 8px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 24px;
-    }
-
-    thead {
-      background: rgba(255, 107, 0, 0.15);
-    }
-
-    th {
-      padding: 16px 12px;
-      text-align: left;
-      font-weight: 600;
-      color: #ff6b00;
-      text-transform: uppercase;
-      font-size: 0.85rem;
-      letter-spacing: 0.5px;
-      border-bottom: 2px solid #ff6b00;
-    }
-
-    th:first-child {
-      text-align: center;
-      width: 80px;
-    }
-
-    th:last-child {
-      text-align: center;
-      width: 100px;
-    }
-
-    tbody tr {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      transition: background 0.2s ease;
-    }
-
-    tbody tr:hover {
-      background: rgba(255, 107, 0, 0.1);
-    }
-
-    tbody tr:nth-child(odd) {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    td {
-      padding: 14px 12px;
-      font-size: 1rem;
-    }
-
-    td:first-child {
-      text-align: center;
-      font-weight: 700;
-      color: #ff6b00;
-      font-size: 1.2rem;
-    }
-
-    .team-name {
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .conference {
-      color: #999;
-      font-size: 0.85rem;
-      display: block;
-      margin-top: 2px;
-    }
-
-    .record {
-      text-align: center;
-      font-weight: 500;
-      color: #b0b0b0;
-    }
-
-    .rank-change {
-      display: inline-block;
-      margin-left: 8px;
-      font-size: 0.75rem;
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-weight: 600;
-    }
-
-    .rank-up {
-      background: rgba(40, 167, 69, 0.2);
-      color: #28a745;
-    }
-
-    .rank-down {
-      background: rgba(220, 53, 69, 0.2);
-      color: #dc3545;
-    }
-
-    .rank-same {
-      color: #888;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      color: #888;
-      font-size: 0.9rem;
-    }
-
-    .footer-actions {
-      margin-bottom: 24px;
-    }
-
-    .action-btn {
-      display: inline-block;
-      background: linear-gradient(135deg, #ff6b00 0%, #d65900 100%);
-      color: #fff;
-      padding: 14px 32px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(255, 107, 0, 0.4);
-      background: linear-gradient(135deg, #ff8533 0%, #ff6b00 100%);
-    }
-
-    .footer-links {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .footer-links p {
-      margin: 8px 0;
-    }
-
-    .footer-links a {
-      color: #ff6b00;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    .footer-links a:hover {
-      color: #ff8533;
-      text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 1.8rem;
-      }
-
-      th, td {
-        padding: 10px 8px;
-        font-size: 0.9rem;
-      }
-
-      th:first-child,
-      td:first-child {
-        width: 50px;
-      }
-
-      .conference {
-        display: none;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>⚾ NCAA Baseball Top 25</h1>
-      <p class="subtitle">${data.season}</p>
-      <p class="last-updated">Last Updated: ${lastUpdatedDate}</p>
-      <span class="source-badge">${data.source}</span>
-    </header>
-
-    <table>
-      <thead>
+      return `
         <tr>
-          <th>Rank</th>
-          <th>Team</th>
-          <th>Record</th>
+          <td class="rank">${entry.rank}</td>
+          <td class="team">
+            <span class="team-name">${entry.team}</span>
+            <span class="conference">${entry.conference}</span>
+          </td>
+          <td class="record">${entry.record}</td>
+          <td class="previous">${previous}</td>
+          <td class="movement ${movement.direction}">${movement.label}</td>
         </tr>
-      </thead>
-      <tbody>
-        ${data.rankings.map(team => {
-          const rankChange = getRankChange(team.rank, team.previousRank);
-          return `
+      `;
+    })
+    .join('');
+
+  return `
+    <section aria-labelledby="rankings-heading" class="table-wrapper">
+      <div class="table-header">
+        <h2 id="rankings-heading">${data.poll} &mdash; Top 25</h2>
+        <p class="table-subtitle">Final ${data.season} rankings sourced from D1Baseball.</p>
+      </div>
+      <div class="table-container" role="region" aria-live="polite" aria-describedby="rankings-caption">
+        <table>
+          <caption id="rankings-caption">Complete Top 25 with conference context, movement, and records.</caption>
+          <thead>
             <tr>
-              <td>${team.rank}${rankChange}</td>
-              <td>
-                <span class="team-name">${team.team}</span>
-                <span class="conference">${team.conference}</span>
-              </td>
-              <td class="record">${team.record}</td>
+              <th scope="col">Rank</th>
+              <th scope="col">Program</th>
+              <th scope="col">Season Resume</th>
+              <th scope="col">Prev.</th>
+              <th scope="col">Movement</th>
             </tr>
-          `;
-        }).join('')}
-      </tbody>
-    </table>
-
-    <footer>
-      <div class="footer-actions">
-        <a href="/college-baseball/games?ranked=true" class="action-btn">
-          ⚾ View Live Games - Top 25 Teams
-        </a>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
       </div>
-      <div class="footer-links">
-        <p>Data sourced from ${data.source}</p>
-        <p><a href="https://blazesportsintel.com">← Back to Blaze Sports Intel</a></p>
-      </div>
-    </footer>
-  </div>
-</body>
-</html>`;
+    </section>
+  `;
 }
 
-/**
- * Calculate rank change indicator
- */
-function getRankChange(currentRank: number, previousRank: number | string): string {
-  if (previousRank === 'NR') {
-    return '<span class="rank-change rank-up">NEW</span>';
-  }
+function buildPage(entries: RankingEntry[]): string {
+  const lastUpdated = formatCentralTimeTimestamp(data.lastUpdated);
+  const freshness = data.dataFreshness ?? '';
+  const status = data.dataStatus ?? '';
+  const timezone = data.timezone ?? 'America/Chicago';
 
-  const prev = typeof previousRank === 'number' ? previousRank : currentRank;
-  const change = prev - currentRank;
+  const head = `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>${data.poll} &mdash; Blaze Sports Intel</title>
+        <meta name="description" content="College baseball Top 25 rankings with conference context, movement, and postseason notes." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+        <style>
+          :root {
+            color-scheme: light dark;
+            --bg: #05080f;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --text: #f7f9fc;
+            --muted: rgba(247, 249, 252, 0.65);
+            --accent: #ff7a18;
+            --accent-soft: rgba(255, 122, 24, 0.12);
+            --border: rgba(255, 255, 255, 0.08);
+          }
 
-  if (change > 0) {
-    return `<span class="rank-change rank-up">↑${change}</span>`;
-  } else if (change < 0) {
-    return `<span class="rank-change rank-down">↓${Math.abs(change)}</span>`;
-  } else {
-    return '<span class="rank-change rank-same">—</span>';
-  }
+          * {
+            box-sizing: border-box;
+          }
+
+          body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top left, rgba(255, 122, 24, 0.18), transparent 50%), var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+          }
+
+          main {
+            width: min(960px, 100%);
+            padding: clamp(1.5rem, 2vw + 1rem, 3rem) clamp(1rem, 4vw, 2.75rem) 4rem;
+          }
+
+          header.hero {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+          }
+
+          header.hero .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            color: var(--muted);
+            font-size: 0.75rem;
+          }
+
+          header.hero h1 {
+            font-size: clamp(1.75rem, 2.8vw, 2.75rem);
+            margin: 0;
+          }
+
+          header.hero p.subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            line-height: 1.6;
+          }
+
+          .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+          }
+
+          .meta .pill {
+            border-radius: 999px;
+            padding: 0.45rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+          }
+
+          .meta .pill strong {
+            color: var(--text);
+          }
+
+          section.metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: clamp(1.5rem, 4vw, 2.75rem);
+          }
+
+          .metric-card {
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(5, 8, 15, 0.65));
+            border: 1px solid var(--border);
+            display: grid;
+            gap: 0.35rem;
+          }
+
+          .metric-label {
+            color: var(--muted);
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+          }
+
+          .metric-value {
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            font-weight: 700;
+          }
+
+          .table-wrapper {
+            background: rgba(5, 8, 15, 0.65);
+            border-radius: 20px;
+            padding: clamp(1.25rem, 2vw, 2rem);
+            border: 1px solid var(--border);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+          }
+
+          .table-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            margin-bottom: 1.5rem;
+          }
+
+          .table-header h2 {
+            margin: 0;
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+          }
+
+          .table-header .table-subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+          }
+
+          .table-container {
+            overflow-x: auto;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+          }
+
+          caption {
+            text-align: left;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+          }
+
+          thead th {
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--muted);
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+          }
+
+          tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          }
+
+          tbody tr:last-of-type {
+            border-bottom: none;
+          }
+
+          tbody td {
+            padding: 0.9rem 0;
+            font-size: 0.95rem;
+            vertical-align: top;
+          }
+
+          td.rank {
+            width: 4ch;
+            font-weight: 600;
+          }
+
+          td.team {
+            display: grid;
+            gap: 0.3rem;
+          }
+
+          td.team .conference {
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 0.02em;
+          }
+
+          td.record {
+            max-width: 240px;
+          }
+
+          td.previous {
+            width: 6ch;
+          }
+
+          td.movement {
+            width: 8ch;
+            font-weight: 600;
+          }
+
+          td.movement.up {
+            color: #3fcf8e;
+          }
+
+          td.movement.down {
+            color: #ff6b6b;
+          }
+
+          td.movement.steady {
+            color: var(--muted);
+          }
+
+          footer.page-footer {
+            margin-top: clamp(2rem, 5vw, 3rem);
+            color: var(--muted);
+            font-size: 0.85rem;
+            display: grid;
+            gap: 0.5rem;
+          }
+
+          footer.page-footer a {
+            color: var(--text);
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+          }
+
+          @media (prefers-color-scheme: light) {
+            :root {
+              --bg: #f1f5ff;
+              --card-bg: rgba(255, 255, 255, 0.75);
+              --text: #091125;
+              --muted: rgba(9, 17, 37, 0.7);
+              --accent-soft: rgba(255, 122, 24, 0.1);
+              --border: rgba(9, 17, 37, 0.08);
+            }
+
+            body {
+              background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(241, 245, 255, 0.95));
+            }
+
+            .table-wrapper {
+              background: rgba(255, 255, 255, 0.9);
+            }
+
+            tbody tr {
+              border-bottom: 1px solid rgba(9, 17, 37, 0.08);
+            }
+
+            .metric-card {
+              background: rgba(255, 255, 255, 0.95);
+            }
+
+            footer.page-footer a {
+              color: #0d1e46;
+            }
+          }
+
+          @media (max-width: 600px) {
+            header.hero {
+              gap: 0.75rem;
+            }
+
+            .meta {
+              flex-direction: column;
+              gap: 0.75rem;
+            }
+
+            table {
+              min-width: unset;
+            }
+
+            tbody td {
+              padding: 0.75rem 0;
+              font-size: 0.9rem;
+            }
+
+            td.team {
+              gap: 0.15rem;
+            }
+
+            .table-wrapper {
+              padding: 1rem;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <main>
+          <header class="hero">
+            <span class="eyebrow">Blaze Sports Intel &bull; College Baseball</span>
+            <h1>${data.poll} &mdash; ${data.season}</h1>
+            <p class="subtitle">Data-driven Top 25 built for analysts and diehard fans. Track postseason resumes, conference strength, and momentum heading into Omaha.</p>
+            <div class="meta">
+              <span class="pill"><strong>Last Updated:</strong> ${lastUpdated}</span>
+              <span class="pill"><strong>Timezone:</strong> ${timezone}</span>
+              ${freshness ? `<span class="pill"><strong>Data Freshness:</strong> ${freshness}</span>` : ''}
+              ${status ? `<span class="pill"><strong>Status:</strong> ${status}</span>` : ''}
+            </div>
+          </header>
+          ${buildSummaryCards(entries)}
+          ${buildRankingsTable(entries)}
+          <footer class="page-footer">
+            <span>Source: <a href="${data.source ?? 'https://d1baseball.com/rankings/'}" target="_blank" rel="noopener noreferrer">D1Baseball</a></span>
+            <span>Built for the BlazeSportsIntel.com College Baseball hub. Edge-rendered via Cloudflare Workers for instant global delivery.</span>
+          </footer>
+        </main>
+      </body>
+    </html>
+  `;
+
+  return head;
 }
+
+export default {
+  async fetch(request: Request, _env: Env): Promise<Response> {
+    const url = new URL(request.url);
+
+    if (url.pathname === '/health') {
+      return new Response(
+        JSON.stringify({
+          status: 'ok',
+          service: 'baseball-rankings',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: {
+            'content-type': 'application/json',
+          },
+        }
+      );
+    }
+
+    if (url.pathname !== '/' && url.pathname !== '') {
+      return new Response('Not Found', {
+        status: 404,
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+        },
+      });
+    }
+
+    const html = buildPage(data.rankings.slice(0, 25));
+
+    return new Response(html, {
+      headers: {
+        'content-type': 'text/html; charset=utf-8',
+        'cache-control': 'public, max-age=300',
+      },
+    });
+  },
+};
