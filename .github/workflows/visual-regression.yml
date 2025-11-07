@@ -1,0 +1,149 @@
+name: Visual Regression Testing
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - '**.html'
+      - '**.css'
+      - 'public/**'
+      - 'components/**'
+      - 'styles/**'
+
+jobs:
+  percy:
+    runs-on: ubuntu-latest
+    name: Percy Visual Testing
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Install Percy CLI
+        run: npm install --save-dev @percy/cli
+
+      - name: Run Percy snapshots
+        run: npx percy snapshot public
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+
+      - name: Comment PR with Percy results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Check if Percy completed successfully
+            const percyUrl = process.env.PERCY_BUILD_URL || 'Percy build in progress';
+
+            const comment = `## 📸 Visual Regression Testing
+
+            Percy has captured snapshots of this PR's visual changes.
+
+            **Build:** ${percyUrl}
+
+            Review the visual changes and approve or request changes as needed.
+
+            ### Widths Tested
+            - 📱 Mobile: 375px (iPhone SE)
+            - 📱 Tablet: 768px (iPad)
+            - 💻 Desktop: 1280px
+            - 🖥️ Large Desktop: 1920px
+
+            ### Pages Tested
+            - Homepage
+            - Sport hubs (MLB, NFL, NBA, College Baseball)
+            - Analytics Dashboard
+            - AI Copilot
+            - Historical Data
+            - Legal pages
+
+            ---
+            *Powered by [Percy](https://percy.io/)*
+            `;
+
+            // Find existing Percy comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const percyComment = comments.find(
+              comment => comment.body.includes('Visual Regression Testing')
+            );
+
+            if (percyComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: percyComment.id,
+                body: comment,
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment,
+              });
+            }
+
+  playwright-visual:
+    runs-on: ubuntu-latest
+    name: Playwright Visual Comparison
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright visual tests
+        run: npx playwright test --grep @visual
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
+      - name: Upload visual diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs
+          path: test-results/**/*-diff.png
+          retention-days: 7

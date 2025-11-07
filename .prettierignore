@@ -1,0 +1,41 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+package-lock.json
+
+# Build outputs
+dist
+build
+.next
+.wrangler
+coverage
+
+# Cloudflare
+.dev.vars
+wrangler.toml
+
+# Git
+.git
+.github
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated files
+*.min.js
+*.min.css
+public/js/vitals-tracker.js
+
+# Documentation
+CHANGELOG.md

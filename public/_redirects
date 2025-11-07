@@ -1,0 +1,17 @@
+# Blaze Sports Intel - Cloudflare Pages Redirects
+# Format: <source> <destination> <status_code>
+
+# Legal URL Canonicalization (Priority: High)
+/privacy /legal/privacy 301
+/terms /legal/terms 301
+
+# Legacy Analytics Pages (Priority: Medium)
+/analytics-original.html /analytics 301
+/sports-analytics-dashboard /analytics 301
+
+# Ensure canonical links for legal pages (these are the correct URLs)
+/legal/privacy /legal/privacy 200
+/legal/terms /legal/terms 200
+/legal/accessibility /legal/accessibility 200
+/legal/ai-disclosure /legal/ai-disclosure 200
+/legal/copyright /legal/copyright 200

@@ -1,0 +1,20 @@
+# Blaze Sports Intel - Robots.txt
+# Updated: 2025-01-11
+
+User-agent: *
+Allow: /
+
+# Disallow admin/utility pages
+Disallow: /api/
+Disallow: /_redirects
+Disallow: /.well-known/
+
+# Allow important API documentation
+Allow: /api-docs
+Allow: /api-status
+
+# Sitemap
+Sitemap: https://blazesportsintel.com/sitemap.xml
+
+# Crawl-delay for politeness (optional, adjust if needed)
+# Crawl-delay: 1
