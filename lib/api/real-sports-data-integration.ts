@@ -481,7 +481,7 @@ export class RealSportsDataClient {
     conference?: string;
     division?: string;
   }): Promise<CFBGame[]> {
-    const cacheKey = `cfb:games:${params.year}:${params.week || 'all'}:${params.team || 'all'}:${params.conference || 'all'}`;
+    const cacheKey = `cfb:games:${params.year}:${params.week ?? 'all'}:${params.seasonType || 'all'}:${params.team || 'all'}:${params.conference || 'all'}:${params.division || 'all'}`;
 
     const { data } = await this.getCached(cacheKey, async () => {
       let url = `https://api.collegefootballdata.com/games?year=${params.year}`;
@@ -629,7 +629,7 @@ export class RealSportsDataClient {
     startWeek?: number;
     endWeek?: number;
   }): Promise<CFBTeamStats[]> {
-    const cacheKey = `cfb:teamstats:${params.year}:${params.team || 'all'}:${params.conference || 'all'}`;
+    const cacheKey = `cfb:teamstats:${params.year}:${params.team || 'all'}:${params.conference || 'all'}:${params.startWeek ?? 'all'}:${params.endWeek ?? 'all'}`;
 
     const { data } = await this.getCached(cacheKey, async () => {
       let url = `https://api.collegefootballdata.com/stats/season?year=${params.year}`;
@@ -667,7 +667,7 @@ export class RealSportsDataClient {
     conference?: string;
     category?: string;
   }): Promise<CFBPlayerStats[]> {
-    const cacheKey = `cfb:playerstats:${params.year}:${params.team || 'all'}:${params.category || 'all'}`;
+    const cacheKey = `cfb:playerstats:${params.year}:${params.seasonType || 'all'}:${params.team || 'all'}:${params.conference || 'all'}:${params.category || 'all'}`;
 
     const { data } = await this.getCached(cacheKey, async () => {
       let url = `https://api.collegefootballdata.com/stats/player/season?year=${params.year}`;
@@ -708,7 +708,9 @@ export class RealSportsDataClient {
     conference?: string;
     playType?: number;
   }): Promise<CFBPlayByPlay[]> {
-    const cacheKey = `cfb:plays:${params.gameId}`;
+    const cacheKey = `cfb:plays:${params.gameId}:${params.seasonType || 'all'}:${params.week ?? 'all'}:${params.team || 'all'}:${params.offense || 'all'}:${params.defense || 'all'}:${params.conference || 'all'}:${
+      typeof params.playType !== 'undefined' ? params.playType : 'all'
+    }`;
 
     const { data } = await this.getCached(cacheKey, async () => {
       let url = `https://api.collegefootballdata.com/plays?gameId=${params.gameId}`;
