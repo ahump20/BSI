@@ -1,425 +1,465 @@
 /**
- * Blaze Sports Intel - Real Sports Data Integration Client
- * Professional-grade API client with retry logic, caching, and error handling
+ * Blaze Sports Intel - Unified Sports Data Client
+ * Production-grade API client for professional and college sports data
  *
  * Data Sources:
- * - MaxPreps: High school football rankings
- * - Perfect Game: Youth baseball data
- * - Athletic.net: Track & field results
- * - ESPN API: Live scores and stats
+ * - SportsDataIO: MLB, NFL, NBA, NCAA comprehensive data
+ * - MLB StatsAPI: Official MLB statistics (free)
+ * - ESPN API: Live scores, standings, college sports
+ * - CollegeFootballData: NCAA football analytics
+ *
+ * Features:
+ * - Exponential backoff retry logic
+ * - Automatic rate limit handling
+ * - Transparent caching with TTL
+ * - America/Chicago timezone for all timestamps
+ * - Zero placeholder data - always real or error
  */
 
-export interface SportsDataConfig {
-  maxPrepsApiKey?: string;
-  perfectGameApiKey?: string;
-  athleticNetApiKey?: string;
-  espnApiKey?: string;
+import { DateTime } from 'luxon';
+
+// ============================================================================
+// Type Definitions
+// ============================================================================
+
+export interface ApiConfig {
+  baseUrl: string;
+  apiKey?: string;
+  headers?: Record<string, string>;
+  timeout?: number;
+  retries?: number;
   cacheTTL?: number;
-  retryAttempts?: number;
-  retryDelay?: number;
 }
 
-export interface ApiResponse<T> {
+export interface DataSource {
+  provider: string;
+  url: string;
+  retrievedAt: string; // ISO8601 in America/Chicago
+  cacheHit: boolean;
+  ttl: number; // seconds
+}
+
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
-  error?: string;
-  cached?: boolean;
+  source: DataSource;
+  error?: ApiError | null;
+}
+
+export interface ApiError {
+  message: string;
+  status: number;
+  provider: string;
   timestamp: string;
-  source: string;
+  retryable: boolean;
 }
 
-export interface Team {
-  id: string;
-  name: string;
-  school: string;
-  city: string;
-  state: string;
-  classification: string;
-  record: {
-    wins: number;
-    losses: number;
-    ties?: number;
-  };
-  ranking?: number;
-  rating?: number;
+export interface RateLimitInfo {
+  limit: number;
+  remaining: number;
+  reset: number; // Unix timestamp
 }
 
-export interface Player {
-  id: string;
-  name: string;
-  position: string;
-  jerseyNumber?: string;
-  year: string;
-  stats: Record<string, number | string>;
-  collegeCommitment?: string;
-}
-
-export interface GameScore {
-  id: string;
-  homeTeam: Team;
-  awayTeam: Team;
-  homeScore: number;
-  awayScore: number;
-  status: 'scheduled' | 'in_progress' | 'final';
-  quarter?: string;
-  timeRemaining?: string;
-  venue?: string;
-  date: string;
-}
+// ============================================================================
+// Sports Data Client
+// ============================================================================
 
 export class SportsDataClient {
-  private config: Required<SportsDataConfig>;
-  private cache: Map<string, { data: any; expires: number }>;
+  private configs: Map<string, ApiConfig>;
+  private rateLimits: Map<string, RateLimitInfo>;
+  private cache: Map<string, { data: unknown; expires: number }>;
 
-  constructor(config: SportsDataConfig = {}) {
-    this.config = {
-      maxPrepsApiKey: config.maxPrepsApiKey || process.env.MAXPREPS_API_KEY || '',
-      perfectGameApiKey: config.perfectGameApiKey || process.env.PERFECT_GAME_API_KEY || '',
-      athleticNetApiKey: config.athleticNetApiKey || process.env.ATHLETIC_NET_API_KEY || '',
-      espnApiKey: config.espnApiKey || process.env.ESPN_API_KEY || '',
-      cacheTTL: config.cacheTTL || 300, // 5 minutes default
-      retryAttempts: config.retryAttempts || 3,
-      retryDelay: config.retryDelay || 1000, // 1 second
-    };
+  constructor() {
+    this.configs = new Map();
+    this.rateLimits = new Map();
     this.cache = new Map();
+    this.initializeProviders();
   }
 
   /**
-   * Generic fetch with retry logic and exponential backoff
+   * Initialize all API provider configurations
+   */
+  private initializeProviders(): void {
+    // SportsDataIO - Comprehensive pro/college sports data
+    this.configs.set('sportsdataio', {
+      baseUrl: 'https://api.sportsdata.io/v3',
+      apiKey: process.env.SPORTSDATAIO_API_KEY || '',
+      headers: {
+        'User-Agent': 'BlazeSportsIntel/1.0',
+        'Accept': 'application/json'
+      },
+      timeout: 10000,
+      retries: 3,
+      cacheTTL: 300 // 5 minutes
+    });
+
+    // MLB StatsAPI - Official MLB data (FREE)
+    this.configs.set('mlb-statsapi', {
+      baseUrl: 'https://statsapi.mlb.com/api/v1',
+      headers: {
+        'User-Agent': 'BlazeSportsIntel/1.0',
+        'Accept': 'application/json'
+      },
+      timeout: 8000,
+      retries: 3,
+      cacheTTL: 60 // 1 minute for live data
+    });
+
+    // ESPN API - Live scores, standings, college sports
+    this.configs.set('espn', {
+      baseUrl: 'https://site.api.espn.com/apis/site/v2/sports',
+      headers: {
+        'User-Agent': 'BlazeSportsIntel/1.0',
+        'Accept': 'application/json',
+        'Referer': 'https://blazesportsintel.com'
+      },
+      timeout: 8000,
+      retries: 3,
+      cacheTTL: 180 // 3 minutes
+    });
+
+    // College Football Data API
+    this.configs.set('cfbd', {
+      baseUrl: 'https://api.collegefootballdata.com',
+      apiKey: process.env.COLLEGEFOOTBALLDATA_API_KEY || '',
+      headers: {
+        'User-Agent': 'BlazeSportsIntel/1.0',
+        'Accept': 'application/json'
+      },
+      timeout: 10000,
+      retries: 3,
+      cacheTTL: 300
+    });
+  }
+
+  /**
+   * Main fetch method - handles caching, retries, rate limits
+   */
+  async fetch<T>(
+    provider: string,
+    endpoint: string,
+    options: {
+      params?: Record<string, string>;
+      skipCache?: boolean;
+      customTTL?: number;
+    } = {}
+  ): Promise<ApiResponse<T>> {
+    const config = this.configs.get(provider);
+    if (!config) {
+      return this.errorResponse(`Unknown provider: ${provider}`, 500, provider, false);
+    }
+
+    // Check rate limits
+    await this.checkRateLimit(provider);
+
+    // Build cache key
+    const cacheKey = this.buildCacheKey(provider, endpoint, options.params);
+
+    // Check cache first unless explicitly skipped
+    if (!options.skipCache) {
+      const cached = this.getFromCache<T>(cacheKey);
+      if (cached) {
+        return {
+          success: true,
+          data: cached,
+          source: this.buildDataSource(provider, endpoint, true, options.customTTL || config.cacheTTL!),
+          error: null
+        };
+      }
+    }
+
+    // Build full URL
+    const url = this.buildUrl(config.baseUrl, endpoint, options.params);
+
+    // Fetch with retry logic
+    try {
+      const data = await this.fetchWithRetry<T>(url, config, provider);
+      const ttl = options.customTTL || config.cacheTTL || 300;
+
+      // Cache successful response
+      this.setCache(cacheKey, data, ttl);
+
+      return {
+        success: true,
+        data,
+        source: this.buildDataSource(provider, url, false, ttl),
+        error: null
+      };
+    } catch (error) {
+      const apiError = error as ApiError;
+      return {
+        success: false,
+        data: undefined,
+        source: this.buildDataSource(provider, url, false, 0),
+        error: apiError
+      };
+    }
+  }
+
+  /**
+   * Fetch with exponential backoff retry
    */
   private async fetchWithRetry<T>(
     url: string,
-    options: RequestInit = {},
-    attempt: number = 1
+    config: ApiConfig,
+    provider: string,
+    attempt = 1
   ): Promise<T> {
+    const headers: Record<string, string> = { ...config.headers };
+
+    // Add API key based on provider
+    if (config.apiKey) {
+      if (provider === 'sportsdataio') {
+        url += `${url.includes('?') ? '&' : '?'}key=${config.apiKey}`;
+      } else if (provider === 'cfbd') {
+        headers['Authorization'] = `Bearer ${config.apiKey}`;
+      }
+    }
+
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), config.timeout || 10000);
+
       const response = await fetch(url, {
-        ...options,
-        headers: {
-          'User-Agent': 'BlazeSportsIntel/1.0',
-          Accept: 'application/json',
-          ...options.headers,
-        },
+        headers,
+        signal: controller.signal
       });
 
+      clearTimeout(timeout);
+
+      // Update rate limit tracking
+      this.updateRateLimit(provider, response);
+
+      // Handle non-OK responses
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (response.status === 429 && attempt < (config.retries || 3)) {
+          // Rate limited - exponential backoff
+          const waitTime = Math.min(1000 * Math.pow(2, attempt), 16000);
+          await this.sleep(waitTime);
+          return this.fetchWithRetry<T>(url, config, provider, attempt + 1);
+        }
+
+        throw this.createError(
+          `HTTP ${response.status}: ${response.statusText}`,
+          response.status,
+          provider,
+          response.status >= 500 // 5xx errors are retryable
+        );
       }
 
-      return await response.json();
+      const data = await response.json();
+      return data as T;
     } catch (error) {
-      if (attempt < this.config.retryAttempts) {
-        const delay = this.config.retryDelay * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return this.fetchWithRetry<T>(url, options, attempt + 1);
+      if (attempt < (config.retries || 3)) {
+        // Exponential backoff with jitter
+        const baseWait = 250 * Math.pow(2, attempt);
+        const jitter = Math.random() * 250;
+        await this.sleep(baseWait + jitter);
+        return this.fetchWithRetry<T>(url, config, provider, attempt + 1);
       }
-      throw error;
+
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw this.createError('Request timeout', 408, provider, true);
+        }
+        throw error; // Re-throw if already ApiError
+      }
+
+      throw this.createError('Unknown error occurred', 500, provider, false);
     }
   }
 
   /**
-   * Get from cache or fetch fresh data
+   * Check and wait for rate limit if necessary
    */
-  private async getCached<T>(
-    key: string,
-    fetcher: () => Promise<T>,
-    ttl: number = this.config.cacheTTL
-  ): Promise<{ data: T; cached: boolean }> {
-    const cached = this.cache.get(key);
-    const now = Date.now();
+  private async checkRateLimit(provider: string): Promise<void> {
+    const limit = this.rateLimits.get(provider);
+    if (!limit) return;
 
-    if (cached && cached.expires > now) {
-      return { data: cached.data, cached: true };
+    if (limit.remaining === 0) {
+      const now = Date.now();
+      if (now < limit.reset) {
+        const waitTime = limit.reset - now;
+        await this.sleep(waitTime);
+      }
+    }
+  }
+
+  /**
+   * Update rate limit info from response headers
+   */
+  private updateRateLimit(provider: string, response: Response): void {
+    const limit = parseInt(response.headers.get('X-RateLimit-Limit') || '0');
+    const remaining = parseInt(response.headers.get('X-RateLimit-Remaining') || '0');
+    const reset = parseInt(response.headers.get('X-RateLimit-Reset') || '0');
+
+    if (limit > 0) {
+      this.rateLimits.set(provider, {
+        limit,
+        remaining,
+        reset: reset * 1000 // Convert to ms
+      });
+    }
+  }
+
+  /**
+   * Build full URL with query parameters
+   */
+  private buildUrl(
+    baseUrl: string,
+    endpoint: string,
+    params?: Record<string, string>
+  ): string {
+    const url = new URL(endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`);
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.append(key, value);
+      });
     }
 
-    const data = await fetcher();
+    return url.toString();
+  }
+
+  /**
+   * Build cache key from provider, endpoint, and params
+   */
+  private buildCacheKey(
+    provider: string,
+    endpoint: string,
+    params?: Record<string, string>
+  ): string {
+    const paramStr = params ? JSON.stringify(params) : '';
+    return `${provider}:${endpoint}:${paramStr}`;
+  }
+
+  /**
+   * Get data from cache if not expired
+   */
+  private getFromCache<T>(key: string): T | null {
+    const cached = this.cache.get(key);
+    if (!cached) return null;
+
+    if (Date.now() > cached.expires) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return cached.data as T;
+  }
+
+  /**
+   * Set data in cache with TTL
+   */
+  private setCache(key: string, data: unknown, ttlSeconds: number): void {
     this.cache.set(key, {
       data,
-      expires: now + (ttl * 1000),
+      expires: Date.now() + (ttlSeconds * 1000)
     });
-
-    return { data, cached: false };
   }
 
   /**
-   * Fetch MaxPreps football rankings
+   * Build DataSource object for transparency
    */
-  async getFootballRankings(
-    state: string = 'TX',
-    classification: string = '6A'
-  ): Promise<ApiResponse<Team[]>> {
-    const cacheKey = `maxpreps:football:${state}:${classification}`;
-
-    try {
-      const { data, cached } = await this.getCached(cacheKey, async () => {
-        // MaxPreps API endpoint (actual endpoint would need to be confirmed)
-        const url = `https://api.maxpreps.com/rankings/football?state=${state}&classification=${classification}`;
-
-        return await this.fetchWithRetry<any>(url, {
-          headers: {
-            'X-API-Key': this.config.maxPrepsApiKey,
-          },
-        });
-      });
-
-      // Transform MaxPreps response to our Team format
-      const teams: Team[] = (data.rankings || []).map((team: any) => ({
-        id: team.id || team.teamId,
-        name: team.name || team.mascot,
-        school: team.school || team.schoolName,
-        city: team.city,
-        state: team.state,
-        classification: team.classification || classification,
-        record: {
-          wins: team.wins || 0,
-          losses: team.losses || 0,
-          ties: team.ties || 0,
-        },
-        ranking: team.rank,
-        rating: team.rating || this.calculateCompositeRating(team),
-      }));
-
-      return {
-        success: true,
-        data: teams,
-        cached,
-        timestamp: new Date().toISOString(),
-        source: 'MaxPreps',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-        source: 'MaxPreps',
-      };
-    }
-  }
-
-  /**
-   * Fetch Perfect Game baseball rankings
-   */
-  async getBaseballRankings(
-    state: string = 'TX',
-    graduationYear?: number
-  ): Promise<ApiResponse<Team[]>> {
-    const cacheKey = `perfectgame:baseball:${state}:${graduationYear || 'all'}`;
-
-    try {
-      const { data, cached } = await this.getCached(cacheKey, async () => {
-        // Perfect Game API endpoint
-        const url = graduationYear
-          ? `https://api.perfectgame.org/teams?state=${state}&grad_year=${graduationYear}`
-          : `https://api.perfectgame.org/teams?state=${state}`;
-
-        return await this.fetchWithRetry<any>(url, {
-          headers: {
-            Authorization: `Bearer ${this.config.perfectGameApiKey}`,
-          },
-        });
-      });
-
-      const teams: Team[] = (data.teams || []).map((team: any) => ({
-        id: team.team_id,
-        name: team.team_name,
-        school: team.school_name,
-        city: team.city,
-        state: team.state,
-        classification: team.age_division || 'HS',
-        record: {
-          wins: team.wins || 0,
-          losses: team.losses || 0,
-        },
-        ranking: team.national_rank,
-        rating: team.pg_rating,
-      }));
-
-      return {
-        success: true,
-        data: teams,
-        cached,
-        timestamp: new Date().toISOString(),
-        source: 'Perfect Game',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-        source: 'Perfect Game',
-      };
-    }
-  }
-
-  /**
-   * Fetch Athletic.net track & field rankings
-   */
-  async getTrackFieldRankings(
-    state: string = 'TX',
-    gender: 'boys' | 'girls' = 'boys'
-  ): Promise<ApiResponse<Team[]>> {
-    const cacheKey = `athletic:track:${state}:${gender}`;
-
-    try {
-      const { data, cached } = await this.getCached(cacheKey, async () => {
-        // Athletic.net API endpoint
-        const url = `https://www.athletic.net/api/v1/School/GetSchoolRankings?state=${state}&gender=${gender}`;
-
-        return await this.fetchWithRetry<any>(url, {
-          headers: {
-            'X-API-Key': this.config.athleticNetApiKey,
-          },
-        });
-      });
-
-      const teams: Team[] = (data.schools || []).map((school: any) => ({
-        id: school.SchoolID.toString(),
-        name: school.SchoolName,
-        school: school.SchoolName,
-        city: school.City,
-        state: school.State,
-        classification: school.Division || 'HS',
-        record: {
-          wins: school.MeetWins || 0,
-          losses: 0, // Track doesn't use W/L
-        },
-        ranking: school.StateRank,
-        rating: school.PowerRating,
-      }));
-
-      return {
-        success: true,
-        data: teams,
-        cached,
-        timestamp: new Date().toISOString(),
-        source: 'Athletic.net',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-        source: 'Athletic.net',
-      };
-    }
-  }
-
-  /**
-   * Fetch ESPN live scores
-   */
-  async getLiveScores(sport: 'football' | 'basketball' | 'baseball'): Promise<ApiResponse<GameScore[]>> {
-    const cacheKey = `espn:live:${sport}`;
-
-    try {
-      const { data, cached } = await this.getCached(
-        cacheKey,
-        async () => {
-          const sportPaths = {
-            football: 'college-football',
-            basketball: 'mens-college-basketball',
-            baseball: 'college-baseball',
-          };
-
-          const url = `https://site.api.espn.com/apis/site/v2/sports/${sportPaths[sport]}/scoreboard`;
-          return await this.fetchWithRetry<any>(url);
-        },
-        30 // 30 second TTL for live scores
-      );
-
-      const games: GameScore[] = (data.events || []).map((event: any) => {
-        const competition = event.competitions[0];
-        const homeTeam = competition.competitors.find((c: any) => c.homeAway === 'home');
-        const awayTeam = competition.competitors.find((c: any) => c.homeAway === 'away');
-
-        return {
-          id: event.id,
-          homeTeam: this.transformESPNTeam(homeTeam),
-          awayTeam: this.transformESPNTeam(awayTeam),
-          homeScore: parseInt(homeTeam.score) || 0,
-          awayScore: parseInt(awayTeam.score) || 0,
-          status: competition.status.type.completed ? 'final' :
-                  competition.status.type.state === 'in' ? 'in_progress' : 'scheduled',
-          quarter: competition.status.period?.toString(),
-          timeRemaining: competition.status.displayClock,
-          venue: competition.venue?.fullName,
-          date: event.date,
-        };
-      });
-
-      return {
-        success: true,
-        data: games,
-        cached,
-        timestamp: new Date().toISOString(),
-        source: 'ESPN',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
-        source: 'ESPN',
-      };
-    }
-  }
-
-  /**
-   * Calculate composite rating using Blaze algorithm
-   */
-  private calculateCompositeRating(team: any): number {
-    const performance = (team.wins / (team.wins + team.losses || 1)) * 40;
-    const talent = (team.avg_player_rating || 75) * 0.3;
-    const historical = (team.historical_success || 75) * 0.2;
-    const strength = (team.sos || 75) * 0.1;
-
-    return Math.round((performance + talent + historical + strength) * 10) / 10;
-  }
-
-  /**
-   * Transform ESPN team data to our format
-   */
-  private transformESPNTeam(competitor: any): Team {
+  private buildDataSource(
+    provider: string,
+    url: string,
+    cacheHit: boolean,
+    ttl: number
+  ): DataSource {
     return {
-      id: competitor.team.id,
-      name: competitor.team.displayName,
-      school: competitor.team.name,
-      city: competitor.team.location || '',
-      state: '',
-      classification: '',
-      record: {
-        wins: parseInt(competitor.records?.[0]?.summary?.split('-')[0]) || 0,
-        losses: parseInt(competitor.records?.[0]?.summary?.split('-')[1]) || 0,
-      },
-      ranking: competitor.curatedRank?.current,
+      provider,
+      url,
+      retrievedAt: DateTime.now().setZone('America/Chicago').toISO() || new Date().toISOString(),
+      cacheHit,
+      ttl
     };
   }
 
   /**
-   * Clear cache manually
+   * Create standardized API error
    */
-  clearCache(pattern?: string): void {
-    if (!pattern) {
+  private createError(
+    message: string,
+    status: number,
+    provider: string,
+    retryable: boolean
+  ): ApiError {
+    return {
+      message,
+      status,
+      provider,
+      timestamp: DateTime.now().setZone('America/Chicago').toISO() || new Date().toISOString(),
+      retryable
+    };
+  }
+
+  /**
+   * Create error response
+   */
+  private errorResponse(
+    message: string,
+    status: number,
+    provider: string,
+    retryable: boolean
+  ): ApiResponse<never> {
+    return {
+      success: false,
+      data: undefined,
+      source: this.buildDataSource(provider, '', false, 0),
+      error: this.createError(message, status, provider, retryable)
+    };
+  }
+
+  /**
+   * Sleep utility for delays
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Clear cache (specific provider or all)
+   */
+  clearCache(provider?: string): void {
+    if (provider) {
+      for (const key of this.cache.keys()) {
+        if (key.startsWith(`${provider}:`)) {
+          this.cache.delete(key);
+        }
+      }
+    } else {
       this.cache.clear();
-      return;
     }
+  }
+
+  /**
+   * Get cache statistics for monitoring
+   */
+  getCacheStats(): { size: number; providers: Record<string, number> } {
+    const providers: Record<string, number> = {};
 
     for (const key of this.cache.keys()) {
-      if (key.includes(pattern)) {
-        this.cache.delete(key);
-      }
+      const provider = key.split(':')[0];
+      providers[provider] = (providers[provider] || 0) + 1;
     }
+
+    return {
+      size: this.cache.size,
+      providers
+    };
   }
 
   /**
-   * Get cache statistics
+   * Get rate limit status for a provider
    */
-  getCacheStats(): { size: number; keys: string[] } {
-    return {
-      size: this.cache.size,
-      keys: Array.from(this.cache.keys()),
-    };
+  getRateLimitStatus(provider: string): RateLimitInfo | null {
+    return this.rateLimits.get(provider) || null;
   }
 }
 
-// Export singleton instance
+// ============================================================================
+// Singleton Export
+// ============================================================================
+
 export const sportsDataClient = new SportsDataClient();

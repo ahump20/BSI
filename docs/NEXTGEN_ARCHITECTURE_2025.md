@@ -10,11 +10,11 @@
 
 ## Executive Summary
 
-This document outlines the architecture for Blaze Sports Intelligence's next-generation analytics engine, incorporating cutting-edge data processing, advanced sabermetrics, AI/ML integration, and state-of-the-art visualization technologies. The system is designed to deliver real-time insights with sub-200ms latency while processing millions of data points from MLB Statcast, NFL Next Gen Stats, and other premier data sources.
+This document outlines the architecture for Blaze Sports Intelligence's next-generation analytics engine, incorporating high-performance data processing, advanced sabermetrics, AI/ML integration, and WebGPU-accelerated visualization technologies. The system targets sub-200ms P95 latency for real-time insights while processing data from MLB Statcast, NFL Next Gen Stats, and other premier sports data sources.
 
 **Key Innovations**:
-- **Edge Computing Architecture**: Process data closer to source for <100ms latency
-- **AI-Powered Predictions**: 91.5% accuracy for injury risk, 80% for performance forecasting
+- **Edge Computing Architecture**: Process data closer to source for <100ms latency target
+- **AI-Powered Predictions**: LSTM injury risk and XGBoost performance models (validation pending)
 - **WebGPU Rendering**: Visualize millions of data points in real-time
 - **Advanced Sabermetrics**: Next-gen metrics including Coverage Responsibility (NFL), Bat Tracking Attack Angles (MLB)
 - **Progressive Disclosure UX**: 5-6 card dashboard design with 200-400ms smooth transitions
@@ -900,11 +900,11 @@ export class PlayerMovementHeatmap {
 **Week 19-20: Testing & Launch**
 - [ ] Load testing (10K concurrent users)
 - [ ] Stress test ML models
-- [ ] Verify 91.5% injury prediction accuracy
+- [ ] Validate injury prediction model against 2024 historical data
 - [ ] Validate 2025 Next Gen Stats integration
 - [ ] Beta launch with select teams
 
-**Deliverable**: Production-ready system with industry-leading performance
+**Deliverable**: Production-ready system meeting <100ms edge latency and <2s dashboard load targets
 
 ---
 
