@@ -292,7 +292,7 @@ class BlazeChampionshipPlatform {
               beginAtZero: true,
               max: 50,
               ticks: {
-                callback: function(value) {
+                callback(value) {
                   return value + '%';
                 }
               }

@@ -23,6 +23,7 @@ test-api-keys.cjs
 validated-keys.env
 *.env
 .env*
+.env.real
 
 # Large media files
 *.mp4

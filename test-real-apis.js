@@ -50,10 +50,10 @@ async function testESPNNFLAPI() {
 
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {
@@ -84,10 +84,10 @@ async function testESPNNBAAPI() {
 
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {
@@ -117,10 +117,10 @@ async function testESPNCFBAPI() {
 
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {

@@ -103,14 +103,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       highlights: game.highlights,
     };
 
-    // Add competition data
-    if (game.competitions && game.competitions.length > 0) {
-      const competition = game.competitions[0];
+    /**
+     * Add competition data with defensive programming
+     * Handle both data structures:
+     * 1. Adapter may return competition directly in game (data.header.competitions[0])
+     * 2. Or competition may be nested under game.competitions[0]
+     */
+    const competition = game.competitions?.[0] || game;
+
+    if (competition.competitors || game.competitors) {
       response.competition = {
-        id: competition.id,
-        competitors: competition.competitors,
-        series: competition.series,
-        situation: competition.situation,
+        id: competition.id || game.id,
+        competitors: competition.competitors || game.competitors || [],
+        series: competition.series || game.series,
+        situation: competition.situation || game.situation,
       };
     }
 
@@ -193,14 +199,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 /**
  * Generate comprehensive game recap with narrative and statistics
  * ESPN app shows ONLY score and inning - we provide the full story
+ *
+ * @param game - Game data (may contain competition directly or nested)
+ * @param boxscore - Box score data with player statistics
+ * @param env - Environment bindings
+ * @returns Structured game recap with headline, summary, and key plays
  */
 async function generateGameRecap(
   game: any,
   boxscore: any,
   env: Env
 ): Promise<NCAAGameRecap> {
-  const competition = game.competitions?.[0];
-  if (!competition) {
+  // Defensive: Handle both data structures (nested or direct)
+  const competition = game.competitions?.[0] || game;
+
+  if (!competition || !competition.competitors) {
     throw new Error('No competition data available');
   }
 
@@ -479,9 +492,18 @@ function ordinal(n: number): string {
 // AUTO-GENERATED GAME PREVIEW
 // ============================================================================
 
+/**
+ * Generate game preview for scheduled games
+ *
+ * @param game - Game data (may contain competition directly or nested)
+ * @param env - Environment bindings
+ * @returns Structured game preview with matchup analysis
+ */
 async function generateGamePreview(game: any, env: Env): Promise<any> {
-  const competition = game.competitions?.[0];
-  if (!competition) {
+  // Defensive: Handle both data structures (nested or direct)
+  const competition = game.competitions?.[0] || game;
+
+  if (!competition || !competition.competitors) {
     throw new Error('No competition data available');
   }
 

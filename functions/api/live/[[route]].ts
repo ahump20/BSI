@@ -237,8 +237,8 @@ async function getNCAAFootball(url: URL, env: Env) {
 
   const response = await fetch(apiUrl, {
     headers: {
-      'Authorization': `Bearer ${env.CFBDATA_API_KEY}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${env.CFBDATA_API_KEY}`,
+      Accept: 'application/json',
     },
   });
 
@@ -350,7 +350,7 @@ async function getNCAAGames(url: URL, env: Env) {
     const response = await fetch(ncaaUrl, {
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0 (+https://blazesportsintel.com)',
-        'Accept': 'application/json, text/html',
+        Accept: 'application/json, text/html',
       },
     });
 

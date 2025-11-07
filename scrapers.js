@@ -31,7 +31,7 @@ export class NCAADataScraper {
       const response = await fetch(endpoint, {
         headers: {
           'User-Agent': 'Mozilla/5.0',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
       });
 
@@ -83,9 +83,9 @@ export class NCAADataScraper {
 
   mapStatus(state) {
     const statusMap = {
-      'LIVE': 'live',
-      'FINAL': 'final',
-      'SCHEDULED': 'scheduled',
+      LIVE: 'live',
+      FINAL: 'final',
+      SCHEDULED: 'scheduled',
     };
     return statusMap[state] || 'scheduled';
   }
@@ -228,9 +228,9 @@ export class SECStatsScraper {
 export class TeamStatsAPI {
   constructor(school) {
     this.baseUrls = {
-      'texas': 'https://texassports.com',
-      'lsu': 'https://lsusports.net',
-      'arkansas': 'https://arkansasrazorbacks.com',
+      texas: 'https://texassports.com',
+      lsu: 'https://lsusports.net',
+      arkansas: 'https://arkansasrazorbacks.com',
       // Add more schools
     };
     this.baseUrl = this.baseUrls[school] || null;

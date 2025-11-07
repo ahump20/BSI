@@ -2,7 +2,12 @@ name = "college-baseball-tracker"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-01-01"
 
-# KV namespace for caching (existing CACHE namespace from blazesportsintel)
+# KV namespace for unified caching
+# Use key prefixes to separate concerns:
+#   - cache:* for general caching
+#   - query:* for query results
+#   - rate_limit:* for rate limiting
+#   - vitals:* for Web Vitals storage
 kv_namespaces = [
   { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" }
 ]

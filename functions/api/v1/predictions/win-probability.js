@@ -153,7 +153,7 @@ async function fetchGameState(env, gameId, sport) {
  */
 function generateDemoWinProbability(sport) {
   const demoGameState = {
-    'NFL': {
+    NFL: {
       sport: 'NFL',
       homeTeam: 'KC',
       awayTeam: 'BUF',
@@ -166,7 +166,7 @@ function generateDemoWinProbability(sport) {
       distance: 10,
       yardLine: 45
     },
-    'MLB': {
+    MLB: {
       sport: 'MLB',
       homeTeam: 'STL',
       awayTeam: 'CHC',
@@ -177,7 +177,7 @@ function generateDemoWinProbability(sport) {
       outs: 2,
       runnersOn: ['2B']
     },
-    'NBA': {
+    NBA: {
       sport: 'NBA',
       homeTeam: 'LAL',
       awayTeam: 'GSW',

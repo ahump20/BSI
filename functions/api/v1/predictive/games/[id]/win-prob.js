@@ -94,7 +94,7 @@ export async function onRequest(context) {
       return jsonResponse({
         error: 'Game not found',
         game_id: gameId,
-        sport: sport
+        sport
       }, 404);
     }
 
@@ -128,7 +128,7 @@ export async function onRequest(context) {
     const response = {
       game: {
         id: game.game_id,
-        sport: sport,
+        sport,
         home_team: {
           id: game.home_team_id,
           name: game.home_team_name,
@@ -165,7 +165,7 @@ export async function onRequest(context) {
       } : null,
       meta: {
         data_source: 'Blaze Predictive Intelligence Engine',
-        sport: sport,
+        sport,
         update_frequency: game.status === 'in_progress' ? 'Real-time (30s)' : 'Static',
         last_updated: winProb ? new Date(winProb.updated_at * 1000).toISOString() : null,
         timezone: 'America/Chicago',
@@ -267,7 +267,7 @@ async function calculateWinProbability(env, game, sport, model) {
   const situation = extractGameSituation(game, sport);
 
   let homeWinProb = 0.5; // Default 50/50
-  let tieProb = 0;
+  const tieProb = 0;
 
   if (sport === 'college-baseball' || sport === 'mlb') {
     homeWinProb = calculateBaseballWinProbability(game, situation);
@@ -290,7 +290,7 @@ async function calculateWinProbability(env, game, sport, model) {
   return {
     prob_id: `prob_${game.game_id}_${Date.now()}`,
     game_id: game.game_id,
-    sport: sport,
+    sport,
     sequence: prevProb ? prevProb.sequence + 1 : 1,
     home_win_prob: parseFloat(homeWinProb.toFixed(3)),
     tie_prob: parseFloat(tieProb.toFixed(3)),

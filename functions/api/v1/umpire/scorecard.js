@@ -91,7 +91,7 @@ export async function onRequest(context) {
  */
 function generateDemoScorecard(sport) {
   return {
-    sport: sport,
+    sport,
     type: 'demo',
     game_id: 'demo_game',
     umpire: {

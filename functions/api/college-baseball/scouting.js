@@ -373,7 +373,7 @@ async function fetchLatestGameData(playerId, env) {
       const response = await fetchWithTimeout(espnUrl, {
         headers: {
           'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-          'Accept': 'application/json'
+          Accept: 'application/json'
         }
       }, 8000);
 

@@ -184,7 +184,7 @@ class UIProtectionValidator {
 
   validateBrandConsistency() {
 
-    let brandColorCounts = {};
+    const brandColorCounts = {};
     
     for (const color of PROTECTED_COLORS) {
       brandColorCounts[color] = 0;

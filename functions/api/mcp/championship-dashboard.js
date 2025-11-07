@@ -204,7 +204,7 @@ async function fetchWithTimeout(url, env, timeout = 5000) {
             signal: controller.signal,
             headers: {
                 'User-Agent': 'BlazeSportsIntel/3.0 (https://blazesportsintel.com)',
-                'Accept': 'application/json'
+                Accept: 'application/json'
             }
         });
 

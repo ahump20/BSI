@@ -346,8 +346,8 @@ export class FanGraphsAdapter {
           signal: controller.signal,
           headers: {
             'User-Agent': 'BlazeSportsIntel/1.0',
-            'Accept': 'application/json',
-            'Referer': 'https://blazesportsintel.com/',
+            Accept: 'application/json',
+            Referer: 'https://blazesportsintel.com/',
           },
         });
 

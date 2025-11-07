@@ -77,28 +77,28 @@ const EXPECTED_OUTCOME_MATRIX: Record<string, {
   xSLG: number;
   homeRunProb: number;
 }> = {
-  'groundBall': {
+  groundBall: {
     launchAngle: { min: -90, max: 10 },
     exitVelo: { min: 0, max: 120 },
     xBA: 0.240,
     xSLG: 0.310,
     homeRunProb: 0.000
   },
-  'lineDrive': {
+  lineDrive: {
     launchAngle: { min: 10, max: 25 },
     exitVelo: { min: 90, max: 120 },
     xBA: 0.680,
     xSLG: 1.250,
     homeRunProb: 0.020
   },
-  'flyBall': {
+  flyBall: {
     launchAngle: { min: 25, max: 50 },
     exitVelo: { min: 95, max: 120 },
     xBA: 0.280,
     xSLG: 1.420,
     homeRunProb: 0.350
   },
-  'barrel': {
+  barrel: {
     launchAngle: { min: 26, max: 30 },
     exitVelo: { min: 98, max: 120 },
     xBA: 0.820,
@@ -195,9 +195,9 @@ export class ExpectedMetricsCalculator {
     batType: 'wood' | 'bbcor' | 'metal'
   ): number {
     const adjustments = {
-      'wood': 1.00,
-      'bbcor': 1.04, // Adjust up to wood equivalent
-      'metal': 0.92  // Adjust down to wood equivalent
+      wood: 1.00,
+      bbcor: 1.04, // Adjust up to wood equivalent
+      metal: 0.92  // Adjust down to wood equivalent
     };
 
     return exitVelocity * adjustments[batType];
@@ -442,18 +442,18 @@ export class ExpectedMetricsCalculator {
     level: 'mlb' | 'college' | 'high_school'
   ): { velocity: number; spinRate: number; horizontalBreak: number; verticalBreak: number } {
     const mlbBaselines: Record<string, any> = {
-      'FB': { velocity: 93.5, spinRate: 2250, horizontalBreak: 8, verticalBreak: 16 },
-      'CH': { velocity: 84.5, spinRate: 1750, horizontalBreak: 12, verticalBreak: 6 },
-      'SL': { velocity: 86.0, spinRate: 2400, horizontalBreak: 6, verticalBreak: 4 },
-      'CB': { velocity: 78.5, spinRate: 2650, horizontalBreak: 4, verticalBreak: -8 },
-      'CU': { velocity: 76.0, spinRate: 2500, horizontalBreak: 10, verticalBreak: -6 }
+      FB: { velocity: 93.5, spinRate: 2250, horizontalBreak: 8, verticalBreak: 16 },
+      CH: { velocity: 84.5, spinRate: 1750, horizontalBreak: 12, verticalBreak: 6 },
+      SL: { velocity: 86.0, spinRate: 2400, horizontalBreak: 6, verticalBreak: 4 },
+      CB: { velocity: 78.5, spinRate: 2650, horizontalBreak: 4, verticalBreak: -8 },
+      CU: { velocity: 76.0, spinRate: 2500, horizontalBreak: 10, verticalBreak: -6 }
     };
 
     // College is ~3-5% lower velocity on average
     const levelAdjustments = {
-      'mlb': 1.00,
-      'college': 0.96,
-      'high_school': 0.90
+      mlb: 1.00,
+      college: 0.96,
+      high_school: 0.90
     };
 
     const baseline = mlbBaselines[pitchType] || mlbBaselines['FB'];

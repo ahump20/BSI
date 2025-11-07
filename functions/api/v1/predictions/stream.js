@@ -74,10 +74,10 @@ export async function onRequest(context) {
         const keyMoments = identifyKeyMoments(history);
 
         result = {
-          gameId: gameId,
+          gameId,
           historyCount: history.length,
-          history: history,
-          keyMoments: keyMoments,
+          history,
+          keyMoments,
           meta: {
             oldestTimestamp: history.length > 0 ? history[0].timestamp : null,
             latestTimestamp: history.length > 0 ? history[history.length - 1].timestamp : null,
@@ -139,7 +139,7 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({
       error: 'Failed to process prediction stream request',
       message: error.message,
-      action: action
+      action
     }), {
       status: error.message.includes('required') ? 400 : 500,
       headers: {
@@ -162,7 +162,7 @@ async function handleSSEPolling(gameId, env) {
     if (streamStatus.status === 'not_initialized') {
       return new Response(JSON.stringify({
         error: 'Stream not initialized',
-        gameId: gameId
+        gameId
       }), {
         status: 404,
         headers: {
@@ -186,7 +186,7 @@ async function handleSSEPolling(gameId, env) {
           ...corsHeaders,
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive'
+          Connection: 'keep-alive'
         }
       });
     } else {
@@ -197,7 +197,7 @@ async function handleSSEPolling(gameId, env) {
           ...corsHeaders,
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive'
+          Connection: 'keep-alive'
         }
       });
     }

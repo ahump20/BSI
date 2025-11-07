@@ -169,7 +169,7 @@ async function generateSingleProjection(env, playerId, sport, modelId) {
     const projection = {
       projection_id: `proj_${playerId}_${Date.now()}`,
       player_id: playerId,
-      sport: sport,
+      sport,
       model_id: modelId,
       draft_round_expected: Math.floor(Math.random() * 10) + 1,
       mlb_eta: null,

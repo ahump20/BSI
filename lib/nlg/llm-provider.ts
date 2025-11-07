@@ -102,7 +102,7 @@ export class LLMProvider {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.openaiKey}`,
+        Authorization: `Bearer ${this.openaiKey}`,
       },
       body: JSON.stringify(payload),
     });

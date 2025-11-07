@@ -49,7 +49,7 @@ async function fetchMLBStandings(filterDivision, filterLeague) {
     return await withRetry(async () => {
         const headers = {
             'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-            'Accept': 'application/json'
+            Accept: 'application/json'
         };
 
         // MLB Stats API endpoint

@@ -92,7 +92,7 @@ async function migrateMLBPlayByPlay(env, results) {
         const response = await fetch(pbpUrl, {
           headers: {
             'User-Agent': 'BlazeSportsIntel/1.0',
-            'Accept': 'application/json'
+            Accept: 'application/json'
           }
         });
 
@@ -286,7 +286,7 @@ async function migrateNCAAFootballPlayByPlay(env, results) {
         const response = await fetch(pbpUrl, {
           headers: {
             'User-Agent': 'BlazeSportsIntel/1.0',
-            'Accept': 'application/json'
+            Accept: 'application/json'
           }
         });
 

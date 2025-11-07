@@ -273,8 +273,8 @@ class BlazeUltimateVisualEngine {
 
         this.particleSystems.set('dataParticles', {
             mesh: particles,
-            geometry: geometry,
-            material: material,
+            geometry,
+            material,
             animation: this.animateDataParticles.bind(this)
         });
     }

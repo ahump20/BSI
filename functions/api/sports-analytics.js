@@ -72,7 +72,7 @@ export async function onRequest(context) {
             };
         } else if (sportsData[sport]) {
             response = {
-                sport: sport,
+                sport,
                 data: sportsData[sport],
                 analytics: {
                     available: true,

@@ -47,10 +47,10 @@ async function fetchVerifiedNFL(teamId) {
   // ESPN requires proper headers to avoid 403 errors
   const headers = {
     'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {
@@ -71,7 +71,7 @@ async function fetchVerifiedNFL(teamId) {
     // TRUTH ENFORCEMENT: Return only verified data with clear labeling
     return {
       success: true,
-      teamId: teamId,
+      teamId,
       team: teamData.team || {},
       standings: standingsData.standings || [],
       analytics: {

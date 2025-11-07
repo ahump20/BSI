@@ -180,7 +180,7 @@ async function fetchBettingLines(env, gameId) {
  */
 function generateDemoLineAnalysis(sport) {
   return {
-    sport: sport,
+    sport,
     homeTeam: 'KC',
     awayTeam: 'BUF',
     modelProbability: {

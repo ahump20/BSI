@@ -1,8 +1,56 @@
-# Blaze Biomechanics Vision System
+# Blaze Sports Intelligence Platform
+
+**Comprehensive sports analytics platform combining real-time data, AI-powered insights, and biomechanical analysis**
+
+## Mission
+Bridge sports data, computer vision, and biomechanics to deliver elite athletic performance prediction and analysis. Covering MLB, NFL, NBA, and College Baseball with real-time updates, advanced analytics, and AI-powered copilot assistance.
+
+## 📊 Project Status
+
+**Current Version:** 1.0.0
+**Last Updated:** November 6, 2025
+
+Track our development progress on the **[Platform Enhancement Project Board](https://github.com/ahump20/BSI/projects/1)**.
+
+### Recent Milestones
+
+✅ **Phase 1: Foundation & SEO** (Complete)
+- Site inventory and information architecture
+- Legal URL canonicalization with 301 redirects
+- Coverage matrix API endpoint
+- SEO optimization (sitemap.xml, robots.txt)
+
+✅ **Phase 2: Page Enhancements** (Complete)
+- Dual-CTA homepage with proof elements
+- Historical data coverage matrix widget
+- Features comparison page (Blaze vs ESPN)
+
+✅ **Phase 3: Technical Infrastructure** (Complete)
+- Core Web Vitals monitoring with INP metric
+- Accessibility quality gates (WCAG 2.2 AA)
+- Design system with component library
+
+✅ **Phase 4: Governance & Process** (In Progress - 80% Complete)
+- ✅ Pre-commit hooks with Husky
+- ✅ Comprehensive documentation suite
+- ⏳ Visual regression testing with Percy
+- ⏳ GitHub project board setup
+
+### 📚 Documentation
+
+Comprehensive documentation for developers, contributors, and operators:
+
+- **[Contributing Guide](docs/CONTRIBUTING.md)** - Code standards, workflow, and PR process
+- **[API Documentation](docs/API.md)** - Complete API reference with OpenAPI 3.1 spec
+- **[Deployment Runbook](docs/DEPLOYMENT.md)** - Operations guide and deployment procedures
+- **[Performance Guidelines](docs/PERFORMANCE.md)** - Performance budgets and optimization strategies
+- **[CI/CD Pipeline](docs/CI-CD-PIPELINE.md)** - Continuous integration and deployment workflow
+- **[Design System](docs/DESIGN-SYSTEM.md)** - Design tokens and component library
+
+## Biomechanics Vision System
 
 **Real-time 3D pose tracking + biomechanical analysis for elite athletic performance prediction**
 
-## Mission
 Bridge computer vision and biomechanics to quantify the "unseen" micro-moves that predict elite upside. Integrates seamlessly with the Diamond Certainty Engine™ to deliver actionable insights from multi-camera 3D pose data.
 
 ## Quick Start

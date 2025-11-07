@@ -17,7 +17,7 @@ const WRANGLER_D1_DB = 'blazesports-historical';
 // API Headers
 const headers = {
   'User-Agent': 'BlazeSportsIntel/1.0',
-  'Accept': 'application/json'
+  Accept: 'application/json'
 };
 
 /**

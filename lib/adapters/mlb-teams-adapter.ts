@@ -811,7 +811,7 @@ export class MLBTeamsAdapter {
         const response = await fetch(url, {
           headers: {
             'User-Agent': 'BlazeSportsIntel/1.0 (blazesportsintel.com)',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
         });
 
@@ -887,20 +887,20 @@ export function getPositionGroup(positionCode: string): string {
  */
 export function getPositionName(code: string): string {
   const positions: Record<string, string> = {
-    '1': 'Pitcher',
-    '2': 'Catcher',
-    '3': 'First Base',
-    '4': 'Second Base',
-    '5': 'Third Base',
-    '6': 'Shortstop',
-    '7': 'Left Field',
-    '8': 'Center Field',
-    '9': 'Right Field',
-    'D': 'Designated Hitter',
-    'Y': 'Two-Way Player',
-    'O': 'Outfield',
-    'H': 'Pinch Hitter',
-    'R': 'Pinch Runner',
+    1: 'Pitcher',
+    2: 'Catcher',
+    3: 'First Base',
+    4: 'Second Base',
+    5: 'Third Base',
+    6: 'Shortstop',
+    7: 'Left Field',
+    8: 'Center Field',
+    9: 'Right Field',
+    D: 'Designated Hitter',
+    Y: 'Two-Way Player',
+    O: 'Outfield',
+    H: 'Pinch Hitter',
+    R: 'Pinch Runner',
   };
 
   return positions[code] || code;

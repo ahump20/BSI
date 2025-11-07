@@ -74,10 +74,10 @@ class NILCalculator {
 
     // Sport multipliers
     const sportMultipliers = {
-      'football': 1.5,
-      'basketball': 1.3,
-      'baseball': 1.2,
-      'track_field': 1.0
+      football: 1.5,
+      basketball: 1.3,
+      baseball: 1.2,
+      track_field: 1.0
     };
 
     // Performance scoring (0-100)
@@ -472,7 +472,7 @@ export default {
       status: 405,
       headers: {
         'Content-Type': 'application/json',
-        'Allow': allowedMethods.join(', '),
+        Allow: allowedMethods.join(', '),
         ...this.getCORSHeaders(),
         ...SECURITY_HEADERS
       }

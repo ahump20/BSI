@@ -210,9 +210,9 @@ export class CFBDAdapter {
     // Fetch from CFBD API with Bearer token
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
     });
 

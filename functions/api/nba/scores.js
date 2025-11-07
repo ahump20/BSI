@@ -65,8 +65,8 @@ async function fetchNBAScores(date, teamFilter) {
     return await withRetry(async () => {
         const headers = {
             'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-            'Accept': 'application/json',
-            'Referer': 'https://blazesportsintel.com/'
+            Accept: 'application/json',
+            Referer: 'https://blazesportsintel.com/'
         };
 
         // ESPN NBA Scoreboard API

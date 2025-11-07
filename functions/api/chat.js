@@ -91,7 +91,7 @@ Keep responses concise (2-3 sentences max unless detailed explanation requested)
             body: JSON.stringify({
                 model: 'claude-sonnet-4-20250514',
                 max_tokens: 1024,
-                messages: messages
+                messages
             })
         });
 

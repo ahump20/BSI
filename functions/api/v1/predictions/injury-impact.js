@@ -155,7 +155,7 @@ async function fetchInjuryDetails(env, playerId, sport) {
  */
 function generateDemoInjuryImpact(sport) {
   const demoData = {
-    'NFL': {
+    NFL: {
       player: {
         id: 'demo_player_001',
         name: 'Patrick Mahomes',
@@ -211,7 +211,7 @@ function generateDemoInjuryImpact(sport) {
         ]
       }
     },
-    'MLB': {
+    MLB: {
       player: {
         id: 'demo_player_002',
         name: 'Shohei Ohtani',
@@ -260,7 +260,7 @@ function generateDemoInjuryImpact(sport) {
         ]
       }
     },
-    'NBA': {
+    NBA: {
       player: {
         id: 'demo_player_003',
         name: 'LeBron James',

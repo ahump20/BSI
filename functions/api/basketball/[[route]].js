@@ -91,7 +91,7 @@ async function getTeams(context) {
   const response = await fetch(espnUrl, {
     headers: {
       'User-Agent': 'BlazeSportsIntel/1.0',
-      'Accept': 'application/json'
+      Accept: 'application/json'
     }
   })
 
@@ -151,7 +151,7 @@ async function getStandings(context) {
   const response = await fetch(espnUrl, {
     headers: {
       'User-Agent': 'BlazeSportsIntel/1.0',
-      'Accept': 'application/json'
+      Accept: 'application/json'
     }
   })
 
@@ -217,7 +217,7 @@ async function getScores(context) {
   const response = await fetch(espnUrl, {
     headers: {
       'User-Agent': 'BlazeSportsIntel/1.0',
-      'Accept': 'application/json'
+      Accept: 'application/json'
     }
   })
 
@@ -295,7 +295,7 @@ async function getStats(context) {
   const response = await fetch(espnUrl, {
     headers: {
       'User-Agent': 'BlazeSportsIntel/1.0',
-      'Accept': 'application/json'
+      Accept: 'application/json'
     }
   })
 

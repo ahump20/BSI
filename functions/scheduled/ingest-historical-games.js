@@ -93,7 +93,7 @@ async function ingestMLBHistorical(env, seasons, results) {
       const response = await fetch(scheduleUrl, {
         headers: {
           'User-Agent': 'BlazeSportsIntel/1.0',
-          'Accept': 'application/json'
+          Accept: 'application/json'
         }
       });
 
@@ -111,7 +111,7 @@ async function ingestMLBHistorical(env, seasons, results) {
             games.push({
               game_id: `mlb_${game.gamePk}`,
               sport: 'MLB',
-              season: season,
+              season,
               game_date: game.officialDate,
               home_team_id: game.teams.home.team.id,
               home_team_name: game.teams.home.team.name,
@@ -181,9 +181,9 @@ async function ingestNFLHistorical(env, seasons, results) {
             games.push({
               game_id: `nfl_${game.GameKey}`,
               sport: 'NFL',
-              season: season,
+              season,
               season_type: week <= 18 ? 'REG' : 'POST',
-              week: week,
+              week,
               game_date: game.Date.split('T')[0],
               home_team_id: game.HomeTeam,
               home_team_name: game.HomeTeam,
@@ -254,7 +254,7 @@ async function ingestNBAHistorical(env, seasons, results) {
           games.push({
             game_id: `nba_${game.GameID}`,
             sport: 'NBA',
-            season: season,
+            season,
             season_type: game.SeasonType === 1 ? 'REG' : 'POST',
             game_date: game.DateTime.split('T')[0],
             home_team_id: game.HomeTeam,
@@ -308,7 +308,7 @@ async function ingestNCAAFootballHistorical(env, seasons, results) {
         const response = await fetch(url, {
           headers: {
             'User-Agent': 'BlazeSportsIntel/1.0',
-            'Accept': 'application/json'
+            Accept: 'application/json'
           }
         });
 
@@ -325,9 +325,9 @@ async function ingestNCAAFootballHistorical(env, seasons, results) {
             games.push({
               game_id: `ncaaf_${event.id}`,
               sport: 'NCAA_FOOTBALL',
-              season: season,
+              season,
               season_type: 'REG',
-              week: week,
+              week,
               game_date: event.date.split('T')[0],
               home_team_id: homeTeam.id,
               home_team_name: homeTeam.team.displayName,

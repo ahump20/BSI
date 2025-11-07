@@ -162,8 +162,8 @@ export function simulateBattedBall(
   };
 
   // Initial position (home plate, 3 feet high)
-  let position = { x: 0, y: 3, z: 0 };
-  let velocity = { ...initialVelocity };
+  const position = { x: 0, y: 3, z: 0 };
+  const velocity = { ...initialVelocity };
 
   // Physics parameters
   const airDensity = calculateAirDensity(
@@ -269,8 +269,8 @@ export function simulatePitch(
     z: -initialSpeed * Math.cos(releaseAngle), // Towards home plate (negative Z)
   };
 
-  let position = { ...releasePoint };
-  let velocity = { ...initialVelocity };
+  const position = { ...releasePoint };
+  const velocity = { ...initialVelocity };
 
   const airDensity = calculateAirDensity(physics.stadium.elevation, 70);
 

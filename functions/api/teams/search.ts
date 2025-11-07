@@ -136,7 +136,7 @@ async function searchTeams(params: SearchParams, env: Env): Promise<Team[]> {
   const conferenceFilter = params.conference ? `AND conference = ?` : '';
 
   // Build SQL query with fuzzy matching
-  let sql = `
+  const sql = `
     SELECT
       id,
       name,

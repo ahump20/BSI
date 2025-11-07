@@ -42,7 +42,7 @@ export class NCAAAPIAdapter {
     const url = `${this.baseUrl}/scoreboard/baseball/${divisionStr}/${year}/${month}/${day}/scoreboard.json`;
 
     const headers: Record<string, string> = {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'User-Agent': 'BlazeSportsIntel/1.0'
     };
 

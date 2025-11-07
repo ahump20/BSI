@@ -125,7 +125,7 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({
       error: 'Failed to process accuracy request',
       message: error.message,
-      action: action
+      action
     }), {
       status: error.message.includes('required') ? 400 : 500,
       headers: {

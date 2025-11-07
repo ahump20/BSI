@@ -213,7 +213,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
       // Add sport filter if specified
       if (sport) {
-        vectorizeOptions.filter = { sport: sport };
+        vectorizeOptions.filter = { sport };
       }
 
       const searchResults = await env.VECTOR_INDEX.query(queryEmbedding, vectorizeOptions);

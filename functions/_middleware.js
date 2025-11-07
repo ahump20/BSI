@@ -50,7 +50,7 @@ export async function onRequest(context) {
       return new Response(null, {
         status: 302,
         headers: {
-          'Location': redirectUrl,
+          Location: redirectUrl,
           'Set-Cookie': cookieHeader
         }
       })
@@ -60,7 +60,7 @@ export async function onRequest(context) {
       return new Response(null, {
         status: 302,
         headers: {
-          'Location': redirectUrl,
+          Location: redirectUrl,
           'Set-Cookie': cookieHeader
         }
       })

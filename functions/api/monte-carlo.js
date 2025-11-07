@@ -66,7 +66,7 @@ export async function onRequest(context) {
             results.push({
                 simulation: i + 1,
                 probability: adjustedProbability,
-                outcome: outcome,
+                outcome,
                 factors: params.factors.map(factor => ({
                     factor,
                     impact: (Math.random() - 0.5) * 0.3 + 0.7 // Random impact between 0.55-0.85
@@ -80,10 +80,10 @@ export async function onRequest(context) {
         // Generate championship probability analysis
         const championshipAnalysis = {
             winProbability: winPercentage,
-            confidence: confidence,
-            simulations: simulations,
-            sport: sport,
-            scenario: scenario,
+            confidence,
+            simulations,
+            sport,
+            scenario,
             keyFactors: params.factors,
             recommendations: generateRecommendations(sport, winPercentage),
             deepSouthAdvantage: calculateRegionalAdvantage(sport)
@@ -95,7 +95,7 @@ export async function onRequest(context) {
             detailedResults: results.slice(0, 10), // Return first 10 for performance
             summary: {
                 totalSimulations: simulations,
-                wins: wins,
+                wins,
                 losses: simulations - wins,
                 winRate: winPercentage.toFixed(2) + '%',
                 confidenceLevel: confidence.toFixed(1) + '%'

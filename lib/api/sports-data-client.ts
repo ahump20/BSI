@@ -97,7 +97,7 @@ export class SportsDataClient {
         ...options,
         headers: {
           'User-Agent': 'BlazeSportsIntel/1.0',
-          'Accept': 'application/json',
+          Accept: 'application/json',
           ...options.headers,
         },
       });
@@ -214,7 +214,7 @@ export class SportsDataClient {
 
         return await this.fetchWithRetry<any>(url, {
           headers: {
-            'Authorization': `Bearer ${this.config.perfectGameApiKey}`,
+            Authorization: `Bearer ${this.config.perfectGameApiKey}`,
           },
         });
       });

@@ -80,7 +80,7 @@ export async function onRequest(context) {
       return jsonResponse({
         error: 'Player not found',
         player_id: playerId,
-        sport: sport
+        sport
       }, 404);
     }
 
@@ -90,7 +90,7 @@ export async function onRequest(context) {
       return jsonResponse({
         error: 'No active model available',
         message: 'Prediction models are being trained. Check back soon.',
-        sport: sport
+        sport
       }, 503);
     }
 
@@ -147,8 +147,8 @@ export async function onRequest(context) {
       },
       meta: {
         data_source: 'Blaze Predictive Intelligence Engine',
-        sport: sport,
-        season: season,
+        sport,
+        season,
         last_updated: new Date(projection.updated_at * 1000).toISOString(),
         timezone: 'America/Chicago',
         generated_at: Date.now()
@@ -246,7 +246,7 @@ async function generateProjection(env, player, model, sport) {
   let projection = {
     projection_id: `proj_${player.player_id}_${Date.now()}`,
     player_id: player.player_id,
-    sport: sport,
+    sport,
     model_id: model.model_id,
     draft_round_expected: null,
     mlb_eta: null,
@@ -405,8 +405,8 @@ function projectGrowth(age, position) {
  */
 function generateTimeline(currentAge, currentLevel) {
   const timeline = [];
-  let age = currentAge;
-  let level = currentLevel;
+  const age = currentAge;
+  const level = currentLevel;
 
   // Project 3 years into future
   for (let year = 0; year < 3; year++) {

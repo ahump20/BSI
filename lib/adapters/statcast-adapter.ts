@@ -517,7 +517,7 @@ export class StatcastAdapter {
         const response = await fetch(url, {
           headers: {
             'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
         });
 

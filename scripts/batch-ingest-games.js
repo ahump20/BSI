@@ -16,7 +16,7 @@ const DB_NAME = 'blazesports-historical';
 // API Headers
 const headers = {
   'User-Agent': 'BlazeSportsIntel/1.0',
-  'Accept': 'application/json',
+  Accept: 'application/json',
   'Accept-Encoding': 'gzip, deflate'
 };
 

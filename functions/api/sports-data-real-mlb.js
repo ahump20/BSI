@@ -95,7 +95,7 @@ async function fetchRealMLB(teamId) {
 
     return {
       success: true,
-      teamId: teamId,
+      teamId,
       team: teamData.teams?.[0] || {},
       standings: standingsData.records?.[0]?.teamRecords || [],
       roster: rosterData.roster || [],
@@ -103,8 +103,8 @@ async function fetchRealMLB(teamId) {
         pythagorean: {
           expectedWins: pythagoreanWins,
           winPercentage: (pythagoreanWins / 162).toFixed(3),
-          runsScored: runsScored,
-          runsAllowed: runsAllowed,
+          runsScored,
+          runsAllowed,
           formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)'
         },
         dataSource: dataSourceLabel,
@@ -113,7 +113,7 @@ async function fetchRealMLB(teamId) {
       meta: {
         season: parseInt(season),
         seasonStatus: isCurrent ? 'active' : 'completed',
-        isCurrent: isCurrent,
+        isCurrent,
         warning: isCurrent ? null : 'This is historical data. For current season, omit the season parameter.'
       }
     };

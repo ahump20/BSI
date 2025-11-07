@@ -44,7 +44,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             {
               headers: {
                 'User-Agent': 'BlazeSportsIntel/1.0',
-                'Accept': 'application/json'
+                Accept: 'application/json'
               }
             }
           );
@@ -94,13 +94,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         if (!teamData) {
           const [teamInfo, roster, schedule] = await Promise.all([
             fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}`, {
-              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', 'Accept': 'application/json' }
+              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' }
             }).then(r => r.json()),
             fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/roster`, {
-              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', 'Accept': 'application/json' }
+              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' }
             }).then(r => r.json()).catch(() => null),
             fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/schedule`, {
-              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', 'Accept': 'application/json' }
+              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' }
             }).then(r => r.json()).catch(() => null)
           ]);
 
@@ -170,7 +170,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           {
             headers: {
               'User-Agent': 'BlazeSportsIntel/1.0',
-              'Accept': 'application/json'
+              Accept: 'application/json'
             }
           }
         );
@@ -183,7 +183,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
         scoreboard = {
           timestamp: new Date().toISOString(),
-          date: date,
+          date,
           games: espnData.events?.map((event: any) => ({
             id: event.id,
             name: event.name,
@@ -230,7 +230,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           {
             headers: {
               'User-Agent': 'BlazeSportsIntel/1.0',
-              'Accept': 'application/json'
+              Accept: 'application/json'
             }
           }
         );

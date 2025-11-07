@@ -7,7 +7,7 @@ const ESPN_API_BASE = 'https://site.api.espn.com/apis/site/v2/sports/baseball/co
 
 const headers = {
   'User-Agent': 'BlazeSportsIntel/1.0',
-  'Accept': 'application/json'
+  Accept: 'application/json'
 };
 
 async function fetchTeamSchedule(teamId, season) {

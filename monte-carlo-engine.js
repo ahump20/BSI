@@ -138,7 +138,7 @@ class MonteCarloEngine {
         const results = [];
 
         // Initialize convergence tracking
-        let convergenceCheck = Math.floor(this.config.simulations / 10);
+        const convergenceCheck = Math.floor(this.config.simulations / 10);
         let previousResults = null;
 
         for (let i = 0; i < this.config.simulations; i++) {
@@ -331,7 +331,7 @@ class MonteCarloEngine {
                     lower: Math.round(confidenceInterval.lower * 1000) / 1000,
                     upper: Math.round(confidenceInterval.upper * 1000) / 1000
                 },
-                wins: wins,
+                wins,
                 averageScore: performanceMetrics.averageScore,
                 winMargin: performanceMetrics.averageWinMargin,
                 upsetPotential: performanceMetrics.upsetPotential,
@@ -1155,11 +1155,11 @@ class TrackFieldChampionshipModel {
             '800m': 120.0,
             '1500m': 240.0,
             '5000m': 900.0,
-            'long_jump': 6.5,
-            'high_jump': 1.8,
-            'pole_vault': 4.0,
-            'shot_put': 15.0,
-            'discus': 45.0
+            long_jump: 6.5,
+            high_jump: 1.8,
+            pole_vault: 4.0,
+            shot_put: 15.0,
+            discus: 45.0
         };
 
         return standards[event] || 10.0;

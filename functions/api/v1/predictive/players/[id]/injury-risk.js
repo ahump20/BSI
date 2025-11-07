@@ -96,7 +96,7 @@ export async function onRequest(context) {
       return jsonResponse({
         error: 'Player not found',
         player_id: playerId,
-        sport: sport
+        sport
       }, 404);
     }
 
@@ -156,7 +156,7 @@ export async function onRequest(context) {
       } : null,
       meta: {
         data_source: 'Blaze Predictive Intelligence Engine',
-        sport: sport,
+        sport,
         lookback_days: lookbackDays,
         timezone: 'America/Chicago',
         generated_at: Date.now()
@@ -320,7 +320,7 @@ async function calculateInjuryRisk(player, workloadData, sport, model, lookbackD
   return {
     risk_id: `risk_${player.player_id}_${Date.now()}`,
     player_id: player.player_id,
-    sport: sport,
+    sport,
     position: player.position,
     risk_index: Math.round(riskIndex),
     risk_category: riskCategory,

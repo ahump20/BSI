@@ -246,7 +246,7 @@ export class ConferenceStrengthModel {
         rank: 0, // Will be assigned after sorting
         teams: conferenceTeams.length,
         averageRPI: avgRPI,
-        avgRPI: avgRPI,  // Alias for averageRPI
+        avgRPI,  // Alias for averageRPI
         topTeamRPI,
         top25Count,
         top50Count,

@@ -40,9 +40,9 @@ export class ESPNAPIAdapter {
     const url = `${this.baseUrl}/scoreboard?dates=${dateStr}`;
 
     const headers: Record<string, string> = {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'User-Agent': 'BlazeSportsIntel/1.0',
-      'Referer': 'https://blazesportsintel.com/'
+      Referer: 'https://blazesportsintel.com/'
     };
 
     if (this.apiKey) {
@@ -73,9 +73,9 @@ export class ESPNAPIAdapter {
     const url = `${this.baseUrl}/teams/${teamId}/statistics?season=${season}`;
 
     const headers: Record<string, string> = {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'User-Agent': 'BlazeSportsIntel/1.0',
-      'Referer': 'https://blazesportsintel.com/'
+      Referer: 'https://blazesportsintel.com/'
     };
 
     if (this.apiKey) {

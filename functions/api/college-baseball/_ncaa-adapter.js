@@ -386,43 +386,43 @@ function normalizeBoxScore(data) {
 
 function normalizeGameStatus(espnStatus) {
   const statusMap = {
-    'STATUS_SCHEDULED': 'scheduled',
-    'STATUS_IN_PROGRESS': 'live',
-    'STATUS_FINAL': 'final',
-    'STATUS_POSTPONED': 'postponed',
-    'STATUS_CANCELED': 'canceled'
+    STATUS_SCHEDULED: 'scheduled',
+    STATUS_IN_PROGRESS: 'live',
+    STATUS_FINAL: 'final',
+    STATUS_POSTPONED: 'postponed',
+    STATUS_CANCELED: 'canceled'
   };
   return statusMap[espnStatus] || 'scheduled';
 }
 
 function getConferenceName(conferenceId) {
   const conferences = {
-    '23': 'SEC',
-    '1': 'ACC',
-    '4': 'Big 12',
-    '5': 'Big Ten',
-    '9': 'Pac-12',
-    '151': 'American',
-    '12': 'Conference USA',
-    '37': 'Sun Belt',
-    '14': 'MAC',
-    '17': 'Mountain West',
-    '18': 'WAC',
-    '20': 'Big West',
-    '49': 'Atlantic 10',
-    '62': 'WCC'
+    23: 'SEC',
+    1: 'ACC',
+    4: 'Big 12',
+    5: 'Big Ten',
+    9: 'Pac-12',
+    151: 'American',
+    12: 'Conference USA',
+    37: 'Sun Belt',
+    14: 'MAC',
+    17: 'Mountain West',
+    18: 'WAC',
+    20: 'Big West',
+    49: 'Atlantic 10',
+    62: 'WCC'
   };
   return conferences[conferenceId] || 'Other';
 }
 
 function getESPNGroupId(conference) {
   const groupIds = {
-    'SEC': '23',
-    'ACC': '1',
-    'Big12': '4',
+    SEC: '23',
+    ACC: '1',
+    Big12: '4',
     'Big Ten': '5',
     'Pac-12': '9',
-    'American': '151'
+    American: '151'
   };
   return groupIds[conference] || '23'; // Default to SEC
 }
@@ -446,11 +446,11 @@ function calculateEstimatedSOS(team) {
   // Simplified SOS estimation
   // Would need opponent data for accurate calculation
   const confStrength = {
-    '23': 0.58,  // SEC
-    '1': 0.55,   // ACC
-    '9': 0.54,   // Pac-12
-    '4': 0.52,   // Big 12
-    '5': 0.50    // Big Ten
+    23: 0.58,  // SEC
+    1: 0.55,   // ACC
+    9: 0.54,   // Pac-12
+    4: 0.52,   // Big 12
+    5: 0.50    // Big Ten
   };
   return (confStrength[team.conferenceId] || 0.45).toFixed(4);
 }
@@ -463,7 +463,7 @@ function getFallbackGames(date, filters) {
   const sampleGames = [
     {
       id: 'fallback-001',
-      date: date,
+      date,
       time: '7:00 PM CT',
       status: 'scheduled',
       homeTeam: {

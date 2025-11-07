@@ -75,6 +75,26 @@ export async function onRequest(context) {
  * Get team statistics for a specific season
  */
 async function handleTeamStats(db, teamId, season, corsHeaders) {
+  // Check if season has any games in the database
+  const seasonExists = await db.prepare(`
+    SELECT COUNT(*) AS count
+    FROM games g
+    JOIN seasons s ON g.season_id = s.season_id
+    WHERE s.year = ?
+  `).bind(season).first();
+
+  if (!seasonExists || seasonExists.count === 0) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Data missing',
+      message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
+      season: parseInt(season)
+    }), {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
   // Get team info
   const team = await db.prepare(`
     SELECT
@@ -222,6 +242,28 @@ async function handlePlayerStats(db, playerId, season, corsHeaders) {
     });
   }
 
+  // Check if player has any stats in the database
+  const playerHasStats = await db.prepare(`
+    SELECT COUNT(*) AS count
+    FROM player_season_stats
+    WHERE player_id = ?
+  `).bind(player.player_id).first();
+
+  if (!playerHasStats || playerHasStats.count === 0) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Data missing',
+      message: `No statistics found for player ${player.full_name}. This data may not have been ingested yet.`,
+      player: {
+        id: player.player_id,
+        name: player.full_name
+      }
+    }), {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
   // Get season-by-season stats
   const careerStats = await db.prepare(`
     SELECT
@@ -312,6 +354,27 @@ async function handlePlayerStats(db, playerId, season, corsHeaders) {
  * Get conference standings and stats
  */
 async function handleConferenceStats(db, conferenceAbbr, season, corsHeaders) {
+  // Check if season has any games in the database
+  const seasonExists = await db.prepare(`
+    SELECT COUNT(*) AS count
+    FROM games g
+    JOIN seasons s ON g.season_id = s.season_id
+    WHERE s.year = ?
+  `).bind(season).first();
+
+  if (!seasonExists || seasonExists.count === 0) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Data missing',
+      message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
+      season: parseInt(season),
+      conference: conferenceAbbr
+    }), {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
   const standings = await db.prepare(`
     SELECT
       t.name AS team,
@@ -359,6 +422,26 @@ async function handleConferenceStats(db, conferenceAbbr, season, corsHeaders) {
  * Get overview statistics (top teams, leaders)
  */
 async function handleOverviewStats(db, season, corsHeaders) {
+  // Check if season has any games in the database
+  const seasonExists = await db.prepare(`
+    SELECT COUNT(*) AS count
+    FROM games g
+    JOIN seasons s ON g.season_id = s.season_id
+    WHERE s.year = ?
+  `).bind(season).first();
+
+  if (!seasonExists || seasonExists.count === 0) {
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Data missing',
+      message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
+      season: parseInt(season)
+    }), {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
   // Top teams by wins
   const topTeams = await db.prepare(`
     SELECT

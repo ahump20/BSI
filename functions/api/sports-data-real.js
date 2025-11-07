@@ -123,8 +123,8 @@ async function fetchRealMLBData() {
         pythagorean: {
           expectedWins: pythagoreanWins,
           winPercentage: (pythagoreanWins / 162).toFixed(3),
-          runsScored: runsScored,
-          runsAllowed: runsAllowed,
+          runsScored,
+          runsAllowed,
           formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)'
         },
         dataSource: 'MLB Stats API (Real-time)',
@@ -147,10 +147,10 @@ async function fetchRealNFLData() {
   // ESPN requires proper headers to avoid 403 errors
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {
@@ -231,10 +231,10 @@ async function fetchRealNBAData() {
 
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {
@@ -270,10 +270,10 @@ async function fetchRealNCAAData() {
 
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {

@@ -233,7 +233,7 @@ class HistoricalStatsViewer {
             trends.push({
                 date: games[i].date,
                 winPct: (wins / windowSize) * 100,
-                avgScore: avgScore
+                avgScore
             });
         }
 

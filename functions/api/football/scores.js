@@ -74,7 +74,7 @@ export async function onRequest({ request, env, ctx }) {
     const response = await fetch(apiUrl, {
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
-        'Accept': 'application/json'
+        Accept: 'application/json'
       }
     })
 

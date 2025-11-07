@@ -73,11 +73,11 @@ const PITCH_BASELINES: Record<string, {
   horizontalBreak: number;
   optimalPairs: string[];
 }> = {
-  'FB': { velocity: 92, verticalBreak: 16, horizontalBreak: 8, optimalPairs: ['CH', 'SL', 'CB'] },
-  'CH': { velocity: 84, verticalBreak: 6, horizontalBreak: 12, optimalPairs: ['FB'] },
-  'SL': { velocity: 86, verticalBreak: 4, horizontalBreak: 6, optimalPairs: ['FB', 'CB'] },
-  'CB': { velocity: 78, verticalBreak: -8, horizontalBreak: 4, optimalPairs: ['FB', 'SL'] },
-  'CU': { velocity: 76, verticalBreak: -6, horizontalBreak: 10, optimalPairs: ['FB'] }
+  FB: { velocity: 92, verticalBreak: 16, horizontalBreak: 8, optimalPairs: ['CH', 'SL', 'CB'] },
+  CH: { velocity: 84, verticalBreak: 6, horizontalBreak: 12, optimalPairs: ['FB'] },
+  SL: { velocity: 86, verticalBreak: 4, horizontalBreak: 6, optimalPairs: ['FB', 'CB'] },
+  CB: { velocity: 78, verticalBreak: -8, horizontalBreak: 4, optimalPairs: ['FB', 'SL'] },
+  CU: { velocity: 76, verticalBreak: -6, horizontalBreak: 10, optimalPairs: ['FB'] }
 };
 
 export class PitchTunnelingAnalyzer {

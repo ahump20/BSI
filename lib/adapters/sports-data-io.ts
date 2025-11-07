@@ -41,7 +41,7 @@ export class SportsDataIOAdapter {
     const response = await fetch(url, {
       headers: {
         'Ocp-Apim-Subscription-Key': this.apiKey,
-        'Accept': 'application/json'
+        Accept: 'application/json'
       }
     });
 
@@ -66,7 +66,7 @@ export class SportsDataIOAdapter {
     const response = await fetch(url, {
       headers: {
         'Ocp-Apim-Subscription-Key': this.apiKey,
-        'Accept': 'application/json'
+        Accept: 'application/json'
       }
     });
 

@@ -163,7 +163,7 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({
       error: 'Failed to process dashboard request',
       message: error.message,
-      action: action
+      action
     }), {
       status: error.message.includes('required') || error.message.includes('not found') ? 400 : 500,
       headers: {

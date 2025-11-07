@@ -80,7 +80,7 @@ function generateDemoAnalysis(sport) {
   const isFootball = sport === 'NFL' || sport === 'NCAA_FOOTBALL';
 
   return {
-    sport: sport,
+    sport,
     type: 'demo',
     summary: {
       total_decisions: 24,

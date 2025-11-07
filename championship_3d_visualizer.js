@@ -685,7 +685,7 @@ class Championship3DVisualizer {
 
             const pointGeometry = new THREE.CircleGeometry(point.radius || 1, 16);
             const pointMaterial = new THREE.MeshBasicMaterial({
-                color: color,
+                color,
                 transparent: true,
                 opacity: 0.6
             });

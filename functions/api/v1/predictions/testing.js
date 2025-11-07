@@ -172,7 +172,7 @@ export async function onRequest(context) {
         const limit = parseInt(url.searchParams.get('limit') || '10');
 
         // List all test result keys
-        const list = await env.SPORTS_DATA_KV.list({ prefix: 'test_result:', limit: limit });
+        const list = await env.SPORTS_DATA_KV.list({ prefix: 'test_result:', limit });
 
         const historyResults = [];
         for (const key of list.keys) {
@@ -217,7 +217,7 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({
       error: 'Failed to process testing request',
       message: error.message,
-      action: action
+      action
     }), {
       status: error.message.includes('required') ? 400 : 500,
       headers: {

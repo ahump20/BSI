@@ -579,17 +579,17 @@ function calculateConferenceFlows(entries: PortalEntry[]): ConferenceFlow[] {
  */
 function getConferenceMultiplier(conference: string): number {
   const multipliers: Record<string, number> = {
-    'SEC': 1.5,
-    'ACC': 1.4,
+    SEC: 1.5,
+    ACC: 1.4,
     'Big 12': 1.3,
     'Pac-12': 1.3,
     'Big Ten': 1.2,
-    'American': 1.1,
+    American: 1.1,
     'Mountain West': 1.0,
     'Conference USA': 0.95,
     'Sun Belt': 0.9,
-    'MAC': 0.85,
-    'WAC': 0.8
+    MAC: 0.85,
+    WAC: 0.8
   };
   return multipliers[conference] || 1.0;
 }

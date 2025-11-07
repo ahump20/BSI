@@ -56,8 +56,8 @@ async function fetchNFLStandings(week, division) {
     return await withRetry(async () => {
         const headers = {
             'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-            'Accept': 'application/json',
-            'Referer': 'https://blazesportsintel.com/'
+            Accept: 'application/json',
+            Referer: 'https://blazesportsintel.com/'
         };
 
         // ESPN NFL API endpoint
@@ -84,52 +84,52 @@ async function fetchNFLStandings(week, division) {
  */
 const NFL_DIVISIONS = {
     // AFC East
-    '2': 'AFC East',   // Buffalo Bills
-    '15': 'AFC East',  // Miami Dolphins
-    '17': 'AFC East',  // New England Patriots
-    '20': 'AFC East',  // New York Jets
+    2: 'AFC East',   // Buffalo Bills
+    15: 'AFC East',  // Miami Dolphins
+    17: 'AFC East',  // New England Patriots
+    20: 'AFC East',  // New York Jets
 
     // AFC North
-    '4': 'AFC North',  // Baltimore Ravens
-    '5': 'AFC North',  // Cincinnati Bengals
-    '6': 'AFC North',  // Cleveland Browns
-    '23': 'AFC North', // Pittsburgh Steelers
+    4: 'AFC North',  // Baltimore Ravens
+    5: 'AFC North',  // Cincinnati Bengals
+    6: 'AFC North',  // Cleveland Browns
+    23: 'AFC North', // Pittsburgh Steelers
 
     // AFC South
-    '34': 'AFC South', // Houston Texans
-    '11': 'AFC South', // Indianapolis Colts
-    '30': 'AFC South', // Jacksonville Jaguars
-    '10': 'AFC South', // Tennessee Titans
+    34: 'AFC South', // Houston Texans
+    11: 'AFC South', // Indianapolis Colts
+    30: 'AFC South', // Jacksonville Jaguars
+    10: 'AFC South', // Tennessee Titans
 
     // AFC West
-    '7': 'AFC West',   // Denver Broncos
-    '12': 'AFC West',  // Kansas City Chiefs
-    '13': 'AFC West',  // Las Vegas Raiders
-    '24': 'AFC West',  // Los Angeles Chargers
+    7: 'AFC West',   // Denver Broncos
+    12: 'AFC West',  // Kansas City Chiefs
+    13: 'AFC West',  // Las Vegas Raiders
+    24: 'AFC West',  // Los Angeles Chargers
 
     // NFC East
-    '8': 'NFC East',   // Dallas Cowboys
-    '19': 'NFC East',  // New York Giants
-    '21': 'NFC East',  // Philadelphia Eagles
-    '28': 'NFC East',  // Washington Commanders
+    8: 'NFC East',   // Dallas Cowboys
+    19: 'NFC East',  // New York Giants
+    21: 'NFC East',  // Philadelphia Eagles
+    28: 'NFC East',  // Washington Commanders
 
     // NFC North
-    '3': 'NFC North',  // Chicago Bears
-    '9': 'NFC North',  // Detroit Lions
-    '14': 'NFC North', // Green Bay Packers
-    '16': 'NFC North', // Minnesota Vikings
+    3: 'NFC North',  // Chicago Bears
+    9: 'NFC North',  // Detroit Lions
+    14: 'NFC North', // Green Bay Packers
+    16: 'NFC North', // Minnesota Vikings
 
     // NFC South
-    '1': 'NFC South',  // Atlanta Falcons
-    '29': 'NFC South', // Carolina Panthers
-    '18': 'NFC South', // New Orleans Saints
-    '27': 'NFC South', // Tampa Bay Buccaneers
+    1: 'NFC South',  // Atlanta Falcons
+    29: 'NFC South', // Carolina Panthers
+    18: 'NFC South', // New Orleans Saints
+    27: 'NFC South', // Tampa Bay Buccaneers
 
     // NFC West
-    '22': 'NFC West',  // Arizona Cardinals
-    '25': 'NFC West',  // Los Angeles Rams
-    '26': 'NFC West',  // San Francisco 49ers
-    '33': 'NFC West'   // Seattle Seahawks
+    22: 'NFC West',  // Arizona Cardinals
+    25: 'NFC West',  // Los Angeles Rams
+    26: 'NFC West',  // San Francisco 49ers
+    33: 'NFC West'   // Seattle Seahawks
 };
 
 /**

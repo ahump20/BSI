@@ -31,8 +31,7 @@
     "emitDecoratorMetadata": true
   },
   "include": [
-    "lib/**/*.ts",
-    "workers/**/*.ts"
+    "lib/**/*.ts"
   ],
   "exclude": [
     "node_modules",
@@ -48,7 +47,9 @@
     "lib/nlg/fact-checker.ts",
     "lib/nlg/prompt-templates.ts",
     "lib/validation/nextjs-validation.ts",
-    "lib/skills/sports-data-qc/**/*"
+    "lib/skills/sports-data-qc/**/*",
+    "lib/reconstruction/**/*",
+    "workers/**/*"
   ],
   "ts-node": {
     "esm": true,

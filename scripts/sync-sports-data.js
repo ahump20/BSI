@@ -115,7 +115,7 @@ class SportsSyncService extends EventEmitter {
           timeout: 10000,
           headers: {
             'User-Agent': 'BSI/1.0',
-            'Accept': 'application/json',
+            Accept: 'application/json',
             ...options.headers
           }
         });
@@ -279,8 +279,8 @@ class SportsSyncService extends EventEmitter {
 
       const headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        'Accept': 'application/json',
-        'Referer': 'https://www.espn.com/'
+        Accept: 'application/json',
+        Referer: 'https://www.espn.com/'
       };
 
       // Sync teams
@@ -320,8 +320,8 @@ class SportsSyncService extends EventEmitter {
   async syncESPNScores(path, sportName) {
     const headers = {
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      'Accept': 'application/json',
-      'Referer': 'https://www.espn.com/'
+      Accept: 'application/json',
+      Referer: 'https://www.espn.com/'
     };
 
     const scoresUrl = `https://site.api.espn.com/apis/site/v2/sports/${path}/scoreboard`;

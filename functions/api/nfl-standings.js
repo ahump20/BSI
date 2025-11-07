@@ -19,10 +19,10 @@ export async function onRequest({ request, env }) {
 
   const headers = {
     'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {

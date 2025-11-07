@@ -80,7 +80,7 @@ export class RealSportsDataClient {
         ...options,
         headers: {
           'User-Agent': 'BlazeSportsIntel/1.0',
-          'Accept': 'application/json',
+          Accept: 'application/json',
           ...options.headers,
         },
       });
@@ -136,7 +136,7 @@ export class RealSportsDataClient {
 
       const response = await this.fetchWithRetry<any>(url, {
         headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
+          Authorization: `Bearer ${this.config.collegeFBDataKey}`,
         },
       });
 
@@ -326,7 +326,7 @@ export class RealSportsDataClient {
 
       return await this.fetchWithRetry<any>(url, {
         headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
+          Authorization: `Bearer ${this.config.collegeFBDataKey}`,
         },
       });
     });
@@ -347,7 +347,7 @@ export class RealSportsDataClient {
 
       return await this.fetchWithRetry<any>(url, {
         headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
+          Authorization: `Bearer ${this.config.collegeFBDataKey}`,
         },
       });
     });
@@ -377,9 +377,9 @@ export class RealSportsDataClient {
    */
   private getStateFromConference(conference: string): string {
     const conferenceStates: Record<string, string> = {
-      'SEC': 'AL',
+      SEC: 'AL',
       'Big 12': 'TX',
-      'ACC': 'NC',
+      ACC: 'NC',
       'Big Ten': 'MI',
       'Pac-12': 'CA',
     };

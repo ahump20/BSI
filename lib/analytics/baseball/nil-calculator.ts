@@ -100,39 +100,39 @@ export interface Comparable {
 export class NILCalculator {
   // Base values by position (in thousands)
   private static readonly POSITION_BASE_VALUES: Record<string, number> = {
-    'SP': 50, // Starting Pitcher
-    'RP': 30, // Relief Pitcher
-    'CL': 45, // Closer
-    'C': 40,  // Catcher
+    SP: 50, // Starting Pitcher
+    RP: 30, // Relief Pitcher
+    CL: 45, // Closer
+    C: 40,  // Catcher
     '1B': 35, // First Base
     '2B': 32, // Second Base
     '3B': 38, // Third Base
-    'SS': 42, // Shortstop
-    'OF': 35, // Outfield
-    'DH': 30  // Designated Hitter
+    SS: 42, // Shortstop
+    OF: 35, // Outfield
+    DH: 30  // Designated Hitter
   };
 
   // Conference multipliers
   private static readonly CONFERENCE_MULTIPLIERS: Record<string, number> = {
-    'SEC': 1.5,
-    'ACC': 1.4,
+    SEC: 1.5,
+    ACC: 1.4,
     'Big 12': 1.3,
     'Pac-12': 1.3,
     'Big Ten': 1.2,
-    'American': 1.1,
+    American: 1.1,
     'Mountain West': 1.0,
     'Conference USA': 0.95,
     'Sun Belt': 0.9,
-    'MAC': 0.85,
-    'WAC': 0.8
+    MAC: 0.85,
+    WAC: 0.8
   };
 
   // Market size multipliers
   private static readonly MARKET_SIZE_MULTIPLIERS: Record<string, number> = {
-    'major': 1.5,   // NYC, LA, Chicago metro
-    'large': 1.3,   // Phoenix, Houston, Atlanta
-    'medium': 1.1,  // Nashville, Austin, Raleigh
-    'small': 0.9    // College Station, Starkville
+    major: 1.5,   // NYC, LA, Chicago metro
+    large: 1.3,   // Phoenix, Houston, Atlanta
+    medium: 1.1,  // Nashville, Austin, Raleigh
+    small: 0.9    // College Station, Starkville
   };
 
   /**
@@ -461,16 +461,16 @@ export class NILCalculator {
 
     // Industry averages (2025 data)
     const positionAverages: Record<string, number> = {
-      'SP': 45000,
-      'RP': 25000,
-      'CL': 40000,
-      'C': 35000,
+      SP: 45000,
+      RP: 25000,
+      CL: 40000,
+      C: 35000,
       '1B': 30000,
       '2B': 28000,
       '3B': 33000,
-      'SS': 38000,
-      'OF': 32000,
-      'DH': 27000
+      SS: 38000,
+      OF: 32000,
+      DH: 27000
     };
 
     const conferenceAverages = [

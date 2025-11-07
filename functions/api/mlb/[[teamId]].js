@@ -30,7 +30,7 @@ export async function onRequest({ request, params, env }) {
     return new Response(JSON.stringify({
       error: 'Failed to fetch MLB data',
       message: error.message,
-      teamId: teamId
+      teamId
     }), {
       headers: corsHeaders,
       status: 500
@@ -86,7 +86,7 @@ async function fetchRealMLB(teamId) {
 
     return {
       success: true,
-      teamId: teamId,
+      teamId,
       team: teamData.teams?.[0] || {},
       standings: standingsData.records?.[0]?.teamRecords || [],
       roster: rosterData.roster || [],
@@ -94,8 +94,8 @@ async function fetchRealMLB(teamId) {
         pythagorean: {
           expectedWins: pythagoreanWins,
           winPercentage: (pythagoreanWins / 162).toFixed(3),
-          runsScored: runsScored,
-          runsAllowed: runsAllowed,
+          runsScored,
+          runsAllowed,
           formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)',
           dataSource: 'MLB Stats API (Real-time)',
           lastUpdated: new Date().toISOString()

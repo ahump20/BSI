@@ -94,8 +94,8 @@ export class WinProbabilitySocket {
     // Send initial connection confirmation
     server.send(JSON.stringify({
       type: 'connected',
-      sessionId: sessionId,
-      gameId: gameId,
+      sessionId,
+      gameId,
       timestamp: new Date().toISOString()
     }));
 
@@ -231,7 +231,7 @@ export class WinProbabilitySocket {
       // Send to client
       socket.send(JSON.stringify({
         type: 'win_prob_update',
-        gameId: gameId,
+        gameId,
         timestamp: new Date().toISOString(),
         home_win_pct: data.current_probability?.home_win_pct,
         away_win_pct: data.current_probability?.away_win_pct,
@@ -272,7 +272,7 @@ export class WinProbabilitySocket {
       // Prepare broadcast message
       const message = JSON.stringify({
         type: 'win_prob_update',
-        gameId: gameId,
+        gameId,
         timestamp: new Date().toISOString(),
         home_win_pct: data.current_probability?.home_win_pct,
         away_win_pct: data.current_probability?.away_win_pct,

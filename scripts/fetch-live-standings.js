@@ -29,7 +29,7 @@ function fetchData(url) {
       method: 'GET',
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
-        'Accept': 'application/json'
+        Accept: 'application/json'
       }
     };
 

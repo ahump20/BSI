@@ -110,8 +110,8 @@ async function analyzeCoachingPatterns(env, identifier, sport, season) {
 
   return {
     type: 'coaching',
-    sport: sport,
-    season: season,
+    sport,
+    season,
     team: identifier || 'Demo Team',
     patterns: [
       {
@@ -190,8 +190,8 @@ async function analyzeUmpirePatterns(env, umpire, sport, season) {
 
   return {
     type: 'umpire',
-    sport: sport,
-    season: season,
+    sport,
+    season,
     umpire: umpire || 'Demo Umpire',
     patterns: [
       {
@@ -261,8 +261,8 @@ async function analyzePlayerPatterns(env, identifier, sport, season) {
 
   return {
     type: 'player',
-    sport: sport,
-    season: season,
+    sport,
+    season,
     player: identifier || 'Demo Player',
     patterns: [
       {

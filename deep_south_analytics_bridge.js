@@ -111,7 +111,7 @@ class DeepSouthAnalyticsBridge {
     async callPythonAnalytics(functionName, data, options = {}) {
         const requestPayload = {
             function: functionName,
-            data: data,
+            data,
             options: {
                 cacheTimeout: options.cacheTimeout || 300, // 5 minutes default
                 realTime: options.realTime || false,

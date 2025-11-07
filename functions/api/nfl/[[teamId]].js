@@ -30,7 +30,7 @@ export async function onRequest({ request, params, env }) {
     return new Response(JSON.stringify({
       error: 'Failed to fetch NFL data',
       message: error.message,
-      teamId: teamId
+      teamId
     }), {
       headers: corsHeaders,
       status: 500
@@ -41,10 +41,10 @@ export async function onRequest({ request, params, env }) {
 async function fetchRealNFL(teamId) {
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.espn.com/',
-    'Origin': 'https://www.espn.com'
+    Referer: 'https://www.espn.com/',
+    Origin: 'https://www.espn.com'
   };
 
   try {
@@ -65,7 +65,7 @@ async function fetchRealNFL(teamId) {
 
     return {
       success: true,
-      teamId: teamId,
+      teamId,
       team: {
         id: team.id,
         displayName: team.displayName,

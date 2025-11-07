@@ -79,7 +79,7 @@ async function getLiveScores(sport, date, env) {
   // Generate live scores data
   const scores = {
     timestamp: new Date().toISOString(),
-    date: date,
+    date,
     cached_at: Date.now(),
     sports: {}
   };

@@ -573,7 +573,7 @@ class BlazeCookieConsent {
         const nameEQ = name + '=';
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
-            let c = cookies[i].trim();
+            const c = cookies[i].trim();
             if (c.indexOf(nameEQ) === 0) {
                 return decodeURIComponent(c.substring(nameEQ.length));
             }

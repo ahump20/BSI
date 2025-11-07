@@ -576,7 +576,7 @@ export class WHOOPv2Adapter {
     const response = await fetch(`${this.baseUrl}/v2/webhook`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -630,7 +630,7 @@ export class WHOOPv2Adapter {
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });

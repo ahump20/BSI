@@ -231,7 +231,7 @@ export default {
             fetch('https://api.github.com/repos/BlazeIntelligence/blazesportsintel/issues', {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+                Authorization: `Bearer ${env.GITHUB_TOKEN}`,
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
@@ -279,7 +279,7 @@ async function runNightlyDriftReport(env) {
   const response = await fetch('https://blazesportsintel.com/api/drift/run-nightly', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${env.INTERNAL_API_KEY}`
+      Authorization: `Bearer ${env.INTERNAL_API_KEY}`
     }
   });
 

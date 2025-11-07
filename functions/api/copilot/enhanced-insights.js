@@ -135,7 +135,7 @@ Provide clear, conversational insights while maintaining analytical rigor.`;
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${env.OPENAI_API_KEY}`
+      Authorization: `Bearer ${env.OPENAI_API_KEY}`
     },
     body: JSON.stringify({
       model: config.model,

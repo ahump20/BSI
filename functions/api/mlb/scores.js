@@ -65,7 +65,7 @@ async function fetchMLBScores(date, teamFilter) {
     return await withRetry(async () => {
         const headers = {
             'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-            'Accept': 'application/json'
+            Accept: 'application/json'
         };
 
         // MLB Stats API schedule endpoint

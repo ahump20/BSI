@@ -55,7 +55,7 @@ async function fetchNBAStandings(filterConference, filterDivision) {
     return await withRetry(async () => {
         const headers = {
             'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-            'Accept': 'application/json'
+            Accept: 'application/json'
         };
 
         // ESPN NBA API endpoint
@@ -151,7 +151,7 @@ function processNBAStandingsData(data, filterConference, filterDivision) {
                         displayRecord: `${wins}-${losses}`
                     },
                     division: divisionName,
-                    divisionAbbr: divisionAbbr,
+                    divisionAbbr,
                     conference: conferenceAbbr,
                     standings: {
                         gamesBack: gamesBehind,

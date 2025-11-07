@@ -104,7 +104,7 @@ export async function onRequest(context) {
               {
                 id: vectorId,
                 values: embedding,
-                metadata: metadata
+                metadata
               }
             ]);
 
@@ -129,7 +129,7 @@ export async function onRequest(context) {
     return Response.json({
       success: true,
       message: 'Embedding generation complete',
-      results: results,
+      results,
       timestamp: new Date().toISOString()
     });
 

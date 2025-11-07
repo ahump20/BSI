@@ -26,8 +26,8 @@ const VALIDATION_RULES = {
 
 async function verifyBuild() {
 
-  let errors = [];
-  let warnings = [];
+  const errors = [];
+  const warnings = [];
 
   // Phase 1: File Existence Check
   for (const file of REQUIRED_BUILDS) {
