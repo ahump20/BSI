@@ -1,7 +1,7 @@
 # Core dependencies
 pandas==2.2.3             # For data manipulation and analysis
 numpy==2.1.1              # For numerical operations
-matplotlib==3.9.2         # For plotting and visualizations
+matplotlib==3.10.7         # For plotting and visualizations
 seaborn==0.13.2           # For statistical data visualization
 mplcursors==0.5.3         # For interactive data exploration
 
