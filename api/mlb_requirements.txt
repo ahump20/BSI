@@ -8,7 +8,7 @@ mplcursors==0.5.3         # For interactive data exploration
 # API and web scraping
 pybaseball==2.2.7         # For fetching baseball data from MLB and Fangraphs
 MLB-StatsAPI==1.9.0       # For fetching baseball data from MLB
-requests==2.32.3          # For making HTTP requests to APIs
+requests==2.32.5          # For making HTTP requests to APIs
 drf_spectacular
 drf_spectacular_sidecar
 
