@@ -97,7 +97,7 @@ class RealAPIServer {
     // Get teams from database
     this.app.get('/api/teams', async (req, res) => {
       try {
-        const result = await this.db.query('SELECT * FROM teams ORDER BY sport, name');
+        const result = await this.db.query('SELECT id, sport, team_id, key, city, name, school, conference, division, logo_url, wins, losses FROM teams ORDER BY sport, name');
         res.json({
           success: true,
           count: result.rows.length,

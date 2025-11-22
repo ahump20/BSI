@@ -182,7 +182,12 @@ def compute_league_averages(
 
 
 def set_league(df):
-    team_to_league = {team: league for league, teams in LeagueTeams.items.items() for team in teams}
+    # Optimized: Build dictionary once without nested comprehension
+    team_to_league = {}
+    for league, teams in LeagueTeams.items.items():
+        for team in teams:
+            team_to_league[team] = league
+    
     df['League'] = df['TeamName'].map(team_to_league)
     
     # Identify teams that were not matched

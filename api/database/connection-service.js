@@ -333,7 +333,8 @@ class DatabaseConnectionService {
      */
     async getTeamAnalytics(teamId, season, week = null) {
         const query = `
-            SELECT * FROM team_analytics
+            SELECT id, team_id, season, week, pythagorean_wins, elo_rating, strength_of_schedule, offensive_rating, defensive_rating, calculation_date
+            FROM team_analytics
             WHERE team_id = $1 AND season = $2
             ${week ? 'AND week = $3' : 'AND week IS NULL'}
             ORDER BY calculation_date DESC
