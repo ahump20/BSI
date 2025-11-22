@@ -39,10 +39,15 @@ type Env = z.infer<typeof EnvSchema>;
 
 /**
  * Validate environment variables
+ * Works in both Node.js and Cloudflare Workers
+ *
+ * @param env - Cloudflare env bindings (Workers) or undefined (Node.js)
  */
-export function validateEnv(): { valid: boolean; errors?: string[] } {
+export function validateEnv(env?: any): { valid: boolean; errors?: string[] } {
+  const envSource = env || (typeof process !== 'undefined' ? process.env : {});
+
   try {
-    EnvSchema.parse(process.env);
+    EnvSchema.parse(envSource);
     return { valid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -66,22 +71,29 @@ export function validateEnv(): { valid: boolean; errors?: string[] } {
 
 /**
  * Get validated environment variables
+ * Works in both Node.js and Cloudflare Workers
+ *
+ * @param env - Cloudflare env bindings (Workers) or undefined (Node.js)
  */
-export function getEnv(): Env {
-  const result = validateEnv();
+export function getEnv(env?: any): Env {
+  const result = validateEnv(env);
 
   if (!result.valid) {
     const errors = result.errors?.join('\n') || 'Unknown error';
     throw new Error(`Environment validation failed:\n${errors}`);
   }
 
-  return process.env as unknown as Env;
+  return (env || (typeof process !== 'undefined' ? process.env : {})) as unknown as Env;
 }
 
 /**
  * Check for default/weak passwords
+ * Works in both Node.js and Cloudflare Workers
+ *
+ * @param env - Cloudflare env bindings (Workers) or undefined (Node.js)
  */
-export function checkForWeakSecrets(): string[] {
+export function checkForWeakSecrets(env?: any): string[] {
+  const envSource = env || (typeof process !== 'undefined' ? process.env : {});
   const warnings: string[] = [];
   const weakPatterns = [
     'CHANGE_ME',
@@ -103,7 +115,7 @@ export function checkForWeakSecrets(): string[] {
   ];
 
   for (const field of secretFields) {
-    const value = process.env[field] || '';
+    const value = envSource[field] || '';
 
     for (const pattern of weakPatterns) {
       if (value.toLowerCase().includes(pattern.toLowerCase())) {
@@ -121,9 +133,16 @@ export function checkForWeakSecrets(): string[] {
 }
 
 /**
- * Run environment validation on startup
+ * Run environment validation on startup (Node.js only)
+ * Skips validation in Cloudflare Workers
  */
 export function validateEnvironmentOnStartup(): void {
+  // Skip in Workers - validation should be done at request time with env bindings
+  if (typeof process === 'undefined') {
+    console.warn('⚠️  Running in Cloudflare Workers - skipping startup validation');
+    return;
+  }
+
   console.log('🔍 Validating environment configuration...');
 
   const result = validateEnv();

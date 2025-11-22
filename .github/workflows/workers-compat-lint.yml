@@ -1,0 +1,125 @@
+name: Workers Compatibility Check
+
+on:
+  pull_request:
+    paths:
+      - 'lib/**/*.ts'
+      - 'lib/**/*.js'
+  push:
+    branches:
+      - main
+    paths:
+      - 'lib/**/*.ts'
+      - 'lib/**/*.js'
+
+jobs:
+  check-process-usage:
+    name: Check for unguarded process usage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for process.env without type guard
+        run: |
+          echo "🔍 Scanning lib/ directory for unguarded process usage..."
+
+          # Find all TypeScript and JavaScript files in lib/
+          # Look for 'process.' usage that's NOT preceded by 'typeof process !== '
+          # Exclude already-refactored dual-compatible patterns
+
+          VIOLATIONS=$(grep -rn "process\." lib/ \
+            --include="*.ts" \
+            --include="*.js" \
+            | grep -v "typeof process !== 'undefined'" \
+            | grep -v "typeof process === 'undefined'" \
+            | grep -v "// @workers-compat-ignore" \
+            || true)
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ ERROR: Found unguarded process usage in lib/ directory:"
+            echo ""
+            echo "$VIOLATIONS"
+            echo ""
+            echo "📖 Workers Compatibility Guide:"
+            echo "   Cloudflare Workers don't have Node.js 'process' global."
+            echo "   Use dual-compatibility pattern:"
+            echo ""
+            echo "   ✅ Good:"
+            echo "   const value = env?.API_KEY ||"
+            echo "                 (typeof process !== 'undefined' ? process.env?.API_KEY : null) ||"
+            echo "                 '';"
+            echo ""
+            echo "   ❌ Bad:"
+            echo "   const value = process.env.API_KEY;"
+            echo ""
+            echo "   See WORKERS-COMPATIBILITY-REFACTOR-COMPLETE.md for examples."
+            echo ""
+            exit 1
+          fi
+
+          echo "✅ No unguarded process usage found in lib/ directory"
+
+      - name: Check for process.exit() calls
+        run: |
+          echo "🔍 Checking for process.exit() calls in lib/..."
+
+          EXITS=$(grep -rn "process\.exit" lib/ \
+            --include="*.ts" \
+            --include="*.js" \
+            | grep -v "typeof process !== 'undefined'" \
+            | grep -v "// @workers-compat-ignore" \
+            || true)
+
+          if [ -n "$EXITS" ]; then
+            echo "⚠️  WARNING: Found process.exit() calls in lib/ directory:"
+            echo ""
+            echo "$EXITS"
+            echo ""
+            echo "💡 Recommendation:"
+            echo "   - Guard with: if (typeof process !== 'undefined') process.exit(1)"
+            echo "   - Or throw an error instead (Workers-compatible)"
+            echo ""
+            # Don't fail on this, just warn
+          else
+            echo "✅ No unguarded process.exit() calls found"
+          fi
+
+      - name: Check for other Node.js globals
+        run: |
+          echo "🔍 Checking for other Node.js-specific globals..."
+
+          # Check for Buffer, require, __dirname, __filename
+          GLOBALS=$(grep -rn -E "\b(Buffer|require\(|__dirname|__filename)\b" lib/ \
+            --include="*.ts" \
+            --include="*.js" \
+            | grep -v "typeof Buffer !== 'undefined'" \
+            | grep -v "typeof require !== 'undefined'" \
+            | grep -v "// @workers-compat-ignore" \
+            | grep -v "import.*require" \
+            || true)
+
+          if [ -n "$GLOBALS" ]; then
+            echo "⚠️  INFO: Found Node.js-specific globals in lib/:"
+            echo ""
+            echo "$GLOBALS"
+            echo ""
+            echo "💡 These may need Workers-compatible alternatives."
+            echo "   Consider using Web APIs or polyfills."
+            echo ""
+            # Don't fail, just inform
+          else
+            echo "✅ No problematic Node.js globals found"
+          fi
+
+      - name: Summary
+        if: success()
+        run: |
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Workers Compatibility Check PASSED"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "All lib/ files are Workers-compatible!"
+          echo ""

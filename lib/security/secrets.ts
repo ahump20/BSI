@@ -108,8 +108,8 @@ export class SecretsManager {
         value = await this.getFromCloudflare(name, cfEnv);
       }
 
-      // Fallback to environment variables
-      if (!value) {
+      // Fallback to environment variables (Node.js only)
+      if (!value && typeof process !== 'undefined') {
         value = process.env[name] || null;
       }
 
@@ -279,7 +279,7 @@ let globalSecretsManager: SecretsManager | null = null;
  */
 export function getSecretsManager(env?: Environment): SecretsManager {
   if (!globalSecretsManager) {
-    const environment = env || (process.env.NODE_ENV as Environment) || 'development';
+    const environment = env || (typeof process !== 'undefined' ? process.env.NODE_ENV as Environment : null) || 'development';
     globalSecretsManager = new SecretsManager(environment);
   }
   return globalSecretsManager;

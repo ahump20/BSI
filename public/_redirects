@@ -9,6 +9,9 @@
 /analytics-original.html /analytics 301
 /sports-analytics-dashboard /analytics 301
 
+# Enhanced Dashboard Routes (Priority: Medium)
+/dashboard-enhanced /enhanced/ 301
+
 # Ensure canonical links for legal pages (these are the correct URLs)
 /legal/privacy /legal/privacy 200
 /legal/terms /legal/terms 200

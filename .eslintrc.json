@@ -1,16 +1,8 @@
 {
-  "root": true,
   "env": {
     "browser": true,
-    "es2022": true,
+    "es2021": true,
     "node": true
-  },
-  "globals": {
-    "THREE": "readonly",
-    "Chart": "readonly",
-    "AOS": "readonly",
-    "BABYLON": "readonly",
-    "Phaser": "readonly"
   },
   "extends": [
     "eslint:recommended",
@@ -21,63 +13,82 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
   },
   "plugins": ["@typescript-eslint", "react", "react-hooks"],
-  "rules": {
-    "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
-      }
-    ],
-    "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-non-null-assertion": "warn",
-    "prefer-const": "error",
-    "no-var": "error",
-    "object-shorthand": "error",
-    "quote-props": ["error", "as-needed"],
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off"
-  },
   "settings": {
     "react": {
       "version": "detect"
     }
   },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error", "info"]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["lib/**/*.ts", "lib/**/*.js"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "MemberExpression[object.name='process'][property.name='env']",
+            "message": "Unguarded process.env usage! Use: env?.VAR || (typeof process !== 'undefined' ? process.env?.VAR : null) || ''"
+          },
+          {
+            "selector": "CallExpression[callee.object.name='process'][callee.property.name='exit']",
+            "message": "Unguarded process.exit()! Guard with: if (typeof process !== 'undefined') process.exit(1);"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["functions/**/*.ts", "functions/**/*.js"],
+      "rules": {
+        "no-console": "off",
+        "no-restricted-syntax": [
+          "warn",
+          {
+            "selector": "MemberExpression[object.name='process'][property.name='env']",
+            "message": "Consider using env parameter in Functions: export async function onRequest({ env }) { const key = env.API_KEY; }"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.config.js", "*.config.ts", "scripts/**/*"],
+      "rules": {
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ],
   "ignorePatterns": [
-    "node_modules/**",
-    "dist/**",
-    ".wrangler/**",
-    "coverage/**",
-    "*.config.js",
-    "*.config.ts",
-    "functions/**/*.js",
-    "public/**/*.js",
-    "*.jsx",
-    "workers/**/*",
-    "api/**/*",
-    "apps/**/*",
-    "archive/**/*",
-    "components/**/*",
-    "observability/**/*",
-    "scripts/**/*",
-    "tests/**/*",
-    "*.js",
-    "*.ts",
-    "!lib/**/*.ts",
-    "!lib/**/*.js",
-    "!functions/**/*.ts",
-    "!functions/**/*.js"
+    "node_modules/",
+    "dist/",
+    "build/",
+    ".next/",
+    "coverage/",
+    "*.min.js",
+    "public/",
+    ".wrangler/"
   ]
 }

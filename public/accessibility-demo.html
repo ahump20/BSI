@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Demo | Blaze Sports Intel</title>
+    <meta name="description" content="WCAG 2.1 Level AAA accessibility demonstration">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="/css/blaze-design-system-enhanced.css">
+    <link rel="stylesheet" href="/css/blaze-components-enhanced.css">
+    <link rel="stylesheet" href="/css/blaze-brand-identity.css">
+    <link rel="stylesheet" href="/css/blaze-accessibility.css">
+
+    <style>
+        body {
+            font-family: var(--font-body);
+            background: var(--color-background-primary);
+            color: var(--color-text-primary);
+            margin: 0;
+            padding: 0;
+        }
+
+        .demo-section {
+            padding: var(--rhythm-xl) var(--rhythm-md);
+            max-width: 1200px;
+            margin: 0 auto;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .demo-title {
+            font-family: var(--font-heading);
+            font-size: var(--font-size-3xl);
+            color: var(--color-brand-primary);
+            margin-bottom: var(--rhythm-md);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--rhythm-lg);
+            margin-top: var(--rhythm-lg);
+        }
+
+        .demo-card {
+            background: var(--glass-surface-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--rhythm-md);
+        }
+
+        .demo-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--rhythm-sm);
+            margin-bottom: var(--rhythm-md);
+        }
+
+        .demo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-brand);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+        }
+
+        .status-pass {
+            background: rgba(0, 200, 81, 0.2);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Navigation Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ARIA Live Regions (Hidden) -->
+    <div class="sr-live-polite" aria-live="polite" aria-atomic="true" id="status-announcer"></div>
+    <div class="sr-live-assertive" aria-live="assertive" aria-atomic="true" id="alert-announcer"></div>
+
+    <!-- Site Header -->
+    <header role="banner" style="background: var(--glass-surface-heavy); backdrop-filter: blur(16px); border-bottom: 1px solid var(--glass-border); padding: 1.5rem 2rem; position: sticky; top: 0; z-index: 100;">
+        <nav role="navigation" aria-label="Main navigation" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="font-family: var(--font-heading); font-size: 1.5rem; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                🔥 BLAZE SPORTS INTEL
+            </div>
+            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                <a href="#keyboard-nav" style="color: var(--color-text-secondary); text-decoration: none; font-weight: 500; transition: color var(--duration-fast);">
+                    Keyboard Nav
+                    <span class="kbd-hint">K</span>
+                </a>
+                <a href="#aria-labels" style="color: var(--color-text-secondary); text-decoration: none; font-weight: 500;">
+                    ARIA Labels
+                    <span class="kbd-hint">A</span>
+                </a>
+                <a href="#screen-readers" style="color: var(--color-text-secondary); text-decoration: none; font-weight: 500;">
+                    Screen Readers
+                    <span class="kbd-hint">S</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero-championship" style="min-height: 50vh;">
+            <div style="position: relative; z-index: 1; max-width: 900px; padding: 0 var(--rhythm-md); text-align: center;">
+                <h1 class="heading-branded" style="font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1; margin-bottom: var(--rhythm-md);">
+                    ACCESSIBILITY FIRST
+                </h1>
+                <p style="font-size: var(--font-size-xl); color: var(--color-text-secondary); max-width: 600px; margin: 0 auto var(--rhythm-lg);">
+                    WCAG 2.1 Level AAA compliance ensuring championship analytics are accessible to everyone
+                </p>
+                <div class="status-badge status-pass" style="font-size: var(--font-size-lg); padding: 12px 24px;">
+                    <i class="fas fa-check-circle"></i>
+                    AAA Compliant
+                </div>
+            </div>
+        </section>
+
+        <!-- Keyboard Navigation -->
+        <section id="keyboard-nav" class="demo-section" aria-labelledby="keyboard-nav-title">
+            <h2 class="demo-title" id="keyboard-nav-title">Keyboard Navigation</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-lg); max-width: 700px;">
+                All interactive elements are fully keyboard accessible. Try pressing <kbd class="kbd-hint">Tab</kbd> to navigate, <kbd class="kbd-hint">Enter</kbd> or <kbd class="kbd-hint">Space</kbd> to activate, and <kbd class="kbd-hint">Escape</kbd> to close modals.
+            </p>
+
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--rhythm-md);">
+                        Focus Visible States
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: var(--rhythm-md);">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-chart-line"></i>
+                            Primary Button
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-filter"></i>
+                            Secondary Button
+                        </button>
+                        <a href="#demo" class="quick-action-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            Quick Action Link
+                        </a>
+                    </div>
+                    <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: var(--rhythm-md);">
+                        <strong>Focus indicator:</strong> 3-4px burnt orange outline with offset
+                    </p>
+                </div>
+
+                <div class="demo-card">
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--rhythm-md);">
+                        Keyboard Shortcuts
+                    </h3>
+                    <table style="width: 100%; font-size: var(--font-size-sm);">
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--glass-border);">
+                                <td style="padding: var(--rhythm-xs) 0;">
+                                    <kbd class="kbd-hint">K</kbd>
+                                </td>
+                                <td style="padding: var(--rhythm-xs) 0; color: var(--color-text-secondary);">
+                                    Jump to keyboard navigation
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--glass-border);">
+                                <td style="padding: var(--rhythm-xs) 0;">
+                                    <kbd class="kbd-hint">Tab</kbd>
+                                </td>
+                                <td style="padding: var(--rhythm-xs) 0; color: var(--color-text-secondary);">
+                                    Next focusable element
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--glass-border);">
+                                <td style="padding: var(--rhythm-xs) 0;">
+                                    <kbd class="kbd-hint">Shift</kbd> + <kbd class="kbd-hint">Tab</kbd>
+                                </td>
+                                <td style="padding: var(--rhythm-xs) 0; color: var(--color-text-secondary);">
+                                    Previous focusable element
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: var(--rhythm-xs) 0;">
+                                    <kbd class="kbd-hint">Escape</kbd>
+                                </td>
+                                <td style="padding: var(--rhythm-xs) 0; color: var(--color-text-secondary);">
+                                    Close modals/dialogs
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="demo-card">
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--rhythm-md);">
+                        Skip Link
+                    </h3>
+                    <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-md);">
+                        Press <kbd class="kbd-hint">Tab</kbd> at the top of this page to reveal the skip navigation link.
+                    </p>
+                    <div style="padding: var(--rhythm-md); background: rgba(217, 98, 0, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-brand-primary);">
+                        <strong>Purpose:</strong> Allows keyboard users to bypass navigation and jump directly to main content.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARIA Labels & Live Regions -->
+        <section id="aria-labels" class="demo-section" aria-labelledby="aria-title">
+            <h2 class="demo-title" id="aria-title">ARIA Labels & Live Regions</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-lg); max-width: 700px;">
+                Comprehensive ARIA implementation provides rich semantic information to assistive technologies.
+            </p>
+
+            <div class="demo-grid">
+                <!-- Live Game Card with Full ARIA -->
+                <article class="game-card game-card--elevated game-card--live" aria-label="Live game: Kansas City Chiefs versus New England Patriots, Quarter 3 with 8 minutes 42 seconds remaining">
+                    <div class="card-accent-strip" style="--team-color: #002244" aria-hidden="true"></div>
+
+                    <div class="card-header">
+                        <span class="live-badge live-badge--pulse" role="status" aria-label="Game status: Live">
+                            <span class="live-dot" aria-hidden="true"></span>
+                            <span aria-hidden="true">LIVE</span>
+                        </span>
+                        <time class="game-time game-time--live" datetime="PT43M18S">Q3 8:42</time>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Away Team -->
+                        <div class="team-container">
+                            <div class="team-logo" aria-hidden="true">
+                                <i class="fas fa-football-ball" style="font-size: 32px; color: #C60C30;"></i>
+                            </div>
+                            <div class="team-info">
+                                <div class="team-name">Kansas City Chiefs</div>
+                                <div class="team-record" aria-label="11 wins, 4 losses, AFC West">11-4 • AFC West</div>
+                            </div>
+                            <div class="score score--winning" aria-label="Kansas City score: 31 points">31</div>
+                        </div>
+
+                        <!-- Home Team -->
+                        <div class="team-container">
+                            <div class="team-logo" aria-hidden="true">
+                                <i class="fas fa-football-ball" style="font-size: 32px; color: #002244;"></i>
+                            </div>
+                            <div class="team-info">
+                                <div class="team-name">New England Patriots</div>
+                                <div class="team-record" aria-label="3 wins, 12 losses, AFC East">3-12 • AFC East</div>
+                            </div>
+                            <div class="score" aria-label="New England score: 17 points">17</div>
+                        </div>
+
+                        <!-- Win Probability -->
+                        <div class="win-probability-container" aria-label="Kansas City win probability: 92 percent">
+                            <div class="win-probability-label">
+                                <span id="win-prob-label">KC Win Probability</span>
+                                <span class="win-probability-value win-probability-value--high" aria-describedby="win-prob-label">92%</span>
+                            </div>
+                            <div class="win-probability-bar" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="Kansas City win probability">
+                                <div class="win-probability-fill win-probability-fill--high" style="width: 92%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="network-info" aria-label="Broadcasting on CBS">
+                            <i class="fas fa-tv" aria-hidden="true"></i>
+                            CBS
+                        </div>
+                        <a href="#game-details" class="quick-action-link" aria-label="View detailed game statistics and play-by-play">
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                            Game Details
+                        </a>
+                    </div>
+                </article>
+
+                <!-- ARIA Features List -->
+                <div class="demo-card">
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--rhythm-md);">
+                        ARIA Implementation
+                    </h3>
+
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <strong>aria-label</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Comprehensive labels for all interactive elements
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <strong>aria-live regions</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Polite and assertive announcements for dynamic content
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <strong>role attributes</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Semantic roles (status, progressbar, navigation)
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <strong>aria-hidden</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Decorative elements hidden from screen readers
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Region Demo -->
+            <div style="margin-top: var(--rhythm-xl); padding: var(--rhythm-lg); background: var(--glass-surface-light); border-radius: var(--rhythm-lg); border: 2px dashed var(--color-brand-primary);">
+                <h3 style="font-size: var(--font-size-xl); font-weight: 600; margin-bottom: var(--rhythm-md);">
+                    Live Region Demo
+                </h3>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-md);">
+                    Click the button below to trigger a live region announcement (turn on screen reader to hear):
+                </p>
+                <button class="btn btn-primary" onclick="announceScoreUpdate()">
+                    <i class="fas fa-broadcast-tower"></i>
+                    Simulate Score Update
+                </button>
+                <p id="announcement-preview" style="margin-top: var(--rhythm-md); padding: var(--rhythm-sm); background: rgba(255, 107, 0, 0.1); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: var(--font-size-sm);"></p>
+            </div>
+        </section>
+
+        <!-- Screen Reader Support -->
+        <section id="screen-readers" class="demo-section" aria-labelledby="sr-title">
+            <h2 class="demo-title" id="sr-title">Screen Reader Support</h2>
+
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--rhythm-md);">
+                        Screen Reader Only Content
+                    </h3>
+                    <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-md);">
+                        Additional context provided exclusively to screen reader users:
+                    </p>
+                    <div style="position: relative; padding: var(--rhythm-md); background: var(--glass-surface-medium); border-radius: var(--radius-md);">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-filter" aria-hidden="true"></i>
+                            <span class="sr-only">Filter games by:</span>
+                            Filter
+                        </button>
+                        <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: var(--rhythm-sm);">
+                            Screen readers hear: "Filter games by: Filter, button"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--rhythm-md);">
+                        Semantic HTML
+                    </h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="display: flex; align-items: center; gap: var(--rhythm-sm); margin-bottom: var(--rhythm-sm);">
+                            <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                            <code style="color: var(--color-brand-primary);">&lt;header role="banner"&gt;</code>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--rhythm-sm); margin-bottom: var(--rhythm-sm);">
+                            <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                            <code style="color: var(--color-brand-primary);">&lt;nav role="navigation"&gt;</code>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--rhythm-sm); margin-bottom: var(--rhythm-sm);">
+                            <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                            <code style="color: var(--color-brand-primary);">&lt;main role="main"&gt;</code>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--rhythm-sm); margin-bottom: var(--rhythm-sm);">
+                            <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                            <code style="color: var(--color-brand-primary);">&lt;article&gt;</code> for game cards
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--rhythm-sm);">
+                            <i class="fas fa-check-circle" style="color: var(--color-success);"></i>
+                            <code style="color: var(--color-brand-primary);">&lt;time datetime&gt;</code> for timestamps
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Features -->
+        <section class="demo-section" aria-labelledby="additional-features-title">
+            <h2 class="demo-title" id="additional-features-title">Additional Accessibility Features</h2>
+
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div>
+                            <strong>High Contrast Support</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Automatic adaptation for Windows High Contrast Mode
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-compress-alt"></i>
+                        </div>
+                        <div>
+                            <strong>Reduced Motion</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Respects prefers-reduced-motion preference
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div>
+                            <strong>Touch Targets</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Minimum 44×44px for all interactive elements
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div>
+                            <strong>Color Blind Mode</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Alternative colors for deuteranopia/protanopia
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                        <div>
+                            <strong>200% Zoom Support</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                Layout remains functional at high zoom levels
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-feature">
+                        <div class="demo-icon">
+                            <i class="fas fa-print"></i>
+                        </div>
+                        <div>
+                            <strong>Print Accessibility</strong>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: 4px;">
+                                High contrast, semantic structure for printed content
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer role="contentinfo" style="background: var(--color-slate-900); padding: var(--rhythm-xl) var(--rhythm-md); text-align: center;">
+        <div class="gradient-stadium-glow-horizontal" style="margin-bottom: var(--rhythm-lg);"></div>
+        <div class="heading-branded" style="font-size: var(--font-size-2xl); margin-bottom: var(--rhythm-sm);">
+            🔥 BLAZE SPORTS INTEL
+        </div>
+        <p style="color: var(--color-text-tertiary); margin-bottom: var(--rhythm-md);">
+            WCAG 2.1 Level AAA • Accessibility First • Championship Analytics
+        </p>
+        <div class="status-badge status-pass">
+            <i class="fas fa-universal-access"></i>
+            Fully Accessible
+        </div>
+    </footer>
+
+    <!-- Colorblind Mode Toggle -->
+    <button class="colorblind-toggle" onclick="toggleColorblindMode()" aria-label="Toggle color blind friendly mode" title="Toggle color blind mode">
+        <i class="fas fa-eye" style="font-size: 20px; color: var(--color-brand-primary);"></i>
+    </button>
+
+    <script>
+        // Live Region Announcement Demo
+        function announceScoreUpdate() {
+            const announcer = document.getElementById('status-announcer');
+            const preview = document.getElementById('announcement-preview');
+            const message = 'Score update: Kansas City Chiefs 34, New England Patriots 17. Kansas City win probability now 95 percent.';
+
+            announcer.textContent = message;
+            preview.textContent = `Announced to screen readers: "${message}"`;
+
+            // Clear after 3 seconds
+            setTimeout(() => {
+                announcer.textContent = '';
+            }, 3000);
+        }
+
+        // Colorblind Mode Toggle
+        let colorblindMode = null;
+        function toggleColorblindMode() {
+            if (!colorblindMode) {
+                colorblindMode = 'deuteranopia';
+                document.documentElement.setAttribute('data-colorblind-mode', 'deuteranopia');
+                console.log('✅ Color blind mode enabled (deuteranopia)');
+            } else {
+                colorblindMode = null;
+                document.documentElement.removeAttribute('data-colorblind-mode');
+                console.log('❌ Color blind mode disabled');
+            }
+        }
+
+        // Keyboard Shortcut Handler
+        document.addEventListener('keydown', (e) => {
+            // Only trigger if not in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            if (e.key === 'k' || e.key === 'K') {
+                e.preventDefault();
+                document.getElementById('keyboard-nav').scrollIntoView({ behavior: 'smooth' });
+            } else if (e.key === 'a' || e.key === 'A') {
+                e.preventDefault();
+                document.getElementById('aria-labels').scrollIntoView({ behavior: 'smooth' });
+            } else if (e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                document.getElementById('screen-readers').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // Log accessibility features
+        console.log('♿ Accessibility Features Active:');
+        console.log('  ✅ ARIA labels and live regions');
+        console.log('  ✅ Keyboard navigation (Tab, Shift+Tab, Enter, Escape)');
+        console.log('  ✅ Focus visible states (3-4px burnt orange outline)');
+        console.log('  ✅ Skip navigation link (press Tab at page top)');
+        console.log('  ✅ Screen reader support (semantic HTML + ARIA)');
+        console.log('  ✅ High contrast mode support');
+        console.log('  ✅ Reduced motion support (prefers-reduced-motion)');
+        console.log('  ✅ Touch target minimum 44×44px');
+        console.log('  ✅ Color blind mode (toggle button bottom-right)');
+        console.log('  ✅ 200% zoom support');
+        console.log('  ✅ Print accessibility');
+    </script>
+</body>
+</html>

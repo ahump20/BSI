@@ -52,6 +52,37 @@ const TEAMS_CONFIG = [
   { team: 'Texas Longhorns Football', sport: 'Football', league: 'NCAA', searchQuery: 'Texas Longhorns football latest stats record' },
 ];
 
+/**
+ * Calculate momentum based on recent game results
+ * Returns -1 (losing streak) to +1 (winning streak)
+ */
+function calculateMomentum(lastGames: Array<{ result: 'W' | 'L' }>): number {
+  if (!lastGames || lastGames.length === 0) return 0;
+
+  const recentGames = lastGames.slice(0, 5); // Last 5 games
+  let momentum = 0;
+  let weight = 1.0;
+
+  recentGames.forEach((game) => {
+    momentum += (game.result === 'W' ? weight : -weight);
+    weight *= 0.8; // Decay factor for older games
+  });
+
+  // Normalize to -1 to 1 range
+  return Math.max(-1, Math.min(1, momentum / 3));
+}
+
+/**
+ * Calculate performance metric based on win-loss record
+ * Returns 0 to 1 (0 = worst, 1 = best)
+ */
+function calculatePerformance(wins: number, losses: number): number {
+  const totalGames = wins + losses;
+  if (totalGames === 0) return 0.5; // Neutral if no games played
+
+  return wins / totalGames;
+}
+
 export default function CommandCenterPage() {
   const [teamsData, setTeamsData] = useState<TeamData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,128 +92,192 @@ export default function CommandCenterPage() {
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Fetch team data using web search
-   * In production, this would use the WebSearch API or your own API
+   * Fetch REAL team data from Blaze Sports Intel API
+   * Uses production adapters: MLB, NFL, NBA, NCAA
    */
   const fetchTeamData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Simulated data for demonstration
-      // In production: Use WebSearch API or fetch from your backend
-      const mockData: TeamData[] = [
-        {
+      // Fetch real data from our APIs in parallel
+      const [cardinalsData, titansData, grizzliesData, longhornsData] = await Promise.allSettled([
+        fetch('/api/mlb/teams/138').then(r => r.json()), // Cardinals team ID
+        fetch('/api/nfl/teams/TEN').then(r => r.json()), // Titans
+        fetch('/api/nba/teams/MEM').then(r => r.json()), // Grizzlies
+        fetch('/api/college-football/teams/251').then(r => r.json()), // Texas
+      ]);
+
+      const realData: TeamData[] = [];
+
+      // Cardinals (MLB)
+      if (cardinalsData.status === 'fulfilled' && cardinalsData.value.success) {
+        const data = cardinalsData.value.data;
+        realData.push({
           team: 'St. Louis Cardinals',
           sport: 'Baseball',
           league: 'MLB',
-          record: '78-84',
-          lastGame: {
-            opponent: 'Chicago Cubs',
-            result: 'L',
-            score: '3-5',
-            date: '2025-10-01',
+          record: `${data.wins || 0}-${data.losses || 0}`,
+          lastGame: data.lastGame ? {
+            opponent: data.lastGame.opponent,
+            result: data.lastGame.result,
+            score: data.lastGame.score,
+            date: data.lastGame.date,
+          } : undefined,
+          nextGame: data.nextGame ? {
+            opponent: data.nextGame.opponent,
+            date: data.nextGame.date,
+            time: data.nextGame.time,
+          } : undefined,
+          keyStats: data.stats || {
+            'Runs': data.runsScored || 0,
+            'ERA': data.era || '0.00',
+            'Team BA': data.battingAvg || '.000',
           },
-          nextGame: {
-            opponent: 'Milwaukee Brewers',
-            date: '2025-10-05',
-            time: '7:15 PM',
-          },
-          keyStats: {
-            'Team BA': '.248',
-            'ERA': '4.32',
-            'Home Runs': '189',
-            'Stolen Bases': '67',
-          },
-          momentum: -0.3,
-          performance: 0.48,
+          momentum: calculateMomentum(data.lastGames || []),
+          performance: calculatePerformance(data.wins || 0, data.losses || 0),
           lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
-          source: 'MLB Stats API',
-        },
-        {
+          source: data.source || 'MLB Stats API',
+        });
+      } else {
+        // Fallback: Show "Data Unavailable" instead of fake data
+        realData.push({
+          team: 'St. Louis Cardinals',
+          sport: 'Baseball',
+          league: 'MLB',
+          keyStats: { 'Status': 'Data currently unavailable' },
+          momentum: 0,
+          performance: 0,
+          lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
+          source: 'Unavailable',
+        });
+      }
+
+      // Titans (NFL)
+      if (titansData.status === 'fulfilled' && titansData.value.success) {
+        const data = titansData.value.data;
+        realData.push({
           team: 'Tennessee Titans',
           sport: 'Football',
           league: 'NFL',
-          record: '1-4',
-          lastGame: {
-            opponent: 'Indianapolis Colts',
-            result: 'L',
-            score: '17-23',
-            date: '2025-10-10',
+          record: `${data.wins || 0}-${data.losses || 0}`,
+          lastGame: data.lastGame ? {
+            opponent: data.lastGame.opponent,
+            result: data.lastGame.result,
+            score: data.lastGame.score,
+            date: data.lastGame.date,
+          } : undefined,
+          nextGame: data.nextGame ? {
+            opponent: data.nextGame.opponent,
+            date: data.nextGame.date,
+            time: data.nextGame.time,
+          } : undefined,
+          keyStats: data.stats || {
+            'Points/Game': data.ppg || 0,
+            'Points Allowed': data.papg || 0,
           },
-          nextGame: {
-            opponent: 'Baltimore Ravens',
-            date: '2025-10-15',
-            time: '12:00 PM',
-          },
-          keyStats: {
-            'Points Per Game': '18.2',
-            'Points Allowed': '27.4',
-            'Total Yards': '312.6',
-            'Turnovers': '8',
-          },
-          momentum: -0.6,
-          performance: 0.35,
+          momentum: calculateMomentum(data.lastGames || []),
+          performance: calculatePerformance(data.wins || 0, data.losses || 0),
           lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
-          source: 'NFL.com',
-        },
-        {
+          source: data.source || 'ESPN NFL API',
+        });
+      } else {
+        realData.push({
+          team: 'Tennessee Titans',
+          sport: 'Football',
+          league: 'NFL',
+          keyStats: { 'Status': 'Data currently unavailable' },
+          momentum: 0,
+          performance: 0,
+          lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
+          source: 'Unavailable',
+        });
+      }
+
+      // Grizzlies (NBA)
+      if (grizzliesData.status === 'fulfilled' && grizzliesData.value.success) {
+        const data = grizzliesData.value.data;
+        realData.push({
           team: 'Memphis Grizzlies',
           sport: 'Basketball',
           league: 'NBA',
-          record: '48-34',
-          lastGame: {
-            opponent: 'Los Angeles Lakers',
-            result: 'W',
-            score: '115-108',
-            date: '2025-10-12',
+          record: `${data.wins || 0}-${data.losses || 0}`,
+          lastGame: data.lastGame ? {
+            opponent: data.lastGame.opponent,
+            result: data.lastGame.result,
+            score: data.lastGame.score,
+            date: data.lastGame.date,
+          } : undefined,
+          nextGame: data.nextGame ? {
+            opponent: data.nextGame.opponent,
+            date: data.nextGame.date,
+            time: data.nextGame.time,
+          } : undefined,
+          keyStats: data.stats || {
+            'PPG': data.ppg || 0,
+            'Rebounds': data.rpg || 0,
+            'Assists': data.apg || 0,
           },
-          nextGame: {
-            opponent: 'Golden State Warriors',
-            date: '2025-10-14',
-            time: '7:00 PM',
-          },
-          keyStats: {
-            'Points Per Game': '112.5',
-            'Rebounds': '45.3',
-            'Assists': '25.7',
-            'FG%': '47.2%',
-          },
-          momentum: 0.5,
-          performance: 0.70,
+          momentum: calculateMomentum(data.lastGames || []),
+          performance: calculatePerformance(data.wins || 0, data.losses || 0),
           lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
-          source: 'NBA.com',
-        },
-        {
+          source: data.source || 'ESPN NBA API',
+        });
+      } else {
+        realData.push({
+          team: 'Memphis Grizzlies',
+          sport: 'Basketball',
+          league: 'NBA',
+          keyStats: { 'Status': 'Data currently unavailable' },
+          momentum: 0,
+          performance: 0,
+          lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
+          source: 'Unavailable',
+        });
+      }
+
+      // Texas Longhorns (NCAA)
+      if (longhornsData.status === 'fulfilled' && longhornsData.value.success) {
+        const data = longhornsData.value.data;
+        realData.push({
           team: 'Texas Longhorns Football',
           sport: 'Football',
           league: 'NCAA',
-          record: '3-2',
-          lastGame: {
-            opponent: 'Oklahoma Sooners',
-            result: 'W',
-            score: '34-27',
-            date: '2025-10-08',
+          record: `${data.wins || 0}-${data.losses || 0}`,
+          lastGame: data.lastGame ? {
+            opponent: data.lastGame.opponent,
+            result: data.lastGame.result,
+            score: data.lastGame.score,
+            date: data.lastGame.date,
+          } : undefined,
+          nextGame: data.nextGame ? {
+            opponent: data.nextGame.opponent,
+            date: data.nextGame.date,
+            time: data.nextGame.time,
+          } : undefined,
+          keyStats: data.stats || {
+            'PPG': data.ppg || 0,
+            'Opponent PPG': data.oppPpg || 0,
           },
-          nextGame: {
-            opponent: 'Kansas Jayhawks',
-            date: '2025-10-16',
-            time: '2:30 PM',
-          },
-          keyStats: {
-            'Points Per Game': '31.8',
-            'Points Allowed': '24.2',
-            'Total Offense': '428.6',
-            'Rushing Yards': '178.4',
-          },
-          momentum: 0.4,
-          performance: 0.65,
+          momentum: calculateMomentum(data.lastGames || []),
+          performance: calculatePerformance(data.wins || 0, data.losses || 0),
           lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
-          source: 'ESPN',
-        },
-      ];
+          source: data.source || 'ESPN NCAA API',
+        });
+      } else {
+        realData.push({
+          team: 'Texas Longhorns Football',
+          sport: 'Football',
+          league: 'NCAA',
+          keyStats: { 'Status': 'Data currently unavailable' },
+          momentum: 0,
+          performance: 0,
+          lastUpdated: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
+          source: 'Unavailable',
+        });
+      }
 
-      setTeamsData(mockData);
+      setTeamsData(realData);
       setLastRefresh(new Date());
     } catch (err) {
       console.error('Failed to fetch team data:', err);

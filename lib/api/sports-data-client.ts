@@ -69,21 +69,36 @@ export class SportsDataClient {
   private rateLimits: Map<string, RateLimitInfo>;
   private cache: Map<string, { data: unknown; expires: number }>;
 
-  constructor() {
+  /**
+   * @param env - Cloudflare env bindings (Workers) or undefined (Node.js)
+   */
+  constructor(env?: any) {
     this.configs = new Map();
     this.rateLimits = new Map();
     this.cache = new Map();
-    this.initializeProviders();
+    this.initializeProviders(env);
   }
 
   /**
    * Initialize all API provider configurations
+   * Works in both Node.js and Cloudflare Workers
+   *
+   * @param env - Cloudflare env bindings (Workers) or undefined (Node.js)
    */
-  private initializeProviders(): void {
+  private initializeProviders(env?: any): void {
+    // Get API keys from env bindings (Workers) or process.env (Node.js)
+    const sportsDataIOKey = env?.SPORTSDATAIO_API_KEY ||
+                           (typeof process !== 'undefined' ? process.env?.SPORTSDATAIO_API_KEY : null) ||
+                           '';
+
+    const cfbdKey = env?.COLLEGEFOOTBALLDATA_API_KEY ||
+                   (typeof process !== 'undefined' ? process.env?.COLLEGEFOOTBALLDATA_API_KEY : null) ||
+                   '';
+
     // SportsDataIO - Comprehensive pro/college sports data
     this.configs.set('sportsdataio', {
       baseUrl: 'https://api.sportsdata.io/v3',
-      apiKey: process.env.SPORTSDATAIO_API_KEY || '',
+      apiKey: sportsDataIOKey,
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
         'Accept': 'application/json'
@@ -121,7 +136,7 @@ export class SportsDataClient {
     // College Football Data API
     this.configs.set('cfbd', {
       baseUrl: 'https://api.collegefootballdata.com',
-      apiKey: process.env.COLLEGEFOOTBALLDATA_API_KEY || '',
+      apiKey: cfbdKey,
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
         'Accept': 'application/json'
@@ -459,7 +474,34 @@ export class SportsDataClient {
 }
 
 // ============================================================================
-// Singleton Export
+// Singleton Export / Factory Function
 // ============================================================================
 
-export const sportsDataClient = new SportsDataClient();
+/**
+ * Global instance for convenience (Node.js only)
+ * Returns null in Cloudflare Workers - use createSportsDataClient(env) instead
+ *
+ * @example Node.js
+ * import { sportsDataClient } from './sports-data-client';
+ * const data = await sportsDataClient.fetch('espn', '/football/nfl/scoreboard');
+ *
+ * @example Cloudflare Workers
+ * import { createSportsDataClient } from './sports-data-client';
+ * export async function onRequest({ request, env }) {
+ *   const client = createSportsDataClient(env);
+ *   const data = await client.fetch('espn', '/football/nfl/scoreboard');
+ * }
+ */
+export const sportsDataClient = typeof process !== 'undefined'
+  ? new SportsDataClient()
+  : null; // null in Workers - must use createSportsDataClient(env)
+
+/**
+ * Factory function for creating SportsDataClient in Cloudflare Workers
+ *
+ * @param env - Cloudflare env bindings with API keys
+ * @returns SportsDataClient instance configured with env bindings
+ */
+export function createSportsDataClient(env: any): SportsDataClient {
+  return new SportsDataClient(env);
+}

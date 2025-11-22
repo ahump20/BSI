@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Identity | Blaze Sports Intel</title>
+    <meta name="description" content="Deep South sports aesthetic with Texas/SEC championship energy">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="/css/blaze-design-system-enhanced.css">
+    <link rel="stylesheet" href="/css/blaze-components-enhanced.css">
+    <link rel="stylesheet" href="/css/blaze-brand-identity.css">
+
+    <style>
+        body {
+            font-family: var(--font-body);
+            background: var(--color-background-primary);
+            color: var(--color-text-primary);
+            margin: 0;
+            padding: 0;
+        }
+
+        .section {
+            padding: var(--rhythm-xl) var(--rhythm-md);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--rhythm-lg);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--rhythm-lg);
+            margin-top: var(--rhythm-lg);
+        }
+
+        .demo-card {
+            background: var(--glass-surface-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--rhythm-md);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-label {
+            position: absolute;
+            top: var(--rhythm-sm);
+            left: var(--rhythm-sm);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-quaternary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--color-background-primary);
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+        }
+
+        .color-swatch {
+            width: 100%;
+            height: 100px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: var(--rhythm-sm);
+        }
+
+        .pattern-demo {
+            width: 100%;
+            height: 150px;
+            border-radius: var(--radius-md);
+        }
+    </style>
+</head>
+<body>
+    <!-- Championship Hero -->
+    <section class="hero-championship">
+        <div class="particle-container">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div style="position: relative; z-index: 1; max-width: 900px; padding: 0 var(--rhythm-md);">
+            <h1 class="heading-branded" style="font-size: clamp(3rem, 10vw, 6rem); line-height: 1; margin-bottom: var(--rhythm-md);">
+                DEEP SOUTH SPORTS AUTHORITY
+            </h1>
+            <p style="font-size: var(--font-size-xl); color: var(--color-text-secondary); font-weight: 300; max-width: 600px; margin: 0 auto var(--rhythm-lg);">
+                Championship analytics platform delivering elite intelligence from Texas to the Gulf Coast
+            </p>
+            <div style="display: flex; gap: var(--rhythm-md); justify-content: center; flex-wrap: wrap;">
+                <button class="btn-branded">
+                    <i class="fas fa-chart-line"></i> View Analytics
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-broadcast-tower"></i> Live Games
+                </button>
+            </div>
+        </div>
+        <div class="floodlight-beam" style="animation: fade-in-out 4s ease-in-out infinite;"></div>
+    </section>
+
+    <!-- Stadium Light Gradients -->
+    <section class="section">
+        <h2 class="section-title text-accent-primary">Stadium Light Gradients</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-lg); max-width: 700px;">
+            Atmospheric lighting effects inspired by Friday night lights and championship game atmospheres across the Deep South.
+        </p>
+
+        <div class="demo-grid">
+            <div class="demo-card gradient-stadium-lights" style="min-height: 300px;">
+                <div class="demo-label">Stadium Lights</div>
+                <div style="color: white; font-family: var(--font-heading); font-size: var(--font-size-3xl);">
+                    CHAMPIONSHIP ATMOSPHERE
+                </div>
+            </div>
+
+            <div class="demo-card" style="min-height: 300px;">
+                <div class="demo-label">Stadium Spotlight</div>
+                <div class="gradient-stadium-spotlight" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: var(--color-brand-primary);">
+                        SPOTLIGHT EFFECT
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card gradient-night-sky" style="min-height: 300px;">
+                <div class="demo-label">Night Sky</div>
+                <div style="color: white; font-family: var(--font-heading); font-size: var(--font-size-2xl);">
+                    TEXAS TWILIGHT
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: var(--rhythm-lg); padding: var(--rhythm-md); background: var(--glass-surface-light); border-radius: var(--radius-lg); border-left: 4px solid var(--color-brand-primary);">
+            <div class="gradient-stadium-glow-horizontal" style="margin-bottom: var(--rhythm-md);"></div>
+            <strong>Stadium Glow Divider</strong> - Use between major sections to create visual separation with branded orange glow.
+        </div>
+    </section>
+
+    <!-- Texas Burnt Orange -->
+    <section class="section" style="background: var(--color-slate-900);">
+        <h2 class="section-title text-burnt-orange-gradient">Texas Burnt Orange Heritage</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-lg); max-width: 700px;">
+            Official University of Texas burnt orange (#BF5700) enhanced for digital displays and championship-level branding.
+        </p>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <div class="demo-label">Burnt Orange Gradient</div>
+                <div class="color-swatch gradient-burnt-orange">
+                    <span style="color: white; font-family: var(--font-heading); font-size: var(--font-size-2xl); text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                        #D96200 → #BF5700 → #8B3D00
+                    </span>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-label">Burnt & Powder Blue</div>
+                <div class="color-swatch gradient-burnt-powder">
+                    <span style="color: white; font-family: var(--font-heading); font-size: var(--font-size-xl); text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                        TEXAS MEETS THE COAST
+                    </span>
+                </div>
+            </div>
+
+            <div class="demo-card glow-burnt-orange" style="background: var(--color-background-primary);">
+                <div class="demo-label">Orange Glow</div>
+                <div style="font-family: var(--font-heading); font-size: var(--font-size-3xl); color: var(--color-brand-primary);">
+                    CHAMPIONSHIP AURA
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEC Dominance Theme -->
+    <section class="section">
+        <h2 class="section-title" style="background: linear-gradient(135deg, #660000 0%, #BF5700 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+            SEC Conference Power
+        </h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-lg); max-width: 700px;">
+            Colors and patterns representing the dominance of Southeastern Conference athletics.
+        </p>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <div class="demo-label">SEC Championship</div>
+                <div class="color-swatch gradient-sec-championship">
+                    <span style="color: white; font-family: var(--font-heading); font-size: var(--font-size-2xl); text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                        BURGUNDY TO BURNT ORANGE
+                    </span>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-label">SEC Gold</div>
+                <div class="color-swatch gradient-sec-gold">
+                    <span style="color: #660000; font-family: var(--font-heading); font-size: var(--font-size-2xl); text-shadow: 0 1px 2px rgba(255,255,255,0.5);">
+                        ATHLETIC DEPARTMENT
+                    </span>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <div class="demo-label">Conference Pride Stripes</div>
+                <div class="pattern-demo stripe-sec-pride"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Friday Night Lights -->
+    <section class="hero-friday-night-lights" style="padding: var(--rhythm-xl) var(--rhythm-md);">
+        <div style="position: relative; z-index: 1; max-width: 900px; margin: 0 auto; text-align: center;">
+            <h2 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1; margin-bottom: var(--rhythm-md); color: var(--color-brand-primary);">
+                FRIDAY NIGHT LIGHTS
+            </h2>
+            <p style="font-size: var(--font-size-lg); color: var(--color-text-secondary); max-width: 600px; margin: 0 auto var(--rhythm-lg);">
+                High school football atmosphere with intense community energy. From West Texas to the Gulf Coast, championship dreams are born under these lights.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--rhythm-md); margin-top: var(--rhythm-xl);">
+                <div style="padding: var(--rhythm-md); background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md);">
+                    <div class="glow-scoreboard-led" style="font-family: var(--font-heading); font-size: var(--font-size-4xl); color: #FFD700; line-height: 1;">
+                        42
+                    </div>
+                    <div style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: var(--rhythm-xs);">Scoreboard LED Glow</div>
+                </div>
+
+                <div style="padding: var(--rhythm-md); background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md);">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-3xl); color: var(--color-brand-primary);">
+                        4th & GOAL
+                    </div>
+                    <div style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: var(--rhythm-xs);">Game Situation</div>
+                </div>
+
+                <div style="padding: var(--rhythm-md); background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md);">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: var(--color-text-primary);">
+                        :03
+                    </div>
+                    <div style="font-size: var(--font-size-sm); color: var(--color-text-tertiary); margin-top: var(--rhythm-xs);">Championship Moment</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Championship Gold -->
+    <section class="section">
+        <h2 class="section-title" style="background: linear-gradient(135deg, #FFD700 0%, #FFB81C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+            Championship Trophy Gold
+        </h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-lg); max-width: 700px;">
+            Metallic gold effects reserved for championship-level content and achievements.
+        </p>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <div class="demo-label">Championship Gold</div>
+                <div class="color-swatch gradient-championship-gold">
+                    <span style="color: #660000; font-family: var(--font-heading); font-size: var(--font-size-2xl); text-shadow: 0 1px 2px rgba(255,255,255,0.5);">
+                        🏆 TROPHY GOLD
+                    </span>
+                </div>
+            </div>
+
+            <div class="demo-card shine-metallic" style="background: linear-gradient(135deg, #FFD700 0%, #FFB81C 100%);">
+                <div class="demo-label">Metallic Shine</div>
+                <div style="font-family: var(--font-heading); font-size: var(--font-size-3xl); color: #660000; text-shadow: 0 2px 4px rgba(255,255,255,0.5);">
+                    SHINE EFFECT
+                </div>
+            </div>
+
+            <div class="demo-card" style="background: #0a0a0f;">
+                <div class="demo-label">Engraved Text</div>
+                <div class="text-engraved" style="font-family: var(--font-heading); font-size: var(--font-size-3xl);">
+                    CHAMPIONS 2025
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Athletic Field Aesthetics -->
+    <section class="section" style="background: var(--color-slate-900);">
+        <h2 class="section-title text-accent-primary">Athletic Field Aesthetics</h2>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <div class="demo-label">Artificial Turf</div>
+                <div class="pattern-demo texture-turf" style="display: flex; align-items: center; justify-content: center;">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                        FIELD TEXTURE
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card" style="background: #1a4d2e;">
+                <div class="demo-label">Chalk Line Divider</div>
+                <div style="width: 100%;">
+                    <div class="divider-chalk-line"></div>
+                    <div style="text-align: center; margin-top: var(--rhythm-md); color: white; font-family: var(--font-heading); font-size: var(--font-size-xl);">
+                        50 YARD LINE
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card pattern-end-zone" style="background: var(--color-background-primary);">
+                <div class="demo-label">End Zone Pattern</div>
+                <div style="font-family: var(--font-heading); font-size: var(--font-size-3xl); color: var(--color-brand-primary);">
+                    TOUCHDOWN
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Texas Heritage -->
+    <section class="section">
+        <h2 class="section-title text-burnt-orange-gradient">Texas Heritage Patterns</h2>
+
+        <div class="demo-grid">
+            <div class="demo-card pattern-lone-star" style="min-height: 250px;">
+                <div class="demo-label">Lone Star Pattern</div>
+                <div style="font-family: var(--font-heading); font-size: var(--font-size-3xl); color: var(--color-brand-primary);">
+                    ⭐ TEXAS PRIDE
+                </div>
+            </div>
+
+            <div class="demo-card border-rope" style="min-height: 250px;">
+                <div class="demo-label">Western Rope Border</div>
+                <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: var(--color-text-primary); text-align: center;">
+                    RODEO HERITAGE
+                </div>
+            </div>
+
+            <div class="demo-card texture-leather" style="min-height: 250px; background: #8B3D00;">
+                <div class="demo-label">Leather Texture</div>
+                <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: #FFB81C;">
+                    AUTHENTIC CRAFTSMANSHIP
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Branded Components -->
+    <section class="section" style="background: var(--color-slate-900);">
+        <h2 class="section-title text-accent-primary">Branded Component Examples</h2>
+
+        <div style="display: grid; gap: var(--rhythm-xl); margin-top: var(--rhythm-lg);">
+            <!-- Branded Card -->
+            <div class="card-branded" style="padding: var(--rhythm-lg);">
+                <h3 style="font-family: var(--font-heading); font-size: var(--font-size-2xl); margin-bottom: var(--rhythm-md); color: var(--color-text-primary);">
+                    CHAMPIONSHIP ANALYTICS CARD
+                </h3>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-md);">
+                    Every component includes the signature burnt orange accent stripe at the top, maintaining brand consistency across the platform. This subtle detail reinforces our Texas heritage and championship mentality.
+                </p>
+                <div style="display: flex; gap: var(--rhythm-md); flex-wrap: wrap;">
+                    <button class="btn-branded">View Full Report</button>
+                    <button class="btn btn-secondary">Compare Teams</button>
+                </div>
+            </div>
+
+            <!-- Live Game Card with Brand -->
+            <article class="game-card game-card--elevated game-card--live">
+                <div class="card-accent-strip" style="--team-color: #BF5700"></div>
+
+                <div class="card-header">
+                    <span class="live-badge live-badge--pulse">
+                        <span class="live-dot"></span>
+                        LIVE
+                    </span>
+                    <span class="game-time game-time--live">Q4 2:15</span>
+                </div>
+
+                <div class="card-body">
+                    <div class="team-container">
+                        <div class="team-logo">
+                            <div style="font-size: 32px;">🏈</div>
+                        </div>
+                        <div class="team-info">
+                            <div class="team-name">Texas Longhorns</div>
+                            <div class="team-record">11-2 • SEC</div>
+                        </div>
+                        <div class="score score--winning">34</div>
+                    </div>
+
+                    <div style="text-align: center; margin: var(--rhythm-xs) 0; color: var(--color-text-quaternary); font-size: var(--font-size-sm);">
+                        <i class="fas fa-map-marker-alt"></i> Darrell K Royal Stadium
+                    </div>
+
+                    <div class="team-container">
+                        <div class="team-logo">
+                            <div style="font-size: 32px;">🏈</div>
+                        </div>
+                        <div class="team-info">
+                            <div class="team-name">Texas A&M Aggies</div>
+                            <div class="team-record">9-4 • SEC</div>
+                        </div>
+                        <div class="score">31</div>
+                    </div>
+
+                    <div class="win-probability-container">
+                        <div class="win-probability-label">
+                            <span>UT Win Probability</span>
+                            <span class="win-probability-value win-probability-value--high">87%</span>
+                        </div>
+                        <div class="win-probability-bar">
+                            <div class="win-probability-fill win-probability-fill--high" style="width: 87%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <div class="network-info">
+                        <i class="fas fa-tv"></i>
+                        ESPN
+                    </div>
+                    <a href="#details" class="quick-action-link">
+                        <i class="fas fa-chart-line"></i>
+                        Game Details
+                    </a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Tight Palette Summary -->
+    <section class="section">
+        <h2 class="section-title heading-branded">Tight Palette System</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--rhythm-lg); max-width: 700px;">
+            Brand consistency through restricted color usage: 2 neutrals + 2 accents only.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--rhythm-lg);">
+            <div style="text-align: center;">
+                <div style="background: var(--color-slate-950); padding: var(--rhythm-lg); border-radius: var(--radius-md); margin-bottom: var(--rhythm-sm);">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: white;">
+                        NEUTRAL 1
+                    </div>
+                </div>
+                <div style="font-size: var(--font-size-sm); color: var(--color-text-tertiary);">
+                    Slate Gray 950<br>
+                    Primary Background
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="background: var(--color-slate-900); padding: var(--rhythm-lg); border-radius: var(--radius-md); margin-bottom: var(--rhythm-sm);">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: white;">
+                        NEUTRAL 2
+                    </div>
+                </div>
+                <div style="font-size: var(--font-size-sm); color: var(--color-text-tertiary);">
+                    Slate Gray 900<br>
+                    Secondary Background
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="background: var(--color-brand-primary); padding: var(--rhythm-lg); border-radius: var(--radius-md); margin-bottom: var(--rhythm-sm);">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: white;">
+                        ACCENT 1
+                    </div>
+                </div>
+                <div style="font-size: var(--font-size-sm); color: var(--color-text-tertiary);">
+                    Burnt Orange<br>
+                    Primary Brand
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="background: var(--color-live-primary); padding: var(--rhythm-lg); border-radius: var(--radius-md); margin-bottom: var(--rhythm-sm);">
+                    <div style="font-family: var(--font-heading); font-size: var(--font-size-2xl); color: white;">
+                        ACCENT 2
+                    </div>
+                </div>
+                <div style="font-size: var(--font-size-sm); color: var(--color-text-tertiary);">
+                    Electric Red<br>
+                    LIVE Indicator Only
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: var(--rhythm-xl); padding: var(--rhythm-lg); background: var(--glass-surface-light); border-radius: var(--radius-lg); border-left: 4px solid var(--color-brand-primary);">
+            <strong>Brand Discipline:</strong> This restricted palette ensures visual consistency across all platforms. Additional colors (win probability green, team identity colors) are used sparingly for data visualization only—never for UI chrome or navigation.
+        </div>
+    </section>
+
+    <footer style="background: var(--color-slate-900); padding: var(--rhythm-xl) var(--rhythm-md); text-align: center; margin-top: var(--rhythm-xl);">
+        <div class="gradient-stadium-glow-horizontal" style="margin-bottom: var(--rhythm-lg);"></div>
+        <div class="heading-branded" style="font-size: var(--font-size-3xl); margin-bottom: var(--rhythm-md);">
+            🔥 BLAZE SPORTS INTEL
+        </div>
+        <p style="color: var(--color-text-secondary); font-size: var(--font-size-lg); max-width: 600px; margin: 0 auto var(--rhythm-md);">
+            Deep South Sports Authority • Texas to the Gulf Coast
+        </p>
+        <p style="color: var(--color-text-quaternary); font-size: var(--font-size-sm);">
+            Brand Identity System v3.0.0 • Championship Analytics Platform
+        </p>
+    </footer>
+
+    <style>
+        @keyframes fade-in-out {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</body>
+</html>
