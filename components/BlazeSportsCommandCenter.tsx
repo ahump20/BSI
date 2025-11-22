@@ -38,6 +38,8 @@ export default function BlazeSportsCommandCenter() {
   const [viewMode, setViewMode] = useState(VIEW_MODES.GRID);
   const [theme, setTheme] = useState(THEMES.DARK);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [comparisonPlayers, setComparisonPlayers] = useState<Player[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
   const [dataSource, setDataSource] = useState('');
   const [lastUpdated, setLastUpdated] = useState('');
 
@@ -251,30 +253,321 @@ export default function BlazeSportsCommandCenter() {
     </div>
   );
 
-  // ==================== RENDER: PLAYER CARDS ====================
+  // ==================== COMPARISON MODE ====================
 
-  const renderPlayerCard = (player: Player) => (
-    <div
-      key={player.id}
-      onClick={() => setSelectedPlayer(player)}
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition cursor-pointer overflow-hidden"
-    >
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              {player.name}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              {player.team} • {player.position}
-              {player.number && ` #${player.number}`}
-            </p>
+  const toggleComparison = (player: Player) => {
+    if (comparisonPlayers.find(p => p.id === player.id)) {
+      setComparisonPlayers(comparisonPlayers.filter(p => p.id !== player.id));
+    } else if (comparisonPlayers.length < 4) {
+      setComparisonPlayers([...comparisonPlayers, player]);
+    }
+  };
+
+  const renderComparison = () => {
+    if (comparisonPlayers.length === 0) return null;
+
+    // Get all unique stat keys from comparison players
+    const allStats = Array.from(
+      new Set(comparisonPlayers.flatMap(p => Object.keys(p.stats)))
+    );
+
+    // Prepare radar chart data
+    const radarData = allStats.map(stat => {
+      const dataPoint: any = { stat };
+      comparisonPlayers.forEach(player => {
+        dataPoint[player.name] = player.stats[stat] || 0;
+      });
+      return dataPoint;
+    });
+
+    return (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Player Comparison ({comparisonPlayers.length}/4)
+            </h2>
+            <button
+              onClick={() => setShowComparison(false)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+            >
+              <X className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+            </button>
+          </div>
+
+          <div className="p-6 space-y-6">
+            {/* Radar Chart Comparison */}
+            {comparisonPlayers.length >= 2 && (
+              <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                  Skills Comparison
+                </h3>
+                <ResponsiveContainer width="100%" height={400}>
+                  <RadarChart data={radarData}>
+                    <PolarGrid stroke="#374151" />
+                    <PolarAngleAxis
+                      dataKey="stat"
+                      tick={{ fill: theme === THEMES.DARK ? '#9CA3AF' : '#4B5563', fontSize: 12 }}
+                    />
+                    <PolarRadiusAxis angle={90} domain={[0, 'auto']} />
+                    {comparisonPlayers.map((player, idx) => (
+                      <Radar
+                        key={player.id}
+                        name={player.name}
+                        dataKey={player.name}
+                        stroke={Object.values(CHART_COLORS)[idx]}
+                        fill={Object.values(CHART_COLORS)[idx]}
+                        fillOpacity={0.3}
+                      />
+                    ))}
+                    <Legend />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+
+            {/* Stats Table */}
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl overflow-x-auto">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                Detailed Stats Comparison
+              </h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left p-3 text-gray-600 dark:text-gray-400 font-semibold">
+                      Stat
+                    </th>
+                    {comparisonPlayers.map(player => (
+                      <th
+                        key={player.id}
+                        className="text-right p-3 text-gray-900 dark:text-white font-semibold"
+                      >
+                        {player.name}
+                        <div className="text-xs font-normal text-gray-500 dark:text-gray-400">
+                          {player.team}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {allStats.map(stat => (
+                    <tr
+                      key={stat}
+                      className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      <td className="p-3 font-medium text-gray-700 dark:text-gray-300">
+                        {stat}
+                      </td>
+                      {comparisonPlayers.map(player => {
+                        const value = player.stats[stat];
+                        const isLeader = comparisonPlayers.every(
+                          p => (p.stats[stat] || 0) <= (value || 0)
+                        );
+                        return (
+                          <td
+                            key={player.id}
+                            className={`p-3 text-right font-mono ${
+                              isLeader
+                                ? 'text-emerald-500 font-bold'
+                                : 'text-gray-600 dark:text-gray-400'
+                            }`}
+                          >
+                            {typeof value === 'number' ? value.toFixed(value < 10 ? 3 : 0) : value || '-'}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Clear Comparison */}
+            <button
+              onClick={() => {
+                setComparisonPlayers([]);
+                setShowComparison(false);
+              }}
+              className="w-full px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+            >
+              Clear Comparison
+            </button>
           </div>
         </div>
+      </div>
+    );
+  };
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mt-4">
-          {Object.entries(player.stats).slice(0, 4).map(([key, value]) => (
+  // ==================== PLAYER DETAIL PANEL ====================
+
+  const renderPlayerDetail = () => {
+    if (!selectedPlayer) return null;
+
+    // Prepare trend data for charts
+    const statKeys = Object.keys(selectedPlayer.stats);
+    const chartData = statKeys.map(key => ({
+      name: key,
+      value: selectedPlayer.stats[key]
+    }));
+
+    return (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                {selectedPlayer.name}
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                {selectedPlayer.team} • {selectedPlayer.position}
+                {selectedPlayer.number && ` #${selectedPlayer.number}`}
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedPlayer(null)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+            >
+              <X className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+            </button>
+          </div>
+
+          <div className="p-6 space-y-6">
+            {/* All Stats Grid */}
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Complete Statistics
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {Object.entries(selectedPlayer.stats).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-4 rounded-xl"
+                  >
+                    <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">
+                      {key}
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {typeof value === 'number' ? value.toFixed(value < 10 ? 3 : 0) : value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bar Chart Visualization */}
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Stats Visualization
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fill: theme === THEMES.DARK ? '#9CA3AF' : '#4B5563', fontSize: 11 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                  />
+                  <YAxis tick={{ fill: theme === THEMES.DARK ? '#9CA3AF' : '#4B5563' }} />
+                  <RechartsTooltip
+                    contentStyle={{
+                      backgroundColor: theme === THEMES.DARK ? '#1F2937' : '#FFFFFF',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: theme === THEMES.DARK ? '#F3F4F6' : '#111827'
+                    }}
+                  />
+                  <Bar dataKey="value" fill={CHART_COLORS.primary} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Data Source */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-xl">
+              <div className="flex items-start gap-3">
+                <Database className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-semibold text-blue-900 dark:text-blue-100">Data Source</p>
+                  <p className="text-blue-700 dark:text-blue-300">
+                    {selectedPlayer.dataSource} • {selectedPlayer.dataStamp}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  toggleComparison(selectedPlayer);
+                  setSelectedPlayer(null);
+                  setShowComparison(true);
+                }}
+                className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition flex items-center justify-center gap-2"
+              >
+                <BarChart3 className="w-5 h-5" />
+                Add to Comparison
+              </button>
+              <button
+                onClick={() => setSelectedPlayer(null)}
+                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ==================== RENDER: PLAYER CARDS ====================
+
+  const renderPlayerCard = (player: Player) => {
+    const isInComparison = comparisonPlayers.find(p => p.id === player.id);
+
+    return (
+      <div
+        key={player.id}
+        className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition overflow-hidden ${
+          isInComparison ? 'ring-4 ring-purple-500' : ''
+        }`}
+      >
+      <div className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div onClick={() => setSelectedPlayer(player)} className="flex-1 cursor-pointer">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                {player.name}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {player.team} • {player.position}
+                {player.number && ` #${player.number}`}
+              </p>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleComparison(player);
+              }}
+              className={`p-2 rounded-lg transition ${
+                isInComparison
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              title={isInComparison ? 'Remove from comparison' : 'Add to comparison'}
+            >
+              <BarChart3 className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Stats Grid */}
+          <div
+            onClick={() => setSelectedPlayer(player)}
+            className="grid grid-cols-2 gap-3 mt-4 cursor-pointer"
+          >
+            {Object.entries(player.stats).slice(0, 6).map(([key, value]) => (
             <div key={key} className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
               <div className="text-xs text-gray-500 dark:text-gray-400 uppercase">
                 {key}
@@ -286,13 +579,25 @@ export default function BlazeSportsCommandCenter() {
           ))}
         </div>
 
-        {/* Data Citation */}
+
+          {/* More Stats Indicator */}
+          {Object.keys(player.stats).length > 6 && (
+            <button
+              onClick={() => setSelectedPlayer(player)}
+              className="mt-4 w-full py-2 text-sm text-emerald-500 hover:text-emerald-600 font-semibold transition"
+            >
+              View {Object.keys(player.stats).length - 6} more stats →
+            </button>
+          )}
+
+          {/* Data Citation */}
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
           Source: {player.dataSource} • {player.dataStamp}
         </div>
       </div>
     </div>
   );
+};
 
   // ==================== RENDER: LOADING & ERROR ====================
 
@@ -367,7 +672,27 @@ export default function BlazeSportsCommandCenter() {
         <div className="text-center text-sm text-gray-600 dark:text-gray-400 pb-8">
           Showing {filteredPlayers.length} of {players.length} players
         </div>
+
+        {/* Comparison Badge */}
+        {comparisonPlayers.length > 0 && (
+          <div className="fixed bottom-6 right-6 z-40">
+            <button
+              onClick={() => setShowComparison(true)}
+              className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-full shadow-2xl transition flex items-center gap-3"
+            >
+              <BarChart3 className="w-6 h-6" />
+              <span className="font-semibold">
+                Compare {comparisonPlayers.length} Player{comparisonPlayers.length > 1 ? 's' : ''}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Modals */}
+      {selectedPlayer && renderPlayerDetail()}
+      {showComparison && renderComparison()}
     </div>
   );
 }
+
