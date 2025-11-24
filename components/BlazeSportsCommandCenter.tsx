@@ -123,34 +123,36 @@ export default function BlazeSportsCommandCenter() {
   // ==================== RENDER: HEADER ====================
 
   const renderHeader = () => (
-    <div className="bg-gradient-to-r from-emerald-600 to-blue-600 text-white p-6 rounded-t-2xl">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <Flame className="w-10 h-10" />
-          <div>
-            <h1 className="text-3xl font-bold">BLAZE SPORTS INTEL</h1>
-            <p className="text-emerald-100 text-sm">
+    <div className="bg-gradient-to-r from-emerald-600 to-blue-600 text-white p-4 sm:p-6 rounded-t-2xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Flame className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" />
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">BLAZE SPORTS INTEL</h1>
+            <p className="text-emerald-100 text-xs sm:text-sm truncate">
               Real-time sports analytics • Enterprise Command Center v10.0
             </p>
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={loadPlayers}
-            className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition text-sm"
             title="Refresh data"
+            aria-label="Refresh player data"
           >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
+            <RefreshCw className="w-4 h-4" aria-hidden="true" />
+            <span className="sm:inline">Refresh</span>
           </button>
 
           <button
             onClick={() => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
-            className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition"
+            className="px-3 sm:px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition"
             title="Toggle theme"
+            aria-label={`Switch to ${theme === THEMES.DARK ? 'light' : 'dark'} mode`}
           >
-            {theme === THEMES.DARK ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === THEMES.DARK ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
           </button>
         </div>
       </div>
@@ -182,71 +184,90 @@ export default function BlazeSportsCommandCenter() {
   // ==================== RENDER: SEARCH & CONTROLS ====================
 
   const renderControls = () => (
-    <div className="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-      <div className="flex gap-4 flex-wrap items-center justify-between">
-        <div className="flex-1 min-w-[300px]">
+    <div className="p-3 sm:p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+        {/* Search Input */}
+        <div className="flex-1 min-w-0">
           <div className="relative">
-            <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
             <input
               type="text"
               placeholder="Search players, teams, positions..."
               onChange={(e) => debouncedSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500"
+              className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 text-sm sm:text-base"
+              aria-label="Search players by name, team, or position"
             />
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => setViewMode(VIEW_MODES.GRID)}
-            className={`px-4 py-2 rounded-lg transition ${
-              viewMode === VIEW_MODES.GRID
-                ? 'bg-emerald-500 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-            }`}
-          >
-            <Grid className="w-5 h-5" />
-          </button>
+        {/* Controls Row */}
+        <div className="flex flex-wrap gap-2 justify-between sm:justify-end">
+          {/* View Mode Toggles */}
+          <div className="flex gap-1 sm:gap-2" role="group" aria-label="View mode">
+            <button
+              onClick={() => setViewMode(VIEW_MODES.GRID)}
+              className={`p-2 sm:px-4 sm:py-2 rounded-lg transition ${
+                viewMode === VIEW_MODES.GRID
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+              }`}
+              aria-label="Grid view"
+              aria-pressed={viewMode === VIEW_MODES.GRID}
+            >
+              <Grid className="w-5 h-5" aria-hidden="true" />
+            </button>
 
-          <button
-            onClick={() => setViewMode(VIEW_MODES.LIST)}
-            className={`px-4 py-2 rounded-lg transition ${
-              viewMode === VIEW_MODES.LIST
-                ? 'bg-emerald-500 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-            }`}
-          >
-            <List className="w-5 h-5" />
-          </button>
+            <button
+              onClick={() => setViewMode(VIEW_MODES.LIST)}
+              className={`p-2 sm:px-4 sm:py-2 rounded-lg transition ${
+                viewMode === VIEW_MODES.LIST
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+              }`}
+              aria-label="List view"
+              aria-pressed={viewMode === VIEW_MODES.LIST}
+            >
+              <List className="w-5 h-5" aria-hidden="true" />
+            </button>
+          </div>
 
-          <button
-            onClick={handleExportCSV}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition flex items-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            CSV
-          </button>
+          {/* Export Buttons */}
+          <div className="flex gap-1 sm:gap-2">
+            <button
+              onClick={handleExportCSV}
+              className="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition flex items-center gap-1 sm:gap-2 text-sm"
+              aria-label="Export data as CSV"
+            >
+              <Download className="w-4 h-4" aria-hidden="true" />
+              <span className="hidden sm:inline">CSV</span>
+            </button>
 
-          <button
-            onClick={handleExportJSON}
-            className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition flex items-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            JSON
-          </button>
+            <button
+              onClick={handleExportJSON}
+              className="px-3 sm:px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition flex items-center gap-1 sm:gap-2 text-sm"
+              aria-label="Export data as JSON"
+            >
+              <Download className="w-4 h-4" aria-hidden="true" />
+              <span className="hidden sm:inline">JSON</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Data Source Attribution */}
-      <div className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <Database className="w-4 h-4" />
-        <span>
-          Data source: <strong>{dataSource}</strong> • Last updated: <strong>{lastUpdated}</strong>
+      <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+        <Database className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+        <span className="break-all">
+          Source: <strong className="text-gray-800 dark:text-gray-200">{dataSource || 'Loading...'}</strong>
+        </span>
+        <span className="hidden sm:inline">•</span>
+        <span className="text-gray-500 dark:text-gray-500">
+          Updated: <strong className="text-gray-700 dark:text-gray-300">{lastUpdated || '—'}</strong>
         </span>
         {!loading && (
-          <span className="flex items-center gap-1 text-emerald-500">
-            <Wifi className="w-4 h-4" />
-            Live
+          <span className="flex items-center gap-1 text-emerald-500 ml-auto sm:ml-0">
+            <Wifi className="w-4 h-4" aria-hidden="true" />
+            <span className="font-medium">Live</span>
           </span>
         )}
       </div>
