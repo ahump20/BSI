@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { recordRuntimeEvent } from '../lib/observability/datadog-runtime';
+import { QuickSearchBanner } from './QuickSearchBanner';
 
 const productTiles = [
   {
@@ -135,20 +136,22 @@ export default function HomePage() {
         }}
       />
       <div className="di-shell">
-        <main className="di-container">
+        <main id="main-content" className="di-container">
+          <QuickSearchBanner />
+
           <section className="di-hero" aria-labelledby="hero-title">
-            <span className="di-pill">Championship Analytics Platform</span>
-            <h1 id="hero-title" className="di-title">
+            <span className="di-pill live-indicator">Championship Analytics Platform</span>
+            <h1 id="hero-title" className="di-title animated-gradient-text">
               Blaze Sports Intel
             </h1>
             <p className="di-subtitle">
               Real data. Faster decisions. Championship analytics for baseball, football, and basketball with live telemetry, AI copilot, and verified historical archives.
             </p>
             <div className="di-actions">
-              <Link className="di-action" href="/features">
+              <Link className="di-action scale-interaction glow-hover" href="/features">
                 View Analytics
               </Link>
-              <Link className="di-action di-action--secondary" href="/copilot">
+              <Link className="di-action di-action--secondary scale-interaction" href="/copilot">
                 Launch Copilot
               </Link>
             </div>
@@ -156,6 +159,15 @@ export default function HomePage() {
               <Link href="/data-transparency" className="di-inline-link" style={{ fontSize: '0.75rem' }}>
                 212 real games • Full data transparency
               </Link>
+              <span style={{ margin: '0 0.5rem', opacity: 0.5 }}>•</span>
+              <kbd style={{
+                padding: '0.15rem 0.4rem',
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '4px',
+                fontSize: '0.7rem',
+                fontFamily: 'inherit'
+              }}>?</kbd>
+              <span style={{ fontSize: '0.7rem', marginLeft: '0.25rem', opacity: 0.7 }}>for shortcuts</span>
             </p>
           </section>
 
@@ -163,10 +175,10 @@ export default function HomePage() {
             <h2 id="sports-navigation" className="di-page-title">
               Coverage by Sport
             </h2>
-            <div className="di-card-grid">
+            <div className="di-card-grid stagger-animate">
               {sportsHubs.map((sport) => (
-                <Link key={sport.href} className="di-nav-card" href={sport.href}>
-                  <span style={{ fontSize: '2rem' }}>{sport.icon}</span>
+                <Link key={sport.href} className="di-nav-card scale-interaction glass-light" href={sport.href}>
+                  <span style={{ fontSize: '2rem' }} className="float-animation">{sport.icon}</span>
                   <span>{sport.title}</span>
                   <p>{sport.coverage}</p>
                 </Link>
@@ -194,13 +206,13 @@ export default function HomePage() {
               {productTiles.map((tile) => (
                 <Link
                   key={tile.href}
-                  className="di-card"
+                  className="di-card scale-interaction glow-hover"
                   href={tile.href}
                   style={{
                     minWidth: '280px',
                     flex: '0 0 auto',
                     scrollSnapAlign: 'start',
-                    transition: 'transform 0.2s ease, border-color 0.2s ease'
+                    transition: 'transform 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease'
                   }}
                 >
                   <span className="di-kicker">{tile.badge}</span>

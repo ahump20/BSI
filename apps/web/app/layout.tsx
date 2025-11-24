@@ -4,6 +4,8 @@ import './globals.css';
 import ObservabilityProvider from './observability-provider';
 import Footer from '../components/Footer';
 import { WebVitalsTracker } from '../components/WebVitalsTracker';
+import { AppProviders } from './providers';
+import { ServiceWorkerRegistration } from '../components/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://blazesportsintel.com'),
@@ -11,6 +13,12 @@ export const metadata: Metadata = {
   description:
     'Blaze Sports Intel delivers professional sports data analytics, real-time scores, and compliance-ready intelligence for Baseball, Football, Basketball, and Track & Field.',
   alternates: { canonical: '/' },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Blaze Intel',
+  },
   openGraph: {
     url: 'https://blazesportsintel.com',
     siteName: 'Blaze Sports Intel',
@@ -30,17 +38,30 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a1a'
+  themeColor: '#fbbf24',
+  colorScheme: 'dark',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
       <body>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <WebVitalsTracker />
+        <ServiceWorkerRegistration />
         <ObservabilityProvider>
-          {children}
-          <Footer />
+          <AppProviders>
+            {children}
+            <Footer />
+          </AppProviders>
         </ObservabilityProvider>
       </body>
     </html>
