@@ -404,11 +404,20 @@
         <!-- Sticky Live Games Section (Phase 2) -->
         <section class="live-games-section" aria-label="Live Games" style="position: sticky; top: 73px; z-index: 90; background: linear-gradient(180deg, rgba(11,14,20,0.98) 0%, rgba(19,24,32,0.98) 100%); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(217,98,0,0.15); padding: 1.5rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
             <div style="max-width: 1200px; margin: 0 auto;">
+                <!-- Demo Data Disclaimer -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 8px; margin-bottom: 1rem; font-size: 0.8rem; color: #FFC107;" role="alert" aria-live="polite">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span><strong>Demo Preview:</strong> Sample data shown for demonstration. <a href="/live/scores" style="color: #FFD54F; text-decoration: underline;">View real-time scores</a></span>
+                </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
                     <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.5rem, 3vw, 2rem); color: #FF2D55; display: flex; align-items: center; gap: 0.75rem; margin: 0;">
                         <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: linear-gradient(135deg, #FF2D55 0%, #FF4066 100%); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 999px; box-shadow: 0 0 12px rgba(255,45,85,0.4);">
                             <span style="width: 8px; height: 8px; background: white; border-radius: 50%; animation: blink 1s ease-in-out infinite;" aria-hidden="true"></span>
-                            LIVE
+                            DEMO
                         </span>
                         3 Games In Progress
                     </h2>
@@ -726,6 +735,103 @@
             </div>
         </section>
     </main>
+
+        <!-- Data Transparency & API Documentation Section -->
+        <section class="sports-section" style="background: linear-gradient(180deg, var(--color-slate-950) 0%, rgba(191, 87, 0, 0.05) 100%);" aria-labelledby="data-sources-title">
+            <div class="section-container">
+                <div class="section-header" data-aos="fade-up">
+                    <div class="section-badge" role="status">Data Transparency</div>
+                    <h2 id="data-sources-title" class="section-title">Our Data Sources</h2>
+                    <p class="section-subtitle">
+                        100% transparent. Every statistic comes from official, documented APIs with full source attribution.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;" role="list">
+                    <!-- MLB StatsAPI -->
+                    <div class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="100" style="text-align: left;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 2.5rem;">⚾</div>
+                            <div>
+                                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">MLB StatsAPI</h3>
+                                <span style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: rgba(34, 197, 94, 0.2); color: #22C55E; border-radius: 4px;">Official Source</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+                            Official Major League Baseball statistics API. Real-time player stats, game data, standings, and historical records.
+                        </p>
+                        <a href="https://statsapi.mlb.com" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #D96200; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+                            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                            View API Documentation
+                        </a>
+                    </div>
+
+                    <!-- ESPN API -->
+                    <div class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="150" style="text-align: left;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 2.5rem;">📊</div>
+                            <div>
+                                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">ESPN API</h3>
+                                <span style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: rgba(34, 197, 94, 0.2); color: #22C55E; border-radius: 4px;">Official Source</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+                            ESPN's public sports data API. Live scores, schedules, and comprehensive college sports coverage including NCAA Baseball.
+                        </p>
+                        <a href="https://site.api.espn.com" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #D96200; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+                            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                            View API Endpoints
+                        </a>
+                    </div>
+
+                    <!-- Our Methodology -->
+                    <div class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="200" style="text-align: left;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 2.5rem;">📖</div>
+                            <div>
+                                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Our Methodology</h3>
+                                <span style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: rgba(217, 98, 0, 0.2); color: #D96200; border-radius: 4px;">Documentation</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+                            How we process, validate, and present sports data. Our confidence intervals, prediction accuracy, and quality control standards.
+                        </p>
+                        <a href="/methodology" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #D96200; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+                            <i class="fas fa-book" aria-hidden="true"></i>
+                            Read Methodology
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Data Integrity Commitment -->
+                <div style="margin-top: 3rem; padding: 2rem; background: rgba(217, 98, 0, 0.05); border: 1px solid rgba(217, 98, 0, 0.2); border-radius: var(--radius-xl);" data-aos="fade-up">
+                    <div style="display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap;">
+                        <div style="font-size: 3rem;">🛡️</div>
+                        <div style="flex: 1; min-width: 280px;">
+                            <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem;">Data Integrity Commitment</h3>
+                            <ul style="list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem;">
+                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
+                                    All statistics sourced from official league APIs
+                                </li>
+                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
+                                    Timestamps shown in America/Chicago timezone
+                                </li>
+                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
+                                    Data refreshed every 30 seconds during live games
+                                </li>
+                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
+                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
+                                    No fabricated claims or AI-generated predictions without disclosure
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
     <!-- Footer -->
     <footer class="footer" role="contentinfo">
