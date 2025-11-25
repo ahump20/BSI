@@ -5,9 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Flame,
   Search,
-  Filter,
-  TrendingUp,
-  Activity,
   BarChart3,
   X,
   Download,
@@ -17,18 +14,11 @@ import {
   Moon,
   Sun,
   AlertTriangle,
-  CheckCircle,
   Database,
   Wifi,
-  WifiOff,
   Command,
-  Keyboard,
 } from 'lucide-react';
 import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -51,26 +41,14 @@ import {
   fetchCollegeFootballPlayers,
   type Player,
 } from '../lib/sports-data/api-client';
-import {
-  formatNumber,
-  formatTimestamp,
-  exportToCSV,
-  exportToJSON,
-  debounce,
-} from '../lib/sports-data/utils';
+import { exportToCSV, exportToJSON, debounce } from '../lib/sports-data/utils';
 import { SPORTS_CONFIG, CHART_COLORS, VIEW_MODES, THEMES } from '../lib/sports-data/config';
 
 // New 2025 Features
 import CommandPalette from './CommandPalette';
 import { ToastProvider, useToastHelpers } from './ToastNotification';
 import { useKeyboardShortcuts, DASHBOARD_SHORTCUTS } from '../lib/hooks/useKeyboardShortcuts';
-import {
-  AnimatedCard,
-  FadeInUp,
-  StaggerContainer,
-  StaggerItem,
-  GlowOnHover,
-} from './ScrollAnimations';
+import { AnimatedCard } from './ScrollAnimations';
 import PlayerHeadshot from './PlayerHeadshot';
 import ExternalLinksPanel, { ExternalLinksInline } from './ExternalLinksPanel';
 

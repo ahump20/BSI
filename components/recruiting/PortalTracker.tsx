@@ -76,7 +76,7 @@ export function PortalTracker() {
   const [entries, setEntries] = useState<PortalEntry[]>([]);
   const [filteredEntries, setFilteredEntries] = useState<PortalEntry[]>([]);
   const [stats, setStats] = useState<PortalStats | null>(null);
-  const [conferenceFlows, setConferenceFlows] = useState<ConferenceFlow[]>([]);
+  const [_conferenceFlows, setConferenceFlows] = useState<ConferenceFlow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,7 +90,7 @@ export function PortalTracker() {
 
   // UI State
   const [selectedEntry, setSelectedEntry] = useState<PortalEntry | null>(null);
-  const [showNILDetails, setShowNILDetails] = useState(false);
+  const [_showNILDetails, _setShowNILDetails] = useState(false);
   const [sortBy, setSortBy] = useState<'date' | 'nil' | 'name'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
