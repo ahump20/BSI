@@ -38,17 +38,19 @@ export async function generateClaudeSummary(
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': anthropicApiKey,
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5-20250929',
         max_tokens: 1024,
         temperature: 0.7,
-        messages: [{
-          role: 'user',
-          content: prompt
-        }]
-      })
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+      }),
     });
 
     if (!response.ok) {
@@ -65,7 +67,7 @@ export async function generateClaudeSummary(
       summary,
       insights,
       confidence: calculateConfidence(data.length, sources.length),
-      model: result.model
+      model: result.model,
     };
   } catch (error) {
     console.error('Claude API call failed:', error);
@@ -121,7 +123,7 @@ function parseSummary(text: string): { summary: string; insights: string[] } {
     // No explicit INSIGHTS section, return full text as summary
     return {
       summary: text.trim(),
-      insights: []
+      insights: [],
     };
   }
 
@@ -131,9 +133,12 @@ function parseSummary(text: string): { summary: string; insights: string[] } {
   // Extract bullet points
   const insights = insightsText
     .split(/\n/)
-    .filter(line => line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*'))
-    .map(line => line.replace(/^[•\-\*]\s*/, '').trim())
-    .filter(line => line.length > 0);
+    .filter(
+      (line) =>
+        line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*')
+    )
+    .map((line) => line.replace(/^[•\-\*]\s*/, '').trim())
+    .filter((line) => line.length > 0);
 
   return { summary, insights };
 }
@@ -168,19 +173,20 @@ export function generateFallbackSummary(
 ): ClaudeSummaryResponse {
   const dataCount = data.length;
 
-  const summary = dataCount > 0
-    ? `Found ${dataCount} record${dataCount === 1 ? '' : 's'} matching "${query}". Data sourced from ${sources.join(', ')}. For detailed analysis, contact austin@blazesportsintel.com or enable Claude API integration.`
-    : `No records found matching "${query}". This may indicate limited historical coverage for this query. Try rephrasing or expanding the search criteria.`;
+  const summary =
+    dataCount > 0
+      ? `Found ${dataCount} record${dataCount === 1 ? '' : 's'} matching "${query}". Data sourced from ${sources.join(', ')}. For detailed analysis, contact austin@blazesportsintel.com or enable Claude API integration.`
+      : `No records found matching "${query}". This may indicate limited historical coverage for this query. Try rephrasing or expanding the search criteria.`;
 
   return {
     summary,
     insights: [
       `${dataCount} total records retrieved`,
       `Data sources: ${sources.join(', ')}`,
-      'Claude API integration available for enhanced summaries'
+      'Claude API integration available for enhanced summaries',
     ],
     confidence: 0.65,
-    model: 'fallback'
+    model: 'fallback',
   };
 }
 
@@ -196,26 +202,23 @@ export async function enhanceQueryResult(
 ): Promise<{ enhanced: boolean; claude_summary?: ClaudeSummaryResponse }> {
   if (!anthropicApiKey) {
     return {
-      enhanced: false
+      enhanced: false,
     };
   }
 
   try {
-    const summary = await generateClaudeSummary(
-      { query, data, sources, sport },
-      anthropicApiKey
-    );
+    const summary = await generateClaudeSummary({ query, data, sources, sport }, anthropicApiKey);
 
     return {
       enhanced: true,
-      claude_summary: summary
+      claude_summary: summary,
     };
   } catch (error) {
     console.warn('Claude enhancement failed, using fallback:', error);
 
     return {
       enhanced: true,
-      claude_summary: generateFallbackSummary(query, data, sources)
+      claude_summary: generateFallbackSummary(query, data, sources),
     };
   }
 }

@@ -46,7 +46,7 @@ export async function onRequest(context: { request: Request; env: Env }): Promis
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
 
   if (request.method === 'OPTIONS') {
@@ -56,17 +56,17 @@ export async function onRequest(context: { request: Request; env: Env }): Promis
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   }
 
   try {
-    const { query } = await request.json() as { query: string };
+    const { query } = (await request.json()) as { query: string };
 
     if (!query || !query.trim()) {
       return new Response(JSON.stringify({ error: 'Query parameter required' }), {
         status: 400,
-        headers: corsHeaders
+        headers: corsHeaders,
       });
     }
 
@@ -77,13 +77,16 @@ export async function onRequest(context: { request: Request; env: Env }): Promis
       cached = await env.QUERY_CACHE?.get(cacheKey, 'json');
 
       if (cached) {
-        return new Response(JSON.stringify({
-          ...cached,
-          cached: true,
-          cache_age_seconds: Math.floor((Date.now() - (cached as any).cached_at) / 1000)
-        }), {
-          headers: corsHeaders
-        });
+        return new Response(
+          JSON.stringify({
+            ...cached,
+            cached: true,
+            cache_age_seconds: Math.floor((Date.now() - (cached as any).cached_at) / 1000),
+          }),
+          {
+            headers: corsHeaders,
+          }
+        );
       }
     } catch (kvError) {
       console.warn('KV cache read failed:', kvError);
@@ -117,27 +120,34 @@ export async function onRequest(context: { request: Request; env: Env }): Promis
     try {
       if (env.QUERY_CACHE) {
         const cacheKey = `historical:query:${query.toLowerCase().trim()}`;
-        await env.QUERY_CACHE.put(cacheKey, JSON.stringify({
-          ...result,
-          cached_at: Date.now()
-        }), { expirationTtl: 21600 });
+        await env.QUERY_CACHE.put(
+          cacheKey,
+          JSON.stringify({
+            ...result,
+            cached_at: Date.now(),
+          }),
+          { expirationTtl: 21600 }
+        );
       }
     } catch (kvError) {
       console.warn('KV cache write failed (quota may be exceeded):', kvError);
     }
 
     return new Response(JSON.stringify(result), {
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   } catch (error) {
     console.error('Historical query error:', error);
-    return new Response(JSON.stringify({
-      error: 'Query execution failed',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-      headers: corsHeaders
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Query execution failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: corsHeaders,
+      }
+    );
   }
 }
 
@@ -153,7 +163,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
       const tournament = match[5] || 'cws';
 
       // Fetch games from both seasons
-      const season1Games = await env.DB.prepare(`
+      const season1Games = await env.DB.prepare(
+        `
         SELECT
           date,
           home_team,
@@ -166,9 +177,13 @@ const QUERY_PATTERNS: QueryPattern[] = [
           AND date LIKE ?
           AND (home_team LIKE ? OR away_team LIKE ?)
         ORDER BY date
-      `).bind(`${year1}%`, `%${team}%`, `%${team}%`).all();
+      `
+      )
+        .bind(`${year1}%`, `%${team}%`, `%${team}%`)
+        .all();
 
-      const season2Games = await env.DB.prepare(`
+      const season2Games = await env.DB.prepare(
+        `
         SELECT
           date,
           home_team,
@@ -181,14 +196,17 @@ const QUERY_PATTERNS: QueryPattern[] = [
           AND date LIKE ?
           AND (home_team LIKE ? OR away_team LIKE ?)
         ORDER BY date
-      `).bind(`${year2}%`, `%${team}%`, `%${team}%`).all();
+      `
+      )
+        .bind(`${year2}%`, `%${team}%`, `%${team}%`)
+        .all();
 
       // Calculate offensive stats
       const calculateOffense = (games: any[], teamName: string) => {
         let totalRuns = 0;
         let gamesPlayed = 0;
 
-        games.forEach(game => {
+        games.forEach((game) => {
           const isHome = game.home_team.includes(teamName);
           totalRuns += isHome ? game.home_score : game.away_score;
           gamesPlayed++;
@@ -197,7 +215,7 @@ const QUERY_PATTERNS: QueryPattern[] = [
         return {
           total_runs: totalRuns,
           games_played: gamesPlayed,
-          runs_per_game: gamesPlayed > 0 ? (totalRuns / gamesPlayed).toFixed(2) : 0
+          runs_per_game: gamesPlayed > 0 ? (totalRuns / gamesPlayed).toFixed(2) : 0,
         };
       };
 
@@ -205,23 +223,34 @@ const QUERY_PATTERNS: QueryPattern[] = [
       const stats2 = calculateOffense(season2Games.results || [], team);
 
       return {
-        data: [{
-          team,
-          season_1: { year: year1, ...stats1 },
-          season_2: { year: year2, ...stats2 },
-          comparison: {
-            runs_difference: stats1.total_runs - stats2.total_runs,
-            rpg_difference: (parseFloat(stats1.runs_per_game as string) - parseFloat(stats2.runs_per_game as string)).toFixed(2),
-            better_season: parseFloat(stats1.runs_per_game as string) > parseFloat(stats2.runs_per_game as string) ? year1 : year2
-          }
-        }],
+        data: [
+          {
+            team,
+            season_1: { year: year1, ...stats1 },
+            season_2: { year: year2, ...stats2 },
+            comparison: {
+              runs_difference: stats1.total_runs - stats2.total_runs,
+              rpg_difference: (
+                parseFloat(stats1.runs_per_game as string) -
+                parseFloat(stats2.runs_per_game as string)
+              ).toFixed(2),
+              better_season:
+                parseFloat(stats1.runs_per_game as string) >
+                parseFloat(stats2.runs_per_game as string)
+                  ? year1
+                  : year2,
+            },
+          },
+        ],
         sources: ['NCAA game logs', 'Blaze historical database'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.87,
-        missing_data: (season1Games.results.length === 0 || season2Games.results.length === 0) ?
-          `Limited data for ${team} in ${year1} or ${year2}. Expand dataset for better comparison.` : undefined
+        missing_data:
+          season1Games.results.length === 0 || season2Games.results.length === 0
+            ? `Limited data for ${team} in ${year1} or ${year2}. Expand dataset for better comparison.`
+            : undefined,
       };
-    }
+    },
   },
   {
     // "What's our all-time CWS record?" or "What's Texas's all-time CWS record?"
@@ -229,7 +258,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
     handler: async (match, env) => {
       const team = match[1] || 'Texas'; // Default to Texas if "our" is used
 
-      const results = await env.DB.prepare(`
+      const results = await env.DB.prepare(
+        `
         SELECT
           COUNT(*) as total_games,
           SUM(CASE
@@ -248,35 +278,45 @@ const QUERY_PATTERNS: QueryPattern[] = [
         WHERE sport = 'baseball'
           AND tournament_round LIKE '%College World Series%'
           AND (home_team LIKE ? OR away_team LIKE ?)
-      `).bind(
-        `%${team}%`, `%${team}%`,
-        `%${team}%`, `%${team}%`,
-        `%${team}%`, `%${team}%`
-      ).all();
+      `
+      )
+        .bind(`%${team}%`, `%${team}%`, `%${team}%`, `%${team}%`, `%${team}%`, `%${team}%`)
+        .all();
 
       const record = results.results[0];
-      const winPct = record && record.total_games > 0
-        ? ((record.wins as number) / (record.total_games as number) * 100).toFixed(1)
-        : '0.0';
+      const winPct =
+        record && record.total_games > 0
+          ? (((record.wins as number) / (record.total_games as number)) * 100).toFixed(1)
+          : '0.0';
 
       return {
-        data: [{
-          team,
-          all_time_record: record ? `${record.wins}-${record.losses}` : '0-0',
-          win_percentage: `${winPct}%`,
-          total_cws_games: record?.total_games || 0,
-          first_appearance: record?.first_appearance || null,
-          most_recent: record?.most_recent || null,
-          years_attended: record && record.total_games > 0 ?
-            Math.ceil((new Date(record.most_recent as string).getFullYear() - new Date(record.first_appearance as string).getFullYear()) / 1) : 0
-        }],
+        data: [
+          {
+            team,
+            all_time_record: record ? `${record.wins}-${record.losses}` : '0-0',
+            win_percentage: `${winPct}%`,
+            total_cws_games: record?.total_games || 0,
+            first_appearance: record?.first_appearance || null,
+            most_recent: record?.most_recent || null,
+            years_attended:
+              record && record.total_games > 0
+                ? Math.ceil(
+                    (new Date(record.most_recent as string).getFullYear() -
+                      new Date(record.first_appearance as string).getFullYear()) /
+                      1
+                  )
+                : 0,
+          },
+        ],
         sources: ['NCAA College World Series archives', 'Official tournament records'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.94,
-        missing_data: !record || record.total_games === 0 ?
-          `No CWS games found for ${team}. Check team name spelling or verify CWS participation.` : undefined
+        missing_data:
+          !record || record.total_games === 0
+            ? `No CWS games found for ${team}. Check team name spelling or verify CWS participation.`
+            : undefined,
       };
-    }
+    },
   },
   {
     // "Who won the FCS championship in 2024?"
@@ -284,7 +324,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
     handler: async (match, env) => {
       const season = match[2];
 
-      const result = await env.DB.prepare(`
+      const result = await env.DB.prepare(
+        `
         SELECT
           champion,
           champion_conference,
@@ -297,7 +338,10 @@ const QUERY_PATTERNS: QueryPattern[] = [
           championship_attendance
         FROM fcs_champions
         WHERE season = ?
-      `).bind(season).first();
+      `
+      )
+        .bind(season)
+        .first();
 
       if (!result) {
         return {
@@ -305,28 +349,30 @@ const QUERY_PATTERNS: QueryPattern[] = [
           sources: ['FCS historical records'],
           timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
           confidence: 0,
-          missing_data: `No FCS championship data found for ${season}. Data coverage: 2010-2024.`
+          missing_data: `No FCS championship data found for ${season}. Data coverage: 2010-2024.`,
         };
       }
 
       return {
-        data: [{
-          season,
-          champion: result.champion,
-          champion_conference: result.champion_conference,
-          champion_record: result.champion_record,
-          runner_up: result.runner_up,
-          runner_up_conference: result.runner_up_conference,
-          runner_up_record: result.runner_up_record,
-          final_score: result.championship_score,
-          site: result.championship_site,
-          attendance: result.championship_attendance
-        }],
+        data: [
+          {
+            season,
+            champion: result.champion,
+            champion_conference: result.champion_conference,
+            champion_record: result.champion_record,
+            runner_up: result.runner_up,
+            runner_up_conference: result.runner_up_conference,
+            runner_up_record: result.runner_up_record,
+            final_score: result.championship_score,
+            site: result.championship_site,
+            attendance: result.championship_attendance,
+          },
+        ],
         sources: ['NCAA FCS official records', 'Championship game archives'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.98,
       };
-    }
+    },
   },
   {
     // "Show me FCS playoff history for North Dakota State"
@@ -334,7 +380,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
     handler: async (match, env) => {
       const team = match[1].trim();
 
-      const championships = await env.DB.prepare(`
+      const championships = await env.DB.prepare(
+        `
         SELECT
           season,
           CASE
@@ -351,13 +398,13 @@ const QUERY_PATTERNS: QueryPattern[] = [
         FROM fcs_champions
         WHERE champion LIKE ? OR runner_up LIKE ?
         ORDER BY season DESC
-      `).bind(
-        `%${team}%`, `%${team}%`,
-        `%${team}%`, `%${team}%`,
-        `%${team}%`, `%${team}%`
-      ).all();
+      `
+      )
+        .bind(`%${team}%`, `%${team}%`, `%${team}%`, `%${team}%`, `%${team}%`, `%${team}%`)
+        .all();
 
-      const playoffGames = await env.DB.prepare(`
+      const playoffGames = await env.DB.prepare(
+        `
         SELECT
           season,
           playoff_round,
@@ -375,26 +422,32 @@ const QUERY_PATTERNS: QueryPattern[] = [
         FROM fcs_playoff_games
         WHERE home_team LIKE ? OR away_team LIKE ?
         ORDER BY season DESC, game_date DESC
-      `).bind(
-        `%${team}%`, `%${team}%`,
-        `%${team}%`, `%${team}%`
-      ).all();
+      `
+      )
+        .bind(`%${team}%`, `%${team}%`, `%${team}%`, `%${team}%`)
+        .all();
 
       return {
-        data: [{
-          team,
-          championship_appearances: championships.results || [],
-          playoff_games: playoffGames.results || [],
-          total_championships: championships.results?.filter(c => c.finish === 'Champion').length || 0,
-          total_runner_ups: championships.results?.filter(c => c.finish === 'Runner-Up').length || 0
-        }],
+        data: [
+          {
+            team,
+            championship_appearances: championships.results || [],
+            playoff_games: playoffGames.results || [],
+            total_championships:
+              championships.results?.filter((c) => c.finish === 'Champion').length || 0,
+            total_runner_ups:
+              championships.results?.filter((c) => c.finish === 'Runner-Up').length || 0,
+          },
+        ],
         sources: ['FCS playoff records', 'NCAA Division I-AA archives'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.91,
-        missing_data: (championships.results.length === 0 && playoffGames.results.length === 0) ?
-          `No FCS playoff history found for ${team}. Verify team name or playoff participation.` : undefined
+        missing_data:
+          championships.results.length === 0 && playoffGames.results.length === 0
+            ? `No FCS playoff history found for ${team}. Verify team name or playoff participation.`
+            : undefined,
       };
-    }
+    },
   },
   {
     // "How many times has [pitcher] faced elimination pressure?"
@@ -403,12 +456,16 @@ const QUERY_PATTERNS: QueryPattern[] = [
       const playerName = match[1].trim();
 
       // Find player's team affiliations
-      const playerTeams = await env.DB.prepare(`
+      const playerTeams = await env.DB.prepare(
+        `
         SELECT DISTINCT team, season
         FROM player_stats
         WHERE player_name LIKE ?
         ORDER BY season DESC
-      `).bind(`%${playerName}%`).all();
+      `
+      )
+        .bind(`%${playerName}%`)
+        .all();
 
       if (!playerTeams.results || playerTeams.results.length === 0) {
         return {
@@ -416,14 +473,15 @@ const QUERY_PATTERNS: QueryPattern[] = [
           sources: ['Player statistics database'],
           timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
           confidence: 0,
-          missing_data: `No records found for ${playerName}. Check spelling or verify player database coverage.`
+          missing_data: `No records found for ${playerName}. Check spelling or verify player database coverage.`,
         };
       }
 
       // Find elimination games for player's teams
       let eliminationGames: any[] = [];
       for (const playerTeam of playerTeams.results) {
-        const games = await env.DB.prepare(`
+        const games = await env.DB.prepare(
+          `
           SELECT
             date,
             home_team,
@@ -437,35 +495,38 @@ const QUERY_PATTERNS: QueryPattern[] = [
             AND tournament_round LIKE '%elimination%'
             AND date LIKE ?
             AND (home_team LIKE ? OR away_team LIKE ?)
-        `).bind(
-          `${playerTeam.season}%`,
-          `%${playerTeam.team}%`,
-          `%${playerTeam.team}%`
-        ).all();
+        `
+        )
+          .bind(`${playerTeam.season}%`, `%${playerTeam.team}%`, `%${playerTeam.team}%`)
+          .all();
 
         eliminationGames = [...eliminationGames, ...(games.results || [])];
       }
 
       return {
-        data: [{
-          player: playerName,
-          total_elimination_games: eliminationGames.length,
-          teams: playerTeams.results?.map(t => ({ team: t.team, season: t.season })) || [],
-          elimination_games: eliminationGames.map(g => ({
-            date: g.date,
-            matchup: `${g.away_team} @ ${g.home_team}`,
-            score: `${g.away_score}-${g.home_score}`,
-            round: g.tournament_round,
-            venue: g.venue
-          }))
-        }],
+        data: [
+          {
+            player: playerName,
+            total_elimination_games: eliminationGames.length,
+            teams: playerTeams.results?.map((t) => ({ team: t.team, season: t.season })) || [],
+            elimination_games: eliminationGames.map((g) => ({
+              date: g.date,
+              matchup: `${g.away_team} @ ${g.home_team}`,
+              score: `${g.away_score}-${g.home_score}`,
+              round: g.tournament_round,
+              venue: g.venue,
+            })),
+          },
+        ],
         sources: ['NCAA tournament records', 'Player career archives'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.84,
-        missing_data: eliminationGames.length === 0 ?
-          `${playerName} found in database but no elimination games recorded. May need expanded game coverage.` : undefined
+        missing_data:
+          eliminationGames.length === 0
+            ? `${playerName} found in database but no elimination games recorded. May need expanded game coverage.`
+            : undefined,
       };
-    }
+    },
   },
   {
     // "When has Texas beaten LSU at the College World Series?"
@@ -474,7 +535,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
       const team1 = match[1];
       const team2 = match[3];
 
-      const results = await env.DB.prepare(`
+      const results = await env.DB.prepare(
+        `
         SELECT
           date,
           home_team,
@@ -492,20 +554,22 @@ const QUERY_PATTERNS: QueryPattern[] = [
             OR (away_team LIKE ? AND home_team LIKE ? AND away_score > home_score)
           )
         ORDER BY date DESC
-      `).bind(
-        `%${team1}%`, `%${team2}%`,
-        `%${team1}%`, `%${team2}%`
-      ).all();
+      `
+      )
+        .bind(`%${team1}%`, `%${team2}%`, `%${team1}%`, `%${team2}%`)
+        .all();
 
       return {
         data: results.results || [],
         sources: ['NCAA historical records', 'Blaze Sports Intel database'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.95,
-        missing_data: results.results.length === 0 ?
-          'No matchups found. Data coverage may be incomplete before 2005.' : undefined
+        missing_data:
+          results.results.length === 0
+            ? 'No matchups found. Data coverage may be incomplete before 2005.'
+            : undefined,
       };
-    }
+    },
   },
   {
     // "What is player X's batting average in 2023?"
@@ -521,10 +585,11 @@ const QUERY_PATTERNS: QueryPattern[] = [
         era: 'era',
         ops: 'ops',
         'home runs': 'hr',
-        'home run': 'hr'
+        'home run': 'hr',
       };
 
-      const results = await env.DB.prepare(`
+      const results = await env.DB.prepare(
+        `
         SELECT
           player_name,
           team,
@@ -538,17 +603,22 @@ const QUERY_PATTERNS: QueryPattern[] = [
           AND season = ?
           AND stat_type = ?
         LIMIT 10
-      `).bind(`%${playerName}%`, season, statMap[statType]).all();
+      `
+      )
+        .bind(`%${playerName}%`, season, statMap[statType])
+        .all();
 
       return {
         data: results.results || [],
         sources: ['NCAA player statistics', 'Conference records'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.88,
-        missing_data: results.results.length === 0 ?
-          `No ${statType} data found for ${playerName} in ${season}. Check spelling or try a different season.` : undefined
+        missing_data:
+          results.results.length === 0
+            ? `No ${statType} data found for ${playerName} in ${season}. Check spelling or try a different season.`
+            : undefined,
       };
-    }
+    },
   },
   {
     // "Compare Coach Smith's 4th down decisions to FBS average"
@@ -556,7 +626,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
     handler: async (match, env) => {
       const coachName = match[2].trim();
 
-      const coachStats = await env.DB.prepare(`
+      const coachStats = await env.DB.prepare(
+        `
         SELECT
           coach_name,
           team,
@@ -569,24 +640,36 @@ const QUERY_PATTERNS: QueryPattern[] = [
           AND decision_type = 'fourth_down_conversion'
           AND sport = 'football'
         GROUP BY coach_id
-      `).bind(`%${coachName}%`).all();
+      `
+      )
+        .bind(`%${coachName}%`)
+        .all();
 
-      const leagueAvg = await env.DB.prepare(`
+      const leagueAvg = await env.DB.prepare(
+        `
         SELECT
           AVG(success_rate) as league_avg_rate,
           AVG(attempt_count) as league_avg_attempts
         FROM coaching_decisions
         WHERE decision_type = 'fourth_down_conversion'
           AND sport = 'football'
-      `).all();
+      `
+      ).all();
 
       const data = {
         coach: coachStats.results[0] || null,
         league_average: leagueAvg.results[0] || null,
-        comparison: coachStats.results[0] && leagueAvg.results[0] ? {
-          attempts_vs_avg: (coachStats.results[0].total_attempts as number) - (leagueAvg.results[0].league_avg_attempts as number),
-          success_rate_diff: (coachStats.results[0].avg_success_rate as number) - (leagueAvg.results[0].league_avg_rate as number)
-        } : null
+        comparison:
+          coachStats.results[0] && leagueAvg.results[0]
+            ? {
+                attempts_vs_avg:
+                  (coachStats.results[0].total_attempts as number) -
+                  (leagueAvg.results[0].league_avg_attempts as number),
+                success_rate_diff:
+                  (coachStats.results[0].avg_success_rate as number) -
+                  (leagueAvg.results[0].league_avg_rate as number),
+              }
+            : null,
       };
 
       return {
@@ -594,10 +677,11 @@ const QUERY_PATTERNS: QueryPattern[] = [
         sources: ['NCAA football play-by-play records', 'Conference decision analytics'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.82,
-        missing_data: !coachStats.results[0] ?
-          `No fourth-down data found for ${coachName}. Data coverage for FCS/Group-of-Five coaches is expanding.` : undefined
+        missing_data: !coachStats.results[0]
+          ? `No fourth-down data found for ${coachName}. Data coverage for FCS/Group-of-Five coaches is expanding.`
+          : undefined,
       };
-    }
+    },
   },
   {
     // "What is umpire Johnson's strike call accuracy?"
@@ -605,7 +689,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
     handler: async (match, env) => {
       const umpireName = match[2].trim();
 
-      const results = await env.DB.prepare(`
+      const results = await env.DB.prepare(
+        `
         SELECT
           umpire_name,
           metric,
@@ -617,18 +702,22 @@ const QUERY_PATTERNS: QueryPattern[] = [
           AND metric IN ('strike_accuracy', 'borderline_call_consistency', 'called_strike_pct')
         GROUP BY umpire_name, metric, batter_handedness
         ORDER BY metric, batter_handedness
-      `).bind(`%${umpireName}%`).all();
+      `
+      )
+        .bind(`%${umpireName}%`)
+        .all();
 
       return {
         data: results.results || [],
         sources: ['College baseball umpire scorecards', 'Blaze tracking system'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.75,
-        missing_data: results.results.length === 0 ?
-          `No scorecard data for umpire ${umpireName}. Pitch tracking coverage limited before 2018.` :
-          'Note: Strike zone accuracy requires pitch tracking data. Coverage varies by conference.'
+        missing_data:
+          results.results.length === 0
+            ? `No scorecard data for umpire ${umpireName}. Pitch tracking coverage limited before 2018.`
+            : 'Note: Strike zone accuracy requires pitch tracking data. Coverage varies by conference.',
       };
-    }
+    },
   },
   {
     // "Show me Vanderbilt's elimination game wins at the CWS"
@@ -636,7 +725,8 @@ const QUERY_PATTERNS: QueryPattern[] = [
     handler: async (match, env) => {
       const team = match[1].trim();
 
-      const results = await env.DB.prepare(`
+      const results = await env.DB.prepare(
+        `
         SELECT
           date,
           home_team,
@@ -656,18 +746,23 @@ const QUERY_PATTERNS: QueryPattern[] = [
             OR (away_team LIKE ? AND away_score > home_score)
           )
         ORDER BY date DESC
-      `).bind(`%${team}%`, `%${team}%`).all();
+      `
+      )
+        .bind(`%${team}%`, `%${team}%`)
+        .all();
 
       return {
         data: results.results || [],
         sources: ['NCAA Tournament archives', 'College World Series records'],
         timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
         confidence: 0.92,
-        missing_data: results.results.length === 0 ?
-          `No elimination game wins found for ${team} at the CWS. Historical coverage complete from 1999 forward.` : undefined
+        missing_data:
+          results.results.length === 0
+            ? `No elimination game wins found for ${team} at the CWS. Historical coverage complete from 1999 forward.`
+            : undefined,
       };
-    }
-  }
+    },
+  },
 ];
 
 /**
@@ -677,12 +772,16 @@ function detectSport(query: string): string {
   const lowerQuery = query.toLowerCase();
 
   // Baseball keywords
-  if (lowerQuery.match(/\b(baseball|cws|college world series|pitcher|batter|era|home run|rbi)\b/i)) {
+  if (
+    lowerQuery.match(/\b(baseball|cws|college world series|pitcher|batter|era|home run|rbi)\b/i)
+  ) {
     return 'baseball';
   }
 
   // Football keywords
-  if (lowerQuery.match(/\b(football|fcs|quarterback|touchdown|fourth down|playoff|championship)\b/i)) {
+  if (
+    lowerQuery.match(/\b(football|fcs|quarterback|touchdown|fourth down|playoff|championship)\b/i)
+  ) {
     return 'football';
   }
 
@@ -703,7 +802,7 @@ async function parseAndExecute(query: string, env: Env): Promise<QueryResult> {
           sources: [],
           timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
           confidence: 0,
-          missing_data: `Query execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          missing_data: `Query execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         };
       }
     }
@@ -715,6 +814,7 @@ async function parseAndExecute(query: string, env: Env): Promise<QueryResult> {
     sources: [],
     timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
     confidence: 0,
-    missing_data: 'Query pattern not recognized. Try queries like: "When has Texas beaten LSU at the CWS?" or "What is Kumar Rocker\'s ERA in 2021?"'
+    missing_data:
+      'Query pattern not recognized. Try queries like: "When has Texas beaten LSU at the CWS?" or "What is Kumar Rocker\'s ERA in 2021?"',
   };
 }

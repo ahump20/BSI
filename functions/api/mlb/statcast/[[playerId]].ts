@@ -85,7 +85,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Parse query parameters
     const url = new URL(request.url);
-    const season = parseInt(url.searchParams.get('season') || new Date().getFullYear().toString(), 10);
+    const season = parseInt(
+      url.searchParams.get('season') || new Date().getFullYear().toString(),
+      10
+    );
     const type = (url.searchParams.get('type') || 'batter') as 'batter' | 'pitcher';
     const includeBattedBalls = url.searchParams.get('includeBattedBalls') !== 'false'; // Default true
     const includePitches = url.searchParams.get('includePitches') === 'true'; // Default false
@@ -120,12 +123,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         includeBattedBalls
           ? adapter.fetchPlayerBattedBalls(playerIdNum, season, minExitVelo)
           : null,
-        includeSprintSpeed
-          ? adapter.fetchSprintSpeed(playerIdNum, season)
-          : null,
-        includeOAA
-          ? adapter.fetchOAA(playerIdNum, season)
-          : null,
+        includeSprintSpeed ? adapter.fetchSprintSpeed(playerIdNum, season) : null,
+        includeOAA ? adapter.fetchOAA(playerIdNum, season) : null,
       ]);
 
       response.statcast = {
@@ -135,19 +134,32 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               events: battedBalls,
               totalEvents: battedBalls.length,
               summary: {
-                avgExitVelo: battedBalls.length > 0
-                  ? (battedBalls.reduce((sum, bb) => sum + (bb.launch_speed || 0), 0) / battedBalls.length).toFixed(1)
-                  : null,
-                maxExitVelo: battedBalls.length > 0
-                  ? Math.max(...battedBalls.map(bb => bb.launch_speed || 0)).toFixed(1)
-                  : null,
-                avgLaunchAngle: battedBalls.length > 0
-                  ? (battedBalls.reduce((sum, bb) => sum + (bb.launch_angle || 0), 0) / battedBalls.length).toFixed(1)
-                  : null,
-                barrels: battedBalls.filter(bb => bb.barrel === 1).length,
-                barrelRate: battedBalls.length > 0
-                  ? ((battedBalls.filter(bb => bb.barrel === 1).length / battedBalls.length) * 100).toFixed(1)
-                  : null,
+                avgExitVelo:
+                  battedBalls.length > 0
+                    ? (
+                        battedBalls.reduce((sum, bb) => sum + (bb.launch_speed || 0), 0) /
+                        battedBalls.length
+                      ).toFixed(1)
+                    : null,
+                maxExitVelo:
+                  battedBalls.length > 0
+                    ? Math.max(...battedBalls.map((bb) => bb.launch_speed || 0)).toFixed(1)
+                    : null,
+                avgLaunchAngle:
+                  battedBalls.length > 0
+                    ? (
+                        battedBalls.reduce((sum, bb) => sum + (bb.launch_angle || 0), 0) /
+                        battedBalls.length
+                      ).toFixed(1)
+                    : null,
+                barrels: battedBalls.filter((bb) => bb.barrel === 1).length,
+                barrelRate:
+                  battedBalls.length > 0
+                    ? (
+                        (battedBalls.filter((bb) => bb.barrel === 1).length / battedBalls.length) *
+                        100
+                      ).toFixed(1)
+                    : null,
               },
             }
           : null,
@@ -158,9 +170,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       // Pitcher
       const [seasonStats, pitches] = await Promise.all([
         adapter.fetchPitcherSeasonStats(playerIdNum, season),
-        includePitches
-          ? adapter.fetchPitcherPitches(playerIdNum, season)
-          : null,
+        includePitches ? adapter.fetchPitcherPitches(playerIdNum, season) : null,
       ]);
 
       response.statcast = {
@@ -170,19 +180,27 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               events: pitches,
               totalPitches: pitches.length,
               summary: {
-                avgVelocity: pitches.length > 0
-                  ? (pitches.reduce((sum, p) => sum + p.release_speed, 0) / pitches.length).toFixed(1)
-                  : null,
-                maxVelocity: pitches.length > 0
-                  ? Math.max(...pitches.map(p => p.release_speed)).toFixed(1)
-                  : null,
-                avgSpinRate: pitches.length > 0
-                  ? (pitches.reduce((sum, p) => sum + p.release_spin_rate, 0) / pitches.length).toFixed(0)
-                  : null,
-                maxSpinRate: pitches.length > 0
-                  ? Math.max(...pitches.map(p => p.release_spin_rate)).toFixed(0)
-                  : null,
-                pitchTypes: [...new Set(pitches.map(p => p.pitch_type))],
+                avgVelocity:
+                  pitches.length > 0
+                    ? (
+                        pitches.reduce((sum, p) => sum + p.release_speed, 0) / pitches.length
+                      ).toFixed(1)
+                    : null,
+                maxVelocity:
+                  pitches.length > 0
+                    ? Math.max(...pitches.map((p) => p.release_speed)).toFixed(1)
+                    : null,
+                avgSpinRate:
+                  pitches.length > 0
+                    ? (
+                        pitches.reduce((sum, p) => sum + p.release_spin_rate, 0) / pitches.length
+                      ).toFixed(0)
+                    : null,
+                maxSpinRate:
+                  pitches.length > 0
+                    ? Math.max(...pitches.map((p) => p.release_spin_rate)).toFixed(0)
+                    : null,
+                pitchTypes: [...new Set(pitches.map((p) => p.pitch_type))],
               },
             }
           : null,

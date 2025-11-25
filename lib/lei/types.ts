@@ -3,9 +3,9 @@
  * Normalizes clutch moments across sports to 0-100 scale
  */
 
-export type Sport = "baseball" | "football";
+export type Sport = 'baseball' | 'football';
 
-export type PlayoffRound = "wildcard" | "division" | "conference" | "championship";
+export type PlayoffRound = 'wildcard' | 'division' | 'conference' | 'championship';
 
 /**
  * Unified play context across sports.

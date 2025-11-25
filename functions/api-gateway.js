@@ -53,7 +53,9 @@ class RateLimiter {
       return true;
     }
 
-    await this.kv.put(key, (count + 1).toString(), { expirationTtl: CONFIG.RATE_LIMIT.window / 1000 });
+    await this.kv.put(key, (count + 1).toString(), {
+      expirationTtl: CONFIG.RATE_LIMIT.window / 1000,
+    });
     return false;
   }
 }
@@ -66,7 +68,7 @@ class NILCalculator {
       level, // high_school, college, professional
       performance_metrics,
       social_media,
-      market_factors
+      market_factors,
     } = athleteData;
 
     // Base value calculation (simplified from Python model)
@@ -77,7 +79,7 @@ class NILCalculator {
       football: 1.5,
       basketball: 1.3,
       baseball: 1.2,
-      track_field: 1.0
+      track_field: 1.0,
     };
 
     // Performance scoring (0-100)
@@ -106,7 +108,7 @@ class NILCalculator {
       social_score: socialScore,
       market_score: marketScore,
       sport_multiplier: sportMultiplier,
-      level_multiplier: levelMultiplier
+      level_multiplier: levelMultiplier,
     };
   }
 
@@ -131,11 +133,11 @@ class NILCalculator {
     let score = 0;
 
     if (position === 'QB') {
-      score = (stats.passing_yards / 100) + (stats.touchdowns * 2) - (stats.interceptions * 1);
+      score = stats.passing_yards / 100 + stats.touchdowns * 2 - stats.interceptions * 1;
     } else if (position === 'RB') {
-      score = (stats.rushing_yards / 50) + (stats.touchdowns * 3);
+      score = stats.rushing_yards / 50 + stats.touchdowns * 3;
     } else if (position === 'WR') {
-      score = (stats.receiving_yards / 40) + (stats.receptions * 0.5) + (stats.touchdowns * 3);
+      score = stats.receiving_yards / 40 + stats.receptions * 0.5 + stats.touchdowns * 3;
     }
 
     return Math.min(Math.max(score, 0), 100);
@@ -143,7 +145,8 @@ class NILCalculator {
 
   static calculateBasketballScore(metrics) {
     const { stats } = metrics;
-    const score = (stats.points * 1.5) + (stats.rebounds * 1.2) + (stats.assists * 1.8) - (stats.turnovers * 0.8);
+    const score =
+      stats.points * 1.5 + stats.rebounds * 1.2 + stats.assists * 1.8 - stats.turnovers * 0.8;
     return Math.min(Math.max(score, 0), 100);
   }
 
@@ -152,9 +155,9 @@ class NILCalculator {
     let score = 0;
 
     if (position === 'P') {
-      score = (stats.era ? (6.0 - stats.era) * 10 : 0) + (stats.strikeouts / 10) + (stats.wins * 5);
+      score = (stats.era ? (6.0 - stats.era) * 10 : 0) + stats.strikeouts / 10 + stats.wins * 5;
     } else {
-      score = (stats.batting_average * 100) + (stats.home_runs * 2) + (stats.rbis * 0.5);
+      score = stats.batting_average * 100 + stats.home_runs * 2 + stats.rbis * 0.5;
     }
 
     return Math.min(Math.max(score, 0), 100);
@@ -182,7 +185,7 @@ class NILCalculator {
       school_prestige = 50,
       local_market_size = 50,
       conference_strength = 50,
-      media_coverage = 50
+      media_coverage = 50,
     } = market_factors;
 
     return (school_prestige + local_market_size + conference_strength + media_coverage) / 4;
@@ -211,19 +214,22 @@ export default {
 
     // Rate limiting check
     if (await rateLimiter.isRateLimited(identifier)) {
-      return new Response(JSON.stringify({
-        error: 'Rate limit exceeded',
-        message: 'Too many requests. Please try again later.',
-        code: 'RATE_LIMIT_EXCEEDED'
-      }), {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          'Retry-After': '3600',
-          ...this.getCORSHeaders(),
-          ...SECURITY_HEADERS
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          message: 'Too many requests. Please try again later.',
+          code: 'RATE_LIMIT_EXCEEDED',
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': '3600',
+            ...this.getCORSHeaders(),
+            ...SECURITY_HEADERS,
+          },
         }
-      });
+      );
     }
 
     try {
@@ -265,20 +271,23 @@ export default {
       const cacheKey = `nil:${JSON.stringify(athleteData)}`;
       await env.CACHE.put(cacheKey, JSON.stringify(result), { expirationTtl: 3600 });
 
-      return new Response(JSON.stringify({
-        success: true,
-        data: result,
-        timestamp: new Date().toISOString(),
-        api_version: CONFIG.API_VERSION
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=3600',
-          ...this.getCORSHeaders(),
-          ...SECURITY_HEADERS
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: result,
+          timestamp: new Date().toISOString(),
+          api_version: CONFIG.API_VERSION,
+        }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'public, max-age=3600',
+            ...this.getCORSHeaders(),
+            ...SECURITY_HEADERS,
+          },
         }
-      });
+      );
     } catch (error) {
       return this.handleError(error);
     }
@@ -300,8 +309,8 @@ export default {
           'Cache-Control': 'public, max-age=1800',
           'X-Cache': 'HIT',
           ...this.getCORSHeaders(),
-          ...SECURITY_HEADERS
-        }
+          ...SECURITY_HEADERS,
+        },
       });
     }
 
@@ -316,7 +325,7 @@ export default {
       school: 'Data not available',
       level: 'Unknown',
       data_source: 'Development placeholder - not real athlete data',
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     // Cache the response
@@ -329,8 +338,8 @@ export default {
         'Cache-Control': 'public, max-age=1800',
         'X-Cache': 'MISS',
         ...this.getCORSHeaders(),
-        ...SECURITY_HEADERS
-      }
+        ...SECURITY_HEADERS,
+      },
     });
   },
 
@@ -345,62 +354,72 @@ export default {
         sportsService.getMLBTeamData('STL'),
         sportsService.getNFLTeamData('TEN'),
         sportsService.getNBATeamData('MEM'),
-        sportsService.getNCAAFootballData('TEX')
+        sportsService.getNCAAFootballData('TEX'),
       ]);
 
       // Count successful API calls vs errors
       const successfulCalls = [mlbData, nflData, nbaData, ncaaData].filter(
-        result => result.status === 'fulfilled' && !result.value.error
+        (result) => result.status === 'fulfilled' && !result.value.error
       ).length;
 
       const totalAPICalls = 4;
-      const apiSuccessRate = (successfulCalls / totalAPICalls * 100).toFixed(1);
+      const apiSuccessRate = ((successfulCalls / totalAPICalls) * 100).toFixed(1);
 
-      return new Response(JSON.stringify({
-        message: 'Real analytics data from live sports APIs',
-        data: {
-          api_success_rate: `${apiSuccessRate}%`,
-          successful_api_calls: successfulCalls,
-          total_api_endpoints: totalAPICalls,
-          data_freshness: 'Live from MLB Stats API, ESPN API',
-          mlb_data_status: mlbData.status === 'fulfilled' && !mlbData.value.error ? 'live' : 'error',
-          nfl_data_status: nflData.status === 'fulfilled' && !nflData.value.error ? 'live' : 'error',
-          nba_data_status: nbaData.status === 'fulfilled' && !nbaData.value.error ? 'live' : 'error',
-          ncaa_data_status: ncaaData.status === 'fulfilled' && !ncaaData.value.error ? 'live' : 'error',
-          last_updated: new Date().toISOString(),
-          note: 'Analytics based on real API calls. Error states shown when APIs fail.'
+      return new Response(
+        JSON.stringify({
+          message: 'Real analytics data from live sports APIs',
+          data: {
+            api_success_rate: `${apiSuccessRate}%`,
+            successful_api_calls: successfulCalls,
+            total_api_endpoints: totalAPICalls,
+            data_freshness: 'Live from MLB Stats API, ESPN API',
+            mlb_data_status:
+              mlbData.status === 'fulfilled' && !mlbData.value.error ? 'live' : 'error',
+            nfl_data_status:
+              nflData.status === 'fulfilled' && !nflData.value.error ? 'live' : 'error',
+            nba_data_status:
+              nbaData.status === 'fulfilled' && !nbaData.value.error ? 'live' : 'error',
+            ncaa_data_status:
+              ncaaData.status === 'fulfilled' && !ncaaData.value.error ? 'live' : 'error',
+            last_updated: new Date().toISOString(),
+            note: 'Analytics based on real API calls. Error states shown when APIs fail.',
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'public, max-age=300',
+            ...this.getCORSHeaders(),
+            ...SECURITY_HEADERS,
+          },
         }
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300',
-          ...this.getCORSHeaders(),
-          ...SECURITY_HEADERS
-        }
-      });
+      );
     } catch (error) {
       // Return honest error instead of fake analytics
-      return new Response(JSON.stringify({
-        message: 'Analytics error - unable to fetch real data',
-        data: {
-          error: 'Real-time analytics unavailable',
-          api_success_rate: '0%',
-          successful_api_calls: 0,
-          total_api_endpoints: 4,
-          data_freshness: 'No live data available',
-          last_updated: new Date().toISOString(),
-          error_message: error.message
+      return new Response(
+        JSON.stringify({
+          message: 'Analytics error - unable to fetch real data',
+          data: {
+            error: 'Real-time analytics unavailable',
+            api_success_rate: '0%',
+            successful_api_calls: 0,
+            total_api_endpoints: 4,
+            data_freshness: 'No live data available',
+            last_updated: new Date().toISOString(),
+            error_message: error.message,
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            ...this.getCORSHeaders(),
+            ...SECURITY_HEADERS,
+          },
         }
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-          ...this.getCORSHeaders(),
-          ...SECURITY_HEADERS
-        }
-      });
+      );
     }
   },
 
@@ -413,12 +432,12 @@ export default {
       services: {
         cache: 'healthy',
         database: 'healthy',
-        analytics: 'healthy'
+        analytics: 'healthy',
       },
       performance: {
         response_time_ms: Date.now() % 100, // Simplified
-        cache_hit_ratio: 0.95
-      }
+        cache_hit_ratio: 0.95,
+      },
     };
 
     return new Response(JSON.stringify(health), {
@@ -427,15 +446,15 @@ export default {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
         ...this.getCORSHeaders(),
-        ...SECURITY_HEADERS
-      }
+        ...SECURITY_HEADERS,
+      },
     });
   },
 
   handleCORS() {
     return new Response(null, {
       status: 204,
-      headers: this.getCORSHeaders()
+      headers: this.getCORSHeaders(),
     });
   },
 
@@ -444,71 +463,83 @@ export default {
       'Access-Control-Allow-Origin': '*', // In production, restrict to specific origins
       'Access-Control-Allow-Methods': CONFIG.CORS.methods.join(', '),
       'Access-Control-Allow-Headers': CONFIG.CORS.headers.join(', '),
-      'Access-Control-Max-Age': '86400'
+      'Access-Control-Max-Age': '86400',
     };
   },
 
   handleNotFound() {
-    return new Response(JSON.stringify({
-      error: 'Not Found',
-      message: 'API endpoint not found',
-      code: 'ENDPOINT_NOT_FOUND'
-    }), {
-      status: 404,
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.getCORSHeaders(),
-        ...SECURITY_HEADERS
+    return new Response(
+      JSON.stringify({
+        error: 'Not Found',
+        message: 'API endpoint not found',
+        code: 'ENDPOINT_NOT_FOUND',
+      }),
+      {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getCORSHeaders(),
+          ...SECURITY_HEADERS,
+        },
       }
-    });
+    );
   },
 
   methodNotAllowed(allowedMethods) {
-    return new Response(JSON.stringify({
-      error: 'Method Not Allowed',
-      message: `Method not allowed. Allowed methods: ${allowedMethods.join(', ')}`,
-      code: 'METHOD_NOT_ALLOWED'
-    }), {
-      status: 405,
-      headers: {
-        'Content-Type': 'application/json',
-        Allow: allowedMethods.join(', '),
-        ...this.getCORSHeaders(),
-        ...SECURITY_HEADERS
+    return new Response(
+      JSON.stringify({
+        error: 'Method Not Allowed',
+        message: `Method not allowed. Allowed methods: ${allowedMethods.join(', ')}`,
+        code: 'METHOD_NOT_ALLOWED',
+      }),
+      {
+        status: 405,
+        headers: {
+          'Content-Type': 'application/json',
+          Allow: allowedMethods.join(', '),
+          ...this.getCORSHeaders(),
+          ...SECURITY_HEADERS,
+        },
       }
-    });
+    );
   },
 
   badRequest(message) {
-    return new Response(JSON.stringify({
-      error: 'Bad Request',
-      message,
-      code: 'BAD_REQUEST'
-    }), {
-      status: 400,
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.getCORSHeaders(),
-        ...SECURITY_HEADERS
+    return new Response(
+      JSON.stringify({
+        error: 'Bad Request',
+        message,
+        code: 'BAD_REQUEST',
+      }),
+      {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getCORSHeaders(),
+          ...SECURITY_HEADERS,
+        },
       }
-    });
+    );
   },
 
   handleError(error) {
     console.error('API Error:', error);
 
-    return new Response(JSON.stringify({
-      error: 'Internal Server Error',
-      message: 'An unexpected error occurred',
-      code: 'INTERNAL_ERROR',
-      timestamp: new Date().toISOString()
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.getCORSHeaders(),
-        ...SECURITY_HEADERS
+    return new Response(
+      JSON.stringify({
+        error: 'Internal Server Error',
+        message: 'An unexpected error occurred',
+        code: 'INTERNAL_ERROR',
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getCORSHeaders(),
+          ...SECURITY_HEADERS,
+        },
       }
-    });
-  }
+    );
+  },
 };

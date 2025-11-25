@@ -25,8 +25,18 @@
  */
 
 import type { PagesFunction, KVNamespace, D1Database } from '@cloudflare/workers-types';
-import { ScheduleOptimizer, RemainingSchedule, ScheduleGame } from '../../../lib/analytics/baseball/schedule-optimizer';
-import { ConferenceStrengthModel, TeamRecord, RPICalculation, SOSCalculation, ISRCalculation } from '../../../lib/analytics/baseball/conference-strength-model';
+import {
+  ScheduleOptimizer,
+  RemainingSchedule,
+  ScheduleGame,
+} from '../../../lib/analytics/baseball/schedule-optimizer';
+import {
+  ConferenceStrengthModel,
+  TeamRecord,
+  RPICalculation,
+  SOSCalculation,
+  ISRCalculation,
+} from '../../../lib/analytics/baseball/conference-strength-model';
 
 // ============================================================================
 // Type Definitions
@@ -68,10 +78,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const includeOptimization = url.searchParams.get('optimize') !== 'false';
 
   if (!teamId) {
-    return Response.json(
-      { error: 'Missing teamId parameter' },
-      { status: 400 }
-    );
+    return Response.json({ error: 'Missing teamId parameter' }, { status: 400 });
   }
 
   try {
@@ -80,45 +87,51 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const cached = await env.KV.get<OptimizationResponse>(cacheKey, 'json');
 
     if (cached) {
-      return Response.json({
-        ...cached,
-        metadata: {
-          ...cached.metadata,
-          cacheStatus: 'hit'
+      return Response.json(
+        {
+          ...cached,
+          metadata: {
+            ...cached.metadata,
+            cacheStatus: 'hit',
+          },
+        },
+        {
+          headers: {
+            'Cache-Control': 'public, max-age=300, s-maxage=900',
+            'X-Cache-Status': 'hit',
+          },
         }
-      }, {
-        headers: {
-          'Cache-Control': 'public, max-age=300, s-maxage=900',
-          'X-Cache-Status': 'hit'
-        }
-      });
+      );
     }
 
     // Fetch data and run optimization
-    const result = await runOptimization({
-      teamId,
-      iterations,
-      scenarios: includeScenarios,
-      optimize: includeOptimization
-    }, env);
+    const result = await runOptimization(
+      {
+        teamId,
+        iterations,
+        scenarios: includeScenarios,
+        optimize: includeOptimization,
+      },
+      env
+    );
 
     // Cache for 15 minutes
     await env.KV.put(cacheKey, JSON.stringify(result), {
-      expirationTtl: 900
+      expirationTtl: 900,
     });
 
     return Response.json(result, {
       headers: {
         'Cache-Control': 'public, max-age=300, s-maxage=900',
-        'X-Cache-Status': 'miss'
-      }
+        'X-Cache-Status': 'miss',
+      },
     });
   } catch (error) {
     console.error('Schedule optimization error:', error);
     return Response.json(
       {
         error: 'Failed to optimize schedule',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -148,13 +161,13 @@ async function runOptimization(
 
   // Calculate metrics
   const rpiResults = ConferenceStrengthModel.calculateRPI(allTeams);
-  const rpiMap = new Map(rpiResults.map(r => [r.teamId, r]));
+  const rpiMap = new Map(rpiResults.map((r) => [r.teamId, r]));
 
   const sosResults = ConferenceStrengthModel.calculateSOS(allTeams, rpiMap);
-  const sosMap = new Map(sosResults.map(r => [r.teamId, r]));
+  const sosMap = new Map(sosResults.map((r) => [r.teamId, r]));
 
   const isrResults = ConferenceStrengthModel.calculateISR(allTeams);
-  const isrMap = new Map(isrResults.map(r => [r.teamId, r]));
+  const isrMap = new Map(isrResults.map((r) => [r.teamId, r]));
 
   // Get team metrics (use database ID, not team key)
   const teamRPI = rpiMap.get(team.record.teamId);
@@ -175,23 +188,26 @@ async function runOptimization(
         lastUpdated: new Date().toISOString(),
         cacheStatus: 'miss',
         error: 'Insufficient data for RPI/SOS/ISR calculations',
-        details: `Found ${allTeams.length} teams, ${team.schedule.remainingGames.length} remaining games, ${team.record.opponents.length} played opponents`
-      }
+        details: `Found ${allTeams.length} teams, ${team.schedule.remainingGames.length} remaining games, ${team.record.opponents.length} played opponents`,
+      },
     } as any;
   }
 
   const teamMetrics = {
     rpi: teamRPI,
     sos: teamSOS,
-    isr: teamISR
+    isr: teamISR,
   };
 
   // Build opponent metrics map
-  const opponentMetrics = new Map<string, {
-    rpi: RPICalculation;
-    sos: SOSCalculation;
-    isr: ISRCalculation;
-  }>();
+  const opponentMetrics = new Map<
+    string,
+    {
+      rpi: RPICalculation;
+      sos: SOSCalculation;
+      isr: ISRCalculation;
+    }
+  >();
 
   for (const game of team.schedule.remainingGames) {
     const oppRPI = rpiMap.get(game.opponent.teamId);
@@ -202,7 +218,7 @@ async function runOptimization(
       opponentMetrics.set(game.opponent.teamId, {
         rpi: oppRPI,
         sos: oppSOS,
-        isr: oppISR
+        isr: oppISR,
       });
     }
   }
@@ -238,12 +254,12 @@ async function runOptimization(
 
   // Calculate conference strength
   const conferenceStrengths = ConferenceStrengthModel.calculateConferenceStrength(
-    allTeams.filter(t => t.conference === team.schedule.conference),
+    allTeams.filter((t) => t.conference === team.schedule.conference),
     allTeams
   );
 
   const conferenceStrength = conferenceStrengths.find(
-    c => c.conference === team.schedule.conference
+    (c) => c.conference === team.schedule.conference
   );
 
   return {
@@ -252,12 +268,12 @@ async function runOptimization(
     optimization,
     conferenceStrength,
     metadata: {
-      teamId: team.schedule.teamId,  // Use database ID (integer) to match simulation
+      teamId: team.schedule.teamId, // Use database ID (integer) to match simulation
       teamName: team.schedule.teamName,
       dataSource: 'BlazeSportsIntel Schedule Optimizer',
       lastUpdated: new Date().toISOString(),
-      cacheStatus: 'miss'
-    }
+      cacheStatus: 'miss',
+    },
   };
 }
 
@@ -272,7 +288,8 @@ async function fetchTeamData(
   record: TeamRecord;
 } | null> {
   // Fetch team info
-  const teamResult = await env.DB.prepare(`
+  const teamResult = await env.DB.prepare(
+    `
     SELECT
       id,
       name,
@@ -291,7 +308,10 @@ async function fetchTeamData(
       runs_allowed
     FROM teams
     WHERE key = ?
-  `).bind(teamId).first();
+  `
+  )
+    .bind(teamId)
+    .first();
 
   if (!teamResult) {
     return null;
@@ -299,7 +319,8 @@ async function fetchTeamData(
 
   // Fetch remaining schedule
   const now = new Date().toISOString();
-  const scheduleResults = await env.DB.prepare(`
+  const scheduleResults = await env.DB.prepare(
+    `
     SELECT
       g.id as game_id,
       g.game_date as date,
@@ -328,7 +349,10 @@ async function fetchTeamData(
       AND g.game_date >= ?
       AND g.status != 'final'
     ORDER BY g.game_date ASC
-  `).bind(teamResult.id, teamResult.id, teamResult.id, teamResult.id, teamResult.id, now).all();
+  `
+  )
+    .bind(teamResult.id, teamResult.id, teamResult.id, teamResult.id, teamResult.id, now)
+    .all();
 
   if (!scheduleResults.success) {
     throw new Error('Failed to fetch schedule');
@@ -345,15 +369,16 @@ async function fetchTeamData(
       opponent: {
         teamId: row.opponent_id,
         teamName: row.opponent_name,
-        conference: row.opponent_conference
+        conference: row.opponent_conference,
       },
-      location: isNeutral ? 'neutral' : (isHome ? 'home' : 'away'),
-      completed: false
+      location: isNeutral ? 'neutral' : isHome ? 'home' : 'away',
+      completed: false,
     };
   });
 
   // Fetch opponents list for RPI calculation
-  const opponentsResults = await env.DB.prepare(`
+  const opponentsResults = await env.DB.prepare(
+    `
     SELECT DISTINCT
       CASE
         WHEN g.home_team_id = ? THEN g.away_team_id
@@ -362,7 +387,10 @@ async function fetchTeamData(
     FROM games g
     WHERE (g.home_team_id = ? OR g.away_team_id = ?)
       AND g.status = 'final'
-  `).bind(teamResult.id, teamResult.id, teamResult.id).all();
+  `
+  )
+    .bind(teamResult.id, teamResult.id, teamResult.id)
+    .all();
 
   const opponents = opponentsResults.success
     ? opponentsResults.results.map((row: any) => row.opponent_id)
@@ -374,9 +402,9 @@ async function fetchTeamData(
     conference: teamResult.conference as string,
     currentRecord: {
       wins: teamResult.wins as number,
-      losses: teamResult.losses as number
+      losses: teamResult.losses as number,
     },
-    remainingGames
+    remainingGames,
   };
 
   const record: TeamRecord = {
@@ -395,7 +423,7 @@ async function fetchTeamData(
     neutralLosses: teamResult.neutral_losses as number,
     runsScored: teamResult.runs_scored as number,
     runsAllowed: teamResult.runs_allowed as number,
-    opponents
+    opponents,
   };
 
   return { schedule, record };
@@ -405,7 +433,8 @@ async function fetchTeamData(
  * Fetch all teams for RPI calculations
  */
 async function fetchAllTeams(env: Env): Promise<TeamRecord[]> {
-  const results = await env.DB.prepare(`
+  const results = await env.DB.prepare(
+    `
     SELECT
       t.id,
       t.name,
@@ -424,7 +453,8 @@ async function fetchAllTeams(env: Env): Promise<TeamRecord[]> {
       t.runs_allowed
     FROM teams t
     WHERE t.sport = 'baseball'
-  `).all();
+  `
+  ).all();
 
   if (!results.success) {
     throw new Error('Failed to fetch teams');
@@ -434,7 +464,8 @@ async function fetchAllTeams(env: Env): Promise<TeamRecord[]> {
   const teams: TeamRecord[] = [];
 
   for (const row of results.results) {
-    const opponentsResults = await env.DB.prepare(`
+    const opponentsResults = await env.DB.prepare(
+      `
       SELECT DISTINCT
         CASE
           WHEN g.home_team_id = ? THEN g.away_team_id
@@ -443,7 +474,10 @@ async function fetchAllTeams(env: Env): Promise<TeamRecord[]> {
       FROM games g
       WHERE (g.home_team_id = ? OR g.away_team_id = ?)
         AND g.status = 'final'
-    `).bind(row.id, row.id, row.id).all();
+    `
+    )
+      .bind(row.id, row.id, row.id)
+      .all();
 
     const opponents = opponentsResults.success
       ? opponentsResults.results.map((opp: any) => opp.opponent_id)
@@ -465,7 +499,7 @@ async function fetchAllTeams(env: Env): Promise<TeamRecord[]> {
       neutralLosses: row.neutral_losses as number,
       runsScored: row.runs_scored as number,
       runsAllowed: row.runs_allowed as number,
-      opponents
+      opponents,
     });
   }
 

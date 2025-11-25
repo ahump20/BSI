@@ -105,14 +105,16 @@ export const WHOOPWorkoutSchema = z.object({
     distance_meter: z.number().optional(),
     altitude_gain_meter: z.number().optional(),
     altitude_change_meter: z.number().optional(),
-    zone_duration: z.object({
-      zone_zero_milli: z.number(),
-      zone_one_milli: z.number(),
-      zone_two_milli: z.number(),
-      zone_three_milli: z.number(),
-      zone_four_milli: z.number(),
-      zone_five_milli: z.number(),
-    }).optional(),
+    zone_duration: z
+      .object({
+        zone_zero_milli: z.number(),
+        zone_one_milli: z.number(),
+        zone_two_milli: z.number(),
+        zone_three_milli: z.number(),
+        zone_four_milli: z.number(),
+        zone_five_milli: z.number(),
+      })
+      .optional(),
   }),
 });
 
@@ -138,7 +140,15 @@ export interface NormalizedWearablesReading {
   player_id: string;
   reading_timestamp: Date;
   timezone_offset: number; // minutes from UTC
-  metric_type: 'heart_rate' | 'hrv_rmssd' | 'recovery_score' | 'spo2' | 'skin_temp' | 'strain' | 'sleep_performance' | 'respiratory_rate';
+  metric_type:
+    | 'heart_rate'
+    | 'hrv_rmssd'
+    | 'recovery_score'
+    | 'spo2'
+    | 'skin_temp'
+    | 'strain'
+    | 'sleep_performance'
+    | 'respiratory_rate';
   metric_value: number;
   metric_unit: 'bpm' | 'ms' | 'score' | '%' | 'celsius' | 'count';
   quality_score: number; // 0.0-1.0
@@ -296,20 +306,13 @@ export class WHOOPv2Adapter {
    * Get user profile (basic info)
    */
   async getUserProfile(accessToken: string): Promise<any> {
-    return this.makeAuthenticatedRequest(
-      '/v2/user/profile/basic',
-      accessToken
-    );
+    return this.makeAuthenticatedRequest('/v2/user/profile/basic', accessToken);
   }
 
   /**
    * Get recovery data for date range
    */
-  async getRecoveryData(
-    accessToken: string,
-    startDate: Date,
-    endDate: Date
-  ): Promise<any[]> {
+  async getRecoveryData(accessToken: string, startDate: Date, endDate: Date): Promise<any[]> {
     const params = new URLSearchParams({
       start: startDate.toISOString(),
       end: endDate.toISOString(),
@@ -326,11 +329,7 @@ export class WHOOPv2Adapter {
   /**
    * Get sleep data for date range
    */
-  async getSleepData(
-    accessToken: string,
-    startDate: Date,
-    endDate: Date
-  ): Promise<any[]> {
+  async getSleepData(accessToken: string, startDate: Date, endDate: Date): Promise<any[]> {
     const params = new URLSearchParams({
       start: startDate.toISOString(),
       end: endDate.toISOString(),
@@ -347,11 +346,7 @@ export class WHOOPv2Adapter {
   /**
    * Get workout/strain data for date range
    */
-  async getWorkoutData(
-    accessToken: string,
-    startDate: Date,
-    endDate: Date
-  ): Promise<any[]> {
+  async getWorkoutData(accessToken: string, startDate: Date, endDate: Date): Promise<any[]> {
     const params = new URLSearchParams({
       start: startDate.toISOString(),
       end: endDate.toISOString(),
@@ -369,11 +364,7 @@ export class WHOOPv2Adapter {
    * Get cycle data (combines recovery, sleep, strain)
    * This is the most efficient endpoint for daily summaries
    */
-  async getCycleData(
-    accessToken: string,
-    startDate: Date,
-    endDate: Date
-  ): Promise<any[]> {
+  async getCycleData(accessToken: string, startDate: Date, endDate: Date): Promise<any[]> {
     const params = new URLSearchParams({
       start: startDate.toISOString(),
       end: endDate.toISOString(),
@@ -394,16 +385,17 @@ export class WHOOPv2Adapter {
   /**
    * Normalize WHOOP recovery data to BSI wearables_readings format
    */
-  normalizeRecoveryData(
-    playerId: string,
-    recoveryData: any
-  ): NormalizedWearablesReading[] {
+  normalizeRecoveryData(playerId: string, recoveryData: any): NormalizedWearablesReading[] {
     const validated = WHOOPRecoverySchema.parse(recoveryData);
     const readings: NormalizedWearablesReading[] = [];
 
     const timestamp = new Date(validated.updated_at);
-    const qualityScore = validated.score_state === 'SCORED' ? 1.0 :
-                        validated.score_state === 'PENDING_SCORE' ? 0.5 : 0.0;
+    const qualityScore =
+      validated.score_state === 'SCORED'
+        ? 1.0
+        : validated.score_state === 'PENDING_SCORE'
+          ? 0.5
+          : 0.0;
 
     // HRV reading
     readings.push({
@@ -473,16 +465,17 @@ export class WHOOPv2Adapter {
   /**
    * Normalize WHOOP sleep data to BSI format
    */
-  normalizeSleepData(
-    playerId: string,
-    sleepData: any
-  ): NormalizedWearablesReading[] {
+  normalizeSleepData(playerId: string, sleepData: any): NormalizedWearablesReading[] {
     const validated = WHOOPSleepSchema.parse(sleepData);
     const readings: NormalizedWearablesReading[] = [];
 
     const timestamp = new Date(validated.end);
-    const qualityScore = validated.score_state === 'SCORED' ? 1.0 :
-                        validated.score_state === 'PENDING_SCORE' ? 0.5 : 0.0;
+    const qualityScore =
+      validated.score_state === 'SCORED'
+        ? 1.0
+        : validated.score_state === 'PENDING_SCORE'
+          ? 0.5
+          : 0.0;
 
     // Sleep performance
     if (validated.score.sleep_performance_percentage) {
@@ -550,9 +543,15 @@ export class WHOOPv2Adapter {
       day_strain: cycleData.score?.strain || null,
       recovery_score: recoveryData?.score?.recovery_score || null,
       sleep_performance_score: sleepData?.score?.sleep_performance_percentage || null,
-      total_sleep_minutes: sleepData ? Math.round(sleepData.score.stage_summary.total_in_bed_time_milli / 60000) : null,
-      rem_sleep_minutes: sleepData ? Math.round(sleepData.score.stage_summary.total_rem_sleep_time_milli / 60000) : null,
-      deep_sleep_minutes: sleepData ? Math.round(sleepData.score.stage_summary.total_slow_wave_sleep_time_milli / 60000) : null,
+      total_sleep_minutes: sleepData
+        ? Math.round(sleepData.score.stage_summary.total_in_bed_time_milli / 60000)
+        : null,
+      rem_sleep_minutes: sleepData
+        ? Math.round(sleepData.score.stage_summary.total_rem_sleep_time_milli / 60000)
+        : null,
+      deep_sleep_minutes: sleepData
+        ? Math.round(sleepData.score.stage_summary.total_slow_wave_sleep_time_milli / 60000)
+        : null,
       sleep_efficiency: sleepData?.score?.sleep_efficiency_percentage || null,
       respiratory_rate_avg: sleepData?.score?.respiratory_rate || null,
       data_completeness: dataCompleteness,
@@ -595,22 +594,12 @@ export class WHOOPv2Adapter {
   /**
    * Verify webhook signature (HMAC validation)
    */
-  verifyWebhookSignature(
-    payload: string,
-    signature: string,
-    secret: string
-  ): boolean {
+  verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
     // WHOOP uses HMAC-SHA256 for webhook verification
     const crypto = require('crypto');
-    const expectedSignature = crypto
-      .createHmac('sha256', secret)
-      .update(payload)
-      .digest('hex');
+    const expectedSignature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   }
 
   // ==========================================================================
@@ -716,7 +705,7 @@ export class WHOOPv2Adapter {
    * Sleep utility for delays
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

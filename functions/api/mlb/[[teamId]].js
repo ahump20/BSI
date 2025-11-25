@@ -23,18 +23,21 @@ export async function onRequest({ request, params, env }) {
     const data = await fetchRealMLB(teamId);
     return new Response(JSON.stringify(data), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
     console.error('MLB API Error:', error);
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch MLB data',
-      message: error.message,
-      teamId
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch MLB data',
+        message: error.message,
+        teamId,
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }
 
@@ -55,10 +58,14 @@ async function fetchRealMLB(teamId) {
     const rosterData = await rosterResponse.json();
 
     // Fetch hitting and pitching stats for Pythagorean calculation
-    const hittingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=2024`);
+    const hittingResponse = await fetch(
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=2024`
+    );
     const hittingData = await hittingResponse.json();
 
-    const pitchingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=2024`);
+    const pitchingResponse = await fetch(
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=2024`
+    );
     const pitchingData = await pitchingResponse.json();
 
     // Extract runs scored and allowed from real data - NO FALLBACKS!
@@ -80,8 +87,9 @@ async function fetchRealMLB(teamId) {
     // REAL Pythagorean calculation using Bill James formula
     const exponent = 1.83; // Bill James exponent for MLB
     const pythagoreanWins = Math.round(
-      162 * (Math.pow(runsScored, exponent) /
-      (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
+      162 *
+        (Math.pow(runsScored, exponent) /
+          (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
     );
 
     return {
@@ -98,16 +106,16 @@ async function fetchRealMLB(teamId) {
           runsAllowed,
           formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)',
           dataSource: 'MLB Stats API (Real-time)',
-          lastUpdated: new Date().toISOString()
-        }
+          lastUpdated: new Date().toISOString(),
+        },
       },
       meta: {
         timestamp: new Date().toISOString(),
         source: 'MLB Stats API',
         version: '1.0',
         noFallbacks: true,
-        allDataReal: true
-      }
+        allDataReal: true,
+      },
     };
   } catch (error) {
     console.error('fetchRealMLB error:', error);

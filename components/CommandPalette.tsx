@@ -20,9 +20,25 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import Fuse from 'fuse.js';
 import {
-  Search, X, ArrowRight, BarChart3, TrendingUp, Database,
-  Users, Settings, Download, Moon, Sun, Grid, List,
-  Activity, Zap, Target, Clock, Keyboard, Command
+  Search,
+  X,
+  ArrowRight,
+  BarChart3,
+  TrendingUp,
+  Database,
+  Users,
+  Settings,
+  Download,
+  Moon,
+  Sun,
+  Grid,
+  List,
+  Activity,
+  Zap,
+  Target,
+  Clock,
+  Keyboard,
+  Command,
 } from 'lucide-react';
 
 // Command types
@@ -75,7 +91,10 @@ export default function CommandPalette({
         icon: <Target className="w-4 h-4" />,
         category: 'navigation',
         shortcut: 'Alt+M',
-        action: () => { onSelectSport?.('baseball'); onClose(); },
+        action: () => {
+          onSelectSport?.('baseball');
+          onClose();
+        },
       },
       {
         id: 'nav-nfl',
@@ -84,7 +103,10 @@ export default function CommandPalette({
         icon: <Zap className="w-4 h-4" />,
         category: 'navigation',
         shortcut: 'Alt+N',
-        action: () => { onSelectSport?.('football'); onClose(); },
+        action: () => {
+          onSelectSport?.('football');
+          onClose();
+        },
       },
       {
         id: 'nav-nba',
@@ -93,7 +115,10 @@ export default function CommandPalette({
         icon: <Activity className="w-4 h-4" />,
         category: 'navigation',
         shortcut: 'Alt+B',
-        action: () => { onSelectSport?.('basketball'); onClose(); },
+        action: () => {
+          onSelectSport?.('basketball');
+          onClose();
+        },
       },
 
       // Actions
@@ -104,7 +129,10 @@ export default function CommandPalette({
         icon: <Database className="w-4 h-4" />,
         category: 'action',
         shortcut: 'Cmd+R',
-        action: () => { onRefresh?.(); onClose(); },
+        action: () => {
+          onRefresh?.();
+          onClose();
+        },
       },
       {
         id: 'action-export',
@@ -113,7 +141,10 @@ export default function CommandPalette({
         icon: <Download className="w-4 h-4" />,
         category: 'action',
         shortcut: 'Cmd+E',
-        action: () => { onExportCSV?.(); onClose(); },
+        action: () => {
+          onExportCSV?.();
+          onClose();
+        },
       },
 
       // Settings
@@ -124,7 +155,10 @@ export default function CommandPalette({
         icon: <Moon className="w-4 h-4" />,
         category: 'setting',
         shortcut: 'Cmd+Shift+T',
-        action: () => { onToggleTheme?.(); onClose(); },
+        action: () => {
+          onToggleTheme?.();
+          onClose();
+        },
       },
       {
         id: 'setting-grid',
@@ -133,7 +167,10 @@ export default function CommandPalette({
         icon: <Grid className="w-4 h-4" />,
         category: 'setting',
         shortcut: 'Cmd+1',
-        action: () => { onToggleView?.('grid'); onClose(); },
+        action: () => {
+          onToggleView?.('grid');
+          onClose();
+        },
       },
       {
         id: 'setting-list',
@@ -142,7 +179,10 @@ export default function CommandPalette({
         icon: <List className="w-4 h-4" />,
         category: 'setting',
         shortcut: 'Cmd+2',
-        action: () => { onToggleView?.('list'); onClose(); },
+        action: () => {
+          onToggleView?.('list');
+          onClose();
+        },
       },
       {
         id: 'shortcuts',
@@ -150,7 +190,12 @@ export default function CommandPalette({
         description: 'View all available keyboard shortcuts',
         icon: <Keyboard className="w-4 h-4" />,
         category: 'setting',
-        action: () => { alert('Keyboard Shortcuts:\n\nCmd+K: Open command palette\n/: Focus search\nCmd+R: Refresh data\nCmd+E: Export CSV\nCmd+1/2: Grid/List view\nAlt+M/N/B: Go to MLB/NFL/NBA'); onClose(); },
+        action: () => {
+          alert(
+            'Keyboard Shortcuts:\n\nCmd+K: Open command palette\n/: Focus search\nCmd+R: Refresh data\nCmd+E: Export CSV\nCmd+1/2: Grid/List view\nAlt+M/N/B: Go to MLB/NFL/NBA'
+          );
+          onClose();
+        },
       },
     ];
 
@@ -162,12 +207,24 @@ export default function CommandPalette({
         description: `${player.team} • ${player.position}`,
         icon: <Users className="w-4 h-4" />,
         category: 'player',
-        action: () => { onSelectPlayer?.(player.id); onClose(); },
+        action: () => {
+          onSelectPlayer?.(player.id);
+          onClose();
+        },
       });
     });
 
     return commands;
-  }, [players, onSelectPlayer, onSelectSport, onToggleTheme, onExportCSV, onRefresh, onToggleView, onClose]);
+  }, [
+    players,
+    onSelectPlayer,
+    onSelectSport,
+    onToggleTheme,
+    onExportCSV,
+    onRefresh,
+    onToggleView,
+    onClose,
+  ]);
 
   // Fuzzy search with Fuse.js
   const fuse = useMemo(
@@ -183,9 +240,12 @@ export default function CommandPalette({
   const filteredCommands = useMemo(() => {
     if (!query.trim()) {
       // Show categories when no query
-      return allCommands.filter(cmd => cmd.category !== 'player').slice(0, 8);
+      return allCommands.filter((cmd) => cmd.category !== 'player').slice(0, 8);
     }
-    return fuse.search(query).map((result) => result.item).slice(0, 10);
+    return fuse
+      .search(query)
+      .map((result) => result.item)
+      .slice(0, 10);
   }, [query, fuse, allCommands]);
 
   // Focus input on open
@@ -281,9 +341,11 @@ export default function CommandPalette({
             <div
               className="overflow-hidden rounded-2xl shadow-2xl"
               style={{
-                background: 'linear-gradient(180deg, rgba(30, 30, 40, 0.98) 0%, rgba(20, 20, 28, 0.98) 100%)',
+                background:
+                  'linear-gradient(180deg, rgba(30, 30, 40, 0.98) 0%, rgba(20, 20, 28, 0.98) 100%)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 80px rgba(191, 87, 0, 0.15)',
+                boxShadow:
+                  '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 80px rgba(191, 87, 0, 0.15)',
               }}
             >
               {/* Search Input */}
@@ -306,10 +368,7 @@ export default function CommandPalette({
               </div>
 
               {/* Results */}
-              <div
-                ref={listRef}
-                className="max-h-[400px] overflow-y-auto py-2 custom-scrollbar"
-              >
+              <div ref={listRef} className="max-h-[400px] overflow-y-auto py-2 custom-scrollbar">
                 {filteredCommands.length === 0 ? (
                   <div className="px-4 py-8 text-center text-white/40">
                     <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
@@ -338,7 +397,9 @@ export default function CommandPalette({
                           >
                             <span
                               className={`flex-shrink-0 p-1.5 rounded-md ${
-                                isSelected ? 'bg-orange-500/30 text-orange-400' : 'bg-white/5 text-white/50'
+                                isSelected
+                                  ? 'bg-orange-500/30 text-orange-400'
+                                  : 'bg-white/5 text-white/50'
                               }`}
                             >
                               {command.icon}

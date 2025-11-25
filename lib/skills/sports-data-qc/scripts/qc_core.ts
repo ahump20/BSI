@@ -240,7 +240,7 @@ export function calculateMAD(values: number[]): number {
   const median = calculateMedian(values);
 
   // Calculate absolute deviations from median
-  const absoluteDeviations = values.map(v => Math.abs(v - median));
+  const absoluteDeviations = values.map((v) => Math.abs(v - median));
 
   // MAD is the median of absolute deviations
   const mad = calculateMedian(absoluteDeviations);
@@ -288,18 +288,18 @@ export function detectOutliersMAD(
 
   // Handle case where MAD is 0 (all values identical)
   if (mad === 0) {
-    return values.map(v => ({
+    return values.map((v) => ({
       metric_name: metricName,
       value: v,
       mad_score: 0,
       is_outlier: false,
       threshold,
-      recommendation: 'ACCEPT'
+      recommendation: 'ACCEPT',
     }));
   }
 
   // Calculate MAD score for each value
-  const results: OutlierResult[] = values.map(value => {
+  const results: OutlierResult[] = values.map((value) => {
     const madScore = Math.abs(value - median) / mad;
     const isOutlier = madScore > threshold;
 
@@ -319,7 +319,7 @@ export function detectOutliersMAD(
       mad_score: madScore,
       is_outlier: isOutlier,
       threshold,
-      recommendation
+      recommendation,
     };
   });
 
@@ -344,14 +344,14 @@ export function validateRange(
       check_name: `range_validation_${fieldName}`,
       status: 'FAIL',
       message: `${fieldName} value ${value} outside acceptable range [${min}, ${max}]`,
-      affected_records: 1
+      affected_records: 1,
     };
   }
 
   return {
     check_name: `range_validation_${fieldName}`,
     status: 'PASS',
-    message: `${fieldName} value ${value} within range [${min}, ${max}]`
+    message: `${fieldName} value ${value} within range [${min}, ${max}]`,
   };
 }
 
@@ -395,12 +395,7 @@ export function validateExitVelocity(velocity: number): QCCheckResult {
  * Validate ERA
  */
 export function validateERA(era: number): QCCheckResult {
-  return validateRange(
-    era,
-    VALIDATION_THRESHOLDS.MIN_ERA,
-    VALIDATION_THRESHOLDS.MAX_ERA,
-    'era'
-  );
+  return validateRange(era, VALIDATION_THRESHOLDS.MIN_ERA, VALIDATION_THRESHOLDS.MAX_ERA, 'era');
 }
 
 // ============================================================================
@@ -428,14 +423,14 @@ export function validateCompleteness<T extends Record<string, any>>(
       status: 'FAIL',
       message: `Missing required fields: ${missingFields.join(', ')}`,
       affected_records: 1,
-      details: { missing_fields: missingFields }
+      details: { missing_fields: missingFields },
     };
   }
 
   return {
     check_name: 'completeness_check',
     status: 'PASS',
-    message: 'All required fields present'
+    message: 'All required fields present',
   };
 }
 
@@ -469,15 +464,15 @@ export function validateBoxScoreConsistency(
       details: {
         box_score: boxScoreTotal,
         play_by_play: playByPlayTotal,
-        difference
-      }
+        difference,
+      },
     };
   }
 
   return {
     check_name: `consistency_${metricName}`,
     status: 'PASS',
-    message: `Box score and play-by-play totals match for ${metricName}`
+    message: `Box score and play-by-play totals match for ${metricName}`,
   };
 }
 
@@ -498,15 +493,15 @@ export function validateProbabilitySum(simulation: SimulationResults): QCCheckRe
         away_win_prob: simulation.away_win_prob,
         tie_prob: simulation.tie_prob,
         sum,
-        difference
-      }
+        difference,
+      },
     };
   }
 
   return {
     check_name: 'probability_sum',
     status: 'PASS',
-    message: `Win probabilities sum to ${sum.toFixed(4)} (within tolerance)`
+    message: `Win probabilities sum to ${sum.toFixed(4)} (within tolerance)`,
   };
 }
 
@@ -515,8 +510,9 @@ export function validateProbabilitySum(simulation: SimulationResults): QCCheckRe
  */
 export function validateScoreDistribution(simulation: SimulationResults): QCCheckResult {
   const invalidProbs = simulation.score_distribution.filter(
-    outcome => outcome.probability < VALIDATION_THRESHOLDS.MIN_PROBABILITY ||
-               outcome.probability > VALIDATION_THRESHOLDS.MAX_PROBABILITY
+    (outcome) =>
+      outcome.probability < VALIDATION_THRESHOLDS.MIN_PROBABILITY ||
+      outcome.probability > VALIDATION_THRESHOLDS.MAX_PROBABILITY
   );
 
   if (invalidProbs.length > 0) {
@@ -525,12 +521,15 @@ export function validateScoreDistribution(simulation: SimulationResults): QCChec
       status: 'FAIL',
       message: `${invalidProbs.length} outcomes have invalid probabilities`,
       affected_records: invalidProbs.length,
-      details: { invalid_outcomes: invalidProbs }
+      details: { invalid_outcomes: invalidProbs },
     };
   }
 
   // Check if probabilities sum to approximately 1.0
-  const totalProb = simulation.score_distribution.reduce((sum, outcome) => sum + outcome.probability, 0);
+  const totalProb = simulation.score_distribution.reduce(
+    (sum, outcome) => sum + outcome.probability,
+    0
+  );
   const difference = Math.abs(totalProb - 1.0);
 
   if (difference > VALIDATION_THRESHOLDS.PROBABILITY_SUM_TOLERANCE) {
@@ -538,14 +537,14 @@ export function validateScoreDistribution(simulation: SimulationResults): QCChec
       check_name: 'score_distribution_probabilities',
       status: 'WARNING',
       message: `Score distribution probabilities sum to ${totalProb.toFixed(4)}, expected 1.0`,
-      details: { total_probability: totalProb, difference }
+      details: { total_probability: totalProb, difference },
     };
   }
 
   return {
     check_name: 'score_distribution_probabilities',
     status: 'PASS',
-    message: 'All score distribution probabilities are valid'
+    message: 'All score distribution probabilities are valid',
   };
 }
 
@@ -564,7 +563,7 @@ export function validateTimestamp(timestamp: string, allowFuture: boolean = fals
     return {
       check_name: 'timestamp_format',
       status: 'FAIL',
-      message: `Invalid timestamp format: ${timestamp}`
+      message: `Invalid timestamp format: ${timestamp}`,
     };
   }
 
@@ -574,14 +573,14 @@ export function validateTimestamp(timestamp: string, allowFuture: boolean = fals
       check_name: 'timestamp_future',
       status: 'FAIL',
       message: `Timestamp ${timestamp} is in the future`,
-      details: { timestamp, current_time: new Date().toISOString() }
+      details: { timestamp, current_time: new Date().toISOString() },
     };
   }
 
   return {
     check_name: 'timestamp_validation',
     status: 'PASS',
-    message: 'Timestamp is valid'
+    message: 'Timestamp is valid',
   };
 }
 
@@ -628,15 +627,15 @@ export function validateSeasonAlignment(game: GameData): QCCheckResult {
         game_season: game.season,
         game_year: gameYear,
         game_month: gameMonth,
-        expected_season: expectedSeason
-      }
+        expected_season: expectedSeason,
+      },
     };
   }
 
   return {
     check_name: 'season_alignment',
     status: 'PASS',
-    message: 'Game season aligns with game date'
+    message: 'Game season aligns with game date',
   };
 }
 
@@ -696,7 +695,7 @@ export function validateGameData(game: GameData): QCCheckResult[] {
       results.push({
         check_name: 'final_score_validation',
         status: 'FAIL',
-        message: 'Final game has negative score'
+        message: 'Final game has negative score',
       });
     }
   }
@@ -723,7 +722,7 @@ export function validateSimulationResults(simulation: SimulationResults): QCChec
     results.push({
       check_name: 'num_simulations',
       status: 'FAIL',
-      message: `Invalid number of simulations: ${simulation.num_simulations}`
+      message: `Invalid number of simulations: ${simulation.num_simulations}`,
     });
   }
 
@@ -737,46 +736,41 @@ export function validateSimulationResults(simulation: SimulationResults): QCChec
 /**
  * Calculate QC metrics for a dataset
  */
-export function calculateQCMetrics(
-  games: GameData[],
-  playerStats: PlayerStats[]
-): QCMetrics {
+export function calculateQCMetrics(games: GameData[], playerStats: PlayerStats[]): QCMetrics {
   // Calculate batting average metrics
   const battingAvgs = playerStats
-    .map(p => p.batting_avg)
+    .map((p) => p.batting_avg)
     .filter((ba): ba is number => ba !== undefined);
 
-  const meanBattingAvg = battingAvgs.length > 0
-    ? battingAvgs.reduce((sum, ba) => sum + ba, 0) / battingAvgs.length
-    : undefined;
+  const meanBattingAvg =
+    battingAvgs.length > 0
+      ? battingAvgs.reduce((sum, ba) => sum + ba, 0) / battingAvgs.length
+      : undefined;
 
   // Calculate pitch velocity metrics
   const pitchVelocities = playerStats
-    .map(p => p.pitch_velocity)
+    .map((p) => p.pitch_velocity)
     .filter((v): v is number => v !== undefined);
 
-  const medianPitchVelocity = pitchVelocities.length > 0
-    ? calculateMedian(pitchVelocities)
-    : undefined;
+  const medianPitchVelocity =
+    pitchVelocities.length > 0 ? calculateMedian(pitchVelocities) : undefined;
 
   // Calculate exit velocity metrics
   const exitVelocities = playerStats
-    .map(p => p.exit_velocity)
+    .map((p) => p.exit_velocity)
     .filter((v): v is number => v !== undefined);
 
-  const medianExitVelocity = exitVelocities.length > 0
-    ? calculateMedian(exitVelocities)
-    : undefined;
+  const medianExitVelocity =
+    exitVelocities.length > 0 ? calculateMedian(exitVelocities) : undefined;
 
   // Count games with complete required fields
-  const gamesWithCompleteData = games.filter(game => {
+  const gamesWithCompleteData = games.filter((game) => {
     const result = validateGameCompleteness(game);
     return result.status === 'PASS';
   }).length;
 
-  const completenessPercentage = games.length > 0
-    ? (gamesWithCompleteData / games.length) * 100
-    : 0;
+  const completenessPercentage =
+    games.length > 0 ? (gamesWithCompleteData / games.length) * 100 : 0;
 
   return {
     mean_batting_avg: meanBattingAvg,
@@ -784,7 +778,7 @@ export function calculateQCMetrics(
     median_exit_velocity: medianExitVelocity,
     total_games: games.length,
     games_with_complete_data: gamesWithCompleteData,
-    completeness_percentage: completenessPercentage
+    completeness_percentage: completenessPercentage,
   };
 }
 

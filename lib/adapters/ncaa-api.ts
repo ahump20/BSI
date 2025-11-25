@@ -15,7 +15,7 @@ import type {
   GamesQueryParams,
   TeamStatsQueryParams,
   ProviderGame,
-  ProviderTeamStats
+  ProviderTeamStats,
 } from '../../workers/ingest/types';
 
 export class NCAAAPIAdapter {
@@ -43,7 +43,7 @@ export class NCAAAPIAdapter {
 
     const headers: Record<string, string> = {
       Accept: 'application/json',
-      'User-Agent': 'BlazeSportsIntel/1.0'
+      'User-Agent': 'BlazeSportsIntel/1.0',
     };
 
     if (this.apiKey) {
@@ -117,12 +117,17 @@ export class NCAAAPIAdapter {
       awayScore: away.score ?? null,
       venueId: game.game?.location?.venueId?.toString(),
       currentInning: game.currentPeriod ?? undefined,
-      currentInningHalf: game.currentPeriodHalf === 'top' ? 'TOP' : game.currentPeriodHalf === 'bottom' ? 'BOTTOM' : undefined,
+      currentInningHalf:
+        game.currentPeriodHalf === 'top'
+          ? 'TOP'
+          : game.currentPeriodHalf === 'bottom'
+            ? 'BOTTOM'
+            : undefined,
       balls: game.situation?.balls ?? undefined,
       strikes: game.situation?.strikes ?? undefined,
       outs: game.situation?.outs ?? undefined,
       providerName: 'NCAA_API',
-      feedPrecision: 'EVENT' // NCAA API provides event-level data
+      feedPrecision: 'EVENT', // NCAA API provides event-level data
     };
   }
 }

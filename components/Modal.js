@@ -45,7 +45,7 @@ export function Modal(options = {}) {
     onOpen = null,
     onClose = null,
     className = '',
-    attributes = {}
+    attributes = {},
   } = options;
 
   let isOpen = false;
@@ -142,9 +142,10 @@ export function Modal(options = {}) {
 
   // Focus trap implementation
   function updateFocusableElements() {
-    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableSelector =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     focusableElements = Array.from(dialog.querySelectorAll(focusableSelector)).filter(
-      el => !el.hasAttribute('disabled') && el.offsetParent !== null
+      (el) => !el.hasAttribute('disabled') && el.offsetParent !== null
     );
     firstFocusable = focusableElements[0];
     lastFocusable = focusableElements[focusableElements.length - 1];
@@ -295,7 +296,7 @@ export function Modal(options = {}) {
     dialog,
     get isOpen() {
       return isOpen;
-    }
+    },
   };
 }
 

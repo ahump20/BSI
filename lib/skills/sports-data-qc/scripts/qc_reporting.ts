@@ -36,9 +36,15 @@ export function formatReportMarkdown(report: QCReport): string {
   lines.push('## Summary');
   lines.push('');
   lines.push(`- **Total Records:** ${report.total_records}`);
-  lines.push(`- **Passed:** ${report.records_passed} (${percentage(report.records_passed, report.total_records)}%)`);
-  lines.push(`- **Flagged:** ${report.records_flagged} (${percentage(report.records_flagged, report.total_records)}%)`);
-  lines.push(`- **Rejected:** ${report.records_rejected} (${percentage(report.records_rejected, report.total_records)}%)`);
+  lines.push(
+    `- **Passed:** ${report.records_passed} (${percentage(report.records_passed, report.total_records)}%)`
+  );
+  lines.push(
+    `- **Flagged:** ${report.records_flagged} (${percentage(report.records_flagged, report.total_records)}%)`
+  );
+  lines.push(
+    `- **Rejected:** ${report.records_rejected} (${percentage(report.records_rejected, report.total_records)}%)`
+  );
   lines.push('');
 
   // Metrics comparison
@@ -47,23 +53,43 @@ export function formatReportMarkdown(report: QCReport): string {
   lines.push('| Metric | Before | After | Change |');
   lines.push('|--------|--------|-------|--------|');
 
-  if (report.metrics_before.mean_batting_avg !== undefined && report.metrics_after.mean_batting_avg !== undefined) {
+  if (
+    report.metrics_before.mean_batting_avg !== undefined &&
+    report.metrics_after.mean_batting_avg !== undefined
+  ) {
     const change = report.metrics_after.mean_batting_avg - report.metrics_before.mean_batting_avg;
-    lines.push(`| Mean Batting Avg | ${report.metrics_before.mean_batting_avg.toFixed(3)} | ${report.metrics_after.mean_batting_avg.toFixed(3)} | ${change >= 0 ? '+' : ''}${change.toFixed(3)} |`);
+    lines.push(
+      `| Mean Batting Avg | ${report.metrics_before.mean_batting_avg.toFixed(3)} | ${report.metrics_after.mean_batting_avg.toFixed(3)} | ${change >= 0 ? '+' : ''}${change.toFixed(3)} |`
+    );
   }
 
-  if (report.metrics_before.median_pitch_velocity !== undefined && report.metrics_after.median_pitch_velocity !== undefined) {
-    const change = report.metrics_after.median_pitch_velocity - report.metrics_before.median_pitch_velocity;
-    lines.push(`| Median Pitch Velocity | ${report.metrics_before.median_pitch_velocity.toFixed(1)} mph | ${report.metrics_after.median_pitch_velocity.toFixed(1)} mph | ${change >= 0 ? '+' : ''}${change.toFixed(1)} mph |`);
+  if (
+    report.metrics_before.median_pitch_velocity !== undefined &&
+    report.metrics_after.median_pitch_velocity !== undefined
+  ) {
+    const change =
+      report.metrics_after.median_pitch_velocity - report.metrics_before.median_pitch_velocity;
+    lines.push(
+      `| Median Pitch Velocity | ${report.metrics_before.median_pitch_velocity.toFixed(1)} mph | ${report.metrics_after.median_pitch_velocity.toFixed(1)} mph | ${change >= 0 ? '+' : ''}${change.toFixed(1)} mph |`
+    );
   }
 
-  if (report.metrics_before.median_exit_velocity !== undefined && report.metrics_after.median_exit_velocity !== undefined) {
-    const change = report.metrics_after.median_exit_velocity - report.metrics_before.median_exit_velocity;
-    lines.push(`| Median Exit Velocity | ${report.metrics_before.median_exit_velocity.toFixed(1)} mph | ${report.metrics_after.median_exit_velocity.toFixed(1)} mph | ${change >= 0 ? '+' : ''}${change.toFixed(1)} mph |`);
+  if (
+    report.metrics_before.median_exit_velocity !== undefined &&
+    report.metrics_after.median_exit_velocity !== undefined
+  ) {
+    const change =
+      report.metrics_after.median_exit_velocity - report.metrics_before.median_exit_velocity;
+    lines.push(
+      `| Median Exit Velocity | ${report.metrics_before.median_exit_velocity.toFixed(1)} mph | ${report.metrics_after.median_exit_velocity.toFixed(1)} mph | ${change >= 0 ? '+' : ''}${change.toFixed(1)} mph |`
+    );
   }
 
-  const completenessChange = report.metrics_after.completeness_percentage - report.metrics_before.completeness_percentage;
-  lines.push(`| Data Completeness | ${report.metrics_before.completeness_percentage.toFixed(1)}% | ${report.metrics_after.completeness_percentage.toFixed(1)}% | ${completenessChange >= 0 ? '+' : ''}${completenessChange.toFixed(1)}% |`);
+  const completenessChange =
+    report.metrics_after.completeness_percentage - report.metrics_before.completeness_percentage;
+  lines.push(
+    `| Data Completeness | ${report.metrics_before.completeness_percentage.toFixed(1)}% | ${report.metrics_after.completeness_percentage.toFixed(1)}% | ${completenessChange >= 0 ? '+' : ''}${completenessChange.toFixed(1)}% |`
+  );
 
   lines.push('');
 
@@ -71,9 +97,9 @@ export function formatReportMarkdown(report: QCReport): string {
   lines.push('## Validation Checks');
   lines.push('');
 
-  const failedChecks = report.checks.filter(c => c.status === 'FAIL');
-  const warningChecks = report.checks.filter(c => c.status === 'WARNING');
-  const passedChecks = report.checks.filter(c => c.status === 'PASS');
+  const failedChecks = report.checks.filter((c) => c.status === 'FAIL');
+  const warningChecks = report.checks.filter((c) => c.status === 'WARNING');
+  const passedChecks = report.checks.filter((c) => c.status === 'PASS');
 
   lines.push(`- **Failed:** ${failedChecks.length}`);
   lines.push(`- **Warnings:** ${warningChecks.length}`);
@@ -105,9 +131,9 @@ export function formatReportMarkdown(report: QCReport): string {
     lines.push('## Outlier Detection');
     lines.push('');
 
-    const rejectOutliers = report.outliers.filter(o => o.recommendation === 'REJECT');
-    const flagOutliers = report.outliers.filter(o => o.recommendation === 'FLAG');
-    const acceptOutliers = report.outliers.filter(o => o.recommendation === 'ACCEPT');
+    const rejectOutliers = report.outliers.filter((o) => o.recommendation === 'REJECT');
+    const flagOutliers = report.outliers.filter((o) => o.recommendation === 'FLAG');
+    const acceptOutliers = report.outliers.filter((o) => o.recommendation === 'ACCEPT');
 
     lines.push(`- **Extreme Outliers (>7 MADs):** ${rejectOutliers.length}`);
     lines.push(`- **Moderate Outliers (5-7 MADs):** ${flagOutliers.length}`);
@@ -120,8 +146,11 @@ export function formatReportMarkdown(report: QCReport): string {
       lines.push('| Metric | Value | MAD Score | Recommendation |');
       lines.push('|--------|-------|-----------|----------------|');
 
-      for (const outlier of rejectOutliers.slice(0, 20)) { // Limit to top 20
-        lines.push(`| ${outlier.metric_name} | ${outlier.value.toFixed(2)} | ${outlier.mad_score.toFixed(2)} | ${outlier.recommendation} |`);
+      for (const outlier of rejectOutliers.slice(0, 20)) {
+        // Limit to top 20
+        lines.push(
+          `| ${outlier.metric_name} | ${outlier.value.toFixed(2)} | ${outlier.mad_score.toFixed(2)} | ${outlier.recommendation} |`
+        );
       }
 
       if (rejectOutliers.length > 20) {
@@ -180,7 +209,9 @@ export function formatReportHTML(report: QCReport): string {
   html.push('      <h1>Data Quality Control Report</h1>');
   html.push(`      <div class="metadata">`);
   html.push(`        <span><strong>Report ID:</strong> ${report.report_id}</span>`);
-  html.push(`        <span><strong>Timestamp:</strong> ${new Date(report.timestamp).toLocaleString()}</span>`);
+  html.push(
+    `        <span><strong>Timestamp:</strong> ${new Date(report.timestamp).toLocaleString()}</span>`
+  );
   html.push(`        <span><strong>Data Source:</strong> ${report.data_source}</span>`);
   html.push(`      </div>`);
   html.push('    </header>');
@@ -194,17 +225,23 @@ export function formatReportHTML(report: QCReport): string {
   html.push('      <div class="card success">');
   html.push(`        <h3>Passed</h3>`);
   html.push(`        <div class="stat">${report.records_passed}</div>`);
-  html.push(`        <div class="percentage">${percentage(report.records_passed, report.total_records)}%</div>`);
+  html.push(
+    `        <div class="percentage">${percentage(report.records_passed, report.total_records)}%</div>`
+  );
   html.push('      </div>');
   html.push('      <div class="card warning">');
   html.push(`        <h3>Flagged</h3>`);
   html.push(`        <div class="stat">${report.records_flagged}</div>`);
-  html.push(`        <div class="percentage">${percentage(report.records_flagged, report.total_records)}%</div>`);
+  html.push(
+    `        <div class="percentage">${percentage(report.records_flagged, report.total_records)}%</div>`
+  );
   html.push('      </div>');
   html.push('      <div class="card error">');
   html.push(`        <h3>Rejected</h3>`);
   html.push(`        <div class="stat">${report.records_rejected}</div>`);
-  html.push(`        <div class="percentage">${percentage(report.records_rejected, report.total_records)}%</div>`);
+  html.push(
+    `        <div class="percentage">${percentage(report.records_rejected, report.total_records)}%</div>`
+  );
   html.push('      </div>');
   html.push('    </section>');
 
@@ -217,35 +254,49 @@ export function formatReportHTML(report: QCReport): string {
   html.push('        </thead>');
   html.push('        <tbody>');
 
-  if (report.metrics_before.mean_batting_avg !== undefined && report.metrics_after.mean_batting_avg !== undefined) {
+  if (
+    report.metrics_before.mean_batting_avg !== undefined &&
+    report.metrics_after.mean_batting_avg !== undefined
+  ) {
     const change = report.metrics_after.mean_batting_avg - report.metrics_before.mean_batting_avg;
     const changeClass = change >= 0 ? 'positive' : 'negative';
     html.push(`          <tr>`);
     html.push(`            <td>Mean Batting Avg</td>`);
     html.push(`            <td>${report.metrics_before.mean_batting_avg.toFixed(3)}</td>`);
     html.push(`            <td>${report.metrics_after.mean_batting_avg.toFixed(3)}</td>`);
-    html.push(`            <td class="${changeClass}">${change >= 0 ? '+' : ''}${change.toFixed(3)}</td>`);
+    html.push(
+      `            <td class="${changeClass}">${change >= 0 ? '+' : ''}${change.toFixed(3)}</td>`
+    );
     html.push(`          </tr>`);
   }
 
-  if (report.metrics_before.median_pitch_velocity !== undefined && report.metrics_after.median_pitch_velocity !== undefined) {
-    const change = report.metrics_after.median_pitch_velocity - report.metrics_before.median_pitch_velocity;
+  if (
+    report.metrics_before.median_pitch_velocity !== undefined &&
+    report.metrics_after.median_pitch_velocity !== undefined
+  ) {
+    const change =
+      report.metrics_after.median_pitch_velocity - report.metrics_before.median_pitch_velocity;
     const changeClass = change >= 0 ? 'positive' : 'negative';
     html.push(`          <tr>`);
     html.push(`            <td>Median Pitch Velocity</td>`);
     html.push(`            <td>${report.metrics_before.median_pitch_velocity.toFixed(1)} mph</td>`);
     html.push(`            <td>${report.metrics_after.median_pitch_velocity.toFixed(1)} mph</td>`);
-    html.push(`            <td class="${changeClass}">${change >= 0 ? '+' : ''}${change.toFixed(1)} mph</td>`);
+    html.push(
+      `            <td class="${changeClass}">${change >= 0 ? '+' : ''}${change.toFixed(1)} mph</td>`
+    );
     html.push(`          </tr>`);
   }
 
-  const completenessChange = report.metrics_after.completeness_percentage - report.metrics_before.completeness_percentage;
+  const completenessChange =
+    report.metrics_after.completeness_percentage - report.metrics_before.completeness_percentage;
   const changeClass = completenessChange >= 0 ? 'positive' : 'negative';
   html.push(`          <tr>`);
   html.push(`            <td>Data Completeness</td>`);
   html.push(`            <td>${report.metrics_before.completeness_percentage.toFixed(1)}%</td>`);
   html.push(`            <td>${report.metrics_after.completeness_percentage.toFixed(1)}%</td>`);
-  html.push(`            <td class="${changeClass}">${completenessChange >= 0 ? '+' : ''}${completenessChange.toFixed(1)}%</td>`);
+  html.push(
+    `            <td class="${changeClass}">${completenessChange >= 0 ? '+' : ''}${completenessChange.toFixed(1)}%</td>`
+  );
   html.push(`          </tr>`);
 
   html.push('        </tbody>');
@@ -253,8 +304,8 @@ export function formatReportHTML(report: QCReport): string {
   html.push('    </section>');
 
   // Validation checks
-  const failedChecks = report.checks.filter(c => c.status === 'FAIL');
-  const warningChecks = report.checks.filter(c => c.status === 'WARNING');
+  const failedChecks = report.checks.filter((c) => c.status === 'FAIL');
+  const warningChecks = report.checks.filter((c) => c.status === 'WARNING');
 
   if (failedChecks.length > 0 || warningChecks.length > 0) {
     html.push('    <section class="checks">');
@@ -285,8 +336,8 @@ export function formatReportHTML(report: QCReport): string {
 
   // Outliers
   if (report.outliers.length > 0) {
-    const rejectOutliers = report.outliers.filter(o => o.recommendation === 'REJECT');
-    const flagOutliers = report.outliers.filter(o => o.recommendation === 'FLAG');
+    const rejectOutliers = report.outliers.filter((o) => o.recommendation === 'REJECT');
+    const flagOutliers = report.outliers.filter((o) => o.recommendation === 'FLAG');
 
     html.push('    <section class="outliers">');
     html.push('      <h2>Outlier Detection</h2>');
@@ -299,7 +350,9 @@ export function formatReportHTML(report: QCReport): string {
       html.push('      <h3>Extreme Outliers (>7 MADs)</h3>');
       html.push('      <table>');
       html.push('        <thead>');
-      html.push('          <tr><th>Metric</th><th>Value</th><th>MAD Score</th><th>Recommendation</th></tr>');
+      html.push(
+        '          <tr><th>Metric</th><th>Value</th><th>MAD Score</th><th>Recommendation</th></tr>'
+      );
       html.push('        </thead>');
       html.push('        <tbody>');
 
@@ -308,7 +361,9 @@ export function formatReportHTML(report: QCReport): string {
         html.push(`            <td>${outlier.metric_name}</td>`);
         html.push(`            <td>${outlier.value.toFixed(2)}</td>`);
         html.push(`            <td>${outlier.mad_score.toFixed(2)}</td>`);
-        html.push(`            <td><span class="badge error">${outlier.recommendation}</span></td>`);
+        html.push(
+          `            <td><span class="badge error">${outlier.recommendation}</span></td>`
+        );
         html.push(`          </tr>`);
       }
 
@@ -316,7 +371,9 @@ export function formatReportHTML(report: QCReport): string {
       html.push('      </table>');
 
       if (rejectOutliers.length > 20) {
-        html.push(`      <p class="note">Showing 20 of ${rejectOutliers.length} extreme outliers</p>`);
+        html.push(
+          `      <p class="note">Showing 20 of ${rejectOutliers.length} extreme outliers</p>`
+        );
       }
     }
 
@@ -359,13 +416,19 @@ export function formatReportConsole(report: QCReport): string {
   lines.push('SUMMARY');
   lines.push('-'.repeat(80));
   lines.push(`Total Records:   ${report.total_records}`);
-  lines.push(`  ✓ Passed:      ${report.records_passed} (${percentage(report.records_passed, report.total_records)}%)`);
-  lines.push(`  ⚠ Flagged:     ${report.records_flagged} (${percentage(report.records_flagged, report.total_records)}%)`);
-  lines.push(`  ✗ Rejected:    ${report.records_rejected} (${percentage(report.records_rejected, report.total_records)}%)`);
+  lines.push(
+    `  ✓ Passed:      ${report.records_passed} (${percentage(report.records_passed, report.total_records)}%)`
+  );
+  lines.push(
+    `  ⚠ Flagged:     ${report.records_flagged} (${percentage(report.records_flagged, report.total_records)}%)`
+  );
+  lines.push(
+    `  ✗ Rejected:    ${report.records_rejected} (${percentage(report.records_rejected, report.total_records)}%)`
+  );
   lines.push('');
 
-  const failedChecks = report.checks.filter(c => c.status === 'FAIL');
-  const warningChecks = report.checks.filter(c => c.status === 'WARNING');
+  const failedChecks = report.checks.filter((c) => c.status === 'FAIL');
+  const warningChecks = report.checks.filter((c) => c.status === 'WARNING');
 
   if (failedChecks.length > 0 || warningChecks.length > 0) {
     lines.push('VALIDATION ISSUES');
@@ -376,8 +439,8 @@ export function formatReportConsole(report: QCReport): string {
   }
 
   if (report.outliers.length > 0) {
-    const rejectOutliers = report.outliers.filter(o => o.recommendation === 'REJECT');
-    const flagOutliers = report.outliers.filter(o => o.recommendation === 'FLAG');
+    const rejectOutliers = report.outliers.filter((o) => o.recommendation === 'REJECT');
+    const flagOutliers = report.outliers.filter((o) => o.recommendation === 'FLAG');
 
     lines.push('OUTLIER DETECTION');
     lines.push('-'.repeat(80));
@@ -651,17 +714,14 @@ export async function saveReportToKV(
 ): Promise<void> {
   const key = `qc:report:${report.report_id}`;
   await kv.put(key, JSON.stringify(report), {
-    expirationTtl: ttl
+    expirationTtl: ttl,
   });
 }
 
 /**
  * Retrieve QC report from KV storage
  */
-export async function getReportFromKV(
-  reportId: string,
-  kv: KVNamespace
-): Promise<QCReport | null> {
+export async function getReportFromKV(reportId: string, kv: KVNamespace): Promise<QCReport | null> {
   const key = `qc:report:${reportId}`;
   const data = await kv.get(key, 'json');
   return data as QCReport | null;
@@ -670,10 +730,7 @@ export async function getReportFromKV(
 /**
  * List recent QC reports from KV (requires prefix listing)
  */
-export async function listRecentReports(
-  kv: KVNamespace,
-  limit: number = 50
-): Promise<string[]> {
+export async function listRecentReports(kv: KVNamespace, limit: number = 50): Promise<string[]> {
   const list = await kv.list({ prefix: 'qc:report:', limit });
-  return list.keys.map(k => k.name.replace('qc:report:', ''));
+  return list.keys.map((k) => k.name.replace('qc:report:', ''));
 }

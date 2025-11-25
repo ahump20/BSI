@@ -1,6 +1,7 @@
 import { createTimeoutSignal, err, ok, preflight, rateLimit, rateLimitError } from '../_utils.js';
 
-const BASE_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard';
+const BASE_URL =
+  'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard';
 const FETCH_TIMEOUT_MS = 6000;
 
 const defaultHeaders = {
@@ -100,9 +101,7 @@ function formatEvent(event) {
       leaders: team?.leaders ?? [],
     })),
     odds: competition?.odds?.[0] ?? null,
-    broadcast: Array.isArray(competition?.broadcasts)
-      ? competition.broadcasts[0]
-      : null,
+    broadcast: Array.isArray(competition?.broadcasts) ? competition.broadcasts[0] : null,
     venue: competition?.venue ?? null,
     weather: event?.weather ?? null,
   };
@@ -123,9 +122,7 @@ function buildStatus(status) {
 }
 
 function buildCacheControlHeader(games) {
-  const completed = Array.isArray(games)
-    ? games.every((game) => game?.status?.completed)
-    : false;
+  const completed = Array.isArray(games) ? games.every((game) => game?.status?.completed) : false;
 
   const ttl = completed ? 300 : 30;
   return `public, max-age=${ttl}`;
@@ -159,4 +156,3 @@ function sanitizeConference(value) {
 
   return /^\d{1,4}$/.test(value) ? value : '';
 }
-

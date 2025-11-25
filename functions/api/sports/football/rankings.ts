@@ -26,18 +26,21 @@ export async function onRequest(context: any) {
     // Try to get from KV cache first
     const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
     if (cached && cached.expires > Date.now()) {
-      return new Response(JSON.stringify({
-        ...cached.data,
-        cached: true,
-        cacheAge: Math.round((Date.now() - cached.timestamp) / 1000),
-      }), {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300',
-        },
-      });
+      return new Response(
+        JSON.stringify({
+          ...cached.data,
+          cached: true,
+          cacheAge: Math.round((Date.now() - cached.timestamp) / 1000),
+        }),
+        {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'Cache-Control': 'public, max-age=300',
+          },
+        }
+      );
     }
 
     // Fetch fresh data from MaxPreps
@@ -69,7 +72,8 @@ export async function onRequest(context: any) {
       const talent = (team.avgPlayerRating || 75) * 0.3; // 30% weight
       const historical = (team.programSuccess || 75) * 0.2; // 20% weight
       const strengthOfSchedule = (team.sos || 75) * 0.1; // 10% weight
-      const compositeRating = Math.round((performance + talent + historical + strengthOfSchedule) * 10) / 10;
+      const compositeRating =
+        Math.round((performance + talent + historical + strengthOfSchedule) * 10) / 10;
 
       return {
         rank: index + 1,
@@ -86,17 +90,21 @@ export async function onRequest(context: any) {
         winPct: Math.round(winPct * 1000) / 1000,
         rating: compositeRating,
         trend: calculateTrend(team.recentGames || []),
-        lastGame: team.lastGame ? {
-          opponent: team.lastGame.opponent,
-          result: team.lastGame.result,
-          score: team.lastGame.score,
-          date: team.lastGame.date,
-        } : null,
-        topPlayer: team.topPlayer ? {
-          name: team.topPlayer.name,
-          position: team.topPlayer.position,
-          stats: team.topPlayer.stats,
-        } : null,
+        lastGame: team.lastGame
+          ? {
+              opponent: team.lastGame.opponent,
+              result: team.lastGame.result,
+              score: team.lastGame.score,
+              date: team.lastGame.date,
+            }
+          : null,
+        topPlayer: team.topPlayer
+          ? {
+              name: team.topPlayer.name,
+              position: team.topPlayer.position,
+              stats: team.topPlayer.stats,
+            }
+          : null,
         collegeCommits: team.collegeCommits || 0,
         compositeFactors: {
           performance: Math.round(performance * 10) / 10,
@@ -116,7 +124,8 @@ export async function onRequest(context: any) {
       rankings: teams,
       meta: {
         dataSource: 'MaxPreps API',
-        methodology: 'Blaze Composite Algorithm: Performance (40%), Talent (30%), Historical (20%), SOS (10%)',
+        methodology:
+          'Blaze Composite Algorithm: Performance (40%), Talent (30%), Historical (20%), SOS (10%)',
         lastUpdated: new Date().toISOString(),
         timezone: 'America/Chicago',
         updateFrequency: 'Every 5 minutes during season',
@@ -131,7 +140,7 @@ export async function onRequest(context: any) {
         JSON.stringify({
           data: response,
           timestamp: Date.now(),
-          expires: Date.now() + (5 * 60 * 1000), // 5 minutes
+          expires: Date.now() + 5 * 60 * 1000, // 5 minutes
         }),
         { expirationTtl: 300 }
       );
@@ -145,23 +154,25 @@ export async function onRequest(context: any) {
         'Cache-Control': 'public, max-age=300',
       },
     });
-
   } catch (error: any) {
     console.error('Football rankings error:', error);
 
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to fetch football rankings',
-      message: error.message,
-      sport: 'football',
-      timestamp: new Date().toISOString(),
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-      },
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to fetch football rankings',
+        message: error.message,
+        sport: 'football',
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
 }
 

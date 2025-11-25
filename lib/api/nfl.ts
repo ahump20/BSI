@@ -1,5 +1,11 @@
 import { apiCache, cacheMetrics } from '../utils/cache';
-import { ApiError, ErrorCode, ErrorHandler, CircuitBreaker, DEFAULT_FALLBACKS } from '../utils/errors';
+import {
+  ApiError,
+  ErrorCode,
+  ErrorHandler,
+  CircuitBreaker,
+  DEFAULT_FALLBACKS,
+} from '../utils/errors';
 
 const DEFAULT_TEAM_ID = '10'; // Tennessee Titans
 const CACHE_TTL = 30000; // 30 seconds for NFL data
@@ -120,7 +126,7 @@ export interface NflTeamResponse {
 export async function getNflTeam(
   teamId: string = DEFAULT_TEAM_ID,
   apiBase: string = resolveDefaultApiBase(),
-  fetcher: Fetcher = fetch,
+  fetcher: Fetcher = fetch
 ): Promise<NflTeamResponse> {
   const url = buildUrl(apiBase, 'nfl', { teamId });
   const cacheKey = `nfl-team-${teamId}`;
@@ -193,7 +199,7 @@ export interface NflStandingsResponse {
 
 export async function getNflStandings(
   apiBase: string = resolveDefaultApiBase(),
-  fetcher: Fetcher = fetch,
+  fetcher: Fetcher = fetch
 ): Promise<NflStandingsResponse> {
   const url = buildUrl(apiBase, 'nfl-standings');
   const cacheKey = 'nfl-standings';

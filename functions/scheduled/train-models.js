@@ -30,7 +30,7 @@ export async function scheduled(event, env, ctx) {
     runId,
     startTime: new Date(startTime).toISOString(),
     models: [],
-    errors: []
+    errors: [],
   };
 
   // Sports to train models for
@@ -49,28 +49,27 @@ export async function scheduled(event, env, ctx) {
         samples: result.samples,
         metrics: result.metrics,
         duration: result.duration,
-        success: true
+        success: true,
       });
 
       console.log(`[${runId}] ${sport} model trained successfully`);
 
       // Generate projections for all active players
       await generateProjectionsForAllPlayers(env, sport, result.modelId);
-
     } catch (error) {
       console.error(`[${runId}] Failed to train ${sport} model:`, error);
 
       results.errors.push({
         sport,
         error: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
 
       // Log error to Analytics Engine
       env.ANALYTICS?.writeDataPoint({
         blobs: [`model_training_error_${sport}`],
         doubles: [1],
-        indexes: [sport, runId]
+        indexes: [sport, runId],
       });
     }
   }
@@ -89,12 +88,12 @@ export async function scheduled(event, env, ctx) {
   env.ANALYTICS?.writeDataPoint({
     blobs: ['model_training_completed'],
     doubles: [results.models.length, results.errors.length, totalDuration],
-    indexes: [runId, new Date().toISOString()]
+    indexes: [runId, new Date().toISOString()],
   });
 
   // Store results in KV for monitoring dashboard
   await env.CACHE?.put(`train_results:${runId}`, JSON.stringify(results), {
-    expirationTtl: 86400 * 7 // Keep for 7 days
+    expirationTtl: 86400 * 7, // Keep for 7 days
   });
 
   return results;
@@ -107,7 +106,8 @@ async function generateProjectionsForAllPlayers(env, sport, modelId) {
   console.log(`Generating projections for all ${sport} players...`);
 
   // Get all active players without recent projections
-  const players = await env.DB.prepare(`
+  const players = await env.DB.prepare(
+    `
     SELECT p.player_id
     FROM players p
     LEFT JOIN player_projections pp
@@ -117,7 +117,10 @@ async function generateProjectionsForAllPlayers(env, sport, modelId) {
       AND p.active = 1
       AND pp.projection_id IS NULL
     LIMIT 1000
-  `).bind(modelId, sport).all();
+  `
+  )
+    .bind(modelId, sport)
+    .all();
 
   if (!players.results || players.results.length === 0) {
     console.log(`No players need projections for ${sport}`);
@@ -132,13 +135,15 @@ async function generateProjectionsForAllPlayers(env, sport, modelId) {
     const batch = players.results.slice(i, i + batchSize);
 
     // Call projection API for each player
-    const promises = batch.map(player =>
+    const promises = batch.map((player) =>
       generateSingleProjection(env, player.player_id, sport, modelId)
     );
 
     await Promise.allSettled(promises);
 
-    console.log(`Processed batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(players.results.length / batchSize)}`);
+    console.log(
+      `Processed batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(players.results.length / batchSize)}`
+    );
   }
 
   console.log(`Completed projection generation for ${sport}`);
@@ -152,16 +157,24 @@ async function generateSingleProjection(env, playerId, sport, modelId) {
     // This would typically call the projection API endpoint
     // For now, we'll directly generate using the baseline logic
 
-    const player = await env.DB.prepare(`
+    const player = await env.DB.prepare(
+      `
       SELECT * FROM players WHERE player_id = ? AND sport = ?
-    `).bind(playerId, sport).first();
+    `
+    )
+      .bind(playerId, sport)
+      .first();
 
     if (!player) return;
 
     // Get model from database
-    const model = await env.DB.prepare(`
+    const model = await env.DB.prepare(
+      `
       SELECT * FROM predictive_models WHERE model_id = ?
-    `).bind(modelId).first();
+    `
+    )
+      .bind(modelId)
+      .first();
 
     if (!model) return;
 
@@ -182,36 +195,39 @@ async function generateSingleProjection(env, playerId, sport, modelId) {
       comparable_players: JSON.stringify([]),
       notes: 'Auto-generated from nightly training',
       projected_at: Math.floor(Date.now() / 1000),
-      updated_at: Math.floor(Date.now() / 1000)
+      updated_at: Math.floor(Date.now() / 1000),
     };
 
     // Store projection
-    await env.DB.prepare(`
+    await env.DB.prepare(
+      `
       INSERT INTO player_projections (
         projection_id, player_id, sport, model_id,
         draft_round_expected, mlb_eta, ceiling, floor, confidence,
         current_skills, projected_growth, development_timeline,
         comparable_players, notes, projected_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      projection.projection_id,
-      projection.player_id,
-      projection.sport,
-      projection.model_id,
-      projection.draft_round_expected,
-      projection.mlb_eta,
-      projection.ceiling,
-      projection.floor,
-      projection.confidence,
-      projection.current_skills,
-      projection.projected_growth,
-      projection.development_timeline,
-      projection.comparable_players,
-      projection.notes,
-      projection.projected_at,
-      projection.updated_at
-    ).run();
-
+    `
+    )
+      .bind(
+        projection.projection_id,
+        projection.player_id,
+        projection.sport,
+        projection.model_id,
+        projection.draft_round_expected,
+        projection.mlb_eta,
+        projection.ceiling,
+        projection.floor,
+        projection.confidence,
+        projection.current_skills,
+        projection.projected_growth,
+        projection.development_timeline,
+        projection.comparable_players,
+        projection.notes,
+        projection.projected_at,
+        projection.updated_at
+      )
+      .run();
   } catch (error) {
     console.error(`Failed to generate projection for player ${playerId}:`, error);
   }

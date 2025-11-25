@@ -23,22 +23,26 @@ Range validation ensures numeric values fall within physically possible or stati
 **Rule:** `0.0 ≤ batting_avg ≤ 1.0`
 
 **Rationale:**
+
 - Batting average is hits/at-bats, mathematically bounded by [0, 1]
 - 0.000 = no hits (common for pitchers)
 - 1.000 = hit every at-bat (possible in small samples)
 
 **Edge Cases:**
+
 - **Small sample sizes:** College player goes 3-for-3 in first game → BA = 1.000 ✅ VALID
 - **Pitcher batting:** 0-for-season is normal → BA = 0.000 ✅ VALID
 - **Negative values:** BA = -0.123 ❌ FAIL (data error)
 - **Greater than 1:** BA = 1.234 ❌ FAIL (calculation error)
 
 **Common Failures:**
+
 - Scraper divides incorrectly (RBI/AB instead of H/AB)
 - API returns percentage as decimal (45.6 instead of 0.456)
 - Missing decimal point conversion
 
 **Fix Strategy:**
+
 ```typescript
 // Check if value is a percentage (>1 but <100)
 if (ba > 1.0 && ba < 100) {
@@ -53,6 +57,7 @@ if (ba > 1.0 && ba < 100) {
 **Rule:** `40 mph ≤ pitch_velocity ≤ 110 mph`
 
 **Rationale:**
+
 - **Lower bound (40 mph):** Slowest college pitches (eephus, knuckleball)
   - Typical college fastball: 85-95 mph
   - Changeups: 75-85 mph
@@ -64,17 +69,20 @@ if (ba > 1.0 && ba < 100) {
   - 110 mph allows headroom for measurement error
 
 **Edge Cases:**
+
 - **Extremely slow pitch:** 42 mph eephus in college game ✅ VALID (but flagged by MAD)
 - **Radar gun error:** 115 mph reading ❌ FAIL (physically impossible)
 - **KMH vs MPH confusion:** 145 kph = 90 mph ✅ (but raw 145 mph ❌ FAIL)
 - **Youth baseball:** 35 mph fastball in little league ❌ FAIL (use different thresholds for youth data)
 
 **Common Failures:**
+
 - API returns km/h instead of mph
 - Decimal point error (951 instead of 95.1)
 - Radar gun calibration issues
 
 **Fix Strategy:**
+
 ```typescript
 // Check if value is likely km/h
 if (velocity > 110 && velocity < 180) {
@@ -83,6 +91,7 @@ if (velocity > 110 && velocity < 180) {
 ```
 
 **Sport-Specific Adjustments:**
+
 - **MLB:** Use 40-110 mph (same)
 - **College:** Use 40-105 mph (more restrictive upper bound)
 - **High School:** Use 40-100 mph
@@ -95,6 +104,7 @@ if (velocity > 110 && velocity < 180) {
 **Rule:** `0 mph ≤ exit_velocity ≤ 120 mph`
 
 **Rationale:**
+
 - **Lower bound (0 mph):** Foul tip, missed swing contact
 - **Upper bound (120 mph):** Elite contact
   - MLB record: ~122-124 mph (Giancarlo Stanton, Aaron Judge)
@@ -102,12 +112,14 @@ if (velocity > 110 && velocity < 180) {
   - 120 mph allows headroom
 
 **Edge Cases:**
+
 - **No contact:** exit_velocity = null/undefined (not 0) ✅ VALID
 - **Weak contact:** 15 mph dribbler ✅ VALID
 - **Elite contact:** 118 mph line drive ✅ VALID (flagged by MAD for college)
 - **Measurement error:** 250 mph ❌ FAIL
 
 **Common Failures:**
+
 - Conflating exit velocity with pitch velocity
 - Unit conversion errors
 - Bat speed vs exit velocity confusion
@@ -119,6 +131,7 @@ if (velocity > 110 && velocity < 180) {
 **Rule:** `0.0 ≤ ERA ≤ 99.99`
 
 **Rationale:**
+
 - **Lower bound (0.00):** Perfect season (no earned runs)
 - **Upper bound (99.99):** Worst possible ERA in reasonable sample
   - ERA = (Earned Runs × 9) / Innings Pitched
@@ -126,17 +139,20 @@ if (velocity > 110 && velocity < 180) {
   - Infinite ERA (0 IP, 1 ER) → Set to 99.99 by convention
 
 **Edge Cases:**
+
 - **Perfect record:** 0.00 ERA in 30 IP ✅ VALID
 - **Terrible outing:** 1 IP, 9 ER → ERA = 81.00 ✅ VALID (but extreme outlier)
 - **Infinite ERA:** 0 IP, 1 ER → Set to 99.99 ✅ VALID (by convention)
 - **Negative ERA:** -2.45 ❌ FAIL (calculation error)
 
 **Common Failures:**
+
 - Division by zero (0 IP)
 - Unearned runs counted as earned
 - Formula error (missing ×9 multiplier)
 
 **Fix Strategy:**
+
 ```typescript
 // Handle infinite ERA
 if (inningsPitched === 0 && earnedRuns > 0) {
@@ -153,6 +169,7 @@ if (inningsPitched === 0 && earnedRuns > 0) {
 **Rule:** `0 rpm ≤ spin_rate ≤ 4000 rpm`
 
 **Rationale:**
+
 - **Lower bound (0 rpm):** Knuckleball (~500-1000 rpm typical)
 - **Upper bound (4000 rpm):** Elite breaking balls
   - Fastballs: 2000-2700 rpm (high spin = "rising" fastball)
@@ -161,6 +178,7 @@ if (inningsPitched === 0 && earnedRuns > 0) {
   - 4000 rpm allows headroom
 
 **Edge Cases:**
+
 - **Knuckleball:** 600 rpm ✅ VALID
 - **Elite curveball:** 3400 rpm ✅ VALID
 - **Measurement error:** 6000 rpm ❌ FAIL
@@ -178,21 +196,25 @@ Ensures all required fields are present and non-empty.
 **Rule:** Game records must have: `game_id`, `timestamp`, `home_team`, `away_team`
 
 **Rationale:**
+
 - **game_id:** Unique identifier for deduplication and lookups
 - **timestamp:** When the game occurred (for time-series analysis)
 - **home_team / away_team:** Core entities
 
 **Optional but Recommended:**
+
 - `home_score` / `away_score` (required if status = 'FINAL')
 - `venue` (for home field advantage analysis)
 - `season` (for year-over-year comparisons)
 
 **Edge Cases:**
+
 - **Scheduled game with no scores:** ✅ VALID if status = 'SCHEDULED'
 - **Final game missing scores:** ❌ FAIL
 - **Neutral site game:** `home_team` = lower seed by convention
 
 **Common Failures:**
+
 - API pagination cuts off fields
 - Scraper regex misses nested fields
 - Database schema mismatch
@@ -204,14 +226,17 @@ Ensures all required fields are present and non-empty.
 **Rule:** Player records must have: `player_id`, `player_name`, `team_id`
 
 **Plus at least one stat field:**
+
 - Batting: `at_bats`, `hits`, `batting_avg`
 - Pitching: `innings_pitched`, `earned_runs`, `era`
 
 **Rationale:**
+
 - Empty stat lines are useless
 - Need identifier for joins/lookups
 
 **Edge Cases:**
+
 - **DNP (Did Not Play):** Omit record entirely, don't store empty stats
 - **Pitcher with 0 IP:** ❌ REJECT (didn't actually pitch)
 - **Batter with 0 AB:** ✅ VALID if BB/HBP/SF (reached base without AB)
@@ -227,6 +252,7 @@ Ensures data is internally coherent.
 **Rule:** Box score totals must match sum of play-by-play events
 
 **Checks:**
+
 - Total runs = sum of scoring plays
 - Total hits = sum of hit events
 - Total errors = sum of error plays
@@ -234,16 +260,19 @@ Ensures data is internally coherent.
 **Tolerance:** 0 (must be exact)
 
 **Edge Cases:**
+
 - **Defensive indifference:** Not an error ✅ Totals may differ
 - **Catcher interference:** Reached base but no hit ✅ Check official scoring
 - **Sacrifice flies:** No AB but RBI counted ✅ This is correct
 
 **Common Failures:**
+
 - Play-by-play data incomplete (missing innings)
 - Box score includes unearned runs in totals
 - Scraper double-counts events
 
 **Example:**
+
 ```
 Box Score: 5 runs, 8 hits, 1 error
 Play-by-Play Sum: 5 runs, 7 hits, 1 error
@@ -259,16 +288,19 @@ Play-by-Play Sum: 5 runs, 7 hits, 1 error
 **Tolerance:** 0.001 (0.1% for rounding)
 
 **Rationale:**
+
 - Probabilities must sum to 100%
 - Allow tiny rounding errors from float math
 
 **Edge Cases:**
+
 - **Baseball (no ties):** `tie_prob = 0` or `undefined` ✅ VALID
 - **Football (overtime):** `tie_prob > 0` ✅ VALID
 - **Rounding error:** Sum = 0.9997 ✅ VALID (within tolerance)
 - **Bad simulation:** Sum = 1.15 ❌ FAIL
 
 **Common Failures:**
+
 - Monte Carlo simulation didn't normalize
 - Forgot to include tie probability
 - Percentage vs decimal confusion (110% vs 1.10)
@@ -280,15 +312,18 @@ Play-by-Play Sum: 5 runs, 7 hits, 1 error
 **Rule:** Each outcome probability in [0, 1] and sum ≈ 1.0
 
 **Checks:**
+
 1. All probabilities are valid: `0 ≤ p ≤ 1`
 2. Sum of all probabilities ≈ 1.0 (within tolerance)
 
 **Edge Cases:**
+
 - **High-scoring game distribution:** 100+ possible outcomes ✅ VALID
 - **Truncated distribution:** Only top 20 outcomes (sum = 0.85) ⚠️ WARNING (document truncation)
 - **Negative probability:** ❌ FAIL
 
 **Example:**
+
 ```json
 {
   "score_distribution": [
@@ -310,12 +345,14 @@ Ensures timestamps and dates are valid.
 **Rule:** Must be valid ISO 8601 format
 
 **Examples:**
+
 - ✅ `2025-03-15T14:30:00Z` (UTC)
 - ✅ `2025-03-15T09:30:00-05:00` (America/Chicago)
 - ❌ `03/15/2025 2:30 PM` (non-ISO format)
 - ❌ `2025-13-45T99:99:99Z` (invalid date/time)
 
 **Timezone Requirement:**
+
 - All scrape timestamps must include timezone
 - Prefer `America/Chicago` for Blaze Sports Intel
 
@@ -326,15 +363,18 @@ Ensures timestamps and dates are valid.
 **Rule:** Game timestamps in the past (unless status = 'SCHEDULED')
 
 **Rationale:**
+
 - Final games can't be in the future
 - Scheduled games can be future dates
 
 **Edge Cases:**
+
 - **Game scheduled tomorrow:** ✅ VALID if status = 'SCHEDULED'
 - **Final game tomorrow:** ❌ FAIL (impossible)
 - **Time zone confusion:** Game at 1am UTC is yesterday in US ✅ Handle correctly
 
 **Common Failures:**
+
 - Server clock drift
 - Timezone conversion errors
 - API returns future timestamp for completed game
@@ -346,18 +386,21 @@ Ensures timestamps and dates are valid.
 **Rule:** Game date should align with declared season year
 
 **Logic:**
+
 - **College Baseball Season:** February - June
   - Feb-Jun game → season = current year
   - Oct-Dec scheduling → season = next year (fall ball)
   - Jul-Sep → warning (summer leagues)
 
 **Edge Cases:**
+
 - **Fall scheduling:** October 2025 game with season=2026 ✅ VALID
 - **Regional playoffs:** June game is still 2025 season ✅ VALID
 - **Summer league:** July game with season=2025 ⚠️ WARNING (document as summer ball)
 - **Bad data:** March 2025 game with season=2030 ❌ FAIL
 
 **Example:**
+
 ```
 Game: 2025-03-15
 Season: 2025
@@ -379,11 +422,13 @@ Season: 2024
 ### MAD (Median Absolute Deviation) Method
 
 **Why MAD instead of Standard Deviation?**
+
 - Standard deviation is sensitive to outliers (circular logic)
 - MAD is robust to outliers
 - Better for small sample sizes (common in college sports)
 
 **Formula:**
+
 ```
 1. Calculate median of all values: M
 2. Calculate absolute deviations: |x - M| for each x
@@ -392,6 +437,7 @@ Season: 2024
 ```
 
 **Interpretation:**
+
 - MAD Score < 3: Typical value
 - MAD Score 3-5: Unusual but plausible
 - MAD Score 5-7: Outlier, flag for review
@@ -402,18 +448,21 @@ Season: 2024
 ### Threshold Selection
 
 **Permissive Threshold (5.0 MADs):**
+
 - Default for production
 - Flags ~1-5% of records
 - Minimizes false positives
 - Use for college baseball (high variance)
 
 **Strict Threshold (7.0 MADs):**
+
 - For historical migrations
 - Flags ~0.1-1% of records
 - Only extreme outliers
 - Use for professional sports (lower variance)
 
 **Custom Thresholds:**
+
 - **Batting Average:** 5.0 MADs (college has wide variance)
 - **Pitch Velocity:** 4.0 MADs (tighter distribution)
 - **Exit Velocity:** 5.0 MADs (equipment variance)
@@ -423,10 +472,12 @@ Season: 2024
 ### Outlier Recommendations
 
 **ACCEPT (MAD Score < 5.0):**
+
 - Normal range
 - Ingest without flagging
 
 **FLAG (MAD Score 5.0 - 7.0):**
+
 - Unusual but possible
 - Could be legitimate exceptional performance
 - Ingest but mark for human review
@@ -436,6 +487,7 @@ Season: 2024
   - Team scores 20 runs (scoring outlier)
 
 **REJECT (MAD Score > 7.0):**
+
 - Extremely unlikely
 - Probably data error
 - Don't auto-delete, but flag strongly
@@ -449,16 +501,19 @@ Season: 2024
 ### Sport-Specific Outlier Handling
 
 **College Baseball:**
+
 - More permissive (5.0 MAD threshold)
 - Small sample sizes create outliers
 - Conference mismatches (D1 vs D3 scrimmage)
 
 **MLB:**
+
 - More strict (4.0 MAD threshold)
 - Larger sample sizes
 - Better data quality
 
 **NFL:**
+
 - Moderate (4.5 MAD threshold)
 - Weekly data only (small N)
 - High scoring variance normal
@@ -468,11 +523,13 @@ Season: 2024
 ## Confidence Score Filtering
 
 **What is Confidence Score?**
+
 - Optional field from scraper: 0.0 - 1.0 scale
 - Indicates scraper's certainty in data accuracy
 - Based on parse quality, data completeness, source reliability
 
 **Example Scoring:**
+
 ```typescript
 let confidence = 1.0;
 
@@ -490,13 +547,15 @@ if (dataAge > 24_hours) confidence -= 0.15;
 ```
 
 **QC Usage:**
+
 ```typescript
 {
-  min_confidence_score: 0.7 // Reject scores below 0.7
+  min_confidence_score: 0.7; // Reject scores below 0.7
 }
 ```
 
 **Thresholds:**
+
 - **0.9+:** High confidence (API with validation)
 - **0.7-0.9:** Medium confidence (parsed HTML)
 - **0.5-0.7:** Low confidence (unreliable source)
@@ -511,6 +570,7 @@ if (dataAge > 24_hours) confidence -= 0.15;
 **Scenario:** Player listed in roster but DNP (did not play)
 
 **Handling:**
+
 - ✅ Omit from data entirely (don't create empty records)
 - ❌ Don't store all nulls/zeros
 
@@ -521,6 +581,7 @@ if (dataAge > 24_hours) confidence -= 0.15;
 **Scenario:** Player has 1 AB or 0.1 IP
 
 **Handling:**
+
 - ✅ Include in dataset (valid stat line)
 - ⚠️ May trigger outlier flags (small sample)
 - Document role (PH, PR, defensive sub)
@@ -532,6 +593,7 @@ if (dataAge > 24_hours) confidence -= 0.15;
 **Scenario:** Two games same day, same teams
 
 **Handling:**
+
 - Must have unique `game_id` (append -1, -2 suffix)
 - Same `timestamp` date but different game instances
 - Validate separately
@@ -543,6 +605,7 @@ if (dataAge > 24_hours) confidence -= 0.15;
 **Scenario:** Game status = 'POSTPONED' or 'CANCELLED'
 
 **Handling:**
+
 - ✅ Store game record with status
 - ❌ Don't require scores (null is valid)
 - Include reason if available (weather, COVID, etc.)
@@ -554,6 +617,7 @@ if (dataAge > 24_hours) confidence -= 0.15;
 **Scenario:** NCAA tournament, bowl games
 
 **Handling:**
+
 - Designate `home_team` = higher seed or alphabetically first
 - Store `venue` separately
 - Flag as neutral site in metadata
@@ -565,6 +629,7 @@ if (dataAge > 24_hours) confidence -= 0.15;
 **Scenario:** Game goes beyond regulation
 
 **Handling:**
+
 - ✅ High scores are normal
 - Don't flag as outliers
 - Include `extra_innings: true` in metadata
@@ -576,6 +641,7 @@ if (dataAge > 24_hours) confidence -= 0.15;
 **Scenario:** Different thresholds needed
 
 **Handling:**
+
 - Define separate validation profiles
 - Adjust pitch velocity ranges
 - Account for smaller fields (exit velo)
@@ -593,21 +659,25 @@ const YOUTH_THRESHOLDS = {
 ## Common Data Quality Issues by Source
 
 ### ESPN API
+
 - ✅ Good: Real-time updates, comprehensive
 - ❌ Issues: Rate limiting, incomplete college coverage
 - **Fix:** Use as tertiary source, prefer NCAA/SportsDataIO
 
 ### NCAA Stats
+
 - ✅ Good: Official data, complete box scores
 - ❌ Issues: Delayed updates, inconsistent formatting
 - **Fix:** Batch scraping at night, normalize team names
 
 ### SportsDataIO
+
 - ✅ Good: Reliable, well-structured
 - ❌ Issues: Expensive, limited free tier
 - **Fix:** Cache aggressively, use for critical games
 
 ### Custom Web Scraping
+
 - ✅ Good: Can access any source
 - ❌ Issues: Fragile to HTML changes, incomplete data
 - **Fix:** High confidence threshold (0.9+), manual review
@@ -617,22 +687,26 @@ const YOUTH_THRESHOLDS = {
 ## Validation Rule Priorities
 
 **Critical (Auto-Reject):**
+
 1. Negative scores
 2. Future timestamps (for final games)
 3. Missing required fields
 4. Invalid probability ranges
 
 **High Priority (Flag Strongly):**
+
 1. Extreme outliers (>7 MADs)
 2. Box score inconsistencies
 3. Season alignment errors
 
 **Medium Priority (Warning):**
+
 1. Moderate outliers (5-7 MADs)
 2. Low confidence scores
 3. Missing optional fields
 
 **Low Priority (Log Only):**
+
 1. Minor outliers (3-5 MADs)
 2. Formatting inconsistencies
 3. Unusual but valid data
@@ -642,6 +716,7 @@ const YOUTH_THRESHOLDS = {
 ## Conclusion
 
 These validation rules are designed to:
+
 1. **Catch real errors** (impossible values, calculation bugs)
 2. **Flag suspicious data** (extreme outliers, inconsistencies)
 3. **Preserve legitimate outliers** (career-high performances)

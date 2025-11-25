@@ -23,13 +23,15 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   }
 
   try {
     const url = new URL(request.url);
-    const season = url.searchParams.get('season') ? parseInt(url.searchParams.get('season')!) : undefined;
+    const season = url.searchParams.get('season')
+      ? parseInt(url.searchParams.get('season')!)
+      : undefined;
     const conferenceFilter = url.searchParams.get('conference');
 
     // Create adapter with env API key
@@ -43,11 +45,11 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
         JSON.stringify({
           error: 'Failed to fetch NCAA Football standings',
           details: response.error,
-          source: response.source
+          source: response.source,
         }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
     }
@@ -56,14 +58,14 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
 
     // Filter by conference if specified
     if (conferenceFilter) {
-      standings = standings.filter(t =>
-        t.Conference.toLowerCase() === conferenceFilter.toLowerCase()
+      standings = standings.filter(
+        (t) => t.Conference.toLowerCase() === conferenceFilter.toLowerCase()
       );
     }
 
     // Organize by conference
     const conferences: Record<string, typeof standings> = {};
-    standings.forEach(team => {
+    standings.forEach((team) => {
       if (!conferences[team.Conference]) {
         conferences[team.Conference] = [];
       }
@@ -71,7 +73,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     });
 
     // Sort each conference by wins
-    Object.keys(conferences).forEach(conf => {
+    Object.keys(conferences).forEach((conf) => {
       conferences[conf].sort((a, b) => b.Wins - a.Wins);
     });
 
@@ -81,7 +83,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
         season: season || new Date().getFullYear(),
         standings: {
           byConference: conferences,
-          all: standings.sort((a, b) => b.Wins - a.Wins)
+          all: standings.sort((a, b) => b.Wins - a.Wins),
         },
         rawData: standings,
         source: response.source,
@@ -91,16 +93,16 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
           dataProvider: 'SportsDataIO',
           timezone: 'America/Chicago',
           cached: response.source.cacheHit,
-          filterApplied: conferenceFilter || 'none'
-        }
+          filterApplied: conferenceFilter || 'none',
+        },
       }),
       {
         status: 200,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300' // 5 minutes
-        }
+          'Cache-Control': 'public, max-age=300', // 5 minutes
+        },
       }
     );
   } catch (error) {
@@ -109,11 +111,11 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       JSON.stringify({
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }

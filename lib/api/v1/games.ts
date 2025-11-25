@@ -107,14 +107,7 @@ export interface GameDetailResponse extends Game {
  * List games with filters
  */
 export async function getGames(params: GamesQueryParams): Promise<GamesResponse> {
-  const {
-    date,
-    status,
-    conference,
-    teamId,
-    limit = 50,
-    offset = 0,
-  } = params;
+  const { date, status, conference, teamId, limit = 50, offset = 0 } = params;
 
   // Validate and clamp limit
   const safeLimit = Math.min(Math.max(limit, 1), 100);
@@ -161,10 +154,7 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
 
   // Filter by team
   if (teamId) {
-    where.OR = [
-      { homeTeamId: teamId },
-      { awayTeamId: teamId },
-    ];
+    where.OR = [{ homeTeamId: teamId }, { awayTeamId: teamId }];
   }
 
   // Execute queries in parallel
@@ -207,10 +197,7 @@ export async function getGames(params: GamesQueryParams): Promise<GamesResponse>
           },
         },
       },
-      orderBy: [
-        { scheduledAt: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ scheduledAt: 'desc' }, { createdAt: 'desc' }],
       take: safeLimit,
       skip: offset,
     }),

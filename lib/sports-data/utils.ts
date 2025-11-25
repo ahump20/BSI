@@ -21,7 +21,7 @@ export const formatCurrency = (value: number | string, currency: string = 'USD')
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(num);
 };
 
@@ -32,7 +32,10 @@ export const formatPercentage = (value: number, decimals: number = 1): string =>
 /**
  * Formats timestamps to America/Chicago timezone (as per user requirements)
  */
-export const formatTimestamp = (timestamp: Date | string | number, format: 'short' | 'long' | 'relative' = 'short'): string => {
+export const formatTimestamp = (
+  timestamp: Date | string | number,
+  format: 'short' | 'long' | 'relative' = 'short'
+): string => {
   const date = new Date(timestamp);
 
   if (format === 'relative') {
@@ -58,7 +61,7 @@ export const formatTimestamp = (timestamp: Date | string | number, format: 'shor
       hour: '2-digit',
       minute: '2-digit',
       timeZone: 'America/Chicago',
-      timeZoneName: 'short'
+      timeZoneName: 'short',
     });
   }
 
@@ -68,7 +71,7 @@ export const formatTimestamp = (timestamp: Date | string | number, format: 'shor
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    timeZone: 'America/Chicago'
+    timeZone: 'America/Chicago',
   });
 };
 
@@ -83,7 +86,7 @@ export const getDataStamp = (): string => {
     hour: '2-digit',
     minute: '2-digit',
     timeZone: 'America/Chicago',
-    timeZoneName: 'short'
+    timeZoneName: 'short',
   });
 };
 
@@ -116,7 +119,7 @@ export const calculateMovingAverage = (values: number[], period: number = 5): (n
 
 export const calculatePercentile = (value: number, dataset: number[]): number => {
   const sorted = [...dataset].sort((a, b) => a - b);
-  const below = sorted.filter(v => v < value).length;
+  const below = sorted.filter((v) => v < value).length;
   return (below / sorted.length) * 100;
 };
 
@@ -143,13 +146,17 @@ export const exportToCSV = (data: any[], filename: string): void => {
   const headers = Object.keys(data[0]);
   const csvContent = [
     headers.join(','),
-    ...data.map(row => headers.map(header => {
-      const value = row[header];
-      const stringValue = String(value ?? '');
-      return stringValue.includes(',') || stringValue.includes('"')
-        ? `"${stringValue.replace(/"/g, '""')}"`
-        : stringValue;
-    }).join(','))
+    ...data.map((row) =>
+      headers
+        .map((header) => {
+          const value = row[header];
+          const stringValue = String(value ?? '');
+          return stringValue.includes(',') || stringValue.includes('"')
+            ? `"${stringValue.replace(/"/g, '""')}"`
+            : stringValue;
+        })
+        .join(',')
+    ),
   ].join('\n');
 
   downloadFile(csvContent, `${filename}_${getTimestamp()}.csv`, 'text/csv');
@@ -173,22 +180,22 @@ const downloadFile = (content: string, filename: string, mimeType: string): void
 
 const getTimestamp = (): string => {
   const now = new Date();
-  return now.toISOString()
-    .replace(/T/, '_')
-    .replace(/:/g, '-')
-    .split('.')[0];
+  return now.toISOString().replace(/T/, '_').replace(/:/g, '-').split('.')[0];
 };
 
 // ==================== API HELPERS ====================
 
-export const fetchAPI = async (url: string, options: RequestInit = {}): Promise<{success: boolean, data: any, error: string | null}> => {
+export const fetchAPI = async (
+  url: string,
+  options: RequestInit = {}
+): Promise<{ success: boolean; data: any; error: string | null }> => {
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers
-      }
+        ...options.headers,
+      },
     });
 
     if (!response.ok) {
@@ -219,11 +226,11 @@ export const debounce = <T extends (...args: any[]) => any>(func: T, wait: numbe
 
 export const throttle = <T extends (...args: any[]) => any>(func: T, limit: number) => {
   let inThrottle: boolean;
-  return function(...args: Parameters<T>) {
+  return function (...args: Parameters<T>) {
     if (!inThrottle) {
       func.apply(this, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 };

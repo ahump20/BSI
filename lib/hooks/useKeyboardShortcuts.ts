@@ -30,11 +30,7 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[], enabled: boolean = t
 
       // Skip if user is typing in an input field
       const target = event.target as HTMLElement;
-      if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      ) {
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         // Allow Escape to always work
         if (event.key !== 'Escape') return;
       }
@@ -52,7 +48,14 @@ export function useKeyboardShortcuts(shortcuts: Shortcut[], enabled: boolean = t
           (shortcut.ctrl && event.ctrlKey) ||
           (!shortcut.meta && !shortcut.ctrl);
 
-        if (keyMatches && ctrlMatches && metaMatches && shiftMatches && altMatches && modifierMatches) {
+        if (
+          keyMatches &&
+          ctrlMatches &&
+          metaMatches &&
+          shiftMatches &&
+          altMatches &&
+          modifierMatches
+        ) {
           event.preventDefault();
           event.stopPropagation();
           shortcut.action();

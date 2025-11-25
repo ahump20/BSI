@@ -3,7 +3,7 @@ import type {
   ScenarioSimulationRequest,
   ScenarioSimulationResponse,
   ScenarioSimulationTeamResult,
-  ScenarioAdjustment
+  ScenarioAdjustment,
 } from './types';
 
 interface TeamAccumulator {
@@ -34,7 +34,7 @@ function computeScenarioHash(payload: ScenarioSimulationRequest): string {
     iterations: payload.iterations,
     adjustments: payload.adjustments,
     protectSeeds: payload.protectSeeds,
-    chaosFactor: payload.chaosFactor
+    chaosFactor: payload.chaosFactor,
   });
 
   let hash = 0;
@@ -46,7 +46,10 @@ function computeScenarioHash(payload: ScenarioSimulationRequest): string {
   return `cfp-${Math.abs(hash).toString(36)}`;
 }
 
-function applyAdjustments(team: string, adjustments: ScenarioAdjustment[]): ScenarioAdjustment | undefined {
+function applyAdjustments(
+  team: string,
+  adjustments: ScenarioAdjustment[]
+): ScenarioAdjustment | undefined {
   return adjustments.find((adjustment) => adjustment.team === team);
 }
 
@@ -79,7 +82,9 @@ function finalizeResults(
       const playoffOdds = stats.inclusionCount / iterations;
       const avgSeed = stats.inclusionCount > 0 ? stats.seedTotal / stats.inclusionCount : 6.5;
       const topTwoOdds = stats.topTwoCount / iterations;
-      const volatilityIndex = Math.sqrt(Math.max(stats.scoreSqSum / iterations - (stats.scoreSum / iterations) ** 2, 0));
+      const volatilityIndex = Math.sqrt(
+        Math.max(stats.scoreSqSum / iterations - (stats.scoreSum / iterations) ** 2, 0)
+      );
 
       return {
         team,
@@ -88,7 +93,7 @@ function finalizeResults(
         topTwoOdds,
         medianSeed: computeMedianSeed(stats.seedCounts),
         volatilityIndex,
-        inclusionCount: stats.inclusionCount
+        inclusionCount: stats.inclusionCount,
       };
     })
     .sort((a, b) => {
@@ -106,11 +111,13 @@ function createAccumulator(): TeamAccumulator {
     topTwoCount: 0,
     scoreSum: 0,
     scoreSqSum: 0,
-    seedCounts: new Map<number, number>()
+    seedCounts: new Map<number, number>(),
   };
 }
 
-export function runScenarioSimulation(payload: ScenarioSimulationRequest = {}): ScenarioSimulationResponse {
+export function runScenarioSimulation(
+  payload: ScenarioSimulationRequest = {}
+): ScenarioSimulationResponse {
   const iterations = Math.min(Math.max(payload.iterations ?? 2500, 500), 20000);
   const chaosFactor = Math.max(Math.min(payload.chaosFactor ?? 1.0, 2.5), 0.25);
   const adjustments = normalizeAdjustments(payload.adjustments ?? []);
@@ -138,7 +145,8 @@ export function runScenarioSimulation(payload: ScenarioSimulationRequest = {}): 
         : 0;
       const autoBidBonus = adjustment?.autoBid ? AUTO_BID_BONUS : 0;
 
-      const totalScore = baseline * BASELINE_WEIGHT + chaos + adjustmentBonus + autoBidBonus + protectedBonus;
+      const totalScore =
+        baseline * BASELINE_WEIGHT + chaos + adjustmentBonus + autoBidBonus + protectedBonus;
 
       const accumulator = accumulators.get(entry.team)!;
       accumulator.scoreSum += totalScore;
@@ -147,7 +155,7 @@ export function runScenarioSimulation(payload: ScenarioSimulationRequest = {}): 
       return {
         team: entry.team,
         score: totalScore,
-        baseSeed: entry.projectedSeed
+        baseSeed: entry.projectedSeed,
       };
     });
 
@@ -183,7 +191,9 @@ export function runScenarioSimulation(payload: ScenarioSimulationRequest = {}): 
     );
   }
   if (bubbleWatch.length > 0) {
-    narrative.push(`Bubble volatility spotlights ${bubbleWatch.slice(0, 3).join(', ')} in this run.`);
+    narrative.push(
+      `Bubble volatility spotlights ${bubbleWatch.slice(0, 3).join(', ')} in this run.`
+    );
   }
   narrative.push(`Chaos factor set to ${(chaosFactor * 100).toFixed(0)}% of baseline variance.`);
 
@@ -194,6 +204,6 @@ export function runScenarioSimulation(payload: ScenarioSimulationRequest = {}): 
     projectedField,
     teams,
     bubbleWatch,
-    narrative
+    narrative,
   };
 }

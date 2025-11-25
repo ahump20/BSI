@@ -256,32 +256,32 @@ export async function getPlayerById(id: string): Promise<PlayerDetailResponse | 
   );
 
   // Calculate career averages
-  const careerBattingAvg = careerBattingStats.atBats > 0
-    ? careerBattingStats.hits / careerBattingStats.atBats
-    : 0;
+  const careerBattingAvg =
+    careerBattingStats.atBats > 0 ? careerBattingStats.hits / careerBattingStats.atBats : 0;
 
-  const careerOnBasePct = careerBattingStats.atBats > 0
-    ? (careerBattingStats.hits + careerBattingStats.walks) /
-      (careerBattingStats.atBats + careerBattingStats.walks)
-    : 0;
+  const careerOnBasePct =
+    careerBattingStats.atBats > 0
+      ? (careerBattingStats.hits + careerBattingStats.walks) /
+        (careerBattingStats.atBats + careerBattingStats.walks)
+      : 0;
 
   const totalBases = player.playerStats.reduce(
-    (acc, stats) =>
-      acc + stats.hits + stats.doubles + stats.triples * 2 + stats.homeRuns * 3,
+    (acc, stats) => acc + stats.hits + stats.doubles + stats.triples * 2 + stats.homeRuns * 3,
     0
   );
-  const careerSluggingPct = careerBattingStats.atBats > 0
-    ? totalBases / careerBattingStats.atBats
-    : 0;
+  const careerSluggingPct =
+    careerBattingStats.atBats > 0 ? totalBases / careerBattingStats.atBats : 0;
 
-  const careerEra = careerPitchingStats.inningsPitched > 0
-    ? (careerPitchingStats.earnedRuns * 9) / careerPitchingStats.inningsPitched
-    : 0;
+  const careerEra =
+    careerPitchingStats.inningsPitched > 0
+      ? (careerPitchingStats.earnedRuns * 9) / careerPitchingStats.inningsPitched
+      : 0;
 
-  const careerWhip = careerPitchingStats.inningsPitched > 0
-    ? (careerPitchingStats.hitsAllowed + careerPitchingStats.walksAllowed) /
-      careerPitchingStats.inningsPitched
-    : 0;
+  const careerWhip =
+    careerPitchingStats.inningsPitched > 0
+      ? (careerPitchingStats.hitsAllowed + careerPitchingStats.walksAllowed) /
+        careerPitchingStats.inningsPitched
+      : 0;
 
   // Process recent games
   const recentGames = player.boxLines.map((boxLine) => {

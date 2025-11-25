@@ -14,16 +14,8 @@
  */
 
 import { runQCPipeline } from '../scripts/qc_analysis';
-import {
-  saveReportToKV,
-  formatReportConsole,
-  formatReportJSON
-} from '../scripts/qc_reporting';
-import type {
-  GameData,
-  PlayerStats,
-  SourceMetadata
-} from '../scripts/qc_core';
+import { saveReportToKV, formatReportConsole, formatReportJSON } from '../scripts/qc_reporting';
+import type { GameData, PlayerStats, SourceMetadata } from '../scripts/qc_core';
 
 // ============================================================================
 // ENVIRONMENT TYPES
@@ -72,7 +64,7 @@ export default {
     // Route: GET /health - Health check
     if (url.pathname === '/health') {
       return new Response(JSON.stringify({ status: 'ok' }), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -95,27 +87,27 @@ export default {
       const scrapedData = await scrapeAllSources(yesterday, env);
 
       // Run QC pipeline
-      const { report, filtered_data } = await runQCPipeline({
-        games: scrapedData.games,
-        player_stats: scrapedData.player_stats,
-        data_source: 'DAILY_BATCH'
-      }, {
-        auto_reject_failures: true,
-        auto_reject_outliers: false,
-        mad_threshold: 5.0,
-        include_flagged: true,
-        min_confidence_score: 0.7
-      });
+      const { report, filtered_data } = await runQCPipeline(
+        {
+          games: scrapedData.games,
+          player_stats: scrapedData.player_stats,
+          data_source: 'DAILY_BATCH',
+        },
+        {
+          auto_reject_failures: true,
+          auto_reject_outliers: false,
+          mad_threshold: 5.0,
+          include_flagged: true,
+          min_confidence_score: 0.7,
+        }
+      );
 
       // Log summary
       console.log(formatReportConsole(report));
 
       // Save report to KV and R2
       await saveReportToKV(report, env.CACHE, 7 * 24 * 60 * 60); // 7 days TTL
-      await env.R2_BUCKET.put(
-        `qc-reports/${report.report_id}.json`,
-        formatReportJSON(report)
-      );
+      await env.R2_BUCKET.put(`qc-reports/${report.report_id}.json`, formatReportJSON(report));
 
       // Check failure rate
       const failureRate = report.records_rejected / report.total_records;
@@ -133,7 +125,7 @@ export default {
       console.error('Scheduled job failed:', error);
       // In production: send alert
     }
-  }
+  },
 };
 
 // ============================================================================
@@ -143,11 +135,7 @@ export default {
 /**
  * Handle POST /ingest - Real-time data ingestion with QC
  */
-async function handleIngest(
-  request: Request,
-  env: Env,
-  ctx: ExecutionContext
-): Promise<Response> {
+async function handleIngest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   try {
     // 1. Authenticate request
     const authHeader = request.headers.get('Authorization');
@@ -156,35 +144,41 @@ async function handleIngest(
     }
 
     // 2. Parse incoming data
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       games?: any[];
       player_stats?: any[];
       data_source: string;
     };
 
     if (!body.games && !body.player_stats) {
-      return new Response(JSON.stringify({
-        error: 'No data provided'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          error: 'No data provided',
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     // 3. Run QC pipeline
     const startTime = Date.now();
 
-    const { report, filtered_data } = await runQCPipeline({
-      games: body.games,
-      player_stats: body.player_stats,
-      data_source: body.data_source
-    }, {
-      auto_reject_failures: true,
-      auto_reject_outliers: false,
-      mad_threshold: 5.0,
-      include_flagged: true,
-      min_confidence_score: 0.7
-    });
+    const { report, filtered_data } = await runQCPipeline(
+      {
+        games: body.games,
+        player_stats: body.player_stats,
+        data_source: body.data_source,
+      },
+      {
+        auto_reject_failures: true,
+        auto_reject_outliers: false,
+        mad_threshold: 5.0,
+        include_flagged: true,
+        min_confidence_score: 0.7,
+      }
+    );
 
     const qcDuration = Date.now() - startTime;
 
@@ -199,18 +193,21 @@ async function handleIngest(
     const failureRate = report.records_rejected / report.total_records;
     if (failureRate > 0.2) {
       // High failure rate - reject batch
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'QC failure rate too high',
-        qc_report_id: report.report_id,
-        failure_rate: failureRate,
-        total_records: report.total_records,
-        records_rejected: report.records_rejected,
-        recommendations: report.recommendations
-      }), {
-        status: 422, // Unprocessable Entity
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'QC failure rate too high',
+          qc_report_id: report.report_id,
+          failure_rate: failureRate,
+          total_records: report.total_records,
+          records_rejected: report.records_rejected,
+          recommendations: report.recommendations,
+        }),
+        {
+          status: 422, // Unprocessable Entity
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     // 7. Ingest validated data into D1
@@ -221,31 +218,36 @@ async function handleIngest(
     console.log(`Ingested ${ingested} records to D1 in ${ingestDuration}ms`);
 
     // 8. Return success response
-    return new Response(JSON.stringify({
-      success: true,
-      qc_report_id: report.report_id,
-      total_records: report.total_records,
-      records_passed: report.records_passed,
-      records_flagged: report.records_flagged,
-      records_rejected: report.records_rejected,
-      records_ingested: ingested,
-      qc_duration_ms: qcDuration,
-      ingest_duration_ms: ingestDuration,
-      report_url: `/qc/${report.report_id}`
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
+    return new Response(
+      JSON.stringify({
+        success: true,
+        qc_report_id: report.report_id,
+        total_records: report.total_records,
+        records_passed: report.records_passed,
+        records_flagged: report.records_flagged,
+        records_rejected: report.records_rejected,
+        records_ingested: ingested,
+        qc_duration_ms: qcDuration,
+        ingest_duration_ms: ingestDuration,
+        report_url: `/qc/${report.report_id}`,
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
     console.error('Ingest error:', error);
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 }
 
@@ -270,7 +272,7 @@ async function handleGetReport(request: Request, env: Env): Promise<Response> {
     }
 
     return new Response(JSON.stringify(report, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Get report error:', error);
@@ -308,21 +310,23 @@ async function ingestDataToD1(
         status = excluded.status
     `);
 
-    const batch = data.games.map(game => stmt.bind(
-      game.game_id,
-      game.timestamp,
-      game.season,
-      game.home_team,
-      game.away_team,
-      game.home_score,
-      game.away_score,
-      game.status,
-      game.venue,
-      game.metadata.source_url,
-      game.metadata.scrape_timestamp,
-      game.metadata.provider_name,
-      game.metadata.confidence_score
-    ));
+    const batch = data.games.map((game) =>
+      stmt.bind(
+        game.game_id,
+        game.timestamp,
+        game.season,
+        game.home_team,
+        game.away_team,
+        game.home_score,
+        game.away_score,
+        game.status,
+        game.venue,
+        game.metadata.source_url,
+        game.metadata.scrape_timestamp,
+        game.metadata.provider_name,
+        game.metadata.confidence_score
+      )
+    );
 
     await env.DB.batch(batch);
     totalIngested += data.games.length;
@@ -340,29 +344,31 @@ async function ingestDataToD1(
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    const batch = data.player_stats.map(stats => stmt.bind(
-      stats.player_id,
-      stats.player_name,
-      stats.team_id,
-      stats.at_bats,
-      stats.hits,
-      stats.runs,
-      stats.rbi,
-      stats.walks,
-      stats.strikeouts,
-      stats.batting_avg,
-      stats.innings_pitched,
-      stats.earned_runs,
-      stats.era,
-      stats.pitches_thrown,
-      stats.pitch_velocity,
-      stats.spin_rate,
-      stats.exit_velocity,
-      stats.metadata.source_url,
-      stats.metadata.scrape_timestamp,
-      stats.metadata.provider_name,
-      stats.metadata.confidence_score
-    ));
+    const batch = data.player_stats.map((stats) =>
+      stmt.bind(
+        stats.player_id,
+        stats.player_name,
+        stats.team_id,
+        stats.at_bats,
+        stats.hits,
+        stats.runs,
+        stats.rbi,
+        stats.walks,
+        stats.strikeouts,
+        stats.batting_avg,
+        stats.innings_pitched,
+        stats.earned_runs,
+        stats.era,
+        stats.pitches_thrown,
+        stats.pitch_velocity,
+        stats.spin_rate,
+        stats.exit_velocity,
+        stats.metadata.source_url,
+        stats.metadata.scrape_timestamp,
+        stats.metadata.provider_name,
+        stats.metadata.confidence_score
+      )
+    );
 
     await env.DB.batch(batch);
     totalIngested += data.player_stats.length;
@@ -399,7 +405,7 @@ async function scrapeAllSources(
     source_url: 'https://example.com/api/games',
     scrape_timestamp: new Date().toISOString(),
     provider_name: 'ESPN_API',
-    confidence_score: 0.85
+    confidence_score: 0.85,
   };
 
   // Example game (replace with real scraping)
@@ -413,7 +419,7 @@ async function scrapeAllSources(
     away_score: 3,
     status: 'FINAL',
     venue: 'UFCU Disch-Falk Field',
-    metadata
+    metadata,
   });
 
   return { games, player_stats };

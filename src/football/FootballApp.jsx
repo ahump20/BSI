@@ -1,42 +1,40 @@
-import { useState, useEffect } from 'react'
-import SportSwitcher from '../components/SportSwitcher'
+import { useState, useEffect } from 'react';
+import SportSwitcher from '../components/SportSwitcher';
 
 function FootballApp() {
-  const [games, setGames] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [currentWeek, setCurrentWeek] = useState('current')
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentWeek, setCurrentWeek] = useState('current');
 
   useEffect(() => {
     // Fetch live college football games from our API
     const fetchGames = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(
-          `/api/football/scores?week=${currentWeek}`
-        )
+        setLoading(true);
+        const response = await fetch(`/api/football/scores?week=${currentWeek}`);
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json()
-        setGames(data.games || [])
-        setError(null)
+        const data = await response.json();
+        setGames(data.games || []);
+        setError(null);
       } catch (err) {
-        console.error('Failed to fetch football games:', err)
-        setError(err.message)
+        console.error('Failed to fetch football games:', err);
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchGames()
+    fetchGames();
 
     // Refresh every 30 seconds for live updates
-    const interval = setInterval(fetchGames, 30000)
-    return () => clearInterval(interval)
-  }, [currentWeek])
+    const interval = setInterval(fetchGames, 30000);
+    return () => clearInterval(interval);
+  }, [currentWeek]);
 
   if (loading) {
     return (
@@ -50,7 +48,7 @@ function FootballApp() {
           <p>Loading live scores...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -69,7 +67,7 @@ function FootballApp() {
           </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -96,13 +94,20 @@ function FootballApp() {
           </div>
 
           {games.length === 0 ? (
-            <p className="no-games" role="status">No games currently in progress</p>
+            <p className="no-games" role="status">
+              No games currently in progress
+            </p>
           ) : (
-            <div className="games-grid" role="list" aria-live="polite" aria-label="Live football games">
+            <div
+              className="games-grid"
+              role="list"
+              aria-live="polite"
+              aria-label="Live football games"
+            >
               {games.map((game) => {
-                const home = game.teams.home
-                const away = game.teams.away
-                const isLive = !game.status.completed
+                const home = game.teams.home;
+                const away = game.teams.away;
+                const isLive = !game.status.completed;
 
                 return (
                   <article
@@ -111,28 +116,56 @@ function FootballApp() {
                     role="listitem"
                     aria-label={`${away.team.name} at ${home.team.name}, ${game.status.completed ? 'Final' : game.status.shortDetail || 'Live'}`}
                   >
-                    <div className="game-status" role="status" aria-live={isLive ? 'polite' : 'off'}>
+                    <div
+                      className="game-status"
+                      role="status"
+                      aria-live={isLive ? 'polite' : 'off'}
+                    >
                       {game.status.completed ? 'Final' : game.status.shortDetail || 'Live'}
                     </div>
 
                     {/* Rankings */}
                     <div className="game-teams" role="group" aria-label="Game teams and scores">
-                      <div className="team" role="group" aria-label={`Away team: ${away.team.name}`}>
+                      <div
+                        className="team"
+                        role="group"
+                        aria-label={`Away team: ${away.team.name}`}
+                      >
                         <div className="team-info">
-                          {away.rank && <span className="rank" aria-label={`Ranked number ${away.rank}`}>#{away.rank}</span>}
+                          {away.rank && (
+                            <span className="rank" aria-label={`Ranked number ${away.rank}`}>
+                              #{away.rank}
+                            </span>
+                          )}
                           <span className="team-name">{away.team.name}</span>
-                          <span className="team-record" aria-label={`Record: ${away.record}`}>{away.record}</span>
+                          <span className="team-record" aria-label={`Record: ${away.record}`}>
+                            {away.record}
+                          </span>
                         </div>
-                        <span className="team-score" aria-label={`Score: ${away.score || '0'}`}>{away.score || '0'}</span>
+                        <span className="team-score" aria-label={`Score: ${away.score || '0'}`}>
+                          {away.score || '0'}
+                        </span>
                       </div>
 
-                      <div className="team" role="group" aria-label={`Home team: ${home.team.name}`}>
+                      <div
+                        className="team"
+                        role="group"
+                        aria-label={`Home team: ${home.team.name}`}
+                      >
                         <div className="team-info">
-                          {home.rank && <span className="rank" aria-label={`Ranked number ${home.rank}`}>#{home.rank}</span>}
+                          {home.rank && (
+                            <span className="rank" aria-label={`Ranked number ${home.rank}`}>
+                              #{home.rank}
+                            </span>
+                          )}
                           <span className="team-name">{home.team.name}</span>
-                          <span className="team-record" aria-label={`Record: ${home.record}`}>{home.record}</span>
+                          <span className="team-record" aria-label={`Record: ${home.record}`}>
+                            {home.record}
+                          </span>
                         </div>
-                        <span className="team-score" aria-label={`Score: ${home.score || '0'}`}>{home.score || '0'}</span>
+                        <span className="team-score" aria-label={`Score: ${home.score || '0'}`}>
+                          {home.score || '0'}
+                        </span>
                       </div>
                     </div>
 
@@ -141,18 +174,27 @@ function FootballApp() {
                         {game.venue?.name || 'TBD'}
                       </span>
                       {game.broadcast && (
-                        <span className="broadcast" aria-label={`Broadcasting on ${game.broadcast}`}> • {game.broadcast}</span>
+                        <span
+                          className="broadcast"
+                          aria-label={`Broadcasting on ${game.broadcast}`}
+                        >
+                          {' '}
+                          • {game.broadcast}
+                        </span>
                       )}
                     </div>
 
                     {/* Betting odds if available */}
                     {game.odds && (
-                      <div className="odds" aria-label={`Betting odds: Spread ${game.odds.spread}, Over/Under ${game.odds.overUnder}`}>
+                      <div
+                        className="odds"
+                        aria-label={`Betting odds: Spread ${game.odds.spread}, Over/Under ${game.odds.overUnder}`}
+                      >
                         Spread: {game.odds.spread} • O/U: {game.odds.overUnder}
                       </div>
                     )}
                   </article>
-                )
+                );
               })}
             </div>
           )}
@@ -162,10 +204,11 @@ function FootballApp() {
           <p>
             Data source: ESPN College Football API
             <br />
-            Last updated: {new Date().toLocaleString('en-US', {
+            Last updated:{' '}
+            {new Date().toLocaleString('en-US', {
               timeZone: 'America/Chicago',
               dateStyle: 'medium',
-              timeStyle: 'short'
+              timeStyle: 'short',
             })}
           </p>
         </footer>
@@ -174,7 +217,7 @@ function FootballApp() {
       {/* Sport Switcher FAB */}
       <SportSwitcher currentSport="football" />
     </div>
-  )
+  );
 }
 
-export default FootballApp
+export default FootballApp;

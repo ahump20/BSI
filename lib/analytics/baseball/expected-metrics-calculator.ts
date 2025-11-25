@@ -70,41 +70,44 @@ export interface StuffRating {
  * Expected outcome probability tables
  * Source: MLB Statcast data (2015-2024), 5M+ batted balls
  */
-const EXPECTED_OUTCOME_MATRIX: Record<string, {
-  launchAngle: { min: number; max: number };
-  exitVelo: { min: number; max: number };
-  xBA: number;
-  xSLG: number;
-  homeRunProb: number;
-}> = {
+const EXPECTED_OUTCOME_MATRIX: Record<
+  string,
+  {
+    launchAngle: { min: number; max: number };
+    exitVelo: { min: number; max: number };
+    xBA: number;
+    xSLG: number;
+    homeRunProb: number;
+  }
+> = {
   groundBall: {
     launchAngle: { min: -90, max: 10 },
     exitVelo: { min: 0, max: 120 },
-    xBA: 0.240,
-    xSLG: 0.310,
-    homeRunProb: 0.000
+    xBA: 0.24,
+    xSLG: 0.31,
+    homeRunProb: 0.0,
   },
   lineDrive: {
     launchAngle: { min: 10, max: 25 },
     exitVelo: { min: 90, max: 120 },
-    xBA: 0.680,
-    xSLG: 1.250,
-    homeRunProb: 0.020
+    xBA: 0.68,
+    xSLG: 1.25,
+    homeRunProb: 0.02,
   },
   flyBall: {
     launchAngle: { min: 25, max: 50 },
     exitVelo: { min: 95, max: 120 },
-    xBA: 0.280,
-    xSLG: 1.420,
-    homeRunProb: 0.350
+    xBA: 0.28,
+    xSLG: 1.42,
+    homeRunProb: 0.35,
   },
   barrel: {
     launchAngle: { min: 26, max: 30 },
     exitVelo: { min: 98, max: 120 },
-    xBA: 0.820,
-    xSLG: 2.850,
-    homeRunProb: 0.800
-  }
+    xBA: 0.82,
+    xSLG: 2.85,
+    homeRunProb: 0.8,
+  },
 };
 
 export class ExpectedMetricsCalculator {
@@ -120,43 +123,24 @@ export class ExpectedMetricsCalculator {
   static calculateExpectedBA(data: BattedBallData): ExpectedMetrics {
     try {
       // Apply bat type adjustment
-      const adjustedEV = this.applyBatAdjustment(
-        data.exitVelocity,
-        data.batType
-      );
+      const adjustedEV = this.applyBatAdjustment(data.exitVelocity, data.batType);
       const adjustmentFactor = adjustedEV / data.exitVelocity;
 
       // Calculate base xBA using Statcast methodology
-      const baseXBA = this.xBAFormula(
-        adjustedEV,
-        data.launchAngle,
-        data.sprayAngle
-      );
+      const baseXBA = this.xBAFormula(adjustedEV, data.launchAngle, data.sprayAngle);
 
       // Calculate xSLG (expected slugging)
-      const xSLG = this.xSLGFormula(
-        adjustedEV,
-        data.launchAngle
-      );
+      const xSLG = this.xSLGFormula(adjustedEV, data.launchAngle);
 
       // Calculate xWOBA (expected weighted on-base average)
       const xWOBA = this.xWOBAFormula(baseXBA, xSLG);
 
       // Calculate specific probabilities
-      const hitProbability = this.calculateHitProbability(
-        adjustedEV,
-        data.launchAngle
-      );
+      const hitProbability = this.calculateHitProbability(adjustedEV, data.launchAngle);
 
-      const homeRunProbability = this.calculateHomeRunProbability(
-        adjustedEV,
-        data.launchAngle
-      );
+      const homeRunProbability = this.calculateHomeRunProbability(adjustedEV, data.launchAngle);
 
-      const barrelProbability = this.calculateBarrelProbability(
-        adjustedEV,
-        data.launchAngle
-      );
+      const barrelProbability = this.calculateBarrelProbability(adjustedEV, data.launchAngle);
 
       return {
         xBA: Math.round(baseXBA * 1000) / 1000,
@@ -171,11 +155,11 @@ export class ExpectedMetricsCalculator {
         citations: [
           'MLB Statcast Expected Stats (2015-2024)',
           'Bahill & Karnavas (2000) - The Science of Hitting',
-          'Alan Nathan (2003-2024) - Physics of Baseball'
+          'Alan Nathan (2003-2024) - Physics of Baseball',
         ],
         lastUpdated: new Date().toLocaleString('en-US', {
-          timeZone: 'America/Chicago'
-        })
+          timeZone: 'America/Chicago',
+        }),
       };
     } catch (error) {
       console.error('Expected metrics calculation error:', error);
@@ -195,9 +179,9 @@ export class ExpectedMetricsCalculator {
     batType: 'wood' | 'bbcor' | 'metal'
   ): number {
     const adjustments = {
-      wood: 1.00,
+      wood: 1.0,
       bbcor: 1.04, // Adjust up to wood equivalent
-      metal: 0.92  // Adjust down to wood equivalent
+      metal: 0.92, // Adjust down to wood equivalent
     };
 
     return exitVelocity * adjustments[batType];
@@ -207,11 +191,7 @@ export class ExpectedMetricsCalculator {
    * xBA formula using Statcast methodology
    * Based on logistic regression over 5M+ batted balls
    */
-  private static xBAFormula(
-    exitVelo: number,
-    launchAngle: number,
-    sprayAngle: number
-  ): number {
+  private static xBAFormula(exitVelo: number, launchAngle: number, sprayAngle: number): number {
     // Optimal launch angle: 15-30 degrees
     const laOptimal = 22.5;
     const laDeviation = Math.abs(launchAngle - laOptimal);
@@ -234,10 +214,7 @@ export class ExpectedMetricsCalculator {
   /**
    * xSLG formula accounting for extra-base hit probability
    */
-  private static xSLGFormula(
-    exitVelo: number,
-    launchAngle: number
-  ): number {
+  private static xSLGFormula(exitVelo: number, launchAngle: number): number {
     // Base probabilities for different hit types
     const singleProb = this.getSingleProbability(exitVelo, launchAngle);
     const doubleProb = this.getDoubleProbability(exitVelo, launchAngle);
@@ -245,11 +222,7 @@ export class ExpectedMetricsCalculator {
     const hrProb = this.calculateHomeRunProbability(exitVelo, launchAngle);
 
     // SLG = (1B * 1) + (2B * 2) + (3B * 3) + (HR * 4)
-    const xSLG =
-      singleProb * 1 +
-      doubleProb * 2 +
-      tripleProb * 3 +
-      hrProb * 4;
+    const xSLG = singleProb * 1 + doubleProb * 2 + tripleProb * 3 + hrProb * 4;
 
     return Math.max(0, Math.min(4, xSLG));
   }
@@ -260,22 +233,22 @@ export class ExpectedMetricsCalculator {
    */
   private static xWOBAFormula(xBA: number, xSLG: number): number {
     // wOBA linear weights (2024 season)
-    const wBB = 0.690;  // walk
-    const wHBP = 0.720; // hit by pitch
-    const w1B = 0.880;  // single
-    const w2B = 1.240;  // double
-    const w3B = 1.570;  // triple
-    const wHR = 2.080;  // home run
+    const wBB = 0.69; // walk
+    const wHBP = 0.72; // hit by pitch
+    const w1B = 0.88; // single
+    const w2B = 1.24; // double
+    const w3B = 1.57; // triple
+    const wHR = 2.08; // home run
 
     // Estimate hit type distribution from xBA and xSLG
     const totalHits = xBA;
     const extraBaseRatio = (xSLG - xBA) / 3; // rough estimate
 
     const xWOBA =
-      (totalHits * (1 - extraBaseRatio) * w1B) +
-      (totalHits * extraBaseRatio * 0.6 * w2B) +
-      (totalHits * extraBaseRatio * 0.1 * w3B) +
-      (totalHits * extraBaseRatio * 0.3 * wHR);
+      totalHits * (1 - extraBaseRatio) * w1B +
+      totalHits * extraBaseRatio * 0.6 * w2B +
+      totalHits * extraBaseRatio * 0.1 * w3B +
+      totalHits * extraBaseRatio * 0.3 * wHR;
 
     return Math.max(0, Math.min(1, xWOBA));
   }
@@ -283,45 +256,39 @@ export class ExpectedMetricsCalculator {
   /**
    * Calculate hit probability (any type of hit)
    */
-  private static calculateHitProbability(
-    exitVelo: number,
-    launchAngle: number
-  ): number {
+  private static calculateHitProbability(exitVelo: number, launchAngle: number): number {
     // Ground balls: low hit rate but some get through
     if (launchAngle < 10) {
-      return exitVelo > 90 ? 0.280 : 0.220;
+      return exitVelo > 90 ? 0.28 : 0.22;
     }
 
     // Line drives: highest hit rate
     if (launchAngle >= 10 && launchAngle < 25) {
-      return 0.690;
+      return 0.69;
     }
 
     // Fly balls: depends heavily on exit velocity
     if (launchAngle >= 25 && launchAngle < 50) {
-      return exitVelo > 95 ? 0.450 : 0.180;
+      return exitVelo > 95 ? 0.45 : 0.18;
     }
 
     // Pop-ups: very low hit rate
-    return 0.050;
+    return 0.05;
   }
 
   /**
    * Calculate home run probability
    * Based on exit velocity and optimal launch angle (25-35 degrees)
    */
-  private static calculateHomeRunProbability(
-    exitVelo: number,
-    launchAngle: number
-  ): number {
+  private static calculateHomeRunProbability(exitVelo: number, launchAngle: number): number {
     // Optimal HR launch angle: 25-35 degrees
     if (launchAngle < 20 || launchAngle > 45) {
-      return 0.000;
+      return 0.0;
     }
 
     // Minimum exit velo for HR: 95 mph
     if (exitVelo < 95) {
-      return 0.000;
+      return 0.0;
     }
 
     // Peak probability at 100+ mph and 28 degrees
@@ -343,12 +310,9 @@ export class ExpectedMetricsCalculator {
    * Calculate barrel probability (ideal contact)
    * Barrel definition: 98+ mph EV and 26-30 degree LA
    */
-  private static calculateBarrelProbability(
-    exitVelo: number,
-    launchAngle: number
-  ): number {
-    if (exitVelo < 98) return 0.000;
-    if (launchAngle < 26 || launchAngle > 30) return 0.000;
+  private static calculateBarrelProbability(exitVelo: number, launchAngle: number): number {
+    if (exitVelo < 98) return 0.0;
+    if (launchAngle < 26 || launchAngle > 30) return 0.0;
 
     // Perfect barrel: 100+ mph and 28 degrees
     const evScore = Math.min(1, (exitVelo - 98) / 22);
@@ -361,21 +325,21 @@ export class ExpectedMetricsCalculator {
    * Helper methods for hit type probabilities
    */
   private static getSingleProbability(ev: number, la: number): number {
-    if (la < 10) return ev > 85 ? 0.240 : 0.180;
-    if (la >= 10 && la < 25) return 0.550;
-    return 0.120;
+    if (la < 10) return ev > 85 ? 0.24 : 0.18;
+    if (la >= 10 && la < 25) return 0.55;
+    return 0.12;
   }
 
   private static getDoubleProbability(ev: number, la: number): number {
-    if (ev < 90) return 0.020;
-    if (la >= 15 && la < 30) return 0.140;
-    return 0.060;
+    if (ev < 90) return 0.02;
+    if (la >= 15 && la < 30) return 0.14;
+    return 0.06;
   }
 
   private static getTripleProbability(ev: number, la: number): number {
     if (ev < 95) return 0.005;
     if (la >= 10 && la < 20) return 0.025;
-    return 0.010;
+    return 0.01;
   }
 
   /**
@@ -402,10 +366,7 @@ export class ExpectedMetricsCalculator {
       );
 
       // Weighted average (velocity: 35%, spin: 30%, movement: 35%)
-      const stuffPlus =
-        velocityPlus * 0.35 +
-        spinPlus * 0.30 +
-        movementPlus * 0.35;
+      const stuffPlus = velocityPlus * 0.35 + spinPlus * 0.3 + movementPlus * 0.35;
 
       // Calculate percentile
       const percentile = this.calculatePercentile(stuffPlus);
@@ -422,11 +383,11 @@ export class ExpectedMetricsCalculator {
         citations: [
           'Driveline Baseball (2017-2024) - Stuff+ methodology',
           'Eno Sarris (2018) - The New Pitching Bible',
-          'Baseball Prospectus (2019-2024) - Pitch quality research'
+          'Baseball Prospectus (2019-2024) - Pitch quality research',
         ],
         lastUpdated: new Date().toLocaleString('en-US', {
-          timeZone: 'America/Chicago'
-        })
+          timeZone: 'America/Chicago',
+        }),
       };
     } catch (error) {
       console.error('Stuff+ calculation error:', error);
@@ -446,14 +407,14 @@ export class ExpectedMetricsCalculator {
       CH: { velocity: 84.5, spinRate: 1750, horizontalBreak: 12, verticalBreak: 6 },
       SL: { velocity: 86.0, spinRate: 2400, horizontalBreak: 6, verticalBreak: 4 },
       CB: { velocity: 78.5, spinRate: 2650, horizontalBreak: 4, verticalBreak: -8 },
-      CU: { velocity: 76.0, spinRate: 2500, horizontalBreak: 10, verticalBreak: -6 }
+      CU: { velocity: 76.0, spinRate: 2500, horizontalBreak: 10, verticalBreak: -6 },
     };
 
     // College is ~3-5% lower velocity on average
     const levelAdjustments = {
-      mlb: 1.00,
+      mlb: 1.0,
       college: 0.96,
-      high_school: 0.90
+      high_school: 0.9,
     };
 
     const baseline = mlbBaselines[pitchType] || mlbBaselines['FB'];
@@ -463,7 +424,7 @@ export class ExpectedMetricsCalculator {
       velocity: baseline.velocity * adjustment,
       spinRate: baseline.spinRate,
       horizontalBreak: baseline.horizontalBreak,
-      verticalBreak: baseline.verticalBreak
+      verticalBreak: baseline.verticalBreak,
     };
   }
 
@@ -477,13 +438,12 @@ export class ExpectedMetricsCalculator {
   ): number {
     // Total movement vector
     const actualMovement = Math.sqrt(
-      horizontalBreak * horizontalBreak +
-      verticalBreak * verticalBreak
+      horizontalBreak * horizontalBreak + verticalBreak * verticalBreak
     );
 
     const baselineMovement = Math.sqrt(
       baseline.horizontalBreak * baseline.horizontalBreak +
-      baseline.verticalBreak * baseline.verticalBreak
+        baseline.verticalBreak * baseline.verticalBreak
     );
 
     return (actualMovement / baselineMovement) * 100;
@@ -506,11 +466,13 @@ export class ExpectedMetricsCalculator {
    * Get interpretation of Stuff+ rating
    */
   private static getStuffInterpretation(stuffPlus: number): string {
-    if (stuffPlus >= 130) return 'Elite+ (Top 1%) - Dominant pitch with exceptional characteristics';
+    if (stuffPlus >= 130)
+      return 'Elite+ (Top 1%) - Dominant pitch with exceptional characteristics';
     if (stuffPlus >= 120) return 'Elite (Top 10%) - Plus-plus pitch with well above-average traits';
     if (stuffPlus >= 110) return 'Above Average (Top 30%) - Solid pitch with good characteristics';
     if (stuffPlus >= 100) return 'Average (50th percentile) - Typical pitch for this level';
-    if (stuffPlus >= 90) return 'Below Average (Bottom 30%) - Needs improvement in one or more areas';
+    if (stuffPlus >= 90)
+      return 'Below Average (Bottom 30%) - Needs improvement in one or more areas';
     return 'Poor (Bottom 10%) - Significant weaknesses in multiple areas';
   }
 
@@ -519,19 +481,19 @@ export class ExpectedMetricsCalculator {
    */
   private static getDefaultMetrics(): ExpectedMetrics {
     return {
-      xBA: 0.250,
-      xSLG: 0.400,
-      xWOBA: 0.320,
-      hitProbability: 0.250,
-      homeRunProbability: 0.000,
-      barrelProbability: 0.000,
+      xBA: 0.25,
+      xSLG: 0.4,
+      xWOBA: 0.32,
+      hitProbability: 0.25,
+      homeRunProbability: 0.0,
+      barrelProbability: 0.0,
       methodology: 'Default values - insufficient data',
       woodBatAdjustment: false,
-      adjustmentFactor: 1.000,
+      adjustmentFactor: 1.0,
       citations: [],
       lastUpdated: new Date().toLocaleString('en-US', {
-        timeZone: 'America/Chicago'
-      })
+        timeZone: 'America/Chicago',
+      }),
     };
   }
 
@@ -550,8 +512,8 @@ export class ExpectedMetricsCalculator {
       methodology: 'Default values',
       citations: [],
       lastUpdated: new Date().toLocaleString('en-US', {
-        timeZone: 'America/Chicago'
-      })
+        timeZone: 'America/Chicago',
+      }),
     };
   }
 }

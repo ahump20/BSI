@@ -18,14 +18,20 @@ const MLBAnalyticsEngine = () => {
   // Mock data structure (in production, this comes from D1)
   const mockTeamData = {
     STL: {
-      name: "St. Louis Cardinals",
-      wins: 71, losses: 91,
-      runsScored: 744, runsAllowed: 829,
-      homeRuns: 155, stolenBases: 98,
-      battingAvg: 0.247, era: 4.73,
-      wOBA: 0.308, wRC: 95,
-      fip: 4.45, babip: 0.294
-    }
+      name: 'St. Louis Cardinals',
+      wins: 71,
+      losses: 91,
+      runsScored: 744,
+      runsAllowed: 829,
+      homeRuns: 155,
+      stolenBases: 98,
+      battingAvg: 0.247,
+      era: 4.73,
+      wOBA: 0.308,
+      wRC: 95,
+      fip: 4.45,
+      babip: 0.294,
+    },
   };
 
   useEffect(() => {
@@ -38,7 +44,7 @@ const MLBAnalyticsEngine = () => {
       // In production, this calls your Cloudflare Worker
       // const response = await fetch(`${API_BASE}/teams/${selectedTeam}`);
       // const data = await response.json();
-      
+
       // For demo, use mock data
       setTimeout(() => {
         setTeamData(mockTeamData[selectedTeam]);
@@ -59,7 +65,7 @@ const MLBAnalyticsEngine = () => {
       //   body: JSON.stringify({ team: selectedTeam, data: teamData })
       // });
       // const result = await response.json();
-      
+
       // Mock AI insight
       setTimeout(() => {
         setAIInsight(
@@ -79,15 +85,16 @@ const MLBAnalyticsEngine = () => {
     const { runsScored, runsAllowed, wins, losses } = teamData;
     const gamesPlayed = wins + losses;
     const exponent = ((runsScored + runsAllowed) / gamesPlayed) ** 0.287;
-    const expectedWinPct = Math.pow(runsScored, exponent) / 
+    const expectedWinPct =
+      Math.pow(runsScored, exponent) /
       (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent));
     const expectedWins = expectedWinPct * gamesPlayed;
     const difference = wins - expectedWins;
-    
+
     return {
       expectedWins: expectedWins.toFixed(1),
       difference: difference.toFixed(1),
-      expectedPct: (expectedWinPct * 100).toFixed(1)
+      expectedPct: (expectedWinPct * 100).toFixed(1),
     };
   };
 
@@ -95,17 +102,17 @@ const MLBAnalyticsEngine = () => {
     if (!teamData) return null;
     const pyth = calculatePythagorean();
     const baseProb = parseFloat(pyth.expectedPct) / 100;
-    
+
     // Factor in advanced metrics
-    const wOBAAdj = (teamData.wOBA - 0.320) * 0.1;
-    const fipAdj = (4.00 - teamData.fip) * 0.02;
-    
+    const wOBAAdj = (teamData.wOBA - 0.32) * 0.1;
+    const fipAdj = (4.0 - teamData.fip) * 0.02;
+
     let adjustedProb = baseProb + wOBAAdj + fipAdj;
     adjustedProb = Math.max(0.3, Math.min(0.7, adjustedProb));
-    
+
     return {
       probability: (adjustedProb * 100).toFixed(1),
-      nextGame: (adjustedProb * 100).toFixed(0)
+      nextGame: (adjustedProb * 100).toFixed(0),
     };
   };
 
@@ -120,29 +127,37 @@ const MLBAnalyticsEngine = () => {
           <h1>🔥 BlazeS MLB Analytics</h1>
           <p className="subtitle">Advanced Baseball Intelligence • Powered by Cloudflare Edge</p>
           <div className="tech-badges">
-            <span className="badge"><Database size={14} /> D1 Database</span>
-            <span className="badge"><Zap size={14} /> Workers KV</span>
-            <span className="badge"><Cpu size={14} /> Workers AI</span>
-            <span className="badge"><Activity size={14} /> Edge Analytics</span>
+            <span className="badge">
+              <Database size={14} /> D1 Database
+            </span>
+            <span className="badge">
+              <Zap size={14} /> Workers KV
+            </span>
+            <span className="badge">
+              <Cpu size={14} /> Workers AI
+            </span>
+            <span className="badge">
+              <Activity size={14} /> Edge Analytics
+            </span>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
       <div className="nav-tabs">
-        <button 
+        <button
           className={activeTab === 'dashboard' ? 'tab active' : 'tab'}
           onClick={() => setActiveTab('dashboard')}
         >
           <TrendingUp size={16} /> Dashboard
         </button>
-        <button 
+        <button
           className={activeTab === 'predictions' ? 'tab active' : 'tab'}
           onClick={() => setActiveTab('predictions')}
         >
           <LineChart size={16} /> Predictions
         </button>
-        <button 
+        <button
           className={activeTab === 'advanced' ? 'tab active' : 'tab'}
           onClick={() => setActiveTab('advanced')}
         >
@@ -172,17 +187,22 @@ const MLBAnalyticsEngine = () => {
               <div className="team-header">
                 <h2>{teamData.name}</h2>
                 <div className="record">
-                  {teamData.wins}-{teamData.losses} 
-                  <span className="pct">({((teamData.wins / (teamData.wins + teamData.losses)) * 100).toFixed(1)}%)</span>
+                  {teamData.wins}-{teamData.losses}
+                  <span className="pct">
+                    ({((teamData.wins / (teamData.wins + teamData.losses)) * 100).toFixed(1)}%)
+                  </span>
                 </div>
               </div>
 
               <div className="stats-grid">
                 <div className="stat-card highlight">
                   <div className="stat-label">Pythagorean W-L</div>
-                  <div className="stat-value">{pyth.expectedWins}-{(162 - parseFloat(pyth.expectedWins)).toFixed(1)}</div>
+                  <div className="stat-value">
+                    {pyth.expectedWins}-{(162 - parseFloat(pyth.expectedWins)).toFixed(1)}
+                  </div>
                   <div className="stat-meta">
-                    Difference: {pyth.difference > 0 ? '+' : ''}{pyth.difference} wins
+                    Difference: {pyth.difference > 0 ? '+' : ''}
+                    {pyth.difference} wins
                   </div>
                 </div>
 
@@ -195,7 +215,9 @@ const MLBAnalyticsEngine = () => {
                 <div className="stat-card">
                   <div className="stat-label">Run Differential</div>
                   <div className="stat-value">{teamData.runsScored - teamData.runsAllowed}</div>
-                  <div className="stat-meta">{teamData.runsScored} scored / {teamData.runsAllowed} allowed</div>
+                  <div className="stat-meta">
+                    {teamData.runsScored} scored / {teamData.runsAllowed} allowed
+                  </div>
                 </div>
 
                 <div className="stat-card">
@@ -232,12 +254,10 @@ const MLBAnalyticsEngine = () => {
               {/* AI Insights Section */}
               <div className="ai-section">
                 <div className="ai-header">
-                  <h3><Cpu size={20} /> AI-Powered Insights</h3>
-                  <button 
-                    className="btn-primary"
-                    onClick={generateAIInsight}
-                    disabled={loading}
-                  >
+                  <h3>
+                    <Cpu size={20} /> AI-Powered Insights
+                  </h3>
+                  <button className="btn-primary" onClick={generateAIInsight} disabled={loading}>
                     Generate Analysis
                   </button>
                 </div>
@@ -265,10 +285,7 @@ const MLBAnalyticsEngine = () => {
                         <div key={wins} className="bar-item">
                           <div className="bar-label">{wins}W</div>
                           <div className="bar-container">
-                            <div 
-                              className="bar-fill" 
-                              style={{width: `${probability * 3}%`}}
-                            />
+                            <div className="bar-fill" style={{ width: `${probability * 3}%` }} />
                           </div>
                           <div className="bar-pct">{probability}%</div>
                         </div>
@@ -297,9 +314,9 @@ const MLBAnalyticsEngine = () => {
                 <h4>Methodology</h4>
                 <p>
                   Projections use Monte Carlo simulation with 10,000 iterations, incorporating:
-                  Pythagorean expectation, strength of schedule, recent form (L10), 
-                  player health factors, and regression to league mean. Computed at 
-                  Cloudflare edge locations for sub-50ms response times.
+                  Pythagorean expectation, strength of schedule, recent form (L10), player health
+                  factors, and regression to league mean. Computed at Cloudflare edge locations for
+                  sub-50ms response times.
                 </p>
               </div>
             </div>
@@ -309,7 +326,7 @@ const MLBAnalyticsEngine = () => {
           {activeTab === 'advanced' && (
             <div className="content">
               <h2>Advanced Sabermetrics</h2>
-              
+
               <div className="advanced-grid">
                 <div className="advanced-section">
                   <h3>Offensive Metrics</h3>
@@ -384,21 +401,30 @@ const MLBAnalyticsEngine = () => {
                   <div className="analysis-item">
                     <div className="analysis-label">Offense vs League</div>
                     <div className="progress-bar">
-                      <div className="progress-fill" style={{width: '45%', background: '#ef4444'}} />
+                      <div
+                        className="progress-fill"
+                        style={{ width: '45%', background: '#ef4444' }}
+                      />
                     </div>
                     <div className="analysis-value">Below Average (-5%)</div>
                   </div>
                   <div className="analysis-item">
                     <div className="analysis-label">Pitching vs League</div>
                     <div className="progress-bar">
-                      <div className="progress-fill" style={{width: '38%', background: '#ef4444'}} />
+                      <div
+                        className="progress-fill"
+                        style={{ width: '38%', background: '#ef4444' }}
+                      />
                     </div>
                     <div className="analysis-value">Well Below Average (-12%)</div>
                   </div>
                   <div className="analysis-item">
                     <div className="analysis-label">Defense vs League</div>
                     <div className="progress-bar">
-                      <div className="progress-fill" style={{width: '52%', background: '#fbbf24'}} />
+                      <div
+                        className="progress-fill"
+                        style={{ width: '52%', background: '#fbbf24' }}
+                      />
                     </div>
                     <div className="analysis-value">Slightly Above Average (+2%)</div>
                   </div>

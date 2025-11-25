@@ -64,10 +64,10 @@ export async function fetchMLBPlayers(): Promise<ApiResponse<Player[]>> {
           RBI: player.RBI || 0,
           OPS: player.OPS ? Number(player.OPS.toFixed(3)) : 0,
           WAR: player.WAR ? Number(player.WAR.toFixed(1)) : 0,
-          'wRC+': player['wRC+'] || 0
+          'wRC+': player['wRC+'] || 0,
         },
         dataSource: 'FanGraphs via Blaze API',
-        dataStamp: getDataStamp()
+        dataStamp: getDataStamp(),
       };
     });
 
@@ -76,7 +76,7 @@ export async function fetchMLBPlayers(): Promise<ApiResponse<Player[]>> {
       data: players,
       error: null,
       source: 'FanGraphs',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('MLB API Error:', error);
@@ -85,7 +85,7 @@ export async function fetchMLBPlayers(): Promise<ApiResponse<Player[]>> {
       data: null,
       error: (error as Error).message,
       source: 'FanGraphs',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -115,10 +115,10 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
         YDS: player.stats?.passing?.yards || player.stats?.rushing?.yards || 0,
         TD: player.stats?.passing?.touchdowns || player.stats?.rushing?.touchdowns || 0,
         QBR: player.stats?.passing?.qbRating || 0,
-        Rating: player.stats?.rating || 0
+        Rating: player.stats?.rating || 0,
       },
       dataSource: DATA_SOURCES.ESPN_API.name,
-      dataStamp: getDataStamp()
+      dataStamp: getDataStamp(),
     }));
 
     return {
@@ -126,7 +126,7 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
       data: players,
       error: null,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('NFL API Error:', error);
@@ -135,7 +135,7 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
       data: null,
       error: (error as Error).message,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -145,7 +145,8 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
  */
 export async function fetchOdds(sport: string = 'baseball_mlb'): Promise<ApiResponse<any[]>> {
   try {
-    const url = sport === 'all' ? API_ENDPOINTS.odds.current : `${API_ENDPOINTS.odds.current}?sport=${sport}`;
+    const url =
+      sport === 'all' ? API_ENDPOINTS.odds.current : `${API_ENDPOINTS.odds.current}?sport=${sport}`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -159,7 +160,7 @@ export async function fetchOdds(sport: string = 'baseball_mlb'): Promise<ApiResp
       data: data,
       error: null,
       source: DATA_SOURCES.THEODDS_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('Odds API Error:', error);
@@ -168,7 +169,7 @@ export async function fetchOdds(sport: string = 'baseball_mlb'): Promise<ApiResp
       data: null,
       error: (error as Error).message,
       source: DATA_SOURCES.THEODDS_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -192,7 +193,7 @@ export async function fetchNews(sport: string = 'mlb'): Promise<ApiResponse<any[
       data: data,
       error: null,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('News API Error:', error);
@@ -201,7 +202,7 @@ export async function fetchNews(sport: string = 'mlb'): Promise<ApiResponse<any[
       data: null,
       error: (error as Error).message,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -226,7 +227,7 @@ export async function fetchWithRetry<T>(
     } catch (error) {
       if (i === retries - 1) throw error;
       // Exponential backoff
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      await new Promise((resolve) => setTimeout(resolve, Math.pow(2, i) * 1000));
     }
   }
   throw new Error('Max retries exceeded');

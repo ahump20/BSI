@@ -14,7 +14,15 @@
  * @returns {EnsembleOutput} Complete scouting report with component scores
  */
 
-import { ok, err, cache, fetchWithTimeout, rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+import {
+  ok,
+  err,
+  cache,
+  fetchWithTimeout,
+  rateLimit,
+  rateLimitError,
+  corsHeaders,
+} from '../_utils.js';
 
 const CACHE_TTL = 300; // 5 minutes
 
@@ -28,7 +36,7 @@ export async function onRequest(context) {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   }
 
@@ -50,7 +58,7 @@ export async function onRequest(context) {
     const [gameData, historicalStats, scoutNotes] = await Promise.all([
       fetchLatestGameData(playerId, env),
       fetchHistoricalStats(playerId, env),
-      fetchScoutNotes(playerId, env)
+      fetchScoutNotes(playerId, env),
     ]);
 
     // Run each specialized model in parallel
@@ -58,7 +66,7 @@ export async function onRequest(context) {
       runVelocityModel(gameData, historicalStats),
       runIntangiblesModel(scoutNotes),
       runScoutNotesNLP(scoutNotes),
-      runChampionEnigmaEngine(playerId, env)
+      runChampionEnigmaEngine(playerId, env),
     ]);
 
     // Meta-learner combines all signals
@@ -66,7 +74,7 @@ export async function onRequest(context) {
       velocity: velocityScore,
       intangibles: intangiblesScore,
       notes: notesScore,
-      enigma: enigmaScore
+      enigma: enigmaScore,
     });
 
     const result = {
@@ -76,7 +84,7 @@ export async function onRequest(context) {
         velocity_model: velocityScore,
         intangibles_model: intangiblesScore,
         scout_notes_model: notesScore,
-        champion_enigma_engine: enigmaScore
+        champion_enigma_engine: enigmaScore,
       },
       final_recommendation: finalRec,
       citations: {
@@ -84,7 +92,7 @@ export async function onRequest(context) {
           'ESPN college-baseball API',
           'D1 historical stats database',
           'Scout notes database',
-          'Champion Enigma Engine (proprietary)'
+          'Champion Enigma Engine (proprietary)',
         ],
         fetched_at: new Date().toLocaleString('en-US', {
           timeZone: 'America/Chicago',
@@ -93,20 +101,19 @@ export async function onRequest(context) {
           day: '2-digit',
           hour: '2-digit',
           minute: '2-digit',
-          second: '2-digit'
+          second: '2-digit',
         }),
-        timezone: 'America/Chicago'
-      }
+        timezone: 'America/Chicago',
+      },
     };
 
     // Store in D1 for audit trail
     if (env.DB) {
       try {
-        await env.DB
-          .prepare(
-            `INSERT INTO scouting_reports (player_id, report_json, created_at)
+        await env.DB.prepare(
+          `INSERT INTO scouting_reports (player_id, report_json, created_at)
              VALUES (?1, ?2, ?3)`
-          )
+        )
           .bind(playerId, JSON.stringify(result), new Date().toISOString())
           .run();
       } catch (dbError) {
@@ -116,10 +123,9 @@ export async function onRequest(context) {
 
     return ok(result, {
       headers: {
-        'Cache-Control': 'public, max-age=300, stale-while-revalidate=60'
-      }
+        'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+      },
     });
-
   } catch (error) {
     return err(error, 500);
   }
@@ -131,16 +137,16 @@ export async function onRequest(context) {
  */
 async function runVelocityModel(gameData, historical) {
   // Extract velocity sequence from latest game
-  const latestVelocities = gameData?.plays
-    ?.filter(p => p.type === 'Pitch' && p.pitchSpeed)
-    ?.map(p => p.pitchSpeed) || [];
+  const latestVelocities =
+    gameData?.plays?.filter((p) => p.type === 'Pitch' && p.pitchSpeed)?.map((p) => p.pitchSpeed) ||
+    [];
 
   // Calculate consistency (inverse of std dev)
   const stdDev = calculateStdDev(latestVelocities);
   const consistency = Math.max(0, 100 - stdDev * 10);
 
   // Trend analysis across multiple games
-  const velocityHistory = historical?.games?.map(g => g.avg_velocity).filter(Boolean) || [];
+  const velocityHistory = historical?.games?.map((g) => g.avg_velocity).filter(Boolean) || [];
   const trend = calculateTrend(velocityHistory);
 
   // Fatigue risk: velocity drop in late innings
@@ -157,8 +163,8 @@ async function runVelocityModel(gameData, historical) {
     fatigue_risk: fatigueRisk,
     avg_velocity: average(latestVelocities),
     max_velocity: Math.max(...latestVelocities, 0),
-    min_velocity: Math.min(...latestVelocities.filter(v => v > 0), 0) || 0,
-    velocity_drop: Math.round(velocityDrop * 10) / 10
+    min_velocity: Math.min(...latestVelocities.filter((v) => v > 0), 0) || 0,
+    velocity_drop: Math.round(velocityDrop * 10) / 10,
   };
 }
 
@@ -180,7 +186,7 @@ async function runIntangiblesModel(scoutNotes) {
     work_ethic: Math.round(workEthic),
     composure: Math.round(composure),
     coachability: Math.round(coachability),
-    overall_intangibles: Math.round((leadership + workEthic + composure + coachability) / 4)
+    overall_intangibles: Math.round((leadership + workEthic + composure + coachability) / 4),
   };
 }
 
@@ -193,17 +199,32 @@ async function runScoutNotesNLP(scoutNotes) {
 
   // Simple sentiment: count positive vs negative words
   const positiveWords = [
-    'excellent', 'strong', 'consistent', 'impressive', 'dominant',
-    'outstanding', 'solid', 'reliable', 'effective', 'plus'
+    'excellent',
+    'strong',
+    'consistent',
+    'impressive',
+    'dominant',
+    'outstanding',
+    'solid',
+    'reliable',
+    'effective',
+    'plus',
   ];
   const negativeWords = [
-    'weak', 'inconsistent', 'concerning', 'struggles', 'poor',
-    'below-average', 'unreliable', 'ineffective', 'questionable'
+    'weak',
+    'inconsistent',
+    'concerning',
+    'struggles',
+    'poor',
+    'below-average',
+    'unreliable',
+    'ineffective',
+    'questionable',
   ];
 
   const lowerText = text.toLowerCase();
-  const posCount = positiveWords.filter(w => lowerText.includes(w)).length;
-  const negCount = negativeWords.filter(w => lowerText.includes(w)).length;
+  const posCount = positiveWords.filter((w) => lowerText.includes(w)).length;
+  const negCount = negativeWords.filter((w) => lowerText.includes(w)).length;
 
   let sentiment = 0;
   if (posCount > negCount) {
@@ -214,7 +235,7 @@ async function runScoutNotesNLP(scoutNotes) {
 
   // Extract key phrases
   const keyPhrases = [];
-  positiveWords.forEach(word => {
+  positiveWords.forEach((word) => {
     const regex = new RegExp(`${word}\\s+\\w+`, 'gi');
     const matches = text.match(regex) || [];
     keyPhrases.push(...matches);
@@ -222,15 +243,15 @@ async function runScoutNotesNLP(scoutNotes) {
 
   // Flag concerns
   const concerns = negativeWords
-    .filter(w => lowerText.includes(w))
-    .map(w => `Note mentions: ${w}`);
+    .filter((w) => lowerText.includes(w))
+    .map((w) => `Note mentions: ${w}`);
 
   return {
     sentiment: Math.round(sentiment * 100) / 100,
     sentiment_score: Math.round((sentiment + 1) * 50), // Normalize -1 to 1 → 0 to 100
     key_phrases: keyPhrases.slice(0, 5),
     concerns,
-    word_count: text.split(/\s+/).length
+    word_count: text.split(/\s+/).length,
   };
 }
 
@@ -246,8 +267,9 @@ async function runChampionEnigmaEngine(playerId, env) {
 
   if (env.DB) {
     try {
-      const enigmaData = await env.DB
-        .prepare('SELECT enigma_score, confidence FROM enigma_scores WHERE player_id = ?1')
+      const enigmaData = await env.DB.prepare(
+        'SELECT enigma_score, confidence FROM enigma_scores WHERE player_id = ?1'
+      )
         .bind(playerId)
         .first();
 
@@ -258,8 +280,8 @@ async function runChampionEnigmaEngine(playerId, env) {
           cognitive_traits: {
             pattern_recognition: Math.round(enigmaData.enigma_score * 0.85),
             decision_speed: Math.round(enigmaData.enigma_score * 0.92),
-            tactical_awareness: Math.round(enigmaData.enigma_score * 0.88)
-          }
+            tactical_awareness: Math.round(enigmaData.enigma_score * 0.88),
+          },
         };
       }
     } catch (dbError) {
@@ -274,9 +296,9 @@ async function runChampionEnigmaEngine(playerId, env) {
     cognitive_traits: {
       pattern_recognition: 68,
       decision_speed: 72,
-      tactical_awareness: 69
+      tactical_awareness: 69,
     },
-    note: 'Placeholder - awaiting cognitive assessment'
+    note: 'Placeholder - awaiting cognitive assessment',
   };
 }
 
@@ -288,9 +310,9 @@ function runMetaLearner(scores) {
   // Weighted combination
   const weights = {
     velocity_consistency: 0.25,
-    intangibles_avg: 0.20,
+    intangibles_avg: 0.2,
     notes_sentiment: 0.15,
-    enigma_score: 0.40  // Proprietary system gets highest weight
+    enigma_score: 0.4, // Proprietary system gets highest weight
   };
 
   const velocityScore = scores.velocity.consistency;
@@ -350,9 +372,14 @@ function runMetaLearner(scores) {
     risk_factors: risks.length > 0 ? risks : ['No significant risk factors identified'],
     decision_velocity_score: Math.round(decisionVelocity),
     confidence_level: draftGrade > 80 ? 'High' : draftGrade > 60 ? 'Medium' : 'Low',
-    recommendation: draftGrade > 80 ? 'Strong recommend' :
-                    draftGrade > 65 ? 'Recommend with development plan' :
-                    draftGrade > 50 ? 'Monitor closely' : 'Pass'
+    recommendation:
+      draftGrade > 80
+        ? 'Strong recommend'
+        : draftGrade > 65
+          ? 'Recommend with development plan'
+          : draftGrade > 50
+            ? 'Monitor closely'
+            : 'Pass',
   };
 }
 
@@ -366,39 +393,48 @@ function runMetaLearner(scores) {
 async function fetchLatestGameData(playerId, env) {
   const cacheKey = `cb:scouting:game:${playerId}`;
 
-  return await cache(env, cacheKey, async () => {
-    try {
-      // Fetch player's recent games from ESPN
-      const espnUrl = `https://site.api.espn.com/apis/common/v3/sports/baseball/college-baseball/athletes/${playerId}`;
-      const response = await fetchWithTimeout(espnUrl, {
-        headers: {
-          'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-          Accept: 'application/json'
+  return await cache(
+    env,
+    cacheKey,
+    async () => {
+      try {
+        // Fetch player's recent games from ESPN
+        const espnUrl = `https://site.api.espn.com/apis/common/v3/sports/baseball/college-baseball/athletes/${playerId}`;
+        const response = await fetchWithTimeout(
+          espnUrl,
+          {
+            headers: {
+              'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
+              Accept: 'application/json',
+            },
+          },
+          8000
+        );
+
+        if (!response.ok) {
+          throw new Error(`ESPN API returned ${response.status}`);
         }
-      }, 8000);
 
-      if (!response.ok) {
-        throw new Error(`ESPN API returned ${response.status}`);
+        const data = await response.json();
+
+        // Extract play-by-play data if available
+        const plays = data.events?.[0]?.competitions?.[0]?.details || [];
+
+        return {
+          plays: plays.map((p) => ({
+            type: p.type?.text,
+            pitchSpeed: p.pitchSpeed,
+            inning: p.inning,
+            sequenceNumber: p.sequenceNumber,
+          })),
+          stats: data.statistics?.[0] || {},
+        };
+      } catch (error) {
+        return { plays: [], stats: {} };
       }
-
-      const data = await response.json();
-
-      // Extract play-by-play data if available
-      const plays = data.events?.[0]?.competitions?.[0]?.details || [];
-
-      return {
-        plays: plays.map(p => ({
-          type: p.type?.text,
-          pitchSpeed: p.pitchSpeed,
-          inning: p.inning,
-          sequenceNumber: p.sequenceNumber
-        })),
-        stats: data.statistics?.[0] || {}
-      };
-    } catch (error) {
-      return { plays: [], stats: {} };
-    }
-  }, 60); // 1 min cache for live data
+    },
+    60
+  ); // 1 min cache for live data
 }
 
 /**
@@ -410,19 +446,20 @@ async function fetchHistoricalStats(playerId, env) {
   }
 
   try {
-    const result = await env.DB
-      .prepare(`
+    const result = await env.DB.prepare(
+      `
         SELECT game_date, avg_velocity, max_velocity, innings_pitched, strikeouts, walks
         FROM player_history
         WHERE player_id = ?1
         ORDER BY game_date DESC
         LIMIT 10
-      `)
+      `
+    )
       .bind(playerId)
       .all();
 
     return {
-      games: result.results || []
+      games: result.results || [],
     };
   } catch (error) {
     return { games: [] };
@@ -438,14 +475,15 @@ async function fetchScoutNotes(playerId, env) {
   }
 
   try {
-    const result = await env.DB
-      .prepare(`
+    const result = await env.DB.prepare(
+      `
         SELECT notes, rubric_json, created_at
         FROM scout_notes
         WHERE player_id = ?1
         ORDER BY created_at DESC
         LIMIT 1
-      `)
+      `
+    )
       .bind(playerId)
       .first();
 
@@ -456,7 +494,7 @@ async function fetchScoutNotes(playerId, env) {
     return {
       notes: result.notes || '',
       rubric: result.rubric_json ? JSON.parse(result.rubric_json) : {},
-      created_at: result.created_at
+      created_at: result.created_at,
     };
   } catch (error) {
     return { notes: '', rubric: {} };

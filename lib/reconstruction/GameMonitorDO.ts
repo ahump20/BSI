@@ -70,7 +70,9 @@ export class GameMonitorDO {
       // Schedule next alarm
       const nextAlarmTime = Date.now() + this.pollInterval;
       await this.state.storage.setAlarm(nextAlarmTime);
-      console.log(`[GameMonitorDO] Next alarm scheduled for ${new Date(nextAlarmTime).toISOString()}`);
+      console.log(
+        `[GameMonitorDO] Next alarm scheduled for ${new Date(nextAlarmTime).toISOString()}`
+      );
     } catch (error) {
       console.error('[GameMonitorDO] Alarm error:', error);
       // Still schedule next alarm even if this cycle failed
@@ -97,7 +99,7 @@ export class GameMonitorDO {
         success: true,
         message: 'Monitoring started',
         pollIntervalSeconds: this.pollInterval / 1000,
-        nextPollTime: new Date(Date.now() + 1000).toISOString()
+        nextPollTime: new Date(Date.now() + 1000).toISOString(),
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
@@ -118,7 +120,7 @@ export class GameMonitorDO {
     return new Response(
       JSON.stringify({
         success: true,
-        message: 'Monitoring stopped'
+        message: 'Monitoring stopped',
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
@@ -128,16 +130,16 @@ export class GameMonitorDO {
    * Get current monitoring status
    */
   private async getStatus(): Promise<Response> {
-    const isMonitoring = await this.state.storage.get<boolean>('isMonitoring') ?? false;
+    const isMonitoring = (await this.state.storage.get<boolean>('isMonitoring')) ?? false;
     const lastPollTime = await this.state.storage.get<string>('lastPollTime');
-    const pollCount = await this.state.storage.get<number>('pollCount') ?? 0;
+    const pollCount = (await this.state.storage.get<number>('pollCount')) ?? 0;
 
     return new Response(
       JSON.stringify({
         isMonitoring,
         lastPollTime,
         pollCount,
-        pollIntervalSeconds: this.pollInterval / 1000
+        pollIntervalSeconds: this.pollInterval / 1000,
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
@@ -152,12 +154,14 @@ export class GameMonitorDO {
 
     try {
       // Get all active monitors from database - fetch ALL columns to match LiveGame type
-      const result = await this.env.DB.prepare(`
+      const result = await this.env.DB.prepare(
+        `
         SELECT *
         FROM live_games
         WHERE is_active = 1
         ORDER BY created_at DESC
-      `).all();
+      `
+      ).all();
 
       const activeGames = result.results ?? [];
       console.log(`[GameMonitorDO] Found ${activeGames.length} active games to poll`);
@@ -179,7 +183,9 @@ export class GameMonitorDO {
           const homeTeam = (game as any).home_team;
           const id = (game as any).id;
 
-          console.log(`[GameMonitorDO] Polling ${sport.toUpperCase()} game ${gameId}: ${awayTeam} @ ${homeTeam}`);
+          console.log(
+            `[GameMonitorDO] Polling ${sport.toUpperCase()} game ${gameId}: ${awayTeam} @ ${homeTeam}`
+          );
 
           // Call pollGame method which handles all sports
           await monitor.pollGame(id);
@@ -192,12 +198,14 @@ export class GameMonitorDO {
       }
 
       // Update poll statistics
-      const pollCount = (await this.state.storage.get<number>('pollCount') ?? 0) + 1;
+      const pollCount = ((await this.state.storage.get<number>('pollCount')) ?? 0) + 1;
       await this.state.storage.put('pollCount', pollCount);
       await this.state.storage.put('lastPollTime', new Date().toISOString());
 
       const duration = Date.now() - startTime;
-      console.log(`[GameMonitorDO] Poll cycle complete in ${duration}ms (${pollCount} total polls)`);
+      console.log(
+        `[GameMonitorDO] Poll cycle complete in ${duration}ms (${pollCount} total polls)`
+      );
     } catch (error) {
       console.error('[GameMonitorDO] Poll cycle error:', error);
       throw error;

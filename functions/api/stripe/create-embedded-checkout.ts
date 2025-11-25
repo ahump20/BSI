@@ -33,9 +33,9 @@ async function createStripeCheckoutSession(
   const body: Record<string, string> = {
     'line_items[0][price]': params.priceId,
     'line_items[0][quantity]': '1',
-    'mode': params.mode,
-    'ui_mode': params.uiMode,
-    'return_url': params.returnUrl,
+    mode: params.mode,
+    ui_mode: params.uiMode,
+    return_url: params.returnUrl,
   };
 
   if (params.customerEmail) {
@@ -63,14 +63,14 @@ async function createStripeCheckoutSession(
   const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${secretKey}`,
+      Authorization: `Bearer ${secretKey}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: formBody,
   });
 
   if (!response.ok) {
-    const error = await response.json() as { error?: { message?: string } };
+    const error = (await response.json()) as { error?: { message?: string } };
     throw new Error(error.error?.message || 'Failed to create checkout session');
   }
 
@@ -103,35 +103,47 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   try {
     if (!env.STRIPE_SECRET_KEY) {
       console.error('STRIPE_SECRET_KEY not configured');
-      return new Response(JSON.stringify({
-        error: 'Payment system not configured'
-      }), { status: 500, headers: corsHeaders });
+      return new Response(
+        JSON.stringify({
+          error: 'Payment system not configured',
+        }),
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     let body: CheckoutRequest;
     try {
       body = await request.json();
     } catch {
-      return new Response(JSON.stringify({
-        error: 'Invalid request body'
-      }), { status: 400, headers: corsHeaders });
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid request body',
+        }),
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     const { tier, email, mode = 'subscription' } = body;
 
     if (!tier || !['pro', 'enterprise'].includes(tier)) {
-      return new Response(JSON.stringify({
-        error: 'Invalid tier. Must be "pro" or "enterprise"'
-      }), { status: 400, headers: corsHeaders });
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid tier. Must be "pro" or "enterprise"',
+        }),
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     const priceId = tier === 'pro' ? env.STRIPE_PRO_PRICE_ID : env.STRIPE_ENTERPRISE_PRICE_ID;
 
     if (!priceId) {
       console.error(`Price ID not configured for tier: ${tier}`);
-      return new Response(JSON.stringify({
-        error: 'Pricing not configured for this tier'
-      }), { status: 500, headers: corsHeaders });
+      return new Response(
+        JSON.stringify({
+          error: 'Pricing not configured for this tier',
+        }),
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     const origin = new URL(request.url).origin;
@@ -151,15 +163,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       },
     });
 
-    return new Response(JSON.stringify({
-      clientSecret: session.client_secret,
-      sessionId: session.id,
-    }), { status: 200, headers: corsHeaders });
-
+    return new Response(
+      JSON.stringify({
+        clientSecret: session.client_secret,
+        sessionId: session.id,
+      }),
+      { status: 200, headers: corsHeaders }
+    );
   } catch (error) {
     console.error('Create embedded checkout error:', error);
-    return new Response(JSON.stringify({
-      error: error instanceof Error ? error.message : 'Failed to create checkout session'
-    }), { status: 500, headers: corsHeaders });
+    return new Response(
+      JSON.stringify({
+        error: error instanceof Error ? error.message : 'Failed to create checkout session',
+      }),
+      { status: 500, headers: corsHeaders }
+    );
   }
 };

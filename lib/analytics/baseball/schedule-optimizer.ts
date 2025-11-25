@@ -24,7 +24,13 @@
  * Timezone: America/Chicago
  */
 
-import { RPICalculation, SOSCalculation, ISRCalculation, ConferenceStrengthModel, TeamRecord } from './conference-strength-model';
+import {
+  RPICalculation,
+  SOSCalculation,
+  ISRCalculation,
+  ConferenceStrengthModel,
+  TeamRecord,
+} from './conference-strength-model';
 
 // ============================================================================
 // Type Definitions
@@ -153,15 +159,18 @@ export class ScheduleOptimizer {
       sos: SOSCalculation;
       isr: ISRCalculation;
     },
-    opponentMetrics: Map<string, {
-      rpi: RPICalculation;
-      sos: SOSCalculation;
-      isr: ISRCalculation;
-    }>,
+    opponentMetrics: Map<
+      string,
+      {
+        rpi: RPICalculation;
+        sos: SOSCalculation;
+        isr: ISRCalculation;
+      }
+    >,
     iterations: number = 10000
   ): MonteCarloSimulation {
     // Calculate win probabilities for each remaining game
-    const gameProbabilities = schedule.remainingGames.map(game => {
+    const gameProbabilities = schedule.remainingGames.map((game) => {
       const oppMetrics = opponentMetrics.get(game.opponent.teamId);
 
       if (!oppMetrics) {
@@ -169,30 +178,22 @@ export class ScheduleOptimizer {
         return {
           gameId: game.gameId,
           opponent: game.opponent.teamName,
-          winProbability: 0.50,
-          expectedMargin: 0
+          winProbability: 0.5,
+          expectedMargin: 0,
         };
       }
 
       // Calculate win probability using Log5 method
-      const winProb = this.calculateWinProbability(
-        teamMetrics,
-        oppMetrics,
-        game.location
-      );
+      const winProb = this.calculateWinProbability(teamMetrics, oppMetrics, game.location);
 
       // Estimate expected run margin
-      const expectedMargin = this.estimateRunMargin(
-        teamMetrics.isr,
-        oppMetrics.isr,
-        game.location
-      );
+      const expectedMargin = this.estimateRunMargin(teamMetrics.isr, oppMetrics.isr, game.location);
 
       return {
         gameId: game.gameId,
         opponent: game.opponent.teamName,
         winProbability: winProb,
-        expectedMargin
+        expectedMargin,
       };
     });
 
@@ -216,7 +217,8 @@ export class ScheduleOptimizer {
 
     // Calculate mean projected wins
     const meanWins = simulationResults.reduce((sum, wins) => sum + wins, 0) / iterations;
-    const totalGames = schedule.currentRecord.wins + schedule.currentRecord.losses + schedule.remainingGames.length;
+    const totalGames =
+      schedule.currentRecord.wins + schedule.currentRecord.losses + schedule.remainingGames.length;
     const projectedLosses = totalGames - meanWins;
 
     // Calculate confidence interval (95% by default)
@@ -249,24 +251,24 @@ export class ScheduleOptimizer {
       projectedRecord: {
         wins: roundedWins,
         losses: roundedLosses,
-        winningPct: roundedWins / totalGames  // Use rounded wins for consistency
+        winningPct: roundedWins / totalGames, // Use rounded wins for consistency
       },
       confidenceInterval: {
         level: 95,
         winsLower,
         winsUpper,
         lossesLower,
-        lossesUpper
+        lossesUpper,
       },
       remainingGameProbabilities: gameProbabilities,
       ncaaTournamentProbability: ncaaTournamentProb,
-      ncaaSeedProbability: Math.min(ncaaSeedProb, ncaaTournamentProb),  // Seed prob can't exceed tournament prob
+      ncaaSeedProbability: Math.min(ncaaSeedProb, ncaaTournamentProb), // Seed prob can't exceed tournament prob
       conferenceChampionshipProbability: confChampProb,
       metadata: {
         simulationDate: new Date().toISOString(),
         confidence: 95,
-        method: 'Monte Carlo with Log5 Win Probability'
-      }
+        method: 'Monte Carlo with Log5 Win Probability',
+      },
     };
   }
 
@@ -337,7 +339,7 @@ export class ScheduleOptimizer {
     const teamRunsAllowed = (1 - teamISR.defensiveRating) * 10;
     const oppRunsAllowed = (1 - oppISR.defensiveRating) * 10;
 
-    let expectedMargin = (teamRunsPerGame - teamRunsAllowed) - (oppRunsPerGame - oppRunsAllowed);
+    let expectedMargin = teamRunsPerGame - teamRunsAllowed - (oppRunsPerGame - oppRunsAllowed);
 
     // Adjust for location
     if (location === 'home') {
@@ -414,49 +416,58 @@ export class ScheduleOptimizer {
     const scenarios: WhatIfScenario[] = [];
 
     // Scenario 1: Win all remaining games
-    scenarios.push(this.createScenario(
-      'Win Out',
-      'Win all remaining games',
-      schedule.remainingGames.map(g => ({ gameId: g.gameId, assumedResult: 'win' as const })),
-      schedule,
-      teamMetrics
-    ));
+    scenarios.push(
+      this.createScenario(
+        'Win Out',
+        'Win all remaining games',
+        schedule.remainingGames.map((g) => ({ gameId: g.gameId, assumedResult: 'win' as const })),
+        schedule,
+        teamMetrics
+      )
+    );
 
     // Scenario 2: Lose all remaining games
-    scenarios.push(this.createScenario(
-      'Worst Case',
-      'Lose all remaining games',
-      schedule.remainingGames.map(g => ({ gameId: g.gameId, assumedResult: 'loss' as const })),
-      schedule,
-      teamMetrics
-    ));
+    scenarios.push(
+      this.createScenario(
+        'Worst Case',
+        'Lose all remaining games',
+        schedule.remainingGames.map((g) => ({ gameId: g.gameId, assumedResult: 'loss' as const })),
+        schedule,
+        teamMetrics
+      )
+    );
 
     // Scenario 3: Win all key games (>60% importance)
-    const keyGames = baseSimulation.remainingGameProbabilities
-      .filter(g => g.winProbability > 0.60 || g.winProbability < 0.40);
+    const keyGames = baseSimulation.remainingGameProbabilities.filter(
+      (g) => g.winProbability > 0.6 || g.winProbability < 0.4
+    );
 
-    scenarios.push(this.createScenario(
-      'Win Key Games',
-      'Win all games against key opponents',
-      keyGames.map(g => ({ gameId: g.gameId, assumedResult: 'win' as const })),
-      schedule,
-      teamMetrics
-    ));
+    scenarios.push(
+      this.createScenario(
+        'Win Key Games',
+        'Win all games against key opponents',
+        keyGames.map((g) => ({ gameId: g.gameId, assumedResult: 'win' as const })),
+        schedule,
+        teamMetrics
+      )
+    );
 
     // Scenario 4: Split remaining games
     const winsInSplit = Math.floor(schedule.remainingGames.length / 2);
     const splitGames = schedule.remainingGames.map((g, i) => ({
       gameId: g.gameId,
-      assumedResult: (i < winsInSplit ? 'win' : 'loss') as 'win' | 'loss'
+      assumedResult: (i < winsInSplit ? 'win' : 'loss') as 'win' | 'loss',
     }));
 
-    scenarios.push(this.createScenario(
-      'Split Remaining',
-      'Win 50% of remaining games',
-      splitGames,
-      schedule,
-      teamMetrics
-    ));
+    scenarios.push(
+      this.createScenario(
+        'Split Remaining',
+        'Win 50% of remaining games',
+        splitGames,
+        schedule,
+        teamMetrics
+      )
+    );
 
     return scenarios;
   }
@@ -476,15 +487,16 @@ export class ScheduleOptimizer {
     }
   ): WhatIfScenario {
     // Calculate projected record
-    const additionalWins = outcomes.filter(o => o.assumedResult === 'win').length;
-    const additionalLosses = outcomes.filter(o => o.assumedResult === 'loss').length;
+    const additionalWins = outcomes.filter((o) => o.assumedResult === 'win').length;
+    const additionalLosses = outcomes.filter((o) => o.assumedResult === 'loss').length;
 
     const projectedWins = schedule.currentRecord.wins + additionalWins;
     const projectedLosses = schedule.currentRecord.losses + additionalLosses;
     const totalGames = projectedWins + projectedLosses;
 
     // Estimate RPI change (simplified)
-    const currentWinPct = schedule.currentRecord.wins / (schedule.currentRecord.wins + schedule.currentRecord.losses);
+    const currentWinPct =
+      schedule.currentRecord.wins / (schedule.currentRecord.wins + schedule.currentRecord.losses);
     const projectedWinPct = projectedWins / totalGames;
     const rpiChange = (projectedWinPct - currentWinPct) * 0.25; // RPI = 25% win pct
 
@@ -508,10 +520,10 @@ export class ScheduleOptimizer {
       projectedRecord: {
         wins: projectedWins,
         losses: projectedLosses,
-        winningPct: projectedWinPct
+        winningPct: projectedWinPct,
       },
       rpiChange,
-      ncaaTournamentProbabilityChange: ncaaProbChange
+      ncaaTournamentProbabilityChange: ncaaProbChange,
     };
   }
 
@@ -526,16 +538,19 @@ export class ScheduleOptimizer {
       sos: SOSCalculation;
       isr: ISRCalculation;
     },
-    opponentMetrics: Map<string, {
-      rpi: RPICalculation;
-      sos: SOSCalculation;
-      isr: ISRCalculation;
-    }>
+    opponentMetrics: Map<
+      string,
+      {
+        rpi: RPICalculation;
+        sos: SOSCalculation;
+        isr: ISRCalculation;
+      }
+    >
   ): ScheduleOptimization {
     // Identify key games based on importance
     const keyGames = simulation.remainingGameProbabilities
-      .map(gameProb => {
-        const game = schedule.remainingGames.find(g => g.gameId === gameProb.gameId)!;
+      .map((gameProb) => {
+        const game = schedule.remainingGames.find((g) => g.gameId === gameProb.gameId)!;
         const oppMetrics = opponentMetrics.get(game.opponent.teamId);
 
         // Calculate importance score
@@ -551,15 +566,13 @@ export class ScheduleOptimizer {
           importance += closenessScore * 30;
 
           // Quality win opportunity (RPI > 0.600)
-          if (oppMetrics.rpi.rpi > 0.600) {
+          if (oppMetrics.rpi.rpi > 0.6) {
             importance += 20;
           }
         }
 
         // Calculate NCAA impact (0-100 scale based on importance and RPI)
-        const ncaaImpact = oppMetrics
-          ? (oppMetrics.rpi.rpi * 50 + importance / 2)
-          : importance;
+        const ncaaImpact = oppMetrics ? oppMetrics.rpi.rpi * 50 + importance / 2 : importance;
 
         return {
           gameId: gameProb.gameId,
@@ -567,7 +580,7 @@ export class ScheduleOptimizer {
           importance,
           reasoning: this.generateImportanceReasoning(gameProb, oppMetrics),
           winProbability: gameProb.winProbability,
-          ncaaImpact
+          ncaaImpact,
         };
       })
       .sort((a, b) => b.importance - a.importance)
@@ -590,7 +603,7 @@ export class ScheduleOptimizer {
       currentSchedule: schedule,
       recommendations,
       keyGames,
-      optimalOutcomes
+      optimalOutcomes,
     };
   }
 
@@ -611,15 +624,15 @@ export class ScheduleOptimizer {
 
     const reasons: string[] = [];
 
-    if (oppMetrics.rpi.rpi > 0.650) {
+    if (oppMetrics.rpi.rpi > 0.65) {
       reasons.push('Elite opponent (Top 25 RPI)');
-    } else if (oppMetrics.rpi.rpi > 0.600) {
+    } else if (oppMetrics.rpi.rpi > 0.6) {
       reasons.push('Quality opponent (Top 50 RPI)');
     }
 
     if (gameProb.winProbability >= 0.45 && gameProb.winProbability <= 0.55) {
       reasons.push('Toss-up game');
-    } else if (gameProb.winProbability > 0.70) {
+    } else if (gameProb.winProbability > 0.7) {
       reasons.push('Must-win game');
     }
 
@@ -657,21 +670,22 @@ export class ScheduleOptimizer {
 
     // Recommendation 1: Win probability threshold
     const closeGames = simulation.remainingGameProbabilities.filter(
-      g => g.winProbability >= 0.40 && g.winProbability <= 0.60
+      (g) => g.winProbability >= 0.4 && g.winProbability <= 0.6
     );
 
     if (closeGames.length > 0) {
       recommendations.push({
         priority: 1,
         recommendation: `Focus on ${closeGames.length} toss-up games`,
-        reasoning: 'These games have the highest variance in outcomes and could significantly impact final record',
-        impactScore: closeGames.length * 10
+        reasoning:
+          'These games have the highest variance in outcomes and could significantly impact final record',
+        impactScore: closeGames.length * 10,
       });
     }
 
     // Recommendation 2: Quality win opportunities
     const qualityWinOpps = simulation.remainingGameProbabilities.filter(
-      g => g.winProbability >= 0.30 // Winnable games
+      (g) => g.winProbability >= 0.3 // Winnable games
     ).length;
 
     if (qualityWinOpps > 3) {
@@ -679,13 +693,13 @@ export class ScheduleOptimizer {
         priority: 2,
         recommendation: `${qualityWinOpps} winnable games remaining`,
         reasoning: 'Maximize quality wins to boost RPI and NCAA tournament resume',
-        impactScore: qualityWinOpps * 8
+        impactScore: qualityWinOpps * 8,
       });
     }
 
     // Recommendation 3: Must-win games
     const mustWinGames = simulation.remainingGameProbabilities.filter(
-      g => g.winProbability >= 0.70
+      (g) => g.winProbability >= 0.7
     ).length;
 
     if (mustWinGames > 0) {
@@ -693,21 +707,21 @@ export class ScheduleOptimizer {
         priority: 3,
         recommendation: `Avoid bad losses in ${mustWinGames} favorable matchups`,
         reasoning: 'Losses in these games would significantly hurt RPI and tournament chances',
-        impactScore: mustWinGames * 12
+        impactScore: mustWinGames * 12,
       });
     }
 
     // Recommendation 4: NCAA tournament threshold
-    if (simulation.ncaaTournamentProbability < 0.70) {
-      const winsNeeded = Math.ceil(
-        (schedule.currentRecord.wins + schedule.remainingGames.length) * 0.55
-      ) - schedule.currentRecord.wins;
+    if (simulation.ncaaTournamentProbability < 0.7) {
+      const winsNeeded =
+        Math.ceil((schedule.currentRecord.wins + schedule.remainingGames.length) * 0.55) -
+        schedule.currentRecord.wins;
 
       recommendations.push({
         priority: 4,
         recommendation: `Win at least ${winsNeeded} of remaining ${schedule.remainingGames.length} games`,
         reasoning: `Current NCAA tournament probability: ${Math.round(simulation.ncaaTournamentProbability * 100)}%. Need strong finish to reach 70%+ threshold`,
-        impactScore: (0.70 - simulation.ncaaTournamentProbability) * 100
+        impactScore: (0.7 - simulation.ncaaTournamentProbability) * 100,
       });
     }
 
@@ -729,27 +743,29 @@ export class ScheduleOptimizer {
     finalRecord: string;
     ncaaTournamentSeed?: number;
   }> {
-    const totalGames = schedule.currentRecord.wins + schedule.currentRecord.losses + schedule.remainingGames.length;
+    const totalGames =
+      schedule.currentRecord.wins + schedule.currentRecord.losses + schedule.remainingGames.length;
 
     const outcomes = [
       {
         scenario: 'Best Case',
         probability: 0.05,
         finalRecord: `${simulation.confidenceInterval.winsUpper}-${simulation.confidenceInterval.lossesLower}`,
-        ncaaTournamentSeed: simulation.confidenceInterval.winsUpper >= totalGames * 0.65 ? 1 : undefined
+        ncaaTournamentSeed:
+          simulation.confidenceInterval.winsUpper >= totalGames * 0.65 ? 1 : undefined,
       },
       {
         scenario: 'Expected',
-        probability: 0.50,
+        probability: 0.5,
         finalRecord: `${simulation.projectedRecord.wins}-${simulation.projectedRecord.losses}`,
-        ncaaTournamentSeed: simulation.ncaaSeedProbability > 0.50 ? 2 : undefined
+        ncaaTournamentSeed: simulation.ncaaSeedProbability > 0.5 ? 2 : undefined,
       },
       {
         scenario: 'Worst Case',
         probability: 0.05,
         finalRecord: `${simulation.confidenceInterval.winsLower}-${simulation.confidenceInterval.lossesUpper}`,
-        ncaaTournamentSeed: undefined
-      }
+        ncaaTournamentSeed: undefined,
+      },
     ];
 
     return outcomes;

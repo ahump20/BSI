@@ -12,7 +12,11 @@
  * DISCLAIMER: For educational and analytical purposes only.
  */
 
-import { analyzeBettingLines, trackLineMovement, calculateClosingLineValue } from '../../../../lib/ml/betting-line-analyzer.js';
+import {
+  analyzeBettingLines,
+  trackLineMovement,
+  calculateClosingLineValue,
+} from '../../../../lib/ml/betting-line-analyzer.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
 export async function onRequest(context) {
@@ -54,7 +58,7 @@ export async function onRequest(context) {
         const betDetails = {
           betType: url.searchParams.get('betType') || 'moneyline',
           side: url.searchParams.get('side') || 'home',
-          odds: parseInt(url.searchParams.get('odds') || '-110')
+          odds: parseInt(url.searchParams.get('odds') || '-110'),
         };
         result = await calculateClosingLineValue(gameId, betDetails, env);
         break;
@@ -77,22 +81,24 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=60, s-maxage=120' // 1-2 min cache for betting lines
-      }
+        'Cache-Control': 'public, max-age=60, s-maxage=120', // 1-2 min cache for betting lines
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to analyze betting lines',
-      message: error.message,
-      disclaimer: 'For educational and analytical purposes only. Not financial advice.'
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to analyze betting lines',
+        message: error.message,
+        disclaimer: 'For educational and analytical purposes only. Not financial advice.',
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -101,7 +107,8 @@ export async function onRequest(context) {
  */
 async function fetchGameState(env, gameId, sport) {
   try {
-    const game = await env.DB.prepare(`
+    const game = await env.DB.prepare(
+      `
       SELECT
         game_id, sport, home_team_id, away_team_id,
         period, time_remaining, home_score, away_score,
@@ -110,7 +117,10 @@ async function fetchGameState(env, gameId, sport) {
         quarter, status
       FROM historical_games
       WHERE game_id = ? AND sport = ?
-    `).bind(gameId, sport).first();
+    `
+    )
+      .bind(gameId, sport)
+      .first();
 
     if (!game) {
       throw new Error(`Game ${gameId} not found`);
@@ -133,9 +143,8 @@ async function fetchGameState(env, gameId, sport) {
       outs: game.outs,
       runnersOn: game.runners_on ? JSON.parse(game.runners_on) : [],
       quarter: game.quarter,
-      status: game.status
+      status: game.status,
     };
-
   } catch (error) {
     throw error;
   }
@@ -154,7 +163,7 @@ async function fetchBettingLines(env, gameId) {
       return {
         moneyline: { home: -150, away: 130 },
         spread: { line: -3.5, homeOdds: -110, awayOdds: -110 },
-        total: { line: 47.5, overOdds: -110, underOdds: -110 }
+        total: { line: 47.5, overOdds: -110, underOdds: -110 },
       };
     }
 
@@ -162,15 +171,14 @@ async function fetchBettingLines(env, gameId) {
     return {
       moneyline: lines.moneyline[lines.moneyline.length - 1],
       spread: lines.spread[lines.spread.length - 1],
-      total: lines.total[lines.total.length - 1]
+      total: lines.total[lines.total.length - 1],
     };
-
   } catch (error) {
     // Return default lines on error
     return {
       moneyline: { home: -150, away: 130 },
       spread: { line: -3.5, homeOdds: -110, awayOdds: -110 },
-      total: { line: 47.5, overOdds: -110, underOdds: -110 }
+      total: { line: 47.5, overOdds: -110, underOdds: -110 },
     };
   }
 }
@@ -186,12 +194,12 @@ function generateDemoLineAnalysis(sport) {
     modelProbability: {
       home: 0.58,
       away: 0.42,
-      confidence: 'medium'
+      confidence: 'medium',
     },
     marketLines: {
       moneyline: { home: -150, away: 130 },
       spread: { line: -3.5, homeOdds: -110, awayOdds: -110 },
-      total: { line: 47.5, overOdds: -110, underOdds: -110 }
+      total: { line: 47.5, overOdds: -110, underOdds: -110 },
     },
     analysis: {
       moneyline: {
@@ -200,13 +208,13 @@ function generateDemoLineAnalysis(sport) {
         vig: 2.38,
         home: {
           odds: -150,
-          impliedProbability: 0.60,
+          impliedProbability: 0.6,
           fairProbability: 0.59,
           modelProbability: 0.58,
           edge: -0.01,
           hasValue: false,
           kellyCriterion: 0,
-          recommendation: 'pass'
+          recommendation: 'pass',
         },
         away: {
           odds: 130,
@@ -216,10 +224,10 @@ function generateDemoLineAnalysis(sport) {
           edge: 0.01,
           hasValue: false,
           kellyCriterion: 0,
-          recommendation: 'pass'
+          recommendation: 'pass',
         },
         bestSide: 'away',
-        maxEdge: 0.01
+        maxEdge: 0.01,
       },
       spread: {
         available: true,
@@ -232,7 +240,7 @@ function generateDemoLineAnalysis(sport) {
           modelProbability: 0.56,
           edge: 0.04,
           hasValue: false,
-          recommendation: 'pass'
+          recommendation: 'pass',
         },
         away: {
           line: 3.5,
@@ -241,10 +249,10 @@ function generateDemoLineAnalysis(sport) {
           modelProbability: 0.44,
           edge: -0.08,
           hasValue: false,
-          recommendation: 'pass'
+          recommendation: 'pass',
         },
         bestSide: 'home',
-        maxEdge: 0.04
+        maxEdge: 0.04,
       },
       total: {
         available: true,
@@ -257,7 +265,7 @@ function generateDemoLineAnalysis(sport) {
           impliedProbability: 0.52,
           edge: 1.7,
           hasValue: false,
-          recommendation: 'pass'
+          recommendation: 'pass',
         },
         under: {
           line: 47.5,
@@ -265,18 +273,18 @@ function generateDemoLineAnalysis(sport) {
           impliedProbability: 0.52,
           edge: -1.7,
           hasValue: false,
-          recommendation: 'pass'
+          recommendation: 'pass',
         },
         bestSide: 'over',
-        maxEdge: 1.7
-      }
+        maxEdge: 1.7,
+      },
     },
     bestOpportunity: {
       found: false,
-      message: 'No value opportunities identified'
+      message: 'No value opportunities identified',
     },
     disclaimer: 'For educational and analytical purposes only. Not financial advice. Demo data.',
     lastUpdated: new Date().toISOString(),
-    timezone: 'America/Chicago'
+    timezone: 'America/Chicago',
   };
 }

@@ -26,9 +26,13 @@ import {
   ReferenceLine,
   ResponsiveContainer,
   Area,
-  AreaChart
+  AreaChart,
 } from 'recharts';
-import { LiveWinProbabilityEngine, WinProbPoint, GameState } from '../../lib/analytics/baseball/win-probability-engine';
+import {
+  LiveWinProbabilityEngine,
+  WinProbPoint,
+  GameState,
+} from '../../lib/analytics/baseball/win-probability-engine';
 
 interface WinProbabilityChartProps {
   gameId: string;
@@ -67,7 +71,7 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
   showConfidenceInterval = false,
   enableWebSocket = true,
   websocketUrl = process.env.NEXT_PUBLIC_WS_URL || 'wss://blazesportsintel.com/ws',
-  onCriticalMoment
+  onCriticalMoment,
 }) => {
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [currentLeverage, setCurrentLeverage] = useState<number>(1.0);
@@ -87,7 +91,7 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
       confidenceLower: 40.0,
       criticalMoment: false,
       description: 'Game Start',
-      timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })
+      timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
     };
     setChartData([initialData]);
 
@@ -149,9 +153,10 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
     const winProb = LiveWinProbabilityEngine.calculateWinProbability(gameState);
 
     // Calculate WPA if we have previous state
-    const wpa = chartData.length > 0
-      ? (winProb.homeWinProbability * 100) - chartData[chartData.length - 1].homeWinProb
-      : 0;
+    const wpa =
+      chartData.length > 0
+        ? winProb.homeWinProbability * 100 - chartData[chartData.length - 1].homeWinProb
+        : 0;
 
     const newDataPoint: ChartDataPoint = {
       playNumber: chartData.length,
@@ -163,13 +168,15 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
       confidenceUpper: Math.min(100, winProb.homeWinProbability * 100 + 10),
       confidenceLower: Math.max(0, winProb.homeWinProbability * 100 - 10),
       criticalMoment: winProb.criticalMoment,
-      description: gameState.lastPlay || `${gameState.half} ${gameState.inning}, ${gameState.outs} out${gameState.outs !== 1 ? 's' : ''}`,
+      description:
+        gameState.lastPlay ||
+        `${gameState.half} ${gameState.inning}, ${gameState.outs} out${gameState.outs !== 1 ? 's' : ''}`,
       timestamp: winProb.lastUpdated,
       wpa: Math.abs(wpa),
-      leverageIndex: winProb.leverageIndex
+      leverageIndex: winProb.leverageIndex,
     };
 
-    setChartData(prev => [...prev, newDataPoint]);
+    setChartData((prev) => [...prev, newDataPoint]);
     setCurrentLeverage(winProb.leverageIndex);
 
     // Trigger callback for critical moments
@@ -181,7 +188,7 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
         homeWinProb: winProb.homeWinProbability * 100,
         criticalMoment: true,
         description: newDataPoint.description,
-        timestamp: winProb.lastUpdated
+        timestamp: winProb.lastUpdated,
       };
       onCriticalMoment(point);
     }
@@ -194,7 +201,8 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
         <div className="win-prob-tooltip">
           <p className="tooltip-title">{data.description}</p>
           <p className="tooltip-inning">
-            {data.half === 'top' ? '▲' : '▼'} Inning {data.inning}, {data.outs} out{data.outs !== 1 ? 's' : ''}
+            {data.half === 'top' ? '▲' : '▼'} Inning {data.inning}, {data.outs} out
+            {data.outs !== 1 ? 's' : ''}
           </p>
           <p className="tooltip-prob home">
             {homeTeam}: <strong>{data.homeWinProb.toFixed(1)}%</strong>
@@ -204,7 +212,11 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
           </p>
           {data.wpa && data.wpa > 0.5 && (
             <p className="tooltip-wpa">
-              WPA: <strong>{data.wpa > 0 ? '+' : ''}{data.wpa.toFixed(1)}%</strong>
+              WPA:{' '}
+              <strong>
+                {data.wpa > 0 ? '+' : ''}
+                {data.wpa.toFixed(1)}%
+              </strong>
             </p>
           )}
           {data.leverageIndex && data.leverageIndex > 1.5 && (
@@ -225,14 +237,7 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
       return (
         <g>
           {/* Critical moment indicator */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={6}
-            fill="#ff6b00"
-            stroke="#ffffff"
-            strokeWidth={2}
-          />
+          <circle cx={cx} cy={cy} r={6} fill="#ff6b00" stroke="#ffffff" strokeWidth={2} />
           <circle
             cx={cx}
             cy={cy}
@@ -265,7 +270,9 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
         {gameStatus === 'live' && (
           <div className="leverage-indicator">
             <span className="leverage-label">Leverage:</span>
-            <span className={`leverage-value ${currentLeverage > 1.8 ? 'high' : currentLeverage > 1.2 ? 'medium' : 'low'}`}>
+            <span
+              className={`leverage-value ${currentLeverage > 1.8 ? 'high' : currentLeverage > 1.2 ? 'medium' : 'low'}`}
+            >
               {currentLeverage.toFixed(2)}
             </span>
           </div>
@@ -277,8 +284,8 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
           <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
             <defs>
               <linearGradient id="confidenceGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={homeColor} stopOpacity={0.3}/>
-                <stop offset="95%" stopColor={homeColor} stopOpacity={0.1}/>
+                <stop offset="5%" stopColor={homeColor} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={homeColor} stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
@@ -374,9 +381,8 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
       <div className="chart-footer">
         <div className="methodology-note">
           <small>
-            Methodology: Log5 + Win Expectancy Matrix (Tango et al. 2007) |
-            Leverage Index (Fangraphs) |
-            Data: {gameStatus === 'live' ? 'Live' : 'Real-time'} game feed
+            Methodology: Log5 + Win Expectancy Matrix (Tango et al. 2007) | Leverage Index
+            (Fangraphs) | Data: {gameStatus === 'live' ? 'Live' : 'Real-time'} game feed
           </small>
         </div>
         {chartData.length > 0 && (
@@ -424,17 +430,17 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
           border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .game-status-badge[data-status="live"] {
+        .game-status-badge[data-status='live'] {
           background: rgba(255, 107, 0, 0.2);
           border-color: rgba(255, 107, 0, 0.5);
           color: #ff6b00;
         }
 
-        .game-status-badge[data-status="pregame"] {
+        .game-status-badge[data-status='pregame'] {
           color: rgba(255, 255, 255, 0.7);
         }
 
-        .game-status-badge[data-status="final"] {
+        .game-status-badge[data-status='final'] {
           color: rgba(255, 255, 255, 0.5);
         }
 
@@ -450,7 +456,8 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
         }
 
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
           }
           50% {

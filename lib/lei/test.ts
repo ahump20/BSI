@@ -10,7 +10,7 @@ import {
   aaronBoone2003ALCS,
   malcolmButler2015SB,
   validateLEIScoring,
-  getAllFamousPlays
+  getAllFamousPlays,
 } from './examples';
 
 // ANSI color codes for terminal output
@@ -150,7 +150,9 @@ const finalSeconds = calculator.compute({
 });
 
 if (finalSeconds.components.scarcity > 0.95) {
-  pass(`Football final seconds has high scarcity: ${(finalSeconds.components.scarcity * 100).toFixed(1)}%`);
+  pass(
+    `Football final seconds has high scarcity: ${(finalSeconds.components.scarcity * 100).toFixed(1)}%`
+  );
 } else {
   fail(`Final seconds scarcity too low: ${finalSeconds.components.scarcity}`);
 }
@@ -216,7 +218,9 @@ const oneStrike = calculator.compute({
 });
 
 if (twoStrikes.lei > oneStrike.lei) {
-  pass(`2-strike count increases scarcity (${twoStrikes.lei.toFixed(1)} > ${oneStrike.lei.toFixed(1)})`);
+  pass(
+    `2-strike count increases scarcity (${twoStrikes.lei.toFixed(1)} > ${oneStrike.lei.toFixed(1)})`
+  );
 } else {
   fail('2-strike count should have higher scarcity than 1-strike');
 }
@@ -243,7 +247,9 @@ const twoScore = calculator.compute({
 });
 
 if (oneScore.lei > twoScore.lei) {
-  pass(`One-score game has higher scarcity (${oneScore.lei.toFixed(1)} > ${twoScore.lei.toFixed(1)})`);
+  pass(
+    `One-score game has higher scarcity (${oneScore.lei.toFixed(1)} > ${twoScore.lei.toFixed(1)})`
+  );
 } else {
   fail('One-score game should have higher scarcity than two-score game');
 }

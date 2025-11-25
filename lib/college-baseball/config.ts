@@ -1,7 +1,7 @@
 /**
  * Blaze Sports Intel - College Baseball Configuration
  * Mobile-First Platform for NCAA Baseball Coverage
- * 
+ *
  * MVP Feature Set:
  * - Live game list with 30s updates
  * - Full sortable box scores
@@ -80,44 +80,99 @@ export interface FeatureFlags {
 // Default configuration for MVP
 export const COLLEGE_BASEBALL_CONFIG: CollegeBaseballConfig = {
   divisions: ['D1', 'D2', 'D3', 'JUCO'],
-  
+
   conferences: [
     {
       id: 'sec',
       name: 'SEC',
       division: 'D1',
-      teams: ['LSU', 'Tennessee', 'Texas', 'Arkansas', 'Vanderbilt', 'Florida', 'Texas A&M', 
-              'Ole Miss', 'Mississippi State', 'Auburn', 'Georgia', 'South Carolina', 
-              'Alabama', 'Kentucky', 'Missouri']
+      teams: [
+        'LSU',
+        'Tennessee',
+        'Texas',
+        'Arkansas',
+        'Vanderbilt',
+        'Florida',
+        'Texas A&M',
+        'Ole Miss',
+        'Mississippi State',
+        'Auburn',
+        'Georgia',
+        'South Carolina',
+        'Alabama',
+        'Kentucky',
+        'Missouri',
+      ],
     },
     {
       id: 'acc',
       name: 'ACC',
       division: 'D1',
-      teams: ['Wake Forest', 'Duke', 'Clemson', 'NC State', 'Virginia', 'Louisville', 
-              'North Carolina', 'Florida State', 'Miami', 'Georgia Tech', 'Notre Dame']
+      teams: [
+        'Wake Forest',
+        'Duke',
+        'Clemson',
+        'NC State',
+        'Virginia',
+        'Louisville',
+        'North Carolina',
+        'Florida State',
+        'Miami',
+        'Georgia Tech',
+        'Notre Dame',
+      ],
     },
     {
       id: 'big12',
       name: 'Big 12',
       division: 'D1',
-      teams: ['TCU', 'Oklahoma State', 'Texas Tech', 'West Virginia', 'Kansas State', 
-              'Baylor', 'Kansas', 'Oklahoma']
+      teams: [
+        'TCU',
+        'Oklahoma State',
+        'Texas Tech',
+        'West Virginia',
+        'Kansas State',
+        'Baylor',
+        'Kansas',
+        'Oklahoma',
+      ],
     },
     {
       id: 'pac12',
       name: 'Pac-12',
       division: 'D1',
-      teams: ['Stanford', 'Oregon State', 'UCLA', 'Arizona', 'USC', 'Washington', 
-              'Oregon', 'Arizona State', 'Cal', 'Utah']
+      teams: [
+        'Stanford',
+        'Oregon State',
+        'UCLA',
+        'Arizona',
+        'USC',
+        'Washington',
+        'Oregon',
+        'Arizona State',
+        'Cal',
+        'Utah',
+      ],
     },
     {
       id: 'big10',
       name: 'Big Ten',
       division: 'D1',
-      teams: ['Nebraska', 'Maryland', 'Indiana', 'Michigan', 'Rutgers', 'Ohio State', 
-              'Iowa', 'Minnesota', 'Illinois', 'Northwestern', 'Penn State', 'Purdue']
-    }
+      teams: [
+        'Nebraska',
+        'Maryland',
+        'Indiana',
+        'Michigan',
+        'Rutgers',
+        'Ohio State',
+        'Iowa',
+        'Minnesota',
+        'Illinois',
+        'Northwestern',
+        'Penn State',
+        'Purdue',
+      ],
+    },
   ],
 
   dataSources: [
@@ -132,8 +187,8 @@ export const COLLEGE_BASEBALL_CONFIG: CollegeBaseballConfig = {
       },
       rateLimit: {
         requestsPerMinute: 30,
-        burstLimit: 10
-      }
+        burstLimit: 10,
+      },
     },
     {
       name: 'NCAA Stats',
@@ -146,39 +201,39 @@ export const COLLEGE_BASEBALL_CONFIG: CollegeBaseballConfig = {
       },
       rateLimit: {
         requestsPerMinute: 20,
-        burstLimit: 5
-      }
-    }
+        burstLimit: 5,
+      },
+    },
   ],
 
   // Aggressive caching per the problem statement
   caching: {
     liveGame: {
       ttl: 30, // 30 seconds for live game updates
-      staleWhileRevalidate: 15
+      staleWhileRevalidate: 15,
     },
     boxScore: {
       live: {
         ttl: 15, // 15s for live box scores
-        staleWhileRevalidate: 10
+        staleWhileRevalidate: 10,
       },
       final: {
         ttl: 3600, // 1 hour for final games
-        staleWhileRevalidate: 300
-      }
+        staleWhileRevalidate: 300,
+      },
     },
     standings: {
       ttl: 300, // 5 minutes for standings
-      staleWhileRevalidate: 60
+      staleWhileRevalidate: 60,
     },
     teamPages: {
       ttl: 3600, // 1 hour for team pages
-      staleWhileRevalidate: 300
+      staleWhileRevalidate: 300,
     },
     playerPages: {
       ttl: 3600, // 1 hour for player pages
-      staleWhileRevalidate: 300
-    }
+      staleWhileRevalidate: 300,
+    },
   },
 
   // MVP feature set
@@ -191,17 +246,20 @@ export const COLLEGE_BASEBALL_CONFIG: CollegeBaseballConfig = {
     nlgRecaps: true,
     nlgPreviews: true,
     videoHighlights: false, // Post-MVP
-    playerCareerLogs: false // Post-MVP
-  }
+    playerCareerLogs: false, // Post-MVP
+  },
 };
 
 // Helper functions
 export function getConferenceTeams(conferenceId: string): string[] {
-  const conference = COLLEGE_BASEBALL_CONFIG.conferences.find(c => c.id === conferenceId);
+  const conference = COLLEGE_BASEBALL_CONFIG.conferences.find((c) => c.id === conferenceId);
   return conference?.teams || [];
 }
 
-export function getCacheTTL(dataType: 'liveGame' | 'boxScore' | 'standings' | 'teamPages' | 'playerPages', status?: 'live' | 'final'): number {
+export function getCacheTTL(
+  dataType: 'liveGame' | 'boxScore' | 'standings' | 'teamPages' | 'playerPages',
+  status?: 'live' | 'final'
+): number {
   if (dataType === 'boxScore' && status) {
     return COLLEGE_BASEBALL_CONFIG.caching.boxScore[status].ttl;
   }

@@ -124,11 +124,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
  * Get player Statcast summary
  * GET /api/mlb/statcast/player/{playerId}?season=2024
  */
-async function getPlayerStatcast(
-  playerId: string,
-  url: URL,
-  env: Env
-): Promise<Response> {
+async function getPlayerStatcast(playerId: string, url: URL, env: Env): Promise<Response> {
   const season = url.searchParams.get('season') || new Date().getFullYear().toString();
   const cacheKey = `statcast:player:${playerId}:${season}`;
 
@@ -248,11 +244,7 @@ async function getPlayerStatcast(
  * Get Statcast leaderboard for a specific metric
  * GET /api/mlb/statcast/leaderboard/{metric}?season=2024&limit=10
  */
-async function getStatcastLeaderboard(
-  metric: string,
-  url: URL,
-  env: Env
-): Promise<Response> {
+async function getStatcastLeaderboard(metric: string, url: URL, env: Env): Promise<Response> {
   const season = url.searchParams.get('season') || new Date().getFullYear().toString();
   const limit = parseInt(url.searchParams.get('limit') || '10');
   const cacheKey = `statcast:leaderboard:${metric}:${season}:${limit}`;
@@ -449,10 +441,7 @@ async function healthCheck(): Promise<Response> {
         'GET /api/mlb/statcast/barrels',
         'GET /api/mlb/statcast/health',
       ],
-      dataSources: [
-        'MLB Stats API (statsapi.mlb.com)',
-        'Baseball Savant (baseballsavant.mlb.com)',
-      ],
+      dataSources: ['MLB Stats API (statsapi.mlb.com)', 'Baseball Savant (baseballsavant.mlb.com)'],
       notes: [
         'Phase 19-A: TypeScript interfaces complete',
         'Phase 19-B: API endpoints created (Baseball Savant integration pending)',

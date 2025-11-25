@@ -23,6 +23,7 @@ npx tsx examples/example_usage.ts
 ```
 
 This will:
+
 1. Load test data from `test_data.json`
 2. Run QC pipeline with permissive settings
 3. Generate reports in JSON, Markdown, and HTML formats
@@ -110,6 +111,7 @@ curl https://sports-data-qc-worker.YOUR_SUBDOMAIN.workers.dev/qc/qc-20250315-abc
 After running `example_usage.ts`, you should see:
 
 ### Console Output
+
 ```
 ==========================================
 Sports Data QC - Example Usage
@@ -148,12 +150,14 @@ Total Records:   14
 ## Integration Patterns
 
 ### Pattern 1: Pre-Ingestion Gate
+
 ```typescript
 const { filtered_data } = await runQCPipeline(scraped_data);
 await db.insert(filtered_data); // Only validated data
 ```
 
 ### Pattern 2: Continuous Monitoring
+
 ```typescript
 // Scheduled worker runs daily
 await runQCPipeline(yesterdayData);
@@ -161,6 +165,7 @@ await runQCPipeline(yesterdayData);
 ```
 
 ### Pattern 3: Scraper Development
+
 ```typescript
 // Test scraper output before deploying
 const { report } = await runQCPipeline(scraper_output);
@@ -175,6 +180,7 @@ if (report.records_rejected > 0) {
 ### "Cannot find module" errors
 
 Install dependencies:
+
 ```bash
 bun install zod
 ```

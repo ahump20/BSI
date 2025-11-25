@@ -27,80 +27,90 @@ export async function onRequest(context) {
 
   try {
     const gameId = url.searchParams.get('gameId');
-    
+
     if (!gameId) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Missing required parameter: gameId'
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Missing required parameter: gameId',
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const cacheKey = `${CACHE_KEY_PREFIX}:${gameId}`;
-    
+
     // Check cache
     if (env.CACHE) {
       const cached = await env.CACHE.get(cacheKey);
       if (cached) {
         const data = JSON.parse(cached);
-        return new Response(JSON.stringify({
-          success: true,
-          data: data.boxscore,
-          cached: true,
-          cacheTime: data.timestamp,
-          source: 'cache'
-        }), {
-          status: 200,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-            'Cache-Control': 'public, max-age=15, stale-while-revalidate=10'
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: data.boxscore,
+            cached: true,
+            cacheTime: data.timestamp,
+            source: 'cache',
+          }),
+          {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'Cache-Control': 'public, max-age=15, stale-while-revalidate=10',
+            },
           }
-        });
+        );
       }
     }
 
     // Fetch box score from NCAA data sources
     const boxscore = await fetchNCAABoxScore(gameId);
-    
+
     // Cache with appropriate TTL
     const cacheTTL = boxscore.status === 'final' ? 3600 : 15;
     const cacheData = {
       boxscore,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
+
     if (env.CACHE) {
       await env.CACHE.put(cacheKey, JSON.stringify(cacheData), {
-        expirationTtl: cacheTTL
+        expirationTtl: cacheTTL,
       });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      data: boxscore,
-      cached: false,
-      timestamp: new Date().toISOString()
-    }), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'Cache-Control': `public, max-age=${cacheTTL}, stale-while-revalidate=${Math.floor(cacheTTL / 2)}`
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: boxscore,
+        cached: false,
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': `public, max-age=${cacheTTL}, stale-while-revalidate=${Math.floor(cacheTTL / 2)}`,
+        },
       }
-    });
-
+    );
   } catch (error) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to fetch box score',
-      message: error.message
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to fetch box score',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 }
-

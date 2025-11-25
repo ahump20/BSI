@@ -14,7 +14,7 @@
 import {
   detectCoachingPatterns,
   detectUmpirePatterns,
-  detectPlayerPatterns
+  detectPlayerPatterns,
 } from '../../../../lib/analytics/pattern-recognition';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
@@ -59,16 +59,19 @@ export async function onRequest(context) {
         break;
 
       default:
-        return new Response(JSON.stringify({
-          error: 'Invalid pattern type',
-          supported_types: ['coaching', 'umpire', 'player']
-        }), {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+        return new Response(
+          JSON.stringify({
+            error: 'Invalid pattern type',
+            supported_types: ['coaching', 'umpire', 'player'],
+          }),
+          {
+            status: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
           }
-        });
+        );
     }
 
     return new Response(JSON.stringify(patterns), {
@@ -76,21 +79,23 @@ export async function onRequest(context) {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=300, s-maxage=600'
-      }
+        'Cache-Control': 'public, max-age=300, s-maxage=600',
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to analyze patterns',
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to analyze patterns',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
       }
-    });
+    );
   }
 }
 
@@ -105,7 +110,7 @@ async function analyzeCoachingPatterns(env, identifier, sport, season) {
   const patterns = detectCoachingPatterns(decisions, {
     min_pattern_length: 3,
     min_occurrences: 2,
-    confidence_threshold: 0.7
+    confidence_threshold: 0.7,
   });
 
   return {
@@ -118,20 +123,20 @@ async function analyzeCoachingPatterns(env, identifier, sport, season) {
         type: 'sequential',
         description: 'Runs draw play after two incomplete passes (3 times)',
         exploitable: true,
-        confidence: 0.85
+        confidence: 0.85,
       },
       {
         type: 'situational',
         description: 'Always punts on 4th and long in opponent territory',
         exploitable: true,
-        confidence: 0.92
+        confidence: 0.92,
       },
       {
         type: 'time_dependent',
         description: 'Becomes more conservative in 4th quarter with lead',
         exploitable: false,
-        confidence: 0.78
-      }
+        confidence: 0.78,
+      },
     ],
     sequential: patterns.sequential,
     situational: patterns.situational,
@@ -146,7 +151,7 @@ async function analyzeCoachingPatterns(env, identifier, sport, season) {
         action: 'pass',
         percentage: 88,
         predictability: 92,
-        sample_size: 25
+        sample_size: 25,
       },
       {
         situation: 'Red zone first down',
@@ -154,7 +159,7 @@ async function analyzeCoachingPatterns(env, identifier, sport, season) {
         action: 'run',
         percentage: 72,
         predictability: 78,
-        sample_size: 18
+        sample_size: 18,
       },
       {
         situation: 'Two-minute drill',
@@ -162,15 +167,15 @@ async function analyzeCoachingPatterns(env, identifier, sport, season) {
         action: 'sideline pass',
         percentage: 65,
         predictability: 71,
-        sample_size: 12
-      }
+        sample_size: 12,
+      },
     ],
     meta: {
       decisions_analyzed: decisions.length,
       data_source: 'Demo Data',
       last_updated: new Date().toISOString(),
-      timezone: 'America/Chicago'
-    }
+      timezone: 'America/Chicago',
+    },
   };
 }
 
@@ -185,7 +190,7 @@ async function analyzeUmpirePatterns(env, umpire, sport, season) {
   const patterns = detectUmpirePatterns(scorecards, {
     min_games: 5,
     bias_threshold: 3.0,
-    consistency_threshold: 85
+    consistency_threshold: 85,
   });
 
   return {
@@ -198,20 +203,20 @@ async function analyzeUmpirePatterns(env, umpire, sport, season) {
         type: 'zone_expansion',
         description: 'Consistently expands low-outside zone by 3-5%',
         exploitable: true,
-        confidence: 0.88
+        confidence: 0.88,
       },
       {
         type: 'bias',
         description: 'Slight home team favor in high-leverage situations',
         exploitable: false,
-        confidence: 0.72
+        confidence: 0.72,
       },
       {
         type: 'consistency',
         description: 'Accuracy declines in late innings (85% → 81%)',
         exploitable: true,
-        confidence: 0.81
-      }
+        confidence: 0.81,
+      },
     ],
     bias: patterns.bias,
     zone_preferences: patterns.zone_preferences,
@@ -220,28 +225,28 @@ async function analyzeUmpirePatterns(env, umpire, sport, season) {
     high_leverage: {
       accuracy: 82.5,
       deviation_from_normal: -5.2,
-      pattern: 'contracts_zone'
+      pattern: 'contracts_zone',
     },
     exploitable: [
       {
         zone: 'low_outside',
         tendency: 'expanded',
         deviation: 4.5,
-        confidence: 0.88
+        confidence: 0.88,
       },
       {
         zone: 'high_inside',
         tendency: 'contracted',
         deviation: -3.2,
-        confidence: 0.79
-      }
+        confidence: 0.79,
+      },
     ],
     meta: {
       games_analyzed: scorecards.length,
       data_source: 'Demo Data',
       last_updated: new Date().toISOString(),
-      timezone: 'America/Chicago'
-    }
+      timezone: 'America/Chicago',
+    },
   };
 }
 
@@ -256,7 +261,7 @@ async function analyzePlayerPatterns(env, identifier, sport, season) {
   const patterns = detectPlayerPatterns(performances, {
     min_games: 10,
     streak_threshold: 3,
-    split_threshold: 0.15
+    split_threshold: 0.15,
   });
 
   return {
@@ -269,20 +274,20 @@ async function analyzePlayerPatterns(env, identifier, sport, season) {
         type: 'hot_streak',
         description: 'Currently on 7-game hitting streak (.385 avg)',
         exploitable: false,
-        confidence: 1.0
+        confidence: 1.0,
       },
       {
         type: 'matchup',
         description: 'Struggles vs left-handed pitchers (.220 avg)',
         exploitable: true,
-        confidence: 0.91
+        confidence: 0.91,
       },
       {
         type: 'situational',
         description: 'RISP performance: .312 avg (league avg .267)',
         exploitable: false,
-        confidence: 0.85
-      }
+        confidence: 0.85,
+      },
     ],
     streaks: patterns.streaks,
     situational: patterns.situational,
@@ -292,26 +297,26 @@ async function analyzePlayerPatterns(env, identifier, sport, season) {
       {
         situation: 'vs LHP',
         metric: 'batting_average',
-        value: 0.220,
+        value: 0.22,
         league_avg: 0.265,
         deviation: -17.0,
-        sample_size: 45
+        sample_size: 45,
       },
       {
         situation: 'night_games',
         metric: 'ops',
         value: 0.685,
-        league_avg: 0.750,
+        league_avg: 0.75,
         deviation: -8.7,
-        sample_size: 38
-      }
+        sample_size: 38,
+      },
     ],
     meta: {
       games_analyzed: performances.length,
       data_source: 'Demo Data',
       last_updated: new Date().toISOString(),
-      timezone: 'America/Chicago'
-    }
+      timezone: 'America/Chicago',
+    },
   };
 }
 
@@ -335,7 +340,7 @@ function generateDemoCoachingDecisions() {
     { decision_type: 'pass_play', quarter: 4, down: 1, distance: 10, yard_line: 42 },
     { decision_type: 'run_play', quarter: 4, down: 2, distance: 3, yard_line: 49 },
     { decision_type: 'run_play', quarter: 4, down: 3, distance: 1, yard_line: 51 },
-    { decision_type: 'punt', quarter: 4, down: 4, distance: 8, yard_line: 44 }
+    { decision_type: 'punt', quarter: 4, down: 4, distance: 8, yard_line: 44 },
   ];
 }
 
@@ -347,16 +352,16 @@ function generateDemoUmpireScorecards() {
     game_id: `demo_game_${i}`,
     summary: {
       accuracy: 88 + Math.random() * 6,
-      consistency_score: 85 + Math.random() * 10
+      consistency_score: 85 + Math.random() * 10,
     },
     favor: {
       home_favor_score: 50 + Math.random() * 10 - 5,
-      away_favor_score: 50 + Math.random() * 10 - 5
+      away_favor_score: 50 + Math.random() * 10 - 5,
     },
     consistency: {
       score: 85 + Math.random() * 10,
-      trend: i < 5 ? 'improving' : 'consistent'
-    }
+      trend: i < 5 ? 'improving' : 'consistent',
+    },
   }));
 }
 
@@ -373,6 +378,6 @@ function generateDemoPlayerPerformances() {
     rbi: Math.floor(Math.random() * 3),
     is_home: Math.random() > 0.5,
     opponent_hand: Math.random() > 0.7 ? 'L' : 'R',
-    day_night: Math.random() > 0.6 ? 'night' : 'day'
+    day_night: Math.random() > 0.6 ? 'night' : 'day',
   }));
 }

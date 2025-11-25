@@ -104,12 +104,7 @@ export interface RankingsHistoryResponse {
  */
 export async function getRankings(params: RankingsQueryParams = {}): Promise<RankingsResponse> {
   const currentYear = new Date().getFullYear();
-  const {
-    pollType = 'COACHES',
-    season = currentYear,
-    week,
-    limit = 25,
-  } = params;
+  const { pollType = 'COACHES', season = currentYear, week, limit = 25 } = params;
 
   const safeLimit = Math.min(Math.max(limit, 1), 50);
 
@@ -232,12 +227,7 @@ export async function getRankingsHistory(
   params: RankingsHistoryQueryParams
 ): Promise<RankingsHistoryResponse | null> {
   const currentYear = new Date().getFullYear();
-  const {
-    teamId,
-    pollType = 'COACHES',
-    season = currentYear,
-    limit = 20,
-  } = params;
+  const { teamId, pollType = 'COACHES', season = currentYear, limit = 20 } = params;
 
   // Get team info
   const team = await prisma.team.findUnique({

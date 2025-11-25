@@ -12,7 +12,7 @@ export async function onRequest(context) {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   }
 
@@ -51,10 +51,9 @@ export async function onRequest(context) {
         'Content-Type': 'application/json',
         'Content-Disposition': `attachment; filename="scouting-report-${playerId}-${Date.now()}.json"`,
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      }
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
     });
-
   } catch (error) {
     console.error('JSON export error:', error);
     return err(error, 500);

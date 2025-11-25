@@ -17,7 +17,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
-    'Cache-Control': 'public, max-age=300, s-maxage=600'
+    'Cache-Control': 'public, max-age=300, s-maxage=600',
   };
 
   if (request.method === 'OPTIONS') {
@@ -44,8 +44,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             {
               headers: {
                 'User-Agent': 'BlazeSportsIntel/1.0',
-                Accept: 'application/json'
-              }
+                Accept: 'application/json',
+              },
             }
           );
 
@@ -63,24 +63,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               abbreviation: t.team.abbreviation,
               location: t.team.location,
               color: t.team.color,
-              logos: t.team.logos
+              logos: t.team.logos,
             })),
             meta: {
               dataSource: 'ESPN NBA API',
-              lastUpdated: new Date().toISOString()
-            }
+              lastUpdated: new Date().toISOString(),
+            },
           };
 
           if (env.SPORTS_CACHE) {
             await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teams), {
-              expirationTtl: 3600
+              expirationTtl: 3600,
             });
           }
         }
 
         return new Response(JSON.stringify(teams, null, 2), {
           status: 200,
-          headers
+          headers,
         });
       } else {
         const cacheKey = `nba:team:${teamId}:full`;
@@ -94,14 +94,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         if (!teamData) {
           const [teamInfo, roster, schedule] = await Promise.all([
             fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}`, {
-              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' }
-            }).then(r => r.json()),
-            fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/roster`, {
-              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' }
-            }).then(r => r.json()).catch(() => null),
-            fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/schedule`, {
-              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' }
-            }).then(r => r.json()).catch(() => null)
+              headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' },
+            }).then((r) => r.json()),
+            fetch(
+              `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/roster`,
+              {
+                headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' },
+              }
+            )
+              .then((r) => r.json())
+              .catch(() => null),
+            fetch(
+              `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}/schedule`,
+              {
+                headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' },
+              }
+            )
+              .then((r) => r.json())
+              .catch(() => null),
           ]);
 
           const record = teamInfo.team?.record?.items?.[0] || {};
@@ -120,35 +130,36 @@ export const onRequest: PagesFunction<Env> = async (context) => {
                 losses: record.stats?.find((s: any) => s.name === 'losses')?.value || 0,
                 winPercent: record.stats?.find((s: any) => s.name === 'winPercent')?.value || 0,
                 home: record.stats?.find((s: any) => s.name === 'home')?.displayValue || '0-0',
-                away: record.stats?.find((s: any) => s.name === 'road')?.displayValue || '0-0'
-              }
+                away: record.stats?.find((s: any) => s.name === 'road')?.displayValue || '0-0',
+              },
             },
-            roster: roster?.athletes?.map((a: any) => ({
-              id: a.id,
-              name: a.fullName,
-              jersey: a.jersey,
-              position: a.position?.abbreviation,
-              height: a.displayHeight,
-              weight: a.displayWeight
-            })) || [],
+            roster:
+              roster?.athletes?.map((a: any) => ({
+                id: a.id,
+                name: a.fullName,
+                jersey: a.jersey,
+                position: a.position?.abbreviation,
+                height: a.displayHeight,
+                weight: a.displayWeight,
+              })) || [],
             schedule: schedule?.events || [],
             meta: {
               dataSource: 'ESPN NBA API',
               lastUpdated: new Date().toISOString(),
-              season: '2024-25'
-            }
+              season: '2024-25',
+            },
           };
 
           if (env.SPORTS_CACHE) {
             await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teamData), {
-              expirationTtl: 300
+              expirationTtl: 300,
             });
           }
         }
 
         return new Response(JSON.stringify(teamData, null, 2), {
           status: 200,
-          headers
+          headers,
         });
       }
     }
@@ -170,8 +181,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           {
             headers: {
               'User-Agent': 'BlazeSportsIntel/1.0',
-              Accept: 'application/json'
-            }
+              Accept: 'application/json',
+            },
           }
         );
 
@@ -184,18 +195,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         scoreboard = {
           timestamp: new Date().toISOString(),
           date,
-          games: espnData.events?.map((event: any) => ({
-            id: event.id,
-            name: event.name,
-            date: event.date,
-            status: event.status,
-            teams: event.competitions?.[0]?.competitors,
-            venue: event.competitions?.[0]?.venue
-          })) || [],
+          games:
+            espnData.events?.map((event: any) => ({
+              id: event.id,
+              name: event.name,
+              date: event.date,
+              status: event.status,
+              teams: event.competitions?.[0]?.competitors,
+              venue: event.competitions?.[0]?.venue,
+            })) || [],
           meta: {
             dataSource: 'ESPN NBA API',
-            lastUpdated: new Date().toISOString()
-          }
+            lastUpdated: new Date().toISOString(),
+          },
         };
 
         const allCompleted = scoreboard.games.every((g: any) => g.status.type.completed);
@@ -203,14 +215,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
         if (env.SPORTS_CACHE) {
           await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(scoreboard), {
-            expirationTtl: ttl
+            expirationTtl: ttl,
           });
         }
       }
 
       return new Response(JSON.stringify(scoreboard, null, 2), {
         status: 200,
-        headers
+        headers,
       });
     }
 
@@ -230,8 +242,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           {
             headers: {
               'User-Agent': 'BlazeSportsIntel/1.0',
-              Accept: 'application/json'
-            }
+              Accept: 'application/json',
+            },
           }
         );
 
@@ -247,49 +259,54 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             name: conf.name,
             teams: conf.standings?.entries?.map((entry: any) => ({
               team: entry.team,
-              stats: entry.stats
-            }))
+              stats: entry.stats,
+            })),
           })),
           meta: {
             dataSource: 'ESPN NBA API',
-            lastUpdated: new Date().toISOString()
-          }
+            lastUpdated: new Date().toISOString(),
+          },
         };
 
         if (env.SPORTS_CACHE) {
           await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(standings), {
-            expirationTtl: 300
+            expirationTtl: 300,
           });
         }
       }
 
       return new Response(JSON.stringify(standings, null, 2), {
         status: 200,
-        headers
+        headers,
       });
     }
 
-    return new Response(JSON.stringify({
-      error: 'Not found',
-      availableEndpoints: [
-        '/api/nba/teams',
-        '/api/nba/teams/{teamId}',
-        '/api/nba/scoreboard?date=YYYY-MM-DD',
-        '/api/nba/standings'
-      ]
-    }), {
-      status: 404,
-      headers
-    });
-
+    return new Response(
+      JSON.stringify({
+        error: 'Not found',
+        availableEndpoints: [
+          '/api/nba/teams',
+          '/api/nba/teams/{teamId}',
+          '/api/nba/scoreboard?date=YYYY-MM-DD',
+          '/api/nba/standings',
+        ],
+      }),
+      {
+        status: 404,
+        headers,
+      }
+    );
   } catch (error: any) {
     console.error('NBA API error:', error);
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error.message
-    }), {
-      status: 500,
-      headers
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Internal server error',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers,
+      }
+    );
   }
 };

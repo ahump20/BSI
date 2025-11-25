@@ -19,7 +19,13 @@
  *   /api/college-baseball/games/401778104?format=compact
  */
 
-import { NCAABaseballAdapter, NCAAGameRecap, extractBattingStats, extractPitchingStats, getGameState } from '../../../../lib/adapters/ncaa-baseball-adapter';
+import {
+  NCAABaseballAdapter,
+  NCAAGameRecap,
+  extractBattingStats,
+  extractPitchingStats,
+  getGameState,
+} from '../../../../lib/adapters/ncaa-baseball-adapter';
 
 interface Env {
   CACHE: KVNamespace;
@@ -69,7 +75,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Parse query parameters
     const url = new URL(request.url);
     const includeParam = url.searchParams.get('include') || 'boxscore,recap';
-    const include = new Set(includeParam.split(',').map(s => s.trim()));
+    const include = new Set(includeParam.split(',').map((s) => s.trim()));
     const format = url.searchParams.get('format') || 'full';
 
     // Initialize adapter
@@ -165,9 +171,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': getGameState(game.status) === 'final'
-          ? 'public, max-age=3600, s-maxage=86400' // 1hr client, 24hr CDN for completed
-          : 'public, max-age=30, s-maxage=300', // 30s client, 5min CDN for live
+        'Cache-Control':
+          getGameState(game.status) === 'final'
+            ? 'public, max-age=3600, s-maxage=86400' // 1hr client, 24hr CDN for completed
+            : 'public, max-age=30, s-maxage=300', // 30s client, 5min CDN for live
       },
     });
   } catch (error) {
@@ -205,11 +212,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
  * @param env - Environment bindings
  * @returns Structured game recap with headline, summary, and key plays
  */
-async function generateGameRecap(
-  game: any,
-  boxscore: any,
-  env: Env
-): Promise<NCAAGameRecap> {
+async function generateGameRecap(game: any, boxscore: any, env: Env): Promise<NCAAGameRecap> {
   // Defensive: Handle both data structures (nested or direct)
   const competition = game.competitions?.[0] || game;
 
@@ -473,7 +476,7 @@ function identifyTurningPoint(
   competition: any
 ): { inning: number; description: string } | undefined {
   // Find the highest impact play
-  const turningPlay = keyPlays.find(p => p.impact === 'high');
+  const turningPlay = keyPlays.find((p) => p.impact === 'high');
   if (!turningPlay) return undefined;
 
   return {

@@ -9,7 +9,10 @@
  * - GET /api/v1/coaching/decisions?teamId=456&sport=NFL&season=2025
  */
 
-import { analyzeGameDecisions, analyzeSeasonDecisions } from '../../../../lib/coaching/decision-analyzer';
+import {
+  analyzeGameDecisions,
+  analyzeSeasonDecisions,
+} from '../../../../lib/coaching/decision-analyzer';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
 export async function onRequest(context) {
@@ -55,21 +58,23 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300, s-maxage=600'
-      }
+        'Cache-Control': 'public, max-age=300, s-maxage=600',
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to analyze coaching decisions',
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to analyze coaching decisions',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -86,13 +91,13 @@ function generateDemoAnalysis(sport) {
       total_decisions: 24,
       optimal_decisions: 16,
       suboptimal_decisions: 8,
-      decision_quality_score: 67
+      decision_quality_score: 67,
     },
     decisions: {
       fourth_down: isFootball ? generateDemoFourthDown() : [],
       two_point: isFootball ? generateDemoTwoPoint() : [],
       timeout: generateDemoTimeouts(),
-      play_calling: generateDemoPlayCalling()
+      play_calling: generateDemoPlayCalling(),
     },
     risk_profile: {
       profile: 'balanced',
@@ -103,38 +108,38 @@ function generateDemoAnalysis(sport) {
       risk_distribution: {
         high_risk: 33,
         medium_risk: 42,
-        low_risk: 25
-      }
+        low_risk: 25,
+      },
     },
     predictability: {
       score: 62,
       entropy: 68,
       assessment: 'moderately_predictable',
       confidence: 'medium',
-      most_common_decision: 'run_play'
+      most_common_decision: 'run_play',
     },
     situational: {
       red_zone: {
         attempts: 12,
         success_rate: 58,
-        optimal_rate: 67
+        optimal_rate: 67,
       },
       two_minute: {
         attempts: 8,
         success_rate: 75,
-        optimal_rate: 88
+        optimal_rate: 88,
       },
       fourth_quarter: {
         attempts: 15,
         success_rate: 67,
-        optimal_rate: 73
-      }
+        optimal_rate: 73,
+      },
     },
     meta: {
       data_source: 'Demo Data',
       last_updated: new Date().toISOString(),
-      timezone: 'America/Chicago'
-    }
+      timezone: 'America/Chicago',
+    },
   };
 }
 
@@ -151,11 +156,11 @@ function generateDemoFourthDown() {
       expected_value: {
         go_for_it: 1.8,
         field_goal: -0.5,
-        punt: 0.3
+        punt: 0.3,
       },
       is_optimal: false,
       confidence: 'high',
-      reasoning: 'Expected value favors going for it with 50% conversion probability'
+      reasoning: 'Expected value favors going for it with 50% conversion probability',
     },
     {
       quarter: 4,
@@ -168,11 +173,11 @@ function generateDemoFourthDown() {
       expected_value: {
         go_for_it: 2.3,
         field_goal: 2.85,
-        punt: -1.2
+        punt: -1.2,
       },
       is_optimal: true,
       confidence: 'high',
-      reasoning: 'High conversion probability (65%) justifies aggressive decision'
+      reasoning: 'High conversion probability (65%) justifies aggressive decision',
     },
     {
       quarter: 3,
@@ -185,12 +190,12 @@ function generateDemoFourthDown() {
       expected_value: {
         go_for_it: 0.5,
         field_goal: 1.5,
-        punt: 0.8
+        punt: 0.8,
       },
       is_optimal: true,
       confidence: 'medium',
-      reasoning: 'Punt maximizes expected points given field position'
-    }
+      reasoning: 'Punt maximizes expected points given field position',
+    },
   ];
 }
 
@@ -204,7 +209,7 @@ function generateDemoTwoPoint() {
       recommended_decision: 'two_point_attempt',
       conversion_probability: 0.47,
       is_optimal: true,
-      reasoning: 'Down 7 late, need 2-point to tie with potential FG'
+      reasoning: 'Down 7 late, need 2-point to tie with potential FG',
     },
     {
       quarter: 2,
@@ -214,8 +219,8 @@ function generateDemoTwoPoint() {
       recommended_decision: 'extra_point',
       conversion_probability: 0.94,
       is_optimal: true,
-      reasoning: 'Standard situation, take the point'
-    }
+      reasoning: 'Standard situation, take the point',
+    },
   ];
 }
 
@@ -227,7 +232,7 @@ function generateDemoTimeouts() {
       situation: 'clock_management',
       actual_decision: 'timeout',
       recommended_decision: 'timeout',
-      is_optimal: true
+      is_optimal: true,
     },
     {
       quarter: 4,
@@ -235,8 +240,8 @@ function generateDemoTimeouts() {
       situation: 'defensive_adjustment',
       actual_decision: 'timeout',
       recommended_decision: 'save_timeout',
-      is_optimal: false
-    }
+      is_optimal: false,
+    },
   ];
 }
 
@@ -251,28 +256,28 @@ function generateDemoPlayCalling() {
       second_down: { run: 8, pass: 12 },
       third_down: { run: 3, pass: 12 },
       red_zone: { run: 15, pass: 8 },
-      two_minute: { run: 2, pass: 10 }
+      two_minute: { run: 2, pass: 10 },
     },
     tendencies: [
       {
         situation: 'First and 10',
         action: 'run',
         frequency: 0.55,
-        predictability: 0.62
+        predictability: 0.62,
       },
       {
         situation: 'Third and long',
         action: 'pass',
-        frequency: 0.80,
-        predictability: 0.85
+        frequency: 0.8,
+        predictability: 0.85,
       },
       {
         situation: 'Red zone',
         action: 'run',
         frequency: 0.65,
-        predictability: 0.71
-      }
+        predictability: 0.71,
+      },
     ],
-    predictability_score: 68
+    predictability_score: 68,
   };
 }

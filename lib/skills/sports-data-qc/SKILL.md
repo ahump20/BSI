@@ -5,12 +5,14 @@
 The Sports Data QC skill validates scraped sports data from ESPN, NCAA, and other sources before ingestion into Cloudflare D1. It combines statistical outlier detection (MAD-based) with rule-based validation to ensure data quality while being permissive enough to capture legitimate exceptional performances.
 
 **Primary Use Cases:**
+
 - Validating college baseball box scores and player statistics
 - Checking MLB pitch tracking data quality
 - Verifying NFL game simulator outputs
 - Pre-ingestion QC for any sports data pipeline
 
 **Tech Stack:**
+
 - TypeScript/JavaScript (Cloudflare Workers compatible)
 - D1 database for persistence
 - KV storage for QC reports
@@ -38,12 +40,14 @@ The Sports Data QC skill validates scraped sports data from ESPN, NCAA, and othe
 **When to use:** Real-time scraping pipelines, data ingestion workers
 
 **How it works:**
+
 1. Scraper fetches data
 2. QC validation runs inline
 3. Only validated data reaches D1
 4. QC report stored in KV for monitoring
 
 **Advantages:**
+
 - Prevents bad data from entering database
 - Fast (adds ~50ms per batch)
 - Automatic filtering
@@ -52,7 +56,10 @@ The Sports Data QC skill validates scraped sports data from ESPN, NCAA, and othe
 
 ```typescript
 import { runQCPipeline } from '/mnt/skills/user/sports-data-qc/scripts/qc_analysis';
-import { saveReportToKV, formatReportConsole } from '/mnt/skills/user/sports-data-qc/scripts/qc_reporting';
+import {
+  saveReportToKV,
+  formatReportConsole,
+} from '/mnt/skills/user/sports-data-qc/scripts/qc_reporting';
 
 // In your Cloudflare Worker
 export default {
@@ -61,16 +68,19 @@ export default {
     const scrapedData = await scrapeESPNBoxScores(date);
 
     // 2. Run QC pipeline
-    const { report, filtered_data } = await runQCPipeline({
-      games: scrapedData.games,
-      player_stats: scrapedData.player_stats,
-      data_source: 'ESPN_API'
-    }, {
-      auto_reject_failures: true,  // Auto-reject invalid data
-      auto_reject_outliers: false, // Flag outliers but don't reject (could be legit)
-      mad_threshold: 5.0,          // Standard permissive threshold
-      min_confidence_score: 0.7    // Only accept high-confidence scrapes
-    });
+    const { report, filtered_data } = await runQCPipeline(
+      {
+        games: scrapedData.games,
+        player_stats: scrapedData.player_stats,
+        data_source: 'ESPN_API',
+      },
+      {
+        auto_reject_failures: true, // Auto-reject invalid data
+        auto_reject_outliers: false, // Flag outliers but don't reject (could be legit)
+        mad_threshold: 5.0, // Standard permissive threshold
+        min_confidence_score: 0.7, // Only accept high-confidence scrapes
+      }
+    );
 
     // 3. Save QC report to KV
     await saveReportToKV(report, env.CACHE);
@@ -83,15 +93,18 @@ export default {
     await insertPlayerStatsIntoD1(filtered_data.player_stats, env.DATABASE_URL);
 
     // 6. Return success response
-    return new Response(JSON.stringify({
-      success: true,
-      qc_report_id: report.report_id,
-      records_ingested: report.records_passed + report.records_flagged,
-      records_rejected: report.records_rejected
-    }), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
+    return new Response(
+      JSON.stringify({
+        success: true,
+        qc_report_id: report.report_id,
+        records_ingested: report.records_passed + report.records_flagged,
+        records_rejected: report.records_rejected,
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  },
 };
 ```
 
@@ -100,12 +113,14 @@ export default {
 **When to use:** Historical data imports, weekly batch processing, quality audits
 
 **How it works:**
+
 1. Data already scraped/staged
 2. Run QC in large batches (1000+ records)
 3. Generate comprehensive reports
 4. Human review before ingestion
 
 **Advantages:**
+
 - Handles millions of records
 - Comprehensive metrics
 - Better for one-time migrations
@@ -123,25 +138,26 @@ export default {
     const yesterdayData = await loadStagedData(env.DATABASE_URL);
 
     // 2. Run batch QC (processes 1000 records at a time)
-    const { report, filtered_data } = await runQCPipelineBatch({
-      games: yesterdayData.games,
-      player_stats: yesterdayData.player_stats,
-      simulations: yesterdayData.simulations,
-      data_source: 'DAILY_BATCH'
-    }, {
-      auto_reject_failures: true,
-      auto_reject_outliers: false,
-      include_flagged: true // Include flagged records with warnings
-    }, 1000); // Batch size
+    const { report, filtered_data } = await runQCPipelineBatch(
+      {
+        games: yesterdayData.games,
+        player_stats: yesterdayData.player_stats,
+        simulations: yesterdayData.simulations,
+        data_source: 'DAILY_BATCH',
+      },
+      {
+        auto_reject_failures: true,
+        auto_reject_outliers: false,
+        include_flagged: true, // Include flagged records with warnings
+      },
+      1000
+    ); // Batch size
 
     // 3. Generate detailed markdown report
     const markdownReport = formatReportMarkdown(report);
 
     // 4. Save report to R2 for long-term storage
-    await env.R2_BUCKET.put(
-      `qc-reports/${report.report_id}.md`,
-      markdownReport
-    );
+    await env.R2_BUCKET.put(`qc-reports/${report.report_id}.md`, markdownReport);
 
     // 5. If too many failures, alert and don't ingest
     const failureRate = report.records_rejected / report.total_records;
@@ -154,7 +170,7 @@ export default {
     await bulkInsertData(filtered_data, env.DATABASE_URL);
 
     console.log(`QC batch complete. Report: ${report.report_id}`);
-  }
+  },
 };
 ```
 
@@ -163,6 +179,7 @@ export default {
 **When to use:** Testing scrapers, investigating data issues, one-off analysis
 
 **How it works:**
+
 1. Load sample data from file or API
 2. Run QC analysis
 3. View report in terminal
@@ -181,15 +198,18 @@ async function main() {
   const rawData = JSON.parse(readFileSync('test_data.json', 'utf-8'));
 
   // Run QC
-  const { report, filtered_data } = await runQCPipeline({
-    games: rawData.games,
-    player_stats: rawData.player_stats,
-    data_source: 'TEST_FILE'
-  }, {
-    mad_threshold: 5.0,
-    auto_reject_failures: false, // See all failures for debugging
-    auto_reject_outliers: false
-  });
+  const { report, filtered_data } = await runQCPipeline(
+    {
+      games: rawData.games,
+      player_stats: rawData.player_stats,
+      data_source: 'TEST_FILE',
+    },
+    {
+      mad_threshold: 5.0,
+      auto_reject_failures: false, // See all failures for debugging
+      auto_reject_outliers: false,
+    }
+  );
 
   // Print to console
   console.log(formatReportConsole(report));
@@ -238,6 +258,7 @@ interface QCPipelineConfig {
 ### Recommended Configurations
 
 #### Production Pipeline (Conservative)
+
 ```typescript
 {
   mad_threshold: 5.0,
@@ -249,6 +270,7 @@ interface QCPipelineConfig {
 ```
 
 #### Development Testing (Permissive)
+
 ```typescript
 {
   mad_threshold: 7.0,
@@ -260,6 +282,7 @@ interface QCPipelineConfig {
 ```
 
 #### Historical Migration (Strict)
+
 ```typescript
 {
   mad_threshold: 5.0,
@@ -273,6 +296,7 @@ interface QCPipelineConfig {
 ## Validation Checks Performed
 
 ### 1. Range Validation
+
 - **Batting Average:** 0.000 - 1.000
 - **Pitch Velocity:** 40-110 mph
 - **Exit Velocity:** 0-120 mph
@@ -280,21 +304,25 @@ interface QCPipelineConfig {
 - **Spin Rate:** 0-4000 rpm
 
 ### 2. Completeness Checks
+
 - Required fields present (game_id, timestamp, teams, etc.)
 - No null values in critical fields
 - Proper data types
 
 ### 3. Consistency Checks
+
 - Box score totals match play-by-play
 - Win probabilities sum to 1.0
 - Score distributions are valid
 
 ### 4. Temporal Validation
+
 - No future dates (except scheduled games)
 - Season year aligns with game date
 - Timestamps in valid ISO 8601 format
 
 ### 5. Statistical Outliers (MAD-based)
+
 - Detects values >5 MADs from median
 - Flags extreme outliers (>7 MADs)
 - Permissive for legitimate exceptional performances
@@ -336,24 +364,28 @@ ctx.waitUntil(runDetailedQC(data));
 ## Output Formats
 
 ### JSON (API Responses)
+
 ```typescript
 import { formatReportJSON } from './scripts/qc_reporting';
 const json = formatReportJSON(report);
 ```
 
 ### Markdown (Documentation)
+
 ```typescript
 import { formatReportMarkdown } from './scripts/qc_reporting';
 const markdown = formatReportMarkdown(report);
 ```
 
 ### HTML (Dashboards)
+
 ```typescript
 import { formatReportHTML } from './scripts/qc_reporting';
 const html = formatReportHTML(report);
 ```
 
 ### Console (CLI)
+
 ```typescript
 import { formatReportConsole } from './scripts/qc_reporting';
 console.log(formatReportConsole(report));
@@ -381,17 +413,20 @@ This QC system follows the **scverse philosophy** - be permissive and flag suspi
 ## Troubleshooting
 
 ### High rejection rate (>10%)
+
 - Check scraper logic
 - Review data source reliability
 - Adjust `mad_threshold` if too strict
 - Check `min_confidence_score` setting
 
 ### Too many flagged records
+
 - Normal for college baseball (high variance)
 - Review flagged records manually
 - Consider more permissive thresholds
 
 ### Zero outliers detected
+
 - Good! Your data is consistent
 - Or... MAD threshold too permissive
 - Check if you're getting actual variance in metrics
@@ -399,6 +434,7 @@ This QC system follows the **scverse philosophy** - be permissive and flag suspi
 ## Examples
 
 See the [examples/](./examples/) directory for:
+
 - `college_baseball_qc.ts` - Complete college baseball pipeline
 - `pitch_tracking_qc.ts` - Pitch-by-pitch data validation
 - `simulation_qc.ts` - Monte Carlo output validation
@@ -413,6 +449,7 @@ See the [examples/](./examples/) directory for:
 ## Support
 
 For issues or questions:
+
 1. Check validation_rules.md for threshold explanations
 2. Review examples/ for similar use cases
 3. File issue on Blaze Sports Intel GitHub

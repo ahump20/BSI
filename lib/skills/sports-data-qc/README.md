@@ -35,7 +35,7 @@ import { formatReportConsole } from './sports-data-qc/scripts/qc_reporting';
 const { report, filtered_data } = await runQCPipeline({
   games: scrapedGames,
   player_stats: scrapedPlayerStats,
-  data_source: 'ESPN_API'
+  data_source: 'ESPN_API',
 });
 
 // Print report
@@ -75,6 +75,7 @@ bun run examples/example_usage.ts
 ## Validation Checks
 
 ### 1. Range Validation
+
 - **Batting Average:** 0.000 - 1.000
 - **Pitch Velocity:** 40-110 mph
 - **Exit Velocity:** 0-120 mph
@@ -82,21 +83,25 @@ bun run examples/example_usage.ts
 - **Spin Rate:** 0-4000 rpm
 
 ### 2. Completeness Checks
+
 - Required fields present (game_id, timestamp, teams)
 - No null values in critical fields
 - Proper data types
 
 ### 3. Consistency Checks
+
 - Box score totals match play-by-play
 - Win probabilities sum to 1.0
 - Score distributions are valid
 
 ### 4. Temporal Validation
+
 - No future dates (except scheduled games)
 - Season aligns with game date
 - Valid ISO 8601 timestamps
 
 ### 5. Statistical Outliers (MAD-based)
+
 - **ACCEPT:** < 5 MADs from median
 - **FLAG:** 5-7 MADs (review recommended)
 - **REJECT:** > 7 MADs (likely error)
@@ -109,17 +114,18 @@ See [references/validation_rules.md](./references/validation_rules.md) for compl
 
 ```typescript
 interface QCPipelineConfig {
-  mad_threshold?: number;           // Default: 5.0
-  auto_reject_failures?: boolean;   // Default: false
-  auto_reject_outliers?: boolean;   // Default: false
-  include_flagged?: boolean;        // Default: true
-  min_confidence_score?: number;    // Default: 0.0
+  mad_threshold?: number; // Default: 5.0
+  auto_reject_failures?: boolean; // Default: false
+  auto_reject_outliers?: boolean; // Default: false
+  include_flagged?: boolean; // Default: true
+  min_confidence_score?: number; // Default: 0.0
 }
 ```
 
 ### Recommended Configurations
 
 **Production Pipeline (Conservative)**
+
 ```typescript
 {
   mad_threshold: 5.0,
@@ -131,6 +137,7 @@ interface QCPipelineConfig {
 ```
 
 **Development Testing (Permissive)**
+
 ```typescript
 {
   mad_threshold: 7.0,
@@ -151,20 +158,23 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const scraped = await scrapeESPN(date);
 
-    const { report, filtered_data } = await runQCPipeline({
-      games: scraped.games,
-      player_stats: scraped.player_stats,
-      data_source: 'ESPN_API'
-    }, {
-      auto_reject_failures: true,
-      min_confidence_score: 0.7
-    });
+    const { report, filtered_data } = await runQCPipeline(
+      {
+        games: scraped.games,
+        player_stats: scraped.player_stats,
+        data_source: 'ESPN_API',
+      },
+      {
+        auto_reject_failures: true,
+        min_confidence_score: 0.7,
+      }
+    );
 
     await env.DB.insert(filtered_data.games);
     await saveReportToKV(report, env.CACHE);
 
     return Response.json({ qc_report_id: report.report_id });
-  }
+  },
 };
 ```
 
@@ -172,13 +182,17 @@ export default {
 
 ```typescript
 // Process millions of records in batches
-const { report } = await runQCPipelineBatch({
-  games: historicalGames,
-  data_source: 'HISTORICAL_MIGRATION'
-}, {
-  auto_reject_failures: true,
-  auto_reject_outliers: true
-}, 1000); // Batch size
+const { report } = await runQCPipelineBatch(
+  {
+    games: historicalGames,
+    data_source: 'HISTORICAL_MIGRATION',
+  },
+  {
+    auto_reject_failures: true,
+    auto_reject_outliers: true,
+  },
+  1000
+); // Batch size
 
 console.log(`Processed ${report.total_records} records`);
 ```
@@ -189,7 +203,7 @@ console.log(`Processed ${report.total_records} records`);
 // Test scraper output quality
 const { report } = await runQCPipeline({
   games: scraperOutput,
-  data_source: 'SCRAPER_TEST'
+  data_source: 'SCRAPER_TEST',
 });
 
 if (report.records_rejected > 0) {
@@ -201,26 +215,30 @@ if (report.records_rejected > 0) {
 ## Output Formats
 
 ### JSON (API Responses)
+
 ```typescript
 import { formatReportJSON } from './scripts/qc_reporting';
 return Response.json(formatReportJSON(report));
 ```
 
 ### Markdown (Documentation)
+
 ```typescript
 import { formatReportMarkdown } from './scripts/qc_reporting';
 writeFileSync('qc_report.md', formatReportMarkdown(report));
 ```
 
 ### HTML (Dashboards)
+
 ```typescript
 import { formatReportHTML } from './scripts/qc_reporting';
 return new Response(formatReportHTML(report), {
-  headers: { 'Content-Type': 'text/html' }
+  headers: { 'Content-Type': 'text/html' },
 });
 ```
 
 ### Console (CLI)
+
 ```typescript
 import { formatReportConsole } from './scripts/qc_reporting';
 console.log(formatReportConsole(report));
@@ -262,21 +280,25 @@ MAD Score for 150: |150 - 90.5| / 1.5 = 39.67
 ## Data Sources Supported
 
 ### College Baseball (Priority)
+
 - ESPN API - Box scores, play-by-play
 - NCAA Stats - Team records, player stats, conference standings
 - SportsDataIO - Comprehensive college baseball data
 
 ### MLB
+
 - ESPN API
 - SportsDataIO
 - Custom pitch tracking systems
 
 ### NFL
+
 - ESPN API
 - SportsDataIO
 - Game simulator outputs
 
 ### NOT Supported
+
 - Soccer (per project requirements)
 
 ## Philosophy: Permissive by Design
@@ -297,11 +319,13 @@ Inspired by the **scverse** philosophy for scientific data:
 ### High Rejection Rate (>10%)
 
 **Causes:**
+
 - Scraper logic errors
 - Data source reliability issues
 - Thresholds too strict
 
 **Solutions:**
+
 - Review scraper code
 - Check validation_rules.md for threshold explanations
 - Adjust `mad_threshold` or `min_confidence_score`
@@ -309,10 +333,12 @@ Inspired by the **scverse** philosophy for scientific data:
 ### Too Many Flagged Records
 
 **Causes:**
+
 - Normal for college baseball (small samples, high variance)
 - Legitimate exceptional performances
 
 **Solutions:**
+
 - Review flagged records manually
 - Use more permissive thresholds
 - Document known outliers
@@ -320,10 +346,12 @@ Inspired by the **scverse** philosophy for scientific data:
 ### Zero Outliers Detected
 
 **Causes:**
+
 - Data is very consistent (good!)
 - Or MAD threshold too permissive
 
 **Solutions:**
+
 - Verify data has actual variance
 - Lower `mad_threshold` if needed (try 4.0)
 
@@ -385,6 +413,7 @@ MIT
 ## Support
 
 For issues or questions:
+
 1. Check [validation_rules.md](./references/validation_rules.md) for threshold explanations
 2. Review [examples/](./examples/) for similar use cases
 3. File issue on Blaze Sports Intel GitHub

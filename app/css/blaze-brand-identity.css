@@ -20,11 +20,11 @@
 .gradient-stadium-lights {
   background: linear-gradient(
     180deg,
-    rgba(11, 14, 20, 1) 0%,           /* Dark sky top */
-    rgba(26, 31, 44, 0.95) 20%,       /* Upper atmosphere */
-    rgba(217, 98, 0, 0.15) 50%,       /* Burnt orange glow mid */
-    rgba(168, 218, 220, 0.08) 70%,    /* Powder blue tint */
-    rgba(11, 14, 20, 1) 100%          /* Dark field bottom */
+    rgba(11, 14, 20, 1) 0%,
+    /* Dark sky top */ rgba(26, 31, 44, 0.95) 20%,
+    /* Upper atmosphere */ rgba(217, 98, 0, 0.15) 50%,
+    /* Burnt orange glow mid */ rgba(168, 218, 220, 0.08) 70%,
+    /* Powder blue tint */ rgba(11, 14, 20, 1) 100% /* Dark field bottom */
   );
 }
 
@@ -56,10 +56,10 @@
 .gradient-night-sky {
   background: linear-gradient(
     180deg,
-    #000814 0%,           /* Deep midnight blue */
-    #001d3d 30%,          /* Twilight */
-    #0a0a0f 60%,          /* Our base dark */
-    #0b0e14 100%          /* Slate-950 */
+    #000814 0%,
+    /* Deep midnight blue */ #001d3d 30%,
+    /* Twilight */ #0a0a0f 60%,
+    /* Our base dark */ #0b0e14 100% /* Slate-950 */
   );
 }
 
@@ -74,21 +74,15 @@
 .gradient-burnt-orange {
   background: linear-gradient(
     135deg,
-    #D96200 0%,           /* Enhanced burnt orange */
-    #BF5700 50%,          /* Official UT burnt orange */
-    #8B3D00 100%          /* Darker burnt orange */
+    #d96200 0%,
+    /* Enhanced burnt orange */ #bf5700 50%,
+    /* Official UT burnt orange */ #8b3d00 100% /* Darker burnt orange */
   );
 }
 
 /* Burnt orange with powder blue accent */
 .gradient-burnt-powder {
-  background: linear-gradient(
-    135deg,
-    #D96200 0%,
-    #FF8C42 30%,
-    #FFB81C 60%,
-    #A8DADC 100%
-  );
+  background: linear-gradient(135deg, #d96200 0%, #ff8c42 30%, #ffb81c 60%, #a8dadc 100%);
 }
 
 /* Burnt orange glow effect */
@@ -101,7 +95,7 @@
 
 /* Burnt orange text with gradient */
 .text-burnt-orange-gradient {
-  background: linear-gradient(135deg, #D96200 0%, #FF8C42 100%);
+  background: linear-gradient(135deg, #d96200 0%, #ff8c42 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -118,10 +112,10 @@
 .gradient-sec-championship {
   background: linear-gradient(
     135deg,
-    #660000 0%,           /* Deep SEC burgundy */
-    #8B0000 25%,          /* Crimson */
-    #BF5700 75%,          /* Burnt orange */
-    #D96200 100%          /* Enhanced orange */
+    #660000 0%,
+    /* Deep SEC burgundy */ #8b0000 25%,
+    /* Crimson */ #bf5700 75%,
+    /* Burnt orange */ #d96200 100% /* Enhanced orange */
   );
 }
 
@@ -129,21 +123,15 @@
 .gradient-sec-gold {
   background: linear-gradient(
     135deg,
-    #FFB81C 0%,           /* Blaze accent gold */
-    #FFC627 50%,
-    #FFCB5C 100%
+    #ffb81c 0%,
+    /* Blaze accent gold */ #ffc627 50%,
+    #ffcb5c 100%
   );
 }
 
 /* Conference pride stripes */
 .stripe-sec-pride {
-  background: repeating-linear-gradient(
-    45deg,
-    #BF5700,
-    #BF5700 10px,
-    #FFB81C 10px,
-    #FFB81C 20px
-  );
+  background: repeating-linear-gradient(45deg, #bf5700, #bf5700 10px, #ffb81c 10px, #ffb81c 20px);
 }
 
 /**
@@ -166,29 +154,30 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 140, 66, 0.1) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 140, 66, 0.1) 50%, transparent 100%);
   animation: heat-shimmer 3s ease-in-out infinite;
 }
 
 @keyframes heat-shimmer {
-  0% { left: -100%; }
-  50% { left: 100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 /* Humid atmosphere gradient */
 .gradient-humid-atmosphere {
   background: linear-gradient(
     180deg,
-    rgba(168, 218, 220, 0.05) 0%,    /* Powder blue mist top */
-    transparent 30%,
+    rgba(168, 218, 220, 0.05) 0%,
+    /* Powder blue mist top */ transparent 30%,
     transparent 70%,
-    rgba(217, 98, 0, 0.05) 100%      /* Orange heat bottom */
+    rgba(217, 98, 0, 0.05) 100% /* Orange heat bottom */
   );
 }
 
@@ -208,11 +197,7 @@
       rgba(0, 8, 20, 0.7) 50%,
       rgba(0, 8, 20, 0.95) 100%
     ),
-    radial-gradient(
-      ellipse at 50% 100%,
-      rgba(217, 98, 0, 0.3) 0%,
-      transparent 60%
-    );
+    radial-gradient(ellipse at 50% 100%, rgba(217, 98, 0, 0.3) 0%, transparent 60%);
   position: relative;
 }
 
@@ -244,8 +229,13 @@
 }
 
 @keyframes led-flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.98; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.98;
+  }
 }
 
 /**
@@ -261,36 +251,22 @@
     radial-gradient(circle at 20% 30%, rgba(217, 98, 0, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(168, 218, 220, 0.02) 0%, transparent 50%);
   background-size: 400px 400px;
-  background-position: 0 0, 200px 200px;
+  background-position:
+    0 0,
+    200px 200px;
 }
 
 /* Western rope border */
 .border-rope {
   border: 2px solid;
-  border-image: repeating-linear-gradient(
-    45deg,
-    #8B3D00,
-    #8B3D00 5px,
-    #BF5700 5px,
-    #BF5700 10px
-  ) 1;
+  border-image: repeating-linear-gradient(45deg, #8b3d00, #8b3d00 5px, #bf5700 5px, #bf5700 10px) 1;
 }
 
 /* Leather texture overlay */
 .texture-leather {
   background-image:
-    repeating-linear-gradient(
-      0deg,
-      rgba(139, 61, 0, 0.03) 0px,
-      transparent 2px,
-      transparent 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(139, 61, 0, 0.03) 0px,
-      transparent 2px,
-      transparent 4px
-    );
+    repeating-linear-gradient(0deg, rgba(139, 61, 0, 0.03) 0px, transparent 2px, transparent 4px),
+    repeating-linear-gradient(90deg, rgba(139, 61, 0, 0.03) 0px, transparent 2px, transparent 4px);
 }
 
 /**
@@ -304,11 +280,11 @@
 .gradient-championship-gold {
   background: linear-gradient(
     135deg,
-    #FFD700 0%,           /* Gold */
-    #FFC627 25%,
-    #FFB81C 50%,          /* Blaze gold */
-    #FFD700 75%,
-    #FFCB5C 100%
+    #ffd700 0%,
+    /* Gold */ #ffc627 25%,
+    #ffb81c 50%,
+    /* Blaze gold */ #ffd700 75%,
+    #ffcb5c 100%
   );
 }
 
@@ -336,13 +312,17 @@
 }
 
 @keyframes metallic-shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
 }
 
 /* Trophy engraving effect */
 .text-engraved {
-  color: #FFB81C;
+  color: #ffb81c;
   text-shadow:
     0 1px 0 rgba(0, 0, 0, 0.5),
     0 -1px 0 rgba(255, 255, 255, 0.2),
@@ -360,14 +340,13 @@
 /* Artificial turf texture */
 .texture-turf {
   background-color: #1a4d2e;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.1) 2px,
-      rgba(0, 0, 0, 0.1) 4px
-    );
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
 }
 
 /* Chalk line divider */
@@ -388,14 +367,13 @@
 
 /* End zone pattern */
 .pattern-end-zone {
-  background:
-    repeating-linear-gradient(
-      45deg,
-      rgba(217, 98, 0, 0.1) 0px,
-      rgba(217, 98, 0, 0.1) 20px,
-      transparent 20px,
-      transparent 40px
-    );
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(217, 98, 0, 0.1) 0px,
+    rgba(217, 98, 0, 0.1) 20px,
+    transparent 20px,
+    transparent 40px
+  );
 }
 
 /**
@@ -409,16 +387,8 @@
 .hero-championship {
   min-height: 60vh;
   background:
-    linear-gradient(
-      180deg,
-      rgba(11, 14, 20, 0.85) 0%,
-      rgba(11, 14, 20, 0.95) 100%
-    ),
-    radial-gradient(
-      ellipse at center top,
-      rgba(217, 98, 0, 0.2) 0%,
-      transparent 60%
-    ),
+    linear-gradient(180deg, rgba(11, 14, 20, 0.85) 0%, rgba(11, 14, 20, 0.95) 100%),
+    radial-gradient(ellipse at center top, rgba(217, 98, 0, 0.2) 0%, transparent 60%),
     var(--color-slate-950);
   position: relative;
   display: flex;
@@ -447,12 +417,7 @@
 /* Live games hero (smaller, focused) */
 .hero-live-games {
   min-height: 30vh;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 45, 85, 0.1) 0%,
-      rgba(11, 14, 20, 1) 50%
-    );
+  background: linear-gradient(135deg, rgba(255, 45, 85, 0.1) 0%, rgba(11, 14, 20, 1) 50%);
   position: relative;
   display: flex;
   align-items: center;
@@ -462,13 +427,12 @@
 /* Analytics hero (data-focused) */
 .hero-analytics {
   min-height: 40vh;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(11, 14, 20, 1) 0%,
-      rgba(26, 31, 44, 0.98) 50%,
-      rgba(11, 14, 20, 1) 100%
-    );
+  background: linear-gradient(
+    to bottom,
+    rgba(11, 14, 20, 1) 0%,
+    rgba(26, 31, 44, 0.98) 50%,
+    rgba(11, 14, 20, 1) 100%
+  );
   position: relative;
 }
 
@@ -593,7 +557,8 @@
 
 /* Stadium dust particles */
 @keyframes float-particle {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) translateX(0);
     opacity: 0.3;
   }
@@ -630,10 +595,22 @@
   animation: float-particle 8s ease-in-out infinite;
 }
 
-.particle:nth-child(2) { animation-delay: 1s; left: 20%; }
-.particle:nth-child(3) { animation-delay: 2s; left: 40%; }
-.particle:nth-child(4) { animation-delay: 3s; left: 60%; }
-.particle:nth-child(5) { animation-delay: 4s; left: 80%; }
+.particle:nth-child(2) {
+  animation-delay: 1s;
+  left: 20%;
+}
+.particle:nth-child(3) {
+  animation-delay: 2s;
+  left: 40%;
+}
+.particle:nth-child(4) {
+  animation-delay: 3s;
+  left: 60%;
+}
+.particle:nth-child(5) {
+  animation-delay: 4s;
+  left: 80%;
+}
 
 /**
  * ============================================================================
@@ -681,14 +658,14 @@
   .gradient-burnt-orange,
   .gradient-stadium-lights,
   .gradient-sec-championship {
-    background: #BF5700 !important;
+    background: #bf5700 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
   .text-burnt-orange-gradient {
-    color: #BF5700 !important;
-    -webkit-text-fill-color: #BF5700 !important;
+    color: #bf5700 !important;
+    -webkit-text-fill-color: #bf5700 !important;
   }
 
   .hero-championship,

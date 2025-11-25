@@ -5,11 +5,13 @@ Normalize clutch moments across sports to a 0-100 scale, enabling fair compariso
 ## Overview
 
 **LEI Formula:**
+
 ```
 LEI = 100 × (Championship_Weight × WPA × Scarcity) / MAX_SWING
 ```
 
 Where:
+
 - **Championship Weight**: 1x (wildcard) → 8x (championship)
 - **WPA**: Win Probability Added (0-1.0)
 - **Scarcity**: Opportunity cost multiplier (0-1.0, higher = fewer chances remaining)
@@ -17,13 +19,13 @@ Where:
 
 ### Score Interpretation
 
-| LEI Range | Description | Examples |
-|-----------|-------------|----------|
-| 60-100 | Legendary championship moments | Butler INT (65.0) |
-| 40-59 | Elite clutch plays | Freese triple (50.7) |
-| 20-39 | High-leverage playoff moments | Boone HR (22.2) |
-| 10-19 | Important playoff plays | Manningham catch (16.0) |
-| 0-9 | Standard playoff situations | Regular wildcard moments |
+| LEI Range | Description                    | Examples                 |
+| --------- | ------------------------------ | ------------------------ |
+| 60-100    | Legendary championship moments | Butler INT (65.0)        |
+| 40-59     | Elite clutch plays             | Freese triple (50.7)     |
+| 20-39     | High-leverage playoff moments  | Boone HR (22.2)          |
+| 10-19     | Important playoff plays        | Manningham catch (16.0)  |
+| 0-9       | Standard playoff situations    | Regular wildcard moments |
 
 ## Quick Start
 
@@ -34,13 +36,13 @@ import { computeLEI } from '@bsi/lei';
 
 // David Freese triple, 2011 World Series Game 6
 const result = computeLEI({
-  sport: "baseball",
-  playoff_round: "championship",
+  sport: 'baseball',
+  playoff_round: 'championship',
   pre_play_win_prob: 0.078,
   post_play_win_prob: 0.605,
   outs_remaining: 1,
   strikes_remaining: 0,
-  score_differential: -2
+  score_differential: -2,
 });
 
 console.log(result.lei); // ~95
@@ -62,7 +64,7 @@ const calculator = new LeverageEquivalencyIndex();
 
 // Compute multiple plays
 const plays = [play1Context, play2Context, play3Context];
-const results = plays.map(ctx => calculator.compute(ctx));
+const results = plays.map((ctx) => calculator.compute(ctx));
 
 // Sort by LEI
 const ranked = results.sort((a, b) => b.lei - a.lei);
@@ -71,11 +73,7 @@ const ranked = results.sort((a, b) => b.lei - a.lei);
 ### Famous Examples
 
 ```typescript
-import {
-  davidFreese2011WS,
-  marioManningham2012SB,
-  getAllFamousPlays
-} from '@bsi/lei/examples';
+import { davidFreese2011WS, marioManningham2012SB, getAllFamousPlays } from '@bsi/lei/examples';
 
 // Get specific famous play
 const freese = davidFreese2011WS();
@@ -84,7 +82,7 @@ console.log(freese.description); // "David Freese game-tying triple"
 
 // Get all famous plays for comparison
 const allPlays = getAllFamousPlays();
-allPlays.forEach(play => {
+allPlays.forEach((play) => {
   console.log(`${play.description}: ${play.lei.toFixed(1)}`);
 });
 ```
@@ -96,6 +94,7 @@ allPlays.forEach(play => {
 Compute LEI for a custom play context.
 
 **Request:**
+
 ```bash
 curl -X POST https://blazesportsintel.com/api/lei \
   -H "Content-Type: application/json" \
@@ -111,6 +110,7 @@ curl -X POST https://blazesportsintel.com/api/lei \
 ```
 
 **Response:**
+
 ```json
 {
   "lei": 95.0,
@@ -128,6 +128,7 @@ curl -X POST https://blazesportsintel.com/api/lei \
 Get famous playoff moments with pre-computed LEI scores.
 
 **Response:**
+
 ```json
 {
   "plays": [
@@ -147,6 +148,7 @@ Get famous playoff moments with pre-computed LEI scores.
 Validate LEI calibration against expected clutch rankings.
 
 **Response:**
+
 ```json
 {
   "plays": [...],
@@ -161,35 +163,39 @@ Validate LEI calibration against expected clutch rankings.
 ### Baseball
 
 Required fields:
+
 - `outs_remaining`: 0-27 (typically 0-3 per inning)
 - `strikes_remaining`: 0-2
 - `score_differential`: runs (positive = leading)
 
 Scarcity factors:
+
 - Base scarcity from outs consumed (27 total)
 - 1.2x multiplier for 2-strike counts
 - Score factor: closer games = higher leverage
 
 ```typescript
 const baseballPlay = {
-  sport: "baseball",
-  playoff_round: "division",
+  sport: 'baseball',
+  playoff_round: 'division',
   pre_play_win_prob: 0.45,
   post_play_win_prob: 0.72,
   outs_remaining: 2,
   strikes_remaining: 1,
-  score_differential: -1
+  score_differential: -1,
 };
 ```
 
 ### Football
 
 Required fields:
+
 - `time_remaining`: seconds (0-3600)
 - `timeouts_remaining`: 0-3
 - `score_differential`: points (positive = leading)
 
 Scarcity factors:
+
 - Base scarcity from time elapsed
 - Exponential boost in 4th quarter (last 15 min)
 - 1.15x per timeout used
@@ -197,13 +203,13 @@ Scarcity factors:
 
 ```typescript
 const footballPlay = {
-  sport: "football",
-  playoff_round: "championship",
+  sport: 'football',
+  playoff_round: 'championship',
   pre_play_win_prob: 0.35,
-  post_play_win_prob: 1.00,
+  post_play_win_prob: 1.0,
   time_remaining: 20,
   timeouts_remaining: 1,
-  score_differential: -4
+  score_differential: -4,
 };
 ```
 
@@ -212,11 +218,13 @@ const footballPlay = {
 ### Baseball Win Expectancy
 
 **Recommended:** Baseball-Reference play-by-play tables
+
 - URL: `https://www.baseball-reference.com/boxes/{game_id}.shtml`
 - Provides: WE before/after each play
 - Alternative: pybaseball library (`from pybaseball import statcast`)
 
 **Converting WPA:**
+
 ```python
 # Baseball-Reference provides WE% directly
 pre_play_we = 0.078  # 7.8% from page
@@ -229,6 +237,7 @@ wpa = abs(post_play_we - pre_play_we)  # 0.527 = 52.7%
 **Recommended:** nflfastR Expected Points Added (EPA) model
 
 **Converting EPA to WP:**
+
 ```python
 import nfl_data_py as nfl
 
@@ -275,6 +284,7 @@ The current scarcity weights are calibrated against known clutch rankings:
 3. **Score differential factors**: Validated against tie-game vs blowout WPA differences
 
 **Validation needed:**
+
 - Expand calibration dataset to n=100+ playoff plays
 - Cross-validate against expert clutch rankings
 - Establish confidence intervals for each component
@@ -283,14 +293,14 @@ The current scarcity weights are calibrated against known clutch rankings:
 ## Type Definitions
 
 ```typescript
-type Sport = "baseball" | "football";
-type PlayoffRound = "wildcard" | "division" | "conference" | "championship";
+type Sport = 'baseball' | 'football';
+type PlayoffRound = 'wildcard' | 'division' | 'conference' | 'championship';
 
 interface PlayContext {
   sport: Sport;
   playoff_round: PlayoffRound;
-  pre_play_win_prob: number;  // 0.0-1.0
-  post_play_win_prob: number;  // 0.0-1.0
+  pre_play_win_prob: number; // 0.0-1.0
+  post_play_win_prob: number; // 0.0-1.0
   outs_remaining?: number;
   strikes_remaining?: number;
   time_remaining?: number;
@@ -299,7 +309,7 @@ interface PlayContext {
 }
 
 interface LEIResult {
-  lei: number;  // 0-100
+  lei: number; // 0-100
   components: {
     championship_weight: number;
     wpa: number;
@@ -312,6 +322,7 @@ interface LEIResult {
 ## Future Enhancements
 
 ### Planned Features
+
 - [ ] Basketball support (NBA/March Madness)
 - [ ] Hockey support (NHL/Frozen Four)
 - [ ] Context modifiers (weather, injuries, historical significance)
@@ -319,6 +330,7 @@ interface LEIResult {
 - [ ] Machine learning refinement of scarcity weights
 
 ### Data Integrations
+
 - [ ] Automated Baseball-Reference scraping
 - [ ] nflfastR API integration
 - [ ] Live game state webhooks

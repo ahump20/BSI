@@ -33,7 +33,7 @@
       "metadata": {
         "source_url": "",
         "scrape_timestamp": "2025-03-15T10:00:00-05:00",
-        "confidence_score": 0.10,
+        "confidence_score": 0.1,
         "provider_name": "CUSTOM_SCRAPER"
       }
     }
@@ -52,7 +52,7 @@
       "batting_avg": 3.333,
       "exit_velocity": 250.0,
       "pitch_velocity": 150.0,
-      "era": -5.00,
+      "era": -5.0,
       "metadata": {
         "source_url": "https://bad-data.com",
         "scrape_timestamp": "2025-03-15T10:00:00-05:00",
@@ -70,7 +70,7 @@
       "rbi": -1,
       "walks": -4,
       "strikeouts": -6,
-      "batting_avg": -0.500,
+      "batting_avg": -0.5,
       "exit_velocity": -100.0,
       "pitch_velocity": 0.0,
       "metadata": {
@@ -90,10 +90,10 @@
       "rbi": 1,
       "walks": 0,
       "strikeouts": 2,
-      "batting_avg": 0.850,
+      "batting_avg": 0.85,
       "innings_pitched": 9.0,
       "earned_runs": 5,
-      "era": 1.50,
+      "era": 1.5,
       "metadata": {
         "source_url": "https://bad-data.com",
         "scrape_timestamp": "2025-03-15T10:00:00-05:00",
@@ -125,14 +125,14 @@
       "rbi": 1,
       "walks": 0,
       "strikeouts": 1,
-      "batting_avg": 0.500,
+      "batting_avg": 0.5,
       "pitch_velocity": 145.0,
       "exit_velocity": 160.0,
       "spin_rate": 5000,
       "metadata": {
         "source_url": "https://bad-data.com",
         "scrape_timestamp": "2025-03-15T10:00:00-05:00",
-        "confidence_score": 0.40,
+        "confidence_score": 0.4,
         "provider_name": "CUSTOM_SCRAPER"
       }
     },
@@ -165,13 +165,13 @@
       "rbi": 12,
       "walks": 0,
       "strikeouts": 0,
-      "batting_avg": 1.000,
+      "batting_avg": 1.0,
       "exit_velocity": 118.0,
       "pitch_velocity": 25.0,
       "metadata": {
         "source_url": "https://bad-data.com",
         "scrape_timestamp": "2025-03-15T10:00:00-05:00",
-        "confidence_score": 0.50,
+        "confidence_score": 0.5,
         "provider_name": "CUSTOM_SCRAPER"
       }
     },
@@ -185,12 +185,12 @@
       "rbi": 1,
       "walks": 1,
       "strikeouts": 2,
-      "batting_avg": 0.400,
+      "batting_avg": 0.4,
       "pitch_velocity": 951.0,
       "exit_velocity": 1023.0,
       "innings_pitched": 6.0,
       "earned_runs": 4,
-      "era": 6.00,
+      "era": 6.0,
       "pitches_thrown": 985,
       "strikes": 650,
       "balls": 335,

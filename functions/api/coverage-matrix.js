@@ -34,7 +34,7 @@ export async function onRequest(context) {
   try {
     const coverageData = {
       success: true,
-      sports: {}
+      sports: {},
     };
 
     // Baseball coverage
@@ -43,12 +43,12 @@ export async function onRequest(context) {
     // Football coverage (placeholder for now)
     coverageData.sports.football = {
       ncaa: await getNCAAFootballCoverage(),
-      nfl: await getNFLCoverage()
+      nfl: await getNFLCoverage(),
     };
 
     // Basketball coverage (placeholder for now)
     coverageData.sports.basketball = {
-      ncaa: await getNCAABasketballCoverage()
+      ncaa: await getNCAABasketballCoverage(),
     };
 
     coverageData.lastUpdated = new Date().toISOString();
@@ -59,20 +59,22 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
-      }
+        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+      },
     });
-
   } catch (error) {
     console.error('Coverage matrix error:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to generate coverage matrix',
-      message: error.message
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to generate coverage matrix',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 }
 
@@ -83,13 +85,15 @@ async function getBaseballCoverage(db) {
   if (!db) {
     return {
       cws: {},
-      note: 'D1 database not available'
+      note: 'D1 database not available',
     };
   }
 
   try {
     // Query games grouped by season for College World Series
-    const cwsGames = await db.prepare(`
+    const cwsGames = await db
+      .prepare(
+        `
       SELECT
         SUBSTR(date, 1, 4) as year,
         COUNT(*) as game_count,
@@ -100,11 +104,13 @@ async function getBaseballCoverage(db) {
         AND tournament_round LIKE 'College World Series%'
       GROUP BY year
       ORDER BY year DESC
-    `).all();
+    `
+      )
+      .all();
 
     const cwsCoverage = {};
 
-    (cwsGames.results || []).forEach(row => {
+    (cwsGames.results || []).forEach((row) => {
       const year = row.year;
       const gameCount = row.game_count;
 
@@ -119,24 +125,23 @@ async function getBaseballCoverage(db) {
         status,
         dateRange: {
           first: row.first_game,
-          last: row.last_game
+          last: row.last_game,
         },
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     });
 
     return {
       cws: cwsCoverage,
       mlb: {
-        note: 'MLB regular season data available via MLB Stats API (live)'
-      }
+        note: 'MLB regular season data available via MLB Stats API (live)',
+      },
     };
-
   } catch (error) {
     console.error('Baseball coverage query error:', error);
     return {
       cws: {},
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -148,7 +153,7 @@ async function getNCAAFootballCoverage() {
   // TODO: Query historical database when NCAA football data is added
   return {
     note: 'NCAA Football data available via ESPN API (live only)',
-    historical: {}
+    historical: {},
   };
 }
 
@@ -158,7 +163,7 @@ async function getNCAAFootballCoverage() {
 async function getNFLCoverage() {
   return {
     note: 'NFL data available via ESPN API and SportsDataIO (live only)',
-    historical: {}
+    historical: {},
   };
 }
 
@@ -168,6 +173,6 @@ async function getNFLCoverage() {
 async function getNCAABasketballCoverage() {
   return {
     note: 'NCAA Basketball data available via ESPN API (live only)',
-    historical: {}
+    historical: {},
   };
 }

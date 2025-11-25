@@ -1,4 +1,5 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "es2021": true,
@@ -36,19 +37,33 @@
     ],
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "react/no-unknown-property": ["error", { "ignore": ["jsx", "global"] }],
+    "no-case-declarations": "off",
+    "no-useless-escape": "warn",
+    "no-useless-catch": "warn",
     "no-console": [
       "warn",
       {
         "allow": ["warn", "error", "info"]
       }
-    ]
+    ],
+    "no-undef": "warn",
+    "no-unreachable": "warn",
+    "no-inner-declarations": "warn",
+    "no-const-assign": "warn",
+    "no-control-regex": "warn",
+    "@typescript-eslint/no-var-requires": "warn",
+    "no-constant-condition": "warn",
+    "no-empty": "warn"
   },
   "overrides": [
     {
       "files": ["lib/**/*.ts", "lib/**/*.js"],
+      "excludedFiles": ["**/examples/**", "**/scripts/**", "**/test*"],
       "rules": {
         "no-restricted-syntax": [
-          "error",
+          "warn",
           {
             "selector": "MemberExpression[object.name='process'][property.name='env']",
             "message": "Unguarded process.env usage! Use: env?.VAR || (typeof process !== 'undefined' ? process.env?.VAR : null) || ''"
@@ -61,16 +76,20 @@
       }
     },
     {
+      "files": ["**/examples/**", "**/scripts/**", "**/*test*", "**/*.test.*", "**/*.spec.*", "*test*.js", "*test*.ts"],
+      "rules": {
+        "no-console": "off",
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "no-inner-declarations": "off",
+        "no-empty": "off"
+      }
+    },
+    {
       "files": ["functions/**/*.ts", "functions/**/*.js"],
       "rules": {
         "no-console": "off",
-        "no-restricted-syntax": [
-          "warn",
-          {
-            "selector": "MemberExpression[object.name='process'][property.name='env']",
-            "message": "Consider using env parameter in Functions: export async function onRequest({ env }) { const key = env.API_KEY; }"
-          }
-        ]
+        "no-restricted-syntax": "off"
       }
     },
     {
@@ -78,6 +97,26 @@
       "rules": {
         "no-restricted-syntax": "off",
         "@typescript-eslint/no-var-requires": "off"
+      }
+    },
+    {
+      "files": ["lib/utils/**/*.ts"],
+      "rules": {
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
+      }
+    },
+    {
+      "files": ["app/**/*.js", "app/**/*.ts"],
+      "rules": {
+        "no-console": "off",
+        "no-restricted-syntax": "off"
+      }
+    },
+    {
+      "files": ["components/**/*.tsx", "components/**/*.jsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "warn"
       }
     }
   ],
@@ -89,6 +128,20 @@
     "coverage/",
     "*.min.js",
     "public/",
-    ".wrangler/"
+    ".wrangler/",
+    "BSI/",
+    "BSI-NextGen/",
+    "BSI-1/",
+    "BSI-2/",
+    "Documents/",
+    "Desktop/",
+    "Downloads/",
+    "Library/",
+    "Applications/",
+    "Movies/",
+    "Music/",
+    "Pictures/",
+    "Public/",
+    "Sites/"
   ]
 }

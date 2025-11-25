@@ -501,14 +501,14 @@ interface CacheConfig {
 }
 
 const CACHE_TTLS: CacheConfig = {
-  teamInfo: 86400,      // 24 hours
-  roster: 3600,         // 1 hour
-  standings: 1800,      // 30 minutes
-  liveScores: 30,       // 30 seconds
+  teamInfo: 86400, // 24 hours
+  roster: 3600, // 1 hour
+  standings: 1800, // 30 minutes
+  liveScores: 30, // 30 seconds
   completedGames: 3600, // 1 hour
-  rankings: 3600,       // 1 hour
-  gamePreview: 7200,    // 2 hours
-  gameRecap: 86400,     // 24 hours (recaps don't change)
+  rankings: 3600, // 1 hour
+  gamePreview: 7200, // 2 hours
+  gameRecap: 86400, // 24 hours (recaps don't change)
 };
 
 // ============================================================================
@@ -517,7 +517,8 @@ const CACHE_TTLS: CacheConfig = {
 
 export class NCAABaseballAdapter {
   private kv?: KVNamespace;
-  private readonly baseUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball';
+  private readonly baseUrl =
+    'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball';
 
   constructor(kv?: KVNamespace) {
     this.kv = kv;
@@ -527,11 +528,7 @@ export class NCAABaseballAdapter {
   // CORE FETCH UTILITIES
   // ==========================================================================
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try KV cache first
     if (this.kv) {
       try {
@@ -556,7 +553,7 @@ export class NCAABaseballAdapter {
       throw new Error(`ESPN API error: ${response.status} ${response.statusText} for ${url}`);
     }
 
-    const data = await response.json() as T;
+    const data = (await response.json()) as T;
 
     // Store in KV cache
     if (this.kv) {
@@ -584,11 +581,7 @@ export class NCAABaseballAdapter {
     const url = `${this.baseUrl}/teams/${teamId}?season=${year}`;
     const cacheKey = `ncaa:team:info:${teamId}:${year}`;
 
-    const data = await this.fetchWithCache<{ team: NCAATeam }>(
-      url,
-      cacheKey,
-      CACHE_TTLS.teamInfo
-    );
+    const data = await this.fetchWithCache<{ team: NCAATeam }>(url, cacheKey, CACHE_TTLS.teamInfo);
 
     return data.team;
   }
@@ -618,11 +611,9 @@ export class NCAABaseballAdapter {
     const url = `${this.baseUrl}/teams?season=${year}&limit=400`;
     const cacheKey = `ncaa:teams:all:${year}`;
 
-    const data = await this.fetchWithCache<{ sports: Array<{ leagues: Array<{ teams: NCAATeam[] }> }> }>(
-      url,
-      cacheKey,
-      CACHE_TTLS.teamInfo
-    );
+    const data = await this.fetchWithCache<{
+      sports: Array<{ leagues: Array<{ teams: NCAATeam[] }> }>;
+    }>(url, cacheKey, CACHE_TTLS.teamInfo);
 
     // Navigate ESPN's nested structure
     const teams = data.sports?.[0]?.leagues?.[0]?.teams || [];
@@ -710,15 +701,18 @@ export class NCAABaseballAdapter {
 /**
  * Extract batting statistics from boxscore
  */
-export function extractBattingStats(boxscore: NCAABoxScore, teamId: string): Record<string, string> {
-  const teamData = boxscore.teams.find(t => t.team.id === teamId);
+export function extractBattingStats(
+  boxscore: NCAABoxScore,
+  teamId: string
+): Record<string, string> {
+  const teamData = boxscore.teams.find((t) => t.team.id === teamId);
   if (!teamData) return {};
 
-  const battingStats = teamData.statistics.find(s => s.name === 'batting');
+  const battingStats = teamData.statistics.find((s) => s.name === 'batting');
   if (!battingStats) return {};
 
   const stats: Record<string, string> = {};
-  battingStats.stats.forEach(stat => {
+  battingStats.stats.forEach((stat) => {
     stats[stat.abbreviation] = stat.displayValue;
   });
 
@@ -728,15 +722,18 @@ export function extractBattingStats(boxscore: NCAABoxScore, teamId: string): Rec
 /**
  * Extract pitching statistics from boxscore
  */
-export function extractPitchingStats(boxscore: NCAABoxScore, teamId: string): Record<string, string> {
-  const teamData = boxscore.teams.find(t => t.team.id === teamId);
+export function extractPitchingStats(
+  boxscore: NCAABoxScore,
+  teamId: string
+): Record<string, string> {
+  const teamData = boxscore.teams.find((t) => t.team.id === teamId);
   if (!teamData) return {};
 
-  const pitchingStats = teamData.statistics.find(s => s.name === 'pitching');
+  const pitchingStats = teamData.statistics.find((s) => s.name === 'pitching');
   if (!pitchingStats) return {};
 
   const stats: Record<string, string> = {};
-  pitchingStats.stats.forEach(stat => {
+  pitchingStats.stats.forEach((stat) => {
     stats[stat.abbreviation] = stat.displayValue;
   });
 
@@ -749,9 +746,7 @@ export function extractPitchingStats(boxscore: NCAABoxScore, teamId: string): Re
 export function formatLineScore(linescores: NCAACompetitor['linescores']): string {
   if (!linescores || linescores.length === 0) return '';
 
-  return linescores
-    .map(ls => ls.displayValue)
-    .join('-');
+  return linescores.map((ls) => ls.displayValue).join('-');
 }
 
 /**
@@ -767,15 +762,15 @@ export function getGameState(status: NCAAGame['status']): 'scheduled' | 'live' |
  * Extract key performers from boxscore
  */
 export function getKeyPerformers(boxscore: NCAABoxScore, teamId: string): NCAAPlayer[] {
-  const teamData = boxscore.players?.find(p => p.team.id === teamId);
+  const teamData = boxscore.players?.find((p) => p.team.id === teamId);
   if (!teamData) return [];
 
   // Get batting leaders (most hits, RBIs)
-  const battingStats = teamData.statistics.find(s => s.name === 'batting');
+  const battingStats = teamData.statistics.find((s) => s.name === 'batting');
   if (!battingStats) return [];
 
   // ESPN provides athletes with stats already sorted by performance
   const topPerformers = battingStats.athletes.slice(0, 3);
 
-  return topPerformers.map(p => p.athlete);
+  return topPerformers.map((p) => p.athlete);
 }

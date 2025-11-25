@@ -17,7 +17,7 @@ import {
   crossValidateModel,
   benchmarkPerformance,
   testEdgeCases,
-  runFullTestSuite
+  runFullTestSuite,
 } from '../../../../lib/ml/model-performance-tester.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
@@ -85,11 +85,9 @@ export async function onRequest(context) {
 
         // Store result in KV
         const cvId = `crossval_${cvSport}_${Date.now()}`;
-        await env.SPORTS_DATA_KV.put(
-          `test_result:${cvId}`,
-          JSON.stringify(result),
-          { expirationTtl: 86400 }
-        );
+        await env.SPORTS_DATA_KV.put(`test_result:${cvId}`, JSON.stringify(result), {
+          expirationTtl: 86400,
+        });
 
         result.testId = cvId;
         break;
@@ -104,11 +102,9 @@ export async function onRequest(context) {
 
         // Store result in KV
         const benchmarkId = `benchmark_${Date.now()}`;
-        await env.SPORTS_DATA_KV.put(
-          `test_result:${benchmarkId}`,
-          JSON.stringify(result),
-          { expirationTtl: 86400 }
-        );
+        await env.SPORTS_DATA_KV.put(`test_result:${benchmarkId}`, JSON.stringify(result), {
+          expirationTtl: 86400,
+        });
 
         result.testId = benchmarkId;
         break;
@@ -123,11 +119,9 @@ export async function onRequest(context) {
 
         // Store result in KV
         const edgecaseId = `edgecase_${Date.now()}`;
-        await env.SPORTS_DATA_KV.put(
-          `test_result:${edgecaseId}`,
-          JSON.stringify(result),
-          { expirationTtl: 86400 }
-        );
+        await env.SPORTS_DATA_KV.put(`test_result:${edgecaseId}`, JSON.stringify(result), {
+          expirationTtl: 86400,
+        });
 
         result.testId = edgecaseId;
         break;
@@ -142,11 +136,9 @@ export async function onRequest(context) {
 
         // Store result in KV
         const suiteId = `fullsuite_${Date.now()}`;
-        await env.SPORTS_DATA_KV.put(
-          `test_result:${suiteId}`,
-          JSON.stringify(result),
-          { expirationTtl: 86400 }
-        );
+        await env.SPORTS_DATA_KV.put(`test_result:${suiteId}`, JSON.stringify(result), {
+          expirationTtl: 86400,
+        });
 
         result.testId = suiteId;
         break;
@@ -161,7 +153,9 @@ export async function onRequest(context) {
         const storedResult = await env.SPORTS_DATA_KV.get(`test_result:${testId}`, 'json');
 
         if (!storedResult) {
-          throw new Error(`Test results not found for testId: ${testId}. Results expire after 24 hours.`);
+          throw new Error(
+            `Test results not found for testId: ${testId}. Results expire after 24 hours.`
+          );
         }
 
         result = storedResult;
@@ -186,20 +180,22 @@ export async function onRequest(context) {
               summary: {
                 accuracy: testResult.overall?.accuracy || testResult.avgAccuracy,
                 brierScore: testResult.overall?.avgBrierScore,
-                duration: testResult.duration
-              }
+                duration: testResult.duration,
+              },
             });
           }
         }
 
         result = {
           totalResults: historyResults.length,
-          results: historyResults
+          results: historyResults,
         };
         break;
 
       default:
-        throw new Error(`Unknown action: ${action}. Valid actions: backtest, crossvalidate, benchmark, edgecases, fullsuite, results, history`);
+        throw new Error(
+          `Unknown action: ${action}. Valid actions: backtest, crossvalidate, benchmark, edgecases, fullsuite, results, history`
+        );
     }
 
     return new Response(JSON.stringify(result), {
@@ -207,24 +203,27 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': action === 'results' || action === 'history'
-          ? 'public, max-age=300, s-maxage=600'
-          : 'no-cache, no-store, must-revalidate'
-      }
+        'Cache-Control':
+          action === 'results' || action === 'history'
+            ? 'public, max-age=300, s-maxage=600'
+            : 'no-cache, no-store, must-revalidate',
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to process testing request',
-      message: error.message,
-      action
-    }), {
-      status: error.message.includes('required') ? 400 : 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to process testing request',
+        message: error.message,
+        action,
+      }),
+      {
+        status: error.message.includes('required') ? 400 : 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 

@@ -208,7 +208,7 @@ export class RealSportsDataClient {
     } catch (error) {
       if (attempt < 3) {
         const delay = 1000 * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
         return this.fetchWithRetry<T>(url, options, attempt + 1);
       }
       throw error;
@@ -233,7 +233,7 @@ export class RealSportsDataClient {
     const data = await fetcher();
     this.cache.set(key, {
       data,
-      expires: now + (ttl * 1000),
+      expires: now + ttl * 1000,
     });
 
     return { data, cached: false };
@@ -334,7 +334,12 @@ export class RealSportsDataClient {
         score: game.AwayTeamRuns || 0,
         logo: `https://cdn.sportsdata.io/mlb/logos/${game.AwayTeam}.png`,
       },
-      status: game.Status === 'Final' ? 'final' : game.Status === 'InProgress' ? 'in_progress' : 'scheduled',
+      status:
+        game.Status === 'Final'
+          ? 'final'
+          : game.Status === 'InProgress'
+            ? 'in_progress'
+            : 'scheduled',
       quarter: game.Inning ? `Inning ${game.Inning}` : undefined,
       timeRemaining: game.InningHalf,
       venue: game.Stadium,
@@ -378,7 +383,12 @@ export class RealSportsDataClient {
         score: game.AwayScore || 0,
         logo: `https://cdn.sportsdata.io/nfl/logos/${game.AwayTeam}.png`,
       },
-      status: game.Status === 'Final' ? 'final' : game.Status === 'InProgress' ? 'in_progress' : 'scheduled',
+      status:
+        game.Status === 'Final'
+          ? 'final'
+          : game.Status === 'InProgress'
+            ? 'in_progress'
+            : 'scheduled',
       quarter: game.Quarter ? `Q${game.Quarter}` : undefined,
       timeRemaining: game.TimeRemaining,
       venue: game.Stadium,
@@ -422,7 +432,12 @@ export class RealSportsDataClient {
         score: game.AwayTeamScore || 0,
         logo: `https://cdn.sportsdata.io/nba/logos/${game.AwayTeam}.png`,
       },
-      status: game.Status === 'Final' ? 'final' : game.Status === 'InProgress' ? 'in_progress' : 'scheduled',
+      status:
+        game.Status === 'Final'
+          ? 'final'
+          : game.Status === 'InProgress'
+            ? 'in_progress'
+            : 'scheduled',
       quarter: game.Quarter ? `Q${game.Quarter}` : undefined,
       timeRemaining: game.TimeRemaining,
       venue: game.Stadium,
@@ -452,7 +467,11 @@ export class RealSportsDataClient {
   /**
    * Fetch Team Records
    */
-  async getNCAATeamRecords(year: number = 2025, team?: string, conference?: string): Promise<any[]> {
+  async getNCAATeamRecords(
+    year: number = 2025,
+    team?: string,
+    conference?: string
+  ): Promise<any[]> {
     const cacheKey = `cfb:records:${year}:${team || 'all'}:${conference || 'all'}`;
 
     const { data } = await this.getCached(cacheKey, async () => {
@@ -483,20 +502,24 @@ export class RealSportsDataClient {
   }): Promise<CFBGame[]> {
     const cacheKey = `cfb:games:${params.year}:${params.week || 'all'}:${params.team || 'all'}:${params.conference || 'all'}`;
 
-    const { data } = await this.getCached(cacheKey, async () => {
-      let url = `https://api.collegefootballdata.com/games?year=${params.year}`;
-      if (params.week) url += `&week=${params.week}`;
-      if (params.seasonType) url += `&seasonType=${params.seasonType}`;
-      if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
-      if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
-      if (params.division) url += `&division=${params.division}`;
+    const { data } = await this.getCached(
+      cacheKey,
+      async () => {
+        let url = `https://api.collegefootballdata.com/games?year=${params.year}`;
+        if (params.week) url += `&week=${params.week}`;
+        if (params.seasonType) url += `&seasonType=${params.seasonType}`;
+        if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
+        if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
+        if (params.division) url += `&division=${params.division}`;
 
-      return await this.fetchWithRetry<any[]>(url, {
-        headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
-        },
-      });
-    }, 300); // 5-minute cache
+        return await this.fetchWithRetry<any[]>(url, {
+          headers: {
+            Authorization: `Bearer ${this.config.collegeFBDataKey}`,
+          },
+        });
+      },
+      300
+    ); // 5-minute cache
 
     return (data || []).map((game: any) => ({
       id: game.id,
@@ -537,7 +560,7 @@ export class RealSportsDataClient {
 
         return await this.fetchWithRetry<any[]>(url, {
           headers: {
-            'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
+            Authorization: `Bearer ${this.config.collegeFBDataKey}`,
           },
         });
       },
@@ -559,7 +582,11 @@ export class RealSportsDataClient {
         score: game.away_points || 0,
         logo: game.away_logo,
       },
-      status: game.completed ? 'final' : game.start_date && new Date(game.start_date) < new Date() ? 'in_progress' : 'scheduled',
+      status: game.completed
+        ? 'final'
+        : game.start_date && new Date(game.start_date) < new Date()
+          ? 'in_progress'
+          : 'scheduled',
       venue: game.venue,
       date: game.start_date,
     }));
@@ -568,25 +595,27 @@ export class RealSportsDataClient {
   /**
    * Fetch College Football Teams
    */
-  async getCFBTeams(params?: {
-    conference?: string;
-    year?: number;
-  }): Promise<CFBTeam[]> {
+  async getCFBTeams(params?: { conference?: string; year?: number }): Promise<CFBTeam[]> {
     const year = params?.year || new Date().getFullYear();
     const cacheKey = `cfb:teams:${params?.conference || 'all'}:${year}`;
 
-    const { data } = await this.getCached(cacheKey, async () => {
-      let url = `https://api.collegefootballdata.com/teams`;
-      const queryParams = [];
-      if (params?.conference) queryParams.push(`conference=${encodeURIComponent(params.conference)}`);
-      if (queryParams.length) url += `?${queryParams.join('&')}`;
+    const { data } = await this.getCached(
+      cacheKey,
+      async () => {
+        let url = `https://api.collegefootballdata.com/teams`;
+        const queryParams = [];
+        if (params?.conference)
+          queryParams.push(`conference=${encodeURIComponent(params.conference)}`);
+        if (queryParams.length) url += `?${queryParams.join('&')}`;
 
-      return await this.fetchWithRetry<any[]>(url, {
-        headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
-        },
-      });
-    }, 3600); // 1-hour cache for team data
+        return await this.fetchWithRetry<any[]>(url, {
+          headers: {
+            Authorization: `Bearer ${this.config.collegeFBDataKey}`,
+          },
+        });
+      },
+      3600
+    ); // 1-hour cache for team data
 
     return (data || []).map((team: any) => ({
       id: team.id,
@@ -600,22 +629,24 @@ export class RealSportsDataClient {
       color: team.color,
       altColor: team.alt_color,
       logos: team.logos || [],
-      location: team.location ? {
-        venueId: team.location.venue_id,
-        name: team.location.name,
-        city: team.location.city,
-        state: team.location.state,
-        zip: team.location.zip,
-        countryCode: team.location.country_code,
-        timezone: team.location.timezone,
-        latitude: team.location.latitude,
-        longitude: team.location.longitude,
-        elevation: team.location.elevation,
-        capacity: team.location.capacity,
-        yearConstructed: team.location.year_constructed,
-        grass: team.location.grass,
-        dome: team.location.dome,
-      } : null,
+      location: team.location
+        ? {
+            venueId: team.location.venue_id,
+            name: team.location.name,
+            city: team.location.city,
+            state: team.location.state,
+            zip: team.location.zip,
+            countryCode: team.location.country_code,
+            timezone: team.location.timezone,
+            latitude: team.location.latitude,
+            longitude: team.location.longitude,
+            elevation: team.location.elevation,
+            capacity: team.location.capacity,
+            yearConstructed: team.location.year_constructed,
+            grass: team.location.grass,
+            dome: team.location.dome,
+          }
+        : null,
     }));
   }
 
@@ -631,29 +662,35 @@ export class RealSportsDataClient {
   }): Promise<CFBTeamStats[]> {
     const cacheKey = `cfb:teamstats:${params.year}:${params.team || 'all'}:${params.conference || 'all'}`;
 
-    const { data } = await this.getCached(cacheKey, async () => {
-      let url = `https://api.collegefootballdata.com/stats/season?year=${params.year}`;
-      if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
-      if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
-      if (params.startWeek) url += `&startWeek=${params.startWeek}`;
-      if (params.endWeek) url += `&endWeek=${params.endWeek}`;
+    const { data } = await this.getCached(
+      cacheKey,
+      async () => {
+        let url = `https://api.collegefootballdata.com/stats/season?year=${params.year}`;
+        if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
+        if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
+        if (params.startWeek) url += `&startWeek=${params.startWeek}`;
+        if (params.endWeek) url += `&endWeek=${params.endWeek}`;
 
-      return await this.fetchWithRetry<any[]>(url, {
-        headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
-        },
-      });
-    }, 600); // 10-minute cache
+        return await this.fetchWithRetry<any[]>(url, {
+          headers: {
+            Authorization: `Bearer ${this.config.collegeFBDataKey}`,
+          },
+        });
+      },
+      600
+    ); // 10-minute cache
 
     return (data || []).map((teamStats: any) => ({
       team: teamStats.team,
       conference: teamStats.conference,
       season: params.year,
       games: teamStats.games,
-      stats: Object.keys(teamStats).filter(key => !['team', 'conference', 'games'].includes(key)).map(key => ({
-        category: key,
-        stat: teamStats[key],
-      })),
+      stats: Object.keys(teamStats)
+        .filter((key) => !['team', 'conference', 'games'].includes(key))
+        .map((key) => ({
+          category: key,
+          stat: teamStats[key],
+        })),
     }));
   }
 
@@ -669,19 +706,23 @@ export class RealSportsDataClient {
   }): Promise<CFBPlayerStats[]> {
     const cacheKey = `cfb:playerstats:${params.year}:${params.team || 'all'}:${params.category || 'all'}`;
 
-    const { data } = await this.getCached(cacheKey, async () => {
-      let url = `https://api.collegefootballdata.com/stats/player/season?year=${params.year}`;
-      if (params.seasonType) url += `&seasonType=${params.seasonType}`;
-      if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
-      if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
-      if (params.category) url += `&category=${params.category}`;
+    const { data } = await this.getCached(
+      cacheKey,
+      async () => {
+        let url = `https://api.collegefootballdata.com/stats/player/season?year=${params.year}`;
+        if (params.seasonType) url += `&seasonType=${params.seasonType}`;
+        if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
+        if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
+        if (params.category) url += `&category=${params.category}`;
 
-      return await this.fetchWithRetry<any[]>(url, {
-        headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
-        },
-      });
-    }, 600); // 10-minute cache
+        return await this.fetchWithRetry<any[]>(url, {
+          headers: {
+            Authorization: `Bearer ${this.config.collegeFBDataKey}`,
+          },
+        });
+      },
+      600
+    ); // 10-minute cache
 
     return (data || []).map((player: any) => ({
       season: player.season,
@@ -710,22 +751,26 @@ export class RealSportsDataClient {
   }): Promise<CFBPlayByPlay[]> {
     const cacheKey = `cfb:plays:${params.gameId}`;
 
-    const { data } = await this.getCached(cacheKey, async () => {
-      let url = `https://api.collegefootballdata.com/plays?gameId=${params.gameId}`;
-      if (params.seasonType) url += `&seasonType=${params.seasonType}`;
-      if (params.week) url += `&week=${params.week}`;
-      if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
-      if (params.offense) url += `&offense=${encodeURIComponent(params.offense)}`;
-      if (params.defense) url += `&defense=${encodeURIComponent(params.defense)}`;
-      if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
-      if (params.playType) url += `&playType=${params.playType}`;
+    const { data } = await this.getCached(
+      cacheKey,
+      async () => {
+        let url = `https://api.collegefootballdata.com/plays?gameId=${params.gameId}`;
+        if (params.seasonType) url += `&seasonType=${params.seasonType}`;
+        if (params.week) url += `&week=${params.week}`;
+        if (params.team) url += `&team=${encodeURIComponent(params.team)}`;
+        if (params.offense) url += `&offense=${encodeURIComponent(params.offense)}`;
+        if (params.defense) url += `&defense=${encodeURIComponent(params.defense)}`;
+        if (params.conference) url += `&conference=${encodeURIComponent(params.conference)}`;
+        if (params.playType) url += `&playType=${params.playType}`;
 
-      return await this.fetchWithRetry<any[]>(url, {
-        headers: {
-          'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
-        },
-      });
-    }, 60); // 1-minute cache for live plays
+        return await this.fetchWithRetry<any[]>(url, {
+          headers: {
+            Authorization: `Bearer ${this.config.collegeFBDataKey}`,
+          },
+        });
+      },
+      60
+    ); // 1-minute cache for live plays
 
     return (data || []).map((play: any) => ({
       id: play.id,
@@ -770,7 +815,7 @@ export class RealSportsDataClient {
 
         return await this.fetchWithRetry<any[]>(url, {
           headers: {
-            'Authorization': `Bearer ${this.config.collegeFBDataKey}`,
+            Authorization: `Bearer ${this.config.collegeFBDataKey}`,
           },
         });
       },
@@ -883,14 +928,23 @@ export class RealSportsDataClient {
 // SECURITY: All API keys MUST be set via environment variables
 // No fallback keys allowed in production code
 export const realSportsDataClient = new RealSportsDataClient({
-  sportsDataIOKey: process.env.SPORTSDATAIO_API_KEY || (() => {
-    throw new Error('SPORTSDATAIO_API_KEY environment variable is required');
-  })(),
+  sportsDataIOKey:
+    process.env.SPORTSDATAIO_API_KEY ||
+    (() => {
+      throw new Error('SPORTSDATAIO_API_KEY environment variable is required');
+    })(),
   // Support both old and new environment variable names for CFBD API key
-  collegeFBDataKey: process.env['CollegeFootballData.com_API_KEY'] || process.env.CFBDATA_API_KEY || (() => {
-    throw new Error('CollegeFootballData.com_API_KEY or CFBDATA_API_KEY environment variable is required');
-  })(),
-  theOddsAPIKey: process.env.THEODDS_API_KEY || (() => {
-    throw new Error('THEODDS_API_KEY environment variable is required');
-  })(),
+  collegeFBDataKey:
+    process.env['CollegeFootballData.com_API_KEY'] ||
+    process.env.CFBDATA_API_KEY ||
+    (() => {
+      throw new Error(
+        'CollegeFootballData.com_API_KEY or CFBDATA_API_KEY environment variable is required'
+      );
+    })(),
+  theOddsAPIKey:
+    process.env.THEODDS_API_KEY ||
+    (() => {
+      throw new Error('THEODDS_API_KEY environment variable is required');
+    })(),
 });

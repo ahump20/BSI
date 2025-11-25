@@ -461,12 +461,12 @@ interface CacheConfig {
 }
 
 const CACHE_TTLS: CacheConfig = {
-  teamInfo: 86400,     // 24 hours (rarely changes)
-  roster: 3600,        // 1 hour (transactions happen)
-  teamStats: 1800,     // 30 minutes (updated frequently during season)
-  schedule: 3600,      // 1 hour
-  standings: 1800,     // 30 minutes
-  liveGames: 30,       // 30 seconds (live data)
+  teamInfo: 86400, // 24 hours (rarely changes)
+  roster: 3600, // 1 hour (transactions happen)
+  teamStats: 1800, // 30 minutes (updated frequently during season)
+  schedule: 3600, // 1 hour
+  standings: 1800, // 30 minutes
+  liveGames: 30, // 30 seconds (live data)
 };
 
 // ============================================================================
@@ -522,15 +522,11 @@ export class MLBTeamsAdapter {
 
     // Group players by position
     const roster: MLBPlayer[] = data.roster || [];
-    const pitchers = roster.filter(p => p.primaryPosition.code === '1');
-    const catchers = roster.filter(p => p.primaryPosition.code === '2');
-    const infielders = roster.filter(p =>
-      ['3', '4', '5', '6'].includes(p.primaryPosition.code)
-    );
-    const outfielders = roster.filter(p =>
-      ['7', '8', '9'].includes(p.primaryPosition.code)
-    );
-    const designatedHitters = roster.filter(p => p.primaryPosition.code === 'D');
+    const pitchers = roster.filter((p) => p.primaryPosition.code === '1');
+    const catchers = roster.filter((p) => p.primaryPosition.code === '2');
+    const infielders = roster.filter((p) => ['3', '4', '5', '6'].includes(p.primaryPosition.code));
+    const outfielders = roster.filter((p) => ['7', '8', '9'].includes(p.primaryPosition.code));
+    const designatedHitters = roster.filter((p) => p.primaryPosition.code === 'D');
 
     return {
       teamId,
@@ -553,16 +549,12 @@ export class MLBTeamsAdapter {
     const url = `${this.baseUrl}/teams/${teamId}/stats?season=${year}&group=hitting,pitching,fielding`;
     const cacheKey = `mlb:team:stats:${teamId}:${year}`;
 
-    const data = await this.fetchWithCache<{ stats: any[] }>(
-      url,
-      cacheKey,
-      CACHE_TTLS.teamStats
-    );
+    const data = await this.fetchWithCache<{ stats: any[] }>(url, cacheKey, CACHE_TTLS.teamStats);
 
     // Extract stats by group
-    const hittingStats = data.stats?.find(s => s.group?.displayName === 'hitting');
-    const pitchingStats = data.stats?.find(s => s.group?.displayName === 'pitching');
-    const fieldingStats = data.stats?.find(s => s.group?.displayName === 'fielding');
+    const hittingStats = data.stats?.find((s) => s.group?.displayName === 'hitting');
+    const pitchingStats = data.stats?.find((s) => s.group?.displayName === 'pitching');
+    const fieldingStats = data.stats?.find((s) => s.group?.displayName === 'fielding');
 
     return {
       teamId,
@@ -590,15 +582,11 @@ export class MLBTeamsAdapter {
 
     const cacheKey = `mlb:team:schedule:${teamId}:${year}:${startDate || 'full'}`;
 
-    const data = await this.fetchWithCache<{ dates: any[] }>(
-      url,
-      cacheKey,
-      CACHE_TTLS.schedule
-    );
+    const data = await this.fetchWithCache<{ dates: any[] }>(url, cacheKey, CACHE_TTLS.schedule);
 
     // Flatten games from all dates
     const games: MLBGame[] = [];
-    data.dates?.forEach(date => {
+    data.dates?.forEach((date) => {
       date.games?.forEach((game: any) => {
         games.push(game);
       });
@@ -612,15 +600,11 @@ export class MLBTeamsAdapter {
     let awayWins = 0;
     let awayLosses = 0;
 
-    const completedGames = games.filter(g =>
-      g.status.abstractGameState === 'Final'
-    );
+    const completedGames = games.filter((g) => g.status.abstractGameState === 'Final');
 
-    completedGames.forEach(game => {
+    completedGames.forEach((game) => {
       const isHome = game.teams.home.team.id === teamId;
-      const isWinner = isHome
-        ? game.teams.home.isWinner
-        : game.teams.away.isWinner;
+      const isWinner = isHome ? game.teams.home.isWinner : game.teams.away.isWinner;
 
       if (isWinner) {
         wins++;
@@ -633,13 +617,11 @@ export class MLBTeamsAdapter {
       }
     });
 
-    const winPct = wins + losses > 0
-      ? (wins / (wins + losses)).toFixed(3)
-      : '.000';
+    const winPct = wins + losses > 0 ? (wins / (wins + losses)).toFixed(3) : '.000';
 
     // Last 10 games
     const lastTen = completedGames.slice(-10);
-    const lastTenWins = lastTen.filter(g => {
+    const lastTenWins = lastTen.filter((g) => {
       const isHome = g.teams.home.team.id === teamId;
       return isHome ? g.teams.home.isWinner : g.teams.away.isWinner;
     }).length;
@@ -684,10 +666,7 @@ export class MLBTeamsAdapter {
   /**
    * Fetch division standings
    */
-  async fetchStandings(
-    teamId: number,
-    season?: number
-  ): Promise<MLBStandings> {
+  async fetchStandings(teamId: number, season?: number): Promise<MLBStandings> {
     const year = season || new Date().getFullYear();
 
     // First get team info to determine division
@@ -697,16 +676,10 @@ export class MLBTeamsAdapter {
     const url = `${this.baseUrl}/standings?leagueId=${teamInfo.league.id}&season=${year}&standingsTypes=regularSeason`;
     const cacheKey = `mlb:standings:${teamInfo.league.id}:${year}`;
 
-    const data = await this.fetchWithCache<{ records: any[] }>(
-      url,
-      cacheKey,
-      CACHE_TTLS.standings
-    );
+    const data = await this.fetchWithCache<{ records: any[] }>(url, cacheKey, CACHE_TTLS.standings);
 
     // Find division standings
-    const divisionStandings = data.records?.find(
-      r => r.division.id === divisionId
-    );
+    const divisionStandings = data.records?.find((r) => r.division.id === divisionId);
 
     if (!divisionStandings) {
       throw new Error(`Standings not found for division ${divisionId}`);
@@ -729,14 +702,10 @@ export class MLBTeamsAdapter {
     const url = `${this.baseUrl}/schedule?sportId=1&teamId=${teamId}&date=${today}`;
     const cacheKey = `mlb:team:live:${teamId}:${today}`;
 
-    const data = await this.fetchWithCache<{ dates: any[] }>(
-      url,
-      cacheKey,
-      CACHE_TTLS.liveGames
-    );
+    const data = await this.fetchWithCache<{ dates: any[] }>(url, cacheKey, CACHE_TTLS.liveGames);
 
     const games: MLBGame[] = [];
-    data.dates?.forEach(date => {
+    data.dates?.forEach((date) => {
       date.games?.forEach((game: any) => {
         games.push(game);
       });
@@ -766,11 +735,7 @@ export class MLBTeamsAdapter {
   // PRIVATE HELPER METHODS
   // ============================================================================
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try cache first
     if (this.kv) {
       try {
@@ -800,10 +765,7 @@ export class MLBTeamsAdapter {
     return data;
   }
 
-  private async fetchWithRetry<T>(
-    url: string,
-    maxRetries: number = 3
-  ): Promise<T> {
+  private async fetchWithRetry<T>(url: string, maxRetries: number = 3): Promise<T> {
     let lastError: Error | null = null;
 
     for (let i = 0; i < maxRetries; i++) {
@@ -827,14 +789,12 @@ export class MLBTeamsAdapter {
         // Exponential backoff
         if (i < maxRetries - 1) {
           const delay = Math.min(1000 * Math.pow(2, i), 5000);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
     }
 
-    throw new Error(
-      `Failed to fetch ${url} after ${maxRetries} attempts: ${lastError?.message}`
-    );
+    throw new Error(`Failed to fetch ${url} after ${maxRetries} attempts: ${lastError?.message}`);
   }
 }
 
@@ -866,7 +826,7 @@ export function calculateGamesBack(
   leaderWins: number,
   leaderLosses: number
 ): string {
-  const gb = ((leaderWins - leaderLosses) - (teamWins - teamLosses)) / 2;
+  const gb = (leaderWins - leaderLosses - (teamWins - teamLosses)) / 2;
   return gb === 0 ? '-' : gb.toFixed(1);
 }
 
@@ -916,7 +876,7 @@ export function parseHeight(height: string): number {
   const feet = parseInt(match[1], 10);
   const inches = parseInt(match[2], 10);
 
-  return (feet * 12) + inches;
+  return feet * 12 + inches;
 }
 
 /**

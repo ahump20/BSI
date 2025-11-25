@@ -37,7 +37,7 @@ export function Button(options = {}) {
     onClick = null,
     type = 'button',
     className = '',
-    attributes = {}
+    attributes = {},
   } = options;
 
   // Create button element

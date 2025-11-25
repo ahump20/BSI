@@ -1,0 +1,98 @@
+[
+  {
+    "id": "stl-cardinals",
+    "name": "St. Louis Cardinals",
+    "league": "MLB",
+    "stats": {
+      "wins": 83,
+      "losses": 79,
+      "rating": 0.512,
+      "championships": 11,
+      "lastChampionship": 2011
+    }
+  },
+  {
+    "id": "nyy-yankees",
+    "name": "New York Yankees",
+    "league": "MLB",
+    "stats": {
+      "wins": 94,
+      "losses": 68,
+      "rating": 0.58,
+      "championships": 27,
+      "lastChampionship": 2009
+    }
+  },
+  {
+    "id": "lad-dodgers",
+    "name": "Los Angeles Dodgers",
+    "league": "MLB",
+    "stats": {
+      "wins": 98,
+      "losses": 64,
+      "rating": 0.605,
+      "championships": 7,
+      "lastChampionship": 2020
+    }
+  },
+  {
+    "id": "hou-astros",
+    "name": "Houston Astros",
+    "league": "MLB",
+    "stats": {
+      "wins": 90,
+      "losses": 72,
+      "rating": 0.556,
+      "championships": 2,
+      "lastChampionship": 2022
+    }
+  },
+  {
+    "id": "atl-braves",
+    "name": "Atlanta Braves",
+    "league": "MLB",
+    "stats": {
+      "wins": 104,
+      "losses": 58,
+      "rating": 0.642,
+      "championships": 4,
+      "lastChampionship": 2021
+    }
+  },
+  {
+    "id": "tb-rays",
+    "name": "Tampa Bay Rays",
+    "league": "MLB",
+    "stats": {
+      "wins": 99,
+      "losses": 63,
+      "rating": 0.611,
+      "championships": 0,
+      "lastChampionship": null
+    }
+  },
+  {
+    "id": "bal-orioles",
+    "name": "Baltimore Orioles",
+    "league": "MLB",
+    "stats": {
+      "wins": 101,
+      "losses": 61,
+      "rating": 0.623,
+      "championships": 3,
+      "lastChampionship": 1983
+    }
+  },
+  {
+    "id": "tex-rangers",
+    "name": "Texas Rangers",
+    "league": "MLB",
+    "stats": {
+      "wins": 90,
+      "losses": 72,
+      "rating": 0.556,
+      "championships": 1,
+      "lastChampionship": 2023
+    }
+  }
+]
