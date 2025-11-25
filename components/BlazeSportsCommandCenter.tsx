@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Flame, Search, Filter, TrendingUp, Activity, BarChart3, X,
   Download, RefreshCw, Grid, List, Moon, Sun, AlertTriangle,
-  CheckCircle, Database, Wifi, WifiOff
+  CheckCircle, Database, Wifi, WifiOff, Command, Keyboard
 } from 'lucide-react';
 import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -17,8 +18,14 @@ import { fetchMLBPlayers, fetchNFLPlayers, type Player } from '../lib/sports-dat
 import { formatNumber, formatTimestamp, exportToCSV, exportToJSON, debounce } from '../lib/sports-data/utils';
 import { SPORTS_CONFIG, CHART_COLORS, VIEW_MODES, THEMES } from '../lib/sports-data/config';
 
+// New 2025 Features
+import CommandPalette from './CommandPalette';
+import { ToastProvider, useToastHelpers } from './ToastNotification';
+import { useKeyboardShortcuts, DASHBOARD_SHORTCUTS } from '../lib/hooks/useKeyboardShortcuts';
+import { AnimatedCard, FadeInUp, StaggerContainer, StaggerItem, GlowOnHover } from './ScrollAnimations';
+
 /**
- * BLAZE SPORTS INTEL | Enterprise Command Center v10.0
+ * BLAZE SPORTS INTEL | Enterprise Command Center v11.0
  *
  * Production-grade dashboard with REAL data from Cloudflare Workers
  * - MLB data from MLB StatsAPI (free, official)
@@ -26,9 +33,19 @@ import { SPORTS_CONFIG, CHART_COLORS, VIEW_MODES, THEMES } from '../lib/sports-d
  * - All stats cited with America/Chicago timestamps
  * - No fake AI predictions, no placeholder data
  * - Mobile-responsive, WCAG 2.1 AA compliant
+ *
+ * NEW IN v11.0:
+ * - Command Palette (Cmd+K) with fuzzy search
+ * - Global keyboard shortcuts
+ * - Scroll-triggered animations
+ * - Toast notifications
+ * - Live data pulse indicators
  */
 
-export default function BlazeSportsCommandCenter() {
+// Inner component that uses toast
+function BlazeSportsCommandCenterInner() {
+  const toast = useToastHelpers();
+
   // ==================== STATE ====================
   const [selectedSport, setSelectedSport] = useState<keyof typeof SPORTS_CONFIG>('baseball');
   const [players, setPlayers] = useState<Player[]>([]);
@@ -42,6 +59,61 @@ export default function BlazeSportsCommandCenter() {
   const [showComparison, setShowComparison] = useState(false);
   const [dataSource, setDataSource] = useState('');
   const [lastUpdated, setLastUpdated] = useState('');
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // ==================== KEYBOARD SHORTCUTS ====================
+
+  useKeyboardShortcuts([
+    {
+      ...DASHBOARD_SHORTCUTS.COMMAND_PALETTE,
+      action: () => setCommandPaletteOpen(true),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.SEARCH,
+      action: () => searchInputRef.current?.focus(),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.REFRESH,
+      action: () => loadPlayersWithToast(),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.TOGGLE_THEME,
+      action: () => setTheme(t => t === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.EXPORT_CSV,
+      action: () => handleExportCSV(),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.CLOSE_MODAL,
+      action: () => {
+        setSelectedPlayer(null);
+        setShowComparison(false);
+        setCommandPaletteOpen(false);
+      },
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.GRID_VIEW,
+      action: () => setViewMode(VIEW_MODES.GRID),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.LIST_VIEW,
+      action: () => setViewMode(VIEW_MODES.LIST),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.GO_MLB,
+      action: () => setSelectedSport('baseball'),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.GO_NFL,
+      action: () => setSelectedSport('football'),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.GO_NBA,
+      action: () => setSelectedSport('basketball'),
+    },
+  ]);
 
   // ==================== DATA FETCHING ====================
 
@@ -80,6 +152,16 @@ export default function BlazeSportsCommandCenter() {
     }
   }, [selectedSport]);
 
+  // Load with toast notification
+  const loadPlayersWithToast = useCallback(async () => {
+    const loadPromise = loadPlayers();
+    await toast.promise(loadPromise, {
+      loading: 'Refreshing player data...',
+      success: 'Data refreshed successfully!',
+      error: 'Failed to refresh data',
+    });
+  }, [loadPlayers, toast]);
+
   useEffect(() => {
     loadPlayers();
   }, [loadPlayers]);
@@ -114,46 +196,62 @@ export default function BlazeSportsCommandCenter() {
       Updated: p.dataStamp
     }));
     exportToCSV(exportData, `blaze-${selectedSport}-players`);
+    toast.success('Export Complete', `${filteredPlayers.length} players exported to CSV`);
   };
 
   const handleExportJSON = () => {
     exportToJSON(filteredPlayers, `blaze-${selectedSport}-players`);
+    toast.success('Export Complete', `${filteredPlayers.length} players exported to JSON`);
   };
 
   // ==================== RENDER: HEADER ====================
 
   const renderHeader = () => (
-    <div className="bg-gradient-to-r from-emerald-600 to-blue-600 text-white p-4 sm:p-6 rounded-t-2xl">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Flame className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" />
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">BLAZE SPORTS INTEL</h1>
-            <p className="text-emerald-100 text-xs sm:text-sm truncate">
-              Real-time sports analytics • Enterprise Command Center v10.0
-            </p>
+    <div className="blaze-card blaze-card-elevated mb-6">
+      <div className="gradient-stadium-lights p-6 -m-6 mb-6 rounded-t-2xl">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-4">
+            <Flame
+              className="w-12 h-12"
+              style={{
+                color: 'var(--color-brand-primary)',
+                filter: 'drop-shadow(0 0 12px rgba(191, 87, 0, 0.8))'
+              }}
+            />
+            <div>
+              <h1
+                className="text-4xl font-bold text-white tracking-tight"
+                style={{ fontFamily: 'var(--font-family-display)' }}
+              >
+                BLAZE SPORTS INTEL
+              </h1>
+              <p
+                className="text-sm mt-1 font-semibold tracking-wide"
+                style={{ color: 'var(--blaze-burnt-orange-200)' }}
+              >
+                Real-time sports analytics • Enterprise Command Center v10.0
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="flex gap-2 w-full sm:w-auto">
-          <button
-            onClick={loadPlayers}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition text-sm"
-            title="Refresh data"
-            aria-label="Refresh player data"
-          >
-            <RefreshCw className="w-4 h-4" aria-hidden="true" />
-            <span className="sm:inline">Refresh</span>
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={loadPlayers}
+              className="blaze-btn blaze-btn-secondary flex items-center gap-2"
+              title="Refresh data"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </button>
 
-          <button
-            onClick={() => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
-            className="px-3 sm:px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition"
-            title="Toggle theme"
-            aria-label={`Switch to ${theme === THEMES.DARK ? 'light' : 'dark'} mode`}
-          >
-            {theme === THEMES.DARK ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
-          </button>
+            <button
+              onClick={() => setTheme(theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
+              className="blaze-btn blaze-btn-secondary"
+              title="Toggle theme"
+            >
+              {theme === THEMES.DARK ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -162,17 +260,15 @@ export default function BlazeSportsCommandCenter() {
   // ==================== RENDER: SPORT SELECTOR ====================
 
   const renderSportSelector = () => (
-    <div className="flex gap-2 p-4 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
+    <div className="flex gap-3 p-4 blaze-card overflow-x-auto">
       {Object.entries(SPORTS_CONFIG).map(([key, config]) => (
         <button
           key={key}
           onClick={() => setSelectedSport(key as keyof typeof SPORTS_CONFIG)}
-          className={`px-6 py-3 rounded-lg font-semibold transition whitespace-nowrap ${
-            selectedSport === key
-              ? `bg-${config.color} text-white shadow-lg`
-              : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:shadow'
+          className={`blaze-btn whitespace-nowrap ${
+            selectedSport === key ? 'blaze-btn-primary' : 'blaze-btn-ghost'
           }`}
-          style={selectedSport === key ? { backgroundColor: config.color } : {}}
+          style={selectedSport === key ? { backgroundColor: 'var(--color-brand-primary)' } : {}}
         >
           <span className="mr-2">{config.icon}</span>
           {config.name}
@@ -184,90 +280,68 @@ export default function BlazeSportsCommandCenter() {
   // ==================== RENDER: SEARCH & CONTROLS ====================
 
   const renderControls = () => (
-    <div className="p-3 sm:p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
-        {/* Search Input */}
-        <div className="flex-1 min-w-0">
+    <div className="p-4 blaze-card">
+      <div className="flex gap-4 flex-wrap items-center justify-between">
+        <div className="flex-1 min-w-[300px]">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
+            <Search className="absolute left-3 top-3 w-5 h-5" style={{ color: 'var(--color-brand-primary)' }} />
             <input
               type="text"
               placeholder="Search players, teams, positions..."
               onChange={(e) => debouncedSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 text-sm sm:text-base"
-              aria-label="Search players by name, team, or position"
+              className="w-full pl-10 pr-4 py-3 rounded-lg"
+              style={{
+                background: 'var(--color-surface-primary)',
+                border: '1px solid var(--glass-border)',
+                color: 'var(--color-charcoal-50)'
+              }}
             />
           </div>
         </div>
 
-        {/* Controls Row */}
-        <div className="flex flex-wrap gap-2 justify-between sm:justify-end">
-          {/* View Mode Toggles */}
-          <div className="flex gap-1 sm:gap-2" role="group" aria-label="View mode">
-            <button
-              onClick={() => setViewMode(VIEW_MODES.GRID)}
-              className={`p-2 sm:px-4 sm:py-2 rounded-lg transition ${
-                viewMode === VIEW_MODES.GRID
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              }`}
-              aria-label="Grid view"
-              aria-pressed={viewMode === VIEW_MODES.GRID}
-            >
-              <Grid className="w-5 h-5" aria-hidden="true" />
-            </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode(VIEW_MODES.GRID)}
+            className={`blaze-btn ${viewMode === VIEW_MODES.GRID ? 'blaze-btn-primary' : 'blaze-btn-ghost'}`}
+          >
+            <Grid className="w-5 h-5" />
+          </button>
 
-            <button
-              onClick={() => setViewMode(VIEW_MODES.LIST)}
-              className={`p-2 sm:px-4 sm:py-2 rounded-lg transition ${
-                viewMode === VIEW_MODES.LIST
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              }`}
-              aria-label="List view"
-              aria-pressed={viewMode === VIEW_MODES.LIST}
-            >
-              <List className="w-5 h-5" aria-hidden="true" />
-            </button>
-          </div>
+          <button
+            onClick={() => setViewMode(VIEW_MODES.LIST)}
+            className={`blaze-btn ${viewMode === VIEW_MODES.LIST ? 'blaze-btn-primary' : 'blaze-btn-ghost'}`}
+          >
+            <List className="w-5 h-5" />
+          </button>
 
-          {/* Export Buttons */}
-          <div className="flex gap-1 sm:gap-2">
-            <button
-              onClick={handleExportCSV}
-              className="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition flex items-center gap-1 sm:gap-2 text-sm"
-              aria-label="Export data as CSV"
-            >
-              <Download className="w-4 h-4" aria-hidden="true" />
-              <span className="hidden sm:inline">CSV</span>
-            </button>
+          <button
+            onClick={handleExportCSV}
+            className="blaze-btn blaze-btn-secondary flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            CSV
+          </button>
 
-            <button
-              onClick={handleExportJSON}
-              className="px-3 sm:px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition flex items-center gap-1 sm:gap-2 text-sm"
-              aria-label="Export data as JSON"
-            >
-              <Download className="w-4 h-4" aria-hidden="true" />
-              <span className="hidden sm:inline">JSON</span>
-            </button>
-          </div>
+          <button
+            onClick={handleExportJSON}
+            className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            JSON
+          </button>
         </div>
       </div>
 
       {/* Data Source Attribution */}
-      <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-        <Database className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-        <span className="break-all">
-          Source: <strong className="text-gray-800 dark:text-gray-200">{dataSource || 'Loading...'}</strong>
-        </span>
-        <span className="hidden sm:inline">•</span>
-        <span className="text-gray-500 dark:text-gray-500">
-          Updated: <strong className="text-gray-700 dark:text-gray-300">{lastUpdated || '—'}</strong>
+      <div className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+        <Database className="w-4 h-4" />
+        <span>
+          Data source: <strong>{dataSource}</strong> • Last updated: <strong>{lastUpdated}</strong>
         </span>
         {!loading && (
-          <span className="flex items-center gap-1 text-emerald-500 ml-auto sm:ml-0">
-            <Wifi className="w-4 h-4" aria-hidden="true" />
-            <span className="font-medium">Live</span>
+          <span className="flex items-center gap-1 text-emerald-500">
+            <Wifi className="w-4 h-4" />
+            Live
           </span>
         )}
       </div>
@@ -552,17 +626,17 @@ export default function BlazeSportsCommandCenter() {
     return (
       <div
         key={player.id}
-        className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition overflow-hidden ${
-          isInComparison ? 'ring-4 ring-purple-500' : ''
-        }`}
+        className={`blaze-card blaze-card-interactive ${isInComparison ? 'ring-4 ring-orange-500' : ''}`}
+        onClick={() => setSelectedPlayer(player)}
       >
-      <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div onClick={() => setSelectedPlayer(player)} className="flex-1 cursor-pointer">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+        {/* Card Header with Burnt Orange Gradient */}
+        <div className="gradient-burnt-orange p-4 -m-6 mb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-white tracking-tight">
                 {player.name}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-white/90 text-sm mt-1">
                 {player.team} • {player.position}
                 {player.number && ` #${player.number}`}
               </p>
@@ -572,53 +646,53 @@ export default function BlazeSportsCommandCenter() {
                 e.stopPropagation();
                 toggleComparison(player);
               }}
-              className={`p-2 rounded-lg transition ${
-                isInComparison
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+              className={`blaze-btn blaze-btn-sm ${
+                isInComparison ? 'blaze-btn-primary' : 'blaze-btn-ghost'
               }`}
               title={isInComparison ? 'Remove from comparison' : 'Add to comparison'}
             >
-              <BarChart3 className="w-5 h-5" />
+              <BarChart3 className="w-4 h-4" />
             </button>
           </div>
-
-          {/* Stats Grid */}
-          <div
-            onClick={() => setSelectedPlayer(player)}
-            className="grid grid-cols-2 gap-3 mt-4 cursor-pointer"
-          >
-            {Object.entries(player.stats).slice(0, 6).map(([key, value]) => (
-            <div key={key} className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-              <div className="text-xs text-gray-500 dark:text-gray-400 uppercase">
-                {key}
-              </div>
-              <div className="text-lg font-bold text-gray-900 dark:text-white">
-                {typeof value === 'number' ? value.toFixed(value < 10 ? 3 : 0) : value}
-              </div>
-            </div>
-          ))}
         </div>
 
+        <div className="p-6">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            {Object.entries(player.stats).slice(0, 6).map(([key, value]) => (
+              <div key={key} className="stat-card">
+                <div className="stat-label text-xs uppercase tracking-wide">
+                  {key}
+                </div>
+                <div className="stat-value text-xl font-bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {typeof value === 'number' ? value.toFixed(value < 10 ? 3 : 0) : value}
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* More Stats Indicator */}
           {Object.keys(player.stats).length > 6 && (
             <button
-              onClick={() => setSelectedPlayer(player)}
-              className="mt-4 w-full py-2 text-sm text-emerald-500 hover:text-emerald-600 font-semibold transition"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPlayer(player);
+              }}
+              className="mt-4 w-full blaze-btn blaze-btn-ghost text-sm"
+              style={{ color: 'var(--color-brand-primary)' }}
             >
               View {Object.keys(player.stats).length - 6} more stats →
             </button>
           )}
+        </div>
 
-          {/* Data Citation */}
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
+        {/* Data Citation */}
+        <div className="card-footer text-xs" style={{ opacity: 0.7 }}>
           Source: {player.dataSource} • {player.dataStamp}
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
   // ==================== RENDER: LOADING & ERROR ====================
 
@@ -672,12 +746,23 @@ export default function BlazeSportsCommandCenter() {
         {renderSportSelector()}
         {renderControls()}
 
-        {/* Player Grid/List */}
-        <div className={`p-4 ${
-          viewMode === VIEW_MODES.GRID
-            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-            : 'space-y-4'
-        }`}>
+        {/* Player Grid/List with Animations */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.05 }
+            }
+          }}
+          className={`p-4 ${
+            viewMode === VIEW_MODES.GRID
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+              : 'space-y-4'
+          }`}
+        >
           {filteredPlayers.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <p className="text-gray-600 dark:text-gray-400">
@@ -685,35 +770,94 @@ export default function BlazeSportsCommandCenter() {
               </p>
             </div>
           ) : (
-            filteredPlayers.map(renderPlayerCard)
+            filteredPlayers.map((player, index) => (
+              <AnimatedCard key={player.id} index={index} hoverScale={1.02}>
+                {renderPlayerCard(player)}
+              </AnimatedCard>
+            ))
           )}
-        </div>
+        </motion.div>
 
         {/* Results Count */}
         <div className="text-center text-sm text-gray-600 dark:text-gray-400 pb-8">
           Showing {filteredPlayers.length} of {players.length} players
         </div>
 
-        {/* Comparison Badge */}
-        {comparisonPlayers.length > 0 && (
-          <div className="fixed bottom-6 right-6 z-40">
-            <button
-              onClick={() => setShowComparison(true)}
-              className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-full shadow-2xl transition flex items-center gap-3"
+        {/* Comparison Badge with Animation */}
+        <AnimatePresence>
+          {comparisonPlayers.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              className="fixed bottom-6 right-6 z-40"
             >
-              <BarChart3 className="w-6 h-6" />
-              <span className="font-semibold">
-                Compare {comparisonPlayers.length} Player{comparisonPlayers.length > 1 ? 's' : ''}
-              </span>
-            </button>
-          </div>
-        )}
+              <button
+                onClick={() => setShowComparison(true)}
+                className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-full shadow-2xl transition flex items-center gap-3 brand-glow-pulse"
+              >
+                <BarChart3 className="w-6 h-6" />
+                <span className="font-semibold">
+                  Compare {comparisonPlayers.length} Player{comparisonPlayers.length > 1 ? 's' : ''}
+                </span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Keyboard Shortcuts Hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="fixed bottom-6 left-6 z-30"
+        >
+          <button
+            onClick={() => setCommandPaletteOpen(true)}
+            className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg text-white/50 hover:text-white/70 text-sm transition-colors"
+          >
+            <Command className="w-4 h-4" />
+            <span className="hidden sm:inline">Press</span>
+            <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-xs font-mono">⌘K</kbd>
+            <span className="hidden sm:inline">for commands</span>
+          </button>
+        </motion.div>
       </div>
 
       {/* Modals */}
       {selectedPlayer && renderPlayerDetail()}
       {showComparison && renderComparison()}
+
+      {/* Command Palette */}
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        players={players.map(p => ({
+          id: p.id,
+          name: p.name,
+          team: p.team,
+          position: p.position,
+        }))}
+        onSelectPlayer={(id) => {
+          const player = players.find(p => p.id === id);
+          if (player) setSelectedPlayer(player);
+        }}
+        onSelectSport={(sport) => setSelectedSport(sport as keyof typeof SPORTS_CONFIG)}
+        onToggleTheme={() => setTheme(t => t === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
+        onExportCSV={handleExportCSV}
+        onRefresh={loadPlayersWithToast}
+        onToggleView={(view) => setViewMode(view === 'grid' ? VIEW_MODES.GRID : VIEW_MODES.LIST)}
+      />
     </div>
+  );
+}
+
+// Main export wrapped with ToastProvider
+export default function BlazeSportsCommandCenter() {
+  return (
+    <ToastProvider>
+      <BlazeSportsCommandCenterInner />
+    </ToastProvider>
   );
 }
 
