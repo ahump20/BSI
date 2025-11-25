@@ -405,6 +405,13 @@
       font-size: 0.8125rem;
       color: rgba(250, 250, 250, 0.4);
     }
+
+    /* Market Context Section */
+    .market-context-section { padding: 2rem 1.5rem 0; background: var(--bsi-midnight); }
+    .market-context-grid { max-width: 900px; margin: 0 auto; display: flex; justify-content: center; flex-wrap: wrap; gap: 2rem; }
+    .market-context-stat { text-align: center; }
+    .market-context-value { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; color: var(--bsi-burnt-orange); display: block; }
+    .market-context-label { font-family: var(--font-ui); font-size: 0.75rem; color: rgba(250, 250, 250, 0.6); margin-top: 0.25rem; }
   </style>
 </head>
 <body>
@@ -435,19 +442,19 @@
     </div>
   </section>
 
-  <section class="market-context-section" style="padding: 2rem 1.5rem 0; background: var(--bsi-midnight);">
-    <div style="max-width: 900px; margin: 0 auto; display: flex; justify-content: center; flex-wrap: wrap; gap: 2rem;">
-      <div style="text-align: center;">
-        <span style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; color: var(--bsi-burnt-orange);">64%</span>
-        <p style="font-family: var(--font-ui); font-size: 0.75rem; color: rgba(250,250,250,0.6); margin-top: 0.25rem;">of NCAA D1 teams use analytics</p>
+  <section class="market-context-section">
+    <div class="market-context-grid">
+      <div class="market-context-stat">
+        <span class="market-context-value">64%</span>
+        <p class="market-context-label">of NCAA D1 teams use analytics</p>
       </div>
-      <div style="text-align: center;">
-        <span style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; color: var(--bsi-burnt-orange);">~20%</span>
-        <p style="font-family: var(--font-ui); font-size: 0.75rem; color: rgba(250,250,250,0.6); margin-top: 0.25rem;">market growth rate (CAGR)</p>
+      <div class="market-context-stat">
+        <span class="market-context-value">~20%</span>
+        <p class="market-context-label">market growth rate (CAGR)</p>
       </div>
-      <div style="text-align: center;">
-        <span style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; color: var(--bsi-burnt-orange);">299</span>
-        <p style="font-family: var(--font-ui); font-size: 0.75rem; color: rgba(250,250,250,0.6); margin-top: 0.25rem;">D1 baseball programs we cover</p>
+      <div class="market-context-stat">
+        <span class="market-context-value">299</span>
+        <p class="market-context-label">D1 baseball programs we cover</p>
       </div>
     </div>
   </section>
