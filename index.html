@@ -22,7 +22,7 @@
     <meta property="twitter:creator" content="@BISportsIntel">
 
     <!-- Theme -->
-    <meta name="theme-color" content="#D96200">
+    <meta name="theme-color" content="#BF5700">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Blaze Sports">
@@ -63,12 +63,25 @@
         /* ==================== INTEGRATION OVERRIDES ==================== */
         /* This section bridges the existing design with the championship system */
 
-        /* Update brand color to championship intensified orange */
+        /* Update brand color to match About page's Texas burnt orange */
         :root {
-            --blaze-burnt-orange: #D96200;  /* Upgraded from #BF5700 */
+            /* About page Texas theme colors */
+            --burnt-orange: #BF5700;
+            --burnt-orange-light: #D97B38;
+            --burnt-orange-dark: #9B4500;
+            --texas-cream: #F5E6D3;
+            --ember-orange: #E68A4F;
+
+            /* Legacy aliases for compatibility */
+            --blaze-burnt-orange: #BF5700;
             --blaze-ember: #CC6600;
             --blaze-copper: #D97B38;
-            --theme-color: #D96200;
+            --theme-color: #BF5700;
+
+            /* About page glassmorphism */
+            --glass: rgba(26, 26, 26, 0.6);
+            --glass-border: rgba(191, 87, 0, 0.2);
+            --glow-orange: 0 0 60px rgba(191, 87, 0, 0.3);
         }
 
         /* Three.js particle background compatibility */
@@ -156,10 +169,10 @@
 
         @keyframes titleGlow {
             0%, 100% {
-                filter: drop-shadow(0 0 40px rgba(217, 98, 0, 0.4)) drop-shadow(0 0 80px rgba(204, 102, 0, 0.2));
+                filter: drop-shadow(0 0 40px rgba(191, 87, 0, 0.4)) drop-shadow(0 0 80px rgba(191, 87, 0, 0.2));
             }
             50% {
-                filter: drop-shadow(0 0 60px rgba(204, 102, 0, 0.6)) drop-shadow(0 0 100px rgba(217, 98, 0, 0.3));
+                filter: drop-shadow(0 0 60px rgba(191, 87, 0, 0.6)) drop-shadow(0 0 100px rgba(191, 87, 0, 0.3));
             }
         }
 
@@ -199,6 +212,93 @@
 
         .sport-card:hover::after {
             opacity: 0.1;
+        }
+
+        /* ==================== 3D CARD TRANSFORMS (Phase 3) ==================== */
+        /* Universal 3D transforms for all card components */
+        .sport-card,
+        .feature-card,
+        .live-game-card,
+        .transparency-card,
+        .proof-badge {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.4s ease,
+                        border-color 0.4s ease;
+            position: relative;
+        }
+
+        /* Glassmorphism overlay on hover */
+        .sport-card::before,
+        .feature-card::before,
+        .live-game-card::before,
+        .transparency-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 0%, rgba(191, 87, 0, 0.12) 0%, transparent 50%);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sport-card:hover::before,
+        .feature-card:hover::before,
+        .live-game-card:hover::before,
+        .transparency-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Enhanced 3D hover transform */
+        .sport-card:hover,
+        .feature-card:hover,
+        .live-game-card:hover,
+        .transparency-card:hover {
+            transform: translateY(-12px) rotateX(2deg) rotateY(-2deg) translateZ(10px);
+            box-shadow: var(--glow-orange), 0 30px 60px rgba(0, 0, 0, 0.3);
+            border-color: var(--burnt-orange);
+        }
+
+        /* Ensure card content stays above overlay */
+        .sport-card > *,
+        .feature-card > *,
+        .live-game-card > *,
+        .transparency-card > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ==================== FLOATING ANIMATIONS (Phase 5) ==================== */
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-6px) scale(1.01) rotate(0.3deg); }
+            50% { transform: translateY(-10px) scale(1.02); }
+            75% { transform: translateY(-6px) scale(1.01) rotate(-0.3deg); }
+        }
+
+        /* Apply floating to hero badges and proof elements */
+        .hero-badge,
+        .proof-badge,
+        .section-badge {
+            animation: gentle-float 6s ease-in-out infinite;
+        }
+
+        /* Stagger animations for multiple badges */
+        .proof-badge:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        .proof-badge:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        /* Pause animation on hover for interactivity */
+        .hero-badge:hover,
+        .proof-badge:hover,
+        .section-badge:hover {
+            animation-play-state: paused;
         }
 
         /* Championship CTA buttons with enhanced glow */
@@ -271,6 +371,38 @@
             .sports-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+            }
+        }
+
+        /* ==================== MOBILE GRACEFUL DEGRADATION (Phase 6) ==================== */
+        @media (max-width: 900px), (prefers-reduced-motion: reduce) {
+            /* Disable floating animations on mobile */
+            .hero-badge,
+            .proof-badge,
+            .section-badge {
+                animation: none;
+            }
+
+            /* Simpler hover transforms - no 3D rotation */
+            .sport-card:hover,
+            .feature-card:hover,
+            .live-game-card:hover,
+            .transparency-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(191, 87, 0, 0.2);
+            }
+
+            /* Disable glassmorphism overlay on mobile */
+            .sport-card::before,
+            .feature-card::before,
+            .live-game-card::before,
+            .transparency-card::before {
+                display: none;
+            }
+
+            /* Reduce particle system impact */
+            #particle-field {
+                opacity: 0.5;
             }
         }
 
@@ -947,6 +1079,46 @@
             });
         });
 
+        // ==================== 3D CARD TILT (Phase 4) ====================
+        function initCardTilt() {
+            // Check for mobile or reduced motion
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 900;
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            if (isMobile || prefersReducedMotion) {
+                console.log('Card tilt disabled - mobile device or reduced motion');
+                return;
+            }
+
+            const cards = document.querySelectorAll('.sport-card, .feature-card, .live-game-card, .transparency-card');
+
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    // Calculate rotation (max ±5 degrees)
+                    const rotateX = ((y - centerY) / centerY) * -5;
+                    const rotateY = ((x - centerX) / centerX) * 5;
+
+                    card.style.transform = `translateY(-12px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    // Reset transform on mouse leave
+                    card.style.transform = '';
+                });
+            });
+
+            console.log(`Card tilt initialized for ${cards.length} cards`);
+        }
+
+        // Initialize card tilt on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', initCardTilt);
+
         // ==================== THREE.JS PARTICLE SYSTEM ====================
         function initParticleSystem() {
             const canvas = document.getElementById('particle-field');
@@ -991,13 +1163,13 @@
                 const colors = new Float32Array(particleCount * 3);
                 const velocities = new Float32Array(particleCount * 3);
 
-                // Championship burnt orange color palette (updated)
+                // Texas burnt orange color palette (matches About page)
                 const colorPalette = [
-                    new THREE.Color(0xD96200), // Championship orange
-                    new THREE.Color(0xCC6600), // Ember
-                    new THREE.Color(0xFF8C42), // Bright accent
-                    new THREE.Color(0xBF5700), // Heritage orange
-                    new THREE.Color(0xFFBF00), // Amber
+                    new THREE.Color(0xBF5700), // Burnt orange (primary)
+                    new THREE.Color(0xD97B38), // Light burnt orange
+                    new THREE.Color(0x9B4500), // Dark burnt orange
+                    new THREE.Color(0xF5E6D3), // Texas cream (accent)
+                    new THREE.Color(0xE68A4F), // Ember orange
                 ];
 
                 for (let i = 0; i < particleCount * 3; i += 3) {
