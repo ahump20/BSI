@@ -30,3 +30,25 @@ script_name = "blazesports-game-monitor"
 
 # Note: Durable Objects are deployed separately as a Worker
 # See wrangler.worker.toml for Durable Object configuration
+
+# ============================================
+# Stripe Payment Integration (REQUIRED for payments)
+# ============================================
+# Set these secrets via Cloudflare Dashboard or CLI:
+#
+#   wrangler secret put STRIPE_SECRET_KEY
+#   wrangler secret put STRIPE_WEBHOOK_SECRET
+#   wrangler secret put STRIPE_PRO_PRICE_ID
+#   wrangler secret put STRIPE_ENTERPRISE_PRICE_ID
+#   wrangler secret put JWT_SECRET
+#
+# Required secrets:
+# - STRIPE_SECRET_KEY: Stripe secret key (sk_live_... or sk_test_...)
+# - STRIPE_WEBHOOK_SECRET: Webhook signing secret (whsec_...)
+# - STRIPE_PRO_PRICE_ID: Pro tier price ID (price_1SX9voLvpRBk20R2pW0AjUIv)
+# - STRIPE_ENTERPRISE_PRICE_ID: Enterprise tier price ID (price_1SX9w7LvpRBk20R2DJkKAH3y)
+# - JWT_SECRET: For session management
+#
+# Stripe Products (Test Mode):
+# - Pro: $29/month (prod_TU8BMcfS4eKWPR)
+# - Enterprise: $199/month (prod_TU8CTVQzZyiZFs)
