@@ -78,7 +78,7 @@ export interface BaseballGameState {
   inning: number;
   inningHalf: 'top' | 'bottom';
   outs: number;
-  runnersOn: boolean[];  // [first, second, third]
+  runnersOn: boolean[]; // [first, second, third]
   homeRuns?: number; // Expected remaining runs
   awayRuns?: number;
 }
@@ -111,9 +111,27 @@ export class FootballWinProbabilityModel {
 
   // Expected points by field position (simplified)
   private readonly EXPECTED_POINTS_BY_YARD_LINE: Record<number, number> = {
-    1: -1.5, 5: -0.8, 10: -0.4, 15: 0, 20: 0.3, 25: 0.6, 30: 0.9,
-    35: 1.2, 40: 1.5, 45: 1.9, 50: 2.2, 55: 2.6, 60: 3.0, 65: 3.4,
-    70: 3.8, 75: 4.2, 80: 4.6, 85: 5.0, 90: 5.5, 95: 6.0, 99: 6.5,
+    1: -1.5,
+    5: -0.8,
+    10: -0.4,
+    15: 0,
+    20: 0.3,
+    25: 0.6,
+    30: 0.9,
+    35: 1.2,
+    40: 1.5,
+    45: 1.9,
+    50: 2.2,
+    55: 2.6,
+    60: 3.0,
+    65: 3.4,
+    70: 3.8,
+    75: 4.2,
+    80: 4.6,
+    85: 5.0,
+    90: 5.5,
+    95: 6.0,
+    99: 6.5,
   };
 
   /**
@@ -124,12 +142,13 @@ export class FootballWinProbabilityModel {
 
     // Calculate base factors
     const scoreDiff = state.homeScore - state.awayScore;
-    const adjustedScoreDiff = state.possession === 'home'
-      ? scoreDiff + this.getExpectedPoints(state.yardLine, state.down, state.distance)
-      : scoreDiff - this.getExpectedPoints(100 - state.yardLine, state.down, state.distance);
+    const adjustedScoreDiff =
+      state.possession === 'home'
+        ? scoreDiff + this.getExpectedPoints(state.yardLine, state.down, state.distance)
+        : scoreDiff - this.getExpectedPoints(100 - state.yardLine, state.down, state.distance);
 
     // Time factor (in quarters remaining)
-    const quartersRemaining = (4 - state.quarter) + (state.timeRemaining / 900);
+    const quartersRemaining = 4 - state.quarter + state.timeRemaining / 900;
     const timeMultiplier = Math.sqrt(quartersRemaining / 4); // Score diff matters less with more time
 
     // Timeout advantage
@@ -359,13 +378,13 @@ export class BasketballWinProbabilityModel {
 export class BaseballWinProbabilityModel {
   // Base-out run expectancy matrix (simplified, 2023 MLB averages)
   private readonly RUN_EXPECTANCY: Record<string, Record<number, number>> = {
-    '---': { 0: 0.48, 1: 0.26, 2: 0.10 },
+    '---': { 0: 0.48, 1: 0.26, 2: 0.1 },
     '1--': { 0: 0.85, 1: 0.51, 2: 0.22 },
-    '-2-': { 0: 1.10, 1: 0.66, 2: 0.32 },
+    '-2-': { 0: 1.1, 1: 0.66, 2: 0.32 },
     '--3': { 0: 1.35, 1: 0.95, 2: 0.36 },
     '12-': { 0: 1.44, 1: 0.89, 2: 0.45 },
-    '1-3': { 0: 1.80, 1: 1.20, 2: 0.50 },
-    '-23': { 0: 1.95, 1: 1.40, 2: 0.58 },
+    '1-3': { 0: 1.8, 1: 1.2, 2: 0.5 },
+    '-23': { 0: 1.95, 1: 1.4, 2: 0.58 },
     '123': { 0: 2.25, 1: 1.55, 2: 0.75 },
   };
 
@@ -376,13 +395,11 @@ export class BaseballWinProbabilityModel {
     const scoreDiff = state.homeScore - state.awayScore;
 
     // Calculate expected remaining runs for each team
-    const homeInningsRemaining = state.inningHalf === 'bottom'
-      ? 9 - state.inning
-      : 9 - state.inning + 0.5;
+    const homeInningsRemaining =
+      state.inningHalf === 'bottom' ? 9 - state.inning : 9 - state.inning + 0.5;
 
-    const awayInningsRemaining = state.inningHalf === 'top'
-      ? 9 - state.inning + 0.5
-      : 9 - state.inning;
+    const awayInningsRemaining =
+      state.inningHalf === 'top' ? 9 - state.inning + 0.5 : 9 - state.inning;
 
     // Current base-out state run expectancy
     const baseOutState = this.getBaseOutKey(state.runnersOn);
@@ -413,7 +430,7 @@ export class BaseballWinProbabilityModel {
     const inningsPlayed = state.inning + (state.inningHalf === 'bottom' ? 0.5 : 0);
     const confidenceMultiplier = Math.min(1, inningsPlayed / 6);
 
-    const confidence = 0.5 + (Math.abs(homeWinProb - 0.5) * confidenceMultiplier);
+    const confidence = 0.5 + Math.abs(homeWinProb - 0.5) * confidenceMultiplier;
 
     return {
       homeWinProbability: Math.round(homeWinProb * 1000) / 1000,

@@ -663,7 +663,10 @@ export class NCAAEnhancedAdapter {
     };
   }
 
-  private extractSportData(game: any, sport: NCAASport): NCAAFootballData | NCAABasketballData | NCAABaseballData | undefined {
+  private extractSportData(
+    game: any,
+    sport: NCAASport
+  ): NCAAFootballData | NCAABasketballData | NCAABaseballData | undefined {
     const situation = game.situation || game.currentSituation;
 
     if (sport === 'football' && situation) {
@@ -759,8 +762,13 @@ export class NCAAEnhancedAdapter {
     };
   }
 
-  private mapStateToStatus(state: NCAAGameState): 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED' {
-    const statusMap: Record<NCAAGameState, 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED'> = {
+  private mapStateToStatus(
+    state: NCAAGameState
+  ): 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED' {
+    const statusMap: Record<
+      NCAAGameState,
+      'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED'
+    > = {
       pre: 'SCHEDULED',
       live: 'LIVE',
       final: 'FINAL',

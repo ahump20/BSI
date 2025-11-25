@@ -20,9 +20,18 @@
  * - Respect rate limits - don't abuse free APIs.
  */
 
-import { ESPNUnifiedAdapter, type ESPNGame, type SportKey as ESPNSportKey } from './espn-unified-adapter';
+import {
+  ESPNUnifiedAdapter,
+  type ESPNGame,
+  type SportKey as ESPNSportKey,
+} from './espn-unified-adapter';
 import { BalldontlieAdapter, type BDLGame, type BDLSportKey } from './balldontlie-adapter';
-import { NCAAEnhancedAdapter, type NCAAGame, type NCAASport, type NCADivision } from './ncaa-enhanced-adapter';
+import {
+  NCAAEnhancedAdapter,
+  type NCAAGame,
+  type NCAASport,
+  type NCADivision,
+} from './ncaa-enhanced-adapter';
 import { CFBDAdapter, type CFBDGame } from './cfbd-adapter';
 import { SportsDataIOAdapter } from './sports-data-io';
 
@@ -41,7 +50,13 @@ export type UnifiedSportKey =
   | 'cbb'
   | 'nhl';
 
-export type UnifiedGameStatus = 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED' | 'DELAYED';
+export type UnifiedGameStatus =
+  | 'SCHEDULED'
+  | 'LIVE'
+  | 'FINAL'
+  | 'POSTPONED'
+  | 'CANCELLED'
+  | 'DELAYED';
 
 export interface UnifiedGame {
   id: string;
@@ -251,7 +266,9 @@ export class EnhancedProviderManager {
 
     for (const providerName of providers) {
       if (!this.canUseProvider(providerName)) {
-        console.warn(`[EnhancedProviderManager] Skipping ${providerName} - circuit open or rate limited`);
+        console.warn(
+          `[EnhancedProviderManager] Skipping ${providerName} - circuit open or rate limited`
+        );
         continue;
       }
 
@@ -281,9 +298,7 @@ export class EnhancedProviderManager {
     const allGames: UnifiedGame[] = [];
 
     // Fetch in parallel
-    const results = await Promise.allSettled(
-      targetSports.map((sport) => this.getGames(sport))
-    );
+    const results = await Promise.allSettled(targetSports.map((sport) => this.getGames(sport)));
 
     results.forEach((result) => {
       if (result.status === 'fulfilled') {
@@ -643,7 +658,9 @@ export class EnhancedProviderManager {
     const year = now.getFullYear();
     const seasonStart = new Date(year, 7, 25);
     if (now < seasonStart) return 0;
-    const diffWeeks = Math.floor((now.getTime() - seasonStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
+    const diffWeeks = Math.floor(
+      (now.getTime() - seasonStart.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    );
     return Math.min(Math.max(diffWeeks + 1, 1), 15);
   }
 
@@ -653,9 +670,9 @@ export class EnhancedProviderManager {
 
   private getProvidersForSport(sport: UnifiedSportKey, preferredProvider?: string): string[] {
     // Get all providers that support this sport
-    const supportingProviders = PROVIDER_CONFIGS
-      .filter((config) => config.sports.includes(sport))
-      .sort((a, b) => a.priority - b.priority);
+    const supportingProviders = PROVIDER_CONFIGS.filter((config) =>
+      config.sports.includes(sport)
+    ).sort((a, b) => a.priority - b.priority);
 
     // Extract names
     let providers = supportingProviders.map((p) => p.name);

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Decades of college baseball data searchable and cross-referenced—player tracking from college through professional careers.">
+  <title>Historical Research | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-success: #22C55E;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); color: var(--bsi-warm-white); background: var(--bsi-midnight); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(26, 26, 26, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-ui); font-weight: 600; font-size: 1.125rem; }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    
+    .hero { padding: calc(80px + 4rem) 1.5rem 3rem; background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%); text-align: center; }
+    .hero-inner { max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bsi-success); padding: 0.25rem 0.75rem; background: rgba(34, 197, 94, 0.1); border-radius: 4px; margin-bottom: 1rem; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.15; margin-bottom: 1rem; }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle { font-size: 1.0625rem; color: rgba(250, 250, 250, 0.8); }
+    
+    .search-section { padding: 2rem 1.5rem; background: var(--bsi-charcoal); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+    .search-container { max-width: 700px; margin: 0 auto; }
+    .search-input { width: 100%; padding: 1rem 1.25rem; font-family: var(--font-ui); font-size: 1rem; color: var(--bsi-warm-white); background: rgba(13, 13, 13, 0.5); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 8px; outline: none; }
+    .search-input::placeholder { color: rgba(250, 250, 250, 0.4); }
+    .search-input:focus { border-color: var(--bsi-burnt-orange); }
+    .search-filters { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; justify-content: center; }
+    .filter-btn { padding: 0.5rem 1rem; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; color: rgba(250, 250, 250, 0.7); background: transparent; border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+    .filter-btn:hover, .filter-btn.active { color: var(--bsi-burnt-orange); border-color: var(--bsi-burnt-orange); background: rgba(191, 87, 0, 0.1); }
+    
+    .stats-section { padding: 3rem 1.5rem; background: var(--bsi-midnight); }
+    .stats-container { max-width: 1000px; margin: 0 auto; }
+    .stats-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .stats-title { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; color: var(--bsi-burnt-orange); }
+    
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th, .data-table td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(191, 87, 0, 0.1); }
+    .data-table th { font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250, 250, 250, 0.5); background: var(--bsi-charcoal); }
+    .data-table td { font-family: var(--font-ui); font-size: 0.9375rem; }
+    .data-table tr:hover { background: rgba(191, 87, 0, 0.05); }
+    .player-link { color: var(--bsi-burnt-orange); font-weight: 500; }
+    .player-link:hover { color: var(--bsi-ember); }
+    .stat-highlight { font-family: var(--font-mono); font-weight: 500; }
+    
+    .decades-section { padding: 4rem 1.5rem; background: var(--bsi-charcoal); }
+    .decades-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+    .decades-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; margin-bottom: 2rem; }
+    .decades-title .accent { color: var(--bsi-burnt-orange); }
+    .decades-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; }
+    .decade-btn { padding: 1rem; font-family: var(--font-mono); font-size: 1rem; font-weight: 500; color: rgba(250, 250, 250, 0.7); background: var(--bsi-midnight); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+    .decade-btn:hover { color: var(--bsi-burnt-orange); border-color: var(--bsi-burnt-orange); }
+    
+    .tools-nav { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.15); }
+    .tools-nav-inner { max-width: 1000px; margin: 0 auto; }
+    .tools-nav-title { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250, 250, 250, 0.5); text-align: center; margin-bottom: 1.5rem; }
+    .tools-nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+    .tools-nav-link { display: flex; align-items: center; justify-content: center; padding: 1rem; background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); transition: all 0.2s ease; }
+    .tools-nav-link:hover { border-color: var(--bsi-burnt-orange); color: var(--bsi-burnt-orange); }
+    .tools-nav-link.current { border-color: var(--bsi-burnt-orange); background: rgba(191, 87, 0, 0.1); color: var(--bsi-burnt-orange); }
+    
+    .footer { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.2); text-align: center; }
+    .footer-tagline { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: rgba(250, 250, 250, 0.6); margin-bottom: 0.75rem; }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy { font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.4); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo"><img src="assets/images/bsi-logo.png" alt="BSI"><span>Blaze Sports Intel</span></a>
+      <div class="nav-links">
+        <a href="/teams" class="nav-link">Teams</a>
+        <a href="/analytics" class="nav-link active">Analytics</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Live</p>
+      <h1 class="hero-title">Historical <span class="accent">Research</span></h1>
+      <p class="hero-subtitle">Decades of college baseball data searchable and cross-referenced. Player tracking from college through professional careers.</p>
+    </div>
+  </section>
+
+  <section class="search-section">
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="Search players, teams, seasons, or statistics...">
+      <div class="search-filters">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Players</button>
+        <button class="filter-btn">Teams</button>
+        <button class="filter-btn">Seasons</button>
+        <button class="filter-btn">CWS</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="stats-header">
+        <h2 class="stats-title">Career Leaders - Batting Average (Min. 500 AB)</h2>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>School</th>
+            <th>Years</th>
+            <th>AVG</th>
+            <th>AB</th>
+            <th>H</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><a href="/players/john-olerud" class="player-link">John Olerud</a></td>
+            <td>Washington State</td>
+            <td>1987-89</td>
+            <td class="stat-highlight">.464</td>
+            <td>559</td>
+            <td>259</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><a href="/players/pete-incaviglia" class="player-link">Pete Incaviglia</a></td>
+            <td>Oklahoma State</td>
+            <td>1983-85</td>
+            <td class="stat-highlight">.417</td>
+            <td>627</td>
+            <td>261</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><a href="/players/phil-nevin" class="player-link">Phil Nevin</a></td>
+            <td>Cal State Fullerton</td>
+            <td>1990-92</td>
+            <td class="stat-highlight">.402</td>
+            <td>584</td>
+            <td>235</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><a href="/players/brooks-kieschnick" class="player-link">Brooks Kieschnick</a></td>
+            <td>Texas</td>
+            <td>1990-93</td>
+            <td class="stat-highlight">.389</td>
+            <td>612</td>
+            <td>238</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><a href="/players/robin-ventura" class="player-link">Robin Ventura</a></td>
+            <td>Oklahoma State</td>
+            <td>1986-88</td>
+            <td class="stat-highlight">.385</td>
+            <td>571</td>
+            <td>220</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="decades-section">
+    <div class="decades-inner">
+      <h2 class="decades-title">Browse by <span class="accent">Decade</span></h2>
+      <div class="decades-grid">
+        <button class="decade-btn">1970s</button>
+        <button class="decade-btn">1980s</button>
+        <button class="decade-btn">1990s</button>
+        <button class="decade-btn">2000s</button>
+        <button class="decade-btn">2010s</button>
+        <button class="decade-btn">2020s</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools-nav">
+    <div class="tools-nav-inner">
+      <p class="tools-nav-title">Analytics Tools</p>
+      <div class="tools-nav-grid">
+        <a href="/teams" class="tools-nav-link">Teams</a>
+        <a href="/live-scoreboards" class="tools-nav-link">Live Scoreboards</a>
+        <a href="/predictive-models" class="tools-nav-link">Predictive Models</a>
+        <a href="/historical-research" class="tools-nav-link current">Historical Research</a>
+        <a href="/recruiting-intel" class="tools-nav-link">Recruiting Intel</a>
+        <a href="/push-alerts" class="tools-nav-link">Push Alerts</a>
+        <a href="/3d-visualizations" class="tools-nav-link">3D Visualizations</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+</body>
+</html>

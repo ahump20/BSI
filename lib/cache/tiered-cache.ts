@@ -227,11 +227,7 @@ export class TieredCache {
    * Returns cached data immediately (even if stale) and triggers
    * background refresh if data is stale.
    */
-  async getWithSWR<T>(
-    key: string,
-    options: CacheOptions,
-    fetchFn: () => Promise<T>
-  ): Promise<T> {
+  async getWithSWR<T>(key: string, options: CacheOptions, fetchFn: () => Promise<T>): Promise<T> {
     const cacheKey = this.buildKey(key);
     const startTime = Date.now();
 
@@ -352,10 +348,7 @@ export class TieredCache {
   /**
    * Get live scores with appropriate caching
    */
-  async getLiveScores<T>(
-    sport: string,
-    fetchFn: () => Promise<T>
-  ): Promise<T> {
+  async getLiveScores<T>(sport: string, fetchFn: () => Promise<T>): Promise<T> {
     return this.getWithSWR(
       `scores:live:${sport}`,
       {
@@ -374,15 +367,15 @@ export class TieredCache {
     conference: string | undefined,
     fetchFn: () => Promise<T>
   ): Promise<T> {
-    const key = conference
-      ? `standings:${sport}:${conference}`
-      : `standings:${sport}:all`;
+    const key = conference ? `standings:${sport}:${conference}` : `standings:${sport}:all`;
 
     return this.getWithSWR(
       key,
       {
         category: 'standings',
-        tags: [`sport:${sport}`, 'type:standings', conference ? `conf:${conference}` : ''].filter(Boolean),
+        tags: [`sport:${sport}`, 'type:standings', conference ? `conf:${conference}` : ''].filter(
+          Boolean
+        ),
       },
       fetchFn
     );
@@ -391,11 +384,7 @@ export class TieredCache {
   /**
    * Get rankings with appropriate caching
    */
-  async getRankings<T>(
-    sport: string,
-    poll: string,
-    fetchFn: () => Promise<T>
-  ): Promise<T> {
+  async getRankings<T>(sport: string, poll: string, fetchFn: () => Promise<T>): Promise<T> {
     return this.getWithSWR(
       `rankings:${sport}:${poll}`,
       {
@@ -409,11 +398,7 @@ export class TieredCache {
   /**
    * Get player stats with appropriate caching
    */
-  async getPlayerStats<T>(
-    playerId: string,
-    season: number,
-    fetchFn: () => Promise<T>
-  ): Promise<T> {
+  async getPlayerStats<T>(playerId: string, season: number, fetchFn: () => Promise<T>): Promise<T> {
     return this.getWithSWR(
       `player:${playerId}:stats:${season}`,
       {
@@ -427,11 +412,7 @@ export class TieredCache {
   /**
    * Get team stats with appropriate caching
    */
-  async getTeamStats<T>(
-    teamId: string,
-    season: number,
-    fetchFn: () => Promise<T>
-  ): Promise<T> {
+  async getTeamStats<T>(teamId: string, season: number, fetchFn: () => Promise<T>): Promise<T> {
     return this.getWithSWR(
       `team:${teamId}:stats:${season}`,
       {
@@ -484,11 +465,13 @@ export class TieredCache {
     if (!this.ctx) return;
 
     this.ctx.waitUntil(
-      this.kv.put(cacheKey, JSON.stringify(entry), {
-        expirationTtl: Math.ceil((entry.staleAt - Date.now()) / 1000),
-      }).catch((error) => {
-        console.warn('[TieredCache] Background update failed:', error);
-      })
+      this.kv
+        .put(cacheKey, JSON.stringify(entry), {
+          expirationTtl: Math.ceil((entry.staleAt - Date.now()) / 1000),
+        })
+        .catch((error) => {
+          console.warn('[TieredCache] Background update failed:', error);
+        })
     );
   }
 
@@ -527,8 +510,7 @@ export class TieredCache {
       this.stats.avgLatencyMs = latency;
     } else {
       // Running average
-      this.stats.avgLatencyMs =
-        (this.stats.avgLatencyMs * (total - 1) + latency) / total;
+      this.stats.avgLatencyMs = (this.stats.avgLatencyMs * (total - 1) + latency) / total;
     }
   }
 }

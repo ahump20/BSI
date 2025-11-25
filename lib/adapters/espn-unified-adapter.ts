@@ -32,16 +32,7 @@
 // TYPE DEFINITIONS
 // ============================================================================
 
-export type SportKey =
-  | 'ncaaf'
-  | 'ncaab'
-  | 'wcbb'
-  | 'nfl'
-  | 'nba'
-  | 'wnba'
-  | 'mlb'
-  | 'cbb'
-  | 'nhl';
+export type SportKey = 'ncaaf' | 'ncaab' | 'wcbb' | 'nfl' | 'nba' | 'wnba' | 'mlb' | 'cbb' | 'nhl';
 
 export type GameStatus = 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED' | 'DELAYED';
 
@@ -183,7 +174,13 @@ interface SportConfig {
 }
 
 const SPORT_CONFIG: Record<SportKey, SportConfig> = {
-  ncaaf: { sport: 'football', league: 'college-football', groups: 80, hasWeeks: true, hasRankings: true },
+  ncaaf: {
+    sport: 'football',
+    league: 'college-football',
+    groups: 80,
+    hasWeeks: true,
+    hasRankings: true,
+  },
   ncaab: { sport: 'basketball', league: 'mens-college-basketball', hasRankings: true },
   wcbb: { sport: 'basketball', league: 'womens-college-basketball', hasRankings: true },
   nfl: { sport: 'football', league: 'nfl', hasWeeks: true },
@@ -201,16 +198,16 @@ const CFB_CONFERENCES: Record<string, number> = {
   'Big 12': 4,
   ACC: 1,
   'Pac-12': 9,
-  'American': 151,
+  American: 151,
   'Mountain West': 17,
   'Sun Belt': 37,
-  'MAC': 15,
+  MAC: 15,
   'Conference USA': 12,
   FBS: 80,
   FCS: 81,
   'Ivy League': 22,
   'Big Sky': 20,
-  'CAA': 18,
+  CAA: 18,
 };
 
 // ============================================================================
@@ -353,14 +350,20 @@ export class ESPNUnifiedAdapter {
   /**
    * Get all FBS college football games (convenience method)
    */
-  async getCFBScoreboard(options: Omit<ScoreboardOptions, 'conference'> & { conference?: string } = {}): Promise<ESPNGame[]> {
+  async getCFBScoreboard(
+    options: Omit<ScoreboardOptions, 'conference'> & { conference?: string } = {}
+  ): Promise<ESPNGame[]> {
     return this.getScoreboard('ncaaf', options);
   }
 
   /**
    * Get games for a specific conference
    */
-  async getConferenceGames(sportKey: SportKey, conference: string, options: ScoreboardOptions = {}): Promise<ESPNGame[]> {
+  async getConferenceGames(
+    sportKey: SportKey,
+    conference: string,
+    options: ScoreboardOptions = {}
+  ): Promise<ESPNGame[]> {
     return this.getScoreboard(sportKey, { ...options, conference });
   }
 
@@ -594,7 +597,8 @@ export class ESPNUnifiedAdapter {
       awayRanking: away.curatedRank?.current || away.rank,
       venue: competition.venue?.fullName || competition.venue?.name,
       venueCity: competition.venue?.address?.city,
-      broadcast: competition.broadcasts?.[0]?.names?.[0] || competition.geoBroadcasts?.[0]?.media?.shortName,
+      broadcast:
+        competition.broadcasts?.[0]?.names?.[0] || competition.geoBroadcasts?.[0]?.media?.shortName,
       conference: competition.conferenceCompetition ? home.team?.conference?.name : undefined,
       isConferenceGame: competition.conferenceCompetition,
       providerName: 'ESPN',
@@ -681,7 +685,8 @@ export class ESPNUnifiedAdapter {
   private mapStatus(statusName: string | undefined): GameStatus {
     const lower = (statusName || '').toLowerCase();
     if (lower.includes('scheduled') || lower.includes('pre')) return 'SCHEDULED';
-    if (lower.includes('progress') || lower.includes('live') || lower.includes('in ')) return 'LIVE';
+    if (lower.includes('progress') || lower.includes('live') || lower.includes('in '))
+      return 'LIVE';
     if (lower.includes('final') || lower.includes('end')) return 'FINAL';
     if (lower.includes('postponed')) return 'POSTPONED';
     if (lower.includes('cancel')) return 'CANCELLED';

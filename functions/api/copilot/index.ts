@@ -140,13 +140,7 @@ const INTENT_PATTERNS: Record<IntentType, RegExp[]> = {
     /(?:how\s+many|what.*)\s+(?:yards?|points?|touchdowns?|home\s+runs?)/i,
     /stats?\s+for/i,
   ],
-  win_probability: [
-    /win\s+prob/i,
-    /chance.*win/i,
-    /likely.*win/i,
-    /odds.*win/i,
-    /who.*favored/i,
-  ],
+  win_probability: [/win\s+prob/i, /chance.*win/i, /likely.*win/i, /odds.*win/i, /who.*favored/i],
   stat_leaders: [
     /who\s+leads/i,
     /leader(?:s|board)/i,
@@ -154,19 +148,8 @@ const INTENT_PATTERNS: Record<IntentType, RegExp[]> = {
     /best\s+\w+/i,
     /top\s+\w+\s+in/i,
   ],
-  comparison: [
-    /compare/i,
-    /vs\.?|versus/i,
-    /better\s+than/i,
-    /difference\s+between/i,
-  ],
-  news: [
-    /news/i,
-    /headlines/i,
-    /latest/i,
-    /updates?/i,
-    /what.*happening/i,
-  ],
+  comparison: [/compare/i, /vs\.?|versus/i, /better\s+than/i, /difference\s+between/i],
+  news: [/news/i, /headlines/i, /latest/i, /updates?/i, /what.*happening/i],
   odds: [
     /odds/i,
     /spread/i,
@@ -231,10 +214,10 @@ export async function onRequest(context: EventContext<Env, string, unknown>): Pr
     const body = (await request.json()) as CopilotRequest;
 
     if (!body.query || typeof body.query !== 'string') {
-      return new Response(
-        JSON.stringify({ error: 'Missing or invalid query' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'Missing or invalid query' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const response = await processCopilotQuery(body, env);
@@ -263,10 +246,7 @@ export async function onRequest(context: EventContext<Env, string, unknown>): Pr
 // QUERY PROCESSING
 // ============================================================================
 
-async function processCopilotQuery(
-  request: CopilotRequest,
-  env: Env
-): Promise<CopilotResponse> {
+async function processCopilotQuery(request: CopilotRequest, env: Env): Promise<CopilotResponse> {
   const query = request.query.trim();
 
   // Extract intent
@@ -303,7 +283,8 @@ async function processCopilotQuery(
       break;
 
     default:
-      answer = `I understand you're asking about "${query}". Let me help you find that information.\n\n` +
+      answer =
+        `I understand you're asking about "${query}". Let me help you find that information.\n\n` +
         `I detected this as a "${intent.type}" query` +
         (intent.sport ? ` for ${intent.sport}` : '') +
         (intent.team ? ` about ${intent.team}` : '') +
@@ -429,7 +410,7 @@ async function handleLiveScores(intent: QueryIntent, env: Env) {
     followUpQuestions: [
       `What's the score of the ${intent.team || 'biggest'} game?`,
       'Show me just college football scores',
-      'Who\'s winning right now?',
+      "Who's winning right now?",
     ],
   };
 }
@@ -437,7 +418,8 @@ async function handleLiveScores(intent: QueryIntent, env: Env) {
 async function handleRankings(intent: QueryIntent, env: Env) {
   const sport = intent.sport || 'ncaaf';
 
-  const answer = `Here are the current ${formatSportName(sport)} rankings:\n\n` +
+  const answer =
+    `Here are the current ${formatSportName(sport)} rankings:\n\n` +
     `[AP Top 25 / CFP Rankings would appear here]\n\n` +
     `Rankings are updated weekly.`;
 
@@ -487,13 +469,14 @@ async function handleSchedule(intent: QueryIntent, env: Env) {
     followUpQuestions: [
       'What time does the game start?',
       'What channel is it on?',
-      'What\'s next week\'s schedule?',
+      "What's next week's schedule?",
     ],
   };
 }
 
 async function handleWinProbability(intent: QueryIntent, query: string, env: Env) {
-  const answer = `Win probability calculation requires a live game state.\n\n` +
+  const answer =
+    `Win probability calculation requires a live game state.\n\n` +
     `To calculate win probability, I need:\n` +
     `- Current score\n` +
     `- Time remaining\n` +
@@ -505,7 +488,7 @@ async function handleWinProbability(intent: QueryIntent, query: string, env: Env
     answer,
     followUpQuestions: [
       'What are the live games right now?',
-      'Who\'s favored in the big game?',
+      "Who's favored in the big game?",
       'What are the current odds?',
     ],
   };
@@ -523,7 +506,8 @@ async function handleStatLeaders(intent: QueryIntent, query: string, env: Env) {
   if (/bat|hit/i.test(query)) statType = 'batting';
   if (/pitch|era/i.test(query)) statType = 'pitching';
 
-  const answer = `Here are the ${statType} leaders${conference ? ` in the ${conference}` : ''}:\n\n` +
+  const answer =
+    `Here are the ${statType} leaders${conference ? ` in the ${conference}` : ''}:\n\n` +
     `[Stat leaders would appear here]\n\n` +
     `Stats are updated after each game.`;
 

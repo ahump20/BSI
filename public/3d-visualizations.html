@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WebGPU-powered pitch tunneling analysis and trajectory visualization—advanced graphics for pitch movement and plate coverage.">
+  <title>3D Visualizations | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-dev: #6B7280;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Serif 4', Georgia, serif; color: var(--bsi-warm-white); background: var(--bsi-midnight); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(26, 26, 26, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-ui); font-weight: 600; font-size: 1.125rem; }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    
+    .hero { padding: calc(80px + 4rem) 1.5rem 3rem; background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%); text-align: center; }
+    .hero-inner { max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bsi-dev); padding: 0.25rem 0.75rem; background: rgba(107, 114, 128, 0.15); border-radius: 4px; margin-bottom: 1rem; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.15; margin-bottom: 1rem; }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle { font-size: 1.0625rem; color: rgba(250, 250, 250, 0.8); }
+    
+    .preview-section { padding: 4rem 1.5rem; background: var(--bsi-midnight); }
+    .preview-container { max-width: 900px; margin: 0 auto; }
+    .preview-placeholder { aspect-ratio: 16/9; background: linear-gradient(135deg, var(--bsi-charcoal) 0%, rgba(191, 87, 0, 0.1) 100%); border: 2px dashed rgba(191, 87, 0, 0.3); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; }
+    .preview-icon { width: 80px; height: 80px; color: rgba(191, 87, 0, 0.5); }
+    .preview-text { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 500; color: rgba(250, 250, 250, 0.6); }
+    .preview-subtext { font-family: var(--font-mono); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.4); }
+    
+    .features-section { padding: 4rem 1.5rem; background: var(--bsi-charcoal); }
+    .features-inner { max-width: 900px; margin: 0 auto; }
+    .features-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; text-align: center; margin-bottom: 2rem; }
+    .features-title .accent { color: var(--bsi-burnt-orange); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+    .feature-card { padding: 1.5rem; background: var(--bsi-midnight); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; }
+    .feature-card h3 { font-family: var(--font-ui); font-size: 1rem; font-weight: 600; color: var(--bsi-burnt-orange); margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.9375rem; color: rgba(250, 250, 250, 0.7); line-height: 1.5; }
+    
+    .tech-section { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.15); }
+    .tech-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+    .tech-title { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600; color: rgba(250, 250, 250, 0.5); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .tech-stack { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+    .tech-badge { padding: 0.5rem 1rem; font-family: var(--font-mono); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.7); background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 6px; }
+    
+    .notify-section { padding: 4rem 1.5rem; background: var(--bsi-charcoal); }
+    .notify-inner { max-width: 500px; margin: 0 auto; text-align: center; }
+    .notify-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; }
+    .notify-title .accent { color: var(--bsi-burnt-orange); }
+    .notify-text { font-size: 1rem; color: rgba(250, 250, 250, 0.7); margin-bottom: 2rem; }
+    .notify-form { display: flex; gap: 0.75rem; }
+    @media (max-width: 500px) { .notify-form { flex-direction: column; } }
+    .notify-input { flex: 1; padding: 0.875rem 1rem; font-family: var(--font-ui); font-size: 0.9375rem; color: var(--bsi-warm-white); background: var(--bsi-midnight); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 8px; outline: none; }
+    .notify-input::placeholder { color: rgba(250, 250, 250, 0.4); }
+    .notify-input:focus { border-color: var(--bsi-burnt-orange); }
+    .notify-btn { padding: 0.875rem 1.5rem; font-family: var(--font-ui); font-weight: 600; font-size: 0.9375rem; color: white; background: var(--bsi-burnt-orange); border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s ease; }
+    .notify-btn:hover { background: var(--bsi-ember); }
+    
+    .tools-nav { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.15); }
+    .tools-nav-inner { max-width: 1000px; margin: 0 auto; }
+    .tools-nav-title { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250, 250, 250, 0.5); text-align: center; margin-bottom: 1.5rem; }
+    .tools-nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+    .tools-nav-link { display: flex; align-items: center; justify-content: center; padding: 1rem; background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); transition: all 0.2s ease; }
+    .tools-nav-link:hover { border-color: var(--bsi-burnt-orange); color: var(--bsi-burnt-orange); }
+    .tools-nav-link.current { border-color: var(--bsi-burnt-orange); background: rgba(191, 87, 0, 0.1); color: var(--bsi-burnt-orange); }
+    
+    .footer { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.2); text-align: center; }
+    .footer-tagline { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: rgba(250, 250, 250, 0.6); margin-bottom: 0.75rem; }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy { font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.4); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo"><img src="assets/images/bsi-logo.png" alt="BSI"><span>Blaze Sports Intel</span></a>
+      <div class="nav-links">
+        <a href="/teams" class="nav-link">Teams</a>
+        <a href="/analytics" class="nav-link active">Analytics</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">In Development</p>
+      <h1 class="hero-title">3D <span class="accent">Visualizations</span></h1>
+      <p class="hero-subtitle">WebGPU-powered pitch tunneling analysis and trajectory visualization. Advanced graphics for pitch movement and plate coverage.</p>
+    </div>
+  </section>
+
+  <section class="preview-section">
+    <div class="preview-container">
+      <div class="preview-placeholder">
+        <svg class="preview-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"/>
+          <polyline points="21 12 16.5 14.6 16.5 19.79"/>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+          <line x1="12" y1="22.08" x2="12" y2="12"/>
+        </svg>
+        <p class="preview-text">3D Visualization Engine</p>
+        <p class="preview-subtext">Coming Q2 2025</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="features-inner">
+      <h2 class="features-title">Planned <span class="accent">Features</span></h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>Pitch Tunneling</h3>
+          <p>Visualize how pitchers create deceptive release points and movement profiles to fool hitters.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Trajectory Analysis</h3>
+          <p>Track pitch movement in 3D space—spin axis, break point, and final location rendered in real-time.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Plate Coverage</h3>
+          <p>Heatmaps and zone analysis showing where hitters make contact and where pitchers attack.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Swing Mechanics</h3>
+          <p>Bat path visualization showing attack angle, barrel time in zone, and contact point.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Defensive Positioning</h3>
+          <p>Fielder positioning overlays with spray chart data for strategic analysis.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Pitch Sequencing</h3>
+          <p>Animate full at-bats showing pitch sequence strategy and hitter reaction patterns.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tech-section">
+    <div class="tech-inner">
+      <h3 class="tech-title">Built With</h3>
+      <div class="tech-stack">
+        <span class="tech-badge">WebGPU</span>
+        <span class="tech-badge">Babylon.js</span>
+        <span class="tech-badge">Cloudflare Workers</span>
+        <span class="tech-badge">D1 Database</span>
+        <span class="tech-badge">R2 Storage</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="notify-section">
+    <div class="notify-inner">
+      <h2 class="notify-title">Get <span class="accent">Notified</span></h2>
+      <p class="notify-text">Be the first to know when 3D Visualizations launches. We'll only email you once.</p>
+      <form class="notify-form">
+        <input type="email" class="notify-input" placeholder="your@email.com" required>
+        <button type="submit" class="notify-btn">Notify Me</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="tools-nav">
+    <div class="tools-nav-inner">
+      <p class="tools-nav-title">Analytics Tools</p>
+      <div class="tools-nav-grid">
+        <a href="/teams" class="tools-nav-link">Teams</a>
+        <a href="/live-scoreboards" class="tools-nav-link">Live Scoreboards</a>
+        <a href="/predictive-models" class="tools-nav-link">Predictive Models</a>
+        <a href="/historical-research" class="tools-nav-link">Historical Research</a>
+        <a href="/recruiting-intel" class="tools-nav-link">Recruiting Intel</a>
+        <a href="/push-alerts" class="tools-nav-link">Push Alerts</a>
+        <a href="/3d-visualizations" class="tools-nav-link current">3D Visualizations</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+</body>
+</html>

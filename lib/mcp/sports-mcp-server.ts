@@ -75,7 +75,8 @@ export interface MCPServerConfig {
 const BSI_TOOLS: MCPTool[] = [
   {
     name: 'get_live_scores',
-    description: 'Get real-time scores for live games across supported sports. Returns current score, game status, and key game details.',
+    description:
+      'Get real-time scores for live games across supported sports. Returns current score, game status, and key game details.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -127,7 +128,8 @@ const BSI_TOOLS: MCPTool[] = [
   },
   {
     name: 'get_game_summary',
-    description: 'Get detailed summary of a specific game including box score, play-by-play highlights, and statistics.',
+    description:
+      'Get detailed summary of a specific game including box score, play-by-play highlights, and statistics.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -142,7 +144,8 @@ const BSI_TOOLS: MCPTool[] = [
         },
         teams: {
           type: 'string',
-          description: 'Alternative to game_id: specify matchup like "Texas vs Oklahoma" or "SEC Championship"',
+          description:
+            'Alternative to game_id: specify matchup like "Texas vs Oklahoma" or "SEC Championship"',
         },
         date: {
           type: 'string',
@@ -154,7 +157,8 @@ const BSI_TOOLS: MCPTool[] = [
   },
   {
     name: 'get_standings',
-    description: 'Get current standings for a sport, optionally filtered by conference or division.',
+    description:
+      'Get current standings for a sport, optionally filtered by conference or division.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -319,7 +323,8 @@ const BSI_TOOLS: MCPTool[] = [
   },
   {
     name: 'search_sports',
-    description: 'Natural language search across all sports data. Use for complex queries like "Who leads the SEC in rushing yards?" or "What ranked teams lost last week?"',
+    description:
+      'Natural language search across all sports data. Use for complex queries like "Who leads the SEC in rushing yards?" or "What ranked teams lost last week?"',
     inputSchema: {
       type: 'object',
       properties: {
@@ -459,11 +464,12 @@ export class SportsMCPServer {
       // Filter by team if specified
       if (team) {
         const teamLower = team.toLowerCase();
-        games = games.filter((g: any) =>
-          g.homeTeamName.toLowerCase().includes(teamLower) ||
-          g.awayTeamName.toLowerCase().includes(teamLower) ||
-          g.homeTeamAbbrev?.toLowerCase() === teamLower ||
-          g.awayTeamAbbrev?.toLowerCase() === teamLower
+        games = games.filter(
+          (g: any) =>
+            g.homeTeamName.toLowerCase().includes(teamLower) ||
+            g.awayTeamName.toLowerCase().includes(teamLower) ||
+            g.homeTeamAbbrev?.toLowerCase() === teamLower ||
+            g.awayTeamAbbrev?.toLowerCase() === teamLower
         );
       }
 
@@ -490,14 +496,18 @@ export class SportsMCPServer {
     const { sport, game_id, teams, date } = args;
 
     // This would call the appropriate adapter for game summary
-    return this.textResult(`Game summary for ${game_id || teams} (${sport}) - Implementation pending`);
+    return this.textResult(
+      `Game summary for ${game_id || teams} (${sport}) - Implementation pending`
+    );
   }
 
   private async getStandings(args: Record<string, any>): Promise<MCPToolResult> {
     const { sport, conference, division } = args;
 
     // This would call the appropriate adapter for standings
-    return this.textResult(`Standings for ${sport}${conference ? ` - ${conference}` : ''} - Implementation pending`);
+    return this.textResult(
+      `Standings for ${sport}${conference ? ` - ${conference}` : ''} - Implementation pending`
+    );
   }
 
   private async getRankings(args: Record<string, any>): Promise<MCPToolResult> {
@@ -511,18 +521,32 @@ export class SportsMCPServer {
     const { sport, player_name, team, season, stat_type } = args;
 
     // This would search for player and return stats
-    return this.textResult(`Stats for ${player_name}${team ? ` (${team})` : ''} - Implementation pending`);
+    return this.textResult(
+      `Stats for ${player_name}${team ? ` (${team})` : ''} - Implementation pending`
+    );
   }
 
   private async getSchedule(args: Record<string, any>): Promise<MCPToolResult> {
     const { sport, team, conference, start_date, end_date, week } = args;
 
     // This would call the appropriate adapter for schedule
-    return this.textResult(`Schedule for ${sport}${team ? ` - ${team}` : ''} - Implementation pending`);
+    return this.textResult(
+      `Schedule for ${sport}${team ? ` - ${team}` : ''} - Implementation pending`
+    );
   }
 
   private async calculateWinProbability(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, home_score, away_score, time_remaining, period, possession, down, distance, yard_line } = args;
+    const {
+      sport,
+      home_score,
+      away_score,
+      time_remaining,
+      period,
+      possession,
+      down,
+      distance,
+      yard_line,
+    } = args;
 
     // Import win probability model dynamically
     const { calculateWinProbability } = await import('../analytics/win-probability');
@@ -585,14 +609,18 @@ export class SportsMCPServer {
     // This would implement natural language search
     // Could use embeddings or keyword extraction to route to appropriate data
 
-    return this.textResult(`Search results for "${query}"${sport ? ` in ${sport}` : ''} - Implementation pending`);
+    return this.textResult(
+      `Search results for "${query}"${sport ? ` in ${sport}` : ''} - Implementation pending`
+    );
   }
 
   private async getBettingOdds(args: Record<string, any>): Promise<MCPToolResult> {
     const { sport, team, date } = args;
 
     // This would call BALLDONTLIE or other odds provider
-    return this.textResult(`Betting odds for ${sport}${team ? ` - ${team}` : ''} - Implementation pending`);
+    return this.textResult(
+      `Betting odds for ${sport}${team ? ` - ${team}` : ''} - Implementation pending`
+    );
   }
 
   // ==========================================================================
@@ -603,9 +631,7 @@ export class SportsMCPServer {
     const homeRank = game.homeRanking ? `#${game.homeRanking} ` : '';
     const awayRank = game.awayRanking ? `#${game.awayRanking} ` : '';
 
-    const score = game.status === 'SCHEDULED'
-      ? 'vs'
-      : `${game.awayScore} - ${game.homeScore}`;
+    const score = game.status === 'SCHEDULED' ? 'vs' : `${game.awayScore} - ${game.homeScore}`;
 
     let statusLine = '';
     if (game.status === 'LIVE') {

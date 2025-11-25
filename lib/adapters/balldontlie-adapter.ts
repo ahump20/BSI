@@ -251,7 +251,9 @@ export class BalldontlieAdapter {
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => 'Unknown error');
-      throw new Error(`BALLDONTLIE API error: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `BALLDONTLIE API error: ${response.status} ${response.statusText} - ${errorText}`
+      );
     }
 
     const data = (await response.json()) as T;
@@ -294,7 +296,8 @@ export class BalldontlieAdapter {
       }
       if (params.start_date) url.searchParams.set('start_date', params.start_date);
       if (params.end_date) url.searchParams.set('end_date', params.end_date);
-      if (params.postseason !== undefined) url.searchParams.set('postseason', params.postseason.toString());
+      if (params.postseason !== undefined)
+        url.searchParams.set('postseason', params.postseason.toString());
       if (params.search) url.searchParams.set('search', params.search);
     }
 
@@ -308,7 +311,10 @@ export class BalldontlieAdapter {
   /**
    * Get games for any supported sport
    */
-  async getGames(sport: BDLSportKey, params?: BDLQueryParams): Promise<BDLPaginatedResponse<BDLGame>> {
+  async getGames(
+    sport: BDLSportKey,
+    params?: BDLQueryParams
+  ): Promise<BDLPaginatedResponse<BDLGame>> {
     const url = this.buildUrl(sport, 'games', params);
     const cacheKey = `bdl:${sport}:games:${JSON.stringify(params || {})}`;
 
@@ -395,7 +401,10 @@ export class BalldontlieAdapter {
   /**
    * Get all teams for a sport
    */
-  async getTeams(sport: BDLSportKey, params?: BDLQueryParams): Promise<BDLPaginatedResponse<BDLTeam>> {
+  async getTeams(
+    sport: BDLSportKey,
+    params?: BDLQueryParams
+  ): Promise<BDLPaginatedResponse<BDLTeam>> {
     const url = this.buildUrl(sport, 'teams', params);
     const cacheKey = `bdl:${sport}:teams:${JSON.stringify(params || {})}`;
 
@@ -427,7 +436,10 @@ export class BalldontlieAdapter {
   /**
    * Get players for a sport
    */
-  async getPlayers(sport: BDLSportKey, params?: BDLQueryParams): Promise<BDLPaginatedResponse<BDLPlayer>> {
+  async getPlayers(
+    sport: BDLSportKey,
+    params?: BDLQueryParams
+  ): Promise<BDLPaginatedResponse<BDLPlayer>> {
     const url = this.buildUrl(sport, 'players', params);
     const cacheKey = `bdl:${sport}:players:${JSON.stringify(params || {})}`;
 
@@ -441,7 +453,11 @@ export class BalldontlieAdapter {
     const url = `${BASE_URL}/${SPORT_ENDPOINTS[sport]}/players/${playerId}`;
     const cacheKey = `bdl:${sport}:player:${playerId}`;
 
-    const response = await this.fetchWithCache<{ data: BDLPlayer }>(url, cacheKey, CACHE_TTLS.players);
+    const response = await this.fetchWithCache<{ data: BDLPlayer }>(
+      url,
+      cacheKey,
+      CACHE_TTLS.players
+    );
     return response.data;
   }
 
@@ -459,7 +475,10 @@ export class BalldontlieAdapter {
   /**
    * Get player stats
    */
-  async getStats(sport: BDLSportKey, params?: BDLQueryParams): Promise<BDLPaginatedResponse<BDLStats>> {
+  async getStats(
+    sport: BDLSportKey,
+    params?: BDLQueryParams
+  ): Promise<BDLPaginatedResponse<BDLStats>> {
     const url = this.buildUrl(sport, 'stats', params);
     const cacheKey = `bdl:${sport}:stats:${JSON.stringify(params || {})}`;
 
@@ -490,12 +509,19 @@ export class BalldontlieAdapter {
   /**
    * Get standings for a sport
    */
-  async getStandings(sport: BDLSportKey, season?: number): Promise<BDLPaginatedResponse<BDLStandings>> {
+  async getStandings(
+    sport: BDLSportKey,
+    season?: number
+  ): Promise<BDLPaginatedResponse<BDLStandings>> {
     const year = season || new Date().getFullYear();
     const url = this.buildUrl(sport, 'standings', { seasons: [year] });
     const cacheKey = `bdl:${sport}:standings:${year}`;
 
-    return this.fetchWithCache<BDLPaginatedResponse<BDLStandings>>(url, cacheKey, CACHE_TTLS.standings);
+    return this.fetchWithCache<BDLPaginatedResponse<BDLStandings>>(
+      url,
+      cacheKey,
+      CACHE_TTLS.standings
+    );
   }
 
   /**
@@ -507,9 +533,7 @@ export class BalldontlieAdapter {
     season?: number
   ): Promise<BDLStandings[]> {
     const standings = await this.getStandings(sport, season);
-    return standings.data.filter(
-      (s) => s.conference.toLowerCase() === conference.toLowerCase()
-    );
+    return standings.data.filter((s) => s.conference.toLowerCase() === conference.toLowerCase());
   }
 
   // ==========================================================================
@@ -519,7 +543,10 @@ export class BalldontlieAdapter {
   /**
    * Get injuries for a sport
    */
-  async getInjuries(sport: BDLSportKey, params?: BDLQueryParams): Promise<BDLPaginatedResponse<BDLInjury>> {
+  async getInjuries(
+    sport: BDLSportKey,
+    params?: BDLQueryParams
+  ): Promise<BDLPaginatedResponse<BDLInjury>> {
     const url = this.buildUrl(sport, 'injuries', params);
     const cacheKey = `bdl:${sport}:injuries:${JSON.stringify(params || {})}`;
 
@@ -529,7 +556,10 @@ export class BalldontlieAdapter {
   /**
    * Get injuries for a specific team
    */
-  async getTeamInjuries(sport: BDLSportKey, teamId: number): Promise<BDLPaginatedResponse<BDLInjury>> {
+  async getTeamInjuries(
+    sport: BDLSportKey,
+    teamId: number
+  ): Promise<BDLPaginatedResponse<BDLInjury>> {
     return this.getInjuries(sport, { team_ids: [teamId] });
   }
 
@@ -540,7 +570,10 @@ export class BalldontlieAdapter {
   /**
    * Get betting odds for games
    */
-  async getOdds(sport: BDLSportKey, params?: BDLQueryParams): Promise<BDLPaginatedResponse<BDLOdds>> {
+  async getOdds(
+    sport: BDLSportKey,
+    params?: BDLQueryParams
+  ): Promise<BDLPaginatedResponse<BDLOdds>> {
     const url = this.buildUrl(sport, 'odds', params);
     const cacheKey = `bdl:${sport}:odds:${JSON.stringify(params || {})}`;
 
@@ -579,8 +612,13 @@ export class BalldontlieAdapter {
     };
   }
 
-  private mapStatus(status: BDLGameStatus): 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED' {
-    const statusMap: Record<BDLGameStatus, 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED'> = {
+  private mapStatus(
+    status: BDLGameStatus
+  ): 'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED' {
+    const statusMap: Record<
+      BDLGameStatus,
+      'SCHEDULED' | 'LIVE' | 'FINAL' | 'POSTPONED' | 'CANCELLED'
+    > = {
       scheduled: 'SCHEDULED',
       in_progress: 'LIVE',
       final: 'FINAL',

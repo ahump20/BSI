@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Live scoreboards for college baseball and football—complete box scores ESPN refuses to provide.">
+  <title>Live Scoreboards | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-success: #22C55E;
+      --bsi-live: #EF4444;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: color 0.15s ease;
+    }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: color 0.15s ease;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+    
+    .hero {
+      padding: calc(80px + 4rem) 1.5rem 3rem;
+      background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+      text-align: center;
+    }
+    .hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bsi-live);
+      margin-bottom: 1rem;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--bsi-live);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle {
+      font-size: 1.0625rem;
+      color: rgba(250, 250, 250, 0.8);
+    }
+    
+    .date-nav {
+      padding: 1.5rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .date-nav-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .date-btn {
+      padding: 0.5rem 1rem;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.7);
+      background: transparent;
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .date-btn:hover, .date-btn.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.1);
+    }
+    .date-current {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0 1rem;
+    }
+    
+    .games-section {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .games-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .sport-group {
+      margin-bottom: 3rem;
+    }
+    .sport-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .sport-title {
+      font-family: var(--font-ui);
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+    }
+    .sport-count {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(250, 250, 250, 0.5);
+    }
+    
+    .games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .game-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1.5rem;
+      align-items: center;
+      transition: border-color 0.2s ease;
+      cursor: pointer;
+    }
+    .game-card:hover {
+      border-color: var(--bsi-burnt-orange);
+    }
+    .game-card.live {
+      border-color: var(--bsi-live);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--bsi-charcoal) 100%);
+    }
+    @media (max-width: 600px) {
+      .game-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1rem;
+      }
+    }
+    .team-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .team-info.away { justify-content: flex-end; }
+    @media (max-width: 600px) {
+      .team-info, .team-info.away { justify-content: center; }
+    }
+    .team-name {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 600;
+    }
+    .team-record {
+      font-size: 0.75rem;
+      color: rgba(250, 250, 250, 0.5);
+    }
+    .team-score {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      min-width: 2rem;
+    }
+    .game-status {
+      text-align: center;
+    }
+    .game-status-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--bsi-live);
+      background: rgba(239, 68, 68, 0.15);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+    .game-status-time {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: rgba(250, 250, 250, 0.6);
+    }
+    .game-status-final {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(250, 250, 250, 0.5);
+      text-transform: uppercase;
+    }
+    
+    .tools-nav {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-charcoal);
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .tools-nav-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .tools-nav-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 250, 0.5);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .tools-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .tools-nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: var(--bsi-midnight);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: all 0.2s ease;
+    }
+    .tools-nav-link:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-burnt-orange);
+    }
+    .tools-nav-link.current {
+      border-color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.1);
+      color: var(--bsi-burnt-orange);
+    }
+    
+    .footer {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      text-align: center;
+    }
+    .footer-tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 0.75rem;
+    }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/bsi-logo.png" alt="Blaze Sports Intel">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/teams" class="nav-link">Teams</a>
+        <a href="/analytics" class="nav-link active">Analytics</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow"><span class="live-dot"></span> Live Scoreboards</p>
+      <h1 class="hero-title">Real-Time Scores. <span class="accent">Complete Box Scores.</span></h1>
+      <p class="hero-subtitle">
+        The game data ESPN refuses to provide for college baseball—live scores, full box scores, 
+        and play-by-play for all 299 D1 programs.
+      </p>
+    </div>
+  </section>
+
+  <section class="date-nav">
+    <div class="date-nav-inner">
+      <button class="date-btn">Yesterday</button>
+      <span class="date-current">Tuesday, Nov 25</span>
+      <button class="date-btn active">Today</button>
+      <button class="date-btn">Tomorrow</button>
+    </div>
+  </section>
+
+  <section class="games-section">
+    <div class="games-container">
+      
+      <div class="sport-group">
+        <div class="sport-header">
+          <h2 class="sport-title">College Baseball</h2>
+          <span class="sport-count">12 games today</span>
+        </div>
+        <div class="games-list">
+          <a href="/games/texas-vs-lsu" class="game-card live">
+            <div class="team-info away">
+              <span class="team-score">7</span>
+              <div>
+                <p class="team-name">Texas</p>
+                <p class="team-record">42-15</p>
+              </div>
+            </div>
+            <div class="game-status">
+              <span class="game-status-live"><span class="live-dot"></span> B7</span>
+            </div>
+            <div class="team-info">
+              <div>
+                <p class="team-name">LSU</p>
+                <p class="team-record">45-12</p>
+              </div>
+              <span class="team-score">5</span>
+            </div>
+          </a>
+          
+          <a href="/games/vanderbilt-vs-arkansas" class="game-card live">
+            <div class="team-info away">
+              <span class="team-score">3</span>
+              <div>
+                <p class="team-name">Vanderbilt</p>
+                <p class="team-record">38-18</p>
+              </div>
+            </div>
+            <div class="game-status">
+              <span class="game-status-live"><span class="live-dot"></span> T5</span>
+            </div>
+            <div class="team-info">
+              <div>
+                <p class="team-name">Arkansas</p>
+                <p class="team-record">40-16</p>
+              </div>
+              <span class="team-score">4</span>
+            </div>
+          </a>
+          
+          <a href="/games/tcu-vs-oklahoma-state" class="game-card">
+            <div class="team-info away">
+              <span class="team-score">—</span>
+              <div>
+                <p class="team-name">TCU</p>
+                <p class="team-record">35-20</p>
+              </div>
+            </div>
+            <div class="game-status">
+              <span class="game-status-time">7:00 PM CT</span>
+            </div>
+            <div class="team-info">
+              <div>
+                <p class="team-name">Oklahoma State</p>
+                <p class="team-record">37-18</p>
+              </div>
+              <span class="team-score">—</span>
+            </div>
+          </a>
+          
+          <a href="/games/florida-vs-tennessee" class="game-card">
+            <div class="team-info away">
+              <span class="team-score">6</span>
+              <div>
+                <p class="team-name">Florida</p>
+                <p class="team-record">39-17</p>
+              </div>
+            </div>
+            <div class="game-status">
+              <span class="game-status-final">Final</span>
+            </div>
+            <div class="team-info">
+              <div>
+                <p class="team-name">Tennessee</p>
+                <p class="team-record">43-14</p>
+              </div>
+              <span class="team-score">8</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="sport-group">
+        <div class="sport-header">
+          <h2 class="sport-title">College Football</h2>
+          <span class="sport-count">8 games today</span>
+        </div>
+        <div class="games-list">
+          <a href="/games/memphis-vs-tulane" class="game-card">
+            <div class="team-info away">
+              <span class="team-score">—</span>
+              <div>
+                <p class="team-name">Memphis</p>
+                <p class="team-record">8-3</p>
+              </div>
+            </div>
+            <div class="game-status">
+              <span class="game-status-time">7:30 PM CT</span>
+            </div>
+            <div class="team-info">
+              <div>
+                <p class="team-name">Tulane</p>
+                <p class="team-record">9-2</p>
+              </div>
+              <span class="team-score">—</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="tools-nav">
+    <div class="tools-nav-inner">
+      <p class="tools-nav-title">Analytics Tools</p>
+      <div class="tools-nav-grid">
+        <a href="/teams" class="tools-nav-link">Teams</a>
+        <a href="/live-scoreboards" class="tools-nav-link current">Live Scoreboards</a>
+        <a href="/predictive-models" class="tools-nav-link">Predictive Models</a>
+        <a href="/historical-research" class="tools-nav-link">Historical Research</a>
+        <a href="/recruiting-intel" class="tools-nav-link">Recruiting Intel</a>
+        <a href="/push-alerts" class="tools-nav-link">Push Alerts</a>
+        <a href="/3d-visualizations" class="tools-nav-link">3D Visualizations</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+
+  <script>
+    /**
+     * BSI Live Scoreboards - Real-time sports data integration
+     * Connects to BSI Live Sports Worker for multi-sport coverage
+     */
+    
+    const API_BASE = 'https://blazesportsintel.com/api';
+    const REFRESH_INTERVAL = 30000; // 30 seconds for live games
+    
+    // Sport configurations
+    const SPORTS = {
+      'college-baseball': { 
+        name: 'College Baseball', 
+        priority: 1,
+        seasons: { start: 2, end: 6 } // Feb-June
+      },
+      'college-football': { 
+        name: 'College Football', 
+        priority: 2,
+        seasons: { start: 8, end: 1 } // Aug-Jan
+      },
+      'mlb': { 
+        name: 'MLB', 
+        priority: 3,
+        seasons: { start: 3, end: 10 } // Mar-Oct
+      },
+      'nfl': { 
+        name: 'NFL', 
+        priority: 4,
+        seasons: { start: 9, end: 2 } // Sep-Feb
+      }
+    };
+    
+    // State
+    let currentDate = new Date();
+    let gamesData = {};
+    let refreshTimer = null;
+    let activeGames = false;
+    
+    // DOM Elements
+    const gamesContainer = document.querySelector('.games-container');
+    const dateDisplay = document.querySelector('.date-current');
+    const dateBtns = document.querySelectorAll('.date-btn');
+    
+    /**
+     * Format date for display
+     */
+    function formatDate(date) {
+      const options = { weekday: 'long', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
+    
+    /**
+     * Format date for API (YYYYMMDD)
+     */
+    function formatDateAPI(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}${month}${day}`;
+    }
+    
+    /**
+     * Format time for display
+     */
+    function formatTime(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        timeZoneName: 'short'
+      });
+    }
+    
+    /**
+     * Get sports to display based on current season
+     */
+    function getActiveSports() {
+      const month = currentDate.getMonth() + 1;
+      const active = [];
+      
+      for (const [key, sport] of Object.entries(SPORTS)) {
+        const { start, end } = sport.seasons;
+        const inSeason = start <= end 
+          ? (month >= start && month <= end)
+          : (month >= start || month <= end);
+        
+        if (inSeason) {
+          active.push({ key, ...sport });
+        }
+      }
+      
+      // Sort by priority
+      return active.sort((a, b) => a.priority - b.priority);
+    }
+    
+    /**
+     * Fetch scores from API
+     */
+    async function fetchScores(sport, date) {
+      try {
+        const response = await fetch(
+          `${API_BASE}/scores/${sport}?date=${formatDateAPI(date)}`,
+          { headers: { 'Accept': 'application/json' } }
+        );
+        
+        if (!response.ok) throw new Error('API error');
+        
+        return await response.json();
+      } catch (error) {
+        console.error(`Error fetching ${sport} scores:`, error);
+        return null;
+      }
+    }
+    
+    /**
+     * Fetch all sports scores
+     */
+    async function fetchAllScores() {
+      const sports = getActiveSports();
+      const promises = sports.map(sport => fetchScores(sport.key, currentDate));
+      const results = await Promise.all(promises);
+      
+      sports.forEach((sport, idx) => {
+        if (results[idx]) {
+          gamesData[sport.key] = results[idx];
+        }
+      });
+      
+      return gamesData;
+    }
+    
+    /**
+     * Render game card
+     */
+    function renderGameCard(game) {
+      const isLive = game.status === 'live';
+      const isFinal = game.status === 'final';
+      const awayScore = isFinal || isLive ? game.awayTeam.score : '—';
+      const homeScore = isFinal || isLive ? game.homeTeam.score : '—';
+      
+      let statusHTML = '';
+      if (isLive) {
+        statusHTML = `<span class="game-status-live"><span class="live-dot"></span> ${game.statusDetail}</span>`;
+      } else if (isFinal) {
+        statusHTML = `<span class="game-status-final">Final</span>`;
+      } else {
+        statusHTML = `<span class="game-status-time">${formatTime(game.date)}</span>`;
+      }
+      
+      const slug = `${game.awayTeam.name.toLowerCase().replace(/\s+/g, '-')}-vs-${game.homeTeam.name.toLowerCase().replace(/\s+/g, '-')}`;
+      
+      return `
+        <a href="/games/${slug}?id=${game.id}" class="game-card ${isLive ? 'live' : ''}" data-game-id="${game.id}">
+          <div class="team-info away">
+            <span class="team-score">${awayScore}</span>
+            <div>
+              <p class="team-name">${game.awayTeam.rank ? `#${game.awayTeam.rank} ` : ''}${game.awayTeam.name}</p>
+              <p class="team-record">${game.awayTeam.record || ''}</p>
+            </div>
+          </div>
+          <div class="game-status">
+            ${statusHTML}
+          </div>
+          <div class="team-info">
+            <div>
+              <p class="team-name">${game.homeTeam.rank ? `#${game.homeTeam.rank} ` : ''}${game.homeTeam.name}</p>
+              <p class="team-record">${game.homeTeam.record || ''}</p>
+            </div>
+            <span class="team-score">${homeScore}</span>
+          </div>
+        </a>
+      `;
+    }
+    
+    /**
+     * Render sport section
+     */
+    function renderSportSection(sport, data) {
+      if (!data || !data.games || data.games.length === 0) {
+        return '';
+      }
+      
+      const liveCount = data.games.filter(g => g.status === 'live').length;
+      const sportName = SPORTS[sport]?.name || sport;
+      
+      return `
+        <div class="sport-group" data-sport="${sport}">
+          <div class="sport-header">
+            <h2 class="sport-title">${sportName}</h2>
+            <span class="sport-count">
+              ${data.count} game${data.count !== 1 ? 's' : ''} today
+              ${liveCount > 0 ? ` • ${liveCount} live` : ''}
+            </span>
+          </div>
+          <div class="games-list">
+            ${data.games.map(game => renderGameCard(game)).join('')}
+          </div>
+        </div>
+      `;
+    }
+    
+    /**
+     * Render all games
+     */
+    function renderGames() {
+      const sports = getActiveSports();
+      let html = '';
+      
+      // Check if any games are live
+      activeGames = false;
+      
+      for (const sport of sports) {
+        const data = gamesData[sport.key];
+        if (data && data.games) {
+          html += renderSportSection(sport.key, data);
+          
+          // Check for live games
+          if (data.games.some(g => g.status === 'live')) {
+            activeGames = true;
+          }
+        }
+      }
+      
+      if (!html) {
+        html = `
+          <div class="empty-state" style="text-align: center; padding: 3rem; color: rgba(250, 250, 250, 0.6);">
+            <p style="font-family: var(--font-ui); font-size: 1.125rem; margin-bottom: 0.5rem;">No games scheduled for this date.</p>
+            <p style="font-family: var(--font-mono); font-size: 0.875rem;">Check tomorrow or browse historical data.</p>
+          </div>
+        `;
+      }
+      
+      gamesContainer.innerHTML = html;
+      
+      // Update refresh timer based on live games
+      updateRefreshTimer();
+    }
+    
+    /**
+     * Update refresh timer
+     */
+    function updateRefreshTimer() {
+      if (refreshTimer) {
+        clearInterval(refreshTimer);
+        refreshTimer = null;
+      }
+      
+      if (activeGames) {
+        refreshTimer = setInterval(async () => {
+          await fetchAllScores();
+          renderGames();
+        }, REFRESH_INTERVAL);
+      }
+    }
+    
+    /**
+     * Change date
+     */
+    async function changeDate(offset) {
+      const newDate = new Date(currentDate);
+      newDate.setDate(newDate.getDate() + offset);
+      currentDate = newDate;
+      
+      // Update UI
+      dateDisplay.textContent = formatDate(currentDate);
+      updateDateButtons();
+      
+      // Show loading
+      gamesContainer.innerHTML = `
+        <div style="display: flex; justify-content: center; padding: 3rem;">
+          <div class="loading-spinner" style="width: 40px; height: 40px; border: 3px solid rgba(191, 87, 0, 0.2); border-top-color: var(--bsi-burnt-orange); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+      `;
+      
+      // Fetch new data
+      await fetchAllScores();
+      renderGames();
+    }
+    
+    /**
+     * Update date button states
+     */
+    function updateDateButtons() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const current = new Date(currentDate);
+      current.setHours(0, 0, 0, 0);
+      
+      dateBtns.forEach(btn => {
+        btn.classList.remove('active');
+        const text = btn.textContent.trim().toLowerCase();
+        
+        if (text === 'today' && current.getTime() === today.getTime()) {
+          btn.classList.add('active');
+        } else if (text === 'yesterday') {
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          if (current.getTime() === yesterday.getTime()) {
+            btn.classList.add('active');
+          }
+        } else if (text === 'tomorrow') {
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          if (current.getTime() === tomorrow.getTime()) {
+            btn.classList.add('active');
+          }
+        }
+      });
+    }
+    
+    /**
+     * Initialize
+     */
+    async function init() {
+      // Set up date navigation
+      dateBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.textContent.trim().toLowerCase();
+          const today = new Date();
+          
+          if (text === 'yesterday') {
+            currentDate = new Date(today);
+            currentDate.setDate(currentDate.getDate() - 1);
+          } else if (text === 'today') {
+            currentDate = new Date(today);
+          } else if (text === 'tomorrow') {
+            currentDate = new Date(today);
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+          
+          changeDate(0);
+        });
+      });
+      
+      // Initial render
+      dateDisplay.textContent = formatDate(currentDate);
+      
+      // Try to fetch from API, fall back to sample data
+      try {
+        await fetchAllScores();
+        
+        // If no data from API, use sample data
+        if (Object.keys(gamesData).length === 0) {
+          useSampleData();
+        }
+      } catch (error) {
+        console.error('API unavailable, using sample data:', error);
+        useSampleData();
+      }
+      
+      renderGames();
+    }
+    
+    /**
+     * Use sample data when API is unavailable
+     */
+    function useSampleData() {
+      // Sample college baseball data
+      gamesData['college-baseball'] = {
+        sport: 'college-baseball',
+        count: 4,
+        games: [
+          {
+            id: 'game-1',
+            status: 'live',
+            statusDetail: 'B7',
+            date: new Date().toISOString(),
+            awayTeam: { name: 'Texas', record: '42-15', score: 7, abbreviation: 'TEX' },
+            homeTeam: { name: 'LSU', record: '45-12', score: 5, abbreviation: 'LSU' }
+          },
+          {
+            id: 'game-2',
+            status: 'live',
+            statusDetail: 'T5',
+            date: new Date().toISOString(),
+            awayTeam: { name: 'Vanderbilt', record: '38-18', score: 3, abbreviation: 'VAN' },
+            homeTeam: { name: 'Arkansas', record: '40-16', score: 4, abbreviation: 'ARK' }
+          },
+          {
+            id: 'game-3',
+            status: 'scheduled',
+            statusDetail: '',
+            date: new Date(Date.now() + 3600000 * 5).toISOString(),
+            awayTeam: { name: 'TCU', record: '35-20', score: 0, abbreviation: 'TCU' },
+            homeTeam: { name: 'Oklahoma State', record: '37-18', score: 0, abbreviation: 'OKST' }
+          },
+          {
+            id: 'game-4',
+            status: 'final',
+            statusDetail: 'Final',
+            date: new Date(Date.now() - 3600000 * 3).toISOString(),
+            awayTeam: { name: 'Florida', record: '39-17', score: 6, abbreviation: 'FLA' },
+            homeTeam: { name: 'Tennessee', record: '43-14', score: 8, abbreviation: 'TENN' }
+          }
+        ]
+      };
+      
+      // Sample college football data
+      gamesData['college-football'] = {
+        sport: 'college-football',
+        count: 2,
+        games: [
+          {
+            id: 'game-5',
+            status: 'scheduled',
+            statusDetail: '',
+            date: new Date(Date.now() + 3600000 * 7).toISOString(),
+            awayTeam: { name: 'Memphis', record: '8-3', score: 0, abbreviation: 'MEM' },
+            homeTeam: { name: 'Tulane', record: '9-2', score: 0, abbreviation: 'TUL' }
+          },
+          {
+            id: 'game-6',
+            status: 'scheduled',
+            statusDetail: '',
+            date: new Date(Date.now() + 3600000 * 8).toISOString(),
+            awayTeam: { name: 'Navy', record: '7-3', score: 0, rank: 24, abbreviation: 'NAVY' },
+            homeTeam: { name: 'East Carolina', record: '6-5', score: 0, abbreviation: 'ECU' }
+          }
+        ]
+      };
+    }
+    
+    // Add spin animation
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
+    document.head.appendChild(styleSheet);
+    
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

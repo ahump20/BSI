@@ -249,11 +249,7 @@ export class StatcastEnhancedAdapter {
   // CORE FETCH UTILITIES
   // ==========================================================================
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try KV cache first
     if (this.kv) {
       try {
@@ -330,9 +326,12 @@ export class StatcastEnhancedAdapter {
     if (params.game_date_gt) searchParams.set('game_date_gt', params.game_date_gt);
     if (params.game_date_lt) searchParams.set('game_date_lt', params.game_date_lt);
     if (params.pitch_type) searchParams.set('pitch_type', params.pitch_type);
-    if (params.min_exit_velocity) searchParams.set('min_launch_speed', params.min_exit_velocity.toString());
-    if (params.min_launch_angle) searchParams.set('min_launch_angle', params.min_launch_angle.toString());
-    if (params.max_launch_angle) searchParams.set('max_launch_angle', params.max_launch_angle.toString());
+    if (params.min_exit_velocity)
+      searchParams.set('min_launch_speed', params.min_exit_velocity.toString());
+    if (params.min_launch_angle)
+      searchParams.set('min_launch_angle', params.min_launch_angle.toString());
+    if (params.max_launch_angle)
+      searchParams.set('max_launch_angle', params.max_launch_angle.toString());
     if (params.sort_col) searchParams.set('sort_col', params.sort_col);
     if (params.sort_order) searchParams.set('sort_order', params.sort_order);
 
@@ -599,14 +598,35 @@ export class StatcastEnhancedAdapter {
 
   private isNumericField(field: string): boolean {
     const numericFields = [
-      'release_speed', 'release_spin_rate', 'spin_axis',
-      'release_pos_x', 'release_pos_z', 'release_extension',
-      'pfx_x', 'pfx_z', 'plate_x', 'plate_z', 'zone',
-      'balls', 'strikes', 'outs_when_up', 'inning',
-      'launch_speed', 'launch_angle', 'hit_distance_sc',
-      'hc_x', 'hc_y', 'estimated_ba_using_speedangle',
-      'estimated_woba_using_speedangle', 'home_score', 'away_score',
-      'pitcher', 'batter', 'game_pk', 'at_bat_number', 'pitch_number',
+      'release_speed',
+      'release_spin_rate',
+      'spin_axis',
+      'release_pos_x',
+      'release_pos_z',
+      'release_extension',
+      'pfx_x',
+      'pfx_z',
+      'plate_x',
+      'plate_z',
+      'zone',
+      'balls',
+      'strikes',
+      'outs_when_up',
+      'inning',
+      'launch_speed',
+      'launch_angle',
+      'hit_distance_sc',
+      'hc_x',
+      'hc_y',
+      'estimated_ba_using_speedangle',
+      'estimated_woba_using_speedangle',
+      'home_score',
+      'away_score',
+      'pitcher',
+      'batter',
+      'game_pk',
+      'at_bat_number',
+      'pitch_number',
     ];
     return numericFields.includes(field);
   }
@@ -640,9 +660,7 @@ export class StatcastEnhancedAdapter {
     );
 
     // Find primary pitch
-    const primaryPitch = pitchTypeStats.reduce((max, p) =>
-      p.usage_pct > max.usage_pct ? p : max
-    );
+    const primaryPitch = pitchTypeStats.reduce((max, p) => (p.usage_pct > max.usage_pct ? p : max));
 
     const fastballs = pitches.filter((p) => ['FF', 'SI', 'FC'].includes(p.pitch_type));
 
@@ -657,9 +675,7 @@ export class StatcastEnhancedAdapter {
       avg_fastball_velo: this.average(fastballs.map((p) => p.release_speed)),
       max_fastball_velo: Math.max(...fastballs.map((p) => p.release_speed)),
       avg_spin_rate: this.average(pitches.map((p) => p.release_spin_rate)),
-      spin_rate_by_pitch: Object.fromEntries(
-        pitchTypeStats.map((p) => [p.pitch_type, p.avg_spin])
-      ),
+      spin_rate_by_pitch: Object.fromEntries(pitchTypeStats.map((p) => [p.pitch_type, p.avg_spin])),
       k_rate: 0,
       bb_rate: 0,
       avg_exit_velo_against: this.average(
