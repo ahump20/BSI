@@ -78,8 +78,11 @@ async function fetchRealMLBData() {
     const teamResponse = await fetch(`${baseUrl}/teams/${teamId}`);
     const teamData = await teamResponse.json();
 
-    // Fetch real standings
-    const standingsResponse = await fetch(`${baseUrl}/standings?leagueId=104&season=2024`);
+    // Fetch real standings - use current year dynamically
+    const currentYear = new Date().getFullYear();
+    const standingsResponse = await fetch(
+      `${baseUrl}/standings?leagueId=104&season=${currentYear}`
+    );
     const standingsData = await standingsResponse.json();
 
     // Fetch real roster
@@ -89,12 +92,12 @@ async function fetchRealMLBData() {
     // Calculate REAL Pythagorean expectation (not hardcoded!)
     // Need separate calls for hitting and pitching stats
     const hittingResponse = await fetch(
-      `${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=2024`
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=${currentYear}`
     );
     const hittingData = await hittingResponse.json();
 
     const pitchingResponse = await fetch(
-      `${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=2024`
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=${currentYear}`
     );
     const pitchingData = await pitchingResponse.json();
 

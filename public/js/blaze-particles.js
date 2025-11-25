@@ -5,7 +5,7 @@
  *
  * Advanced 150K+ Particle Ambient System
  * Version: 1.0.0
- * Last Updated: 2025-10-16
+ * Last Updated: 2025-11-25
  *
  * Features:
  * - 150,000 particles with GPU instancing

@@ -58,13 +58,15 @@ async function fetchRealMLB(teamId) {
     const rosterData = await rosterResponse.json();
 
     // Fetch hitting and pitching stats for Pythagorean calculation
+    // Use current year dynamically - MLB season runs April-October
+    const currentYear = new Date().getFullYear();
     const hittingResponse = await fetch(
-      `${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=2024`
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=${currentYear}`
     );
     const hittingData = await hittingResponse.json();
 
     const pitchingResponse = await fetch(
-      `${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=2024`
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=${currentYear}`
     );
     const pitchingData = await pitchingResponse.json();
 

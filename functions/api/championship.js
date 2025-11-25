@@ -37,7 +37,7 @@ export async function onRequestGet({ request, env, ctx }) {
           runsAllowed: 698,
           homeRecord: '44-37',
           awayRecord: '39-42',
-          lastUpdate: '2024 Season Final',
+          lastUpdate: '2025 Season Current',
           keyPlayers: {
             batting: ['Paul Goldschmidt', 'Nolan Arenado', 'Willson Contreras'],
             pitching: ['Sonny Gray', 'Jordan Montgomery', 'Ryan Helsley'],
@@ -101,9 +101,9 @@ export async function onRequestGet({ request, env, ctx }) {
           sport: 'NCAA Athletics',
           team: 'Texas Longhorns',
           conference: 'SEC',
-          footballRecord: '13-2 (2024)',
-          ranking: '#3 CFP Final',
-          baseballRecord: '37-23 (2024)',
+          footballRecord: '2025 Season In Progress',
+          ranking: 'Check Live Standings',
+          baseballRecord: '2025 Season Starts February',
           basketballRecord: '21-13 (2023-24)',
           trackField: {
             menIndoor: '#2 National',
@@ -113,7 +113,7 @@ export async function onRequestGet({ request, env, ctx }) {
           },
           championships: {
             football: 'Big 12 Champions 2023',
-            baseball: 'CWS Appearance 2024',
+            baseball: 'CWS Appearance 2024 (Historical)',
             trackField: '13 NCAA Championships',
           },
           analytics: {

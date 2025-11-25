@@ -1,15 +1,22 @@
 name = "college-baseball-tracker"
 pages_build_output_dir = "dist"
-compatibility_date = "2025-01-01"
+compatibility_date = "2025-03-07"
+compatibility_flags = ["nodejs_compat"]
+
+# ============================================
+# Resource Bindings
+# ============================================
 
 # KV namespace for unified caching
 # Use key prefixes to separate concerns:
 #   - cache:* for general caching
+#   - cache:nil:* for NIL API caching
 #   - query:* for query results
 #   - rate_limit:* for rate limiting
 #   - vitals:* for Web Vitals storage
 kv_namespaces = [
-  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" }
+  { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" },
+  { binding = "NIL_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26", preview_id = "a53c3726fc3044be82e79d2d1e371d26" }
 ]
 
 # Environment variables
@@ -22,14 +29,14 @@ binding = "DB"
 database_name = "blazesports-historical"
 database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
 
-# Durable Object binding (references Worker deployment)
-[[durable_objects.bindings]]
-name = "GAME_MONITOR"
-class_name = "GameMonitorDO"
-script_name = "blazesports-game-monitor"
+# D1 database for NIL valuations (uses same DB with nil_ prefixed tables)
+[[d1_databases]]
+binding = "NIL_DB"
+database_name = "blazesports-historical"
+database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
 
-# Note: Durable Objects are deployed separately as a Worker
-# See wrangler.worker.toml for Durable Object configuration
+# Note: Durable Objects deployed separately as a Worker
+# See wrangler.worker.toml for GAME_MONITOR configuration
 
 # ============================================
 # Stripe Payment Integration (REQUIRED for payments)
@@ -52,3 +59,31 @@ script_name = "blazesports-game-monitor"
 # Stripe Products (Test Mode):
 # - Pro: $29/month (prod_TU8BMcfS4eKWPR)
 # - Enterprise: $199/month (prod_TU8CTVQzZyiZFs)
+
+# ============================================
+# AI Services Configuration
+# ============================================
+
+# Workers AI - enables AI inference at the edge
+[ai]
+binding = "AI"
+
+# Vectorize - semantic search for sports data
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "sports-scouting-index"
+
+# R2 bucket for sports data storage (used by AI Search)
+[[r2_buckets]]
+binding = "SPORTS_DATA"
+bucket_name = "blaze-sports-data-lake"
+
+# R2 bucket for NIL historical data archives
+[[r2_buckets]]
+binding = "NIL_ARCHIVE"
+bucket_name = "blaze-nil-archive"
+
+# Analytics Engine for time-series sports metrics
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+dataset = "bsi_sports_metrics"

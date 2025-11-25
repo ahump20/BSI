@@ -20,9 +20,11 @@ export async function onRequest({ request, env }) {
     const baseUrl = 'https://statsapi.mlb.com/api/v1';
 
     // Fetch both AL and NL standings
+    // Use current year for standings - MLB season runs April-October
+    const currentYear = new Date().getFullYear();
     const [alResponse, nlResponse] = await Promise.all([
-      fetch(`${baseUrl}/standings?leagueId=103&season=2024`), // American League
-      fetch(`${baseUrl}/standings?leagueId=104&season=2024`), // National League
+      fetch(`${baseUrl}/standings?leagueId=103&season=${currentYear}`), // American League
+      fetch(`${baseUrl}/standings?leagueId=104&season=${currentYear}`), // National League
     ]);
 
     const alData = await alResponse.json();

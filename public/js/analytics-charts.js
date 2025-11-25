@@ -24,7 +24,7 @@
  * - WebGL2: Chrome 56+, Firefox 51+, Safari 15+
  * - Canvas 2D: Universal fallback
  *
- * Last Updated: 2025-11-02
+ * Last Updated: 2025-11-25
  * ========================================================================
  */
 

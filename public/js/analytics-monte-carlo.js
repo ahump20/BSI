@@ -23,10 +23,10 @@
  *
  * Data Sources:
  * - NFL: Real Week 5 2025 standings (live API)
- * - MLB: 2024 final standings (fallback)
+ * - MLB: 2024 final standings (historical fallback - 2025 season not yet started)
  * - Monte Carlo: 10,000 iterations per team projection
  *
- * Last Updated: 2025-11-02
+ * Last Updated: 2025-11-25
  * ========================================================================
  */
 
@@ -525,8 +525,9 @@ export const MonteCarloView = () => {
     // ========== LEAGUE DATA ==========
 
     /**
-     * Real NFL Week 5 2025 standings + MLB 2024 final standings
+     * Real NFL 2025 season standings + MLB 2024 final standings (historical)
      * Used as fallback when API unavailable
+     * Note: MLB 2025 season starts April 2025 - using 2024 final as baseline
      */
     const leagueData = {
         'NFL': [
