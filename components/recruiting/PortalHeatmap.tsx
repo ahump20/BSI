@@ -70,7 +70,7 @@ export function PortalHeatmap() {
   const [vizType, setVizType] = useState<VisualizationType>('force');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedConference, setSelectedConference] = useState<string | null>(null);
+  const [_selectedConference, setSelectedConference] = useState<string | null>(null);
 
   // Dimensions
   const width = 1200;

@@ -24,8 +24,6 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -129,7 +127,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
   const [data, setData] = useState<SimulationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [iterations, setIterations] = useState(10000);
-  const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
+  const [_selectedScenario, setSelectedScenario] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'scenarios' | 'recommendations'>(
     'overview'
   );
@@ -219,7 +217,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
   }
 
   // Prepare chart data for remaining games
-  const gamesData = simulation.remainingGameProbabilities.map((game, index) => ({
+  const gamesData = simulation.remainingGameProbabilities.map((game, _index) => ({
     name: game.opponent.length > 15 ? game.opponent.substring(0, 12) + '...' : game.opponent,
     winProb: game.winProbability * 100,
     lossProb: (1 - game.winProbability) * 100,

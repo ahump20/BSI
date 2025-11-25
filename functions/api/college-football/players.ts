@@ -140,101 +140,108 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     const allPlayers: any[] = [];
 
-    // Fetch rosters in parallel (batched to avoid rate limits)
-    const batchSize = 10;
-    for (let i = 0; i < teamsToFetch.length; i += batchSize) {
-      const batch = teamsToFetch.slice(i, i + batchSize);
+    // Fetch ALL rosters in parallel for maximum speed
+    const fetchTimeout = 8000; // 8 seconds per request max
 
-      const responses = await Promise.allSettled(
-        batch.map(async (team) => {
-          const rosterUrl = `${ESPN_BASE}/teams/${team.espnId}/roster`;
-          const response = await fetch(rosterUrl, {
-            headers: {
-              'User-Agent': 'BlazeSportsIntel/1.0',
-              Accept: 'application/json',
-            },
-          });
+    const fetchWithTimeout = async (team: CollegeFootballTeam) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
 
-          if (!response.ok) {
-            console.error(`Failed to fetch roster for ${team.name}: ${response.status}`);
-            return { team, athletes: [] };
-          }
+      try {
+        const rosterUrl = `${ESPN_BASE}/teams/${team.espnId}/roster`;
+        const response = await fetch(rosterUrl, {
+          headers: {
+            'User-Agent': 'BlazeSportsIntel/1.0',
+            Accept: 'application/json',
+          },
+          signal: controller.signal,
+        });
 
-          const data = await response.json();
-          // College football rosters are nested in position groups
-          const athletes: any[] = [];
-          if (data.athletes) {
-            for (const group of data.athletes) {
-              if (group.items) {
-                athletes.push(...group.items);
-              }
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          return { team, athletes: [] };
+        }
+
+        const data = await response.json();
+        // College football rosters are nested in position groups
+        const athletes: any[] = [];
+        if (data.athletes) {
+          for (const group of data.athletes) {
+            if (group.items) {
+              athletes.push(...group.items);
             }
           }
-          return { team, athletes };
-        })
-      );
-
-      for (const result of responses) {
-        if (result.status === 'rejected') continue;
-
-        const { team, athletes } = result.value;
-
-        for (const player of athletes) {
-          // Skip players with no first name (incomplete/historical records)
-          if (!player.firstName || player.firstName === '') {
-            continue;
-          }
-
-          const position =
-            player.position?.abbreviation || player.position?.displayName || 'Unknown';
-
-          // Apply position filter
-          if (positionFilter && position.toUpperCase() !== positionFilter) {
-            continue;
-          }
-
-          const headshotUrl =
-            player.headshot?.href ||
-            `https://a.espncdn.com/combiner/i?img=/i/headshots/college-football/players/full/${player.id}.png&w=350&h=254`;
-
-          allPlayers.push({
-            id: player.id,
-            espn_id: player.id,
-            name: player.displayName || `${player.firstName} ${player.lastName}`,
-            first_name: player.firstName,
-            last_name: player.lastName,
-            team: team.name,
-            team_slug: team.slug,
-            conference: team.conference,
-            position,
-            jersey: player.jersey,
-            year: player.experience?.displayValue || null,
-            height: player.height || null,
-            weight: player.weight || null,
-            hometown: player.birthPlace?.city
-              ? `${player.birthPlace.city}, ${player.birthPlace.state}`
-              : null,
-            headshot_url: headshotUrl,
-            stats: {
-              passing: {
-                yards: player.statistics?.passing?.passingYards || 0,
-                touchdowns: player.statistics?.passing?.passingTouchdowns || 0,
-                interceptions: player.statistics?.passing?.interceptions || 0,
-                qbRating: player.statistics?.passing?.qbRating || 0,
-              },
-              rushing: {
-                yards: player.statistics?.rushing?.rushingYards || 0,
-                touchdowns: player.statistics?.rushing?.rushingTouchdowns || 0,
-                yardsPerCarry: player.statistics?.rushing?.yardsPerCarry || 0,
-              },
-              receiving: {
-                yards: player.statistics?.receiving?.receivingYards || 0,
-                touchdowns: player.statistics?.receiving?.receivingTouchdowns || 0,
-                receptions: player.statistics?.receiving?.receptions || 0,
-              },
-            },
-          });
         }
+        return { team, athletes };
+      } catch (e) {
+        clearTimeout(timeoutId);
+        return { team, athletes: [] };
+      }
+    };
+
+    // Fetch ALL teams in parallel
+    const responses = await Promise.allSettled(teamsToFetch.map(fetchWithTimeout));
+
+    for (const result of responses) {
+      if (result.status === 'rejected') continue;
+
+      const { team, athletes } = result.value;
+
+      for (const player of athletes) {
+        // Skip players with no first name (incomplete/historical records)
+        if (!player.firstName || player.firstName === '') {
+          continue;
+        }
+
+        const position = player.position?.abbreviation || player.position?.displayName || 'Unknown';
+
+        // Apply position filter
+        if (positionFilter && position.toUpperCase() !== positionFilter) {
+          continue;
+        }
+
+        const headshotUrl =
+          player.headshot?.href ||
+          `https://a.espncdn.com/combiner/i?img=/i/headshots/college-football/players/full/${player.id}.png&w=350&h=254`;
+
+        allPlayers.push({
+          id: player.id,
+          espn_id: player.id,
+          name: player.displayName || `${player.firstName} ${player.lastName}`,
+          first_name: player.firstName,
+          last_name: player.lastName,
+          team: team.name,
+          team_slug: team.slug,
+          conference: team.conference,
+          position,
+          jersey: player.jersey,
+          year: player.experience?.displayValue || null,
+          height: player.height || null,
+          weight: player.weight || null,
+          hometown: player.birthPlace?.city
+            ? `${player.birthPlace.city}, ${player.birthPlace.state}`
+            : null,
+          headshot_url: headshotUrl,
+          stats: {
+            passing: {
+              yards: player.statistics?.passing?.passingYards || 0,
+              touchdowns: player.statistics?.passing?.passingTouchdowns || 0,
+              interceptions: player.statistics?.passing?.interceptions || 0,
+              qbRating: player.statistics?.passing?.qbRating || 0,
+            },
+            rushing: {
+              yards: player.statistics?.rushing?.rushingYards || 0,
+              touchdowns: player.statistics?.rushing?.rushingTouchdowns || 0,
+              yardsPerCarry: player.statistics?.rushing?.yardsPerCarry || 0,
+            },
+            receiving: {
+              yards: player.statistics?.receiving?.receivingYards || 0,
+              touchdowns: player.statistics?.receiving?.receivingTouchdowns || 0,
+              receptions: player.statistics?.receiving?.receptions || 0,
+            },
+          },
+        });
       }
     }
 

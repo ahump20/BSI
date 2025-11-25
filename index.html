@@ -3,1316 +3,539 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 Blaze Sports Intel | Championship Analytics Platform</title>
-    <meta name="description" content="Practice to Play. Blaze Data Wins the Day. Elite championship analytics platform delivering real-time data-driven intelligence for Baseball, Football, and Basketball. Professional scouting, performance metrics, and strategic insights from the Deep South Sports Authority powered by SportsDataIO.">
-    <meta name="keywords" content="sports analytics, championship intelligence, Deep South sports, Texas athletics, baseball analytics, football analytics, basketball analytics, MLB scouting, NFL strategy, NBA metrics, NCAA recruiting, Austin Humphrey, Blaze Sports Intel, Monte Carlo simulation, AI sports analysis, SportsDataIO">
-
-    <!-- Open Graph / Social Media -->
+    <title>Blaze Sports Intel — Born to Blaze the Path Less Beaten</title>
+    <meta name="description" content="Sports analytics for the games big media ignores. College baseball coverage ESPN won't give you. Born in Memphis, rooted in Texas soil. Courage. Grit. Leadership.">
+    <meta property="og:title" content="Blaze Sports Intel">
+    <meta property="og:description" content="Born in Memphis. Rooted in Texas soil. Covering the sports that deserve better.">
+    <meta property="og:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://blazesportsintel.com/">
-    <meta property="og:title" content="🔥 Blaze Sports Intel | Deep South Sports Authority">
-    <meta property="og:description" content="Practice to Play. Blaze Data Wins the Day. Championship intelligence platform delivering elite analytics for professional and collegiate sports organizations.">
-    <meta property="og:site_name" content="Blaze Sports Intel">
-
-    <!-- Twitter Card -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://blazesportsintel.com/">
-    <meta property="twitter:title" content="🔥 Blaze Sports Intel | Championship Intelligence">
-    <meta property="twitter:description" content="Practice to Play. Blaze Data Wins the Day. Elite sports intelligence platform delivering championship-caliber analytics.">
-    <meta property="twitter:creator" content="@BISportsIntel">
-
-    <!-- Theme -->
-    <meta name="theme-color" content="#D96200">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Blaze Sports">
-
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-192x192.png">
-
-    <!-- Canonical -->
-    <link rel="canonical" href="https://blazesportsintel.com/">
-
-    <!-- Preconnect -->
+    <meta property="og:url" content="https://blazesportsintel.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blaze Sports Intel">
+    <meta name="twitter:description" content="Born in Memphis. Rooted in Texas soil. The sports coverage ESPN won't give you.">
+    <meta name="twitter:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
+    <link rel="canonical" href="https://blazesportsintel.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Three.js for particle background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <!-- AOS Animations -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-
-    <!-- Championship Design System -->
-    <link rel="stylesheet" href="/css/blaze-design-system-enhanced.css">
-    <link rel="stylesheet" href="/css/blaze-components-enhanced.css">
-    <link rel="stylesheet" href="/css/blaze-brand-identity.css">
-    <link rel="stylesheet" href="/css/blaze-accessibility.css">
-    <link rel="stylesheet" href="/css/championship-common.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./images/bsi-logo-nav.png">
     <style>
-        /* ==================== INTEGRATION OVERRIDES ==================== */
-        /* This section bridges the existing design with the championship system */
-
-        /* Update brand color to championship intensified orange */
         :root {
-            --blaze-burnt-orange: #D96200;  /* Upgraded from #BF5700 */
-            --blaze-ember: #CC6600;
-            --blaze-copper: #D97B38;
-            --theme-color: #D96200;
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-warm-white: #FAFAFA;
+            --bsi-ember: #FF6B35;
+            --bsi-flame: #E85D04;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Serif 4', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+            --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+            --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+            --space-6: 1.5rem; --space-8: 2rem; --space-12: 3rem; --space-16: 4rem; --space-24: 6rem;
+            --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+            --duration-normal: 300ms; --duration-slow: 500ms;
         }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body { font-family: var(--font-body); background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: inherit; text-decoration: none; }
+        h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+        .text-gradient { background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .text-orange { color: var(--bsi-burnt-orange); }
+        .text-gold { color: var(--bsi-gold); }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+        section { padding: var(--space-16) 0; }
+        @media (min-width: 768px) { section { padding: var(--space-24) 0; } }
 
-        /* Three.js particle background compatibility */
-        #particle-field {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: var(--space-3) 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-display); font-weight: 700; font-size: 1.125rem; }
+        .logo-img { height: 48px; width: auto; filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3)); }
+        .logo-text { display: none; }
+        @media (min-width: 640px) { .logo-text { display: block; } .logo-img { height: 52px; } }
+        .nav-links { display: none; gap: var(--space-8); list-style: none; font-family: var(--font-ui); font-size: 0.9rem; font-weight: 500; }
+        .nav-links a { color: var(--bsi-cream); opacity: 0.7; transition: all var(--duration-normal) var(--ease-out); }
+        .nav-links a:hover { opacity: 1; color: var(--bsi-ember); }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn { display: flex; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: var(--space-2); }
+        .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: var(--bsi-cream); transition: all var(--duration-normal) var(--ease-out); }
+        .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+        .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        @media (min-width: 768px) { .mobile-menu-btn { display: none; } }
+        .mobile-menu { position: fixed; top: 68px; left: 0; right: 0; background: rgba(13, 13, 13, 0.98); backdrop-filter: blur(20px); padding: var(--space-8); transform: translateY(-100%); opacity: 0; transition: all var(--duration-normal) var(--ease-out); pointer-events: none; border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+        .mobile-menu.active { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        .mobile-menu ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-4); }
+        .mobile-menu a { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 500; color: var(--bsi-cream); display: block; padding: var(--space-3) 0; border-bottom: 1px solid rgba(250, 248, 245, 0.1); }
+        @media (min-width: 768px) { .mobile-menu { display: none; } }
 
-        /* Preserve existing navigation while enhancing */
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: linear-gradient(180deg, rgba(11, 14, 20, 0.95) 0%, rgba(11, 14, 20, 0.9) 100%);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: 0 8px 32px 0 rgba(217, 98, 0, 0.1);
-            border-bottom: 1px solid rgba(217, 98, 0, 0.15);
-            transition: all 0.3s ease;
-            padding: 0.75rem 0;
-        }
+        /* Hero */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; padding-top: 80px; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 20% 20%, rgba(191, 87, 0, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%); pointer-events: none; }
+        .hero-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-12); align-items: center; position: relative; z-index: 1; }
+        @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.2fr 1fr; } }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-tagline { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-4); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.2s forwards; }
+        .hero-title { font-size: clamp(2.25rem, 7vw, 4.5rem); font-weight: 700; line-height: 1.05; margin-bottom: var(--space-6); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.4s forwards; }
+        .hero-subtitle { font-size: clamp(1rem, 2.5vw, 1.375rem); font-family: var(--font-body); font-weight: 400; line-height: 1.6; color: rgba(250, 248, 245, 0.8); max-width: 540px; margin-bottom: var(--space-8); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.6s forwards; }
+        .hero-cta { display: flex; flex-wrap: wrap; gap: var(--space-4); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.8s forwards; }
+        .hero-visual { display: none; opacity: 0; animation: fadeIn 1s var(--ease-out) 0.6s forwards; }
+        @media (min-width: 1024px) { .hero-visual { display: block; } }
+        .hero-image-wrapper { position: relative; }
+        .hero-image-wrapper::before { content: ''; position: absolute; inset: -20px; background: linear-gradient(135deg, rgba(191, 87, 0, 0.3), rgba(139, 69, 19, 0.2)); border-radius: 20px; transform: rotate(3deg); z-index: -1; }
+        .hero-image { border-radius: 16px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4); }
+        .hero-badge { position: absolute; bottom: -20px; right: -20px; background: var(--bsi-charcoal); padding: var(--space-4) var(--space-6); border-radius: 12px; border: 1px solid rgba(191, 87, 0, 0.3); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
+        .hero-badge-text { font-family: var(--font-ui); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-1); }
+        .hero-badge-value { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--bsi-cream); }
 
-        .nav.scrolled {
-            background: rgba(11, 14, 20, 0.98);
-            backdrop-filter: blur(30px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-4) var(--space-6); font-family: var(--font-ui); font-size: 0.9rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all var(--duration-normal) var(--ease-out); border: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); color: white; box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4); }
+        .btn-secondary { background: transparent; color: var(--bsi-cream); border: 1px solid rgba(250, 248, 245, 0.3); }
+        .btn-secondary:hover { background: rgba(250, 248, 245, 0.1); border-color: rgba(250, 248, 245, 0.5); }
 
-        /* Navigation container - CRITICAL FALLBACK STYLES */
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-        }
+        /* Values Banner */
+        .values-banner { background: linear-gradient(90deg, var(--bsi-charcoal), var(--bsi-midnight)); padding: var(--space-8) 0; border-top: 1px solid rgba(191, 87, 0, 0.2); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+        .values-grid { display: flex; justify-content: center; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+        .value-item { display: flex; align-items: center; gap: var(--space-3); }
+        .value-icon { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(139, 69, 19, 0.2)); display: flex; align-items: center; justify-content: center; }
+        .value-icon svg { width: 20px; height: 20px; stroke: var(--bsi-burnt-orange); fill: none; stroke-width: 2; }
+        .value-text { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--bsi-gold); }
+        .value-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bsi-burnt-orange); }
 
-        /* Navigation menu - horizontal list */
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
+        /* Origin Section */
+        .origin { background: var(--bsi-cream); color: var(--bsi-charcoal); position: relative; overflow: hidden; }
+        .origin::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; }
+        .origin-header { text-align: center; margin-bottom: var(--space-12); position: relative; z-index: 1; }
+        .origin-header h2 { font-size: clamp(1.75rem, 5vw, 3rem); color: var(--bsi-charcoal); margin-bottom: var(--space-4); }
+        .origin-header p { font-size: 1.0625rem; color: rgba(26, 26, 26, 0.7); max-width: 600px; margin: 0 auto; }
+        .origin-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-12); position: relative; z-index: 1; }
+        @media (min-width: 768px) { .origin-grid { grid-template-columns: 1fr 1fr; gap: var(--space-16); align-items: start; } }
+        .origin-story { position: sticky; top: 100px; }
+        .origin-story h3 { font-size: 1.5rem; margin-bottom: var(--space-6); color: var(--bsi-texas-soil); }
+        .origin-story p { margin-bottom: var(--space-4); font-size: 1rem; line-height: 1.7; }
+        .doctor-quote { background: var(--bsi-charcoal); color: var(--bsi-cream); padding: var(--space-6); border-radius: 12px; margin: var(--space-6) 0; position: relative; overflow: hidden; }
+        .doctor-quote::before { content: '"'; position: absolute; top: -15px; left: 15px; font-family: var(--font-display); font-size: 6rem; color: var(--bsi-burnt-orange); opacity: 0.2; line-height: 1; }
+        .doctor-quote p { position: relative; z-index: 1; font-family: var(--font-display); font-size: 1.25rem; font-style: italic; line-height: 1.4; margin-bottom: var(--space-3); color: var(--bsi-cream); }
+        .doctor-quote cite { font-family: var(--font-ui); font-style: normal; font-size: 0.8rem; color: var(--bsi-burnt-orange); }
+        .origin-media { display: flex; flex-direction: column; gap: var(--space-6); }
+        .media-item { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15); }
+        .media-item img { width: 100%; height: auto; object-fit: cover; }
+        .media-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: var(--space-4); background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent); color: var(--bsi-cream); font-family: var(--font-ui); font-size: 0.8rem; line-height: 1.4; }
+        
+        /* Birth Certificate Section */
+        .birth-proof { background: var(--bsi-midnight); padding: var(--space-12) 0; }
+        .birth-proof-inner { display: grid; grid-template-columns: 1fr; gap: var(--space-8); align-items: center; }
+        @media (min-width: 768px) { .birth-proof-inner { grid-template-columns: 1fr 1.5fr; } }
+        .birth-proof-text h3 { font-size: 1.5rem; margin-bottom: var(--space-4); color: var(--bsi-cream); }
+        .birth-proof-text p { font-size: 1rem; color: rgba(250, 248, 245, 0.7); line-height: 1.6; margin-bottom: var(--space-4); }
+        .birth-proof-facts { display: flex; gap: var(--space-6); margin-top: var(--space-6); }
+        .birth-fact { text-align: center; }
+        .birth-fact-value { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--bsi-burnt-orange); }
+        .birth-fact-label { font-family: var(--font-ui); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(250, 248, 245, 0.5); margin-top: var(--space-1); }
+        .birth-proof-image { position: relative; }
+        .birth-proof-image img { border-radius: 8px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); border: 1px solid rgba(191, 87, 0, 0.2); }
+        .birth-proof-image::after { content: 'CERTIFIED COPY'; position: absolute; top: 20px; right: 20px; font-family: var(--font-ui); font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); background: rgba(13, 13, 13, 0.9); padding: var(--space-2) var(--space-3); border-radius: 4px; }
 
-        .nav-menu li {
-            list-style: none;
-        }
+        /* Philosophy */
+        .philosophy { background: var(--bsi-charcoal); position: relative; }
+        .philosophy::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 70%, rgba(139, 69, 19, 0.1) 0%, transparent 50%); pointer-events: none; }
+        .philosophy-content { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+        .philosophy-quote { font-family: var(--font-display); font-size: clamp(1.125rem, 2.5vw, 1.5rem); font-style: italic; line-height: 1.6; margin-bottom: var(--space-8); color: rgba(250, 248, 245, 0.9); }
+        .philosophy-quote cite { display: block; margin-top: var(--space-4); font-family: var(--font-ui); font-style: normal; font-size: 0.875rem; color: var(--bsi-burnt-orange); }
+        .philosophy-personal { font-size: 1.0625rem; line-height: 1.7; color: var(--bsi-cream); padding-top: var(--space-8); border-top: 1px solid rgba(191, 87, 0, 0.3); }
+        .philosophy-personal strong { color: var(--bsi-burnt-orange); }
 
-        .nav-link {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: color 0.2s ease;
-            white-space: nowrap;
-        }
+        /* Gallery */
+        .gallery { background: var(--bsi-midnight); padding: var(--space-16) 0; }
+        .gallery-header { text-align: center; margin-bottom: var(--space-12); }
+        .gallery-header h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: var(--space-4); }
+        .gallery-header p { font-size: 1rem; color: rgba(250, 248, 245, 0.6); max-width: 500px; margin: 0 auto; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+        @media (min-width: 640px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-6); } }
+        @media (min-width: 1024px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+        .gallery-item { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform var(--duration-normal) var(--ease-out); }
+        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--duration-slow) var(--ease-out); }
+        .gallery-item:hover img { transform: scale(1.1); }
+        .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 50%); opacity: 0; transition: opacity var(--duration-normal) var(--ease-out); }
+        .gallery-item:hover::after { opacity: 1; }
+        .gallery-item .caption { position: absolute; bottom: var(--space-3); left: var(--space-3); right: var(--space-3); font-family: var(--font-ui); font-size: 0.75rem; color: var(--bsi-cream); opacity: 0; transform: translateY(10px); transition: all var(--duration-normal) var(--ease-out); z-index: 1; line-height: 1.3; }
+        .gallery-item:hover .caption { opacity: 1; transform: translateY(0); }
+        .gallery-item.featured { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+        .gallery-item.featured .caption { font-size: 0.875rem; bottom: var(--space-4); left: var(--space-4); right: var(--space-4); }
 
-        .nav-link:hover {
-            color: #D96200;
-        }
+        /* Coverage */
+        .coverage { background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%); }
+        .coverage-header { text-align: center; margin-bottom: var(--space-12); }
+        .coverage-header h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: var(--space-4); }
+        .coverage-header p { font-size: 1rem; color: rgba(250, 248, 245, 0.7); max-width: 550px; margin: 0 auto; }
+        .coverage-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
+        @media (min-width: 640px) { .coverage-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .coverage-grid { grid-template-columns: repeat(4, 1fr); } }
+        .coverage-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(191, 87, 0, 0.1); border-radius: 16px; padding: var(--space-6); text-align: center; transition: all var(--duration-normal) var(--ease-out); }
+        .coverage-card:hover { background: rgba(191, 87, 0, 0.05); border-color: rgba(191, 87, 0, 0.3); transform: translateY(-4px); }
+        .coverage-card.primary { background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); border-color: var(--bsi-burnt-orange); }
+        .coverage-icon { width: 56px; height: 56px; margin: 0 auto var(--space-4); background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(139, 69, 19, 0.15)); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .coverage-icon svg { width: 28px; height: 28px; stroke: var(--bsi-ember); fill: none; stroke-width: 1.5; }
+        .coverage-card h3 { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-2); }
+        .coverage-card p { font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); line-height: 1.5; }
+        .coverage-card .badge { display: inline-block; margin-top: var(--space-4); padding: var(--space-1) var(--space-3); background: var(--bsi-burnt-orange); color: white; font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 100px; }
 
-        .nav-btn-primary {
-            background: linear-gradient(135deg, #D96200 0%, #BF5700 100%);
-            color: white;
-            padding: 0.5rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
+        /* About */
+        .about { background: var(--bsi-cream); color: var(--bsi-charcoal); }
+        .about-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-12); align-items: center; }
+        @media (min-width: 768px) { .about-grid { grid-template-columns: 1fr 1.3fr; } }
+        .about-image { position: relative; }
+        .about-image img { border-radius: 16px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2); }
+        .about-image::before { content: ''; position: absolute; top: 20px; left: 20px; right: -20px; bottom: -20px; background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil)); border-radius: 16px; z-index: -1; opacity: 0.3; }
+        .about-content h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); margin-bottom: var(--space-6); color: var(--bsi-charcoal); }
+        .about-content p { font-size: 1rem; line-height: 1.7; margin-bottom: var(--space-4); }
+        .about-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-6); margin-top: var(--space-8); padding-top: var(--space-8); border-top: 1px solid rgba(26, 26, 26, 0.1); }
+        .fact-item { font-family: var(--font-ui); }
+        .fact-item .number { font-size: 1.75rem; font-weight: 700; color: var(--bsi-burnt-orange); line-height: 1; margin-bottom: var(--space-2); }
+        .fact-item .label { font-size: 0.8125rem; color: rgba(26, 26, 26, 0.6); line-height: 1.3; }
 
-        .nav-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(217, 98, 0, 0.4);
-        }
+        /* Footer */
+        .footer { background: var(--bsi-midnight); padding: var(--space-16) 0 var(--space-8); border-top: 1px solid rgba(191, 87, 0, 0.2); }
+        .footer-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-8); margin-bottom: var(--space-12); }
+        @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
+        .footer-brand { max-width: 350px; }
+        .footer-brand .logo { margin-bottom: var(--space-4); }
+        .footer-brand p { font-size: 0.9375rem; color: rgba(250, 248, 245, 0.6); line-height: 1.6; }
+        .footer-values { display: flex; gap: var(--space-4); margin-top: var(--space-4); font-family: var(--font-ui); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-gold); }
+        .footer-links h4 { font-family: var(--font-ui); font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-4); }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: var(--space-2); }
+        .footer-links a { font-family: var(--font-ui); font-size: 0.9375rem; color: rgba(250, 248, 245, 0.6); transition: color var(--duration-normal) var(--ease-out); }
+        .footer-links a:hover { color: var(--bsi-cream); }
+        .footer-bottom { display: flex; flex-direction: column; gap: var(--space-4); padding-top: var(--space-8); border-top: 1px solid rgba(250, 248, 245, 0.1); font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 248, 245, 0.4); }
+        @media (min-width: 768px) { .footer-bottom { flex-direction: row; justify-content: space-between; align-items: center; } }
+        .footer-tagline { font-family: var(--font-display); font-style: italic; color: var(--bsi-burnt-orange); }
 
-        /* Mobile toggle */
-        .mobile-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 4px;
-            padding: 8px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }
-
-        .mobile-toggle span {
-            width: 24px;
-            height: 2px;
-            background: white;
-            transition: all 0.3s ease;
-        }
-
-        @media (max-width: 900px) {
-            .nav-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(11, 14, 20, 0.98);
-                flex-direction: column;
-                padding: 1rem;
-                gap: 0;
-            }
-
-            .nav-menu.active {
-                display: flex;
-            }
-
-            .mobile-toggle {
-                display: flex;
-            }
-
-            .nav-link {
-                padding: 1rem;
-                width: 100%;
-            }
-        }
-
-        /* Enhanced logo with championship glow */
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .logo img {
-            height: 50px;
-            width: auto;
-            filter: drop-shadow(0 0 8px rgba(217, 98, 0, 0.3));
-            transition: all 0.3s ease;
-        }
-
-        .logo:hover img {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 16px rgba(217, 98, 0, 0.5));
-        }
-
-        /* Championship hero with enhanced contrast */
-        .hero {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6rem 2rem 4rem;
-            z-index: 10;
-            background: linear-gradient(180deg, rgba(11,14,20,0.85) 0%, rgba(11,14,20,0.95) 100%),
-                        radial-gradient(ellipse at center top, rgba(217,98,0,0.2) 0%, transparent 60%);
-        }
-
-        .hero-title {
-            font-family: var(--font-display);
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #D96200 0%, #FF8C42 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 2px;
-            filter: drop-shadow(0 0 40px rgba(217, 98, 0, 0.4)) drop-shadow(0 0 80px rgba(204, 102, 0, 0.2));
-            animation: titleGlow 4s ease-in-out infinite;
-        }
-
-        @keyframes titleGlow {
-            0%, 100% {
-                filter: drop-shadow(0 0 40px rgba(217, 98, 0, 0.4)) drop-shadow(0 0 80px rgba(204, 102, 0, 0.2));
-            }
-            50% {
-                filter: drop-shadow(0 0 60px rgba(204, 102, 0, 0.6)) drop-shadow(0 0 100px rgba(217, 98, 0, 0.3));
-            }
-        }
-
-        /* Enhanced sport cards with championship polish */
-        .sport-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(217, 98, 0, 0.25);
-            border-radius: var(--radius-xl);
-            padding: 2rem;
-            text-align: center;
-            transition: all var(--transition-base);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .sport-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #D96200 0%, #CC6600 100%);
-            opacity: 0;
-            transition: opacity var(--transition-base);
-            z-index: -1;
-        }
-
-        .sport-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(217, 98, 0, 0.4), 0 0 24px rgba(217, 98, 0, 0.3);
-            border-color: transparent;
-        }
-
-        .sport-card:hover::after {
-            opacity: 0.1;
-        }
-
-        /* Championship CTA buttons with enhanced glow */
-        .cta-btn-primary {
-            background: linear-gradient(135deg, #D96200 0%, #BF5700 100%);
-            color: var(--text-primary);
-            box-shadow: 0 8px 32px rgba(217, 98, 0, 0.3);
-            border: 2px solid rgba(255, 140, 66, 0.4);
-        }
-
-        .cta-btn-primary:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 0 60px rgba(204, 102, 0, 0.6), 0 0 100px rgba(217, 98, 0, 0.4), 0 0 140px rgba(255, 140, 66, 0.2);
-        }
-
-        /* Footer with championship branding */
-        .footer {
-            position: relative;
-            z-index: 10;
-            background: var(--color-slate-900);
-            border-top: 1px solid rgba(217, 98, 0, 0.15);
-            padding: 4rem 2rem 2rem;
-            margin-top: 6rem;
-        }
-
-        .text-gradient {
-            background: linear-gradient(135deg, #D96200 0%, #FF8C42 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Accessibility enhancements */
-        .skip-link {
-            position: absolute;
-            top: -100px;
-            left: 0;
-            background: var(--color-brand-primary);
-            color: white;
-            padding: 12px 24px;
-            z-index: 10000;
-            transition: top var(--duration-fast) var(--ease-smooth);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .skip-link:focus {
-            top: 0;
-            outline: none;
-        }
-
-        /* Focus visible for all interactive elements */
-        *:focus-visible {
-            outline: 3px solid var(--color-brand-primary);
-            outline-offset: 2px;
-            border-radius: var(--radius-md);
-        }
-
-        /* Subtle floating animation for badges */
-        @keyframes subtle-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-
-        .hero-badge,
-        .section-badge {
-            animation: subtle-float 4s ease-in-out infinite;
-        }
-
-        .proof-badge:nth-child(2) { animation-delay: 0.3s; }
-        .proof-badge:nth-child(3) { animation-delay: 0.6s; }
-
-        /* Disable animations on mobile/reduced motion */
-        @media (max-width: 768px), (prefers-reduced-motion: reduce) {
-            .hero-badge, .section-badge, .proof-badge {
-                animation: none;
-            }
-        }
-
-        /* Mobile optimizations */
-        @media (max-width: 768px) {
-            .hero {
-                padding: 5rem 1rem 3rem;
-                min-height: 80vh;
-            }
-
-            .hero-title {
-                font-size: 2.5rem;
-            }
-
-            .sports-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-        }
-
-        /* Print styles */
-        @media print {
-            #particle-field,
-            .nav,
-            .cta-btn {
-                display: none !important;
-            }
-
-            body {
-                background: white;
-                color: black;
-            }
-        }
-
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-
-            #particle-field {
-                display: none;
-            }
-        }
-
-        /* High contrast mode support */
-        @media (prefers-contrast: high) {
-            .sport-card {
-                border: 2px solid var(--color-brand-primary);
-            }
-
-            .hero-title {
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s var(--ease-out); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
-    <!-- Skip Navigation Link (Accessibility) -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-
-    <!-- Three.js Particle Background -->
-    <canvas id="particle-field" aria-hidden="true"></canvas>
-
-    <!-- ARIA Live Regions (Hidden) -->
-    <div class="sr-only" aria-live="polite" aria-atomic="true" id="status-announcer"></div>
-    <div class="sr-only" aria-live="assertive" aria-atomic="true" id="alert-announcer"></div>
-
-    <!-- Navigation -->
-    <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
-        <div class="nav-container">
-            <a href="/" class="logo" aria-label="Blaze Sports Intel Home">
-                <img src="/images/bsi-logo.png" alt="Blaze Sports Intel" style="height: 50px; width: auto;">
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="/" class="logo">
+                <img src="./images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+                <span class="logo-text">Blaze Sports Intel</span>
             </a>
-            <ul class="nav-menu" id="navMenu" role="menubar">
-                <li role="none"><a href="#sports" class="nav-link" role="menuitem">Sports</a></li>
-                <li role="none"><a href="/analytics" class="nav-link" role="menuitem">Analytics</a></li>
-                <li role="none"><a href="/HistoricalData" class="nav-link" role="menuitem">Historical Data</a></li>
-                <li role="none"><a href="/copilot" class="nav-link" role="menuitem">AI Copilot</a></li>
-                <li role="none"><a href="/about" class="nav-link" role="menuitem">About</a></li>
-                <li role="none"><a href="/contact" class="nav-link" role="menuitem">Contact</a></li>
-                <li role="none"><a href="/copilot" class="nav-btn nav-btn-primary" role="menuitem">Launch AI Copilot</a></li>
+            <ul class="nav-links">
+                <li><a href="#origin">Our Story</a></li>
+                <li><a href="#coverage">Coverage</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="/analytics">Analytics</a></li>
             </ul>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle mobile menu" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
             </button>
         </div>
     </nav>
+    <div class="mobile-menu">
+        <ul>
+            <li><a href="#origin">Our Story</a></li>
+            <li><a href="#coverage">Coverage</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="/analytics">Analytics</a></li>
+        </ul>
+    </div>
 
-    <!-- Main Content -->
-    <main id="main-content">
-        <!-- Hero Section -->
-        <section class="hero" aria-labelledby="hero-title">
-            <div class="hero-content" data-aos="fade-up">
-                <div class="hero-badge" role="status">
-                    Built from Deep South observation
-                </div>
-                <h1 id="hero-title" class="hero-title">
-                    Practice to Play.<br>Blaze Data Wins the Day.
-                </h1>
-                <p class="hero-subtitle">
-                    Most tools count what's convenient. Blaze captures what swings outcomes—situation, momentum, and adjustments under pressure—so coaches decide faster.
-                </p>
-                <div class="hero-cta">
-                    <a href="/analytics" class="cta-btn cta-btn-primary" aria-label="View detailed analytics dashboard">
-                        <i class="fas fa-chart-line" aria-hidden="true"></i>
-                        View Analytics
-                    </a>
-                    <a href="/copilot" class="cta-btn cta-btn-secondary" aria-label="Launch AI-powered coaching copilot">
-                        <i class="fas fa-robot" aria-hidden="true"></i>
-                        Launch Copilot
-                    </a>
-                </div>
-
-                <!-- Proof Elements -->
-                <div class="hero-proof" style="margin-top: 3rem; display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;" data-aos="fade-up" data-aos-delay="300" role="list">
-                    <div class="proof-badge" role="listitem" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; backdrop-filter: blur(12px);">
-                        <i class="fas fa-database" style="font-size: 1.5rem; color: #FFB84D;" aria-hidden="true"></i>
-                        <div>
-                            <div style="font-weight: 700; color: #FFFFFF; font-size: 0.95rem;">133 CWS Games</div>
-                            <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">2000-2007 Complete</div>
-                        </div>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <p class="hero-tagline">Est. August 17, 1995 — Memphis, TN on Texas Soil</p>
+                    <h1 class="hero-title">Born to <span class="text-gradient">Blaze</span> the Path Less Beaten</h1>
+                    <p class="hero-subtitle">Sports analytics for the games big media ignores. The college baseball coverage ESPN won't give you. Real data, real stories, zero corporate slop.</p>
+                    <div class="hero-cta">
+                        <a href="#origin" class="btn btn-primary">Read Our Story →</a>
+                        <a href="/analytics" class="btn btn-secondary">Explore Analytics</a>
                     </div>
-                    <div class="proof-badge" role="listitem" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; backdrop-filter: blur(12px);">
-                        <i class="fas fa-chart-bar" style="font-size: 1.5rem; color: #D96200;" aria-hidden="true"></i>
-                        <div>
-                            <div style="font-weight: 700; color: #FFFFFF; font-size: 0.95rem;">5 Sports Covered</div>
-                            <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">Real-Time Updates</div>
-                        </div>
-                    </div>
-                    <div class="proof-badge" role="listitem" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; backdrop-filter: blur(12px);">
-                        <i class="fas fa-shield-check" style="font-size: 1.5rem; color: #4CAF50;" aria-hidden="true"></i>
-                        <div>
-                            <div style="font-weight: 700; color: #FFFFFF; font-size: 0.95rem;">Data Transparency</div>
-                            <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">All Sources Public</div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-image-wrapper">
+                        <img src="./images/texas-soil.jpg" alt="The original Texas soil from West Columbia and newspaper clipping from 1995" class="hero-image">
+                        <div class="hero-badge">
+                            <p class="hero-badge-text">Family Tradition</p>
+                            <p class="hero-badge-value">127+ Years</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Sticky Live Games Section (Phase 2) -->
-        <section class="live-games-section" aria-label="Live Games" style="position: sticky; top: 73px; z-index: 90; background: linear-gradient(180deg, rgba(11,14,20,0.98) 0%, rgba(19,24,32,0.98) 100%); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(217,98,0,0.15); padding: 1.5rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <!-- Demo Data Disclaimer -->
-                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 8px; margin-bottom: 1rem; font-size: 0.8rem; color: #FFC107;" role="alert" aria-live="polite">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    <span><strong>Demo Preview:</strong> Sample data shown for demonstration. <a href="/live/scores" style="color: #FFD54F; text-decoration: underline;">View real-time scores</a></span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                    <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.5rem, 3vw, 2rem); color: #FF2D55; display: flex; align-items: center; gap: 0.75rem; margin: 0;">
-                        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: linear-gradient(135deg, #FF2D55 0%, #FF4066 100%); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 999px; box-shadow: 0 0 12px rgba(255,45,85,0.4);">
-                            <span style="width: 8px; height: 8px; background: white; border-radius: 50%; animation: blink 1s ease-in-out infinite;" aria-hidden="true"></span>
-                            DEMO
-                        </span>
-                        3 Games In Progress
-                    </h2>
-                    <a href="/live/scores" style="color: #D96200; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;">
-                        View All
-                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                    </a>
-                </div>
-
-                <!-- Live Games Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;" role="list">
-                    <!-- Game 1: Kansas City Chiefs vs New England Patriots -->
-                    <article style="background: rgba(255,255,255,0.05); backdrop-filter: blur(16px); border: 2px solid #FF2D55; border-radius: 12px; padding: 1rem; box-shadow: 0 0 24px rgba(255,45,85,0.4); position: relative; animation: live-pulse 2s ease-in-out infinite;" role="listitem" aria-label="Live game: Kansas City Chiefs 31, New England Patriots 17">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                            <span style="font-size: 0.75rem; font-weight: 600; font-family: 'Bebas Neue', sans-serif; color: #FF2D55;">NFL</span>
-                            <time style="font-size: 0.875rem; font-weight: 600; font-family: 'Bebas Neue', sans-serif; color: #FF2D55;" datetime="PT43M18S">Q3 8:42</time>
-                        </div>
-
-                        <!-- Away Team -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div>
-                                <div style="font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 600; color: #FFFFFF;">Kansas City Chiefs</div>
-                                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.65); font-variant-numeric: tabular-nums;">11-4 • AFC West</div>
-                            </div>
-                            <div style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 900; font-family: 'Bebas Neue', sans-serif; color: #00FF88; text-shadow: 0 0 12px rgba(0,255,136,0.3); line-height: 1; font-variant-numeric: tabular-nums;">31</div>
-                        </div>
-
-                        <!-- Home Team -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;">
-                            <div>
-                                <div style="font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 600; color: #FFFFFF;">New England Patriots</div>
-                                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.65); font-variant-numeric: tabular-nums;">3-12 • AFC East</div>
-                            </div>
-                            <div style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 900; font-family: 'Bebas Neue', sans-serif; color: rgba(255,255,255,0.87); line-height: 1; font-variant-numeric: tabular-nums;">17</div>
-                        </div>
-
-                        <!-- Win Probability -->
-                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                <span style="font-size: 0.7rem; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.05em;">KC Win Probability</span>
-                                <span style="font-size: 1.25rem; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: #00FF88; font-variant-numeric: tabular-nums; text-shadow: 0 0 12px rgba(0,255,136,0.3);">92%</span>
-                            </div>
-                            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
-                                <div style="width: 92%; height: 100%; background: linear-gradient(90deg, #00FF88 0%, #22C55E 100%); box-shadow: 0 0 12px #00FF88; border-radius: 999px; transition: width 0.5s ease;"></div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Game 2: Los Angeles Lakers vs Golden State Warriors -->
-                    <article style="background: rgba(255,255,255,0.05); backdrop-filter: blur(16px); border: 2px solid #FF2D55; border-radius: 12px; padding: 1rem; box-shadow: 0 0 24px rgba(255,45,85,0.4); position: relative; animation: live-pulse 2s ease-in-out infinite;" role="listitem" aria-label="Live game: Los Angeles Lakers 98, Golden State Warriors 95">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                            <span style="font-size: 0.75rem; font-weight: 600; font-family: 'Bebas Neue', sans-serif; color: #FF2D55;">NBA</span>
-                            <time style="font-size: 0.875rem; font-weight: 600; font-family: 'Bebas Neue', sans-serif; color: #FF2D55;" datetime="PT2M15S">4th 2:15</time>
-                        </div>
-
-                        <!-- Away Team -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div>
-                                <div style="font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 600; color: #FFFFFF;">Los Angeles Lakers</div>
-                                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.65); font-variant-numeric: tabular-nums;">24-18 • Pacific</div>
-                            </div>
-                            <div style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 900; font-family: 'Bebas Neue', sans-serif; color: #00FF88; text-shadow: 0 0 12px rgba(0,255,136,0.3); line-height: 1; font-variant-numeric: tabular-nums;">98</div>
-                        </div>
-
-                        <!-- Home Team -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;">
-                            <div>
-                                <div style="font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 600; color: #FFFFFF;">Golden State Warriors</div>
-                                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.65); font-variant-numeric: tabular-nums;">22-20 • Pacific</div>
-                            </div>
-                            <div style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 900; font-family: 'Bebas Neue', sans-serif; color: rgba(255,255,255,0.87); line-height: 1; font-variant-numeric: tabular-nums;">95</div>
-                        </div>
-
-                        <!-- Win Probability -->
-                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                <span style="font-size: 0.7rem; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.05em;">LAL Win Probability</span>
-                                <span style="font-size: 1.25rem; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: #FFB800; font-variant-numeric: tabular-nums;">68%</span>
-                            </div>
-                            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
-                                <div style="width: 68%; height: 100%; background: linear-gradient(90deg, #FFB800 0%, #FFA000 100%); box-shadow: 0 0 12px #FFB800; border-radius: 999px; transition: width 0.5s ease;"></div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Game 3: St. Louis Cardinals vs Chicago Cubs -->
-                    <article style="background: rgba(255,255,255,0.05); backdrop-filter: blur(16px); border: 2px solid #FF2D55; border-radius: 12px; padding: 1rem; box-shadow: 0 0 24px rgba(255,45,85,0.4); position: relative; animation: live-pulse 2s ease-in-out infinite;" role="listitem" aria-label="Live game: St. Louis Cardinals 4, Chicago Cubs 3">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                            <span style="font-size: 0.75rem; font-weight: 600; font-family: 'Bebas Neue', sans-serif; color: #FF2D55;">MLB</span>
-                            <time style="font-size: 0.875rem; font-weight: 600; font-family: 'Bebas Neue', sans-serif; color: #FF2D55;" datetime="B7">Bot 7th</time>
-                        </div>
-
-                        <!-- Away Team -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div>
-                                <div style="font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 600; color: #FFFFFF;">St. Louis Cardinals</div>
-                                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.65); font-variant-numeric: tabular-nums;">45-38 • NL Central</div>
-                            </div>
-                            <div style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 900; font-family: 'Bebas Neue', sans-serif; color: #00FF88; text-shadow: 0 0 12px rgba(0,255,136,0.3); line-height: 1; font-variant-numeric: tabular-nums;">4</div>
-                        </div>
-
-                        <!-- Home Team -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;">
-                            <div>
-                                <div style="font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 600; color: #FFFFFF;">Chicago Cubs</div>
-                                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.65); font-variant-numeric: tabular-nums;">42-41 • NL Central</div>
-                            </div>
-                            <div style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 900; font-family: 'Bebas Neue', sans-serif; color: rgba(255,255,255,0.87); line-height: 1; font-variant-numeric: tabular-nums;">3</div>
-                        </div>
-
-                        <!-- Win Probability -->
-                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                <span style="font-size: 0.7rem; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.05em;">STL Win Probability</span>
-                                <span style="font-size: 1.25rem; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: #00FF88; font-variant-numeric: tabular-nums; text-shadow: 0 0 12px rgba(0,255,136,0.3);">78%</span>
-                            </div>
-                            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
-                                <div style="width: 78%; height: 100%; background: linear-gradient(90deg, #00FF88 0%, #22C55E 100%); box-shadow: 0 0 12px #00FF88; border-radius: 999px; transition: width 0.5s ease;"></div>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sports Hubs Section -->
-        <section class="sports-section" id="sports" aria-labelledby="sports-title">
-            <div class="section-container">
-                <div class="section-header" data-aos="fade-up">
-                    <div class="section-badge" role="status">Coverage</div>
-                    <h2 id="sports-title" class="section-title">Three sports</h2>
-                    <p class="section-subtitle">
-                        Baseball → Football → Basketball. Youth through professional levels.
-                    </p>
-                </div>
-
-                <div class="sports-grid" role="list">
-                    <a href="/mlb/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="100" aria-label="MLB Professional Baseball Analytics">
-                        <div class="sport-icon" aria-hidden="true">⚾</div>
-                        <h3 class="sport-name">MLB</h3>
-                        <p class="sport-status">Professional Baseball Analytics</p>
-                    </a>
-
-                    <a href="/nfl/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="150" aria-label="NFL Professional Football Analytics">
-                        <div class="sport-icon" aria-hidden="true">🏈</div>
-                        <h3 class="sport-name">NFL</h3>
-                        <p class="sport-status">Professional Football Analytics</p>
-                    </a>
-
-                    <a href="/cfb/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="200" aria-label="College Football NCAA Division 1 SEC Big 12">
-                        <div class="sport-icon" aria-hidden="true">🏈</div>
-                        <h3 class="sport-name">COLLEGE FOOTBALL</h3>
-                        <p class="sport-status">NCAA D1 • SEC • Big 12</p>
-                    </a>
-
-                    <a href="/cbb/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="250" aria-label="College Basketball NCAA Division 1 Men's and Women's">
-                        <div class="sport-icon" aria-hidden="true">🏀</div>
-                        <h3 class="sport-name">COLLEGE BASKETBALL</h3>
-                        <p class="sport-status">NCAA D1 Men's & Women's</p>
-                    </a>
-
-                    <a href="/college-baseball/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="300" aria-label="College Baseball Complete coverage ESPN won't provide">
-                        <div class="sport-icon" aria-hidden="true">⚾</div>
-                        <h3 class="sport-name">COLLEGE BASEBALL</h3>
-                        <p class="sport-status">Complete ESPN Won't Provide</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Platform Features Section -->
-        <section class="sports-section" style="background: linear-gradient(180deg, var(--color-slate-900) 0%, var(--color-slate-950) 100%);" aria-labelledby="platform-title">
-            <div class="section-container">
-                <div class="section-header" data-aos="fade-up">
-                    <div class="section-badge" role="status">Platform Access</div>
-                    <h2 id="platform-title" class="section-title">Intelligence Tools</h2>
-                    <p class="section-subtitle">
-                        AI-powered analytics, real-time dashboards, and coaching intelligence systems.
-                    </p>
-                </div>
-
-                <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;" role="list">
-                    <!-- AI Copilot -->
-                    <a href="/copilot" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="100" style="text-align: left;" aria-label="AI Copilot with semantic search and RAG insights">
-                        <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;" aria-hidden="true">🤖</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">AI Copilot</h3>
-                        <p class="sport-status" style="margin-bottom: 0.5rem;">Semantic Search • RAG Insights • Workers AI</p>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
-                            Natural language queries across all sports data with AI-powered insights and recommendations.
-                        </p>
-                    </a>
-
-                    <!-- Analytics Dashboard -->
-                    <a href="/analytics" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="150" style="text-align: left;" aria-label="Analytics Dashboard with live scores and standings">
-                        <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;" aria-hidden="true">📊</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Analytics Dashboard</h3>
-                        <p class="sport-status" style="margin-bottom: 0.5rem;">Live Scores • Standings • Statistical Projections</p>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
-                            Real-time sports data with Pythagorean win projections, playoff probability trends, and heatmaps.
-                        </p>
-                    </a>
-
-                    <!-- Interactive Dashboard -->
-                    <a href="/components/interactive-dashboard.html" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="200" style="text-align: left;" aria-label="Interactive Dashboard with mobile-first design">
-                        <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;" aria-hidden="true">⚡</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Interactive Dashboard</h3>
-                        <p class="sport-status" style="margin-bottom: 0.5rem;">Mobile • Real-time • 3D Visualizations</p>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
-                            Production-ready dashboard with authentication, testing suite, deployment tools, and monitoring.
-                        </p>
-                    </a>
-
-                    <!-- Continue with remaining 45+ feature cards... -->
-                    <!-- (I'll include a representative subset to keep file manageable) -->
-
-                    <!-- College Baseball -->
-                    <a href="/college-baseball-demo" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="250" style="text-align: left;" aria-label="College Baseball with complete box scores">
-                        <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;" aria-hidden="true">⚾</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">College Baseball</h3>
-                        <p class="sport-status" style="margin-bottom: 0.5rem;">NCAA D1 • Box Scores • Player Stats</p>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
-                            Complete coverage ESPN won't provide—full box scores, standings, and player-level analytics.
-                        </p>
-                    </a>
-
-                    <!-- Live Scores -->
-                    <a href="/live/scores" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="300" style="text-align: left;" aria-label="Live Scores across multiple sports">
-                        <div class="sport-icon" style="font-size: 3rem; margin-bottom: 1rem;" aria-hidden="true">🏟️</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem; margin-bottom: 0.75rem;">Live Scores</h3>
-                        <p class="sport-status" style="margin-bottom: 0.5rem;">Multi-Sport • Real-Time Updates • Auto-Refresh</p>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6;">
-                            Real-time scores across MLB, NFL, NBA, CFB, CBB, and College Baseball with comprehensive game details.
-                        </p>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Garrido Code Coaching Series -->
-        <section class="sports-section" style="background: linear-gradient(180deg, var(--color-slate-950) 0%, var(--color-slate-900) 100%);" aria-labelledby="garrido-title">
-            <div class="section-container">
-                <div class="section-header" data-aos="fade-up">
-                    <div class="section-badge" role="status">Coaching Intelligence</div>
-                    <h2 id="garrido-title" class="section-title">The Garrido Code</h2>
-                    <p class="section-subtitle">
-                        10-episode coaching philosophy series from legendary Texas baseball coach Augie Garrido.
-                    </p>
-                </div>
-
-                <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;" role="list">
-                    <a href="/garrido/chaos.html" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="50" aria-label="Episode 1: Chaos - Embracing the Unpredictable">
-                        <div class="sport-icon" style="font-size: 2.5rem;" aria-hidden="true">🌪️</div>
-                        <h3 class="sport-name" style="font-size: 1.3rem;">Episode 1: Chaos</h3>
-                        <p class="sport-status">Embracing the Unpredictable</p>
-                    </a>
-
-                    <a href="/garrido/responsibility.html" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="75" aria-label="Episode 2: Responsibility - Ownership and Accountability">
-                        <div class="sport-icon" style="font-size: 2.5rem;" aria-hidden="true">⚖️</div>
-                        <h3 class="sport-name" style="font-size: 1.3rem;">Episode 2: Responsibility</h3>
-                        <p class="sport-status">Ownership & Accountability</p>
-                    </a>
-
-                    <!-- Continue with episodes 3-10... -->
-                    <a href="/garrido/legacy.html" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="275" aria-label="Episode 10: Legacy - Beyond Championships">
-                        <div class="sport-icon" style="font-size: 2.5rem;" aria-hidden="true">🏅</div>
-                        <h3 class="sport-name" style="font-size: 1.3rem;">Episode 10: Legacy</h3>
-                        <p class="sport-status">Beyond Championships</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- College Baseball Expanded -->
-        <section class="sports-section" style="background: linear-gradient(180deg, var(--color-slate-900) 0%, var(--color-slate-950) 100%);" aria-labelledby="college-baseball-title">
-            <div class="section-container">
-                <div class="section-header" data-aos="fade-up">
-                    <div class="section-badge" role="status">Complete Coverage</div>
-                    <h2 id="college-baseball-title" class="section-title">College Baseball Deep Dive</h2>
-                    <p class="section-subtitle">
-                        Every stat ESPN won't show you. Complete box scores, player stats, and scouting reports.
-                    </p>
-                </div>
-
-                <div class="sports-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));" role="list">
-                    <a href="/college-baseball/games/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="100" aria-label="Live Games with complete box scores">
-                        <div class="sport-icon" style="font-size: 3rem;" aria-hidden="true">📅</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem;">Live Games</h3>
-                        <p class="sport-status">Real-time Scores • Complete Box Scores</p>
-                    </a>
-
-                    <a href="/college-baseball/standings/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="150" aria-label="Standings with RPI and strength of schedule">
-                        <div class="sport-icon" style="font-size: 3rem;" aria-hidden="true">📊</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem;">Standings</h3>
-                        <p class="sport-status">Conference Rankings • RPI • Strength of Schedule</p>
-                    </a>
-
-                    <a href="/college-baseball/teams/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="200" aria-label="Team Profiles with complete rosters">
-                        <div class="sport-icon" style="font-size: 3rem;" aria-hidden="true">🏫</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem;">Team Profiles</h3>
-                        <p class="sport-status">Complete Rosters • Statistics • Analytics</p>
-                    </a>
-
-                    <a href="/college-baseball/players/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="250" aria-label="Player Stats with advanced metrics">
-                        <div class="sport-icon" style="font-size: 3rem;" aria-hidden="true">👤</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem;">Player Stats</h3>
-                        <p class="sport-status">Batting • Pitching • Fielding • Advanced Metrics</p>
-                    </a>
-
-                    <a href="/college-baseball/scouting-report/" class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="300" aria-label="Scouting Reports with draft prospects">
-                        <div class="sport-icon" style="font-size: 3rem;" aria-hidden="true">🔍</div>
-                        <h3 class="sport-name" style="font-size: 1.5rem;">Scouting Reports</h3>
-                        <p class="sport-status">Draft Prospects • Tools Grades • Pro Projections</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-        <!-- Data Transparency & API Documentation Section -->
-        <section class="sports-section" style="background: linear-gradient(180deg, var(--color-slate-950) 0%, rgba(191, 87, 0, 0.05) 100%);" aria-labelledby="data-sources-title">
-            <div class="section-container">
-                <div class="section-header" data-aos="fade-up">
-                    <div class="section-badge" role="status">Data Transparency</div>
-                    <h2 id="data-sources-title" class="section-title">Our Data Sources</h2>
-                    <p class="section-subtitle">
-                        100% transparent. Every statistic comes from official, documented APIs with full source attribution.
-                    </p>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;" role="list">
-                    <!-- MLB StatsAPI -->
-                    <div class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="100" style="text-align: left;">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="font-size: 2.5rem;">⚾</div>
-                            <div>
-                                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">MLB StatsAPI</h3>
-                                <span style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: rgba(34, 197, 94, 0.2); color: #22C55E; border-radius: 4px;">Official Source</span>
-                            </div>
-                        </div>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-                            Official Major League Baseball statistics API. Real-time player stats, game data, standings, and historical records.
-                        </p>
-                        <a href="https://statsapi.mlb.com" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #D96200; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
-                            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
-                            View API Documentation
-                        </a>
+    <section class="values-banner">
+        <div class="container">
+            <div class="values-grid">
+                <div class="value-item">
+                    <div class="value-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                     </div>
-
-                    <!-- ESPN API -->
-                    <div class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="150" style="text-align: left;">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="font-size: 2.5rem;">📊</div>
-                            <div>
-                                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">ESPN API</h3>
-                                <span style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: rgba(34, 197, 94, 0.2); color: #22C55E; border-radius: 4px;">Official Source</span>
-                            </div>
-                        </div>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-                            ESPN's public sports data API. Live scores, schedules, and comprehensive college sports coverage including NCAA Baseball.
-                        </p>
-                        <a href="https://site.api.espn.com" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #D96200; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
-                            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
-                            View API Endpoints
-                        </a>
-                    </div>
-
-                    <!-- Our Methodology -->
-                    <div class="sport-card" role="listitem" data-aos="zoom-in" data-aos-delay="200" style="text-align: left;">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="font-size: 2.5rem;">📖</div>
-                            <div>
-                                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Our Methodology</h3>
-                                <span style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: rgba(217, 98, 0, 0.2); color: #D96200; border-radius: 4px;">Documentation</span>
-                            </div>
-                        </div>
-                        <p style="color: var(--text-tertiary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-                            How we process, validate, and present sports data. Our confidence intervals, prediction accuracy, and quality control standards.
-                        </p>
-                        <a href="/methodology" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #D96200; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
-                            <i class="fas fa-book" aria-hidden="true"></i>
-                            Read Methodology
-                        </a>
-                    </div>
+                    <span class="value-text">Courage</span>
                 </div>
+                <span class="value-dot"></span>
+                <div class="value-item">
+                    <div class="value-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10zm0-2c4.4 0 8-3.6 8-8s-3.6-8-8-8-8 3.6-8 8 3.6 8 8 8z"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <span class="value-text">Grit</span>
+                </div>
+                <span class="value-dot"></span>
+                <div class="value-item">
+                    <div class="value-icon">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <span class="value-text">Leadership</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Data Integrity Commitment -->
-                <div style="margin-top: 3rem; padding: 2rem; background: rgba(217, 98, 0, 0.05); border: 1px solid rgba(217, 98, 0, 0.2); border-radius: var(--radius-xl);" data-aos="fade-up">
-                    <div style="display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap;">
-                        <div style="font-size: 3rem;">🛡️</div>
-                        <div style="flex: 1; min-width: 280px;">
-                            <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem;">Data Integrity Commitment</h3>
-                            <ul style="list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem;">
-                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
-                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
-                                    All statistics sourced from official league APIs
-                                </li>
-                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
-                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
-                                    Timestamps shown in America/Chicago timezone
-                                </li>
-                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
-                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
-                                    Data refreshed every 30 seconds during live games
-                                </li>
-                                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem;">
-                                    <i class="fas fa-check-circle" style="color: #22C55E;" aria-hidden="true"></i>
-                                    No fabricated claims or AI-generated predictions without disclosure
-                                </li>
-                            </ul>
-                        </div>
+    <section class="origin" id="origin">
+        <div class="container">
+            <header class="origin-header reveal">
+                <h2>Tennessee Birth on <span class="text-orange">Texas Soil</span></h2>
+                <p>Before there was a brand, there was a promise. A covenant between a father from Texas and his son about to be born in Tennessee.</p>
+            </header>
+            <div class="origin-grid">
+                <div class="origin-story reveal">
+                    <h3>August 17, 1995</h3>
+                    <p>John Dean Humphrey was born and raised in Texas—El Campo, to be exact. Son of Bill Humphrey, who grew up dirt poor in west Texas, served in WWII, met my grandmother Helen at Hardin-Simmons, then founded and owned banks in El Campo. But life had taken my father to Memphis, Tennessee, where my mother Margaret was about to give birth to their first child.</p>
+                    <p>There was just one problem: no Humphrey had been born outside of Texas in 127 years. And my father wasn't about to break that streak—at least not technically.</p>
+                    <p>So before heading to Baptist Memorial Hospital East, Dad did what any reasonable Texan would do: he drove to West Columbia—the birthplace of the Republic of Texas—scooped up a bag of that sacred soil, and placed it beneath the hospital delivery bed.</p>
+                    <div class="doctor-quote">
+                        <p>"You know you ain't the first to do this—but they've ALL been from Texas."</p>
+                        <cite>— The attending physician, Baptist Memorial Hospital East</cite>
+                    </div>
+                    <p>On August 17, 1995—the same birthday as Davy Crockett, the Tennessee Senator who died defending the Alamo—John Austin Humphrey entered the world. Born in Memphis. Standing on Texas soil.</p>
+                    <p>The <em>El Campo Leader-News</em> ran the story. The headline? <strong>"Tennessee birth will be on Texas soil."</strong></p>
+                    <p style="margin-top: var(--space-6); font-style: italic; color: var(--bsi-texas-soil);">Yes, I still have that soil and that newspaper clipping to this day.</p>
+                </div>
+                <div class="origin-media reveal">
+                    <div class="media-item">
+                        <img src="./images/texas-soil.jpg" alt="The original Texas soil from West Columbia and the 1995 newspaper clipping" loading="lazy">
+                        <span class="media-caption">The original Texas soil from West Columbia and the <em>El Campo Leader-News</em> clipping—still in my possession 30 years later.</span>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="footer" role="contentinfo">
-        <div class="footer-container">
-            <!-- Legal & Compliance Links -->
-            <nav class="footer-links" style="display: flex; flex-wrap: wrap; gap: 1.5rem 3rem; justify-content: center; margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(217, 98, 0, 0.15);" aria-label="Legal and compliance links">
-                <a href="/legal/privacy/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Privacy Policy">
-                    <i class="fas fa-shield-alt" style="color: var(--blaze-copper);" aria-hidden="true"></i>
-                    Privacy Policy
-                </a>
-                <a href="/legal/terms/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Terms of Service">
-                    <i class="fas fa-file-contract" style="color: var(--blaze-copper);" aria-hidden="true"></i>
-                    Terms of Service
-                </a>
-                <a href="/legal/accessibility/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Accessibility Statement">
-                    <i class="fas fa-universal-access" style="color: var(--blaze-copper);" aria-hidden="true"></i>
-                    Accessibility
-                </a>
-                <a href="/legal/ai-disclosure/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="AI Disclosure">
-                    <i class="fas fa-robot" style="color: var(--blaze-copper);" aria-hidden="true"></i>
-                    AI Disclosure
-                </a>
-                <a href="/legal/cookies/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Cookie Policy">
-                    <i class="fas fa-cookie-bite" style="color: var(--blaze-copper);" aria-hidden="true"></i>
-                    Cookie Policy
-                </a>
-                <a href="/legal/copyright/" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 0.5rem;" aria-label="Copyright and DMCA">
-                    <i class="fas fa-copyright" style="color: var(--blaze-copper);" aria-hidden="true"></i>
-                    Copyright & DMCA
-                </a>
-            </nav>
+    <section class="birth-proof">
+        <div class="container">
+            <div class="birth-proof-inner reveal">
+                <div class="birth-proof-text">
+                    <h3>The <span class="text-orange">Proof</span></h3>
+                    <p>State of Tennessee. Office of Vital Records. Certificate of Live Birth #141-95-048276. John Austin Humphrey. Male. August 17, 1995. 10:29 AM. Baptist Memorial Hospital East. Memphis, Shelby County.</p>
+                    <p>Father: John Dean Humphrey. Birthplace: <strong>Texas</strong>.</p>
+                    <div class="birth-proof-facts">
+                        <div class="birth-fact">
+                            <div class="birth-fact-value">Aug 17</div>
+                            <div class="birth-fact-label">Same as Davy Crockett</div>
+                        </div>
+                        <div class="birth-fact">
+                            <div class="birth-fact-value">10:29 AM</div>
+                            <div class="birth-fact-label">Time of Birth</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="birth-proof-image">
+                    <img src="./images/birth-certificate.jpg" alt="Tennessee birth certificate for John Austin Humphrey" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <section class="philosophy">
+        <div class="container">
+            <div class="philosophy-content reveal">
+                <blockquote class="philosophy-quote">
+                    "I have said that Texas is a state of mind, but I think it is more than that. It is a mystique closely approximating a religion... Texas has a tight cohesiveness perhaps stronger than any other section of America. Rich, poor, Panhandle, Gulf, city, country, Texas is the obsession, the proper study, and the passionate possession of all Texans."
+                    <cite>— John Steinbeck</cite>
+                </blockquote>
+                <p class="philosophy-personal">For me, <strong>Texas isn't just a place—it's how you choose to treat the best and worst of us.</strong> A covenant with oneself and the company you keep to never allow each other to stop dreaming beyond the horizon, regardless of race, ethnicity, religion, or even birth soil. A home. A family. A philosophy.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <header class="gallery-header reveal">
+                <h2>The <span class="text-gradient">Journey</span></h2>
+                <p>From the Bartlett Blaze to Blaze Sports Intel. Memphis roots, Texas soul, sports in the blood.</p>
+            </header>
+            <div class="gallery-grid">
+                <div class="gallery-item featured reveal">
+                    <img src="./images/blaze-and-austin.jpg" alt="Austin with his dachshund Blaze" loading="lazy">
+                    <span class="caption">Blaze the dachshund—named after the Bartlett Blaze baseball team, and the namesake of this company.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/dad-and-kid.jpg" alt="Young Austin with his dad ready for baseball" loading="lazy">
+                    <span class="caption">Ready for the Bartlett Blaze with Dad, circa 1999.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/longhorns-kid.jpg" alt="Young Austin in Longhorns gear" loading="lazy">
+                    <span class="caption">Burnt orange in the blood before I could spell it.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/titans-halloween.jpg" alt="Young Austin as Eddie George for Halloween" loading="lazy">
+                    <span class="caption">Eddie George (#27) for Halloween—Memphis born, football obsessed.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/headshot.jpg" alt="Austin Humphrey professional headshot" loading="lazy">
+                    <span class="caption">Still blazing the path, just with better lighting.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="coverage" id="coverage">
+        <div class="container">
+            <header class="coverage-header reveal">
+                <h2>What We <span class="text-gradient">Cover</span></h2>
+                <p>The sports that deserve better. The stories big media ignores. The data they refuse to provide.</p>
+            </header>
+            <div class="coverage-grid">
+                <article class="coverage-card primary reveal">
+                    <div class="coverage-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2c2.5 2 4 5.5 4 10s-1.5 8-4 10"/><path d="M12 2c-2.5 2-4 5.5-4 10s1.5 8 4 10"/></svg>
+                    </div>
+                    <h3>College Baseball</h3>
+                    <p>Full box scores, comprehensive stats, and the coverage ESPN won't give one of college sports' three revenue-generating programs.</p>
+                    <span class="badge">Primary Focus</span>
+                </article>
+                <article class="coverage-card reveal">
+                    <div class="coverage-icon">
+                        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6v12"/><path d="M6.5 8.5L17.5 15.5"/><path d="M17.5 8.5L6.5 15.5"/></svg>
+                    </div>
+                    <h3>College Football</h3>
+                    <p>FCS and Group of Five coverage that goes beyond the Power Four obsession. Every team matters.</p>
+                </article>
+                <article class="coverage-card reveal">
+                    <div class="coverage-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+                    </div>
+                    <h3>MLB</h3>
+                    <p>Advanced analytics, predictive intelligence, and the context mainstream coverage lacks.</p>
+                </article>
+                <article class="coverage-card reveal">
+                    <div class="coverage-icon">
+                        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6v12"/></svg>
+                    </div>
+                    <h3>NFL</h3>
+                    <p>Beyond fantasy points—real analysis of scheme, personnel, and the decisions that decide games.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image reveal">
+                    <img src="./images/headshot.jpg" alt="Austin Humphrey" loading="lazy">
+                </div>
+                <div class="about-content reveal">
+                    <h2>The Human Behind the Data</h2>
+                    <p>I'm Austin Humphrey—UT Austin grad (International Relations, Economics minor), Full Sail MS in Entertainment Business, former data-driven advertising specialist at Spectrum Reach, and a guy who landed in the top 10% nationally at Northwestern Mutual.</p>
+                    <p>But those are just resume bullets. What matters is this: I grew up driving from Memphis to Austin every year for Thanksgiving and Longhorn football—same four season tickets my family's held for 40+ years. I was there when Ricky Williams broke the rushing record against A&M. My grandfather Bill built banks in El Campo after growing up with nothing in west Texas. This isn't a startup pivot—it's a calling.</p>
+                    <p>Blaze Sports Intel exists because ESPN has systematically neglected college baseball—one of only three revenue-generating college sports—and I got tired of waiting for someone else to fix it.</p>
+                    <div class="about-facts">
+                        <div class="fact-item"><span class="number">40+</span><span class="label">Years of family Longhorn season tickets</span></div>
+                        <div class="fact-item"><span class="number">127+</span><span class="label">Years of Humphreys born on Texas soil</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo">
+                        <img src="./images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+                    </a>
+                    <p>Born in Memphis. Rooted in Texas soil. Covering the sports that deserve better.</p>
+                    <div class="footer-values">
+                        <span>Courage</span>
+                        <span>•</span>
+                        <span>Grit</span>
+                        <span>•</span>
+                        <span>Leadership</span>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Coverage</h4>
+                    <ul>
+                        <li><a href="/coverage/college-baseball">College Baseball</a></li>
+                        <li><a href="/coverage/college-football">College Football</a></li>
+                        <li><a href="/coverage/mlb">MLB</a></li>
+                        <li><a href="/coverage/nfl">NFL</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#origin">Our Story</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="/analytics">Analytics</a></li>
+                    </ul>
+                </div>
+            </div>
             <div class="footer-bottom">
-                <p>© 2025 Blaze Sports Intel. Built with <span class="text-gradient">🔥</span> in Boerne, Texas.</p>
-                <p style="margin-top: 0.5rem; font-size: 0.85rem;">
-                    Deep South Sports Authority • Championship Analytics Platform
-                </p>
+                <p>© 2025 Blaze Sports Intel. All rights reserved.</p>
+                <p class="footer-tagline">Born to Blaze the Path Less Beaten</p>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script>
-        // ==================== INITIALIZE AOS ====================
-        document.addEventListener('DOMContentLoaded', () => {
-            AOS.init({
-                duration: 1000,
-                once: true,
-                offset: 100,
-                easing: 'ease-out'
-            });
+        // Mobile menu toggle
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        menuBtn?.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
         });
-
-        // ==================== NAVIGATION SCROLL EFFECT ====================
-        const nav = document.getElementById('nav');
-        let lastScroll = 0;
-
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-
-            if (currentScroll > 100) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
-
-            lastScroll = currentScroll;
-        });
-
-        // ==================== MOBILE MENU TOGGLE ====================
-        const mobileToggle = document.getElementById('mobileToggle');
-        const navMenu = document.getElementById('navMenu');
-
-        mobileToggle.addEventListener('click', () => {
-            const isExpanded = mobileToggle.getAttribute('aria-expanded') === 'true';
-            mobileToggle.setAttribute('aria-expanded', !isExpanded);
-            mobileToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-link').forEach(link => {
+        // Close mobile menu on link click
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
             link.addEventListener('click', () => {
-                mobileToggle.setAttribute('aria-expanded', 'false');
-                mobileToggle.classList.remove('active');
-                navMenu.classList.remove('active');
+                menuBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
             });
         });
-
-        // ==================== SMOOTH SCROLL ====================
+        // Reveal animations
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        reveals.forEach(reveal => revealObserver.observe(reveal));
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    // Move focus to target for screen readers
-                    target.setAttribute('tabindex', '-1');
-                    target.focus();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
-
-        // ==================== THREE.JS PARTICLE SYSTEM ====================
-        function initParticleSystem() {
-            const canvas = document.getElementById('particle-field');
-            if (!canvas || typeof THREE === 'undefined') {
-                console.warn('Three.js or canvas not available');
-                return;
-            }
-
-            // Check for reduced motion preference
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (prefersReducedMotion) {
-                console.log('Reduced motion detected - skipping particle system');
-                return;
-            }
-
-            try {
-                // Scene setup
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(
-                    75,
-                    window.innerWidth / window.innerHeight,
-                    0.1,
-                    1000
-                );
-                const renderer = new THREE.WebGLRenderer({
-                    canvas,
-                    alpha: true,
-                    antialias: true
-                });
-
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setClearColor(0x000000, 0);
-                camera.position.z = 500;
-
-                // Detect device type and set particle count (reduced for better performance)
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                const particleCount = isMobile ? 3000 : 40000;
-
-                // Create particles
-                const geometry = new THREE.BufferGeometry();
-                const positions = new Float32Array(particleCount * 3);
-                const colors = new Float32Array(particleCount * 3);
-                const velocities = new Float32Array(particleCount * 3);
-
-                // Championship burnt orange color palette (updated)
-                const colorPalette = [
-                    new THREE.Color(0xD96200), // Championship orange
-                    new THREE.Color(0xCC6600), // Ember
-                    new THREE.Color(0xFF8C42), // Bright accent
-                    new THREE.Color(0xBF5700), // Heritage orange
-                    new THREE.Color(0xFFBF00), // Amber
-                ];
-
-                for (let i = 0; i < particleCount * 3; i += 3) {
-                    // Random position
-                    positions[i] = (Math.random() - 0.5) * 2000;
-                    positions[i + 1] = (Math.random() - 0.5) * 2000;
-                    positions[i + 2] = (Math.random() - 0.5) * 1000;
-
-                    // Random velocity
-                    velocities[i] = (Math.random() - 0.5) * 0.3;
-                    velocities[i + 1] = (Math.random() - 0.5) * 0.3;
-                    velocities[i + 2] = (Math.random() - 0.5) * 0.3;
-
-                    // Random championship orange color
-                    const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-                    colors[i] = color.r;
-                    colors[i + 1] = color.g;
-                    colors[i + 2] = color.b;
-                }
-
-                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-                // Particle material
-                const material = new THREE.PointsMaterial({
-                    size: isMobile ? 1.5 : 2,
-                    vertexColors: true,
-                    transparent: true,
-                    opacity: 0.8,
-                    blending: THREE.AdditiveBlending,
-                    sizeAttenuation: true
-                });
-
-                const particles = new THREE.Points(geometry, material);
-                scene.add(particles);
-
-                // Mouse interaction
-                let mouseX = 0;
-                let mouseY = 0;
-
-                document.addEventListener('mousemove', (event) => {
-                    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-                    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-                });
-
-                // Animation loop
-                function animate() {
-                    requestAnimationFrame(animate);
-
-                    const positions = particles.geometry.attributes.position.array;
-
-                    for (let i = 0; i < particleCount * 3; i += 3) {
-                        // Update position with velocity
-                        positions[i] += velocities[i];
-                        positions[i + 1] += velocities[i + 1];
-                        positions[i + 2] += velocities[i + 2];
-
-                        // Boundary check and wrap
-                        if (Math.abs(positions[i]) > 1000) positions[i] *= -1;
-                        if (Math.abs(positions[i + 1]) > 1000) positions[i + 1] *= -1;
-                        if (Math.abs(positions[i + 2]) > 500) positions[i + 2] *= -1;
-                    }
-
-                    particles.geometry.attributes.position.needsUpdate = true;
-
-                    // Rotate particles slowly
-                    particles.rotation.y += 0.0002;
-                    particles.rotation.x += 0.0001;
-
-                    // Mouse parallax effect
-                    camera.position.x += (mouseX * 50 - camera.position.x) * 0.05;
-                    camera.position.y += (mouseY * 50 - camera.position.y) * 0.05;
-
-                    renderer.render(scene, camera);
-                }
-
-                animate();
-
-                // Handle window resize
-                window.addEventListener('resize', () => {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                });
-            } catch (error) {
-                console.error('Particle system initialization failed:', error);
-            }
-        }
-
-        // Initialize particle system on load
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initParticleSystem);
-        } else {
-            initParticleSystem();
-        }
-
-        // ==================== ACCESSIBILITY ANNOUNCEMENTS ====================
-        function announce(message, assertive = false) {
-            const announcer = document.getElementById(assertive ? 'alert-announcer' : 'status-announcer');
-            announcer.textContent = message;
-            setTimeout(() => {
-                announcer.textContent = '';
-            }, 1000);
-        }
-
-        // Example: Announce when user navigates
-        window.addEventListener('popstate', () => {
-            announce('Page navigation occurred');
-        });
     </script>
-
-    <!-- PWA Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then((registration) => {
-                        console.log('[PWA] Service Worker registered successfully:', registration.scope);
-
-                        // Check for updates every hour
-                        setInterval(() => {
-                            registration.update();
-                        }, 60 * 60 * 1000);
-
-                        // Handle updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New service worker available, show update prompt
-                                    if (confirm('New version available! Reload to update?')) {
-                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                        window.location.reload();
-                                    }
-                                }
-                            });
-                        });
-                    })
-                    .catch((error) => {
-                        console.error('[PWA] Service Worker registration failed:', error);
-                    });
-
-                // Handle controller change (when new SW takes over)
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    console.log('[PWA] New Service Worker activated');
-                });
-            });
-
-            // Listen for messages from service worker
-            navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data.type === 'CACHE_UPDATED') {
-                    console.log('[PWA] Cache updated:', event.data.url);
-                }
-            });
-
-            // Handle offline/online status
-            window.addEventListener('online', () => {
-                console.log('[PWA] Back online');
-                document.body.classList.remove('offline');
-                announce('Connection restored', true);
-            });
-
-            window.addEventListener('offline', () => {
-                console.log('[PWA] Gone offline');
-                document.body.classList.add('offline');
-                announce('Connection lost - working offline', true);
-            });
-
-            // Install prompt for PWA
-            let deferredPrompt;
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                console.log('[PWA] Install prompt available');
-
-                // Show custom install button if you have one
-                const installButton = document.getElementById('pwa-install-button');
-                if (installButton) {
-                    installButton.style.display = 'block';
-                    installButton.addEventListener('click', async () => {
-                        if (deferredPrompt) {
-                            deferredPrompt.prompt();
-                            const { outcome } = await deferredPrompt.userChoice;
-                            console.log('[PWA] Install prompt outcome:', outcome);
-                            deferredPrompt = null;
-                            installButton.style.display = 'none';
-                        }
-                    });
-                }
-            });
-
-            // Track if app was installed
-            window.addEventListener('appinstalled', () => {
-                console.log('[PWA] App installed successfully');
-                deferredPrompt = null;
-                announce('App installed successfully', false);
-            });
-        }
-    </script>
-
-    <!-- Phase 3: Live Games Real-Time Integration -->
-    <script src="/js/live-games-integration.js" defer></script>
-
-    <!-- Real User Monitoring (Web Vitals) -->
-    <script src="/js/web-vitals-tracker.js" defer></script>
 </body>
 </html>

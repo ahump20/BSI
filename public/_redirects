@@ -1,6 +1,9 @@
 # Blaze Sports Intel - Cloudflare Pages Redirects
 # Format: <source> <destination> <status_code>
 
+# Main Analytics Route (Priority: High)
+/analytics /dashboard.html 200
+
 # Legal URL Canonicalization (Priority: High)
 /privacy /legal/privacy 301
 /terms /legal/terms 301

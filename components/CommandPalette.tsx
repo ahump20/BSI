@@ -21,22 +21,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Fuse from 'fuse.js';
 import {
   Search,
-  X,
   ArrowRight,
-  BarChart3,
-  TrendingUp,
   Database,
   Users,
-  Settings,
   Download,
   Moon,
-  Sun,
   Grid,
   List,
   Activity,
   Zap,
   Target,
-  Clock,
   Keyboard,
   Command,
 } from 'lucide-react';
@@ -392,7 +386,7 @@ export default function CommandPalette({
                       <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
                         {categoryLabels[category] || category}
                       </div>
-                      {commands.map((command, idx) => {
+                      {commands.map((command, _idx) => {
                         const globalIndex = filteredCommands.indexOf(command);
                         const isSelected = globalIndex === selectedIndex;
 
