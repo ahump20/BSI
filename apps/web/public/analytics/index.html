@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Blaze Sports Intel analytics—live scoreboards, predictive models, and historical research built on real data from verified sources.">
+  <title>Analytics | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-success: #22C55E;
+      --bsi-warning: #EAB308;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: color 0.15s ease;
+    }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: color 0.15s ease;
+      position: relative;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--bsi-burnt-orange);
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+    
+    .hero {
+      padding: calc(80px + 5rem) 1.5rem 4rem;
+      background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+      text-align: center;
+    }
+    .hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.8);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .status-bar {
+      padding: 1.5rem;
+      background: var(--bsi-charcoal);
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .status-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--bsi-success);
+    }
+    .status-indicator--warning {
+      background: var(--bsi-warning);
+    }
+    .status-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: rgba(250, 250, 250, 0.7);
+    }
+    .status-value {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--bsi-warm-white);
+    }
+    
+    .tools-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .tools-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .tools-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .tools-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .tools-title .accent { color: var(--bsi-burnt-orange); }
+    .tools-subtitle {
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.7);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) {
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .tools-grid { grid-template-columns: 1fr; }
+    }
+    
+    .tool-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 8px;
+      padding: 1.75rem;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .tool-card:hover {
+      border-color: rgba(191, 87, 0, 0.4);
+      transform: translateY(-4px);
+    }
+    .tool-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .tool-title {
+      font-family: var(--font-ui);
+      font-size: 1.0625rem;
+      font-weight: 600;
+    }
+    .tool-status {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.625rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .tool-status--live {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--bsi-success);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .tool-status--beta {
+      background: rgba(234, 179, 8, 0.15);
+      color: var(--bsi-warning);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+    .tool-status--coming {
+      background: rgba(250, 250, 250, 0.05);
+      color: rgba(250, 250, 250, 0.5);
+      border: 1px solid rgba(250, 250, 250, 0.1);
+    }
+    .tool-description {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: rgba(250, 250, 250, 0.75);
+    }
+    
+    .data-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-charcoal);
+    }
+    .data-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .data-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .data-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .data-title .accent { color: var(--bsi-burnt-orange); }
+    .data-subtitle {
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.7);
+    }
+    
+    .sources-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    @media (max-width: 800px) {
+      .sources-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .source {
+      background: rgba(13, 13, 13, 0.5);
+      border: 1px solid rgba(191, 87, 0, 0.1);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .source-name {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 0.375rem;
+    }
+    .source-type {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(250, 250, 250, 0.5);
+    }
+    
+    .tech-section {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .tech-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 250, 0.5);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .tech-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .tech-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 4px;
+      color: var(--bsi-burnt-orange);
+    }
+    
+    .principles-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .principles-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .principles-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+    .principles-title .accent { color: var(--bsi-burnt-orange); }
+    .principles-text {
+      font-size: 1.0625rem;
+      line-height: 1.8;
+      color: rgba(250, 250, 250, 0.8);
+      margin-bottom: 1.5rem;
+    }
+    .principles-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 600px) {
+      .principles-list { grid-template-columns: 1fr; }
+    }
+    .principle-item {
+      text-align: center;
+    }
+    .principle-item h4 {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 0.5rem;
+    }
+    .principle-item p {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: rgba(250, 250, 250, 0.7);
+    }
+    
+    .cta-section {
+      padding: 5rem 1.5rem;
+      background: linear-gradient(135deg, rgba(139, 69, 19, 0.1) 0%, var(--bsi-charcoal) 100%);
+      text-align: center;
+    }
+    .cta-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .cta-title .accent { color: var(--bsi-burnt-orange); }
+    .cta-text {
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.7);
+      margin-bottom: 2rem;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cta-btn {
+      padding: 0.875rem 2rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .cta-btn--primary {
+      background: var(--bsi-burnt-orange);
+      color: white;
+    }
+    .cta-btn--primary:hover {
+      background: var(--bsi-ember);
+      transform: translateY(-2px);
+    }
+    .cta-btn--ghost {
+      background: transparent;
+      border: 1px solid rgba(191, 87, 0, 0.5);
+      color: var(--bsi-burnt-orange);
+    }
+    .cta-btn--ghost:hover {
+      border-color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.1);
+    }
+    
+    .footer {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      text-align: center;
+    }
+    .footer-tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 0.75rem;
+    }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/assets/images/bsi-logo.png" alt="Blaze Sports Intel">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/our-story" class="nav-link">Our Story</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/analytics" class="nav-link active">Analytics</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Analytics Platform</p>
+      <h1 class="hero-title">Real Data. <span class="accent">No Fabrication.</span></h1>
+      <p class="hero-subtitle">
+        Live scoreboards, predictive models, and historical research—all built on verified data 
+        from primary sources. Every number cited, every claim backed by evidence.
+      </p>
+    </div>
+  </section>
+
+  <section class="status-bar">
+    <div class="status-inner">
+      <div class="status-item">
+        <span class="status-indicator"></span>
+        <span class="status-label">Data Pipeline</span>
+        <span class="status-value">Operational</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span>
+        <span class="status-label">API Status</span>
+        <span class="status-value">All Systems Go</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span>
+        <span class="status-label">Last Update</span>
+        <span class="status-value">Live</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools-section">
+    <div class="tools-container">
+      <div class="tools-header">
+        <h2 class="tools-title">Analytics <span class="accent">Tools</span></h2>
+        <p class="tools-subtitle">
+          Purpose-built tools for college baseball and football analysis.
+        </p>
+      </div>
+      
+      <div class="tools-grid">
+        <article class="tool-card">
+          <div class="tool-header">
+            <h3 class="tool-title">Live Scoreboards</h3>
+            <span class="tool-status tool-status--live">Live</span>
+          </div>
+          <p class="tool-description">
+            Real-time game tracking with complete box scores—the data ESPN refuses to provide for 
+            college baseball.
+          </p>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-header">
+            <h3 class="tool-title">Predictive Models</h3>
+            <span class="tool-status tool-status--live">Live</span>
+          </div>
+          <p class="tool-description">
+            Monte Carlo simulations and win probability models. Projections clearly labeled as 
+            projections, never presented as facts.
+          </p>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-header">
+            <h3 class="tool-title">Historical Research</h3>
+            <span class="tool-status tool-status--live">Live</span>
+          </div>
+          <p class="tool-description">
+            Decades of college baseball data searchable and cross-referenced. Player tracking from 
+            college through professional careers.
+          </p>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-header">
+            <h3 class="tool-title">Recruiting Intel</h3>
+            <span class="tool-status tool-status--beta">Beta</span>
+          </div>
+          <p class="tool-description">
+            Cross-sport recruiting aggregation. Class rankings, transfer portal activity, and 
+            composite ratings across baseball and football.
+          </p>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-header">
+            <h3 class="tool-title">Push Alerts</h3>
+            <span class="tool-status tool-status--beta">Beta</span>
+          </div>
+          <p class="tool-description">
+            Mobile notifications for game updates, breaking news, and significant statistical 
+            events across tracked programs.
+          </p>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-header">
+            <h3 class="tool-title">3D Visualizations</h3>
+            <span class="tool-status tool-status--coming">In Development</span>
+          </div>
+          <p class="tool-description">
+            WebGPU-powered pitch tunneling analysis and trajectory visualization. Advanced 
+            graphics for pitch movement and plate coverage.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="data-section">
+    <div class="data-container">
+      <div class="data-header">
+        <h2 class="data-title">Data <span class="accent">Sources</span></h2>
+        <p class="data-subtitle">
+          Primary sources over aggregators. Every data point traced to its origin.
+        </p>
+      </div>
+      
+      <div class="sources-grid">
+        <div class="source">
+          <p class="source-name">NCAA</p>
+          <p class="source-type">Official Statistics</p>
+        </div>
+        <div class="source">
+          <p class="source-name">ESPN</p>
+          <p class="source-type">API Data</p>
+        </div>
+        <div class="source">
+          <p class="source-name">MLB</p>
+          <p class="source-type">Statcast</p>
+        </div>
+        <div class="source">
+          <p class="source-name">Conference Sites</p>
+          <p class="source-type">Primary Sources</p>
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <p class="tech-label">Built on Cloudflare Developer Platform</p>
+        <div class="tech-grid">
+          <span class="tech-badge">Workers</span>
+          <span class="tech-badge">D1 Database</span>
+          <span class="tech-badge">KV Storage</span>
+          <span class="tech-badge">R2 Objects</span>
+          <span class="tech-badge">Workers AI</span>
+          <span class="tech-badge">Durable Objects</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="principles-section">
+    <div class="principles-container">
+      <h2 class="principles-title">Our Data <span class="accent">Standards</span></h2>
+      <p class="principles-text">
+        No fake data. No placeholder numbers. No projections presented as facts. Every statistic 
+        verified, every source cited, every claim backed by evidence.
+      </p>
+      
+      <div class="principles-list">
+        <div class="principle-item">
+          <h4>Verified Data Only</h4>
+          <p>Real endpoints with proper types. Zero placeholders, zero "your-api-key-here" shortcuts.</p>
+        </div>
+        <div class="principle-item">
+          <h4>Sources Always Cited</h4>
+          <p>Every data point traced to its origin. Primary sources over aggregators.</p>
+        </div>
+        <div class="principle-item">
+          <h4>Projections Labeled</h4>
+          <p>Predictive models clearly marked. Analysis distinct from factual reporting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-container">
+      <h2 class="cta-title">Want to know <span class="accent">the story?</span></h2>
+      <p class="cta-text">
+        BSI started with a simple question: why does ESPN ignore college baseball?
+      </p>
+      <div class="cta-buttons">
+        <a href="/our-story" class="cta-btn cta-btn--primary">Read Our Story</a>
+        <a href="/coverage" class="cta-btn cta-btn--ghost">View Coverage</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+</body>
+</html>
