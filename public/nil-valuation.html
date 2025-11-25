@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NIL Valuation Engine | Blaze Sports Intel</title>
-  <meta name="description" content="BSI's Fair Market NIL Value model helps college football GMs optimize Transfer Portal recruiting with roster optimization, WAR calculations, and market intelligence.">
+  <meta name="description" content="BSI's Fair Market NIL Value model for the 2025-26 Transfer Portal—roster optimization, WAR calculations, and market intelligence for college football.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -15,6 +15,7 @@
       --burnt-orange-light: #FF7720;
       --charcoal: #1a1a1a;
       --charcoal-light: #2d2d2d;
+      --charcoal-dark: #121212;
       --steel: #4a4a4a;
       --silver: #9a9a9a;
       --cream: #f5f5f0;
@@ -29,7 +30,7 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--charcoal);
+      background: var(--charcoal-dark);
       color: var(--cream);
       line-height: 1.6;
       min-height: 100vh;
@@ -37,15 +38,14 @@
 
     /* Navigation */
     .nav {
-      background: rgba(26, 26, 26, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--charcoal-light);
+      background: rgba(26, 26, 26, 0.98);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
       padding: 1rem 2rem;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-
     .nav-container {
       max-width: 1400px;
       margin: 0 auto;
@@ -53,21 +53,22 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       font-size: 1.25rem;
       font-weight: 800;
-      color: var(--burnt-orange);
+      color: var(--cream);
       text-decoration: none;
-      letter-spacing: -0.02em;
     }
-
+    .nav-logo:hover { color: var(--burnt-orange); }
+    .nav-logo img { height: 36px; }
     .nav-links {
       display: flex;
       gap: 2rem;
       list-style: none;
     }
-
     .nav-links a {
       color: var(--silver);
       text-decoration: none;
@@ -75,761 +76,449 @@
       font-weight: 500;
       transition: color 0.2s;
     }
+    .nav-links a:hover, .nav-links a.active { color: var(--burnt-orange); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
 
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--burnt-orange);
-    }
-
-    /* Hero Section */
+    /* Hero */
     .hero {
       background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-light) 100%);
-      padding: 3rem 2rem;
-      border-bottom: 1px solid var(--charcoal-light);
+      padding: 2.5rem 2rem;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
     }
-
-    .hero-container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .hero-eyebrow {
+    .hero-container { max-width: 1400px; margin: 0 auto; }
+    .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(191, 87, 0, 0.15);
-      border: 1px solid rgba(191, 87, 0, 0.3);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
       padding: 0.35rem 0.75rem;
       border-radius: 100px;
       font-size: 0.75rem;
       font-weight: 600;
-      color: var(--burnt-orange);
+      color: var(--success);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 1rem;
     }
-
-    .hero-eyebrow::before {
+    .hero-badge::before {
       content: '';
       width: 8px;
       height: 8px;
-      background: var(--burnt-orange);
+      background: var(--success);
       border-radius: 50%;
       animation: pulse 2s infinite;
     }
-
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
     }
-
     .hero h1 {
-      font-size: 2.5rem;
+      font-size: 2.25rem;
       font-weight: 800;
       letter-spacing: -0.03em;
-      margin-bottom: 0.75rem;
-      color: var(--white);
+      margin-bottom: 0.5rem;
     }
-
+    .hero h1 .accent { color: var(--burnt-orange); }
     .hero p {
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: var(--silver);
       max-width: 700px;
     }
 
-    /* Tab Navigation */
-    .tabs {
+    /* Status Bar */
+    .status-bar {
+      background: var(--charcoal);
+      padding: 0.75rem 2rem;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+    }
+    .status-inner {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 0 2rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      font-size: 0.8125rem;
     }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .status-dot.loading { background: var(--warning); animation: pulse 1s infinite; }
+    .status-dot.error { background: var(--error); }
+    .status-label { color: var(--silver); }
+    .status-value { font-weight: 600; color: var(--cream); }
 
+    /* Tabs */
+    .tabs { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
     .tab-nav {
       display: flex;
-      gap: 0.5rem;
+      gap: 0;
       border-bottom: 1px solid var(--charcoal-light);
-      margin-top: 2rem;
+      margin-top: 1.5rem;
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
-
     .tab-btn {
       padding: 1rem 1.5rem;
       background: none;
       border: none;
       color: var(--silver);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
       border-bottom: 3px solid transparent;
       transition: all 0.2s;
     }
-
-    .tab-btn:hover {
-      color: var(--cream);
-    }
-
+    .tab-btn:hover { color: var(--cream); background: rgba(191, 87, 0, 0.05); }
     .tab-btn.active {
       color: var(--burnt-orange);
       border-bottom-color: var(--burnt-orange);
+      background: rgba(191, 87, 0, 0.08);
     }
+    .tab-content { display: none; padding: 2rem 0; }
+    .tab-content.active { display: block; }
 
-    .tab-content {
-      display: none;
-      padding: 2rem 0;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Card Styles */
+    /* Cards */
     .card {
-      background: var(--charcoal-light);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 1.5rem;
     }
-
     .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-
     .card-title {
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--white);
+      margin-bottom: 0.25rem;
     }
-
     .card-subtitle {
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--silver);
-      margin-top: 0.25rem;
     }
 
-    /* Form Styles */
-    .form-group {
-      margin-bottom: 1.25rem;
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
-
-    .form-label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--cream);
-      margin-bottom: 0.5rem;
-    }
-
-    .form-input,
-    .form-select {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: var(--charcoal);
+    .form-select, .form-input {
+      background: var(--charcoal-light);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
       color: var(--cream);
-      font-size: 0.95rem;
+      font-size: 0.875rem;
       font-family: inherit;
-      transition: border-color 0.2s;
     }
-
-    .form-input:focus,
-    .form-select:focus {
+    .form-select:focus, .form-input:focus {
       outline: none;
       border-color: var(--burnt-orange);
     }
 
-    .form-input::placeholder {
-      color: var(--steel);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    /* Button Styles */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: none;
-      font-family: inherit;
-    }
-
-    .btn-primary {
-      background: var(--burnt-orange);
-      color: var(--white);
-    }
-
-    .btn-primary:hover {
-      background: var(--burnt-orange-dark);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--cream);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--burnt-orange);
-    }
-
-    .btn-sm {
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
-    }
-
-    /* Table Styles */
-    .table-container {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
+    /* Table */
+    .table-container { overflow-x: auto; }
     .data-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
     }
-
     .data-table th {
       text-align: left;
-      padding: 0.75rem 1rem;
-      background: var(--charcoal);
+      padding: 0.875rem 1rem;
+      background: var(--charcoal-light);
       color: var(--silver);
       font-weight: 600;
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      white-space: nowrap;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
-
-    .data-table th.sortable {
-      cursor: pointer;
-    }
-
-    .data-table th.sortable:hover {
-      color: var(--burnt-orange);
-    }
-
+    .data-table th.sortable { cursor: pointer; }
+    .data-table th.sortable:hover { color: var(--burnt-orange); }
     .data-table td {
-      padding: 0.875rem 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      white-space: nowrap;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
     }
-
-    .data-table tr:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
+    .data-table tr:hover { background: rgba(191, 87, 0, 0.04); }
 
     .rank-cell {
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       color: var(--burnt-orange);
+      font-size: 1rem;
     }
-
     .player-cell {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
-
     .player-avatar {
-      width: 36px;
-      height: 36px;
-      background: var(--steel);
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
+      background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 0.8rem;
-      color: var(--cream);
+      font-size: 0.75rem;
+      color: white;
     }
-
-    .player-name {
+    .player-name { font-weight: 600; }
+    .player-school { font-size: 0.8125rem; color: var(--silver); }
+    .position-badge {
+      background: rgba(191, 87, 0, 0.15);
+      color: var(--burnt-orange);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: var(--white);
     }
-
-    .player-school {
-      font-size: 0.8rem;
-      color: var(--silver);
-    }
-
     .value-cell {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
       color: var(--success);
+      font-size: 0.9375rem;
     }
-
     .grade-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
       font-weight: 700;
-      min-width: 40px;
+      font-size: 0.875rem;
     }
+    .grade-elite { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .grade-good { background: rgba(59, 130, 246, 0.2); color: var(--info); }
+    .grade-avg { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+    .trend-up { color: var(--success); }
+    .trend-down { color: var(--error); }
 
-    .grade-elite { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-    .grade-good { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-    .grade-avg { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-    .grade-below { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-
-    .position-badge {
-      display: inline-flex;
-      padding: 0.25rem 0.5rem;
-      background: rgba(191, 87, 0, 0.2);
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--burnt-orange);
-    }
-
-    .portal-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .portal-status--entered {
-      background: rgba(59, 130, 246, 0.2);
-      color: #3b82f6;
-    }
-
-    .portal-status--committed {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-    }
-
-    /* Optimizer Section */
-    .optimizer-grid {
+    /* Market Analysis */
+    .market-grid {
       display: grid;
-      grid-template-columns: 380px 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
+      margin-bottom: 2rem;
     }
-
-    @media (max-width: 1024px) {
-      .optimizer-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .position-needs {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .position-need-item {
-      display: grid;
-      grid-template-columns: 80px 1fr 80px auto;
-      gap: 0.75rem;
-      align-items: center;
-      padding: 0.75rem;
+    .market-card {
       background: var(--charcoal);
-      border-radius: 8px;
-    }
-
-    .priority-select {
-      padding: 0.5rem;
-      background: var(--charcoal-light);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      color: var(--cream);
-      font-size: 0.85rem;
-    }
-
-    .remove-btn {
-      width: 28px;
-      height: 28px;
-      background: rgba(239, 68, 68, 0.2);
-      border: none;
-      border-radius: 4px;
-      color: #ef4444;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    .add-position-btn {
-      padding: 0.75rem;
-      background: transparent;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      color: var(--silver);
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-
-    .add-position-btn:hover {
-      border-color: var(--burnt-orange);
-      color: var(--burnt-orange);
-    }
-
-    /* Results Section */
-    .results-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .summary-stat {
-      background: var(--charcoal);
-      padding: 1rem;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .summary-stat-value {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--burnt-orange);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .summary-stat-label {
-      font-size: 0.75rem;
-      color: var(--silver);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 0.25rem;
-    }
-
-    /* WAR Calculator Section */
-    .war-calculator {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 900px) {
-      .war-calculator {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .war-result {
-      background: var(--charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 12px;
       padding: 1.5rem;
     }
-
-    .war-result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1.5rem;
-    }
-
-    .war-value {
-      font-size: 3rem;
-      font-weight: 800;
-      color: var(--burnt-orange);
-      font-family: 'JetBrains Mono', monospace;
-      line-height: 1;
-    }
-
-    .war-label {
-      font-size: 0.85rem;
+    .market-card h3 {
+      font-size: 0.875rem;
       color: var(--silver);
-      margin-top: 0.25rem;
-    }
-
-    .war-breakdown {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .war-factor {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .war-factor-name {
-      font-size: 0.9rem;
-      color: var(--cream);
-    }
-
-    .war-factor-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-    }
-
-    .war-factor-value.positive { color: var(--success); }
-    .war-factor-value.negative { color: var(--error); }
-    .war-factor-value.neutral { color: var(--silver); }
-
-    .recommendation-box {
-      background: rgba(191, 87, 0, 0.1);
-      border: 1px solid rgba(191, 87, 0, 0.3);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .recommendation-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--burnt-orange);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 0.5rem;
     }
+    .market-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--burnt-orange);
+    }
+    .market-change {
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+    .market-change.up { color: var(--success); }
+    .market-change.down { color: var(--error); }
 
-    .recommendation-text {
-      font-size: 0.95rem;
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--burnt-orange);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--burnt-orange-light); }
+    .btn-secondary {
+      background: var(--charcoal-light);
       color: var(--cream);
-      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-secondary:hover { border-color: var(--burnt-orange); }
+
+    /* Loading */
+    .skeleton {
+      background: linear-gradient(90deg, var(--charcoal-light) 25%, rgba(191, 87, 0, 0.1) 50%, var(--charcoal-light) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
-    /* Methodology Section */
+    /* Methodology */
     .methodology {
       background: var(--charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.15);
       border-radius: 12px;
       padding: 2rem;
       margin-top: 2rem;
     }
-
     .methodology h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 1rem;
+      font-size: 1.125rem;
+      margin-bottom: 1.5rem;
+      color: var(--burnt-orange);
     }
-
     .methodology-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5rem;
     }
-
-    .method-card {
-      background: var(--charcoal-light);
-      border-radius: 8px;
-      padding: 1.25rem;
-    }
-
     .method-card h4 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--burnt-orange);
+      font-size: 0.875rem;
       margin-bottom: 0.5rem;
-    }
-
-    .method-card p {
-      font-size: 0.9rem;
-      color: var(--silver);
-    }
-
-    /* Disclaimer */
-    .disclaimer {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      margin-top: 2rem;
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
-    }
-
-    .disclaimer-icon {
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-
-    .disclaimer-text {
-      font-size: 0.85rem;
       color: var(--cream);
+    }
+    .method-card p {
+      font-size: 0.8125rem;
+      color: var(--silver);
+      line-height: 1.5;
     }
 
     /* Footer */
     .footer {
-      background: var(--charcoal);
-      border-top: 1px solid var(--charcoal-light);
+      margin-top: 4rem;
       padding: 2rem;
-      margin-top: 3rem;
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .footer p {
+      font-size: 0.8125rem;
+      color: var(--silver);
+    }
+    .footer .accent { color: var(--burnt-orange); }
+    .footer-timestamp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--steel);
+      margin-top: 0.5rem;
     }
 
-    .footer-container {
-      max-width: 1400px;
-      margin: 0 auto;
+    /* Pagination */
+    .pagination {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
-
-    .footer-copy {
-      font-size: 0.85rem;
+    .pagination-info {
+      font-size: 0.8125rem;
       color: var(--silver);
     }
-
-    .footer-links {
+    .pagination-buttons {
       display: flex;
-      gap: 1.5rem;
+      gap: 0.5rem;
     }
-
-    .footer-links a {
-      color: var(--silver);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: var(--burnt-orange);
-    }
-
-    /* Loading State */
-    .loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem;
-    }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid var(--charcoal-light);
-      border-top-color: var(--burnt-orange);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: var(--silver);
-    }
-
-    .empty-state-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.5;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 1.75rem;
-      }
-
-      .tab-nav {
-        gap: 0;
-      }
-
-      .tab-btn {
-        padding: 0.75rem 1rem;
-        font-size: 0.85rem;
-      }
-
-      .nav-links {
-        display: none;
-      }
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.8125rem;
     }
   </style>
 </head>
 <body>
-  <!-- Navigation -->
   <nav class="nav">
     <div class="nav-container">
-      <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+      <a href="/" class="nav-logo">
+        <img src="/images/bsi-logo.png" alt="BSI" onerror="this.style.display='none'">
+        <span>Blaze Sports Intel</span>
+      </a>
       <ul class="nav-links">
         <li><a href="/teams">Teams</a></li>
-        <li><a href="/analytics" class="active">Analytics</a></li>
+        <li><a href="/analytics">Analytics</a></li>
+        <li><a href="/nil-valuation" class="active">NIL</a></li>
         <li><a href="/coverage">Coverage</a></li>
         <li><a href="/pricing">Pricing</a></li>
-        <li><a href="/login">Sign In</a></li>
       </ul>
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero">
     <div class="hero-container">
-      <span class="hero-eyebrow">NIL Intelligence</span>
-      <h1>NIL Valuation Engine</h1>
-      <p>Fair Market Value modeling for the Transfer Portal era. Optimize your roster spend with data-driven NIL analysis, team-specific WAR projections, and market intelligence.</p>
+      <div class="hero-badge">2025-26 Season Data</div>
+      <h1>NIL <span class="accent">Valuation Engine</span></h1>
+      <p>Fair Market NIL Values for the Transfer Portal. Real-time roster optimization, WAR calculations, and market intelligence for college football GMs.</p>
     </div>
   </section>
 
-  <!-- Main Content -->
-  <main class="tabs">
-    <!-- Tab Navigation -->
+  <section class="status-bar">
+    <div class="status-inner">
+      <div class="status-item">
+        <span class="status-dot" id="api-status"></span>
+        <span class="status-label">Data Source:</span>
+        <span class="status-value" id="api-source">Loading...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot" id="update-status"></span>
+        <span class="status-label">Last Updated:</span>
+        <span class="status-value" id="last-update">--</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Season:</span>
+        <span class="status-value">2025-26</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="tabs">
     <div class="tab-nav">
-      <button class="tab-btn active" data-tab="rankings">Fair Market Rankings</button>
-      <button class="tab-btn" data-tab="optimizer">Roster Optimizer</button>
-      <button class="tab-btn" data-tab="war">WAR Calculator</button>
+      <button class="tab-btn active" data-tab="rankings">Program Rankings</button>
+      <button class="tab-btn" data-tab="players">Top Players</button>
       <button class="tab-btn" data-tab="market">Market Analysis</button>
     </div>
 
-    <!-- Rankings Tab -->
+    <!-- Program Rankings Tab -->
     <div id="rankings" class="tab-content active">
       <div class="card">
         <div class="card-header">
           <div>
-            <h2 class="card-title">Transfer Portal Fair Market Values</h2>
-            <p class="card-subtitle">BSI's proprietary model combining performance, exposure, and social metrics</p>
+            <h2 class="card-title">Top 50 NIL Program Rankings</h2>
+            <p class="card-subtitle">Total roster NIL value by program, sourced from On3 NIL Valuations</p>
           </div>
-          <div style="display: flex; gap: 0.75rem;">
-            <select class="form-select" id="position-filter" style="width: 120px;">
-              <option value="">All Positions</option>
-              <option value="QB">QB</option>
-              <option value="RB">RB</option>
-              <option value="WR">WR</option>
-              <option value="TE">TE</option>
-              <option value="OT">OT</option>
-              <option value="IOL">IOL</option>
-              <option value="EDGE">EDGE</option>
-              <option value="DT">DT</option>
-              <option value="LB">LB</option>
-              <option value="CB">CB</option>
-              <option value="S">S</option>
-            </select>
-            <select class="form-select" id="conference-filter" style="width: 140px;">
+          <div class="filters">
+            <select class="form-select" id="conference-filter">
               <option value="">All Conferences</option>
               <option value="SEC">SEC</option>
               <option value="Big Ten">Big Ten</option>
               <option value="Big 12">Big 12</option>
               <option value="ACC">ACC</option>
-              <option value="Pac-12">Pac-12</option>
-              <option value="G5">Group of 5</option>
             </select>
           </div>
         </div>
@@ -839,902 +528,414 @@
             <thead>
               <tr>
                 <th style="width: 60px;">Rank</th>
-                <th class="sortable">Player</th>
-                <th class="sortable">Pos</th>
-                <th class="sortable">Fair Market Value</th>
-                <th class="sortable">Grade</th>
-                <th>Social</th>
-                <th>Years</th>
-                <th>Status</th>
+                <th class="sortable">School</th>
+                <th class="sortable">Conference</th>
+                <th class="sortable">Total Roster Value</th>
+                <th class="sortable">Avg Player Value</th>
+                <th>Top Athlete</th>
+                <th>Collective</th>
+                <th class="sortable">YoY Change</th>
               </tr>
             </thead>
             <tbody id="rankings-body">
-              <!-- Sample data - populated by JS -->
-              <tr>
-                <td class="rank-cell">1</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">TH</div>
-                    <div>
-                      <div class="player-name">Travis Hunter</div>
-                      <div class="player-school">Colorado</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">CB/WR</span></td>
-                <td class="value-cell">$4,800,000</td>
-                <td><span class="grade-badge grade-elite">98</span></td>
-                <td>2.1M</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">2</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">CW</div>
-                    <div>
-                      <div class="player-name">Cam Ward</div>
-                      <div class="player-school">Miami</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">QB</span></td>
-                <td class="value-cell">$3,200,000</td>
-                <td><span class="grade-badge grade-elite">94</span></td>
-                <td>890K</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">3</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">TM</div>
-                    <div>
-                      <div class="player-name">Tetairoa McMillan</div>
-                      <div class="player-school">Arizona</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">WR</span></td>
-                <td class="value-cell">$2,100,000</td>
-                <td><span class="grade-badge grade-elite">92</span></td>
-                <td>245K</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">4</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">AC</div>
-                    <div>
-                      <div class="player-name">Abdul Carter</div>
-                      <div class="player-school">Penn State</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">EDGE</span></td>
-                <td class="value-cell">$1,850,000</td>
-                <td><span class="grade-badge grade-elite">91</span></td>
-                <td>156K</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">5</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">QE</div>
-                    <div>
-                      <div class="player-name">Quinn Ewers</div>
-                      <div class="player-school">Texas</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">QB</span></td>
-                <td class="value-cell">$1,750,000</td>
-                <td><span class="grade-badge grade-good">86</span></td>
-                <td>520K</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">6</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">LB</div>
-                    <div>
-                      <div class="player-name">Luther Burden III</div>
-                      <div class="player-school">Missouri</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">WR</span></td>
-                <td class="value-cell">$1,650,000</td>
-                <td><span class="grade-badge grade-elite">90</span></td>
-                <td>312K</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">7</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">JP</div>
-                    <div>
-                      <div class="player-name">James Pearce Jr.</div>
-                      <div class="player-school">Tennessee</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">EDGE</span></td>
-                <td class="value-cell">$1,580,000</td>
-                <td><span class="grade-badge grade-elite">93</span></td>
-                <td>89K</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">8</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">WC</div>
-                    <div>
-                      <div class="player-name">Will Campbell</div>
-                      <div class="player-school">LSU</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">OT</span></td>
-                <td class="value-cell">$1,420,000</td>
-                <td><span class="grade-badge grade-elite">91</span></td>
-                <td>45K</td>
-                <td>1</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">9</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">BM</div>
-                    <div>
-                      <div class="player-name">Benjamin Morrison</div>
-                      <div class="player-school">Notre Dame</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">CB</span></td>
-                <td class="value-cell">$1,350,000</td>
-                <td><span class="grade-badge grade-elite">90</span></td>
-                <td>78K</td>
-                <td>2</td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td class="rank-cell">10</td>
-                <td>
-                  <div class="player-cell">
-                    <div class="player-avatar">DA</div>
-                    <div>
-                      <div class="player-name">Drew Allar</div>
-                      <div class="player-school">Penn State</div>
-                    </div>
-                  </div>
-                </td>
-                <td><span class="position-badge">QB</span></td>
-                <td class="value-cell">$1,280,000</td>
-                <td><span class="grade-badge grade-good">87</span></td>
-                <td>198K</td>
-                <td>2</td>
-                <td>—</td>
-              </tr>
+              <tr><td colspan="8"><div class="skeleton" style="height: 400px;"></div></td></tr>
             </tbody>
           </table>
         </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
-          <p style="font-size: 0.85rem; color: var(--silver);">Showing 1-10 of 500 players</p>
-          <div style="display: flex; gap: 0.5rem;">
-            <button class="btn btn-secondary btn-sm" disabled>Previous</button>
-            <button class="btn btn-secondary btn-sm">Next</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Methodology -->
-      <div class="methodology">
-        <h3>Fair Market Value Methodology</h3>
-        <div class="methodology-grid">
-          <div class="method-card">
-            <h4>Performance Component (50%)</h4>
-            <p>Composite grade derived from production metrics, efficiency stats, and advanced analytics. Elite performers (90+) receive exponential value increases.</p>
-          </div>
-          <div class="method-card">
-            <h4>Exposure Component (25%)</h4>
-            <p>Program tier, conference strength, media market size, and TV appearance frequency. Blue blood programs command 50%+ premium.</p>
-          </div>
-          <div class="method-card">
-            <h4>Social Component (15%)</h4>
-            <p>Total followers across platforms weighted by engagement rate. Mega influencers (500K+) receive 80% multiplier boost.</p>
-          </div>
-          <div class="method-card">
-            <h4>Position Multiplier</h4>
-            <p>QBs (2.5x), EDGE (1.75x), OT (1.6x), WR (1.45x), CB (1.4x). Reflects market scarcity and positional impact.</p>
-          </div>
-        </div>
       </div>
     </div>
 
-    <!-- Roster Optimizer Tab -->
-    <div id="optimizer" class="tab-content">
-      <div class="optimizer-grid">
-        <!-- Input Panel -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Roster Optimizer</h2>
-              <p class="card-subtitle">Input your budget and needs to find optimal combinations</p>
-            </div>
+    <!-- Top Players Tab -->
+    <div id="players" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Top NIL Athletes</h2>
+            <p class="card-subtitle">Individual player valuations by sport</p>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Total NIL Budget</label>
-            <input type="text" class="form-input" id="budget-input" placeholder="$5,000,000" value="$5,000,000">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Position Needs</label>
-            <div class="position-needs" id="position-needs">
-              <div class="position-need-item">
-                <select class="form-select" style="padding: 0.5rem;">
-                  <option value="QB">QB</option>
-                  <option value="RB">RB</option>
-                  <option value="WR">WR</option>
-                  <option value="TE">TE</option>
-                  <option value="OT">OT</option>
-                  <option value="IOL">IOL</option>
-                  <option value="EDGE">EDGE</option>
-                  <option value="DT">DT</option>
-                  <option value="LB">LB</option>
-                  <option value="CB">CB</option>
-                  <option value="S">S</option>
-                </select>
-                <input type="number" class="form-input" placeholder="Min Grade" value="75" style="padding: 0.5rem;">
-                <select class="priority-select">
-                  <option value="3">High</option>
-                  <option value="2">Medium</option>
-                  <option value="1">Low</option>
-                </select>
-                <button class="remove-btn">×</button>
-              </div>
-              <div class="position-need-item">
-                <select class="form-select" style="padding: 0.5rem;">
-                  <option value="QB">QB</option>
-                  <option value="RB">RB</option>
-                  <option value="WR" selected>WR</option>
-                  <option value="TE">TE</option>
-                  <option value="OT">OT</option>
-                  <option value="IOL">IOL</option>
-                  <option value="EDGE">EDGE</option>
-                  <option value="DT">DT</option>
-                  <option value="LB">LB</option>
-                  <option value="CB">CB</option>
-                  <option value="S">S</option>
-                </select>
-                <input type="number" class="form-input" placeholder="Min Grade" value="70" style="padding: 0.5rem;">
-                <select class="priority-select">
-                  <option value="3">High</option>
-                  <option value="2" selected>Medium</option>
-                  <option value="1">Low</option>
-                </select>
-                <button class="remove-btn">×</button>
-              </div>
-              <div class="position-need-item">
-                <select class="form-select" style="padding: 0.5rem;">
-                  <option value="QB">QB</option>
-                  <option value="RB">RB</option>
-                  <option value="WR">WR</option>
-                  <option value="TE">TE</option>
-                  <option value="OT">OT</option>
-                  <option value="IOL">IOL</option>
-                  <option value="EDGE" selected>EDGE</option>
-                  <option value="DT">DT</option>
-                  <option value="LB">LB</option>
-                  <option value="CB">CB</option>
-                  <option value="S">S</option>
-                </select>
-                <input type="number" class="form-input" placeholder="Min Grade" value="80" style="padding: 0.5rem;">
-                <select class="priority-select">
-                  <option value="3" selected>High</option>
-                  <option value="2">Medium</option>
-                  <option value="1">Low</option>
-                </select>
-                <button class="remove-btn">×</button>
-              </div>
-            </div>
-            <button class="add-position-btn" id="add-position">+ Add Position Need</button>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Constraints</label>
-            <div class="form-row">
-              <div>
-                <label class="form-label" style="font-size: 0.75rem; color: var(--silver);">Max Players</label>
-                <input type="number" class="form-input" id="max-players" value="5" min="1" max="15">
-              </div>
-              <div>
-                <label class="form-label" style="font-size: 0.75rem; color: var(--silver);">Min Eligibility</label>
-                <select class="form-select" id="min-eligibility">
-                  <option value="1">1+ Years</option>
-                  <option value="2">2+ Years</option>
-                  <option value="3">3+ Years</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="run-optimizer">
-            Run Optimization
-          </button>
-        </div>
-
-        <!-- Results Panel -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">Optimization Results</h2>
-          </div>
-
-          <div class="results-summary">
-            <div class="summary-stat">
-              <div class="summary-stat-value">$4.85M</div>
-              <div class="summary-stat-label">Total Spent</div>
-            </div>
-            <div class="summary-stat">
-              <div class="summary-stat-value">5</div>
-              <div class="summary-stat-label">Players</div>
-            </div>
-            <div class="summary-stat">
-              <div class="summary-stat-value">6.8</div>
-              <div class="summary-stat-label">Projected WAR</div>
-            </div>
-            <div class="summary-stat">
-              <div class="summary-stat-value">1.40</div>
-              <div class="summary-stat-label">WAR / $M</div>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>Pos</th>
-                  <th>NIL Value</th>
-                  <th>Grade</th>
-                  <th>WAR</th>
-                  <th>Value Score</th>
-                </tr>
-              </thead>
-              <tbody id="optimizer-results">
-                <tr>
-                  <td>
-                    <div class="player-cell">
-                      <div class="player-avatar">MC</div>
-                      <div>
-                        <div class="player-name">Michael Carter</div>
-                        <div class="player-school">Oregon</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="position-badge">QB</span></td>
-                  <td class="value-cell">$1,450,000</td>
-                  <td><span class="grade-badge grade-good">84</span></td>
-                  <td>1.8</td>
-                  <td>1.24</td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="player-cell">
-                      <div class="player-avatar">JW</div>
-                      <div>
-                        <div class="player-name">Jayden Williams</div>
-                        <div class="player-school">USC</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="position-badge">EDGE</span></td>
-                  <td class="value-cell">$1,200,000</td>
-                  <td><span class="grade-badge grade-good">86</span></td>
-                  <td>1.6</td>
-                  <td>1.33</td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="player-cell">
-                      <div class="player-avatar">DT</div>
-                      <div>
-                        <div class="player-name">Devon Thomas</div>
-                        <div class="player-school">Alabama</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="position-badge">WR</span></td>
-                  <td class="value-cell">$980,000</td>
-                  <td><span class="grade-badge grade-good">82</span></td>
-                  <td>1.3</td>
-                  <td>1.33</td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="player-cell">
-                      <div class="player-avatar">KJ</div>
-                      <div>
-                        <div class="player-name">Kevin Johnson</div>
-                        <div class="player-school">Michigan</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="position-badge">CB</span></td>
-                  <td class="value-cell">$720,000</td>
-                  <td><span class="grade-badge grade-good">80</span></td>
-                  <td>1.1</td>
-                  <td>1.53</td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="player-cell">
-                      <div class="player-avatar">RB</div>
-                      <div>
-                        <div class="player-name">Robert Brown</div>
-                        <div class="player-school">Tennessee</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="position-badge">RB</span></td>
-                  <td class="value-cell">$500,000</td>
-                  <td><span class="grade-badge grade-avg">78</span></td>
-                  <td>1.0</td>
-                  <td>2.00</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="recommendation-box">
-            <div class="recommendation-title">Optimization Insight</div>
-            <div class="recommendation-text">This combination maximizes WAR efficiency at 1.40 WAR/$M. Alternative: Spend $800K more for +0.4 WAR by upgrading CB to elite tier.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- WAR Calculator Tab -->
-    <div id="war" class="tab-content">
-      <div class="war-calculator">
-        <!-- Input -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Team-Specific WAR Calculator</h2>
-              <p class="card-subtitle">Calculate a player's value relative to YOUR roster</p>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Select Player</label>
-            <select class="form-select" id="war-player">
-              <option value="">Search or select player...</option>
-              <option value="cam-ward">Cam Ward (QB, Miami)</option>
-              <option value="travis-hunter">Travis Hunter (CB/WR, Colorado)</option>
-              <option value="quinn-ewers">Quinn Ewers (QB, Texas)</option>
-              <option value="drew-allar">Drew Allar (QB, Penn State)</option>
-              <option value="james-pearce">James Pearce Jr. (EDGE, Tennessee)</option>
+          <div class="filters">
+            <select class="form-select" id="sport-filter">
+              <option value="football">Football</option>
+              <option value="basketball">Basketball</option>
+              <option value="baseball">Baseball</option>
             </select>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Target Team</label>
-            <select class="form-select" id="war-team">
-              <option value="">Select your team...</option>
-              <option value="texas">Texas Longhorns</option>
-              <option value="ohio-state">Ohio State Buckeyes</option>
-              <option value="georgia">Georgia Bulldogs</option>
-              <option value="alabama">Alabama Crimson Tide</option>
-              <option value="oregon">Oregon Ducks</option>
-              <option value="penn-state">Penn State Nittany Lions</option>
-              <option value="michigan">Michigan Wolverines</option>
-              <option value="notre-dame">Notre Dame Fighting Irish</option>
-              <option value="tennessee">Tennessee Volunteers</option>
-              <option value="lsu">LSU Tigers</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Current Starter at Position</label>
-            <select class="form-select" id="current-starter">
-              <option value="">Select starter to replace...</option>
-              <option value="starter-1">Current QB1 (Grade: 72)</option>
-              <option value="starter-2">Current QB2 (Grade: 65)</option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Scheme Fit</label>
-              <select class="form-select" id="scheme-fit">
-                <option value="1.15">Excellent (+15%)</option>
-                <option value="1.05" selected>Good (+5%)</option>
-                <option value="1.0">Average</option>
-                <option value="0.90">Poor (-10%)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Positional Need</label>
-              <select class="form-select" id="positional-need">
-                <option value="1.25">Critical (+25%)</option>
-                <option value="1.15" selected>High (+15%)</option>
-                <option value="1.05">Moderate (+5%)</option>
-                <option value="1.0">Low</option>
-              </select>
-            </div>
-          </div>
-
-          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="calculate-war">
-            Calculate Team-Specific WAR
-          </button>
         </div>
 
-        <!-- Results -->
-        <div class="card">
-          <div class="war-result">
-            <div class="war-result-header">
-              <div>
-                <div class="war-value">2.4</div>
-                <div class="war-label">Team-Specific WAR</div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">+1.6</div>
-                <div class="war-label">WAR Over Current</div>
-              </div>
-            </div>
-
-            <div class="war-breakdown">
-              <div class="war-factor">
-                <span class="war-factor-name">Baseline WAR (production)</span>
-                <span class="war-factor-value neutral">1.9</span>
-              </div>
-              <div class="war-factor">
-                <span class="war-factor-name">Scheme Fit Adjustment</span>
-                <span class="war-factor-value positive">+5%</span>
-              </div>
-              <div class="war-factor">
-                <span class="war-factor-name">Positional Need Bonus</span>
-                <span class="war-factor-value positive">+15%</span>
-              </div>
-              <div class="war-factor">
-                <span class="war-factor-name">Depth Chart Value</span>
-                <span class="war-factor-value positive">+8%</span>
-              </div>
-              <div class="war-factor">
-                <span class="war-factor-name">Conference Adjustment</span>
-                <span class="war-factor-value neutral">0%</span>
-              </div>
-              <div class="war-factor" style="border-bottom: none; padding-top: 1rem;">
-                <span class="war-factor-name" style="font-weight: 700;">Implied Market Value</span>
-                <span class="war-factor-value positive" style="font-size: 1.1rem;">$600,000</span>
-              </div>
-            </div>
-
-            <div class="recommendation-box">
-              <div class="recommendation-title">BSI Recommendation</div>
-              <div class="recommendation-text">Strong Pursue — Elite value proposition with significant upgrade over current roster. This player projects to add 1.6 wins to your program at a cost-efficient rate.</div>
-            </div>
-          </div>
-
-          <!-- Destination Comparison -->
-          <div style="margin-top: 1.5rem;">
-            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--cream); margin-bottom: 1rem;">Destination Comparison</h4>
-            <div class="table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Team</th>
-                    <th>Projected WAR</th>
-                    <th>Scheme Fit</th>
-                    <th>Marginal WAR</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style="background: rgba(191, 87, 0, 0.1);">
-                    <td><strong>Your Team</strong></td>
-                    <td>2.4</td>
-                    <td>Good</td>
-                    <td style="color: var(--success);">+1.6</td>
-                  </tr>
-                  <tr>
-                    <td>Ohio State</td>
-                    <td>2.1</td>
-                    <td>Excellent</td>
-                    <td style="color: var(--success);">+0.8</td>
-                  </tr>
-                  <tr>
-                    <td>Georgia</td>
-                    <td>1.9</td>
-                    <td>Good</td>
-                    <td style="color: var(--success);">+0.4</td>
-                  </tr>
-                  <tr>
-                    <td>Alabama</td>
-                    <td>2.0</td>
-                    <td>Average</td>
-                    <td style="color: var(--warning);">+0.2</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">Rank</th>
+                <th>Player</th>
+                <th>School</th>
+                <th>Position</th>
+                <th class="sortable">NIL Valuation</th>
+              </tr>
+            </thead>
+            <tbody id="players-body">
+              <tr><td colspan="5"><div class="skeleton" style="height: 300px;"></div></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
     <!-- Market Analysis Tab -->
     <div id="market" class="tab-content">
-      <div class="form-row" style="margin-bottom: 1.5rem;">
-        <div class="card" style="margin-bottom: 0;">
-          <div class="card-header">
-            <h2 class="card-title">Position Market Overview</h2>
-          </div>
-          <select class="form-select" id="market-position" style="max-width: 200px;">
-            <option value="all">All Positions</option>
-            <option value="QB">Quarterback</option>
-            <option value="RB">Running Back</option>
-            <option value="WR">Wide Receiver</option>
-            <option value="TE">Tight End</option>
-            <option value="OT">Offensive Tackle</option>
-            <option value="IOL">Interior O-Line</option>
-            <option value="EDGE">Edge Rusher</option>
-            <option value="DT">Defensive Tackle</option>
-            <option value="LB">Linebacker</option>
-            <option value="CB">Cornerback</option>
-            <option value="S">Safety</option>
-          </select>
+      <div class="market-grid" id="market-grid">
+        <div class="market-card">
+          <div class="skeleton" style="height: 100px;"></div>
+        </div>
+        <div class="market-card">
+          <div class="skeleton" style="height: 100px;"></div>
+        </div>
+        <div class="market-card">
+          <div class="skeleton" style="height: 100px;"></div>
+        </div>
+        <div class="market-card">
+          <div class="skeleton" style="height: 100px;"></div>
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="card" style="margin-bottom: 0;">
-          <h3 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--silver); margin-bottom: 0.5rem;">Median Value</h3>
-          <div style="font-size: 2rem; font-weight: 800; color: var(--burnt-orange); font-family: 'JetBrains Mono', monospace;">$450,000</div>
-          <div style="font-size: 0.85rem; color: var(--success); margin-top: 0.25rem;">↑ 22% YoY</div>
-        </div>
-        <div class="card" style="margin-bottom: 0;">
-          <h3 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--silver); margin-bottom: 0.5rem;">Top Tier Threshold</h3>
-          <div style="font-size: 2rem; font-weight: 800; color: var(--white); font-family: 'JetBrains Mono', monospace;">$1,200,000</div>
-          <div style="font-size: 0.85rem; color: var(--silver); margin-top: 0.25rem;">Top 10% cutoff</div>
-        </div>
-        <div class="card" style="margin-bottom: 0;">
-          <h3 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--silver); margin-bottom: 0.5rem;">Portal Supply</h3>
-          <div style="font-size: 2rem; font-weight: 800; color: var(--white); font-family: 'JetBrains Mono', monospace;">89</div>
-          <div style="font-size: 0.85rem; color: var(--warning); margin-top: 0.25rem;">Seller's market</div>
-        </div>
-        <div class="card" style="margin-bottom: 0;">
-          <h3 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--silver); margin-bottom: 0.5rem;">Position Multiplier</h3>
-          <div style="font-size: 2rem; font-weight: 800; color: var(--white); font-family: 'JetBrains Mono', monospace;">2.50x</div>
-          <div style="font-size: 0.85rem; color: var(--silver); margin-top: 0.25rem;">vs baseline</div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top: 1.5rem;">
+      <div class="card">
         <div class="card-header">
-          <h2 class="card-title">Position Value Comparison</h2>
+          <div>
+            <h2 class="card-title">Biggest Gainers</h2>
+            <p class="card-subtitle">Programs with largest year-over-year NIL increases</p>
+          </div>
         </div>
         <div class="table-container">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Position</th>
-                <th>Median Value</th>
-                <th>Multiplier</th>
-                <th>YoY Change</th>
-                <th>Portal Count</th>
-                <th>Market Status</th>
+                <th>School</th>
+                <th>Increase</th>
+                <th>% Change</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td><span class="position-badge">QB</span></td>
-                <td class="value-cell">$450,000</td>
-                <td>2.50x</td>
-                <td style="color: var(--success);">+22%</td>
-                <td>89</td>
-                <td><span style="color: var(--warning);">Seller's market</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">EDGE</span></td>
-                <td class="value-cell">$280,000</td>
-                <td>1.75x</td>
-                <td style="color: var(--success);">+15%</td>
-                <td>156</td>
-                <td><span style="color: var(--silver);">Balanced</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">OT</span></td>
-                <td class="value-cell">$250,000</td>
-                <td>1.60x</td>
-                <td style="color: var(--success);">+20%</td>
-                <td>98</td>
-                <td><span style="color: var(--warning);">Seller's market</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">WR</span></td>
-                <td class="value-cell">$220,000</td>
-                <td>1.45x</td>
-                <td style="color: var(--success);">+18%</td>
-                <td>312</td>
-                <td><span style="color: var(--success);">Buyer's market</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">CB</span></td>
-                <td class="value-cell">$200,000</td>
-                <td>1.40x</td>
-                <td style="color: var(--success);">+12%</td>
-                <td>187</td>
-                <td><span style="color: var(--silver);">Balanced</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">RB</span></td>
-                <td class="value-cell">$180,000</td>
-                <td>1.20x</td>
-                <td style="color: var(--error);">-5%</td>
-                <td>245</td>
-                <td><span style="color: var(--success);">Buyer's market</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">LB</span></td>
-                <td class="value-cell">$170,000</td>
-                <td>1.15x</td>
-                <td style="color: var(--success);">+8%</td>
-                <td>201</td>
-                <td><span style="color: var(--silver);">Balanced</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">S</span></td>
-                <td class="value-cell">$160,000</td>
-                <td>1.10x</td>
-                <td style="color: var(--success);">+10%</td>
-                <td>178</td>
-                <td><span style="color: var(--silver);">Balanced</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">DT</span></td>
-                <td class="value-cell">$155,000</td>
-                <td>1.10x</td>
-                <td style="color: var(--success);">+6%</td>
-                <td>134</td>
-                <td><span style="color: var(--silver);">Balanced</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">TE</span></td>
-                <td class="value-cell">$150,000</td>
-                <td>1.05x</td>
-                <td style="color: var(--success);">+14%</td>
-                <td>89</td>
-                <td><span style="color: var(--warning);">Seller's market</span></td>
-              </tr>
-              <tr>
-                <td><span class="position-badge">IOL</span></td>
-                <td class="value-cell">$140,000</td>
-                <td>1.00x</td>
-                <td style="color: var(--success);">+9%</td>
-                <td>167</td>
-                <td><span style="color: var(--silver);">Balanced</span></td>
-              </tr>
+            <tbody id="gainers-body">
+              <tr><td colspan="3"><div class="skeleton" style="height: 150px;"></div></td></tr>
             </tbody>
           </table>
         </div>
       </div>
+    </div>
 
-      <div class="disclaimer">
-        <span class="disclaimer-icon">⚠️</span>
-        <p class="disclaimer-text">
-          <strong>Disclaimer:</strong> NIL valuations are estimates based on publicly available data, market trends, and BSI's proprietary modeling. Actual NIL deal values may vary significantly based on individual negotiations, collective resources, and market conditions. This tool is for informational purposes only and does not constitute financial or legal advice.
-        </p>
+    <!-- Methodology -->
+    <div class="methodology">
+      <h3>Data Sources & Methodology</h3>
+      <div class="methodology-grid">
+        <div class="method-card">
+          <h4>On3 NIL Valuations</h4>
+          <p>Primary source for individual athlete and program valuations. Updated weekly during the season.</p>
+        </div>
+        <div class="method-card">
+          <h4>Performance Component</h4>
+          <p>50% weight—composite grade from production metrics, efficiency stats, and advanced analytics.</p>
+        </div>
+        <div class="method-card">
+          <h4>Exposure Component</h4>
+          <p>25% weight—program tier, conference strength, media market size, TV appearances.</p>
+        </div>
+        <div class="method-card">
+          <h4>Social Component</h4>
+          <p>15% weight—total followers across platforms weighted by engagement rate.</p>
+        </div>
       </div>
     </div>
-  </main>
+  </div>
 
-  <!-- Footer -->
   <footer class="footer">
-    <div class="footer-container">
-      <p class="footer-copy">© 2025 Blaze Sports Intel. All rights reserved.</p>
-      <div class="footer-links">
-        <a href="/about">About</a>
-        <a href="/coverage">Coverage</a>
-        <a href="/pricing">Pricing</a>
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-      </div>
-    </div>
+    <p><span class="accent">Blaze Sports Intel</span> — Built on verified data from On3, NCAA, and official sources.</p>
+    <p class="footer-timestamp" id="footer-timestamp"></p>
   </footer>
 
   <script>
+    // ============================================
+    // NIL Valuation Engine - Live Data Integration
+    // ============================================
+
+    const API_BASE = '/api/nil/valuations';
+
+    // Format currency
+    function formatCurrency(value) {
+      if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+      if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K';
+      return '$' + value.toLocaleString();
+    }
+
+    // Format large numbers
+    function formatNumber(value) {
+      if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+      if (value >= 1000) return (value / 1000).toFixed(0) + 'K';
+      return value.toString();
+    }
+
+    // Get Chicago timestamp
+    function getChicagoTime() {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      }).format(new Date());
+    }
+
     // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
         btn.classList.add('active');
         document.getElementById(btn.dataset.tab).classList.add('active');
       });
     });
 
-    // Add position need
-    document.getElementById('add-position')?.addEventListener('click', () => {
-      const container = document.getElementById('position-needs');
-      const item = document.createElement('div');
-      item.className = 'position-need-item';
-      item.innerHTML = `
-        <select class="form-select" style="padding: 0.5rem;">
-          <option value="QB">QB</option>
-          <option value="RB">RB</option>
-          <option value="WR">WR</option>
-          <option value="TE">TE</option>
-          <option value="OT">OT</option>
-          <option value="IOL">IOL</option>
-          <option value="EDGE">EDGE</option>
-          <option value="DT">DT</option>
-          <option value="LB">LB</option>
-          <option value="CB">CB</option>
-          <option value="S">S</option>
-        </select>
-        <input type="number" class="form-input" placeholder="Min Grade" value="70" style="padding: 0.5rem;">
-        <select class="priority-select">
-          <option value="3">High</option>
-          <option value="2" selected>Medium</option>
-          <option value="1">Low</option>
-        </select>
-        <button class="remove-btn">×</button>
+    // Load NIL data from API
+    async function loadNILData() {
+      const apiStatus = document.getElementById('api-status');
+      const apiSource = document.getElementById('api-source');
+      const updateStatus = document.getElementById('update-status');
+      const lastUpdate = document.getElementById('last-update');
+
+      apiStatus.classList.add('loading');
+      updateStatus.classList.add('loading');
+
+      try {
+        const response = await fetch(API_BASE);
+        if (!response.ok) throw new Error('API request failed');
+
+        const data = await response.json();
+
+        // Update status
+        apiStatus.classList.remove('loading', 'error');
+        updateStatus.classList.remove('loading', 'error');
+        apiSource.textContent = data.source || 'On3 NIL Valuations';
+        lastUpdate.textContent = data.lastUpdated || getChicagoTime();
+
+        // Render program rankings
+        if (data.programs && data.programs.length > 0) {
+          renderProgramRankings(data.programs);
+        }
+
+        // Render top athletes
+        if (data.topAthletes) {
+          renderTopAthletes(data.topAthletes.football || []);
+        }
+
+        // Render market analysis
+        if (data.trends) {
+          renderMarketAnalysis(data.trends, data.programs);
+        }
+
+      } catch (error) {
+        console.error('NIL API Error:', error);
+        apiStatus.classList.add('error');
+        apiStatus.classList.remove('loading');
+        apiSource.textContent = 'Connection Failed';
+        updateStatus.classList.add('error');
+        updateStatus.classList.remove('loading');
+
+        // Load fallback data
+        loadFallbackData();
+      }
+
+      // Update footer
+      document.getElementById('footer-timestamp').textContent = 'Data retrieved: ' + getChicagoTime() + ' CT';
+    }
+
+    // Render program rankings table
+    function renderProgramRankings(programs) {
+      const tbody = document.getElementById('rankings-body');
+
+      tbody.innerHTML = programs.map(p => {
+        const topAthlete = p.topAthletes && p.topAthletes[0]
+          ? `${p.topAthletes[0].name} (${formatCurrency(p.topAthletes[0].nilValue)})`
+          : '—';
+        const changeClass = p.yearOverYearChange >= 0 ? 'trend-up' : 'trend-down';
+        const changeSign = p.yearOverYearChange >= 0 ? '+' : '';
+
+        return `
+          <tr>
+            <td class="rank-cell">${p.rank}</td>
+            <td>
+              <div class="player-cell">
+                <div class="player-avatar">${p.school.substring(0, 2).toUpperCase()}</div>
+                <div class="player-name">${p.school}</div>
+              </div>
+            </td>
+            <td><span class="position-badge">${p.conference}</span></td>
+            <td class="value-cell">${formatCurrency(p.totalRosterValue)}</td>
+            <td>${formatCurrency(p.avgPlayerValue)}</td>
+            <td style="font-size: 0.8125rem;">${topAthlete}</td>
+            <td style="font-size: 0.8125rem; color: var(--silver);">${p.collective || '—'}</td>
+            <td class="${changeClass}">${changeSign}${formatCurrency(Math.abs(p.yearOverYearChange))}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render top athletes table
+    function renderTopAthletes(athletes) {
+      const tbody = document.getElementById('players-body');
+
+      if (athletes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--silver);">No athlete data available</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = athletes.map((a, i) => `
+        <tr>
+          <td class="rank-cell">${i + 1}</td>
+          <td>
+            <div class="player-cell">
+              <div class="player-avatar">${a.name.split(' ').map(n => n[0]).join('').substring(0, 2)}</div>
+              <div class="player-name">${a.name}</div>
+            </div>
+          </td>
+          <td>${a.school}</td>
+          <td><span class="position-badge">${a.position}</span></td>
+          <td class="value-cell">${formatCurrency(a.valuation || a.nilValue)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Render market analysis
+    function renderMarketAnalysis(trends, programs) {
+      const marketGrid = document.getElementById('market-grid');
+      const gainersBody = document.getElementById('gainers-body');
+
+      // Calculate market stats
+      const totalMarket = programs.reduce((sum, p) => sum + p.totalRosterValue, 0);
+      const avgTop10 = trends.insights?.averageTop10Value || 16570000;
+      const top50Threshold = trends.insights?.top50Threshold || 4000000;
+      const secCount = programs.filter(p => p.conference === 'SEC').length;
+
+      marketGrid.innerHTML = `
+        <div class="market-card">
+          <h3>Total Top 50 Market</h3>
+          <div class="market-value">${formatCurrency(totalMarket)}</div>
+          <div class="market-change up">Combined roster value</div>
+        </div>
+        <div class="market-card">
+          <h3>Avg Top 10 Value</h3>
+          <div class="market-value">${formatCurrency(avgTop10)}</div>
+          <div class="market-change">Per program</div>
+        </div>
+        <div class="market-card">
+          <h3>Top 50 Threshold</h3>
+          <div class="market-value">${formatCurrency(top50Threshold)}</div>
+          <div class="market-change">Minimum to qualify</div>
+        </div>
+        <div class="market-card">
+          <h3>SEC Dominance</h3>
+          <div class="market-value">${secCount}/${programs.length}</div>
+          <div class="market-change">${trends.insights?.secDominance || 'Half of top 10 from SEC'}</div>
+        </div>
       `;
-      container.insertBefore(item, document.getElementById('add-position'));
-      
-      // Add remove handler
-      item.querySelector('.remove-btn').addEventListener('click', () => item.remove());
-    });
 
-    // Remove position handlers
-    document.querySelectorAll('.remove-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => e.target.closest('.position-need-item').remove());
-    });
+      // Render gainers
+      if (trends.biggestGainers && trends.biggestGainers.length > 0) {
+        gainersBody.innerHTML = trends.biggestGainers.map(g => `
+          <tr>
+            <td><strong>${g.school}</strong></td>
+            <td class="value-cell">+${formatCurrency(g.increase)}</td>
+            <td class="trend-up">+${g.percentChange.toFixed(1)}%</td>
+          </tr>
+        `).join('');
+      }
+    }
 
-    // Format currency input
-    document.getElementById('budget-input')?.addEventListener('blur', (e) => {
-      const value = e.target.value.replace(/[^0-9]/g, '');
-      if (value) {
-        e.target.value = '$' + parseInt(value).toLocaleString();
+    // Fallback data if API fails
+    function loadFallbackData() {
+      const fallbackPrograms = [
+        { rank: 1, school: 'Texas', conference: 'SEC', totalRosterValue: 22000000, avgPlayerValue: 253000, topAthletes: [{ name: 'Arch Manning', nilValue: 6800000 }], collective: 'Texas One Fund', yearOverYearChange: 2100000 },
+        { rank: 2, school: 'Alabama', conference: 'SEC', totalRosterValue: 18400000, avgPlayerValue: 206000, topAthletes: [{ name: 'Ryan Williams', nilValue: 2600000 }], collective: 'Yellowhammer Fund', yearOverYearChange: 2400000 },
+        { rank: 3, school: 'Ohio State', conference: 'Big Ten', totalRosterValue: 18300000, avgPlayerValue: 208000, topAthletes: [{ name: 'Jeremiah Smith', nilValue: 4200000 }], collective: 'THE Foundation', yearOverYearChange: 4700000 },
+        { rank: 4, school: 'LSU', conference: 'SEC', totalRosterValue: 17900000, avgPlayerValue: 180000, topAthletes: [{ name: 'Garrett Nussmeier', nilValue: 4000000 }], collective: 'Bayou Traditions', yearOverYearChange: 7800000 },
+        { rank: 5, school: 'Georgia', conference: 'SEC', totalRosterValue: 15700000, avgPlayerValue: 159000, topAthletes: [], collective: 'Classic City Collective', yearOverYearChange: 2300000 },
+        { rank: 6, school: 'Penn State', conference: 'Big Ten', totalRosterValue: 14600000, avgPlayerValue: 120000, topAthletes: [{ name: 'Drew Allar', nilValue: 3300000 }], collective: 'Happy Valley United', yearOverYearChange: 4700000 },
+        { rank: 7, school: 'Texas A&M', conference: 'SEC', totalRosterValue: 14300000, avgPlayerValue: 159000, topAthletes: [], collective: 'Texas Aggies United', yearOverYearChange: 5000000 },
+        { rank: 8, school: 'Oregon', conference: 'Big Ten', totalRosterValue: 13700000, avgPlayerValue: 149000, topAthletes: [{ name: 'Dakorien Moore', nilValue: 2000000 }], collective: 'Division Street', yearOverYearChange: 2100000 },
+        { rank: 9, school: 'Michigan', conference: 'Big Ten', totalRosterValue: 13000000, avgPlayerValue: 139000, topAthletes: [{ name: 'Bryce Underwood', nilValue: 3000000 }], collective: 'Champions Circle', yearOverYearChange: 1400000 },
+        { rank: 10, school: 'Oklahoma', conference: 'SEC', totalRosterValue: 12600000, avgPlayerValue: 146000, topAthletes: [{ name: 'David Stone', nilValue: 1500000 }], collective: 'Crimson & Cream', yearOverYearChange: 2900000 },
+        { rank: 11, school: 'Tennessee', conference: 'SEC', totalRosterValue: 11500000, avgPlayerValue: 135000, topAthletes: [{ name: 'Nico Iamaleava', nilValue: 8000000 }], collective: 'Spyre Sports', yearOverYearChange: -100000 },
+        { rank: 12, school: 'South Carolina', conference: 'SEC', totalRosterValue: 10600000, avgPlayerValue: 125000, topAthletes: [{ name: 'LaNorris Sellers', nilValue: 3800000 }], collective: 'Garnet Trust', yearOverYearChange: 2600000 }
+      ];
+
+      const fallbackAthletes = [
+        { name: 'Nico Iamaleava', school: 'Tennessee', position: 'QB', valuation: 8000000 },
+        { name: 'Arch Manning', school: 'Texas', position: 'QB', valuation: 6800000 },
+        { name: 'Jeremiah Smith', school: 'Ohio State', position: 'WR', valuation: 4200000 },
+        { name: 'Garrett Nussmeier', school: 'LSU', position: 'QB', valuation: 4000000 },
+        { name: 'LaNorris Sellers', school: 'South Carolina', position: 'QB', valuation: 3800000 },
+        { name: 'Drew Allar', school: 'Penn State', position: 'QB', valuation: 3300000 },
+        { name: 'Bryce Underwood', school: 'Michigan', position: 'QB', valuation: 3000000 },
+        { name: 'Ryan Williams', school: 'Alabama', position: 'WR', valuation: 2600000 },
+        { name: 'Caleb Downs', school: 'Ohio State', position: 'S', valuation: 2400000 },
+        { name: 'Dakorien Moore', school: 'Oregon', position: 'WR', valuation: 2000000 }
+      ];
+
+      const fallbackTrends = {
+        biggestGainers: [
+          { school: 'LSU', increase: 7800000, percentChange: 77.2 },
+          { school: 'Texas A&M', increase: 5000000, percentChange: 53.8 },
+          { school: 'Penn State', increase: 4700000, percentChange: 47.5 },
+          { school: 'Ohio State', increase: 4700000, percentChange: 34.6 }
+        ],
+        insights: {
+          top50Threshold: 4000000,
+          averageTop10Value: 16570000,
+          secDominance: 'Half of top 10 from SEC'
+        }
+      };
+
+      renderProgramRankings(fallbackPrograms);
+      renderTopAthletes(fallbackAthletes);
+      renderMarketAnalysis(fallbackTrends, fallbackPrograms);
+    }
+
+    // Conference filter
+    document.getElementById('conference-filter')?.addEventListener('change', async (e) => {
+      const conference = e.target.value;
+      if (conference) {
+        try {
+          const response = await fetch(`${API_BASE}?conference=${encodeURIComponent(conference)}`);
+          const data = await response.json();
+          if (data.programs) {
+            renderProgramRankings(data.programs);
+          }
+        } catch (error) {
+          console.error('Filter error:', error);
+        }
+      } else {
+        loadNILData();
       }
     });
 
-    // Run optimizer (placeholder - would call API)
-    document.getElementById('run-optimizer')?.addEventListener('click', () => {
-      // Would call /api/nil/optimize
-      console.log('Running optimization...');
+    // Sport filter for athletes
+    document.getElementById('sport-filter')?.addEventListener('change', async (e) => {
+      const sport = e.target.value;
+      try {
+        const response = await fetch(`${API_BASE}?sport=${sport}`);
+        const data = await response.json();
+        if (data.athletes) {
+          renderTopAthletes(data.athletes);
+        }
+      } catch (error) {
+        console.error('Sport filter error:', error);
+      }
     });
 
-    // Calculate WAR (placeholder - would call API)
-    document.getElementById('calculate-war')?.addEventListener('click', () => {
-      // Would call /api/nil/war
-      console.log('Calculating WAR...');
-    });
-
-    // Table sorting
-    document.querySelectorAll('.data-table th.sortable').forEach(th => {
-      th.addEventListener('click', () => {
-        // Would implement sorting
-        console.log('Sorting by:', th.textContent);
-      });
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('api-status').classList.add('loading');
+      document.getElementById('update-status').classList.add('loading');
+      loadNILData();
     });
   </script>
 </body>
