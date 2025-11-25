@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Austin Humphrey | Born on Texas Soil | Blaze Sports Intel</title>
+    <meta name="description" content="The story of Austin Humphrey, founder of Blaze Sports Intel. Born in Memphis on Davy Crockett's birthday, on Texas soil from the birthplace of the Republic. From the Ricky Williams game to building championship intelligence.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="About Austin Humphrey | Blaze Sports Intel">
+    <meta property="og:description" content="Born in Memphis, TN on Davy Crockett's birthday, on Texas soil. Building sports intelligence from the Deep South.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/about">
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Brand Colors */
+            --burnt-orange: #BF5700;
+            --burnt-orange-light: #D97B38;
+            --burnt-orange-dark: #9B4500;
+            --texas-cream: #F5E6D3;
+            --charcoal: #1A1A1A;
+            --charcoal-light: #2D2D2D;
+            --slate: #0B0E14;
+
+            /* Text */
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --text-muted: rgba(255, 255, 255, 0.6);
+
+            /* Effects */
+            --glass: rgba(26, 26, 26, 0.6);
+            --glass-border: rgba(191, 87, 0, 0.2);
+            --glow-orange: 0 0 60px rgba(191, 87, 0, 0.3);
+
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Playfair Display', Georgia, serif;
+
+            /* Spacing */
+            --section-padding: clamp(4rem, 10vw, 8rem);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--slate);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background Gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(191, 87, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(191, 87, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.25rem 2rem;
+            background: rgba(11, 14, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--glass);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: var(--burnt-orange);
+            border-color: var(--burnt-orange);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main {
+            position: relative;
+            z-index: 1;
+            padding-top: 80px;
+        }
+
+        /* Hero Section - Origin Story */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--section-padding) 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            background: var(--glass);
+            border: 1px solid var(--burnt-orange);
+            border-radius: 50px;
+            color: var(--burnt-orange-light);
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--burnt-orange-light) 0%, var(--burnt-orange) 50%, #E68A4F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+        }
+
+        .hero-subtitle strong {
+            color: var(--burnt-orange-light);
+        }
+
+        /* Profile Image */
+        .profile-container {
+            position: relative;
+            margin: 3rem auto;
+            max-width: 280px;
+        }
+
+        .profile-image {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--burnt-orange);
+            box-shadow: var(--glow-orange), 0 20px 40px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.02);
+        }
+
+        .profile-ring {
+            position: absolute;
+            inset: -12px;
+            border: 2px solid rgba(191, 87, 0, 0.3);
+            border-radius: 50%;
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.02); }
+        }
+
+        /* Origin Story Section */
+        .origin-section {
+            padding: var(--section-padding) 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(191, 87, 0, 0.03) 100%);
+        }
+
+        .origin-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-divider {
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--burnt-orange), var(--burnt-orange-light));
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        /* Story Cards */
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        .story-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--glow-orange);
+            border-color: var(--burnt-orange);
+        }
+
+        .story-card-featured {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        @media (max-width: 900px) {
+            .story-card-featured {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .story-image-container {
+            position: relative;
+            min-height: 400px;
+            overflow: hidden;
+        }
+
+        .story-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+        }
+
+        .story-card:hover .story-image {
+            transform: scale(1.05);
+        }
+
+        .story-image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(11, 14, 20, 0.9) 100%);
+        }
+
+        .story-image-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            color: var(--text-primary);
+        }
+
+        .story-image-caption h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .story-image-caption p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .story-content {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .story-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--burnt-orange-light);
+            margin-bottom: 1rem;
+        }
+
+        .story-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .story-text {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .story-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .story-highlight {
+            color: var(--burnt-orange-light);
+            font-weight: 600;
+        }
+
+        /* Doctor Quote */
+        .doctor-quote {
+            position: relative;
+            margin: 1.5rem 0;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, rgba(191, 87, 0, 0.15) 0%, rgba(191, 87, 0, 0.05) 100%);
+            border-left: 4px solid var(--burnt-orange);
+            border-radius: 0 16px 16px 0;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .doctor-quote .quote-icon {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 1.5rem;
+            color: var(--burnt-orange);
+            opacity: 0.6;
+        }
+
+        .doctor-quote .quote-attribution {
+            display: block;
+            margin-top: 0.75rem;
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            font-style: normal;
+            color: var(--text-muted);
+        }
+
+        /* Birth Story Featured Card */
+        .birth-story-card {
+            background: linear-gradient(135deg, rgba(191, 87, 0, 0.1) 0%, var(--glass) 100%);
+            border: 2px solid var(--burnt-orange);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--burnt-orange) 0%, transparent 100%);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .timeline-content {
+            flex: 1;
+            max-width: 45%;
+        }
+
+        .timeline-marker {
+            width: 20px;
+            height: 20px;
+            background: var(--burnt-orange);
+            border: 4px solid var(--slate);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(191, 87, 0, 0.5);
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(odd) {
+                flex-direction: row;
+                text-align: left;
+                gap: 2rem;
+            }
+
+            .timeline-content {
+                max-width: 100%;
+            }
+
+            .timeline-marker {
+                flex-shrink: 0;
+            }
+        }
+
+        /* Credentials Section */
+        .credentials-section {
+            padding: var(--section-padding) 2rem;
+        }
+
+        .credentials-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .credential-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .credential-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--burnt-orange);
+        }
+
+        .credential-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .credential-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .credential-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Teams Section */
+        .teams-section {
+            padding: var(--section-padding) 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(191, 87, 0, 0.05) 100%);
+        }
+
+        .teams-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--burnt-orange);
+            box-shadow: 0 10px 30px rgba(191, 87, 0, 0.2);
+        }
+
+        .team-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .team-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .team-league {
+            font-size: 0.875rem;
+            color: var(--burnt-orange-light);
+            font-weight: 600;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: var(--section-padding) 2rem;
+        }
+
+        .contact-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .contact-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--charcoal-light);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            background: var(--burnt-orange);
+            transform: translateX(4px);
+        }
+
+        .contact-link i {
+            font-size: 1.25rem;
+            color: var(--burnt-orange-light);
+        }
+
+        .contact-link:hover i {
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer-text a {
+            color: var(--burnt-orange-light);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                min-height: auto;
+                padding: 6rem 1.5rem 4rem;
+            }
+
+            .profile-image {
+                width: 200px;
+                height: 200px;
+            }
+
+            .story-content {
+                padding: 2rem;
+            }
+
+            .story-image-container {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span>BLAZE SPORTS INTEL</span>
+            </a>
+            <a href="/" class="nav-back">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero" data-aos="fade-up">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-star"></i>
+                    The Origin Story
+                </div>
+                <h1 class="hero-title">Born on Texas Soil</h1>
+                <p class="hero-subtitle">
+                    <strong>August 17, 1995</strong> - Memphis, Tennessee. The same birthday as <strong>Davy Crockett</strong>,
+                    the Tennessee folk hero who died defending Texas at the Alamo. Born literally on Texas soil,
+                    from the birthplace of the Republic.
+                </p>
+
+                <div class="profile-container" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="profile-ring"></div>
+                    <img
+                        src="/images/austin-humphrey.jpg"
+                        alt="Austin Humphrey, Founder of Blaze Sports Intel"
+                        class="profile-image"
+                    >
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem;">Austin Humphrey</h2>
+                    <p style="color: var(--burnt-orange-light); font-weight: 600; font-size: 1.125rem;">Founder & Lead Analyst</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Origin Story Section -->
+        <section class="origin-section">
+            <div class="origin-container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">A Birth Story Written in Texas Dirt</h2>
+                    <div class="section-divider"></div>
+                </div>
+
+                <div class="story-grid">
+                    <!-- The Texas Soil Story -->
+                    <div class="story-card story-card-featured birth-story-card" data-aos="fade-up">
+                        <div class="story-image-container">
+                            <img
+                                src="/images/texas-soil-birth.jpg"
+                                alt="Newspaper clipping: Tennessee birth will be on Texas soil, with bag of Texas soil from West Columbia"
+                                class="story-image"
+                            >
+                            <div class="story-image-overlay"></div>
+                            <div class="story-image-caption">
+                                <h3>"Tennessee birth will be on Texas soil"</h3>
+                                <p>El Campo Leader-News, 1995</p>
+                            </div>
+                        </div>
+                        <div class="story-content">
+                            <div class="story-label">The Origin</div>
+                            <h3 class="story-title">Destiny Written Before Birth</h3>
+                            <p class="story-text">
+                                My family knew I'd be born in Memphis, but they also knew I was meant for Texas.
+                                So they did something extraordinary: they collected soil from <span class="story-highlight">West Columbia</span>—the
+                                first capital of the Republic of Texas, where Sam Houston was inaugurated as the first president.
+                            </p>
+                            <p class="story-text">
+                                That soil traveled from the birthplace of Texas independence to a Memphis hospital room.
+                                I was born on it. <span class="story-highlight">Literally on Texas soil.</span>
+                            </p>
+                            <p class="story-text">
+                                The doctor looked at my parents, smiled, and said:
+                            </p>
+                            <blockquote class="doctor-quote">
+                                <i class="fas fa-quote-left quote-icon"></i>
+                                "You know you ain't the first to do this—but they've ALL been from Texas."
+                                <span class="quote-attribution">— Delivering Physician, Memphis, TN</span>
+                            </blockquote>
+                            <p class="story-text">
+                                August 17, 1995—the same birthday as Davy Crockett, the Tennessee senator who left everything
+                                to defend Texas at the Alamo. Born in Tennessee, destined for Texas. History has a sense of poetry.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Dad Teaching Baseball -->
+                    <div class="story-card story-card-featured" data-aos="fade-up" data-aos-delay="100">
+                        <div class="story-content">
+                            <div class="story-label">The Foundation</div>
+                            <h3 class="story-title">A Boy and His Bat</h3>
+                            <p class="story-text">
+                                Before the analytics. Before the algorithms. Before understanding what a batting average even meant.
+                                There was this: <span class="story-highlight">a red bat, a glove, and a dad who taught me to love the game.</span>
+                            </p>
+                            <p class="story-text">
+                                Every great sports analyst starts the same way—not with spreadsheets, but with someone
+                                who hands you a bat and shows you how to swing. The numbers came later.
+                                <span class="story-highlight">The love of the game came first.</span>
+                            </p>
+                            <p class="story-text">
+                                This photo hangs in my office. A reminder that sports intelligence isn't just about data—it's about
+                                the moments that made you care about the data in the first place.
+                            </p>
+                        </div>
+                        <div class="story-image-container">
+                            <img
+                                src="/images/austin-dad-baseball.jpeg"
+                                alt="Young Austin with his dad, holding a baseball bat and glove"
+                                class="story-image"
+                            >
+                            <div class="story-image-overlay"></div>
+                            <div class="story-image-caption">
+                                <h3>Where It Started</h3>
+                                <p>Austin with his father, circa 1998</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- The Ricky Williams Game -->
+                    <div class="story-card story-card-featured" data-aos="fade-up" data-aos-delay="200">
+                        <div class="story-content">
+                            <div class="story-label">The Moment</div>
+                            <h3 class="story-title">November 27, 1998</h3>
+                            <p class="story-text">
+                                Three years old. Darrell K Royal-Texas Memorial Stadium.
+                                <span class="story-highlight">Ricky Williams breaks the NCAA all-time rushing record</span>
+                                against Texas A&M. Final score: Texas 26, A&M 24.
+                            </p>
+                            <p class="story-text">
+                                I was there, in a Texas t-shirt, watching history happen. Too young to understand statistics,
+                                old enough to feel the electricity when something legendary unfolds.
+                            </p>
+                            <p class="story-text">
+                                That game taught me what numbers can't capture: <span class="story-highlight">momentum, pressure,
+                                the intangibles that separate statistics from story.</span> Twenty-five years later,
+                                I'm still trying to measure what I felt that day.
+                            </p>
+                        </div>
+                        <div class="story-image-container">
+                            <img
+                                src="/images/ricky-williams-game.jpg"
+                                alt="Young Austin at the Ricky Williams rushing record game, November 1998"
+                                class="story-image"
+                            >
+                            <div class="story-image-overlay"></div>
+                            <div class="story-image-caption">
+                                <h3>The Ricky Williams Game</h3>
+                                <p>DKR-Texas Memorial Stadium, 1998</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why This Platform Exists -->
+        <section class="credentials-section">
+            <div class="origin-container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">Why Blaze Exists</h2>
+                    <div class="section-divider"></div>
+                </div>
+
+                <div class="story-card" style="padding: 3rem;" data-aos="fade-up">
+                    <div class="story-label" style="text-align: center;">The Problem</div>
+                    <h3 class="story-title" style="text-align: center; margin-bottom: 2rem;">
+                        Analytics Platforms Built by People Who Never Competed
+                    </h3>
+
+                    <div style="display: grid; gap: 2rem; max-width: 800px; margin: 0 auto;">
+                        <p class="story-text" style="text-align: center;">
+                            Most sports analytics tools are built by data scientists who optimize for statistical elegance,
+                            not competitive reality. They measure what's <em>convenient</em>—exit velocity, yards per play,
+                            shooting percentage—not what actually <span class="story-highlight">swings outcomes</span>.
+                        </p>
+
+                        <p class="story-text" style="text-align: center;">
+                            Coaches don't need prettier spreadsheets. They need answers:
+                            <span class="story-highlight">Should I pull this pitcher? Is this recruit worth the scholarship?
+                            What's the optimal play call on third-and-seven?</span>
+                        </p>
+
+                        <p class="story-text" style="text-align: center;">
+                            Blaze measures what matters. Situation. Momentum. Pressure.
+                            The stuff you feel at three years old in a stadium when records get broken.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Credentials -->
+        <section class="credentials-section" style="padding-top: 0;">
+            <div class="credentials-grid" data-aos="fade-up">
+                <div class="credential-card">
+                    <div class="credential-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="credential-label">Education</div>
+                    <div class="credential-value">University of Texas at Austin</div>
+                </div>
+
+                <div class="credential-card">
+                    <div class="credential-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="credential-label">Location</div>
+                    <div class="credential-value">Boerne, Texas</div>
+                </div>
+
+                <div class="credential-card">
+                    <div class="credential-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="credential-label">Born</div>
+                    <div class="credential-value">August 17, 1995</div>
+                </div>
+
+                <div class="credential-card">
+                    <div class="credential-icon">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <div class="credential-label">Heritage</div>
+                    <div class="credential-value">Memphis → Texas</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Favorite Teams -->
+        <section class="teams-section">
+            <div class="origin-container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">The Teams</h2>
+                    <div class="section-divider"></div>
+                </div>
+
+                <div class="teams-grid" data-aos="fade-up" data-aos-delay="100">
+                    <div class="team-card">
+                        <div class="team-icon">⚾</div>
+                        <div class="team-name">St. Louis Cardinals</div>
+                        <div class="team-league">MLB</div>
+                    </div>
+
+                    <div class="team-card">
+                        <div class="team-icon">🤘</div>
+                        <div class="team-name">Texas Longhorns</div>
+                        <div class="team-league">NCAA All Sports</div>
+                    </div>
+
+                    <div class="team-card">
+                        <div class="team-icon">🏈</div>
+                        <div class="team-name">Tennessee Titans</div>
+                        <div class="team-league">NFL</div>
+                    </div>
+
+                    <div class="team-card">
+                        <div class="team-icon">🏀</div>
+                        <div class="team-name">Memphis Grizzlies</div>
+                        <div class="team-league">NBA</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section class="contact-section">
+            <div class="contact-card" data-aos="fade-up">
+                <h2 class="contact-title">Get in Touch</h2>
+                <div class="contact-links">
+                    <a href="mailto:austin@blazesportsintel.com" class="contact-link">
+                        <i class="fas fa-envelope"></i>
+                        austin@blazesportsintel.com
+                    </a>
+                    <a href="tel:+12102735538" class="contact-link">
+                        <i class="fas fa-phone"></i>
+                        (210) 273-5538
+                    </a>
+                    <a href="https://x.com/BISportsIntel" target="_blank" rel="noopener" class="contact-link">
+                        <i class="fab fa-x-twitter"></i>
+                        @BISportsIntel
+                    </a>
+                    <a href="https://linkedin.com/in/austinhumphrey20" target="_blank" rel="noopener" class="contact-link">
+                        <i class="fab fa-linkedin"></i>
+                        LinkedIn Profile
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            &copy; 2025 <a href="/">Blaze Sports Intel</a>. Built in Texas.
+        </p>
+    </footer>
+
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 100
+        });
+    </script>
+</body>
+</html>
