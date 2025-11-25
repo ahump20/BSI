@@ -385,6 +385,39 @@
             font-weight: 600;
         }
 
+        /* Doctor Quote */
+        .doctor-quote {
+            position: relative;
+            margin: 1.5rem 0;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, rgba(191, 87, 0, 0.15) 0%, rgba(191, 87, 0, 0.05) 100%);
+            border-left: 4px solid var(--burnt-orange);
+            border-radius: 0 16px 16px 0;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .doctor-quote .quote-icon {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 1.5rem;
+            color: var(--burnt-orange);
+            opacity: 0.6;
+        }
+
+        .doctor-quote .quote-attribution {
+            display: block;
+            margin-top: 0.75rem;
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            font-style: normal;
+            color: var(--text-muted);
+        }
+
         /* Birth Story Featured Card */
         .birth-story-card {
             background: linear-gradient(135deg, rgba(191, 87, 0, 0.1) 0%, var(--glass) 100%);
@@ -734,14 +767,55 @@
                                 I was born on it. <span class="story-highlight">Literally on Texas soil.</span>
                             </p>
                             <p class="story-text">
+                                The doctor looked at my parents, smiled, and said:
+                            </p>
+                            <blockquote class="doctor-quote">
+                                <i class="fas fa-quote-left quote-icon"></i>
+                                "You know you ain't the first to do this—but they've ALL been from Texas."
+                                <span class="quote-attribution">— Delivering Physician, Memphis, TN</span>
+                            </blockquote>
+                            <p class="story-text">
                                 August 17, 1995—the same birthday as Davy Crockett, the Tennessee senator who left everything
                                 to defend Texas at the Alamo. Born in Tennessee, destined for Texas. History has a sense of poetry.
                             </p>
                         </div>
                     </div>
 
-                    <!-- The Ricky Williams Game -->
+                    <!-- Dad Teaching Baseball -->
                     <div class="story-card story-card-featured" data-aos="fade-up" data-aos-delay="100">
+                        <div class="story-content">
+                            <div class="story-label">The Foundation</div>
+                            <h3 class="story-title">A Boy and His Bat</h3>
+                            <p class="story-text">
+                                Before the analytics. Before the algorithms. Before understanding what a batting average even meant.
+                                There was this: <span class="story-highlight">a red bat, a glove, and a dad who taught me to love the game.</span>
+                            </p>
+                            <p class="story-text">
+                                Every great sports analyst starts the same way—not with spreadsheets, but with someone
+                                who hands you a bat and shows you how to swing. The numbers came later.
+                                <span class="story-highlight">The love of the game came first.</span>
+                            </p>
+                            <p class="story-text">
+                                This photo hangs in my office. A reminder that sports intelligence isn't just about data—it's about
+                                the moments that made you care about the data in the first place.
+                            </p>
+                        </div>
+                        <div class="story-image-container">
+                            <img
+                                src="/images/austin-dad-baseball.jpeg"
+                                alt="Young Austin with his dad, holding a baseball bat and glove"
+                                class="story-image"
+                            >
+                            <div class="story-image-overlay"></div>
+                            <div class="story-image-caption">
+                                <h3>Where It Started</h3>
+                                <p>Austin with his father, circa 1998</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- The Ricky Williams Game -->
+                    <div class="story-card story-card-featured" data-aos="fade-up" data-aos-delay="200">
                         <div class="story-content">
                             <div class="story-label">The Moment</div>
                             <h3 class="story-title">November 27, 1998</h3>
