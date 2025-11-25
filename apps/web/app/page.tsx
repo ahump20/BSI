@@ -80,19 +80,13 @@ const sportsHubs = [
     href: '/baseball',
     title: 'Baseball',
     icon: '⚾',
-    coverage: 'MLB + NCAA Division I'
+    coverage: 'MLB + NCAA Division I (SEC, Big 12, Top 25)'
   },
   {
     href: '/football',
     title: 'Football',
     icon: '🏈',
     coverage: 'NFL + College Football Playoff'
-  },
-  {
-    href: '/basketball',
-    title: 'Basketball',
-    icon: '🏀',
-    coverage: 'NBA + NCAA (Coming Soon)'
   }
 ];
 
@@ -110,7 +104,7 @@ export default function HomePage() {
             name: 'Blaze Sports Intel',
             url: 'https://blazesportsintel.com',
             logo: 'https://blazesportsintel.com/images/logo.png',
-            description: 'Championship analytics platform for baseball, football, and basketball with real-time data, AI copilot, and historical research.',
+            description: 'Championship analytics platform for baseball and football with real-time data, AI copilot, and historical research.',
             sameAs: []
           })
         }}
@@ -142,7 +136,7 @@ export default function HomePage() {
               Blaze Sports Intel
             </h1>
             <p className="di-subtitle">
-              Real data. Faster decisions. Championship analytics for baseball, football, and basketball with live telemetry, AI copilot, and verified historical archives.
+              Real data. Faster decisions. Championship analytics for baseball and football with live telemetry, AI copilot, and verified historical archives.
             </p>
             <div className="di-actions">
               <Link className="di-action" href="/features">

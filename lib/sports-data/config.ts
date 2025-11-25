@@ -31,12 +31,30 @@ export const API_ENDPOINTS = {
     standings: `${API_BASE}/api/nfl/standings`
   },
 
+  // College Baseball Data (ESPN API via worker)
+  collegeBaseball: {
+    players: `${API_BASE}/api/college-baseball/players`,
+    teams: `${API_BASE}/api/college-baseball/teams`,
+    standings: `${API_BASE}/api/college-baseball/standings`,
+    rankings: `${API_BASE}/api/college-baseball/rankings`,
+    scoreboard: `${API_BASE}/api/college-baseball/scoreboard`
+  },
+
+  // College Football Data (CFBD API via worker)
+  collegeFootball: {
+    players: `${API_BASE}/api/college-football/players`,
+    teams: `${API_BASE}/api/college-football/teams`,
+    standings: `${API_BASE}/api/college-football/standings`,
+    rankings: `${API_BASE}/api/college-football/rankings`,
+    scoreboard: `${API_BASE}/api/college-football/scoreboard`
+  },
+
   // Odds Data (TheOddsAPI via your worker)
   odds: {
     current: `${API_BASE}/api/odds/current`,
     mlb: `${API_BASE}/api/odds/current?sport=baseball_mlb`,
     nfl: `${API_BASE}/api/odds/current?sport=american_football_nfl`,
-    nba: `${API_BASE}/api/odds/current?sport=basketball_nba`
+    ncaaf: `${API_BASE}/api/odds/current?sport=american_football_ncaaf`
   },
 
   // News Data (ESPN RSS via your worker)
@@ -44,7 +62,8 @@ export const API_ENDPOINTS = {
     feed: `${API_BASE}/api/news/feed`,
     mlb: `${API_BASE}/api/news/feed?sport=mlb`,
     nfl: `${API_BASE}/api/news/feed?sport=nfl`,
-    nba: `${API_BASE}/api/news/feed?sport=nba`
+    ncaaf: `${API_BASE}/api/news/feed?sport=ncaaf`,
+    collegeBaseball: `${API_BASE}/api/news/feed?sport=college-baseball`
   }
 };
 
@@ -60,31 +79,41 @@ export const CACHE_TTL = {
 
 /**
  * Sport configuration
+ * Note: Basketball (CBB/NBA) intentionally removed per user requirements
+ * Focus: Baseball (MLB, College), Football (NFL, College)
  */
 export const SPORTS_CONFIG = {
   baseball: {
-    name: 'Baseball',
+    name: 'MLB',
     icon: '⚾',
     color: '#DC143C',
     apiKey: 'mlb',
     primaryMetrics: ['AVG', 'HR', 'RBI', 'OPS'],
     season: { start: '03-20', end: '10-31' }
   },
+  collegeBaseball: {
+    name: 'College Baseball',
+    icon: '⚾',
+    color: '#BF5700',  // Burnt Orange - Texas theme
+    apiKey: 'collegeBaseball',
+    primaryMetrics: ['AVG', 'HR', 'RBI', 'ERA'],
+    season: { start: '02-14', end: '06-30' }
+  },
   football: {
-    name: 'Football',
+    name: 'NFL',
     icon: '🏈',
     color: '#0066CC',
     apiKey: 'nfl',
     primaryMetrics: ['YDS', 'TD', 'QBR', 'Rating'],
     season: { start: '09-01', end: '02-15' }
   },
-  basketball: {
-    name: 'Basketball',
-    icon: '🏀',
-    color: '#FF6600',
-    apiKey: 'nba',
-    primaryMetrics: ['PPG', 'REB', 'AST', 'FG%'],
-    season: { start: '10-15', end: '06-20' }
+  collegeFootball: {
+    name: 'College Football',
+    icon: '🏈',
+    color: '#BF5700',  // Burnt Orange - Texas theme
+    apiKey: 'collegeFootball',
+    primaryMetrics: ['YDS', 'TD', 'INT', 'QBR'],
+    season: { start: '08-24', end: '01-15' }
   }
 };
 

@@ -14,7 +14,13 @@ import {
   BarChart, Bar
 } from 'recharts';
 
-import { fetchMLBPlayers, fetchNFLPlayers, type Player } from '../lib/sports-data/api-client';
+import {
+  fetchMLBPlayers,
+  fetchNFLPlayers,
+  fetchCollegeBaseballPlayers,
+  fetchCollegeFootballPlayers,
+  type Player
+} from '../lib/sports-data/api-client';
 import { formatNumber, formatTimestamp, exportToCSV, exportToJSON, debounce } from '../lib/sports-data/utils';
 import { SPORTS_CONFIG, CHART_COLORS, VIEW_MODES, THEMES } from '../lib/sports-data/config';
 
@@ -23,6 +29,8 @@ import CommandPalette from './CommandPalette';
 import { ToastProvider, useToastHelpers } from './ToastNotification';
 import { useKeyboardShortcuts, DASHBOARD_SHORTCUTS } from '../lib/hooks/useKeyboardShortcuts';
 import { AnimatedCard, FadeInUp, StaggerContainer, StaggerItem, GlowOnHover } from './ScrollAnimations';
+import PlayerHeadshot from './PlayerHeadshot';
+import ExternalLinksPanel, { ExternalLinksInline } from './ExternalLinksPanel';
 
 /**
  * BLAZE SPORTS INTEL | Enterprise Command Center v11.0
@@ -110,8 +118,12 @@ function BlazeSportsCommandCenterInner() {
       action: () => setSelectedSport('football'),
     },
     {
-      ...DASHBOARD_SHORTCUTS.GO_NBA,
-      action: () => setSelectedSport('basketball'),
+      ...DASHBOARD_SHORTCUTS.GO_COLLEGE_BASEBALL,
+      action: () => setSelectedSport('collegeBaseball'),
+    },
+    {
+      ...DASHBOARD_SHORTCUTS.GO_COLLEGE_FOOTBALL,
+      action: () => setSelectedSport('collegeFootball'),
     },
   ]);
 
@@ -124,7 +136,8 @@ function BlazeSportsCommandCenterInner() {
     try {
       let response;
       if (selectedSport === 'baseball') {
-        response = await fetchMLBPlayers();
+        // Fetch 500 players for comprehensive MLB coverage
+        response = await fetchMLBPlayers({ limit: 500 });
 
         if (response.success && response.data) {
           setPlayers(response.data);
@@ -134,11 +147,35 @@ function BlazeSportsCommandCenterInner() {
           setError(response.error || 'Failed to load player data');
         }
       } else if (selectedSport === 'football') {
-        // NFL support coming soon - need to build leaderboards endpoint
-        setError('NFL data coming soon! We\'re building the leaderboards API.');
-        setPlayers([]);
-        setLoading(false);
-        return;
+        response = await fetchNFLPlayers();
+
+        if (response.success && response.data) {
+          setPlayers(response.data);
+          setDataSource(response.source);
+          setLastUpdated(response.timestamp);
+        } else {
+          setError(response.error || 'Failed to load NFL player data');
+        }
+      } else if (selectedSport === 'collegeBaseball') {
+        response = await fetchCollegeBaseballPlayers();
+
+        if (response.success && response.data) {
+          setPlayers(response.data);
+          setDataSource(response.source);
+          setLastUpdated(response.timestamp);
+        } else {
+          setError(response.error || 'Failed to load college baseball player data');
+        }
+      } else if (selectedSport === 'collegeFootball') {
+        response = await fetchCollegeFootballPlayers();
+
+        if (response.success && response.data) {
+          setPlayers(response.data);
+          setDataSource(response.source);
+          setLastUpdated(response.timestamp);
+        } else {
+          setError(response.error || 'Failed to load college football player data');
+        }
       } else {
         setError('Sport not yet supported. Coming soon!');
         setPlayers([]);
@@ -509,22 +546,36 @@ function BlazeSportsCommandCenterInner() {
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {selectedPlayer.name}
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
-                {selectedPlayer.team} • {selectedPlayer.position}
-                {selectedPlayer.number && ` #${selectedPlayer.number}`}
-              </p>
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-start gap-6">
+              {/* Large Headshot */}
+              <PlayerHeadshot
+                src={selectedPlayer.headshotUrl}
+                playerName={selectedPlayer.name}
+                size="xl"
+                fallback="silhouette"
+                className="flex-shrink-0 ring-4 ring-gray-200 dark:ring-gray-700"
+              />
+              <div className="flex-1">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                      {selectedPlayer.name}
+                    </h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">
+                      {selectedPlayer.team} • {selectedPlayer.position}
+                      {selectedPlayer.number && ` #${selectedPlayer.number}`}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedPlayer(null)}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                  >
+                    <X className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                  </button>
+                </div>
+              </div>
             </div>
-            <button
-              onClick={() => setSelectedPlayer(null)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-            >
-              <X className="w-6 h-6 text-gray-600 dark:text-gray-400" />
-            </button>
           </div>
 
           <div className="p-6 space-y-6">
@@ -579,6 +630,17 @@ function BlazeSportsCommandCenterInner() {
               </ResponsiveContainer>
             </div>
 
+            {/* External Links */}
+            <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl">
+              <ExternalLinksPanel
+                sport={selectedPlayer.sport === 'baseball' ? 'baseball' : 'football'}
+                playerName={selectedPlayer.name}
+                mlbamId={selectedPlayer.mlbamId}
+                teamAbbrev={selectedPlayer.team}
+                variant="full"
+              />
+            </div>
+
             {/* Data Source */}
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-xl">
               <div className="flex items-start gap-3">
@@ -629,11 +691,19 @@ function BlazeSportsCommandCenterInner() {
         className={`blaze-card blaze-card-interactive ${isInComparison ? 'ring-4 ring-orange-500' : ''}`}
         onClick={() => setSelectedPlayer(player)}
       >
-        {/* Card Header with Burnt Orange Gradient */}
+        {/* Card Header with Burnt Orange Gradient + Headshot */}
         <div className="gradient-burnt-orange p-4 -m-6 mb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-white tracking-tight">
+          <div className="flex items-center gap-4">
+            {/* Player Headshot */}
+            <PlayerHeadshot
+              src={player.headshotUrl}
+              playerName={player.name}
+              size="lg"
+              fallback="initials"
+              className="flex-shrink-0 border-2 border-white/30"
+            />
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xl font-bold text-white tracking-tight truncate">
                 {player.name}
               </h3>
               <p className="text-white/90 text-sm mt-1">
@@ -646,7 +716,7 @@ function BlazeSportsCommandCenterInner() {
                 e.stopPropagation();
                 toggleComparison(player);
               }}
-              className={`blaze-btn blaze-btn-sm ${
+              className={`blaze-btn blaze-btn-sm flex-shrink-0 ${
                 isInComparison ? 'blaze-btn-primary' : 'blaze-btn-ghost'
               }`}
               title={isInComparison ? 'Remove from comparison' : 'Add to comparison'}
@@ -684,6 +754,15 @@ function BlazeSportsCommandCenterInner() {
               View {Object.keys(player.stats).length - 6} more stats →
             </button>
           )}
+
+          {/* Inline External Links */}
+          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+            <ExternalLinksInline
+              sport={player.sport === 'baseball' ? 'baseball' : 'football'}
+              playerName={player.name}
+              mlbamId={player.mlbamId}
+            />
+          </div>
         </div>
 
         {/* Data Citation */}

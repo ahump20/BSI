@@ -83,5 +83,6 @@ export const DASHBOARD_SHORTCUTS = {
   LIST_VIEW: { key: '2', meta: true, description: 'List view' },
   GO_MLB: { key: 'm', alt: true, description: 'Go to MLB' },
   GO_NFL: { key: 'n', alt: true, description: 'Go to NFL' },
-  GO_NBA: { key: 'b', alt: true, description: 'Go to NBA' },
+  GO_COLLEGE_BASEBALL: { key: 'b', alt: true, description: 'Go to College Baseball' },
+  GO_COLLEGE_FOOTBALL: { key: 'f', alt: true, description: 'Go to College Football' },
 };

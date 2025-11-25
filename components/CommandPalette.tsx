@@ -87,13 +87,22 @@ export default function CommandPalette({
         action: () => { onSelectSport?.('football'); onClose(); },
       },
       {
-        id: 'nav-nba',
-        label: 'Go to NBA',
-        description: 'View NBA player statistics',
-        icon: <Activity className="w-4 h-4" />,
+        id: 'nav-college-baseball',
+        label: 'Go to College Baseball',
+        description: 'View NCAA baseball player statistics',
+        icon: <Target className="w-4 h-4" />,
         category: 'navigation',
         shortcut: 'Alt+B',
-        action: () => { onSelectSport?.('basketball'); onClose(); },
+        action: () => { onSelectSport?.('collegeBaseball'); onClose(); },
+      },
+      {
+        id: 'nav-college-football',
+        label: 'Go to College Football',
+        description: 'View NCAA football player statistics',
+        icon: <Activity className="w-4 h-4" />,
+        category: 'navigation',
+        shortcut: 'Alt+F',
+        action: () => { onSelectSport?.('collegeFootball'); onClose(); },
       },
 
       // Actions
@@ -150,7 +159,7 @@ export default function CommandPalette({
         description: 'View all available keyboard shortcuts',
         icon: <Keyboard className="w-4 h-4" />,
         category: 'setting',
-        action: () => { alert('Keyboard Shortcuts:\n\nCmd+K: Open command palette\n/: Focus search\nCmd+R: Refresh data\nCmd+E: Export CSV\nCmd+1/2: Grid/List view\nAlt+M/N/B: Go to MLB/NFL/NBA'); onClose(); },
+        action: () => { alert('Keyboard Shortcuts:\n\nCmd+K: Open command palette\n/: Focus search\nCmd+R: Refresh data\nCmd+E: Export CSV\nCmd+1/2: Grid/List view\nAlt+M: Go to MLB\nAlt+N: Go to NFL\nAlt+B: Go to College Baseball\nAlt+F: Go to College Football'); onClose(); },
       },
     ];
 
