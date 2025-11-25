@@ -270,7 +270,7 @@
         .story-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 3rem;
+            gap: 4rem;
         }
 
         .story-card {
@@ -278,32 +278,75 @@
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            overflow: hidden;
-            transition: all 0.4s ease;
+            overflow: visible;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 0%, rgba(191, 87, 0, 0.12) 0%, transparent 50%);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .story-card:hover::before {
+            opacity: 1;
         }
 
         .story-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--glow-orange);
+            transform: translateY(-12px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: var(--glow-orange), 0 30px 60px rgba(0, 0, 0, 0.3);
             border-color: var(--burnt-orange);
         }
 
         .story-card-featured {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0;
+            gap: 1.5rem;
+            perspective: 1000px;
         }
 
         @media (max-width: 900px) {
             .story-card-featured {
                 grid-template-columns: 1fr;
+                gap: 0;
             }
         }
 
         .story-image-container {
             position: relative;
-            min-height: 400px;
+            aspect-ratio: 3/4;
+            min-height: 350px;
             overflow: hidden;
+            border-radius: 20px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .story-image-container::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10px;
+            right: 10px;
+            height: 40px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
+            filter: blur(15px);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .story-card:hover .story-image-container::after {
+            opacity: 1;
         }
 
         .story-image {
@@ -311,11 +354,29 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
-            transition: transform 0.5s ease;
+            transition: transform 0.6s ease, filter 0.3s ease;
+            filter: brightness(0.95) contrast(1.02);
         }
 
         .story-card:hover .story-image {
-            transform: scale(1.05);
+            transform: scale(1.08);
+            filter: brightness(1) contrast(1.05);
+        }
+
+        /* Floating animation for birth story Texas soil image */
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-6px) scale(1.01) rotate(0.3deg); }
+            50% { transform: translateY(-10px) scale(1.02); }
+            75% { transform: translateY(-6px) scale(1.01) rotate(-0.3deg); }
+        }
+
+        .birth-story-card .story-image-container {
+            animation: gentle-float 6s ease-in-out infinite;
+        }
+
+        .birth-story-card:hover .story-image-container {
+            animation-play-state: paused;
         }
 
         .story-image-overlay {
@@ -684,6 +745,58 @@
                 min-height: 300px;
             }
         }
+
+        /* Mobile Graceful Degradation - Disable Three.js, keep CSS animations */
+        @media (max-width: 900px), (prefers-reduced-motion: reduce) {
+            .hero-particles-canvas,
+            .story-particles-canvas {
+                display: none !important;
+            }
+
+            .birth-story-card .story-image-container {
+                animation: none;
+            }
+
+            .story-card:hover {
+                transform: translateY(-4px);
+            }
+        }
+
+        /* Particle Canvas Styling */
+        .hero-particles-canvas,
+        .story-particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .origin-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .origin-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .story-particles-canvas {
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
@@ -703,6 +816,7 @@
     <main class="main">
         <!-- Hero Section -->
         <section class="hero" data-aos="fade-up">
+            <canvas id="hero-particles" class="hero-particles-canvas" aria-hidden="true"></canvas>
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fas fa-star"></i>
@@ -733,6 +847,7 @@
 
         <!-- Origin Story Section -->
         <section class="origin-section">
+            <canvas id="story-particles" class="story-particles-canvas" aria-hidden="true"></canvas>
             <div class="origin-container">
                 <div class="section-header" data-aos="fade-up">
                     <h2 class="section-title">A Birth Story Written in Texas Dirt</h2>
@@ -1006,6 +1121,353 @@
             once: true,
             offset: 100
         });
+    </script>
+
+    <!-- Three.js for Particle Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // Device detection
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 900;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Skip Three.js entirely on mobile or reduced motion
+        if (isMobile || prefersReducedMotion) {
+            console.log('Three.js particles disabled: mobile or reduced motion');
+            return;
+        }
+
+        // Burnt orange Texas color palette
+        const heroColors = [
+            0xBF5700, // Burnt orange
+            0xD97B38, // Light burnt orange
+            0x9B4500, // Dark burnt orange
+            0xF5E6D3, // Texas cream (accent)
+            0xE68A4F  // Ember orange
+        ];
+
+        const storyColors = [
+            0x964B00, // Dirt brown
+            0xBF5700, // Burnt orange
+            0x8B4513, // Saddle brown
+            0xA0522D, // Sienna
+            0xD2691E  // Chocolate (Texas earth)
+        ];
+
+        // ==================
+        // HERO PARTICLES (10K embers)
+        // ==================
+        class HeroParticles {
+            constructor() {
+                this.canvas = document.getElementById('hero-particles');
+                this.hero = document.querySelector('.hero');
+                if (!this.canvas || !this.hero) return;
+
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, this.hero.clientWidth / this.hero.clientHeight, 1, 1000);
+                this.camera.position.z = 400;
+
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    alpha: true,
+                    antialias: false
+                });
+                this.renderer.setSize(this.hero.clientWidth, this.hero.clientHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                this.mouse = { x: 0, y: 0 };
+                this.targetMouse = { x: 0, y: 0 };
+
+                this.createParticles();
+                this.bindEvents();
+                this.animate();
+            }
+
+            createParticles() {
+                const particleCount = 10000;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                const sizes = new Float32Array(particleCount);
+                const velocities = new Float32Array(particleCount * 3);
+
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+
+                    // Spread particles across 3 depth layers
+                    const layer = Math.floor(i / (particleCount / 3));
+                    const depthRange = layer === 0 ? 200 : layer === 1 ? 400 : 600;
+
+                    positions[i3] = (Math.random() - 0.5) * 1200;
+                    positions[i3 + 1] = (Math.random() - 0.5) * 800;
+                    positions[i3 + 2] = (Math.random() - 0.5) * depthRange;
+
+                    // Random color from palette
+                    const color = new THREE.Color(heroColors[Math.floor(Math.random() * heroColors.length)]);
+                    colors[i3] = color.r;
+                    colors[i3 + 1] = color.g;
+                    colors[i3 + 2] = color.b;
+
+                    // Varying sizes for depth effect
+                    sizes[i] = Math.random() * 3 + 1;
+
+                    // Slow upward drift like embers
+                    velocities[i3] = (Math.random() - 0.5) * 0.1;
+                    velocities[i3 + 1] = Math.random() * 0.15 + 0.05;
+                    velocities[i3 + 2] = (Math.random() - 0.5) * 0.05;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+                this.velocities = velocities;
+
+                const material = new THREE.PointsMaterial({
+                    size: 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.7,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                });
+
+                this.particles = new THREE.Points(geometry, material);
+                this.scene.add(this.particles);
+            }
+
+            bindEvents() {
+                window.addEventListener('resize', () => this.onResize());
+                document.addEventListener('mousemove', (e) => this.onMouseMove(e));
+            }
+
+            onResize() {
+                const width = this.hero.clientWidth;
+                const height = this.hero.clientHeight;
+                this.camera.aspect = width / height;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(width, height);
+            }
+
+            onMouseMove(e) {
+                this.targetMouse.x = (e.clientX / window.innerWidth - 0.5) * 30;
+                this.targetMouse.y = (e.clientY / window.innerHeight - 0.5) * 30;
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                // Smooth mouse follow
+                this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
+                this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
+
+                // Move camera based on mouse
+                this.camera.position.x = this.mouse.x;
+                this.camera.position.y = -this.mouse.y;
+                this.camera.lookAt(this.scene.position);
+
+                // Animate particles upward (embers rising)
+                const positions = this.particles.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i] += this.velocities[i];
+                    positions[i + 1] += this.velocities[i + 1];
+                    positions[i + 2] += this.velocities[i + 2];
+
+                    // Reset particles that go too high
+                    if (positions[i + 1] > 400) {
+                        positions[i + 1] = -400;
+                        positions[i] = (Math.random() - 0.5) * 1200;
+                    }
+                }
+                this.particles.geometry.attributes.position.needsUpdate = true;
+
+                // Slow rotation
+                this.particles.rotation.y += 0.0002;
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // ==================
+        // STORY PARTICLES (5K Texas dust)
+        // ==================
+        class StoryParticles {
+            constructor() {
+                this.canvas = document.getElementById('story-particles');
+                this.section = document.querySelector('.origin-section');
+                if (!this.canvas || !this.section) return;
+
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(60, this.section.clientWidth / this.section.clientHeight, 1, 800);
+                this.camera.position.z = 300;
+
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    alpha: true,
+                    antialias: false
+                });
+                this.renderer.setSize(this.section.clientWidth, this.section.clientHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                this.scrollY = 0;
+                this.intensity = 0;
+
+                this.createParticles();
+                this.bindEvents();
+                this.animate();
+            }
+
+            createParticles() {
+                const particleCount = 5000;
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                const velocities = new Float32Array(particleCount * 3);
+
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+
+                    // More concentrated around the center (birth story card area)
+                    const angle = Math.random() * Math.PI * 2;
+                    const radius = Math.random() * 500 + 100;
+
+                    positions[i3] = Math.cos(angle) * radius;
+                    positions[i3 + 1] = (Math.random() - 0.5) * 800;
+                    positions[i3 + 2] = Math.sin(angle) * radius - 200;
+
+                    // Texas earth colors
+                    const color = new THREE.Color(storyColors[Math.floor(Math.random() * storyColors.length)]);
+                    colors[i3] = color.r;
+                    colors[i3 + 1] = color.g;
+                    colors[i3 + 2] = color.b;
+
+                    // Slow swirling motion like dust motes
+                    velocities[i3] = (Math.random() - 0.5) * 0.05;
+                    velocities[i3 + 1] = (Math.random() - 0.5) * 0.02;
+                    velocities[i3 + 2] = (Math.random() - 0.5) * 0.05;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                this.velocities = velocities;
+                this.basePositions = new Float32Array(positions);
+
+                const material = new THREE.PointsMaterial({
+                    size: 1.5,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.5,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                });
+
+                this.particles = new THREE.Points(geometry, material);
+                this.scene.add(this.particles);
+            }
+
+            bindEvents() {
+                window.addEventListener('resize', () => this.onResize());
+                window.addEventListener('scroll', () => this.onScroll());
+            }
+
+            onResize() {
+                const width = this.section.clientWidth;
+                const height = this.section.clientHeight;
+                this.camera.aspect = width / height;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(width, height);
+            }
+
+            onScroll() {
+                const rect = this.section.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                const visible = Math.max(0, Math.min(1, 1 - (rect.top / windowHeight)));
+                this.intensity = visible;
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                const time = Date.now() * 0.0001;
+                const positions = this.particles.geometry.attributes.position.array;
+
+                for (let i = 0; i < positions.length; i += 3) {
+                    // Gentle floating motion
+                    const idx = i / 3;
+                    positions[i] = this.basePositions[i] + Math.sin(time + idx * 0.1) * 20;
+                    positions[i + 1] = this.basePositions[i + 1] + Math.cos(time + idx * 0.1) * 15;
+                    positions[i + 2] = this.basePositions[i + 2] + Math.sin(time * 0.5 + idx * 0.05) * 10;
+                }
+                this.particles.geometry.attributes.position.needsUpdate = true;
+
+                // Rotate based on scroll visibility
+                this.particles.rotation.y = time + this.intensity * 0.1;
+
+                // Adjust opacity based on visibility
+                this.particles.material.opacity = 0.3 + this.intensity * 0.4;
+
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // ==================
+        // CARD TILT EFFECT
+        // ==================
+        function initCardTilt() {
+            const cards = document.querySelectorAll('.story-card');
+
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * -5;
+                    const rotateY = ((x - centerX) / centerX) * 5;
+
+                    card.style.transform = `translateY(-12px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
+        }
+
+        // ==================
+        // SCROLL PARALLAX
+        // ==================
+        function initScrollParallax() {
+            const images = document.querySelectorAll('.story-image');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.transform = 'scale(1.02)';
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            images.forEach(img => observer.observe(img));
+        }
+
+        // ==================
+        // INITIALIZE
+        // ==================
+        document.addEventListener('DOMContentLoaded', () => {
+            new HeroParticles();
+            new StoryParticles();
+            initCardTilt();
+            initScrollParallax();
+            console.log('✨ About page 3D effects initialized');
+        });
+
+    })();
     </script>
 </body>
 </html>
