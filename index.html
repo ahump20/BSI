@@ -58,6 +58,7 @@
     <link rel="stylesheet" href="/css/blaze-components-enhanced.css">
     <link rel="stylesheet" href="/css/blaze-brand-identity.css">
     <link rel="stylesheet" href="/css/blaze-accessibility.css">
+    <link rel="stylesheet" href="/css/championship-common.css">
 
     <style>
         /* ==================== INTEGRATION OVERRIDES ==================== */
@@ -89,12 +90,13 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            background: linear-gradient(180deg, rgba(11, 14, 20, 0.95) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(11, 14, 20, 0.95) 0%, rgba(11, 14, 20, 0.9) 100%);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             box-shadow: 0 8px 32px 0 rgba(217, 98, 0, 0.1);
             border-bottom: 1px solid rgba(217, 98, 0, 0.15);
-            transition: all var(--transition-base);
+            transition: all 0.3s ease;
+            padding: 0.75rem 0;
         }
 
         .nav.scrolled {
@@ -103,27 +105,123 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* Enhanced logo with championship glow */
-        .logo {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #D96200 0%, #CC6600 50%, #BF5700 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 2px;
+        /* Navigation container - CRITICAL FALLBACK STYLES */
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        /* Navigation menu - horizontal list */
+        .nav-menu {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            filter: drop-shadow(0 0 20px rgba(217, 98, 0, 0.4));
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .logo:hover {
+        .nav-menu li {
+            list-style: none;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #D96200;
+        }
+
+        .nav-btn-primary {
+            background: linear-gradient(135deg, #D96200 0%, #BF5700 100%);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(217, 98, 0, 0.4);
+        }
+
+        /* Mobile toggle */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            padding: 8px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .mobile-toggle span {
+            width: 24px;
+            height: 2px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 900px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(11, 14, 20, 0.98);
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .nav-link {
+                padding: 1rem;
+                width: 100%;
+            }
+        }
+
+        /* Enhanced logo with championship glow */
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 0 8px rgba(217, 98, 0, 0.3));
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover img {
             transform: scale(1.05);
-            filter: drop-shadow(0 0 30px rgba(217, 98, 0, 0.6));
+            filter: drop-shadow(0 0 16px rgba(217, 98, 0, 0.5));
         }
 
         /* Championship hero with enhanced contrast */
@@ -350,9 +448,9 @@
     <!-- Navigation -->
     <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
         <div class="nav-container">
-            <div class="logo" onclick="window.location.href='/'" role="button" tabindex="0" aria-label="Blaze Sports Intel Home">
-                🔥 BLAZE SPORTS INTEL
-            </div>
+            <a href="/" class="logo" aria-label="Blaze Sports Intel Home">
+                <img src="/images/bsi-logo.png" alt="Blaze Sports Intel" style="height: 50px; width: auto;">
+            </a>
             <ul class="nav-menu" id="navMenu" role="menubar">
                 <li role="none"><a href="#sports" class="nav-link" role="menuitem">Sports</a></li>
                 <li role="none"><a href="/analytics" class="nav-link" role="menuitem">Analytics</a></li>
@@ -940,15 +1038,6 @@
                 mobileToggle.classList.remove('active');
                 navMenu.classList.remove('active');
             });
-        });
-
-        // ==================== KEYBOARD ACCESSIBILITY ====================
-        // Make logo keyboard accessible
-        document.querySelector('.logo').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                window.location.href = '/';
-            }
         });
 
         // ==================== SMOOTH SCROLL ====================
