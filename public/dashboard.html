@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Dashboard | Blaze Sports Intel</title>
-    <meta name="description" content="Real-time sports analytics dashboard with MLB, NFL, NBA data">
+    <meta name="description" content="Real-time sports analytics dashboard with MLB, NFL, NBA, College Football, College Basketball, and College Baseball data powered by SportsDataIO">
 
-    <!-- Fonts -->
+    <!-- Fonts - Matching Main Site -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,34 +17,41 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Three.js for Particle System -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        blaze: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            200: '#fed7aa',
-                            300: '#fdba74',
-                            400: '#fb923c',
-                            500: '#f97316',
-                            600: '#ea580c',
-                            700: '#c2410c',
-                            800: '#9a3412',
-                            900: '#7c2d12',
-                        },
                         burnt: {
-                            orange: '#BF5700',
-                            dark: '#9B4500',
-                            light: '#D97B38',
+                            50: '#FFF8F3',
+                            100: '#FFEDDF',
+                            200: '#F5E6D3',
+                            300: '#E8C9A8',
+                            400: '#D97B38',
+                            500: '#BF5700',
+                            600: '#9B4500',
+                            700: '#7A3600',
+                            800: '#5C2900',
+                            900: '#3D1B00',
+                        },
+                        ember: '#CC6600',
+                        copper: '#D97B38',
+                        amber: '#FFBF00',
+                        cream: '#F5E6D3',
+                        texas: {
+                            cream: '#F5E6D3',
+                            sand: '#E8D5B8',
+                            earth: '#964B00',
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
-                        display: ['Oswald', 'sans-serif'],
+                        display: ['Bebas Neue', 'sans-serif'],
                     },
                 }
             }
@@ -52,402 +59,736 @@
     </script>
 
     <style>
+        /* ==================== CSS VARIABLES - Matching Main Site ==================== */
         :root {
-            --burnt-orange: #BF5700;
-            --burnt-orange-dark: #9B4500;
-            --burnt-orange-light: #D97B38;
+            /* Sophisticated Burnt Orange Palette - Psychology Optimized */
+            --blaze-burnt-orange: #BF5700;
+            --blaze-ember: #CC6600;
+            --blaze-copper: #D97B38;
+            --blaze-sunset: #E69551;
+            --blaze-bronze: #A0522D;
+            --blaze-amber: #FFBF00;
+            --blaze-rust: #8B4513;
+            --blaze-terracotta: #E2725B;
+
+            /* Gradient Definitions */
+            --gradient-primary: linear-gradient(135deg, #BF5700 0%, #CC6600 50%, #D97B38 100%);
+            --gradient-ember: linear-gradient(135deg, #CC6600 0%, #E69551 100%);
+            --gradient-deep: linear-gradient(135deg, #8B4513 0%, #BF5700 50%, #CC6600 100%);
+            --gradient-glow: radial-gradient(circle at center, rgba(191, 87, 0, 0.3) 0%, transparent 70%);
+
+            /* Dark Theme - Enhanced Contrast */
+            --dark-charcoal: #0D0D12;
+            --dark-slate: #161620;
+            --dark-graphite: #1F1F2E;
+            --dark-midnight: #0A0A0F;
+            --dark-border: rgba(191, 87, 0, 0.15);
+
+            /* Glass Morphism - Burnt Orange Tinted */
+            --glass-light: rgba(191, 87, 0, 0.08);
+            --glass-medium: rgba(191, 87, 0, 0.12);
+            --glass-heavy: rgba(191, 87, 0, 0.18);
+            --glass-border: rgba(191, 87, 0, 0.25);
+            --glass-glow: rgba(204, 102, 0, 0.15);
+
+            /* Text - Warm Tinted */
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.92);
+            --text-tertiary: rgba(255, 235, 215, 0.75);
+            --text-quaternary: rgba(255, 235, 215, 0.55);
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+
+            /* Effects */
+            --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 600ms cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Glow Effects */
+            --glow-soft: 0 0 30px rgba(191, 87, 0, 0.4);
+            --glow-medium: 0 0 50px rgba(204, 102, 0, 0.5), 0 0 80px rgba(191, 87, 0, 0.3);
+            --glow-intense: 0 0 60px rgba(204, 102, 0, 0.6), 0 0 100px rgba(191, 87, 0, 0.4);
         }
 
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            font-family: var(--font-primary);
+            background: var(--dark-charcoal);
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(191, 87, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(204, 102, 0, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(160, 82, 45, 0.04) 0%, transparent 70%);
             min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-primary);
         }
 
-        .glass-card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(191, 87, 0, 0.2);
+        /* Particle System Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        .stat-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
-            border: 1px solid rgba(191, 87, 0, 0.3);
-            transition: all 0.3s ease;
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
         }
 
-        .stat-card:hover {
-            border-color: rgba(191, 87, 0, 0.6);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(191, 87, 0, 0.15);
+        /* 3D Card Transforms */
+        .card-3d {
+            perspective: 1000px;
+            transform-style: preserve-3d;
         }
 
+        .card-3d-inner {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .card-3d-inner:hover {
+            box-shadow:
+                0 25px 50px -12px rgba(191, 87, 0, 0.25),
+                0 0 30px rgba(191, 87, 0, 0.15);
+        }
+
+        /* Glassmorphism overlay */
+        .card-3d-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(191, 87, 0, 0.1) 0%,
+                transparent 50%,
+                rgba(191, 87, 0, 0.05) 100%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .card-3d-inner:hover::before {
+            opacity: 1;
+        }
+
+        /* Floating Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(1deg); }
+            50% { transform: translateY(-4px) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(191, 87, 0, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(191, 87, 0, 0.5); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-gentle {
+            animation: gentleFloat 4s ease-in-out infinite;
+        }
+
+        .glow-pulse {
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        /* Title Glow Effect */
+        .title-glow {
+            text-shadow:
+                0 0 10px rgba(191, 87, 0, 0.5),
+                0 0 20px rgba(191, 87, 0, 0.3),
+                0 0 40px rgba(191, 87, 0, 0.2);
+        }
+
+        /* Player Card Styles with 3D */
         .player-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-            border: 1px solid rgba(191, 87, 0, 0.2);
-            transition: all 0.3s ease;
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(191, 87, 0, 0.1),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        .player-card:hover::after {
+            left: 100%;
         }
 
         .player-card:hover {
-            border-color: var(--burnt-orange);
-            box-shadow: 0 0 20px rgba(191, 87, 0, 0.2);
+            border-color: var(--blaze-burnt-orange);
+            transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+            box-shadow:
+                0 20px 40px rgba(191, 87, 0, 0.2),
+                0 0 30px rgba(191, 87, 0, 0.1);
         }
 
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-medium);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Sport Tab Styles */
         .sport-tab {
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            background: var(--glass-light);
+            border: 1px solid transparent;
+        }
+
+        .sport-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--blaze-burnt-orange);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .sport-tab.active::before,
+        .sport-tab:hover::before {
+            width: 80%;
         }
 
         .sport-tab.active {
-            background: var(--burnt-orange);
+            background: var(--gradient-primary);
             color: white;
+            box-shadow: var(--glow-soft);
+            border-color: rgba(217, 123, 56, 0.4);
         }
 
         .sport-tab:not(.active):hover {
-            background: rgba(191, 87, 0, 0.2);
+            background: var(--glass-heavy);
+            border-color: var(--glass-border);
+            transform: translateY(-2px);
         }
 
+        /* Gradient Header */
+        .gradient-header {
+            background: var(--gradient-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: shimmer 8s linear infinite;
+        }
+
+        /* Live Indicator */
         .live-indicator {
-            animation: pulse 2s infinite;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
         }
 
-        .data-refresh {
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .gradient-header {
-            background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-dark) 100%);
-        }
-
+        /* Stat Value */
         .stat-value {
             font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #ffffff 0%, var(--blaze-amber) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Stat Card Hover */
+        .stat-mini {
+            transition: all 0.2s ease;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--dark-border);
+        }
+
+        .stat-mini:hover {
+            background: var(--glass-heavy);
+            transform: scale(1.05);
+            border-color: var(--glass-border);
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: var(--gradient-primary);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(217, 123, 56, 0.4);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-medium);
+        }
+
+        /* Error State */
+        .error-state {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #E74C3C;
+        }
+
+        /* Mobile Graceful Degradation */
+        @media (max-width: 768px) {
+            .floating, .floating-gentle {
+                animation: none;
+            }
+
+            .player-card:hover {
+                transform: translateY(-4px);
+            }
+
+            #particle-canvas {
+                display: none;
+            }
+
+            .sport-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            #particle-canvas {
+                display: none;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-slate);
+            border-left: 1px solid var(--dark-border);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: 6px;
+            border: 2px solid var(--dark-slate);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gradient-ember);
+            box-shadow: var(--glow-soft);
+        }
+
+        /* Data Citation Badge */
+        .citation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--glass-light);
+            border: 1px solid var(--dark-border);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--text-quaternary);
+        }
+
+        .citation-badge i {
+            color: var(--blaze-copper);
         }
     </style>
 </head>
-<body class="antialiased text-gray-100">
-    <!-- Header -->
-    <header class="gradient-header shadow-xl">
-        <div class="max-w-7xl mx-auto px-4 py-6">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                        <i class="fas fa-fire text-2xl text-white"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-3xl font-bold text-white font-display tracking-wide">BLAZE SPORTS INTEL</h1>
-                        <p class="text-orange-100 text-sm">Real-time sports analytics • Enterprise Command Center v10.0</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="refreshData()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition flex items-center gap-2 text-white">
-                        <i class="fas fa-sync-alt" id="refresh-icon"></i>
-                        <span>Refresh</span>
-                    </button>
-                    <a href="/pricing" class="px-4 py-2 bg-white text-burnt-orange font-semibold rounded-lg hover:bg-orange-50 transition">
-                        Upgrade
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
+<body class="antialiased">
+    <!-- Particle System Canvas -->
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        <!-- Sport Tabs -->
-        <div class="flex items-center gap-2 mb-6">
-            <button onclick="switchSport('mlb')" class="sport-tab active px-4 py-2 rounded-lg font-medium" id="tab-mlb">
-                <i class="fas fa-baseball-ball mr-2"></i>Baseball
-            </button>
-            <button onclick="switchSport('nfl')" class="sport-tab px-4 py-2 rounded-lg font-medium text-gray-400" id="tab-nfl">
-                <i class="fas fa-football-ball mr-2"></i>Football
-            </button>
-            <button onclick="switchSport('nba')" class="sport-tab px-4 py-2 rounded-lg font-medium text-gray-400" id="tab-nba">
-                <i class="fas fa-basketball-ball mr-2"></i>Basketball
-            </button>
-        </div>
-
-        <!-- Search and Controls -->
-        <div class="glass-card rounded-xl p-4 mb-6">
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="flex-1 min-w-[200px]">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" id="search-input" placeholder="Search players, teams..."
-                               class="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-400 focus:border-orange-500 focus:outline-none">
+    <div class="content-wrapper">
+        <!-- Header -->
+        <header class="gradient-header shadow-2xl relative z-10">
+            <div class="max-w-7xl mx-auto px-4 py-6">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="/" class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center floating-gentle glow-pulse" aria-label="Go to homepage">
+                            <i class="fas fa-fire text-3xl text-white" aria-hidden="true"></i>
+                        </a>
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold text-white font-display tracking-wide title-glow">
+                                BLAZE SPORTS INTEL
+                            </h1>
+                            <p class="text-orange-100 text-sm">Real-time sports analytics | Enterprise Command Center v10.0</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="refreshData()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition flex items-center gap-2 text-white backdrop-blur-sm" aria-label="Refresh data">
+                            <i class="fas fa-sync-alt" id="refresh-icon" aria-hidden="true"></i>
+                            <span>Refresh</span>
+                        </button>
+                        <a href="/" class="btn-primary px-5 py-2 text-white font-semibold rounded-lg">
+                            Home
+                        </a>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="setView('grid')" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition" id="view-grid">
-                        <i class="fas fa-th text-gray-400"></i>
-                    </button>
-                    <button onclick="setView('list')" class="p-2 rounded-lg hover:bg-slate-700 transition" id="view-list">
-                        <i class="fas fa-list text-gray-400"></i>
-                    </button>
-                    <button onclick="exportCSV()" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition flex items-center gap-2 text-gray-300">
-                        <i class="fas fa-download"></i>
-                        <span class="hidden sm:inline">CSV</span>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Sport Tabs -->
+            <nav class="flex items-center gap-2 mb-6 flex-wrap" role="tablist" aria-label="Sport categories">
+                <button onclick="switchSport('mlb')" class="sport-tab active px-4 py-2.5 rounded-xl font-medium" id="tab-mlb" role="tab" aria-selected="true" aria-controls="players-container">
+                    <i class="fas fa-baseball-ball mr-2" aria-hidden="true"></i>MLB
+                </button>
+                <button onclick="switchSport('nfl')" class="sport-tab px-4 py-2.5 rounded-xl font-medium text-gray-400" id="tab-nfl" role="tab" aria-selected="false" aria-controls="players-container">
+                    <i class="fas fa-football-ball mr-2" aria-hidden="true"></i>NFL
+                </button>
+                <button onclick="switchSport('nba')" class="sport-tab px-4 py-2.5 rounded-xl font-medium text-gray-400" id="tab-nba" role="tab" aria-selected="false" aria-controls="players-container">
+                    <i class="fas fa-basketball-ball mr-2" aria-hidden="true"></i>NBA
+                </button>
+                <button onclick="switchSport('cfb')" class="sport-tab px-4 py-2.5 rounded-xl font-medium text-gray-400" id="tab-cfb" role="tab" aria-selected="false" aria-controls="players-container">
+                    <i class="fas fa-football-ball mr-2" aria-hidden="true"></i>CFB
+                </button>
+                <button onclick="switchSport('cbb')" class="sport-tab px-4 py-2.5 rounded-xl font-medium text-gray-400" id="tab-cbb" role="tab" aria-selected="false" aria-controls="players-container">
+                    <i class="fas fa-basketball-ball mr-2" aria-hidden="true"></i>CBB
+                </button>
+                <button onclick="switchSport('college-baseball')" class="sport-tab px-4 py-2.5 rounded-xl font-medium text-gray-400" id="tab-college-baseball" role="tab" aria-selected="false" aria-controls="players-container">
+                    <i class="fas fa-baseball-ball mr-2" aria-hidden="true"></i>College Baseball
+                </button>
+            </nav>
+
+            <!-- Search and Controls -->
+            <div class="glass-card rounded-2xl p-5 mb-6">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex-1 min-w-[200px]">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-burnt-400" aria-hidden="true"></i>
+                            <input type="text" id="search-input" placeholder="Search players, teams..."
+                                   class="w-full pl-12 pr-4 py-3 bg-black/30 border border-burnt-500/30 rounded-xl text-white placeholder-gray-500 focus:border-burnt-500 focus:outline-none focus:ring-2 focus:ring-burnt-500/20 transition-all"
+                                   aria-label="Search players and teams">
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="setView('grid')" class="p-3 rounded-xl bg-burnt-500/20 hover:bg-burnt-500/30 transition border border-burnt-500/30" id="view-grid" aria-label="Grid view" aria-pressed="true">
+                            <i class="fas fa-th text-burnt-400" aria-hidden="true"></i>
+                        </button>
+                        <button onclick="setView('list')" class="p-3 rounded-xl hover:bg-burnt-500/20 transition border border-transparent hover:border-burnt-500/30" id="view-list" aria-label="List view" aria-pressed="false">
+                            <i class="fas fa-list text-gray-500" aria-hidden="true"></i>
+                        </button>
+                        <button onclick="exportCSV()" class="px-4 py-3 rounded-xl bg-burnt-500/20 hover:bg-burnt-500/30 transition flex items-center gap-2 text-burnt-300 border border-burnt-500/30" aria-label="Export data as CSV">
+                            <i class="fas fa-download" aria-hidden="true"></i>
+                            <span class="hidden sm:inline">CSV</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Source Info -->
+            <div class="flex items-center justify-between mb-6 text-sm px-1 flex-wrap gap-2">
+                <div class="flex items-center gap-2 text-gray-400">
+                    <i class="fas fa-database text-burnt-500" aria-hidden="true"></i>
+                    <span>Data source: <span class="text-burnt-400 font-medium" id="data-source">SportsDataIO</span></span>
+                    <span class="mx-2 text-burnt-700">|</span>
+                    <span>Last updated: <span class="text-cream" id="last-updated">Loading...</span></span>
+                </div>
+                <div class="flex items-center gap-2 floating-gentle">
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 live-indicator" aria-hidden="true"></span>
+                    <span class="text-green-400 text-sm font-medium" id="connection-status">Connecting...</span>
+                </div>
+            </div>
+
+            <!-- Player Cards Grid -->
+            <div id="players-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="tabpanel" aria-labelledby="tab-mlb">
+                <!-- Loading State -->
+                <div class="col-span-full flex items-center justify-center py-20" id="loading-state">
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 relative">
+                            <div class="absolute inset-0 rounded-full border-4 border-burnt-500/20"></div>
+                            <div class="absolute inset-0 rounded-full border-4 border-burnt-500 border-t-transparent animate-spin"></div>
+                        </div>
+                        <p class="text-gray-400">Loading real sports data from SportsDataIO...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error State (hidden by default) -->
+            <div id="error-state" class="hidden col-span-full">
+                <div class="error-state rounded-2xl p-8 text-center">
+                    <i class="fas fa-exclamation-triangle text-5xl mb-4" aria-hidden="true"></i>
+                    <h3 class="text-xl font-bold mb-2">Unable to Load Data</h3>
+                    <p class="text-gray-400 mb-4" id="error-message">An error occurred while fetching data.</p>
+                    <button onclick="refreshData()" class="btn-primary px-6 py-2 text-white font-semibold rounded-lg">
+                        <i class="fas fa-redo mr-2" aria-hidden="true"></i>Try Again
                     </button>
                 </div>
             </div>
-        </div>
 
-        <!-- Data Source Info -->
-        <div class="flex items-center justify-between mb-6 text-sm">
-            <div class="flex items-center gap-2 text-gray-400">
-                <i class="fas fa-database"></i>
-                <span>Data source: <span class="text-orange-400 font-medium" id="data-source">FanGraphs</span></span>
-                <span class="mx-2">•</span>
-                <span>Last updated: <span class="text-white" id="last-updated">Loading...</span></span>
+            <!-- No Results -->
+            <div id="no-results" class="hidden text-center py-20">
+                <i class="fas fa-search text-5xl text-burnt-700 mb-4" aria-hidden="true"></i>
+                <p class="text-gray-400">No players found matching your search.</p>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-green-500 live-indicator"></span>
-                <span class="text-green-400 text-sm font-medium">Live</span>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-burnt-900/50 mt-12 py-8 bg-black/30">
+            <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+                <p>&copy; 2025 Blaze Sports Intel. All data sourced from SportsDataIO with proper attribution.</p>
+                <p class="mt-3">
+                    <a href="/" class="text-burnt-400 hover:text-burnt-300 transition">Home</a>
+                    <span class="mx-3 text-burnt-800">|</span>
+                    <a href="/about" class="hover:text-cream transition">About</a>
+                    <span class="mx-3 text-burnt-800">|</span>
+                    <a href="/legal/terms/" class="hover:text-cream transition">Terms</a>
+                    <span class="mx-3 text-burnt-800">|</span>
+                    <a href="/legal/privacy/" class="hover:text-cream transition">Privacy</a>
+                </p>
             </div>
-        </div>
-
-        <!-- Player Cards Grid -->
-        <div id="players-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Loading State -->
-            <div class="col-span-full flex items-center justify-center py-20" id="loading-state">
-                <div class="text-center">
-                    <i class="fas fa-spinner fa-spin text-4xl text-orange-500 mb-4"></i>
-                    <p class="text-gray-400">Loading real sports data...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- No Results -->
-        <div id="no-results" class="hidden text-center py-20">
-            <i class="fas fa-search text-4xl text-gray-600 mb-4"></i>
-            <p class="text-gray-400">No players found matching your search.</p>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 mt-12 py-8">
-        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
-            <p>&copy; 2025 Blaze Sports Intel. All data sourced from official APIs with proper attribution.</p>
-            <p class="mt-2">
-                <a href="/pricing" class="text-orange-400 hover:text-orange-300">Upgrade to Pro</a>
-                <span class="mx-2">•</span>
-                <a href="/about" class="hover:text-gray-300">About</a>
-                <span class="mx-2">•</span>
-                <a href="/terms" class="hover:text-gray-300">Terms</a>
-                <span class="mx-2">•</span>
-                <a href="/privacy" class="hover:text-gray-300">Privacy</a>
-            </p>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <script>
-        // State
+        /**
+         * Blaze Sports Intel - Enterprise Dashboard
+         * Real-time sports analytics with SportsDataIO API integration
+         *
+         * @version 10.0
+         * @author Austin Humphrey
+         * @copyright 2025 Blaze Sports Intel
+         */
+
+        // ========================================
+        // Configuration & Constants
+        // ========================================
+        const CONFIG = {
+            API_KEY: '6ca2adb39404482da5406f0a6cd7aa37',
+            BASE_URL: 'https://api.sportsdata.io/v3',
+            TIMEZONE: 'America/Chicago',
+            CACHE_TTL: {
+                players: 5 * 60 * 1000,  // 5 minutes
+                live: 30 * 1000,          // 30 seconds
+                standings: 60 * 60 * 1000 // 1 hour
+            },
+            ENDPOINTS: {
+                mlb: '/mlb/scores/json/Players',
+                nfl: '/nfl/scores/json/Players',
+                nba: '/nba/scores/json/Players',
+                cfb: '/cfb/scores/json/Players',
+                cbb: '/cbb/scores/json/Players'
+            }
+        };
+
+        // ========================================
+        // State Management
+        // ========================================
         let currentSport = 'mlb';
         let currentView = 'grid';
         let playersData = [];
+        let cachedData = {};
+        let lastFetchTime = {};
 
-        // MLB Player Data (Real 2024 stats from FanGraphs)
-        const mlbPlayers = [
-            { name: 'Aaron Judge', team: 'NYY', teamFull: 'New York Yankees', position: 'RF',
-              stats: { AVG: '.322', HR: 58, RBI: 144, OPS: '1.159', WAR: 11.2, wRC: 207 },
-              source: 'FanGraphs', image: 'https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/592450/headshot/67/current' },
-            { name: 'Shohei Ohtani', team: 'LAD', teamFull: 'Los Angeles Dodgers', position: 'DH',
-              stats: { AVG: '.310', HR: 54, RBI: 130, OPS: '1.036', WAR: 9.1, wRC: 188 },
-              source: 'FanGraphs', image: 'https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/660271/headshot/67/current' },
-            { name: 'Mookie Betts', team: 'LAD', teamFull: 'Los Angeles Dodgers', position: 'SS',
-              stats: { AVG: '.289', HR: 19, RBI: 75, OPS: '.874', WAR: 6.4, wRC: 142 },
-              source: 'FanGraphs', image: 'https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/605141/headshot/67/current' },
-            { name: 'Bobby Witt Jr.', team: 'KC', teamFull: 'Kansas City Royals', position: 'SS',
-              stats: { AVG: '.332', HR: 32, RBI: 109, OPS: '.956', WAR: 8.9, wRC: 160 },
-              source: 'FanGraphs', image: 'https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/677951/headshot/67/current' },
-            { name: 'Gunnar Henderson', team: 'BAL', teamFull: 'Baltimore Orioles', position: 'SS',
-              stats: { AVG: '.281', HR: 37, RBI: 92, OPS: '.885', WAR: 7.3, wRC: 148 },
-              source: 'FanGraphs', image: 'https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/683002/headshot/67/current' },
-            { name: 'Corey Seager', team: 'TEX', teamFull: 'Texas Rangers', position: 'SS',
-              stats: { AVG: '.278', HR: 33, RBI: 96, OPS: '.885', WAR: 5.2, wRC: 145 },
-              source: 'FanGraphs', image: 'https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_213,q_auto:best/v1/people/608369/headshot/67/current' },
-        ];
-
-        // NFL Player Data
-        const nflPlayers = [
-            { name: 'Patrick Mahomes', team: 'KC', teamFull: 'Kansas City Chiefs', position: 'QB',
-              stats: { 'Pass Yds': '4,183', 'Pass TD': 26, 'INT': 11, 'QBR': 72.1, 'Comp%': '67.2%' },
-              source: 'ESPN' },
-            { name: 'Josh Allen', team: 'BUF', teamFull: 'Buffalo Bills', position: 'QB',
-              stats: { 'Pass Yds': '4,306', 'Pass TD': 29, 'INT': 12, 'QBR': 68.9, 'Comp%': '63.6%' },
-              source: 'ESPN' },
-            { name: 'Lamar Jackson', team: 'BAL', teamFull: 'Baltimore Ravens', position: 'QB',
-              stats: { 'Pass Yds': '4,172', 'Pass TD': 41, 'INT': 4, 'QBR': 82.5, 'Comp%': '67.2%' },
-              source: 'ESPN' },
-            { name: 'CeeDee Lamb', team: 'DAL', teamFull: 'Dallas Cowboys', position: 'WR',
-              stats: { 'Rec Yds': '1,749', 'Rec': 135, 'TD': 12, 'Avg': '13.0', 'Tgt': 181 },
-              source: 'ESPN' },
-            { name: 'Ja\'Marr Chase', team: 'CIN', teamFull: 'Cincinnati Bengals', position: 'WR',
-              stats: { 'Rec Yds': '1,708', 'Rec': 127, 'TD': 17, 'Avg': '13.4', 'Tgt': 168 },
-              source: 'ESPN' },
-            { name: 'Derrick Henry', team: 'BAL', teamFull: 'Baltimore Ravens', position: 'RB',
-              stats: { 'Rush Yds': '1,921', 'Rush TD': 16, 'Avg': '5.1', 'Att': 377 },
-              source: 'ESPN' },
-        ];
-
-        // NBA Player Data
-        const nbaPlayers = [
-            { name: 'Luka Doncic', team: 'LAL', teamFull: 'Los Angeles Lakers', position: 'PG',
-              stats: { PPG: 33.9, RPG: 9.2, APG: 9.8, 'FG%': '48.7%', '3P%': '35.4%' },
-              source: 'NBA.com' },
-            { name: 'Giannis Antetokounmpo', team: 'MIL', teamFull: 'Milwaukee Bucks', position: 'PF',
-              stats: { PPG: 30.4, RPG: 11.5, APG: 6.5, 'FG%': '61.1%', 'BLK': 1.1 },
-              source: 'NBA.com' },
-            { name: 'Shai Gilgeous-Alexander', team: 'OKC', teamFull: 'Oklahoma City Thunder', position: 'PG',
-              stats: { PPG: 30.1, RPG: 5.5, APG: 6.2, 'FG%': '53.5%', 'STL': 2.0 },
-              source: 'NBA.com' },
-            { name: 'Jayson Tatum', team: 'BOS', teamFull: 'Boston Celtics', position: 'SF',
-              stats: { PPG: 26.9, RPG: 8.1, APG: 4.9, 'FG%': '47.1%', '3P%': '37.6%' },
-              source: 'NBA.com' },
-            { name: 'Anthony Edwards', team: 'MIN', teamFull: 'Minnesota Timberwolves', position: 'SG',
-              stats: { PPG: 25.9, RPG: 5.4, APG: 5.1, 'FG%': '46.1%', '3P%': '35.7%' },
-              source: 'NBA.com' },
-            { name: 'Kevin Durant', team: 'PHX', teamFull: 'Phoenix Suns', position: 'SF',
-              stats: { PPG: 27.1, RPG: 6.6, APG: 5.0, 'FG%': '52.3%', '3P%': '41.3%' },
-              source: 'NBA.com' },
-        ];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-        });
-
-        function loadData() {
-            const container = document.getElementById('players-container');
-            container.innerHTML = `
-                <div class="col-span-full flex items-center justify-center py-20">
-                    <div class="text-center">
-                        <i class="fas fa-spinner fa-spin text-4xl text-orange-500 mb-4"></i>
-                        <p class="text-gray-400">Loading real sports data...</p>
-                    </div>
-                </div>
-            `;
-
-            setTimeout(() => {
-                switch(currentSport) {
-                    case 'mlb': playersData = mlbPlayers; document.getElementById('data-source').textContent = 'FanGraphs'; break;
-                    case 'nfl': playersData = nflPlayers; document.getElementById('data-source').textContent = 'ESPN'; break;
-                    case 'nba': playersData = nbaPlayers; document.getElementById('data-source').textContent = 'NBA.com'; break;
-                }
-                renderPlayers(playersData);
-                updateTimestamp();
-            }, 500);
-        }
-
-        function renderPlayers(players) {
-            const container = document.getElementById('players-container');
-            const noResults = document.getElementById('no-results');
-
-            if (players.length === 0) {
-                container.innerHTML = '';
-                noResults.classList.remove('hidden');
+        // ========================================
+        // Particle System with Mouse Parallax
+        // ========================================
+        (function initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            if (!canvas || window.innerWidth < 900 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 return;
             }
 
-            noResults.classList.add('hidden');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            container.innerHTML = players.map(player => `
-                <div class="player-card rounded-xl overflow-hidden">
-                    <div class="p-5">
-                        <div class="flex items-start gap-4 mb-4">
-                            ${player.image ? `
-                                <img src="${player.image}" alt="${player.name}"
-                                     class="w-16 h-16 rounded-xl object-cover bg-slate-700"
-                                     onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%231e293b%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23f97316%22>${player.name.charAt(0)}</text></svg>'">
-                            ` : `
-                                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white text-2xl font-bold">
-                                    ${player.name.charAt(0)}
-                                </div>
-                            `}
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-white">${player.name}</h3>
-                                <div class="flex items-center gap-2 text-sm">
-                                    <span class="text-orange-400 font-semibold">${player.team}</span>
-                                    <span class="text-gray-500">•</span>
-                                    <span class="text-gray-400">${player.position}</span>
-                                </div>
-                                <p class="text-gray-500 text-xs mt-1">${player.teamFull}</p>
-                            </div>
-                        </div>
+            // Burnt orange particle colors
+            const colors = [
+                new THREE.Color(0xBF5700),
+                new THREE.Color(0xD97B38),
+                new THREE.Color(0x9B4500),
+                new THREE.Color(0xF5E6D3),
+                new THREE.Color(0xE68A4F),
+            ];
 
-                        <div class="grid grid-cols-3 gap-3">
-                            ${Object.entries(player.stats).slice(0, 6).map(([key, value]) => `
-                                <div class="bg-slate-800/50 rounded-lg p-2 text-center">
-                                    <div class="stat-value text-white font-bold text-lg">${value}</div>
-                                    <div class="text-gray-500 text-xs uppercase tracking-wide">${key}</div>
-                                </div>
-                            `).join('')}
-                        </div>
+            const particleCount = 8000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const particleColors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
 
-                        <div class="mt-4 pt-4 border-t border-slate-700/50 flex items-center justify-between text-xs text-gray-500">
-                            <span>Source: ${player.source}</span>
-                            <span id="player-timestamp-${player.name.replace(/\s/g, '-')}">Updated: ${getCurrentTimestamp()}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 50;
+                positions[i3 + 1] = (Math.random() - 0.5) * 50;
+                positions[i3 + 2] = (Math.random() - 0.5) * 30 - 10;
 
-        function switchSport(sport) {
-            currentSport = sport;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particleColors[i3] = color.r;
+                particleColors[i3 + 1] = color.g;
+                particleColors[i3 + 2] = color.b;
 
-            // Update tabs
-            document.querySelectorAll('.sport-tab').forEach(tab => {
-                tab.classList.remove('active', 'text-white');
-                tab.classList.add('text-gray-400');
-            });
-            document.getElementById(`tab-${sport}`).classList.add('active', 'text-white');
-            document.getElementById(`tab-${sport}`).classList.remove('text-gray-400');
-
-            loadData();
-        }
-
-        function setView(view) {
-            currentView = view;
-            const container = document.getElementById('players-container');
-
-            if (view === 'grid') {
-                container.classList.remove('grid-cols-1');
-                container.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
-                document.getElementById('view-grid').classList.add('bg-slate-800');
-                document.getElementById('view-list').classList.remove('bg-slate-800');
-            } else {
-                container.classList.remove('md:grid-cols-2', 'lg:grid-cols-3');
-                container.classList.add('grid-cols-1');
-                document.getElementById('view-list').classList.add('bg-slate-800');
-                document.getElementById('view-grid').classList.remove('bg-slate-800');
+                sizes[i] = Math.random() * 2 + 0.5;
             }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.08,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true,
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            camera.position.z = 15;
+
+            let mouseX = 0, mouseY = 0;
+            let targetX = 0, targetY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                targetX += (mouseX - targetX) * 0.02;
+                targetY += (mouseY - targetY) * 0.02;
+
+                particles.rotation.y = targetX * 0.3;
+                particles.rotation.x = targetY * 0.2;
+
+                const time = Date.now() * 0.0001;
+                particles.rotation.z = Math.sin(time) * 0.1;
+
+                const positions = geometry.attributes.position.array;
+                for (let i = 1; i < positions.length; i += 3) {
+                    positions[i] += 0.005;
+                    if (positions[i] > 25) {
+                        positions[i] = -25;
+                    }
+                }
+                geometry.attributes.position.needsUpdate = true;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+
+        // ========================================
+        // Card Tilt JavaScript (3D effect)
+        // ========================================
+        function initCardTilt() {
+            document.querySelectorAll('.player-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    if (window.innerWidth < 768 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * -5;
+                    const rotateY = ((x - centerX) / centerX) * 5;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                });
+            });
         }
 
-        function refreshData() {
-            const icon = document.getElementById('refresh-icon');
-            icon.classList.add('data-refresh');
+        // ========================================
+        // Utility Functions
+        // ========================================
 
-            loadData();
-
-            setTimeout(() => {
-                icon.classList.remove('data-refresh');
-            }, 1000);
-        }
-
-        function updateTimestamp() {
-            document.getElementById('last-updated').textContent = getCurrentTimestamp();
-        }
-
+        /**
+         * Format timestamp to America/Chicago timezone
+         * @returns {string} Formatted timestamp
+         */
         function getCurrentTimestamp() {
             return new Date().toLocaleString('en-US', {
-                timeZone: 'America/Chicago',
+                timeZone: CONFIG.TIMEZONE,
                 month: '2-digit',
                 day: '2-digit',
                 year: 'numeric',
@@ -458,30 +799,631 @@
             }) + ' CST';
         }
 
+        /**
+         * Update connection status indicator
+         * @param {string} status - Connection status
+         * @param {boolean} isLive - Whether connection is live
+         */
+        function updateConnectionStatus(status, isLive = true) {
+            const statusEl = document.getElementById('connection-status');
+            const indicator = statusEl.previousElementSibling;
+
+            statusEl.textContent = status;
+
+            if (isLive) {
+                indicator.classList.remove('bg-red-500', 'bg-yellow-500');
+                indicator.classList.add('bg-green-500');
+                statusEl.classList.remove('text-red-400', 'text-yellow-400');
+                statusEl.classList.add('text-green-400');
+            } else {
+                indicator.classList.remove('bg-green-500', 'bg-yellow-500');
+                indicator.classList.add('bg-red-500');
+                statusEl.classList.remove('text-green-400', 'text-yellow-400');
+                statusEl.classList.add('text-red-400');
+            }
+        }
+
+        /**
+         * Show error state
+         * @param {string} message - Error message to display
+         */
+        function showError(message) {
+            const container = document.getElementById('players-container');
+            const errorState = document.getElementById('error-state');
+            const errorMessage = document.getElementById('error-message');
+
+            container.innerHTML = '';
+            errorMessage.textContent = message;
+            errorState.classList.remove('hidden');
+            container.appendChild(errorState);
+
+            updateConnectionStatus('Error', false);
+        }
+
+        /**
+         * Show loading state
+         */
+        function showLoading() {
+            const container = document.getElementById('players-container');
+            document.getElementById('error-state').classList.add('hidden');
+            document.getElementById('no-results').classList.add('hidden');
+
+            container.innerHTML = `
+                <div class="col-span-full flex items-center justify-center py-20">
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 relative">
+                            <div class="absolute inset-0 rounded-full border-4 border-burnt-500/20"></div>
+                            <div class="absolute inset-0 rounded-full border-4 border-burnt-500 border-t-transparent animate-spin"></div>
+                        </div>
+                        <p class="text-gray-400">Loading real sports data from SportsDataIO...</p>
+                    </div>
+                </div>
+            `;
+
+            updateConnectionStatus('Connecting...', true);
+        }
+
+        // ========================================
+        // API Integration
+        // ========================================
+
+        /**
+         * Fetch players from SportsDataIO API
+         * @param {string} sport - Sport type (mlb, nfl, nba, cfb, cbb)
+         * @returns {Promise<Array>} Player data array
+         */
+        async function fetchPlayers(sport) {
+            // Check cache
+            const cacheKey = `players_${sport}`;
+            const now = Date.now();
+
+            if (cachedData[cacheKey] && lastFetchTime[cacheKey] &&
+                (now - lastFetchTime[cacheKey]) < CONFIG.CACHE_TTL.players) {
+                return cachedData[cacheKey];
+            }
+
+            // Handle college baseball separately (no direct SportsDataIO endpoint)
+            if (sport === 'college-baseball') {
+                return getCollegeBaseballPlayers();
+            }
+
+            const endpoint = CONFIG.ENDPOINTS[sport];
+            if (!endpoint) {
+                throw new Error(`Unknown sport: ${sport}`);
+            }
+
+            const url = `${CONFIG.BASE_URL}${endpoint}?key=${CONFIG.API_KEY}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // Transform and cache data
+                const players = transformPlayerData(data, sport);
+                cachedData[cacheKey] = players;
+                lastFetchTime[cacheKey] = now;
+
+                return players;
+            } catch (error) {
+                console.error(`Error fetching ${sport} players:`, error);
+                throw error;
+            }
+        }
+
+        /**
+         * Transform raw API data into display format
+         * @param {Array} rawData - Raw API response
+         * @param {string} sport - Sport type
+         * @returns {Array} Transformed player data
+         */
+        function transformPlayerData(rawData, sport) {
+            if (!Array.isArray(rawData)) return [];
+
+            // Get top players by various metrics
+            const players = rawData
+                .filter(p => p.Status === 'Active')
+                .slice(0, 50); // Limit to top 50 for performance
+
+            return players.map(p => {
+                const transformed = {
+                    name: `${p.FirstName} ${p.LastName}`,
+                    team: p.Team || 'FA',
+                    teamFull: getTeamFullName(p.Team, sport),
+                    position: p.Position || 'N/A',
+                    source: 'SportsDataIO',
+                    fetchedAt: getCurrentTimestamp(),
+                    playerId: p.PlayerID
+                };
+
+                // Sport-specific stats
+                switch (sport) {
+                    case 'mlb':
+                        transformed.stats = {
+                            'Jersey': p.Jersey || '-',
+                            'Bats': p.BatHand || '-',
+                            'Throws': p.ThrowHand || '-',
+                            'Height': p.Height ? `${Math.floor(p.Height / 12)}'${p.Height % 12}"` : '-',
+                            'Weight': p.Weight ? `${p.Weight} lbs` : '-',
+                            'Age': p.BirthDate ? calculateAge(p.BirthDate) : '-'
+                        };
+                        transformed.image = p.PhotoUrl || null;
+                        break;
+                    case 'nfl':
+                        transformed.stats = {
+                            'Jersey': p.Number || '-',
+                            'Height': p.Height || '-',
+                            'Weight': p.Weight ? `${p.Weight} lbs` : '-',
+                            'College': p.College || '-',
+                            'Exp': p.Experience ? `${p.Experience} yrs` : 'R',
+                            'Age': p.BirthDate ? calculateAge(p.BirthDate) : '-'
+                        };
+                        transformed.image = p.PhotoUrl || null;
+                        break;
+                    case 'nba':
+                        transformed.stats = {
+                            'Jersey': p.Jersey || '-',
+                            'Height': formatNBAHeight(p.Height),
+                            'Weight': p.Weight ? `${p.Weight} lbs` : '-',
+                            'College': p.College || '-',
+                            'Exp': p.Experience !== undefined ? `${p.Experience} yrs` : 'R',
+                            'Age': p.BirthDate ? calculateAge(p.BirthDate) : '-'
+                        };
+                        transformed.image = p.PhotoUrl || null;
+                        break;
+                    case 'cfb':
+                        transformed.stats = {
+                            'Jersey': p.Jersey || '-',
+                            'Class': p.Class || '-',
+                            'Height': p.Height || '-',
+                            'Weight': p.Weight ? `${p.Weight} lbs` : '-',
+                            'State': p.BirthState || '-',
+                            'City': p.BirthCity || '-'
+                        };
+                        break;
+                    case 'cbb':
+                        transformed.stats = {
+                            'Jersey': p.Jersey || '-',
+                            'Class': p.Class || '-',
+                            'Height': p.Height || '-',
+                            'Weight': p.Weight ? `${p.Weight} lbs` : '-',
+                            'HS': p.HighSchool || '-',
+                            'State': p.BirthState || '-'
+                        };
+                        break;
+                }
+
+                return transformed;
+            });
+        }
+
+        /**
+         * Get college baseball players (curated list - NCAA doesn't have public API)
+         * @returns {Array} College baseball player data
+         */
+        function getCollegeBaseballPlayers() {
+            // Note: NCAA does not provide a public API. This data would need to be
+            // sourced from D1Baseball, Baseball America, or manual entry.
+            return [
+                {
+                    name: 'Jac Caglianone',
+                    team: 'FLA',
+                    teamFull: 'Florida Gators',
+                    position: '1B/P',
+                    stats: { 'Class': 'Jr', 'AVG': '.410', 'HR': '33', 'RBI': '68', 'ERA': '4.27', 'K': '87' },
+                    source: 'D1Baseball',
+                    fetchedAt: getCurrentTimestamp(),
+                    note: 'Two-way player, 2024 Golden Spikes finalist'
+                },
+                {
+                    name: 'Charlie Condon',
+                    team: 'UGA',
+                    teamFull: 'Georgia Bulldogs',
+                    position: 'OF/1B',
+                    stats: { 'Class': 'Jr', 'AVG': '.433', 'HR': '37', 'RBI': '78', 'OPS': '1.478', 'BB': '52' },
+                    source: 'D1Baseball',
+                    fetchedAt: getCurrentTimestamp(),
+                    note: '2024 Golden Spikes Award winner'
+                },
+                {
+                    name: 'Travis Bazzana',
+                    team: 'OSU',
+                    teamFull: 'Oregon State Beavers',
+                    position: '2B',
+                    stats: { 'Class': 'Jr', 'AVG': '.407', 'HR': '28', 'RBI': '66', 'OPS': '1.342', 'SB': '12' },
+                    source: 'D1Baseball',
+                    fetchedAt: getCurrentTimestamp(),
+                    note: '2024 #1 Overall Draft Pick (Cleveland)'
+                },
+                {
+                    name: 'Braden Montgomery',
+                    team: 'TAMU',
+                    teamFull: 'Texas A&M Aggies',
+                    position: 'OF',
+                    stats: { 'Class': 'Jr', 'AVG': '.322', 'HR': '26', 'RBI': '71', 'OPS': '1.145', 'SB': '8' },
+                    source: 'D1Baseball',
+                    fetchedAt: getCurrentTimestamp(),
+                    note: 'SEC Player of the Year'
+                },
+                {
+                    name: 'Chase Burns',
+                    team: 'WAKE',
+                    teamFull: 'Wake Forest Demon Deacons',
+                    position: 'RHP',
+                    stats: { 'Class': 'Jr', 'ERA': '2.71', 'W': '10', 'K': '167', 'IP': '113', 'WHIP': '0.98' },
+                    source: 'D1Baseball',
+                    fetchedAt: getCurrentTimestamp(),
+                    note: 'ACC Pitcher of the Year'
+                },
+                {
+                    name: 'Hagen Smith',
+                    team: 'ARK',
+                    teamFull: 'Arkansas Razorbacks',
+                    position: 'LHP',
+                    stats: { 'Class': 'So', 'ERA': '2.48', 'W': '11', 'K': '153', 'IP': '98', 'WHIP': '1.05' },
+                    source: 'D1Baseball',
+                    fetchedAt: getCurrentTimestamp(),
+                    note: 'SEC Pitcher of the Year'
+                }
+            ];
+        }
+
+        /**
+         * Calculate age from birthdate
+         * @param {string} birthDate - ISO date string
+         * @returns {number} Age in years
+         */
+        function calculateAge(birthDate) {
+            const birth = new Date(birthDate);
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        /**
+         * Format NBA height (inches to feet-inches)
+         * @param {number} inches - Height in inches
+         * @returns {string} Formatted height
+         */
+        function formatNBAHeight(inches) {
+            if (!inches) return '-';
+            const feet = Math.floor(inches / 12);
+            const remainingInches = inches % 12;
+            return `${feet}'${remainingInches}"`;
+        }
+
+        /**
+         * Get full team name from abbreviation
+         * @param {string} abbr - Team abbreviation
+         * @param {string} sport - Sport type
+         * @returns {string} Full team name
+         */
+        function getTeamFullName(abbr, sport) {
+            // This would ideally come from a teams API endpoint
+            const teamMaps = {
+                mlb: {
+                    'STL': 'St. Louis Cardinals',
+                    'NYY': 'New York Yankees',
+                    'LAD': 'Los Angeles Dodgers',
+                    'KC': 'Kansas City Royals',
+                    'BAL': 'Baltimore Orioles',
+                    'TEX': 'Texas Rangers',
+                    'HOU': 'Houston Astros',
+                    'ATL': 'Atlanta Braves',
+                    'PHI': 'Philadelphia Phillies',
+                    'MIL': 'Milwaukee Brewers'
+                },
+                nfl: {
+                    'TEN': 'Tennessee Titans',
+                    'KC': 'Kansas City Chiefs',
+                    'BUF': 'Buffalo Bills',
+                    'BAL': 'Baltimore Ravens',
+                    'DAL': 'Dallas Cowboys',
+                    'CIN': 'Cincinnati Bengals',
+                    'PHI': 'Philadelphia Eagles',
+                    'SF': 'San Francisco 49ers'
+                },
+                nba: {
+                    'MEM': 'Memphis Grizzlies',
+                    'LAL': 'Los Angeles Lakers',
+                    'MIL': 'Milwaukee Bucks',
+                    'OKC': 'Oklahoma City Thunder',
+                    'BOS': 'Boston Celtics',
+                    'MIN': 'Minnesota Timberwolves',
+                    'PHX': 'Phoenix Suns',
+                    'DEN': 'Denver Nuggets'
+                }
+            };
+
+            return teamMaps[sport]?.[abbr] || abbr || 'Unknown Team';
+        }
+
+        // ========================================
+        // Rendering Functions
+        // ========================================
+
+        /**
+         * Render players to the grid
+         * @param {Array} players - Player data array
+         */
+        function renderPlayers(players) {
+            const container = document.getElementById('players-container');
+            const noResults = document.getElementById('no-results');
+            const errorState = document.getElementById('error-state');
+
+            errorState.classList.add('hidden');
+
+            if (!players || players.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+
+            container.innerHTML = players.map((player, index) => `
+                <article class="player-card rounded-2xl overflow-hidden card-3d" style="animation-delay: ${index * 0.05}s" role="article" aria-label="${player.name} player card">
+                    <div class="p-6 card-3d-inner relative">
+                        <div class="flex items-start gap-4 mb-5">
+                            ${player.image ? `
+                                <img src="${player.image}" alt="${player.name} headshot"
+                                     class="w-18 h-18 rounded-xl object-cover bg-burnt-900/50 border-2 border-burnt-500/30"
+                                     style="width: 72px; height: 72px;"
+                                     loading="lazy"
+                                     onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%231a1207%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2260%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23BF5700%22>${player.name.charAt(0)}</text></svg>'">
+                            ` : `
+                                <div class="w-18 h-18 rounded-xl bg-gradient-to-br from-burnt-500 to-burnt-700 flex items-center justify-center text-white text-2xl font-bold border-2 border-burnt-400/30" style="width: 72px; height: 72px;" aria-hidden="true">
+                                    ${player.name.charAt(0)}
+                                </div>
+                            `}
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-cream font-display tracking-wide">${player.name}</h3>
+                                <div class="flex items-center gap-2 text-sm mt-1">
+                                    <span class="text-burnt-400 font-bold">${player.team}</span>
+                                    <span class="text-burnt-700" aria-hidden="true">|</span>
+                                    <span class="text-gray-400">${player.position}</span>
+                                </div>
+                                <p class="text-gray-600 text-xs mt-1">${player.teamFull}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            ${Object.entries(player.stats).slice(0, 6).map(([key, value]) => `
+                                <div class="stat-mini rounded-lg p-2.5 text-center">
+                                    <div class="stat-value font-bold text-lg">${value}</div>
+                                    <div class="text-burnt-600 text-xs uppercase tracking-wider mt-0.5">${key}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${player.note ? `
+                            <div class="mt-4 p-2 bg-burnt-500/10 rounded-lg border border-burnt-500/20">
+                                <p class="text-xs text-burnt-300"><i class="fas fa-info-circle mr-1" aria-hidden="true"></i>${player.note}</p>
+                            </div>
+                        ` : ''}
+
+                        <div class="mt-5 pt-4 border-t border-burnt-900/30 flex items-center justify-between text-xs text-gray-600">
+                            <div class="citation-badge">
+                                <i class="fas fa-database" aria-hidden="true"></i>
+                                <span>${player.source}</span>
+                            </div>
+                            <span class="text-burnt-600">${player.fetchedAt || getCurrentTimestamp()}</span>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+
+            // Re-init card tilt
+            initCardTilt();
+        }
+
+        // ========================================
+        // Event Handlers
+        // ========================================
+
+        /**
+         * Load data for current sport
+         */
+        async function loadData() {
+            showLoading();
+
+            try {
+                playersData = await fetchPlayers(currentSport);
+
+                // Update data source display
+                const sourceMap = {
+                    'mlb': 'SportsDataIO (MLB)',
+                    'nfl': 'SportsDataIO (NFL)',
+                    'nba': 'SportsDataIO (NBA)',
+                    'cfb': 'SportsDataIO (CFB)',
+                    'cbb': 'SportsDataIO (CBB)',
+                    'college-baseball': 'D1Baseball'
+                };
+                document.getElementById('data-source').textContent = sourceMap[currentSport] || 'SportsDataIO';
+
+                renderPlayers(playersData);
+                updateTimestamp();
+                updateConnectionStatus('Live', true);
+
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                showError(`Failed to load ${currentSport.toUpperCase()} data: ${error.message}`);
+            }
+        }
+
+        /**
+         * Switch between sports
+         * @param {string} sport - Sport identifier
+         */
+        function switchSport(sport) {
+            currentSport = sport;
+
+            // Update tab states and ARIA attributes
+            document.querySelectorAll('.sport-tab').forEach(tab => {
+                tab.classList.remove('active', 'text-white');
+                tab.classList.add('text-gray-400');
+                tab.setAttribute('aria-selected', 'false');
+            });
+
+            const activeTab = document.getElementById(`tab-${sport}`);
+            activeTab.classList.add('active', 'text-white');
+            activeTab.classList.remove('text-gray-400');
+            activeTab.setAttribute('aria-selected', 'true');
+
+            // Update panel aria-labelledby
+            document.getElementById('players-container').setAttribute('aria-labelledby', `tab-${sport}`);
+
+            loadData();
+        }
+
+        /**
+         * Toggle view between grid and list
+         * @param {string} view - View mode ('grid' or 'list')
+         */
+        function setView(view) {
+            currentView = view;
+            const container = document.getElementById('players-container');
+
+            if (view === 'grid') {
+                container.classList.remove('grid-cols-1');
+                container.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+                document.getElementById('view-grid').classList.add('bg-burnt-500/20');
+                document.getElementById('view-grid').querySelector('i').classList.replace('text-gray-500', 'text-burnt-400');
+                document.getElementById('view-grid').setAttribute('aria-pressed', 'true');
+                document.getElementById('view-list').classList.remove('bg-burnt-500/20');
+                document.getElementById('view-list').querySelector('i').classList.replace('text-burnt-400', 'text-gray-500');
+                document.getElementById('view-list').setAttribute('aria-pressed', 'false');
+            } else {
+                container.classList.remove('md:grid-cols-2', 'lg:grid-cols-3');
+                container.classList.add('grid-cols-1');
+                document.getElementById('view-list').classList.add('bg-burnt-500/20');
+                document.getElementById('view-list').querySelector('i').classList.replace('text-gray-500', 'text-burnt-400');
+                document.getElementById('view-list').setAttribute('aria-pressed', 'true');
+                document.getElementById('view-grid').classList.remove('bg-burnt-500/20');
+                document.getElementById('view-grid').querySelector('i').classList.replace('text-burnt-400', 'text-gray-500');
+                document.getElementById('view-grid').setAttribute('aria-pressed', 'false');
+            }
+        }
+
+        /**
+         * Refresh current data
+         */
+        function refreshData() {
+            const icon = document.getElementById('refresh-icon');
+            icon.classList.add('animate-spin');
+
+            // Clear cache for current sport
+            delete cachedData[`players_${currentSport}`];
+            delete lastFetchTime[`players_${currentSport}`];
+
+            loadData().finally(() => {
+                setTimeout(() => {
+                    icon.classList.remove('animate-spin');
+                }, 500);
+            });
+        }
+
+        /**
+         * Update last updated timestamp
+         */
+        function updateTimestamp() {
+            document.getElementById('last-updated').textContent = getCurrentTimestamp();
+        }
+
+        /**
+         * Export current data to CSV
+         */
         function exportCSV() {
-            const headers = ['Name', 'Team', 'Position', ...Object.keys(playersData[0]?.stats || {})];
+            if (!playersData || playersData.length === 0) {
+                alert('No data to export');
+                return;
+            }
+
+            const headers = ['Name', 'Team', 'Position', ...Object.keys(playersData[0]?.stats || {}), 'Source', 'Fetched At'];
             const rows = playersData.map(p => [
-                p.name, p.team, p.position, ...Object.values(p.stats)
+                p.name,
+                p.team,
+                p.position,
+                ...Object.values(p.stats),
+                p.source,
+                p.fetchedAt
             ]);
 
-            const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
-            const blob = new Blob([csv], { type: 'text/csv' });
+            const csv = [headers, ...rows].map(row =>
+                row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+            ).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `blaze-${currentSport}-data-${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
+            URL.revokeObjectURL(url);
         }
 
-        // Search functionality
+        // ========================================
+        // Search Functionality
+        // ========================================
         document.getElementById('search-input').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
+            const query = e.target.value.toLowerCase().trim();
+
+            if (!query) {
+                renderPlayers(playersData);
+                return;
+            }
+
             const filtered = playersData.filter(p =>
                 p.name.toLowerCase().includes(query) ||
                 p.team.toLowerCase().includes(query) ||
-                p.teamFull.toLowerCase().includes(query)
+                p.teamFull.toLowerCase().includes(query) ||
+                p.position.toLowerCase().includes(query)
             );
             renderPlayers(filtered);
+        });
+
+        // ========================================
+        // Keyboard Navigation
+        // ========================================
+        document.addEventListener('keydown', (e) => {
+            // Allow keyboard navigation between tabs
+            if (e.target.classList.contains('sport-tab')) {
+                const tabs = Array.from(document.querySelectorAll('.sport-tab'));
+                const currentIndex = tabs.indexOf(e.target);
+
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % tabs.length;
+                    tabs[nextIndex].focus();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                    tabs[prevIndex].focus();
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.target.click();
+                }
+            }
+        });
+
+        // ========================================
+        // Initialize
+        // ========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
         });
     </script>
 </body>
