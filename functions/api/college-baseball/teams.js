@@ -37,63 +37,71 @@ export async function onRequest(context) {
       const cached = await env.CACHE.get(cacheKey);
       if (cached) {
         const data = JSON.parse(cached);
-        return new Response(JSON.stringify({
-          success: true,
-          teams: data.teams,
-          count: data.teams.length,
-          cached: true,
-          cacheTime: data.timestamp
-        }), {
-          status: 200,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-            'Cache-Control': 'public, max-age=300, stale-while-revalidate=60'
+        return new Response(
+          JSON.stringify({
+            success: true,
+            teams: data.teams,
+            count: data.teams.length,
+            cached: true,
+            cacheTime: data.timestamp,
+          }),
+          {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+            },
           }
-        });
+        );
       }
     }
 
     // Fetch teams from NCAA data sources
     const teams = await fetchTeams({
       search: search || undefined,
-      conference: conference || undefined
+      conference: conference || undefined,
     });
 
     const cacheData = {
       teams,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     if (env.CACHE) {
       await env.CACHE.put(cacheKey, JSON.stringify(cacheData), {
-        expirationTtl: 300 // 5 minutes
+        expirationTtl: 300, // 5 minutes
       });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      teams,
-      count: teams.length,
-      cached: false,
-      timestamp: new Date().toISOString()
-    }), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300, stale-while-revalidate=60'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        teams,
+        count: teams.length,
+        cached: false,
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+        },
       }
-    });
-
+    );
   } catch (error) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to fetch teams',
-      message: error.message
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to fetch teams',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 }

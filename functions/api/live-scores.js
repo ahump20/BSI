@@ -36,7 +36,7 @@ export async function onRequestGet({ request, env, ctx }) {
 
   // Validate request parameters using Zod
   const validation = await validateRequest(request, {
-    query: liveScoresQuerySchema
+    query: liveScoresQuerySchema,
   });
 
   if (!validation.success) {
@@ -51,13 +51,16 @@ export async function onRequestGet({ request, env, ctx }) {
     const scores = await getLiveScores(sport, date, env);
     return new Response(JSON.stringify(scores), { headers });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Live scores fetch error',
-      message: error.message
-    }), {
-      status: 500,
-      headers
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Live scores fetch error',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers,
+      }
+    );
   }
 }
 
@@ -81,7 +84,7 @@ async function getLiveScores(sport, date, env) {
     timestamp: new Date().toISOString(),
     date,
     cached_at: Date.now(),
-    sports: {}
+    sports: {},
   };
 
   if (sport === 'all' || sport === 'mlb') {
@@ -95,7 +98,7 @@ async function getLiveScores(sport, date, env) {
           away: { team: 'Cubs', score: 3, hits: 7, errors: 1 },
           winning_pitcher: 'Sonny Gray (12-8)',
           losing_pitcher: 'Justin Steele (16-6)',
-          save: 'Ryan Helsley (48)'
+          save: 'Ryan Helsley (48)',
         },
         {
           game_id: 'HOU_TEX_2025_09_26',
@@ -104,9 +107,9 @@ async function getLiveScores(sport, date, env) {
           home: { team: 'Rangers', score: 2, hits: 5, errors: 0 },
           away: { team: 'Astros', score: 4, hits: 8, errors: 0 },
           current_pitcher: 'Framber Valdez',
-          current_batter: 'Corey Seager'
-        }
-      ]
+          current_batter: 'Corey Seager',
+        },
+      ],
     };
   }
 
@@ -120,7 +123,7 @@ async function getLiveScores(sport, date, env) {
           kickoff: '2025-09-29T18:00:00Z',
           home: { team: 'Texans', spread: -7.5, total: 42.5 },
           away: { team: 'Titans', spread: 7.5, total: 42.5 },
-          broadcast: 'CBS'
+          broadcast: 'CBS',
         },
         {
           game_id: 'DAL_NO_2025_09_29',
@@ -128,9 +131,9 @@ async function getLiveScores(sport, date, env) {
           kickoff: '2025-09-29T20:20:00Z',
           home: { team: 'Saints', spread: -3, total: 46.5 },
           away: { team: 'Cowboys', spread: 3, total: 46.5 },
-          broadcast: 'NBC'
-        }
-      ]
+          broadcast: 'NBC',
+        },
+      ],
     };
   }
 
@@ -145,10 +148,10 @@ async function getLiveScores(sport, date, env) {
           away: { team: 'Grizzlies', score: 110 },
           top_performers: {
             grizzlies: { player: 'Ja Morant', pts: 22, ast: 7, reb: 4 },
-            mavericks: { player: 'Luka Doncic', pts: 28, ast: 9, reb: 8 }
-          }
-        }
-      ]
+            mavericks: { player: 'Luka Doncic', pts: 28, ast: 9, reb: 8 },
+          },
+        },
+      ],
     };
   }
 
@@ -165,7 +168,7 @@ async function getLiveScores(sport, date, env) {
             home: { team: 'Oklahoma', rank: 15, spread: 7.5 },
             away: { team: 'Texas', rank: 3, spread: -7.5 },
             broadcast: 'ABC',
-            series: 'Red River Rivalry'
+            series: 'Red River Rivalry',
           },
           {
             game_id: 'ALA_UGA_2025_09_28',
@@ -174,10 +177,10 @@ async function getLiveScores(sport, date, env) {
             venue: 'Bryant-Denny Stadium',
             home: { team: 'Alabama', rank: 4, spread: -2.5 },
             away: { team: 'Georgia', rank: 2, spread: 2.5 },
-            broadcast: 'CBS'
-          }
-        ]
-      }
+            broadcast: 'CBS',
+          },
+        ],
+      },
     };
   }
 
@@ -200,7 +203,7 @@ async function getLiveScores(sport, date, env) {
   // Cache the results
   if (env.CACHE) {
     await env.CACHE.put(cacheKey, JSON.stringify(scores), {
-      expirationTtl: 60 // 1 minute TTL
+      expirationTtl: 60, // 1 minute TTL
     });
   }
 

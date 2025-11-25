@@ -9,11 +9,13 @@ export function getTeamBaseline(teamName: string) {
     return undefined;
   }
 
-  const baselineProjection = cfpTop25Data.modelBaseline.teams.find((team) => team.team === teamName);
+  const baselineProjection = cfpTop25Data.modelBaseline.teams.find(
+    (team) => team.team === teamName
+  );
 
   return {
     ranking,
-    projection: baselineProjection
+    projection: baselineProjection,
   };
 }
 
@@ -26,6 +28,6 @@ export function normalizeAdjustments(adjustments: ScenarioAdjustment[] = []): Sc
       team: adjustment.team,
       winProbabilityDelta: Math.max(Math.min(adjustment.winProbabilityDelta ?? 0, 0.4), -0.4),
       resumeBonus: Math.max(Math.min(adjustment.resumeBonus ?? 0, 8), -8),
-      autoBid: adjustment.autoBid ?? false
+      autoBid: adjustment.autoBid ?? false,
     }));
 }

@@ -30,7 +30,7 @@ export async function onRequest(context) {
   try {
     let data;
 
-    switch(sport) {
+    switch (sport) {
       case 'mlb':
         data = await fetchRealMLBData();
         break;
@@ -49,16 +49,19 @@ export async function onRequest(context) {
 
     return new Response(JSON.stringify(data), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch real sports data',
-      message: error.message
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch real sports data',
+        message: error.message,
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }
 
@@ -85,10 +88,14 @@ async function fetchRealMLBData() {
 
     // Calculate REAL Pythagorean expectation (not hardcoded!)
     // Need separate calls for hitting and pitching stats
-    const hittingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=2024`);
+    const hittingResponse = await fetch(
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=2024`
+    );
     const hittingData = await hittingResponse.json();
 
-    const pitchingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=2024`);
+    const pitchingResponse = await fetch(
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=2024`
+    );
     const pitchingData = await pitchingResponse.json();
 
     // Extract runs scored and allowed from real data - NO FALLBACKS!
@@ -110,8 +117,9 @@ async function fetchRealMLBData() {
     // REAL Pythagorean calculation using Bill James formula
     const exponent = 1.83; // Bill James exponent for MLB
     const pythagoreanWins = Math.round(
-      162 * (Math.pow(runsScored, exponent) /
-      (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
+      162 *
+        (Math.pow(runsScored, exponent) /
+          (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
     );
 
     return {
@@ -125,11 +133,11 @@ async function fetchRealMLBData() {
           winPercentage: (pythagoreanWins / 162).toFixed(3),
           runsScored,
           runsAllowed,
-          formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)'
+          formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)',
         },
         dataSource: 'MLB Stats API (Real-time)',
-        lastUpdated: new Date().toISOString()
-      }
+        lastUpdated: new Date().toISOString(),
+      },
     };
   } catch (error) {
     throw new Error(`MLB API Error: ${error.message}`);
@@ -150,7 +158,7 @@ async function fetchRealNFLData() {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -181,11 +189,11 @@ async function fetchRealNFLData() {
 
     // Get team's recent games to calculate Elo
     if (scoreboardData.events) {
-      scoreboardData.events.forEach(game => {
+      scoreboardData.events.forEach((game) => {
         const competitors = game.competitions?.[0]?.competitors;
         if (competitors) {
-          const titan = competitors.find(c => c.id === String(teamId));
-          const opponent = competitors.find(c => c.id !== String(teamId));
+          const titan = competitors.find((c) => c.id === String(teamId));
+          const opponent = competitors.find((c) => c.id !== String(teamId));
 
           if (titan && opponent) {
             const titanScore = parseInt(titan.score);
@@ -211,11 +219,11 @@ async function fetchRealNFLData() {
         elo: {
           currentRating: teamElo,
           kFactor: K,
-          formula: 'Standard Elo rating system'
+          formula: 'Standard Elo rating system',
         },
         dataSource: 'ESPN API (Real-time)',
-        lastUpdated: new Date().toISOString()
-      }
+        lastUpdated: new Date().toISOString(),
+      },
     };
   } catch (error) {
     throw new Error(`ESPN API Error: ${error.message}`);
@@ -234,7 +242,7 @@ async function fetchRealNBAData() {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -255,7 +263,7 @@ async function fetchRealNBAData() {
       team: teamData.team || {},
       standings: standingsData.standings || [],
       dataSource: 'ESPN NBA API (Real-time)',
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   } catch (error) {
     throw new Error(`NBA API Error: ${error.message}`);
@@ -273,7 +281,7 @@ async function fetchRealNCAAData() {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -296,7 +304,7 @@ async function fetchRealNCAAData() {
       team: texasData.team || {},
       rankings: rankingsData.rankings || [],
       dataSource: 'ESPN College Football API (Real-time)',
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   } catch (error) {
     throw new Error(`NCAA API Error: ${error.message}`);
@@ -308,10 +316,10 @@ async function fetchRealNCAAData() {
  */
 async function fetchAllSportsData() {
   const [mlb, nfl, nba, ncaa] = await Promise.all([
-    fetchRealMLBData().catch(e => ({ error: e.message })),
-    fetchRealNFLData().catch(e => ({ error: e.message })),
-    fetchRealNBAData().catch(e => ({ error: e.message })),
-    fetchRealNCAAData().catch(e => ({ error: e.message }))
+    fetchRealMLBData().catch((e) => ({ error: e.message })),
+    fetchRealNFLData().catch((e) => ({ error: e.message })),
+    fetchRealNBAData().catch((e) => ({ error: e.message })),
+    fetchRealNCAAData().catch((e) => ({ error: e.message })),
   ]);
 
   return {
@@ -321,6 +329,6 @@ async function fetchAllSportsData() {
     ncaa,
     dataSource: 'Multiple Real-time APIs',
     lastUpdated: new Date().toISOString(),
-    note: 'This is REAL data from live APIs, not hardcoded values!'
+    note: 'This is REAL data from live APIs, not hardcoded values!',
   };
 }

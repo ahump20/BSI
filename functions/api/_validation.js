@@ -58,8 +58,8 @@ export async function validateRequest(request, schemas = {}) {
             success: false,
             errorResponse: createValidationErrorResponse({
               message: 'Invalid JSON in request body',
-              details: [{ field: 'body', message: 'Request body must be valid JSON' }]
-            })
+              details: [{ field: 'body', message: 'Request body must be valid JSON' }],
+            }),
           };
         }
         throw error;
@@ -68,14 +68,14 @@ export async function validateRequest(request, schemas = {}) {
 
     return {
       success: true,
-      data: validatedData
+      data: validatedData,
     };
   } catch (error) {
     if (error instanceof ZodError) {
       const formattedError = formatZodError(error);
       return {
         success: false,
-        errorResponse: createValidationErrorResponse(formattedError)
+        errorResponse: createValidationErrorResponse(formattedError),
       };
     }
 
@@ -87,16 +87,16 @@ export async function validateRequest(request, schemas = {}) {
           success: false,
           error: 'Validation Error',
           message: 'An unexpected validation error occurred',
-          details: error.message
+          details: error.message,
         }),
         {
           status: 500,
           headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
+            'Access-Control-Allow-Origin': '*',
+          },
         }
-      )
+      ),
     };
   }
 }
@@ -107,17 +107,17 @@ export async function validateRequest(request, schemas = {}) {
  * @returns {Object} Formatted error object
  */
 function formatZodError(zodError) {
-  const details = zodError.errors.map(err => ({
+  const details = zodError.errors.map((err) => ({
     field: err.path.join('.'),
     message: err.message,
     code: err.code,
     ...(err.expected && { expected: err.expected }),
-    ...(err.received && { received: err.received })
+    ...(err.received && { received: err.received }),
   }));
 
   return {
     message: 'Request validation failed',
-    details
+    details,
   };
 }
 
@@ -133,7 +133,7 @@ function createValidationErrorResponse(error, status = 400) {
       success: false,
       error: 'Validation Error',
       message: error.message,
-      details: error.details
+      details: error.details,
     }),
     {
       status,
@@ -141,8 +141,8 @@ function createValidationErrorResponse(error, status = 400) {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      }
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
     }
   );
 }
@@ -165,8 +165,8 @@ export function validate(data, schema) {
       success: false,
       error: {
         message: 'Validation failed',
-        details: [{ field: 'unknown', message: error.message }]
-      }
+        details: [{ field: 'unknown', message: error.message }],
+      },
     };
   }
 }

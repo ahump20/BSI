@@ -57,10 +57,7 @@ export {
 // ============================================================================
 // Players API
 // ============================================================================
-export {
-  getPlayerById,
-  type PlayerDetailResponse,
-} from './players';
+export { getPlayerById, type PlayerDetailResponse } from './players';
 
 // ============================================================================
 // Rankings API

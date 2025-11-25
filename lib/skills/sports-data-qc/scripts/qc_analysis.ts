@@ -26,7 +26,7 @@ import {
   detectOutliersMAD,
   calculateQCMetrics,
   generateReportId,
-  VALIDATION_THRESHOLDS
+  VALIDATION_THRESHOLDS,
 } from './qc_core';
 
 // ============================================================================
@@ -71,7 +71,7 @@ const DEFAULT_CONFIG: Required<QCPipelineConfig> = {
   auto_reject_failures: false,
   auto_reject_outliers: false,
   include_flagged: true,
-  min_confidence_score: 0.0
+  min_confidence_score: 0.0,
 };
 
 // ============================================================================
@@ -117,10 +117,7 @@ export async function runQCPipeline(
   // STEP 1: Calculate before metrics
   // -------------------------------------------------------------------------
 
-  const metricsBefore = calculateQCMetrics(
-    input.games || [],
-    input.player_stats || []
-  );
+  const metricsBefore = calculateQCMetrics(input.games || [], input.player_stats || []);
 
   // -------------------------------------------------------------------------
   // STEP 2: Validate games
@@ -144,12 +141,12 @@ export async function runQCPipeline(
           check_name: 'confidence_score',
           status: 'FAIL',
           message: `Confidence score ${game.metadata.confidence_score} below threshold ${cfg.min_confidence_score}`,
-          affected_records: 1
+          affected_records: 1,
         });
       }
 
-      const failedChecks = checks.filter(c => c.status === 'FAIL');
-      const warningChecks = checks.filter(c => c.status === 'WARNING');
+      const failedChecks = checks.filter((c) => c.status === 'FAIL');
+      const warningChecks = checks.filter((c) => c.status === 'WARNING');
 
       if (failedChecks.length > 0) {
         if (cfg.auto_reject_failures) {
@@ -188,12 +185,12 @@ export async function runQCPipeline(
           check_name: 'confidence_score',
           status: 'FAIL',
           message: `Confidence score ${stats.metadata.confidence_score} below threshold ${cfg.min_confidence_score}`,
-          affected_records: 1
+          affected_records: 1,
         });
       }
 
-      const failedChecks = checks.filter(c => c.status === 'FAIL');
-      const warningChecks = checks.filter(c => c.status === 'WARNING');
+      const failedChecks = checks.filter((c) => c.status === 'FAIL');
+      const warningChecks = checks.filter((c) => c.status === 'WARNING');
 
       if (failedChecks.length > 0) {
         if (cfg.auto_reject_failures) {
@@ -214,12 +211,10 @@ export async function runQCPipeline(
 
     // Move outliers to appropriate buckets
     for (const player of outlierAnalysis.players_with_outliers) {
-      const playerOutliers = allOutliers.filter(
-        o => input.player_stats!.indexOf(player) >= 0
-      );
+      const playerOutliers = allOutliers.filter((o) => input.player_stats!.indexOf(player) >= 0);
 
-      const shouldReject = playerOutliers.some(o => o.recommendation === 'REJECT');
-      const shouldFlag = playerOutliers.some(o => o.recommendation === 'FLAG');
+      const shouldReject = playerOutliers.some((o) => o.recommendation === 'REJECT');
+      const shouldFlag = playerOutliers.some((o) => o.recommendation === 'FLAG');
 
       if (shouldReject && cfg.auto_reject_outliers) {
         // Remove from validated, add to rejected
@@ -261,12 +256,12 @@ export async function runQCPipeline(
           check_name: 'confidence_score',
           status: 'FAIL',
           message: `Confidence score ${sim.metadata.confidence_score} below threshold ${cfg.min_confidence_score}`,
-          affected_records: 1
+          affected_records: 1,
         });
       }
 
-      const failedChecks = checks.filter(c => c.status === 'FAIL');
-      const warningChecks = checks.filter(c => c.status === 'WARNING');
+      const failedChecks = checks.filter((c) => c.status === 'FAIL');
+      const warningChecks = checks.filter((c) => c.status === 'WARNING');
 
       if (failedChecks.length > 0) {
         if (cfg.auto_reject_failures) {
@@ -286,18 +281,17 @@ export async function runQCPipeline(
   // STEP 5: Calculate after metrics
   // -------------------------------------------------------------------------
 
-  const metricsAfter = calculateQCMetrics(
-    validatedGames,
-    validatedPlayerStats
-  );
+  const metricsAfter = calculateQCMetrics(validatedGames, validatedPlayerStats);
 
   // -------------------------------------------------------------------------
   // STEP 6: Generate recommendations
   // -------------------------------------------------------------------------
 
-  const totalRejected = rejectedGames.length + rejectedPlayerStats.length + rejectedSimulations.length;
+  const totalRejected =
+    rejectedGames.length + rejectedPlayerStats.length + rejectedSimulations.length;
   const totalFlagged = flaggedGames.length + flaggedPlayerStats.length + flaggedSimulations.length;
-  const totalPassed = validatedGames.length + validatedPlayerStats.length + validatedSimulations.length;
+  const totalPassed =
+    validatedGames.length + validatedPlayerStats.length + validatedSimulations.length;
 
   // Add recommendations based on results
   if (totalRejected > 0) {
@@ -312,7 +306,7 @@ export async function runQCPipeline(
     );
   }
 
-  const failedChecks = allChecks.filter(c => c.status === 'FAIL');
+  const failedChecks = allChecks.filter((c) => c.status === 'FAIL');
   const failuresByType = groupChecksByName(failedChecks);
 
   for (const [checkName, count] of Object.entries(failuresByType)) {
@@ -323,14 +317,14 @@ export async function runQCPipeline(
     }
   }
 
-  const extremeOutliers = allOutliers.filter(o => o.recommendation === 'REJECT');
+  const extremeOutliers = allOutliers.filter((o) => o.recommendation === 'REJECT');
   if (extremeOutliers.length > 0) {
     recommendations.push(
       `${extremeOutliers.length} extreme outliers detected (>7 MADs). Likely data quality issues.`
     );
   }
 
-  const flaggedOutliers = allOutliers.filter(o => o.recommendation === 'FLAG');
+  const flaggedOutliers = allOutliers.filter((o) => o.recommendation === 'FLAG');
   if (flaggedOutliers.length > 0) {
     recommendations.push(
       `${flaggedOutliers.length} statistical outliers flagged. Could be legitimate exceptional performances - review manually.`
@@ -338,7 +332,8 @@ export async function runQCPipeline(
   }
 
   // Check completeness degradation
-  const completenessChange = metricsAfter.completeness_percentage - metricsBefore.completeness_percentage;
+  const completenessChange =
+    metricsAfter.completeness_percentage - metricsBefore.completeness_percentage;
   if (completenessChange < -10) {
     recommendations.push(
       `Data completeness dropped by ${Math.abs(completenessChange).toFixed(1)}% after filtering. Review required field validation.`
@@ -353,9 +348,7 @@ export async function runQCPipeline(
   }
 
   if (allOutliers.length === 0 && totalFlagged === 0 && totalRejected === 0) {
-    recommendations.push(
-      'All data passed QC checks. Safe to proceed with ingestion into D1.'
-    );
+    recommendations.push('All data passed QC checks. Safe to proceed with ingestion into D1.');
   }
 
   // -------------------------------------------------------------------------
@@ -374,7 +367,7 @@ export async function runQCPipeline(
     outliers: allOutliers,
     metrics_before: metricsBefore,
     metrics_after: metricsAfter,
-    recommendations
+    recommendations,
   };
 
   // -------------------------------------------------------------------------
@@ -385,7 +378,7 @@ export async function runQCPipeline(
     data_source: input.data_source,
     games: validatedGames,
     player_stats: validatedPlayerStats,
-    simulations: validatedSimulations
+    simulations: validatedSimulations,
   };
 
   // Include flagged records if configured
@@ -439,7 +432,7 @@ function runOutlierDetection(
   // Run MAD detection for each metric
   if (battingAvgs.length > 0) {
     const results = detectOutliersMAD(
-      battingAvgs.map(x => x.value),
+      battingAvgs.map((x) => x.value),
       'batting_avg',
       threshold
     );
@@ -455,7 +448,7 @@ function runOutlierDetection(
 
   if (pitchVelocities.length > 0) {
     const results = detectOutliersMAD(
-      pitchVelocities.map(x => x.value),
+      pitchVelocities.map((x) => x.value),
       'pitch_velocity',
       threshold
     );
@@ -470,7 +463,7 @@ function runOutlierDetection(
 
   if (exitVelocities.length > 0) {
     const results = detectOutliersMAD(
-      exitVelocities.map(x => x.value),
+      exitVelocities.map((x) => x.value),
       'exit_velocity',
       threshold
     );
@@ -485,7 +478,7 @@ function runOutlierDetection(
 
   if (eras.length > 0) {
     const results = detectOutliersMAD(
-      eras.map(x => x.value),
+      eras.map((x) => x.value),
       'era',
       threshold
     );
@@ -500,7 +493,7 @@ function runOutlierDetection(
 
   if (spinRates.length > 0) {
     const results = detectOutliersMAD(
-      spinRates.map(x => x.value),
+      spinRates.map((x) => x.value),
       'spin_rate',
       threshold
     );
@@ -518,7 +511,7 @@ function runOutlierDetection(
 
   return {
     outliers,
-    players_with_outliers: uniquePlayers
+    players_with_outliers: uniquePlayers,
   };
 }
 
@@ -615,8 +608,8 @@ export async function runQCPipelineBatch(
       data_source: input.data_source,
       games: allFilteredGames,
       player_stats: allFilteredPlayerStats,
-      simulations: allFilteredSimulations
-    }
+      simulations: allFilteredSimulations,
+    },
   };
 }
 
@@ -659,6 +652,6 @@ function mergeReports(reports: QCReport[], dataSource: string): QCReport {
     outliers: mergedOutliers,
     metrics_before: reports[0]?.metrics_before || lastReport.metrics_before,
     metrics_after: lastReport.metrics_after,
-    recommendations: Array.from(new Set(mergedRecommendations)) // Deduplicate
+    recommendations: Array.from(new Set(mergedRecommendations)), // Deduplicate
   };
 }

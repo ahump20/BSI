@@ -7,9 +7,8 @@
  */
 
 // Base URL for Cloudflare Workers API (deployed at blazesportsintel.com)
-const API_BASE = typeof window !== 'undefined'
-  ? window.location.origin
-  : 'https://blazesportsintel.com';
+const API_BASE =
+  typeof window !== 'undefined' ? window.location.origin : 'https://blazesportsintel.com';
 
 /**
  * API Endpoints (using existing Cloudflare Workers)
@@ -20,7 +19,7 @@ export const API_ENDPOINTS = {
     leaderboards: `${API_BASE}/api/mlb/leaderboards`,
     players: `${API_BASE}/api/mlb/players`,
     teams: `${API_BASE}/api/mlb/teams`,
-    standings: `${API_BASE}/api/mlb/standings`
+    standings: `${API_BASE}/api/mlb/standings`,
   },
 
   // NFL Data (free ESPN API via your worker)
@@ -28,7 +27,7 @@ export const API_ENDPOINTS = {
     players: `${API_BASE}/api/nfl/players`,
     passingLeaders: `${API_BASE}/api/nfl/players?leaders=passing`,
     teams: `${API_BASE}/api/nfl/teams`,
-    standings: `${API_BASE}/api/nfl/standings`
+    standings: `${API_BASE}/api/nfl/standings`,
   },
 
   // College Baseball Data (ESPN API via worker)
@@ -37,7 +36,7 @@ export const API_ENDPOINTS = {
     teams: `${API_BASE}/api/college-baseball/teams`,
     standings: `${API_BASE}/api/college-baseball/standings`,
     rankings: `${API_BASE}/api/college-baseball/rankings`,
-    scoreboard: `${API_BASE}/api/college-baseball/scoreboard`
+    scoreboard: `${API_BASE}/api/college-baseball/scoreboard`,
   },
 
   // College Football Data (CFBD API via worker)
@@ -46,7 +45,7 @@ export const API_ENDPOINTS = {
     teams: `${API_BASE}/api/college-football/teams`,
     standings: `${API_BASE}/api/college-football/standings`,
     rankings: `${API_BASE}/api/college-football/rankings`,
-    scoreboard: `${API_BASE}/api/college-football/scoreboard`
+    scoreboard: `${API_BASE}/api/college-football/scoreboard`,
   },
 
   // Odds Data (TheOddsAPI via your worker)
@@ -54,7 +53,7 @@ export const API_ENDPOINTS = {
     current: `${API_BASE}/api/odds/current`,
     mlb: `${API_BASE}/api/odds/current?sport=baseball_mlb`,
     nfl: `${API_BASE}/api/odds/current?sport=american_football_nfl`,
-    ncaaf: `${API_BASE}/api/odds/current?sport=american_football_ncaaf`
+    ncaaf: `${API_BASE}/api/odds/current?sport=american_football_ncaaf`,
   },
 
   // News Data (ESPN RSS via your worker)
@@ -63,18 +62,18 @@ export const API_ENDPOINTS = {
     mlb: `${API_BASE}/api/news/feed?sport=mlb`,
     nfl: `${API_BASE}/api/news/feed?sport=nfl`,
     ncaaf: `${API_BASE}/api/news/feed?sport=ncaaf`,
-    collegeBaseball: `${API_BASE}/api/news/feed?sport=college-baseball`
-  }
+    collegeBaseball: `${API_BASE}/api/news/feed?sport=college-baseball`,
+  },
 };
 
 /**
  * Cache configuration (matches your Cloudflare Workers KV setup)
  */
 export const CACHE_TTL = {
-  players: 60 * 60 * 1000,      // 1 hour (matches your KV cache)
-  standings: 60 * 60 * 1000,    // 1 hour
-  odds: 5 * 60 * 1000,          // 5 minutes (matches your worker)
-  news: 10 * 60 * 1000          // 10 minutes (matches your worker)
+  players: 60 * 60 * 1000, // 1 hour (matches your KV cache)
+  standings: 60 * 60 * 1000, // 1 hour
+  odds: 5 * 60 * 1000, // 5 minutes (matches your worker)
+  news: 10 * 60 * 1000, // 10 minutes (matches your worker)
 };
 
 /**
@@ -89,15 +88,15 @@ export const SPORTS_CONFIG = {
     color: '#DC143C',
     apiKey: 'mlb',
     primaryMetrics: ['AVG', 'HR', 'RBI', 'OPS'],
-    season: { start: '03-20', end: '10-31' }
+    season: { start: '03-20', end: '10-31' },
   },
   collegeBaseball: {
     name: 'College Baseball',
     icon: '⚾',
-    color: '#BF5700',  // Burnt Orange - Texas theme
+    color: '#BF5700', // Burnt Orange - Texas theme
     apiKey: 'collegeBaseball',
     primaryMetrics: ['AVG', 'HR', 'RBI', 'ERA'],
-    season: { start: '02-14', end: '06-30' }
+    season: { start: '02-14', end: '06-30' },
   },
   football: {
     name: 'NFL',
@@ -105,16 +104,16 @@ export const SPORTS_CONFIG = {
     color: '#0066CC',
     apiKey: 'nfl',
     primaryMetrics: ['YDS', 'TD', 'QBR', 'Rating'],
-    season: { start: '09-01', end: '02-15' }
+    season: { start: '09-01', end: '02-15' },
   },
   collegeFootball: {
     name: 'College Football',
     icon: '🏈',
-    color: '#BF5700',  // Burnt Orange - Texas theme
+    color: '#BF5700', // Burnt Orange - Texas theme
     apiKey: 'collegeFootball',
     primaryMetrics: ['YDS', 'TD', 'INT', 'QBR'],
-    season: { start: '08-24', end: '01-15' }
-  }
+    season: { start: '08-24', end: '01-15' },
+  },
 };
 
 /**
@@ -131,7 +130,7 @@ export const CHART_COLORS = {
   danger: '#ef4444',
   info: '#3b82f6',
   purple: '#8b5cf6',
-  pink: '#ec4899'
+  pink: '#ec4899',
 };
 
 /**
@@ -141,7 +140,7 @@ export const VIEW_MODES = {
   GRID: 'grid',
   LIST: 'list',
   DETAILED: 'detailed',
-  COMPACT: 'compact'
+  COMPACT: 'compact',
 } as const;
 
 /**
@@ -150,7 +149,7 @@ export const VIEW_MODES = {
 export const THEMES = {
   LIGHT: 'light',
   DARK: 'dark',
-  AUTO: 'auto'
+  AUTO: 'auto',
 } as const;
 
 /**
@@ -161,18 +160,18 @@ export const DATA_SOURCES = {
     name: 'MLB StatsAPI',
     url: 'https://statsapi.mlb.com',
     description: 'Official MLB statistics',
-    free: true
+    free: true,
   },
   ESPN_API: {
     name: 'ESPN API',
     url: 'https://sports.core.api.espn.com',
     description: 'ESPN sports data',
-    free: true
+    free: true,
   },
   THEODDS_API: {
     name: 'TheOddsAPI',
     url: 'https://the-odds-api.com',
     description: 'Sports betting odds',
-    free: false
-  }
+    free: false,
+  },
 };

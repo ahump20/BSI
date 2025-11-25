@@ -3,15 +3,45 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Flame, Search, Filter, TrendingUp, Activity, BarChart3, X,
-  Download, RefreshCw, Grid, List, Moon, Sun, AlertTriangle,
-  CheckCircle, Database, Wifi, WifiOff, Command, Keyboard
+  Flame,
+  Search,
+  Filter,
+  TrendingUp,
+  Activity,
+  BarChart3,
+  X,
+  Download,
+  RefreshCw,
+  Grid,
+  List,
+  Moon,
+  Sun,
+  AlertTriangle,
+  CheckCircle,
+  Database,
+  Wifi,
+  WifiOff,
+  Command,
+  Keyboard,
 } from 'lucide-react';
 import {
-  LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip as RechartsTooltip, ResponsiveContainer, RadarChart,
-  PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,
-  BarChart, Bar
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  Legend,
+  BarChart,
+  Bar,
 } from 'recharts';
 
 import {
@@ -19,16 +49,28 @@ import {
   fetchNFLPlayers,
   fetchCollegeBaseballPlayers,
   fetchCollegeFootballPlayers,
-  type Player
+  type Player,
 } from '../lib/sports-data/api-client';
-import { formatNumber, formatTimestamp, exportToCSV, exportToJSON, debounce } from '../lib/sports-data/utils';
+import {
+  formatNumber,
+  formatTimestamp,
+  exportToCSV,
+  exportToJSON,
+  debounce,
+} from '../lib/sports-data/utils';
 import { SPORTS_CONFIG, CHART_COLORS, VIEW_MODES, THEMES } from '../lib/sports-data/config';
 
 // New 2025 Features
 import CommandPalette from './CommandPalette';
 import { ToastProvider, useToastHelpers } from './ToastNotification';
 import { useKeyboardShortcuts, DASHBOARD_SHORTCUTS } from '../lib/hooks/useKeyboardShortcuts';
-import { AnimatedCard, FadeInUp, StaggerContainer, StaggerItem, GlowOnHover } from './ScrollAnimations';
+import {
+  AnimatedCard,
+  FadeInUp,
+  StaggerContainer,
+  StaggerItem,
+  GlowOnHover,
+} from './ScrollAnimations';
 import PlayerHeadshot from './PlayerHeadshot';
 import ExternalLinksPanel, { ExternalLinksInline } from './ExternalLinksPanel';
 
@@ -87,7 +129,7 @@ function BlazeSportsCommandCenterInner() {
     },
     {
       ...DASHBOARD_SHORTCUTS.TOGGLE_THEME,
-      action: () => setTheme(t => t === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK),
+      action: () => setTheme((t) => (t === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)),
     },
     {
       ...DASHBOARD_SHORTCUTS.EXPORT_CSV,
@@ -209,10 +251,11 @@ function BlazeSportsCommandCenterInner() {
     if (!searchTerm) return players;
 
     const term = searchTerm.toLowerCase();
-    return players.filter(player =>
-      player.name.toLowerCase().includes(term) ||
-      player.team.toLowerCase().includes(term) ||
-      player.position.toLowerCase().includes(term)
+    return players.filter(
+      (player) =>
+        player.name.toLowerCase().includes(term) ||
+        player.team.toLowerCase().includes(term) ||
+        player.position.toLowerCase().includes(term)
     );
   }, [players, searchTerm]);
 
@@ -224,13 +267,13 @@ function BlazeSportsCommandCenterInner() {
   // ==================== EXPORT FUNCTIONS ====================
 
   const handleExportCSV = () => {
-    const exportData = filteredPlayers.map(p => ({
+    const exportData = filteredPlayers.map((p) => ({
       Name: p.name,
       Team: p.team,
       Position: p.position,
       ...p.stats,
       Source: p.dataSource,
-      Updated: p.dataStamp
+      Updated: p.dataStamp,
     }));
     exportToCSV(exportData, `blaze-${selectedSport}-players`);
     toast.success('Export Complete', `${filteredPlayers.length} players exported to CSV`);
@@ -252,7 +295,7 @@ function BlazeSportsCommandCenterInner() {
               className="w-12 h-12"
               style={{
                 color: 'var(--color-brand-primary)',
-                filter: 'drop-shadow(0 0 12px rgba(191, 87, 0, 0.8))'
+                filter: 'drop-shadow(0 0 12px rgba(191, 87, 0, 0.8))',
               }}
             />
             <div>
@@ -321,7 +364,10 @@ function BlazeSportsCommandCenterInner() {
       <div className="flex gap-4 flex-wrap items-center justify-between">
         <div className="flex-1 min-w-[300px]">
           <div className="relative">
-            <Search className="absolute left-3 top-3 w-5 h-5" style={{ color: 'var(--color-brand-primary)' }} />
+            <Search
+              className="absolute left-3 top-3 w-5 h-5"
+              style={{ color: 'var(--color-brand-primary)' }}
+            />
             <input
               type="text"
               placeholder="Search players, teams, positions..."
@@ -330,7 +376,7 @@ function BlazeSportsCommandCenterInner() {
               style={{
                 background: 'var(--color-surface-primary)',
                 border: '1px solid var(--glass-border)',
-                color: 'var(--color-charcoal-50)'
+                color: 'var(--color-charcoal-50)',
               }}
             />
           </div>
@@ -388,8 +434,8 @@ function BlazeSportsCommandCenterInner() {
   // ==================== COMPARISON MODE ====================
 
   const toggleComparison = (player: Player) => {
-    if (comparisonPlayers.find(p => p.id === player.id)) {
-      setComparisonPlayers(comparisonPlayers.filter(p => p.id !== player.id));
+    if (comparisonPlayers.find((p) => p.id === player.id)) {
+      setComparisonPlayers(comparisonPlayers.filter((p) => p.id !== player.id));
     } else if (comparisonPlayers.length < 4) {
       setComparisonPlayers([...comparisonPlayers, player]);
     }
@@ -399,14 +445,12 @@ function BlazeSportsCommandCenterInner() {
     if (comparisonPlayers.length === 0) return null;
 
     // Get all unique stat keys from comparison players
-    const allStats = Array.from(
-      new Set(comparisonPlayers.flatMap(p => Object.keys(p.stats)))
-    );
+    const allStats = Array.from(new Set(comparisonPlayers.flatMap((p) => Object.keys(p.stats))));
 
     // Prepare radar chart data
-    const radarData = allStats.map(stat => {
+    const radarData = allStats.map((stat) => {
       const dataPoint: any = { stat };
-      comparisonPlayers.forEach(player => {
+      comparisonPlayers.forEach((player) => {
         dataPoint[player.name] = player.stats[stat] || 0;
       });
       return dataPoint;
@@ -469,7 +513,7 @@ function BlazeSportsCommandCenterInner() {
                     <th className="text-left p-3 text-gray-600 dark:text-gray-400 font-semibold">
                       Stat
                     </th>
-                    {comparisonPlayers.map(player => (
+                    {comparisonPlayers.map((player) => (
                       <th
                         key={player.id}
                         className="text-right p-3 text-gray-900 dark:text-white font-semibold"
@@ -483,18 +527,16 @@ function BlazeSportsCommandCenterInner() {
                   </tr>
                 </thead>
                 <tbody>
-                  {allStats.map(stat => (
+                  {allStats.map((stat) => (
                     <tr
                       key={stat}
                       className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
-                      <td className="p-3 font-medium text-gray-700 dark:text-gray-300">
-                        {stat}
-                      </td>
-                      {comparisonPlayers.map(player => {
+                      <td className="p-3 font-medium text-gray-700 dark:text-gray-300">{stat}</td>
+                      {comparisonPlayers.map((player) => {
                         const value = player.stats[stat];
                         const isLeader = comparisonPlayers.every(
-                          p => (p.stats[stat] || 0) <= (value || 0)
+                          (p) => (p.stats[stat] || 0) <= (value || 0)
                         );
                         return (
                           <td
@@ -505,7 +547,9 @@ function BlazeSportsCommandCenterInner() {
                                 : 'text-gray-600 dark:text-gray-400'
                             }`}
                           >
-                            {typeof value === 'number' ? value.toFixed(value < 10 ? 3 : 0) : value || '-'}
+                            {typeof value === 'number'
+                              ? value.toFixed(value < 10 ? 3 : 0)
+                              : value || '-'}
                           </td>
                         );
                       })}
@@ -538,9 +582,9 @@ function BlazeSportsCommandCenterInner() {
 
     // Prepare trend data for charts
     const statKeys = Object.keys(selectedPlayer.stats);
-    const chartData = statKeys.map(key => ({
+    const chartData = statKeys.map((key) => ({
       name: key,
-      value: selectedPlayer.stats[key]
+      value: selectedPlayer.stats[key],
     }));
 
     return (
@@ -622,7 +666,7 @@ function BlazeSportsCommandCenterInner() {
                       backgroundColor: theme === THEMES.DARK ? '#1F2937' : '#FFFFFF',
                       border: 'none',
                       borderRadius: '8px',
-                      color: theme === THEMES.DARK ? '#F3F4F6' : '#111827'
+                      color: theme === THEMES.DARK ? '#F3F4F6' : '#111827',
                     }}
                   />
                   <Bar dataKey="value" fill={CHART_COLORS.primary} />
@@ -683,7 +727,7 @@ function BlazeSportsCommandCenterInner() {
   // ==================== RENDER: PLAYER CARDS ====================
 
   const renderPlayerCard = (player: Player) => {
-    const isInComparison = comparisonPlayers.find(p => p.id === player.id);
+    const isInComparison = comparisonPlayers.find((p) => p.id === player.id);
 
     return (
       <div
@@ -729,16 +773,19 @@ function BlazeSportsCommandCenterInner() {
         <div className="p-6">
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-3">
-            {Object.entries(player.stats).slice(0, 6).map(([key, value]) => (
-              <div key={key} className="stat-card">
-                <div className="stat-label text-xs uppercase tracking-wide">
-                  {key}
+            {Object.entries(player.stats)
+              .slice(0, 6)
+              .map(([key, value]) => (
+                <div key={key} className="stat-card">
+                  <div className="stat-label text-xs uppercase tracking-wide">{key}</div>
+                  <div
+                    className="stat-value text-xl font-bold"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {typeof value === 'number' ? value.toFixed(value < 10 ? 3 : 0) : value}
+                  </div>
                 </div>
-                <div className="stat-value text-xl font-bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {typeof value === 'number' ? value.toFixed(value < 10 ? 3 : 0) : value}
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
 
           {/* More Stats Indicator */}
@@ -833,8 +880,8 @@ function BlazeSportsCommandCenterInner() {
             hidden: { opacity: 0 },
             visible: {
               opacity: 1,
-              transition: { staggerChildren: 0.05 }
-            }
+              transition: { staggerChildren: 0.05 },
+            },
           }}
           className={`p-4 ${
             viewMode === VIEW_MODES.GRID
@@ -911,18 +958,18 @@ function BlazeSportsCommandCenterInner() {
       <CommandPalette
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
-        players={players.map(p => ({
+        players={players.map((p) => ({
           id: p.id,
           name: p.name,
           team: p.team,
           position: p.position,
         }))}
         onSelectPlayer={(id) => {
-          const player = players.find(p => p.id === id);
+          const player = players.find((p) => p.id === id);
           if (player) setSelectedPlayer(player);
         }}
         onSelectSport={(sport) => setSelectedSport(sport as keyof typeof SPORTS_CONFIG)}
-        onToggleTheme={() => setTheme(t => t === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK)}
+        onToggleTheme={() => setTheme((t) => (t === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK))}
         onExportCSV={handleExportCSV}
         onRefresh={loadPlayersWithToast}
         onToggleView={(view) => setViewMode(view === 'grid' ? VIEW_MODES.GRID : VIEW_MODES.LIST)}
@@ -939,4 +986,3 @@ export default function BlazeSportsCommandCenter() {
     </ToastProvider>
   );
 }
-

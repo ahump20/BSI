@@ -153,7 +153,6 @@ async function trackMetrics(data) {
       // Indexes: Additional categorical data (max 20, optional)
       indexes: [sport, endpoint],
     });
-
   } catch (e) {
     // Don't let analytics failures affect the API response
   }

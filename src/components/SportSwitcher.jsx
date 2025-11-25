@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import './SportSwitcher.css'
+import { useState } from 'react';
+import './SportSwitcher.css';
 
 /**
  * Floating Action Button for Sport Switching
@@ -8,38 +8,38 @@ import './SportSwitcher.css'
  * Allows users to switch between Baseball, Football, Basketball, and Tools
  */
 function SportSwitcher({ currentSport = 'baseball' }) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   const sports = [
     {
       name: 'Baseball',
       icon: '⚾',
       path: '/',
-      color: '#00a86b'
+      color: '#00a86b',
     },
     {
       name: 'Football',
       icon: '🏈',
       path: '/football',
-      color: '#ff6b00'
+      color: '#ff6b00',
     },
     {
       name: 'Basketball',
       icon: '🏀',
       path: '/basketball',
-      color: '#ff8c00'
+      color: '#ff8c00',
     },
     {
       name: 'Tools',
       icon: '🔧',
       path: '/tools',
-      color: '#bf5700'
-    }
-  ]
+      color: '#bf5700',
+    },
+  ];
 
   const handleSportClick = (path) => {
-    window.location.href = path
-  }
+    window.location.href = path;
+  };
 
   return (
     <div className="sport-switcher">
@@ -47,10 +47,11 @@ function SportSwitcher({ currentSport = 'baseball' }) {
       {isOpen && (
         <div className="sport-menu">
           {sports.map((sport) => {
-            const isCurrent = (currentSport === 'baseball' && sport.path === '/') ||
-                              (currentSport === 'football' && sport.path === '/football') ||
-                              (currentSport === 'basketball' && sport.path === '/basketball') ||
-                              (currentSport === 'tools' && sport.path === '/tools')
+            const isCurrent =
+              (currentSport === 'baseball' && sport.path === '/') ||
+              (currentSport === 'football' && sport.path === '/football') ||
+              (currentSport === 'basketball' && sport.path === '/basketball') ||
+              (currentSport === 'tools' && sport.path === '/tools');
 
             return (
               <button
@@ -63,7 +64,7 @@ function SportSwitcher({ currentSport = 'baseball' }) {
                 <span className="sport-icon">{sport.icon}</span>
                 <span className="sport-name">{sport.name}</span>
               </button>
-            )
+            );
           })}
         </div>
       )}
@@ -77,7 +78,7 @@ function SportSwitcher({ currentSport = 'baseball' }) {
         {isOpen ? '✕' : '⚡'}
       </button>
     </div>
-  )
+  );
 }
 
-export default SportSwitcher
+export default SportSwitcher;

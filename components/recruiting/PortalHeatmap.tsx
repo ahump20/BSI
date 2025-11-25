@@ -107,11 +107,14 @@ export function PortalHeatmap() {
 
   const transformToHeatmapData = (apiData: any): HeatmapData => {
     // Aggregate by conference
-    const conferenceStats: Record<string, {
-      entries: number;
-      commits: number;
-      nilValues: number[];
-    }> = {};
+    const conferenceStats: Record<
+      string,
+      {
+        entries: number;
+        commits: number;
+        nilValues: number[];
+      }
+    > = {};
 
     apiData.entries.forEach((entry: any) => {
       // Previous conference
@@ -119,14 +122,12 @@ export function PortalHeatmap() {
         conferenceStats[entry.previousConference] = {
           entries: 0,
           commits: 0,
-          nilValues: []
+          nilValues: [],
         };
       }
       conferenceStats[entry.previousConference].entries++;
       if (entry.nilValuation) {
-        conferenceStats[entry.previousConference].nilValues.push(
-          entry.nilValuation.estimatedValue
-        );
+        conferenceStats[entry.previousConference].nilValues.push(entry.nilValuation.estimatedValue);
       }
 
       // New conference
@@ -135,7 +136,7 @@ export function PortalHeatmap() {
           conferenceStats[entry.newConference] = {
             entries: 0,
             commits: 0,
-            nilValues: []
+            nilValues: [],
           };
         }
         conferenceStats[entry.newConference].commits++;
@@ -144,9 +145,10 @@ export function PortalHeatmap() {
 
     // Create nodes
     const nodes: ConferenceNode[] = Object.entries(conferenceStats).map(([conf, stats]) => {
-      const avgNIL = stats.nilValues.length > 0
-        ? stats.nilValues.reduce((sum, val) => sum + val, 0) / stats.nilValues.length
-        : 0;
+      const avgNIL =
+        stats.nilValues.length > 0
+          ? stats.nilValues.reduce((sum, val) => sum + val, 0) / stats.nilValues.length
+          : 0;
 
       return {
         id: conf,
@@ -155,7 +157,7 @@ export function PortalHeatmap() {
         totalCommitments: stats.commits,
         avgNILValue: Math.round(avgNIL),
         strength: getConferenceStrength(conf),
-        color: getConferenceColor(conf)
+        color: getConferenceColor(conf),
       };
     });
 
@@ -164,7 +166,7 @@ export function PortalHeatmap() {
       source: flow.from,
       target: flow.to,
       count: flow.count,
-      avgNILDelta: flow.avgNILDelta
+      avgNILDelta: flow.avgNILDelta,
     }));
 
     return { nodes, flows };
@@ -198,28 +200,42 @@ export function PortalHeatmap() {
     const svg = d3.select(svgRef.current);
 
     // Create simulation
-    const simulation = d3.forceSimulation(data.nodes as any)
-      .force('link', d3.forceLink(data.flows)
-        .id((d: any) => d.id)
-        .distance(150)
-        .strength(0.5))
+    const simulation = d3
+      .forceSimulation(data.nodes as any)
+      .force(
+        'link',
+        d3
+          .forceLink(data.flows)
+          .id((d: any) => d.id)
+          .distance(150)
+          .strength(0.5)
+      )
       .force('charge', d3.forceManyBody().strength(-500))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(50));
 
     // Add zoom behavior
     const g = svg.append('g');
-    svg.call(d3.zoom<SVGSVGElement, unknown>()
-      .extent([[0, 0], [width, height]])
-      .scaleExtent([0.5, 4])
-      .on('zoom', (event) => {
-        g.attr('transform', event.transform);
-      }) as any);
+    svg.call(
+      d3
+        .zoom<SVGSVGElement, unknown>()
+        .extent([
+          [0, 0],
+          [width, height],
+        ])
+        .scaleExtent([0.5, 4])
+        .on('zoom', (event) => {
+          g.attr('transform', event.transform);
+        }) as any
+    );
 
     // Create arrow markers
-    svg.append('defs').selectAll('marker')
+    svg
+      .append('defs')
+      .selectAll('marker')
       .data(['end'])
-      .enter().append('marker')
+      .enter()
+      .append('marker')
       .attr('id', 'arrow')
       .attr('viewBox', '0 -5 10 10')
       .attr('refX', 25)
@@ -232,37 +248,45 @@ export function PortalHeatmap() {
       .attr('fill', '#9ca3af');
 
     // Draw links
-    const link = g.append('g')
+    const link = g
+      .append('g')
       .selectAll('line')
       .data(data.flows)
-      .enter().append('line')
+      .enter()
+      .append('line')
       .attr('stroke', '#9ca3af')
       .attr('stroke-width', (d: TransferFlow) => Math.sqrt(d.count) * 2)
       .attr('stroke-opacity', 0.6)
       .attr('marker-end', 'url(#arrow)');
 
     // Draw nodes
-    const node = g.append('g')
+    const node = g
+      .append('g')
       .selectAll('g')
       .data(data.nodes)
-      .enter().append('g')
-      .call(d3.drag<SVGGElement, ConferenceNode>()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended) as any);
+      .enter()
+      .append('g')
+      .call(
+        d3
+          .drag<SVGGElement, ConferenceNode>()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended) as any
+      );
 
     // Node circles
-    node.append('circle')
+    node
+      .append('circle')
       .attr('r', (d: ConferenceNode) => Math.sqrt(d.totalEntries) * 5 + 15)
       .attr('fill', (d: ConferenceNode) => d.color)
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 2)
       .attr('opacity', 0.9)
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).attr('opacity', 1).attr('stroke-width', 3);
         showTooltip(event, d);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).attr('opacity', 0.9).attr('stroke-width', 2);
         hideTooltip();
       })
@@ -271,7 +295,8 @@ export function PortalHeatmap() {
       });
 
     // Node labels
-    node.append('text')
+    node
+      .append('text')
       .text((d: ConferenceNode) => d.name)
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em')
@@ -288,8 +313,7 @@ export function PortalHeatmap() {
         .attr('x2', (d: any) => d.target.x)
         .attr('y2', (d: any) => d.target.y);
 
-      node
-        .attr('transform', (d: any) => `translate(${d.x},${d.y})`);
+      node.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
     });
 
     // Drag functions
@@ -317,8 +341,7 @@ export function PortalHeatmap() {
 
   const renderChordDiagram = (data: HeatmapData) => {
     const svg = d3.select(svgRef.current);
-    const g = svg.append('g')
-      .attr('transform', `translate(${width / 2},${height / 2})`);
+    const g = svg.append('g').attr('transform', `translate(${width / 2},${height / 2})`);
 
     const outerRadius = Math.min(width, height) * 0.4;
     const innerRadius = outerRadius - 30;
@@ -331,7 +354,7 @@ export function PortalHeatmap() {
       .fill(0)
       .map(() => Array(data.nodes.length).fill(0));
 
-    data.flows.forEach(flow => {
+    data.flows.forEach((flow) => {
       const sourceIdx = nodeIndexMap.get(flow.source);
       const targetIdx = nodeIndexMap.get(flow.target);
       if (sourceIdx !== undefined && targetIdx !== undefined) {
@@ -340,47 +363,45 @@ export function PortalHeatmap() {
     });
 
     // Create chord layout
-    const chord = d3.chord()
-      .padAngle(0.05)
-      .sortSubgroups(d3.descending);
+    const chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending);
 
     const chords = chord(matrix);
 
     // Create ribbon generator
-    const ribbon = d3.ribbon()
-      .radius(innerRadius);
+    const ribbon = d3.ribbon().radius(innerRadius);
 
     // Draw groups
-    const group = g.append('g')
-      .selectAll('g')
-      .data(chords.groups)
-      .enter().append('g');
+    const group = g.append('g').selectAll('g').data(chords.groups).enter().append('g');
 
-    group.append('path')
+    group
+      .append('path')
       .style('fill', (d: any) => data.nodes[d.index].color)
       .style('stroke', '#ffffff')
-      .attr('d', d3.arc<any>()
-        .innerRadius(innerRadius)
-        .outerRadius(outerRadius))
-      .on('mouseover', function(event, d: any) {
+      .attr('d', d3.arc<any>().innerRadius(innerRadius).outerRadius(outerRadius))
+      .on('mouseover', function (event, d: any) {
         d3.select(this).style('opacity', 1);
         showTooltip(event, data.nodes[d.index]);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).style('opacity', 0.8);
         hideTooltip();
       });
 
     // Draw labels
-    group.append('text')
-      .each((d: any) => { d.angle = (d.startAngle + d.endAngle) / 2; })
+    group
+      .append('text')
+      .each((d: any) => {
+        d.angle = (d.startAngle + d.endAngle) / 2;
+      })
       .attr('dy', '.35em')
-      .attr('transform', (d: any) =>
-        `rotate(${(d.angle * 180 / Math.PI - 90)})
+      .attr(
+        'transform',
+        (d: any) =>
+          `rotate(${(d.angle * 180) / Math.PI - 90})
          translate(${outerRadius + 10})
          ${d.angle > Math.PI ? 'rotate(180)' : ''}`
       )
-      .attr('text-anchor', (d: any) => d.angle > Math.PI ? 'end' : 'start')
+      .attr('text-anchor', (d: any) => (d.angle > Math.PI ? 'end' : 'start'))
       .text((d: any) => data.nodes[d.index].name)
       .attr('fill', '#ffffff')
       .attr('font-size', '12px');
@@ -390,22 +411,23 @@ export function PortalHeatmap() {
       .attr('fill-opacity', 0.67)
       .selectAll('path')
       .data(chords)
-      .enter().append('path')
+      .enter()
+      .append('path')
       .attr('d', ribbon)
       .style('fill', (d: any) => data.nodes[d.source.index].color)
       .style('stroke', '#ffffff')
       .style('stroke-width', 0.5)
-      .on('mouseover', function(event, d: any) {
+      .on('mouseover', function (event, d: any) {
         d3.select(this).style('fill-opacity', 1);
-        const flow = data.flows.find(f =>
-          f.source === data.nodes[d.source.index].id &&
-          f.target === data.nodes[d.target.index].id
+        const flow = data.flows.find(
+          (f) =>
+            f.source === data.nodes[d.source.index].id && f.target === data.nodes[d.target.index].id
         );
         if (flow) {
           showFlowTooltip(event, flow);
         }
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).style('fill-opacity', 0.67);
         hideTooltip();
       });
@@ -417,8 +439,7 @@ export function PortalHeatmap() {
 
   const renderMatrixHeatmap = (data: HeatmapData) => {
     const svg = d3.select(svgRef.current);
-    const g = svg.append('g')
-      .attr('transform', 'translate(150,50)');
+    const g = svg.append('g').attr('transform', 'translate(150,50)');
 
     const cellSize = 80;
     const n = data.nodes.length;
@@ -427,8 +448,10 @@ export function PortalHeatmap() {
     const nodeIndexMap = new Map<string, number>();
     data.nodes.forEach((node, i) => nodeIndexMap.set(node.id, i));
 
-    const matrix: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
-    data.flows.forEach(flow => {
+    const matrix: number[][] = Array(n)
+      .fill(0)
+      .map(() => Array(n).fill(0));
+    data.flows.forEach((flow) => {
       const sourceIdx = nodeIndexMap.get(flow.source);
       const targetIdx = nodeIndexMap.get(flow.target);
       if (sourceIdx !== undefined && targetIdx !== undefined) {
@@ -437,30 +460,34 @@ export function PortalHeatmap() {
     });
 
     // Color scale
-    const maxCount = Math.max(...data.flows.map(f => f.count));
-    const colorScale = d3.scaleSequential(d3.interpolateOranges)
-      .domain([0, maxCount]);
+    const maxCount = Math.max(...data.flows.map((f) => f.count));
+    const colorScale = d3.scaleSequential(d3.interpolateOranges).domain([0, maxCount]);
 
     // Draw cells
-    const row = g.selectAll('.row')
+    const row = g
+      .selectAll('.row')
       .data(matrix)
-      .enter().append('g')
+      .enter()
+      .append('g')
       .attr('class', 'row')
       .attr('transform', (d, i) => `translate(0,${i * cellSize})`);
 
-    const cell = row.selectAll('.cell')
+    const cell = row
+      .selectAll('.cell')
       .data((d, i) => d.map((value, j) => ({ value, i, j })))
-      .enter().append('g')
+      .enter()
+      .append('g')
       .attr('class', 'cell')
-      .attr('transform', d => `translate(${d.j * cellSize},0)`);
+      .attr('transform', (d) => `translate(${d.j * cellSize},0)`);
 
-    cell.append('rect')
+    cell
+      .append('rect')
       .attr('width', cellSize - 2)
       .attr('height', cellSize - 2)
-      .attr('fill', d => d.value > 0 ? colorScale(d.value) : '#1a1a1a')
+      .attr('fill', (d) => (d.value > 0 ? colorScale(d.value) : '#1a1a1a'))
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 1)
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).attr('stroke-width', 2);
         if (d.value > 0) {
           const from = data.nodes[d.i].name;
@@ -468,26 +495,28 @@ export function PortalHeatmap() {
           showMatrixTooltip(event, from, to, d.value);
         }
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).attr('stroke-width', 1);
         hideTooltip();
       });
 
-    cell.append('text')
+    cell
+      .append('text')
       .attr('x', cellSize / 2)
       .attr('y', cellSize / 2)
       .attr('dy', '.35em')
       .attr('text-anchor', 'middle')
-      .attr('fill', d => d.value > maxCount / 2 ? '#000000' : '#ffffff')
+      .attr('fill', (d) => (d.value > maxCount / 2 ? '#000000' : '#ffffff'))
       .attr('font-size', '12px')
       .attr('font-weight', 'bold')
       .attr('pointer-events', 'none')
-      .text(d => d.value > 0 ? d.value : '');
+      .text((d) => (d.value > 0 ? d.value : ''));
 
     // Row labels
     g.selectAll('.row-label')
       .data(data.nodes)
-      .enter().append('text')
+      .enter()
+      .append('text')
       .attr('class', 'row-label')
       .attr('x', -10)
       .attr('y', (d, i) => i * cellSize + cellSize / 2)
@@ -495,49 +524,51 @@ export function PortalHeatmap() {
       .attr('text-anchor', 'end')
       .attr('fill', '#ffffff')
       .attr('font-size', '12px')
-      .text(d => d.name);
+      .text((d) => d.name);
 
     // Column labels
     g.selectAll('.col-label')
       .data(data.nodes)
-      .enter().append('text')
+      .enter()
+      .append('text')
       .attr('class', 'col-label')
       .attr('x', (d, i) => i * cellSize + cellSize / 2)
       .attr('y', -10)
       .attr('text-anchor', 'middle')
       .attr('fill', '#ffffff')
       .attr('font-size', '12px')
-      .text(d => d.name);
+      .text((d) => d.name);
 
     // Legend
     const legendWidth = 300;
     const legendHeight = 20;
-    const legend = svg.append('g')
+    const legend = svg
+      .append('g')
       .attr('transform', `translate(${width - legendWidth - 50},${height - 50})`);
 
-    const legendScale = d3.scaleLinear()
-      .domain([0, maxCount])
-      .range([0, legendWidth]);
+    const legendScale = d3.scaleLinear().domain([0, maxCount]).range([0, legendWidth]);
 
-    const legendAxis = d3.axisBottom(legendScale)
-      .ticks(5)
-      .tickFormat(d3.format('d'));
+    const legendAxis = d3.axisBottom(legendScale).ticks(5).tickFormat(d3.format('d'));
 
-    legend.selectAll('rect')
+    legend
+      .selectAll('rect')
       .data(d3.range(0, maxCount, maxCount / 100))
-      .enter().append('rect')
-      .attr('x', d => legendScale(d))
+      .enter()
+      .append('rect')
+      .attr('x', (d) => legendScale(d))
       .attr('width', legendWidth / 100)
       .attr('height', legendHeight)
-      .attr('fill', d => colorScale(d));
+      .attr('fill', (d) => colorScale(d));
 
-    legend.append('g')
+    legend
+      .append('g')
       .attr('transform', `translate(0,${legendHeight})`)
       .call(legendAxis)
       .selectAll('text')
       .attr('fill', '#ffffff');
 
-    legend.append('text')
+    legend
+      .append('text')
       .attr('x', legendWidth / 2)
       .attr('y', -10)
       .attr('text-anchor', 'middle')
@@ -551,7 +582,9 @@ export function PortalHeatmap() {
   // ============================================================================
 
   const showTooltip = (event: any, node: ConferenceNode) => {
-    const tooltip = d3.select('body').append('div')
+    const tooltip = d3
+      .select('body')
+      .append('div')
       .attr('class', 'portal-tooltip')
       .style('position', 'absolute')
       .style('background', 'rgba(0, 0, 0, 0.9)')
@@ -562,8 +595,7 @@ export function PortalHeatmap() {
       .style('font-family', 'system-ui')
       .style('font-size', '14px')
       .style('pointer-events', 'none')
-      .style('z-index', '1000')
-      .html(`
+      .style('z-index', '1000').html(`
         <strong>${node.name}</strong><br/>
         Entries: ${node.totalEntries}<br/>
         Commitments: ${node.totalCommitments}<br/>
@@ -571,13 +603,13 @@ export function PortalHeatmap() {
         Strength: ${node.strength}/10
       `);
 
-    tooltip
-      .style('left', `${event.pageX + 10}px`)
-      .style('top', `${event.pageY - 10}px`);
+    tooltip.style('left', `${event.pageX + 10}px`).style('top', `${event.pageY - 10}px`);
   };
 
   const showFlowTooltip = (event: any, flow: TransferFlow) => {
-    const tooltip = d3.select('body').append('div')
+    const tooltip = d3
+      .select('body')
+      .append('div')
       .attr('class', 'portal-tooltip')
       .style('position', 'absolute')
       .style('background', 'rgba(0, 0, 0, 0.9)')
@@ -588,20 +620,19 @@ export function PortalHeatmap() {
       .style('font-family', 'system-ui')
       .style('font-size', '14px')
       .style('pointer-events', 'none')
-      .style('z-index', '1000')
-      .html(`
+      .style('z-index', '1000').html(`
         <strong>${flow.source} → ${flow.target}</strong><br/>
         Transfers: ${flow.count}<br/>
         Avg NIL Change: ${flow.avgNILDelta >= 0 ? '+' : ''}$${(flow.avgNILDelta / 1000).toFixed(0)}K
       `);
 
-    tooltip
-      .style('left', `${event.pageX + 10}px`)
-      .style('top', `${event.pageY - 10}px`);
+    tooltip.style('left', `${event.pageX + 10}px`).style('top', `${event.pageY - 10}px`);
   };
 
   const showMatrixTooltip = (event: any, from: string, to: string, count: number) => {
-    const tooltip = d3.select('body').append('div')
+    const tooltip = d3
+      .select('body')
+      .append('div')
       .attr('class', 'portal-tooltip')
       .style('position', 'absolute')
       .style('background', 'rgba(0, 0, 0, 0.9)')
@@ -612,15 +643,12 @@ export function PortalHeatmap() {
       .style('font-family', 'system-ui')
       .style('font-size', '14px')
       .style('pointer-events', 'none')
-      .style('z-index', '1000')
-      .html(`
+      .style('z-index', '1000').html(`
         <strong>${from} → ${to}</strong><br/>
         Transfers: ${count}
       `);
 
-    tooltip
-      .style('left', `${event.pageX + 10}px`)
-      .style('top', `${event.pageY - 10}px`);
+    tooltip.style('left', `${event.pageX + 10}px`).style('top', `${event.pageY - 10}px`);
   };
 
   const hideTooltip = () => {
@@ -633,34 +661,34 @@ export function PortalHeatmap() {
 
   const getConferenceStrength = (conference: string): number => {
     const strengths: Record<string, number> = {
-      'SEC': 10,
-      'ACC': 9,
+      SEC: 10,
+      ACC: 9,
       'Big 12': 8,
       'Pac-12': 8,
       'Big Ten': 7,
-      'American': 6,
+      American: 6,
       'Mountain West': 5,
       'Conference USA': 4,
       'Sun Belt': 4,
-      'MAC': 3,
-      'WAC': 3
+      MAC: 3,
+      WAC: 3,
     };
     return strengths[conference] || 5;
   };
 
   const getConferenceColor = (conference: string): string => {
     const colors: Record<string, string> = {
-      'SEC': '#ff6b00',
-      'ACC': '#0066cc',
+      SEC: '#ff6b00',
+      ACC: '#0066cc',
       'Big 12': '#dc2626',
       'Pac-12': '#7c3aed',
       'Big Ten': '#059669',
-      'American': '#2563eb',
+      American: '#2563eb',
       'Mountain West': '#0891b2',
       'Conference USA': '#65a30d',
       'Sun Belt': '#f59e0b',
-      'MAC': '#8b5cf6',
-      'WAC': '#ec4899'
+      MAC: '#8b5cf6',
+      WAC: '#ec4899',
     };
     return colors[conference] || '#6b7280';
   };
@@ -700,9 +728,7 @@ export function PortalHeatmap() {
       <div style={styles.header}>
         <div>
           <h2 style={styles.title}>Transfer Portal Heatmap</h2>
-          <p style={styles.subtitle}>
-            Interactive visualization of conference movement patterns
-          </p>
+          <p style={styles.subtitle}>Interactive visualization of conference movement patterns</p>
         </div>
 
         {/* Visualization Type Selector */}
@@ -711,7 +737,7 @@ export function PortalHeatmap() {
             onClick={() => setVizType('force')}
             style={{
               ...styles.vizButton,
-              ...(vizType === 'force' ? styles.vizButtonActive : {})
+              ...(vizType === 'force' ? styles.vizButtonActive : {}),
             }}
           >
             Force Graph
@@ -720,7 +746,7 @@ export function PortalHeatmap() {
             onClick={() => setVizType('chord')}
             style={{
               ...styles.vizButton,
-              ...(vizType === 'chord' ? styles.vizButtonActive : {})
+              ...(vizType === 'chord' ? styles.vizButtonActive : {}),
             }}
           >
             Chord Diagram
@@ -729,7 +755,7 @@ export function PortalHeatmap() {
             onClick={() => setVizType('matrix')}
             style={{
               ...styles.vizButton,
-              ...(vizType === 'matrix' ? styles.vizButtonActive : {})
+              ...(vizType === 'matrix' ? styles.vizButtonActive : {}),
             }}
           >
             Matrix
@@ -739,12 +765,7 @@ export function PortalHeatmap() {
 
       {/* SVG Canvas */}
       <div style={styles.svgContainer}>
-        <svg
-          ref={svgRef}
-          width={width}
-          height={height}
-          style={styles.svg}
-        />
+        <svg ref={svgRef} width={width} height={height} style={styles.svg} />
       </div>
 
       {/* Instructions */}
@@ -790,7 +811,7 @@ const styles: Record<string, React.CSSProperties> = {
   container: {
     width: '100%',
     padding: '24px',
-    fontFamily: 'system-ui, -apple-system, sans-serif'
+    fontFamily: 'system-ui, -apple-system, sans-serif',
   },
 
   // Header
@@ -800,24 +821,24 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     marginBottom: '24px',
     paddingBottom: '16px',
-    borderBottom: '2px solid rgba(255, 107, 0, 0.2)'
+    borderBottom: '2px solid rgba(255, 107, 0, 0.2)',
   },
   title: {
     fontSize: '24px',
     fontWeight: 'bold',
     color: '#ffffff',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   subtitle: {
     fontSize: '14px',
     color: '#9ca3af',
-    margin: 0
+    margin: 0,
   },
 
   // Visualization Selector
   vizSelector: {
     display: 'flex',
-    gap: '8px'
+    gap: '8px',
   },
   vizButton: {
     padding: '10px 20px',
@@ -828,12 +849,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     fontWeight: '500',
     cursor: 'pointer',
-    transition: 'all 0.2s'
+    transition: 'all 0.2s',
   },
   vizButtonActive: {
     background: 'rgba(255, 107, 0, 0.2)',
     borderColor: '#ff6b00',
-    color: '#ff6b00'
+    color: '#ff6b00',
   },
 
   // SVG Container
@@ -843,12 +864,12 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: '12px',
     padding: '24px',
     marginBottom: '24px',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   svg: {
     display: 'block',
     margin: '0 auto',
-    background: 'transparent'
+    background: 'transparent',
   },
 
   // Instructions
@@ -856,20 +877,20 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'rgba(255, 107, 0, 0.05)',
     border: '1px solid rgba(255, 107, 0, 0.2)',
     borderRadius: '12px',
-    padding: '24px'
+    padding: '24px',
   },
   instructionsTitle: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#ff6b00',
-    margin: '0 0 16px 0'
+    margin: '0 0 16px 0',
   },
   instructionsList: {
     margin: 0,
     paddingLeft: '24px',
     color: '#9ca3af',
     fontSize: '14px',
-    lineHeight: '1.8'
+    lineHeight: '1.8',
   },
 
   // Loading
@@ -879,7 +900,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '64px',
-    minHeight: '400px'
+    minHeight: '400px',
   },
   spinner: {
     width: '48px',
@@ -887,12 +908,12 @@ const styles: Record<string, React.CSSProperties> = {
     border: '4px solid rgba(255, 107, 0, 0.1)',
     borderTopColor: '#ff6b00',
     borderRadius: '50%',
-    animation: 'spin 1s linear infinite'
+    animation: 'spin 1s linear infinite',
   },
   loadingText: {
     marginTop: '16px',
     color: '#9ca3af',
-    fontSize: '14px'
+    fontSize: '14px',
   },
 
   // Error
@@ -902,19 +923,19 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '64px',
-    minHeight: '400px'
+    minHeight: '400px',
   },
   errorTitle: {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#ef4444',
-    marginBottom: '8px'
+    marginBottom: '8px',
   },
   errorMessage: {
     color: '#9ca3af',
     fontSize: '14px',
     marginBottom: '24px',
-    textAlign: 'center' as const
+    textAlign: 'center' as const,
   },
   retryButton: {
     padding: '12px 24px',
@@ -925,6 +946,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     fontWeight: 'bold',
     cursor: 'pointer',
-    transition: 'transform 0.2s'
-  }
+    transition: 'transform 0.2s',
+  },
 };

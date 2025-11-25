@@ -19,9 +19,11 @@ async function enhanceQuery(userQuery, env) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are a sports query analyzer. Expand this search query into semantic variations that capture the user's intent. Return ONLY a JSON array of 3-5 search phrases, no other text.
+          contents: [
+            {
+              parts: [
+                {
+                  text: `You are a sports query analyzer. Expand this search query into semantic variations that capture the user's intent. Return ONLY a JSON array of 3-5 search phrases, no other text.
 
 User query: "${userQuery}"
 
@@ -31,14 +33,16 @@ Example output format:
 Focus on:
 - Synonyms for sports terms (e.g., "close game" → "tight game", "one-possession game", "narrow margin")
 - Team name variations (e.g., "Chiefs" → "Kansas City", "KC")
-- Sport-specific jargon`
-            }]
-          }],
+- Sport-specific jargon`,
+                },
+              ],
+            },
+          ],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 300
-          }
-        })
+            maxOutputTokens: 300,
+          },
+        }),
       }
     );
 
@@ -67,11 +71,12 @@ Focus on:
 async function performSemanticSearch(queries, sport, env) {
   const allMatches = [];
 
-  for (const query of queries.slice(0, 3)) { // Limit to 3 variations
+  for (const query of queries.slice(0, 3)) {
+    // Limit to 3 variations
     try {
       // Generate embedding for this query variation
       const embeddingResult = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-        text: query
+        text: query,
       });
       const embedding = embeddingResult.data[0];
 
@@ -80,14 +85,16 @@ async function performSemanticSearch(queries, sport, env) {
       const results = await env.VECTOR_INDEX.query(embedding, {
         topK: 5,
         returnMetadata: 'all',
-        filter
+        filter,
       });
 
       if (results.matches) {
-        allMatches.push(...results.matches.map(m => ({
-          ...m,
-          searchQuery: query
-        })));
+        allMatches.push(
+          ...results.matches.map((m) => ({
+            ...m,
+            searchQuery: query,
+          }))
+        );
       }
     } catch (error) {
       // Continue with other query variations on search failure
@@ -129,8 +136,10 @@ function calculateRelevance(match, userQuery) {
   }
 
   // Boost for team name matches
-  if (desc.includes(match.metadata.home_team.toLowerCase()) ||
-      desc.includes(match.metadata.away_team.toLowerCase())) {
+  if (
+    desc.includes(match.metadata.home_team.toLowerCase()) ||
+    desc.includes(match.metadata.away_team.toLowerCase())
+  ) {
     score += 3;
   }
 
@@ -143,7 +152,7 @@ function calculateRelevance(match, userQuery) {
   return {
     score: Math.min(100, score),
     exactMatches,
-    recency: daysSince < 7 ? 'recent' : daysSince < 30 ? 'this month' : 'older'
+    recency: daysSince < 7 ? 'recent' : daysSince < 30 ? 'this month' : 'older',
   };
 }
 
@@ -174,13 +183,16 @@ export async function onRequest(context) {
     const { query, sport, limit = 10 } = await request.json();
 
     if (!query || query.trim().length === 0) {
-      return Response.json({
-        error: 'Query is required',
-        example: {
-          query: 'close NFL games',
-          sport: 'NFL' // optional
-        }
-      }, { status: 400 });
+      return Response.json(
+        {
+          error: 'Query is required',
+          example: {
+            query: 'close NFL games',
+            sport: 'NFL', // optional
+          },
+        },
+        { status: 400 }
+      );
     }
 
     const startTime = Date.now();
@@ -192,24 +204,27 @@ export async function onRequest(context) {
     const matches = await performSemanticSearch(queryVariations, sport, env);
 
     if (matches.length === 0) {
-      return Response.json({
-        success: true,
-        query,
-        variations: queryVariations,
-        results: [],
-        count: 0,
-        searchTime: Date.now() - startTime,
-        message: 'No matching games found. Try different keywords or remove sport filter.'
-      }, {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
+      return Response.json(
+        {
+          success: true,
+          query,
+          variations: queryVariations,
+          results: [],
+          count: 0,
+          searchTime: Date.now() - startTime,
+          message: 'No matching games found. Try different keywords or remove sport filter.',
+        },
+        {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     }
 
     // Step 3: Enhance results with relevance scoring
-    const enhancedResults = matches.slice(0, limit).map(match => {
+    const enhancedResults = matches.slice(0, limit).map((match) => {
       const relevance = calculateRelevance(match, query);
 
       return {
@@ -227,47 +242,52 @@ export async function onRequest(context) {
           vectorScore: match.score,
           relevanceScore: relevance.score,
           exactMatches: relevance.exactMatches,
-          recency: relevance.recency
+          recency: relevance.recency,
         },
-        matchedQuery: match.searchQuery
+        matchedQuery: match.searchQuery,
       };
     });
 
     const searchTime = Date.now() - startTime;
 
-    return Response.json({
-      success: true,
-      query,
-      variations: queryVariations,
-      results: enhancedResults,
-      count: enhancedResults.length,
-      performance: {
-        searchTime: `${searchTime}ms`,
-        queryEnhancement: 'gemini_flash',
-        vectorSearch: 'bge-base-en-v1.5',
-        totalGamesSearched: 212
+    return Response.json(
+      {
+        success: true,
+        query,
+        variations: queryVariations,
+        results: enhancedResults,
+        count: enhancedResults.length,
+        performance: {
+          searchTime: `${searchTime}ms`,
+          queryEnhancement: 'gemini_flash',
+          vectorSearch: 'bge-base-en-v1.5',
+          totalGamesSearched: 212,
+        },
+        timestamp: new Date().toISOString(),
       },
-      timestamp: new Date().toISOString()
-    }, {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'X-Search-Time': searchTime.toString(),
-        'X-Results-Count': enhancedResults.length.toString()
+      {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-Search-Time': searchTime.toString(),
+          'X-Results-Count': enhancedResults.length.toString(),
+        },
       }
-    });
-
+    );
   } catch (error) {
-    return Response.json({
-      success: false,
-      error: error.message,
-      stack: error.stack
-    }, {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return Response.json(
+      {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+      },
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }

@@ -39,7 +39,7 @@ const SIZE_MAP = {
 function getInitials(name: string): string {
   return name
     .split(' ')
-    .map(part => part[0])
+    .map((part) => part[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
@@ -60,9 +60,7 @@ export default function PlayerHeadshot({
   const sizeStyles = SIZE_MAP[size];
   const initials = getInitials(playerName);
 
-  const ringStyle = showRing && teamColor
-    ? { boxShadow: `0 0 0 3px ${teamColor}` }
-    : {};
+  const ringStyle = showRing && teamColor ? { boxShadow: `0 0 0 3px ${teamColor}` } : {};
 
   // Show fallback if no src or image failed to load
   if (!src || imageError) {
@@ -79,9 +77,7 @@ export default function PlayerHeadshot({
         title={playerName}
       >
         {fallback === 'initials' ? (
-          <span className={`${sizeStyles.text} font-bold text-white/80`}>
-            {initials}
-          </span>
+          <span className={`${sizeStyles.text} font-bold text-white/80`}>{initials}</span>
         ) : (
           <User className={`${sizeStyles.icon} text-white/60`} />
         )}

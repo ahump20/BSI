@@ -16,7 +16,7 @@ import type {
   GamesQueryParams,
   TeamStatsQueryParams,
   ProviderGame,
-  ProviderTeamStats
+  ProviderTeamStats,
 } from '../../workers/ingest/types';
 
 export class ESPNAPIAdapter {
@@ -42,7 +42,7 @@ export class ESPNAPIAdapter {
     const headers: Record<string, string> = {
       Accept: 'application/json',
       'User-Agent': 'BlazeSportsIntel/1.0',
-      Referer: 'https://blazesportsintel.com/'
+      Referer: 'https://blazesportsintel.com/',
     };
 
     if (this.apiKey) {
@@ -75,7 +75,7 @@ export class ESPNAPIAdapter {
     const headers: Record<string, string> = {
       Accept: 'application/json',
       'User-Agent': 'BlazeSportsIntel/1.0',
-      Referer: 'https://blazesportsintel.com/'
+      Referer: 'https://blazesportsintel.com/',
     };
 
     if (this.apiKey) {
@@ -138,7 +138,7 @@ export class ESPNAPIAdapter {
       strikes: competition.situation?.strikes ?? undefined,
       outs: competition.situation?.outs ?? undefined,
       providerName: 'ESPN_API',
-      feedPrecision: 'EVENT' // ESPN provides event-level data
+      feedPrecision: 'EVENT', // ESPN provides event-level data
     };
   }
 
@@ -172,7 +172,7 @@ export class ESPNAPIAdapter {
       fieldingPct: findStat('fieldingPercentage'),
       rpi: undefined, // ESPN doesn't provide RPI directly
       strengthOfSched: undefined, // ESPN doesn't provide SOS directly
-      pythagWins: undefined // Will be calculated separately
+      pythagWins: undefined, // Will be calculated separately
     };
   }
 }

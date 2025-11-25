@@ -214,7 +214,10 @@ export function calculateAvgResponseTime(events: AnalyticsEvent[]): number {
 /**
  * Get top endpoints by request count
  */
-export function getTopEndpoints(events: AnalyticsEvent[], limit: number = 10): Array<{ endpoint: string; count: number }> {
+export function getTopEndpoints(
+  events: AnalyticsEvent[],
+  limit: number = 10
+): Array<{ endpoint: string; count: number }> {
   const counts = new Map<string, number>();
 
   for (const event of events) {

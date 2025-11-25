@@ -29,7 +29,12 @@ const COLLEGE_FOOTBALL_TEAMS: CollegeFootballTeam[] = [
   { espnId: '57', slug: 'florida', name: 'Florida Gators', conference: 'SEC' },
   { espnId: '61', slug: 'georgia', name: 'Georgia Bulldogs', conference: 'SEC' },
   { espnId: '2', slug: 'auburn', name: 'Auburn Tigers', conference: 'SEC' },
-  { espnId: '344', slug: 'mississippi-state', name: 'Mississippi State Bulldogs', conference: 'SEC' },
+  {
+    espnId: '344',
+    slug: 'mississippi-state',
+    name: 'Mississippi State Bulldogs',
+    conference: 'SEC',
+  },
   { espnId: '145', slug: 'ole-miss', name: 'Ole Miss Rebels', conference: 'SEC' },
   { espnId: '96', slug: 'kentucky', name: 'Kentucky Wildcats', conference: 'SEC' },
   { espnId: '238', slug: 'vanderbilt', name: 'Vanderbilt Commodores', conference: 'SEC' },
@@ -123,13 +128,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Apply conference filter
     if (conferenceFilter) {
-      teamsToFetch = teamsToFetch.filter(t => t.conference === conferenceFilter);
+      teamsToFetch = teamsToFetch.filter((t) => t.conference === conferenceFilter);
     }
 
     // Apply team filter
     if (teamFilter) {
-      teamsToFetch = teamsToFetch.filter(t =>
-        t.slug.includes(teamFilter) || t.name.toLowerCase().includes(teamFilter)
+      teamsToFetch = teamsToFetch.filter(
+        (t) => t.slug.includes(teamFilter) || t.name.toLowerCase().includes(teamFilter)
       );
     }
 
@@ -180,14 +185,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             continue;
           }
 
-          const position = player.position?.abbreviation || player.position?.displayName || 'Unknown';
+          const position =
+            player.position?.abbreviation || player.position?.displayName || 'Unknown';
 
           // Apply position filter
           if (positionFilter && position.toUpperCase() !== positionFilter) {
             continue;
           }
 
-          const headshotUrl = player.headshot?.href ||
+          const headshotUrl =
+            player.headshot?.href ||
             `https://a.espncdn.com/combiner/i?img=/i/headshots/college-football/players/full/${player.id}.png&w=350&h=254`;
 
           allPlayers.push({
@@ -204,7 +211,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             year: player.experience?.displayValue || null,
             height: player.height || null,
             weight: player.weight || null,
-            hometown: player.birthPlace?.city ? `${player.birthPlace.city}, ${player.birthPlace.state}` : null,
+            hometown: player.birthPlace?.city
+              ? `${player.birthPlace.city}, ${player.birthPlace.state}`
+              : null,
             headshot_url: headshotUrl,
             stats: {
               passing: {

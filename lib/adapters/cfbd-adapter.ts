@@ -163,13 +163,13 @@ interface CacheConfig {
 }
 
 const CACHE_TTLS: CacheConfig = {
-  teamInfo: 86400,      // 24 hours
-  roster: 3600,         // 1 hour
-  rankings: 1800,       // 30 minutes
-  liveScores: 30,       // 30 seconds
+  teamInfo: 86400, // 24 hours
+  roster: 3600, // 1 hour
+  rankings: 1800, // 30 minutes
+  liveScores: 30, // 30 seconds
   completedGames: 3600, // 1 hour
-  stats: 3600,          // 1 hour
-  games: 300,           // 5 minutes
+  stats: 3600, // 1 hour
+  games: 300, // 5 minutes
 };
 
 // ============================================================================
@@ -190,11 +190,7 @@ export class CFBDAdapter {
   // CORE FETCH UTILITIES
   // ==========================================================================
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try KV cache first
     if (this.kv) {
       try {
@@ -220,7 +216,7 @@ export class CFBDAdapter {
       throw new Error(`CFBD API error: ${response.status} ${response.statusText} for ${url}`);
     }
 
-    const data = await response.json() as T;
+    const data = (await response.json()) as T;
 
     // Store in KV cache
     if (this.kv) {
@@ -248,15 +244,9 @@ export class CFBDAdapter {
     const url = conference
       ? `${this.baseUrl}/teams?conference=${encodeURIComponent(conference)}`
       : `${this.baseUrl}/teams`;
-    const cacheKey = conference
-      ? `cfbd:teams:conference:${conference}`
-      : 'cfbd:teams:all';
+    const cacheKey = conference ? `cfbd:teams:conference:${conference}` : 'cfbd:teams:all';
 
-    return await this.fetchWithCache<CFBDTeam[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.teamInfo
-    );
+    return await this.fetchWithCache<CFBDTeam[]>(url, cacheKey, CACHE_TTLS.teamInfo);
   }
 
   /**
@@ -264,7 +254,7 @@ export class CFBDAdapter {
    */
   async fetchTeamById(teamId: number): Promise<CFBDTeam | null> {
     const teams = await this.fetchTeams();
-    return teams.find(t => t.id === teamId) || null;
+    return teams.find((t) => t.id === teamId) || null;
   }
 
   /**
@@ -275,11 +265,7 @@ export class CFBDAdapter {
     const url = `${this.baseUrl}/roster?team=${encodeURIComponent(team)}&year=${season}`;
     const cacheKey = `cfbd:roster:${team}:${season}`;
 
-    return await this.fetchWithCache<CFBDPlayer[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.roster
-    );
+    return await this.fetchWithCache<CFBDPlayer[]>(url, cacheKey, CACHE_TTLS.roster);
   }
 
   // ==========================================================================
@@ -318,9 +304,10 @@ export class CFBDAdapter {
     const currentYear = currentDate.getFullYear();
     const isCurrentSeason = year === currentYear;
 
-    const ttl = isCurrentSeason && week >= getCurrentWeek() - 1
-      ? CACHE_TTLS.liveScores
-      : CACHE_TTLS.completedGames;
+    const ttl =
+      isCurrentSeason && week >= getCurrentWeek() - 1
+        ? CACHE_TTLS.liveScores
+        : CACHE_TTLS.completedGames;
 
     return await this.fetchWithCache<CFBDGame[]>(url, cacheKey, ttl);
   }
@@ -332,11 +319,7 @@ export class CFBDAdapter {
     const url = `${this.baseUrl}/games?id=${gameId}`;
     const cacheKey = `cfbd:game:${gameId}`;
 
-    const games = await this.fetchWithCache<CFBDGame[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.games
-    );
+    const games = await this.fetchWithCache<CFBDGame[]>(url, cacheKey, CACHE_TTLS.games);
 
     return games[0] || null;
   }
@@ -386,11 +369,7 @@ export class CFBDAdapter {
     const url = `${this.baseUrl}/rankings?${params.toString()}`;
     const cacheKey = `cfbd:rankings:${year}:${week}:${seasonType}`;
 
-    return await this.fetchWithCache<CFBDRanking[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.rankings
-    );
+    return await this.fetchWithCache<CFBDRanking[]>(url, cacheKey, CACHE_TTLS.rankings);
   }
 
   /**
@@ -401,7 +380,7 @@ export class CFBDAdapter {
     const currentWeek = week || getCurrentWeek();
 
     const rankings = await this.fetchRankings(season, currentWeek);
-    return rankings.find(r => r.poll === 'AP Top 25') || null;
+    return rankings.find((r) => r.poll === 'AP Top 25') || null;
   }
 
   /**
@@ -412,7 +391,7 @@ export class CFBDAdapter {
     const currentWeek = week || getCurrentWeek();
 
     const rankings = await this.fetchRankings(season, currentWeek);
-    return rankings.find(r => r.poll === 'Playoff Committee Rankings') || null;
+    return rankings.find((r) => r.poll === 'Playoff Committee Rankings') || null;
   }
 
   // ==========================================================================
@@ -425,11 +404,7 @@ export class CFBDAdapter {
    * @param team Optional team filter
    * @param conference Optional conference filter
    */
-  async fetchTeamStats(
-    year: number,
-    team?: string,
-    conference?: string
-  ): Promise<CFBDTeamStats[]> {
+  async fetchTeamStats(year: number, team?: string, conference?: string): Promise<CFBDTeamStats[]> {
     const params = new URLSearchParams({
       year: year.toString(),
     });
@@ -440,20 +415,13 @@ export class CFBDAdapter {
     const url = `${this.baseUrl}/stats/season?${params.toString()}`;
     const cacheKey = `cfbd:stats:${year}:${team || 'all'}:${conference || 'all'}`;
 
-    return await this.fetchWithCache<CFBDTeamStats[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.stats
-    );
+    return await this.fetchWithCache<CFBDTeamStats[]>(url, cacheKey, CACHE_TTLS.stats);
   }
 
   /**
    * Fetch advanced team metrics (SP+, FPI, etc.)
    */
-  async fetchAdvancedStats(
-    year: number,
-    team?: string
-  ): Promise<any[]> {
+  async fetchAdvancedStats(year: number, team?: string): Promise<any[]> {
     const params = new URLSearchParams({
       year: year.toString(),
     });
@@ -463,11 +431,7 @@ export class CFBDAdapter {
     const url = `${this.baseUrl}/ratings/sp?${params.toString()}`;
     const cacheKey = `cfbd:advanced:${year}:${team || 'all'}`;
 
-    return await this.fetchWithCache<any[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.stats
-    );
+    return await this.fetchWithCache<any[]>(url, cacheKey, CACHE_TTLS.stats);
   }
 }
 
@@ -507,7 +471,7 @@ export function isGameLive(game: CFBDGame): boolean {
   const gameStart = new Date(game.startDate);
 
   // Game is live if it started within the last 4 hours and isn't completed
-  const fourHoursAgo = new Date(now.getTime() - (4 * 60 * 60 * 1000));
+  const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
 
   return gameStart < now && gameStart > fourHoursAgo;
 }
@@ -530,7 +494,7 @@ export function calculateRecord(
 ): { wins: number; losses: number; ties: number } {
   const record = { wins: 0, losses: 0, ties: 0 };
 
-  games.forEach(game => {
+  games.forEach((game) => {
     if (!game.completed) return;
 
     const isHome = game.homeTeam === teamName;

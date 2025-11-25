@@ -58,9 +58,7 @@ async function checkRateLimit(
   const existing = await kv.get<number[]>(key, 'json');
 
   // Filter requests within current window
-  const recentRequests = (existing || []).filter(
-    (timestamp) => now - timestamp < window
-  );
+  const recentRequests = (existing || []).filter((timestamp) => now - timestamp < window);
 
   // Check if limit exceeded
   if (recentRequests.length >= limit) {
@@ -125,9 +123,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   try {
     // Get client IP for rate limiting
-    const ip = request.headers.get('CF-Connecting-IP') ||
-               request.headers.get('X-Forwarded-For') ||
-               'unknown';
+    const ip =
+      request.headers.get('CF-Connecting-IP') ||
+      request.headers.get('X-Forwarded-For') ||
+      'unknown';
 
     // Check rate limit
     const rateLimit = await checkRateLimit(env.KV, ip);

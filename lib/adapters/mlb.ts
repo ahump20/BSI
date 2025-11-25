@@ -40,7 +40,12 @@ function toPythagoreanViewModel(data: unknown): PythagoreanViewModel | null {
   const runsScored = typeof record.runsScored === 'number' ? record.runsScored : null;
   const runsAllowed = typeof record.runsAllowed === 'number' ? record.runsAllowed : null;
 
-  if (expectedWins === null && winPercentage === null && runsScored === null && runsAllowed === null) {
+  if (
+    expectedWins === null &&
+    winPercentage === null &&
+    runsScored === null &&
+    runsAllowed === null
+  ) {
     return null;
   }
 
@@ -52,7 +57,9 @@ export function toTeamCardView(data: unknown): TeamCardViewModel {
   const team = (source.team as { name?: unknown; division?: unknown; venue?: unknown }) ?? {};
   const division = (team.division as { name?: unknown }) ?? {};
   const venue = (team.venue as { name?: unknown }) ?? {};
-  const analytics = (source.analytics as { pythagorean?: unknown; dataSource?: unknown; lastUpdated?: unknown }) ?? {};
+  const analytics =
+    (source.analytics as { pythagorean?: unknown; dataSource?: unknown; lastUpdated?: unknown }) ??
+    {};
 
   return {
     name: typeof team.name === 'string' ? team.name : 'St. Louis Cardinals',
@@ -78,7 +85,7 @@ function normalizePercentage(value: unknown): string {
 
 export function toStandingsView(data: unknown): StandingsViewModel {
   const nationalLeague = Array.isArray((data as { nationalLeague?: unknown }).nationalLeague)
-    ? ((data as { nationalLeague: unknown[] }).nationalLeague)
+    ? (data as { nationalLeague: unknown[] }).nationalLeague
     : [];
 
   const centralRecord = nationalLeague.find((record) => {
@@ -128,10 +135,14 @@ export function toStandingsView(data: unknown): StandingsViewModel {
     : [];
 
   return {
-    divisionName: typeof centralRecord?.division?.name === 'string' ? centralRecord.division.name : 'NL Central',
+    divisionName:
+      typeof centralRecord?.division?.name === 'string'
+        ? centralRecord.division.name
+        : 'NL Central',
     rows,
-    lastUpdated: typeof (data as { lastUpdated?: unknown }).lastUpdated === 'string'
-      ? ((data as { lastUpdated: string }).lastUpdated)
-      : null,
+    lastUpdated:
+      typeof (data as { lastUpdated?: unknown }).lastUpdated === 'string'
+        ? (data as { lastUpdated: string }).lastUpdated
+        : null,
   };
 }

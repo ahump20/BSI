@@ -7,7 +7,10 @@
  * GET /api/live-events/monitor - Get active monitors
  */
 
-import type { StartMonitoringRequest, StartMonitoringResponse } from '../../../lib/reconstruction/types';
+import type {
+  StartMonitoringRequest,
+  StartMonitoringResponse,
+} from '../../../lib/reconstruction/types';
 import { LiveMonitor } from '../../../lib/reconstruction/live-monitor';
 
 interface Env {
@@ -18,14 +21,20 @@ interface Env {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
-    const request = await context.request.json() as StartMonitoringRequest;
+    const request = (await context.request.json()) as StartMonitoringRequest;
 
     // Validate request
-    if (!request.sport || !request.gameId || !request.homeTeam || !request.awayTeam || !request.startTime) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Missing required fields' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+    if (
+      !request.sport ||
+      !request.gameId ||
+      !request.homeTeam ||
+      !request.awayTeam ||
+      !request.startTime
+    ) {
+      return new Response(JSON.stringify({ success: false, error: 'Missing required fields' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const monitor = new LiveMonitor(context.env);

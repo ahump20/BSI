@@ -15,7 +15,11 @@ import type {
   PredictionData,
   ActualOutcome,
 } from '../../../lib/reconstruction/types';
-import { simulateBattedBall, simulatePitch, DEFAULT_PHYSICS_PARAMS } from '../../../lib/reconstruction/physics';
+import {
+  simulateBattedBall,
+  simulatePitch,
+  DEFAULT_PHYSICS_PARAMS,
+} from '../../../lib/reconstruction/physics';
 
 interface Env {
   DB: D1Database;
@@ -25,33 +29,33 @@ interface Env {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
-    const request = await context.request.json() as TriggerReconstructionRequest;
+    const request = (await context.request.json()) as TriggerReconstructionRequest;
 
     if (!request.eventId) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Missing event ID' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ success: false, error: 'Missing event ID' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     // Fetch event data
-    const eventResult = await context.env.DB.prepare(
-      'SELECT * FROM live_events WHERE id = ?'
-    )
+    const eventResult = await context.env.DB.prepare('SELECT * FROM live_events WHERE id = ?')
       .bind(request.eventId)
       .first<LiveEvent>();
 
     if (!eventResult) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Event not found' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ success: false, error: 'Event not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const event: LiveEvent = {
       ...eventResult,
       rawData: JSON.parse(eventResult.rawData as unknown as string),
-      statcastData: eventResult.statcastData ? JSON.parse(eventResult.statcastData as unknown as string) : null,
+      statcastData: eventResult.statcastData
+        ? JSON.parse(eventResult.statcastData as unknown as string)
+        : null,
     };
 
     // Check if already reconstructed
@@ -239,7 +243,7 @@ async function generateBattedBallReconstruction(
       type: statcast.exitVelocity! >= 100 && statcast.launchAngle! >= 20 ? 'home_run' : 'hit',
       probability: 0.75,
       alternativeOutcomes: [
-        { type: 'flyout', probability: 0.20 },
+        { type: 'flyout', probability: 0.2 },
         { type: 'ground_out', probability: 0.05 },
       ],
     },
@@ -285,10 +289,7 @@ async function generateBattedBallReconstruction(
 /**
  * Generate 3D reconstruction for pitch
  */
-async function generatePitchReconstruction(
-  event: LiveEvent,
-  statcast: StatcastData
-): Promise<any> {
+async function generatePitchReconstruction(event: LiveEvent, statcast: StatcastData): Promise<any> {
   const physics = { ...DEFAULT_PHYSICS_PARAMS };
 
   const trajectory = simulatePitch(statcast, physics);

@@ -88,11 +88,7 @@ export class SecretsManager {
    * @param required - Whether the secret is required (throws if missing)
    * @returns Secret value or null
    */
-  async getSecret(
-    name: string,
-    cfEnv?: any,
-    required: boolean = true
-  ): Promise<string | null> {
+  async getSecret(name: string, cfEnv?: any, required: boolean = true): Promise<string | null> {
     try {
       // Check cache first
       const cached = this.secretsCache.get(name);
@@ -279,7 +275,10 @@ let globalSecretsManager: SecretsManager | null = null;
  */
 export function getSecretsManager(env?: Environment): SecretsManager {
   if (!globalSecretsManager) {
-    const environment = env || (typeof process !== 'undefined' ? process.env.NODE_ENV as Environment : null) || 'development';
+    const environment =
+      env ||
+      (typeof process !== 'undefined' ? (process.env.NODE_ENV as Environment) : null) ||
+      'development';
     globalSecretsManager = new SecretsManager(environment);
   }
   return globalSecretsManager;
@@ -288,7 +287,11 @@ export function getSecretsManager(env?: Environment): SecretsManager {
 /**
  * Helper to get a secret value
  */
-export async function getSecret(name: string, cfEnv?: any, required: boolean = true): Promise<string | null> {
+export async function getSecret(
+  name: string,
+  cfEnv?: any,
+  required: boolean = true
+): Promise<string | null> {
   const manager = getSecretsManager();
   return manager.getSecret(name, cfEnv, required);
 }

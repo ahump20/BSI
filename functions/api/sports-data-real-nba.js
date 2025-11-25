@@ -23,16 +23,19 @@ export async function onRequest({ request, env }) {
     const data = await fetchRealNBA(teamId);
     return new Response(JSON.stringify(data), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch NBA data',
-      message: error.message
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch NBA data',
+        message: error.message,
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }
 
@@ -44,7 +47,7 @@ async function fetchRealNBA(teamId) {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -76,8 +79,8 @@ async function fetchRealNBA(teamId) {
     let defensiveRating = 110.0;
 
     if (teamRecord.stats) {
-      const ppg = teamRecord.stats.find(s => s.name === 'avgPointsFor')?.value || 110;
-      const oppPpg = teamRecord.stats.find(s => s.name === 'avgPointsAgainst')?.value || 110;
+      const ppg = teamRecord.stats.find((s) => s.name === 'avgPointsFor')?.value || 110;
+      const oppPpg = teamRecord.stats.find((s) => s.name === 'avgPointsAgainst')?.value || 110;
 
       offensiveRating = parseFloat(ppg);
       defensiveRating = parseFloat(oppPpg);
@@ -95,11 +98,11 @@ async function fetchRealNBA(teamId) {
         efficiency: {
           offensiveRating: offensiveRating.toFixed(1),
           defensiveRating: defensiveRating.toFixed(1),
-          netRating: (offensiveRating - defensiveRating).toFixed(1)
+          netRating: (offensiveRating - defensiveRating).toFixed(1),
         },
         dataSource: 'ESPN NBA API (Real-time)',
-        lastUpdated: new Date().toISOString()
-      }
+        lastUpdated: new Date().toISOString(),
+      },
     };
   } catch (error) {
     throw new Error(`NBA API Error: ${error.message}`);

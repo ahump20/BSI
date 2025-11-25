@@ -74,9 +74,7 @@ export async function fetchMLBPlayers(
 
     if (team) params.append('team', team);
 
-    const response = await fetch(
-      `${API_ENDPOINTS.mlb.leaderboards}/batting?${params.toString()}`
-    );
+    const response = await fetch(`${API_ENDPOINTS.mlb.leaderboards}/batting?${params.toString()}`);
 
     if (!response.ok) {
       throw new Error(`MLB API Error: ${response.status}`);
@@ -88,9 +86,8 @@ export async function fetchMLBPlayers(
     const leaderboardData = result.data?.data || [];
 
     // Apply offset for client-side pagination if needed
-    const paginatedData = offset > 0
-      ? leaderboardData.slice(offset, offset + limit)
-      : leaderboardData;
+    const paginatedData =
+      offset > 0 ? leaderboardData.slice(offset, offset + limit) : leaderboardData;
 
     // Transform FanGraphs leaderboard data to our Player interface
     const players: Player[] = paginatedData.map((player: any) => {
@@ -126,7 +123,7 @@ export async function fetchMLBPlayers(
           SB: player.SB || 0,
         },
         dataSource: 'FanGraphs via Blaze API',
-        dataStamp: getDataStamp()
+        dataStamp: getDataStamp(),
       };
     });
 
@@ -135,7 +132,7 @@ export async function fetchMLBPlayers(
       data: players,
       error: null,
       source: 'FanGraphs',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('MLB API Error:', error);
@@ -144,7 +141,7 @@ export async function fetchMLBPlayers(
       data: null,
       error: (error as Error).message,
       source: 'FanGraphs',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -167,8 +164,7 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
     const players: Player[] = data.map((player: any) => {
       const espnId = player.id;
       // Use ESPN's headshot URL if provided, otherwise generate from CDN
-      const headshotUrl = player.headshot?.href ||
-        (espnId ? getNFLHeadshotUrl(espnId) : undefined);
+      const headshotUrl = player.headshot?.href || (espnId ? getNFLHeadshotUrl(espnId) : undefined);
 
       return {
         id: `nfl_${espnId}`,
@@ -182,10 +178,10 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
           YDS: player.stats?.passing?.yards || player.stats?.rushing?.yards || 0,
           TD: player.stats?.passing?.touchdowns || player.stats?.rushing?.touchdowns || 0,
           QBR: player.stats?.passing?.qbRating || 0,
-          Rating: player.stats?.rating || 0
+          Rating: player.stats?.rating || 0,
         },
         dataSource: DATA_SOURCES.ESPN_API.name,
-        dataStamp: getDataStamp()
+        dataStamp: getDataStamp(),
       };
     });
 
@@ -194,7 +190,7 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
       data: players,
       error: null,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('NFL API Error:', error);
@@ -203,7 +199,7 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
       data: null,
       error: (error as Error).message,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -213,7 +209,8 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
  */
 export async function fetchOdds(sport: string = 'baseball_mlb'): Promise<ApiResponse<any[]>> {
   try {
-    const url = sport === 'all' ? API_ENDPOINTS.odds.current : `${API_ENDPOINTS.odds.current}?sport=${sport}`;
+    const url =
+      sport === 'all' ? API_ENDPOINTS.odds.current : `${API_ENDPOINTS.odds.current}?sport=${sport}`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -227,7 +224,7 @@ export async function fetchOdds(sport: string = 'baseball_mlb'): Promise<ApiResp
       data: data,
       error: null,
       source: DATA_SOURCES.THEODDS_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('Odds API Error:', error);
@@ -236,7 +233,7 @@ export async function fetchOdds(sport: string = 'baseball_mlb'): Promise<ApiResp
       data: null,
       error: (error as Error).message,
       source: DATA_SOURCES.THEODDS_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -260,7 +257,7 @@ export async function fetchNews(sport: string = 'mlb'): Promise<ApiResponse<any[
       data: data,
       error: null,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('News API Error:', error);
@@ -269,7 +266,7 @@ export async function fetchNews(sport: string = 'mlb'): Promise<ApiResponse<any[
       data: null,
       error: (error as Error).message,
       source: DATA_SOURCES.ESPN_API.name,
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -305,8 +302,8 @@ export async function fetchCollegeBaseballPlayers(): Promise<ApiResponse<Player[
     // Transform API response to our Player interface
     const players: Player[] = data.map((player: any) => {
       const espnId = player.espn_id || player.id;
-      const headshotUrl = player.headshot_url ||
-        (espnId ? getCollegeBaseballHeadshotUrl(espnId) : undefined);
+      const headshotUrl =
+        player.headshot_url || (espnId ? getCollegeBaseballHeadshotUrl(espnId) : undefined);
 
       return {
         id: `cbb_${espnId}`,
@@ -322,10 +319,10 @@ export async function fetchCollegeBaseballPlayers(): Promise<ApiResponse<Player[
           RBI: player.stats?.batting?.rbi || 0,
           ERA: player.stats?.pitching?.era || 0,
           Class: player.experience || player.year || 'Unknown',
-          Age: player.age || 0
+          Age: player.age || 0,
         },
         dataSource: 'ESPN College Baseball via Blaze API',
-        dataStamp: getDataStamp()
+        dataStamp: getDataStamp(),
       };
     });
 
@@ -334,7 +331,7 @@ export async function fetchCollegeBaseballPlayers(): Promise<ApiResponse<Player[
       data: players,
       error: null,
       source: 'ESPN College Baseball',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('College Baseball API Error:', error);
@@ -343,7 +340,7 @@ export async function fetchCollegeBaseballPlayers(): Promise<ApiResponse<Player[
       data: null,
       error: (error as Error).message,
       source: 'ESPN College Baseball',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -365,8 +362,8 @@ export async function fetchCollegeFootballPlayers(): Promise<ApiResponse<Player[
     // Transform API response to our Player interface
     const players: Player[] = data.map((player: any) => {
       const espnId = player.espn_id || player.id;
-      const headshotUrl = player.headshot_url ||
-        (espnId ? getCollegeFootballHeadshotUrl(espnId) : undefined);
+      const headshotUrl =
+        player.headshot_url || (espnId ? getCollegeFootballHeadshotUrl(espnId) : undefined);
 
       return {
         id: `cfb_${espnId}`,
@@ -383,10 +380,10 @@ export async function fetchCollegeFootballPlayers(): Promise<ApiResponse<Player[
           QBR: player.stats?.passing?.qbRating || 0,
           Class: player.year || player.experience || 'Unknown',
           Height: player.height || '',
-          Weight: player.weight || ''
+          Weight: player.weight || '',
         },
         dataSource: 'CFBD via Blaze API',
-        dataStamp: getDataStamp()
+        dataStamp: getDataStamp(),
       };
     });
 
@@ -395,7 +392,7 @@ export async function fetchCollegeFootballPlayers(): Promise<ApiResponse<Player[
       data: players,
       error: null,
       source: 'College Football Data (CFBD)',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   } catch (error) {
     console.error('College Football API Error:', error);
@@ -404,7 +401,7 @@ export async function fetchCollegeFootballPlayers(): Promise<ApiResponse<Player[
       data: null,
       error: (error as Error).message,
       source: 'College Football Data (CFBD)',
-      timestamp: getDataStamp()
+      timestamp: getDataStamp(),
     };
   }
 }
@@ -429,7 +426,7 @@ export async function fetchWithRetry<T>(
     } catch (error) {
       if (i === retries - 1) throw error;
       // Exponential backoff
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      await new Promise((resolve) => setTimeout(resolve, Math.pow(2, i) * 1000));
     }
   }
   throw new Error('Max retries exceeded');

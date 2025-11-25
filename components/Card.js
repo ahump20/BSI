@@ -39,7 +39,7 @@ export function Card(options = {}) {
     href = null,
     onClick = null,
     className = '',
-    attributes = {}
+    attributes = {},
   } = options;
 
   // Determine container element (anchor or div)

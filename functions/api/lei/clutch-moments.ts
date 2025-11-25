@@ -59,7 +59,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       LEFT JOIN highlights h ON h.game_id = le.game_id
       ${whereClause}
     `;
-    const countResult = await context.env.DB.prepare(countQuery).bind(...params).first<{ count: number }>();
+    const countResult = await context.env.DB.prepare(countQuery)
+      .bind(...params)
+      .first<{ count: number }>();
     const total = countResult?.count ?? 0;
 
     // Get clutch moments ordered by leverage index

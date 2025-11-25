@@ -93,32 +93,38 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const cached = await env.KV.get<PortalActivityResponse>(cacheKey, 'json');
 
     if (cached) {
-      return Response.json({
-        ...cached,
-        metadata: {
-          ...cached.metadata,
-          cacheStatus: 'hit'
+      return Response.json(
+        {
+          ...cached,
+          metadata: {
+            ...cached.metadata,
+            cacheStatus: 'hit',
+          },
+        },
+        {
+          headers: {
+            'Cache-Control': 'public, max-age=300, s-maxage=900',
+            'X-Cache-Status': 'hit',
+          },
         }
-      }, {
-        headers: {
-          'Cache-Control': 'public, max-age=300, s-maxage=900',
-          'X-Cache-Status': 'hit'
-        }
-      });
+      );
     }
 
     // Fetch fresh data
-    const data = await fetchPortalActivity({
-      position,
-      status,
-      conference,
-      graduateOnly,
-      limit,
-      offset
-    }, env);
+    const data = await fetchPortalActivity(
+      {
+        position,
+        status,
+        conference,
+        graduateOnly,
+        limit,
+        offset,
+      },
+      env
+    );
 
     // Calculate NIL valuations
-    data.entries = data.entries.map(entry => {
+    data.entries = data.entries.map((entry) => {
       if (!entry.nilValuation) {
         entry.nilValuation = NILCalculator.calculateValuation(entry.metrics);
       }
@@ -136,27 +142,27 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       metadata: {
         dataSource: '247Sports + On3 + Perfect Game',
         lastUpdated: new Date().toISOString(),
-        cacheStatus: 'miss'
-      }
+        cacheStatus: 'miss',
+      },
     };
 
     // Cache for 15 minutes
     await env.KV.put(cacheKey, JSON.stringify(response), {
-      expirationTtl: 900 // 15 minutes
+      expirationTtl: 900, // 15 minutes
     });
 
     return Response.json(response, {
       headers: {
         'Cache-Control': 'public, max-age=300, s-maxage=900',
-        'X-Cache-Status': 'miss'
-      }
+        'X-Cache-Status': 'miss',
+      },
     });
   } catch (error) {
     console.error('Portal activity fetch error:', error);
     return Response.json(
       {
         error: 'Failed to fetch portal activity',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -177,10 +183,7 @@ function buildCacheKey(params: any): string {
 /**
  * Fetch portal activity from multiple sources
  */
-async function fetchPortalActivity(
-  filters: any,
-  env: Env
-): Promise<{ entries: PortalEntry[] }> {
+async function fetchPortalActivity(filters: any, env: Env): Promise<{ entries: PortalEntry[] }> {
   // Try 247Sports API first
   try {
     const entries = await fetch247SportsPortal(filters);
@@ -238,10 +241,10 @@ async function fetch247SportsPortal(filters: any): Promise<PortalEntry[]> {
         position: 'SP',
         draftRound: 3,
         positionRank: 12,
-        classYear: 'JR'
+        classYear: 'JR',
       },
       graduateTransfer: false,
-      yearsRemaining: 2
+      yearsRemaining: 2,
     },
     {
       id: '247-p-002',
@@ -267,10 +270,10 @@ async function fetch247SportsPortal(filters: any): Promise<PortalEntry[]> {
         position: 'SS',
         draftRound: 2,
         positionRank: 8,
-        classYear: 'JR'
+        classYear: 'JR',
       },
       graduateTransfer: false,
-      yearsRemaining: 2
+      yearsRemaining: 2,
     },
     {
       id: '247-p-003',
@@ -296,10 +299,10 @@ async function fetch247SportsPortal(filters: any): Promise<PortalEntry[]> {
         position: 'CL',
         draftRound: 4,
         positionRank: 6,
-        classYear: 'SR'
+        classYear: 'SR',
       },
       graduateTransfer: true,
-      yearsRemaining: 1
+      yearsRemaining: 1,
     },
     {
       id: '247-p-004',
@@ -323,10 +326,10 @@ async function fetch247SportsPortal(filters: any): Promise<PortalEntry[]> {
         position: 'C',
         draftRound: 8,
         positionRank: 15,
-        classYear: 'SO'
+        classYear: 'SO',
       },
       graduateTransfer: false,
-      yearsRemaining: 3
+      yearsRemaining: 3,
     },
     {
       id: '247-p-005',
@@ -355,33 +358,32 @@ async function fetch247SportsPortal(filters: any): Promise<PortalEntry[]> {
         position: 'OF',
         draftRound: 5,
         positionRank: 10,
-        classYear: 'JR'
+        classYear: 'JR',
       },
       graduateTransfer: false,
-      yearsRemaining: 2
-    }
+      yearsRemaining: 2,
+    },
   ];
 
   // Apply filters
   let filtered = demoEntries;
 
   if (filters.position) {
-    filtered = filtered.filter(e => e.position === filters.position);
+    filtered = filtered.filter((e) => e.position === filters.position);
   }
 
   if (filters.status) {
-    filtered = filtered.filter(e => e.status === filters.status);
+    filtered = filtered.filter((e) => e.status === filters.status);
   }
 
   if (filters.conference) {
-    filtered = filtered.filter(e =>
-      e.previousConference === filters.conference ||
-      e.newConference === filters.conference
+    filtered = filtered.filter(
+      (e) => e.previousConference === filters.conference || e.newConference === filters.conference
     );
   }
 
   if (filters.graduateOnly) {
-    filtered = filtered.filter(e => e.graduateTransfer);
+    filtered = filtered.filter((e) => e.graduateTransfer);
   }
 
   // Pagination
@@ -449,7 +451,9 @@ async function fetchDatabasePortal(filters: any, env: Env): Promise<PortalEntry[
   binds.push(filters.limit || 100, filters.offset || 0);
 
   try {
-    const results = await env.DB.prepare(sql).bind(...binds).all();
+    const results = await env.DB.prepare(sql)
+      .bind(...binds)
+      .all();
 
     if (!results.success) {
       throw new Error('Database query failed');
@@ -468,7 +472,7 @@ async function fetchDatabasePortal(filters: any, env: Env): Promise<PortalEntry[
       commitDate: row.commitDate || undefined,
       metrics: JSON.parse(row.metrics),
       graduateTransfer: row.graduateTransfer === 1,
-      yearsRemaining: row.yearsRemaining
+      yearsRemaining: row.yearsRemaining,
     }));
   } catch (error) {
     console.error('Database portal query error:', error);
@@ -481,45 +485,40 @@ async function fetchDatabasePortal(filters: any, env: Env): Promise<PortalEntry[
  */
 function calculateStats(entries: PortalEntry[]): PortalStats {
   const totalEntries = entries.length;
-  const totalCommitments = entries.filter(e => e.status === 'committed').length;
+  const totalCommitments = entries.filter((e) => e.status === 'committed').length;
 
   // Calculate average NIL value
-  const nilValues = entries
-    .map(e => e.nilValuation?.estimatedValue || 0)
-    .filter(v => v > 0);
-  const averageNILValue = nilValues.length > 0
-    ? nilValues.reduce((sum, val) => sum + val, 0) / nilValues.length
-    : 0;
+  const nilValues = entries.map((e) => e.nilValuation?.estimatedValue || 0).filter((v) => v > 0);
+  const averageNILValue =
+    nilValues.length > 0 ? nilValues.reduce((sum, val) => sum + val, 0) / nilValues.length : 0;
 
   // Find top position
   const positionCounts: Record<string, number> = {};
-  entries.forEach(e => {
+  entries.forEach((e) => {
     positionCounts[e.position] = (positionCounts[e.position] || 0) + 1;
   });
-  const topPosition = Object.entries(positionCounts)
-    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+  const topPosition = Object.entries(positionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
   // Find top conference
   const conferenceCounts: Record<string, number> = {};
-  entries.forEach(e => {
+  entries.forEach((e) => {
     conferenceCounts[e.previousConference] = (conferenceCounts[e.previousConference] || 0) + 1;
   });
-  const topConference = Object.entries(conferenceCounts)
-    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+  const topConference =
+    Object.entries(conferenceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
   // Calculate median days to commit
   const commitDays = entries
-    .filter(e => e.status === 'committed' && e.commitDate)
-    .map(e => {
+    .filter((e) => e.status === 'committed' && e.commitDate)
+    .map((e) => {
       const entryTime = new Date(e.entryDate).getTime();
       const commitTime = new Date(e.commitDate!).getTime();
       return Math.floor((commitTime - entryTime) / (1000 * 60 * 60 * 24));
     })
     .sort((a, b) => a - b);
 
-  const medianDaysToCommit = commitDays.length > 0
-    ? commitDays[Math.floor(commitDays.length / 2)]
-    : 0;
+  const medianDaysToCommit =
+    commitDays.length > 0 ? commitDays[Math.floor(commitDays.length / 2)] : 0;
 
   return {
     totalEntries,
@@ -527,7 +526,7 @@ function calculateStats(entries: PortalEntry[]): PortalStats {
     averageNILValue: Math.round(averageNILValue),
     topPosition,
     topConference,
-    medianDaysToCommit
+    medianDaysToCommit,
   };
 }
 
@@ -538,8 +537,8 @@ function calculateConferenceFlows(entries: PortalEntry[]): ConferenceFlow[] {
   const flows: Record<string, ConferenceFlow> = {};
 
   entries
-    .filter(e => e.status === 'committed' && e.newConference)
-    .forEach(entry => {
+    .filter((e) => e.status === 'committed' && e.newConference)
+    .forEach((entry) => {
       const key = `${entry.previousConference}->${entry.newConference}`;
 
       if (!flows[key]) {
@@ -547,7 +546,7 @@ function calculateConferenceFlows(entries: PortalEntry[]): ConferenceFlow[] {
           from: entry.previousConference,
           to: entry.newConference!,
           count: 0,
-          avgNILDelta: 0
+          avgNILDelta: 0,
         };
       }
 
@@ -559,13 +558,14 @@ function calculateConferenceFlows(entries: PortalEntry[]): ConferenceFlow[] {
         // For now, assume movement to better conference = +20% NIL
         const conferenceMultiplier = getConferenceMultiplier(entry.newConference!);
         const previousMultiplier = getConferenceMultiplier(entry.previousConference);
-        const nilDelta = entry.nilValuation.estimatedValue * (conferenceMultiplier - previousMultiplier);
+        const nilDelta =
+          entry.nilValuation.estimatedValue * (conferenceMultiplier - previousMultiplier);
         flows[key].avgNILDelta += nilDelta;
       }
     });
 
   // Calculate averages
-  Object.values(flows).forEach(flow => {
+  Object.values(flows).forEach((flow) => {
     if (flow.count > 0) {
       flow.avgNILDelta = Math.round(flow.avgNILDelta / flow.count);
     }
@@ -589,7 +589,7 @@ function getConferenceMultiplier(conference: string): number {
     'Conference USA': 0.95,
     'Sun Belt': 0.9,
     MAC: 0.85,
-    WAC: 0.8
+    WAC: 0.8,
   };
   return multipliers[conference] || 1.0;
 }

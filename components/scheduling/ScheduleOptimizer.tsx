@@ -24,8 +24,19 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  ReferenceLine,
+  Area,
+  AreaChart,
 } from 'recharts';
 
 // ============================================================================
@@ -113,13 +124,15 @@ interface SimulationData {
 export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
   teamId,
   teamName,
-  onError
+  onError,
 }) => {
   const [data, setData] = useState<SimulationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [iterations, setIterations] = useState(10000);
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'scenarios' | 'recommendations'>('overview');
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'scenarios' | 'recommendations'>(
+    'overview'
+  );
 
   // Fetch optimization data
   useEffect(() => {
@@ -185,16 +198,23 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
 
   // Prepare chart data for win probability distribution
   const distributionData = [];
-  for (let wins = simulation.confidenceInterval.winsLower; wins <= simulation.confidenceInterval.winsUpper; wins++) {
+  for (
+    let wins = simulation.confidenceInterval.winsLower;
+    wins <= simulation.confidenceInterval.winsUpper;
+    wins++
+  ) {
     // Approximate normal distribution
     const mean = simulation.projectedRecord.wins;
-    const stdDev = (simulation.confidenceInterval.winsUpper - simulation.confidenceInterval.winsLower) / 4;
-    const probability = Math.exp(-Math.pow(wins - mean, 2) / (2 * stdDev * stdDev)) / (stdDev * Math.sqrt(2 * Math.PI));
+    const stdDev =
+      (simulation.confidenceInterval.winsUpper - simulation.confidenceInterval.winsLower) / 4;
+    const probability =
+      Math.exp(-Math.pow(wins - mean, 2) / (2 * stdDev * stdDev)) /
+      (stdDev * Math.sqrt(2 * Math.PI));
 
     distributionData.push({
       wins,
       probability: probability * 100,
-      isProjected: wins === simulation.projectedRecord.wins
+      isProjected: wins === simulation.projectedRecord.wins,
     });
   }
 
@@ -203,7 +223,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
     name: game.opponent.length > 15 ? game.opponent.substring(0, 12) + '...' : game.opponent,
     winProb: game.winProbability * 100,
     lossProb: (1 - game.winProbability) * 100,
-    expectedMargin: game.expectedMargin
+    expectedMargin: game.expectedMargin,
   }));
 
   return (
@@ -237,7 +257,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
           onClick={() => setSelectedTab('overview')}
           style={{
             ...styles.tabButton,
-            ...(selectedTab === 'overview' ? styles.tabButtonActive : {})
+            ...(selectedTab === 'overview' ? styles.tabButtonActive : {}),
           }}
         >
           Overview
@@ -246,7 +266,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
           onClick={() => setSelectedTab('scenarios')}
           style={{
             ...styles.tabButton,
-            ...(selectedTab === 'scenarios' ? styles.tabButtonActive : {})
+            ...(selectedTab === 'scenarios' ? styles.tabButtonActive : {}),
           }}
         >
           What-If Scenarios
@@ -255,7 +275,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
           onClick={() => setSelectedTab('recommendations')}
           style={{
             ...styles.tabButton,
-            ...(selectedTab === 'recommendations' ? styles.tabButtonActive : {})
+            ...(selectedTab === 'recommendations' ? styles.tabButtonActive : {}),
           }}
         >
           Recommendations
@@ -279,7 +299,8 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
             <div style={styles.confidenceInterval}>
               <p style={styles.confidenceLabel}>95% Confidence Interval:</p>
               <p style={styles.confidenceRange}>
-                {simulation.confidenceInterval.winsLower}-{simulation.confidenceInterval.winsUpper} wins
+                {simulation.confidenceInterval.winsLower}-{simulation.confidenceInterval.winsUpper}{' '}
+                wins
               </p>
             </div>
           </div>
@@ -296,7 +317,8 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
                   style={{
                     ...styles.probBarFill,
                     width: `${simulation.ncaaTournamentProbability * 100}%`,
-                    backgroundColor: simulation.ncaaTournamentProbability > 0.70 ? '#10b981' : '#f59e0b'
+                    backgroundColor:
+                      simulation.ncaaTournamentProbability > 0.7 ? '#10b981' : '#f59e0b',
                   }}
                 />
               </div>
@@ -304,15 +326,13 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
 
             <div style={styles.probCard}>
               <div style={styles.probLabel}>National Seed</div>
-              <div style={styles.probValue}>
-                {formatPercentage(simulation.ncaaSeedProbability)}
-              </div>
+              <div style={styles.probValue}>{formatPercentage(simulation.ncaaSeedProbability)}</div>
               <div style={styles.probBar}>
                 <div
                   style={{
                     ...styles.probBarFill,
                     width: `${simulation.ncaaSeedProbability * 100}%`,
-                    backgroundColor: simulation.ncaaSeedProbability > 0.50 ? '#10b981' : '#6b7280'
+                    backgroundColor: simulation.ncaaSeedProbability > 0.5 ? '#10b981' : '#6b7280',
                   }}
                 />
               </div>
@@ -328,7 +348,8 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
                   style={{
                     ...styles.probBarFill,
                     width: `${simulation.conferenceChampionshipProbability * 100}%`,
-                    backgroundColor: simulation.conferenceChampionshipProbability > 0.30 ? '#10b981' : '#6b7280'
+                    backgroundColor:
+                      simulation.conferenceChampionshipProbability > 0.3 ? '#10b981' : '#6b7280',
                   }}
                 />
               </div>
@@ -344,14 +365,28 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
                 <XAxis
                   dataKey="wins"
                   stroke="#9ca3af"
-                  label={{ value: 'Final Wins', position: 'insideBottom', offset: -5, fill: '#9ca3af' }}
+                  label={{
+                    value: 'Final Wins',
+                    position: 'insideBottom',
+                    offset: -5,
+                    fill: '#9ca3af',
+                  }}
                 />
                 <YAxis
                   stroke="#9ca3af"
-                  label={{ value: 'Probability', angle: -90, position: 'insideLeft', fill: '#9ca3af' }}
+                  label={{
+                    value: 'Probability',
+                    angle: -90,
+                    position: 'insideLeft',
+                    fill: '#9ca3af',
+                  }}
                 />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' }}
+                  contentStyle={{
+                    backgroundColor: '#1f2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                  }}
                   labelStyle={{ color: '#ffffff' }}
                 />
                 <Area
@@ -379,14 +414,13 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
               <BarChart data={gamesData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis type="number" stroke="#9ca3af" domain={[0, 100]} />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  stroke="#9ca3af"
-                  width={120}
-                />
+                <YAxis type="category" dataKey="name" stroke="#9ca3af" width={120} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' }}
+                  contentStyle={{
+                    backgroundColor: '#1f2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                  }}
                   formatter={(value: number) => `${value.toFixed(1)}%`}
                 />
                 <Legend />
@@ -446,19 +480,25 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
                   <div style={styles.scenarioMetrics}>
                     <div style={styles.scenarioMetric}>
                       <span style={styles.metricLabel}>RPI Change:</span>
-                      <span style={{
-                        ...styles.metricValue,
-                        color: scenario.rpiChange > 0 ? '#10b981' : '#ef4444'
-                      }}>
-                        {scenario.rpiChange > 0 ? '+' : ''}{scenario.rpiChange.toFixed(3)}
+                      <span
+                        style={{
+                          ...styles.metricValue,
+                          color: scenario.rpiChange > 0 ? '#10b981' : '#ef4444',
+                        }}
+                      >
+                        {scenario.rpiChange > 0 ? '+' : ''}
+                        {scenario.rpiChange.toFixed(3)}
                       </span>
                     </div>
                     <div style={styles.scenarioMetric}>
                       <span style={styles.metricLabel}>NCAA Prob Change:</span>
-                      <span style={{
-                        ...styles.metricValue,
-                        color: scenario.ncaaTournamentProbabilityChange > 0 ? '#10b981' : '#ef4444'
-                      }}>
+                      <span
+                        style={{
+                          ...styles.metricValue,
+                          color:
+                            scenario.ncaaTournamentProbabilityChange > 0 ? '#10b981' : '#ef4444',
+                        }}
+                      >
                         {scenario.ncaaTournamentProbabilityChange > 0 ? '+' : ''}
                         {formatPercentage(scenario.ncaaTournamentProbabilityChange)}
                       </span>
@@ -494,9 +534,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
           {/* Key Games */}
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Key Games</h2>
-            <p style={styles.cardSubtitle}>
-              Must-win games and high-impact matchups
-            </p>
+            <p style={styles.cardSubtitle}>Must-win games and high-impact matchups</p>
             <div style={styles.keyGamesList}>
               {optimization.keyGames.map((game, index) => (
                 <div key={index} style={styles.keyGameCard}>
@@ -548,14 +586,14 @@ const styles: Record<string, React.CSSProperties> = {
     maxWidth: '1400px',
     margin: '0 auto',
     padding: '20px',
-    fontFamily: 'system-ui, -apple-system, sans-serif'
+    fontFamily: 'system-ui, -apple-system, sans-serif',
   },
   loadingSpinner: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '400px'
+    minHeight: '400px',
   },
   spinner: {
     width: '50px',
@@ -563,17 +601,17 @@ const styles: Record<string, React.CSSProperties> = {
     border: '4px solid rgba(255, 107, 0, 0.3)',
     borderTop: '4px solid #ff6b00',
     borderRadius: '50%',
-    animation: 'spin 1s linear infinite'
+    animation: 'spin 1s linear infinite',
   },
   loadingText: {
     marginTop: '20px',
     fontSize: '16px',
-    color: '#9ca3af'
+    color: '#9ca3af',
   },
   errorMessage: {
     textAlign: 'center',
     padding: '40px',
-    color: '#ef4444'
+    color: '#ef4444',
   },
   retryButton: {
     marginTop: '20px',
@@ -584,7 +622,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '14px',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   header: {
     display: 'flex',
@@ -595,27 +633,27 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'rgba(31, 41, 55, 0.8)',
     backdropFilter: 'blur(10px)',
     borderRadius: '12px',
-    border: '1px solid rgba(255, 107, 0, 0.2)'
+    border: '1px solid rgba(255, 107, 0, 0.2)',
   },
   title: {
     fontSize: '28px',
     fontWeight: '700',
     color: '#ffffff',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   subtitle: {
     fontSize: '14px',
     color: '#9ca3af',
-    margin: 0
+    margin: 0,
   },
   iterationsSelector: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px'
+    gap: '10px',
   },
   label: {
     fontSize: '14px',
-    color: '#9ca3af'
+    color: '#9ca3af',
   },
   select: {
     padding: '8px 12px',
@@ -624,13 +662,13 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255, 107, 0, 0.3)',
     borderRadius: '6px',
     fontSize: '14px',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   tabNav: {
     display: 'flex',
     gap: '10px',
     marginBottom: '20px',
-    padding: '0 20px'
+    padding: '0 20px',
   },
   tabButton: {
     padding: '12px 24px',
@@ -641,110 +679,110 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     fontSize: '14px',
     fontWeight: '600',
-    transition: 'all 0.2s ease'
+    transition: 'all 0.2s ease',
   },
   tabButtonActive: {
     backgroundColor: 'rgba(255, 107, 0, 0.2)',
     color: '#ff6b00',
-    borderColor: '#ff6b00'
+    borderColor: '#ff6b00',
   },
   content: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px'
+    gap: '20px',
   },
   card: {
     padding: '24px',
     background: 'rgba(31, 41, 55, 0.8)',
     backdropFilter: 'blur(10px)',
     borderRadius: '12px',
-    border: '1px solid rgba(255, 107, 0, 0.2)'
+    border: '1px solid rgba(255, 107, 0, 0.2)',
   },
   cardTitle: {
     fontSize: '20px',
     fontWeight: '700',
     color: '#ffffff',
-    margin: '0 0 4px 0'
+    margin: '0 0 4px 0',
   },
   cardSubtitle: {
     fontSize: '14px',
     color: '#9ca3af',
-    margin: '0 0 20px 0'
+    margin: '0 0 20px 0',
   },
   recordDisplay: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '10px',
-    padding: '30px 0'
+    padding: '30px 0',
   },
   recordMain: {
     fontSize: '48px',
     fontWeight: '800',
     color: '#ff6b00',
-    textShadow: '0 0 20px rgba(255, 107, 0, 0.5)'
+    textShadow: '0 0 20px rgba(255, 107, 0, 0.5)',
   },
   recordWinPct: {
     fontSize: '24px',
-    color: '#9ca3af'
+    color: '#9ca3af',
   },
   confidenceInterval: {
     textAlign: 'center',
     marginTop: '20px',
     paddingTop: '20px',
-    borderTop: '1px solid rgba(255, 107, 0, 0.2)'
+    borderTop: '1px solid rgba(255, 107, 0, 0.2)',
   },
   confidenceLabel: {
     fontSize: '14px',
     color: '#9ca3af',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   confidenceRange: {
     fontSize: '18px',
     fontWeight: '600',
     color: '#ffffff',
-    margin: 0
+    margin: 0,
   },
   probCards: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: '20px'
+    gap: '20px',
   },
   probCard: {
     padding: '20px',
     background: 'rgba(31, 41, 55, 0.8)',
     backdropFilter: 'blur(10px)',
     borderRadius: '12px',
-    border: '1px solid rgba(255, 107, 0, 0.2)'
+    border: '1px solid rgba(255, 107, 0, 0.2)',
   },
   probLabel: {
     fontSize: '14px',
     color: '#9ca3af',
-    marginBottom: '10px'
+    marginBottom: '10px',
   },
   probValue: {
     fontSize: '32px',
     fontWeight: '700',
     color: '#ffffff',
-    marginBottom: '15px'
+    marginBottom: '15px',
   },
   probBar: {
     width: '100%',
     height: '8px',
     backgroundColor: 'rgba(55, 65, 81, 0.8)',
     borderRadius: '4px',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   probBarFill: {
     height: '100%',
     transition: 'width 0.3s ease',
-    borderRadius: '4px'
+    borderRadius: '4px',
   },
   confStrength: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '20px',
-    marginTop: '20px'
+    marginTop: '20px',
   },
   confMetric: {
     display: 'flex',
@@ -752,22 +790,22 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     padding: '15px',
     backgroundColor: 'rgba(55, 65, 81, 0.6)',
-    borderRadius: '8px'
+    borderRadius: '8px',
   },
   confLabel: {
     fontSize: '14px',
-    color: '#9ca3af'
+    color: '#9ca3af',
   },
   confValue: {
     fontSize: '18px',
     fontWeight: '700',
-    color: '#ff6b00'
+    color: '#ff6b00',
   },
   scenarioGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
     gap: '20px',
-    marginTop: '20px'
+    marginTop: '20px',
   },
   scenarioCard: {
     padding: '20px',
@@ -775,25 +813,25 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: '8px',
     border: '1px solid rgba(255, 107, 0, 0.2)',
     cursor: 'pointer',
-    transition: 'all 0.2s ease'
+    transition: 'all 0.2s ease',
   },
   scenarioName: {
     fontSize: '18px',
     fontWeight: '700',
     color: '#ffffff',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   scenarioDesc: {
     fontSize: '14px',
     color: '#9ca3af',
-    margin: '0 0 15px 0'
+    margin: '0 0 15px 0',
   },
   scenarioRecord: {
     fontSize: '28px',
     fontWeight: '700',
     color: '#ff6b00',
     textAlign: 'center',
-    margin: '15px 0'
+    margin: '15px 0',
   },
   scenarioMetrics: {
     display: 'flex',
@@ -801,124 +839,124 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '10px',
     marginTop: '15px',
     paddingTop: '15px',
-    borderTop: '1px solid rgba(255, 107, 0, 0.2)'
+    borderTop: '1px solid rgba(255, 107, 0, 0.2)',
   },
   scenarioMetric: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   metricLabel: {
     fontSize: '12px',
-    color: '#9ca3af'
+    color: '#9ca3af',
   },
   metricValue: {
     fontSize: '14px',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   recommendationsList: {
     display: 'flex',
     flexDirection: 'column',
     gap: '15px',
-    marginTop: '20px'
+    marginTop: '20px',
   },
   recommendationCard: {
     padding: '20px',
     backgroundColor: 'rgba(55, 65, 81, 0.6)',
     borderRadius: '8px',
-    borderLeft: '4px solid #ff6b00'
+    borderLeft: '4px solid #ff6b00',
   },
   recHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '12px'
+    marginBottom: '12px',
   },
   recPriority: {
     fontSize: '12px',
     fontWeight: '600',
     color: '#ff6b00',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   recImpact: {
     fontSize: '12px',
-    color: '#9ca3af'
+    color: '#9ca3af',
   },
   recTitle: {
     fontSize: '16px',
     fontWeight: '600',
     color: '#ffffff',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   recReasoning: {
     fontSize: '14px',
     color: '#9ca3af',
     margin: 0,
-    lineHeight: '1.6'
+    lineHeight: '1.6',
   },
   keyGamesList: {
     display: 'flex',
     flexDirection: 'column',
     gap: '15px',
-    marginTop: '20px'
+    marginTop: '20px',
   },
   keyGameCard: {
     padding: '20px',
     backgroundColor: 'rgba(55, 65, 81, 0.6)',
     borderRadius: '8px',
-    border: '1px solid rgba(255, 107, 0, 0.2)'
+    border: '1px solid rgba(255, 107, 0, 0.2)',
   },
   keyGameHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '12px'
+    marginBottom: '12px',
   },
   keyGameOpponent: {
     fontSize: '16px',
     fontWeight: '600',
-    color: '#ffffff'
+    color: '#ffffff',
   },
   keyGameImportance: {
     fontSize: '14px',
     color: '#ff6b00',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   keyGameReasoning: {
     fontSize: '14px',
     color: '#9ca3af',
     margin: 0,
-    lineHeight: '1.6'
+    lineHeight: '1.6',
   },
   outcomesGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '20px',
-    marginTop: '20px'
+    marginTop: '20px',
   },
   outcomeCard: {
     padding: '20px',
     backgroundColor: 'rgba(55, 65, 81, 0.6)',
     borderRadius: '8px',
     border: '1px solid rgba(255, 107, 0, 0.2)',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   outcomeScenario: {
     fontSize: '18px',
     fontWeight: '700',
     color: '#ffffff',
-    margin: '0 0 10px 0'
+    margin: '0 0 10px 0',
   },
   outcomeProb: {
     fontSize: '14px',
     color: '#9ca3af',
-    marginBottom: '15px'
+    marginBottom: '15px',
   },
   outcomeRecord: {
     fontSize: '24px',
     fontWeight: '700',
     color: '#ff6b00',
-    marginBottom: '15px'
+    marginBottom: '15px',
   },
   outcomeSeed: {
     fontSize: '14px',
@@ -926,8 +964,8 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: '600',
     marginTop: '10px',
     paddingTop: '10px',
-    borderTop: '1px solid rgba(255, 107, 0, 0.2)'
-  }
+    borderTop: '1px solid rgba(255, 107, 0, 0.2)',
+  },
 };
 
 export default ScheduleOptimizer;

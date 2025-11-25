@@ -77,8 +77,8 @@ export class FactChecker {
     const { homeScore, awayScore } = this.context.game;
 
     // Check if scores match in either order (home/away or away/home)
-    const matchesCorrectOrder = (homeScore === score1 && awayScore === score2);
-    const matchesReverseOrder = (homeScore === score2 && awayScore === score1);
+    const matchesCorrectOrder = homeScore === score1 && awayScore === score2;
+    const matchesReverseOrder = homeScore === score2 && awayScore === score1;
 
     if (matchesCorrectOrder || matchesReverseOrder) {
       return {
@@ -166,14 +166,12 @@ export class FactChecker {
       };
     }
 
-    const allPerformers = [
-      ...(topPerformers.hitting || []),
-      ...(topPerformers.pitching || []),
-    ];
+    const allPerformers = [...(topPerformers.hitting || []), ...(topPerformers.pitching || [])];
 
-    const playerFound = allPerformers.some(p =>
-      p.playerName.toLowerCase().includes(playerName.toLowerCase()) ||
-      playerName.toLowerCase().includes(p.playerName.toLowerCase())
+    const playerFound = allPerformers.some(
+      (p) =>
+        p.playerName.toLowerCase().includes(playerName.toLowerCase()) ||
+        playerName.toLowerCase().includes(p.playerName.toLowerCase())
     );
 
     if (playerFound) {
@@ -217,13 +215,10 @@ export class FactChecker {
         };
       }
 
-      const allPlayers = [
-        ...(game.homeTeam.players || []),
-        ...(game.awayTeam.players || []),
-      ];
+      const allPlayers = [...(game.homeTeam.players || []), ...(game.awayTeam.players || [])];
 
       const fullName = playerName.toLowerCase();
-      const rosterMatch = allPlayers.some(p => {
+      const rosterMatch = allPlayers.some((p) => {
         const dbFullName = `${p.firstName} ${p.lastName}`.toLowerCase();
         return dbFullName.includes(fullName) || fullName.includes(dbFullName);
       });
@@ -304,9 +299,9 @@ export class FactChecker {
       };
     }
 
-    const verifiedCount = results.filter(r => r.verified && r.confidence >= 0.8).length;
-    const failedCount = results.filter(r => !r.verified && r.confidence < 0.5).length;
-    const manualReviewCount = results.filter(r => r.source === 'manual').length;
+    const verifiedCount = results.filter((r) => r.verified && r.confidence >= 0.8).length;
+    const failedCount = results.filter((r) => !r.verified && r.confidence < 0.5).length;
+    const manualReviewCount = results.filter((r) => r.source === 'manual').length;
 
     // Calculate weighted score
     const totalConfidence = results.reduce((sum, r) => sum + (r.verified ? r.confidence : 0), 0);

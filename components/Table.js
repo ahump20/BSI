@@ -42,7 +42,7 @@ export function Table(options = {}) {
     sticky = false,
     responsive = true,
     onSort = null,
-    className = ''
+    className = '',
   } = options;
 
   // State for sorting
@@ -51,7 +51,8 @@ export function Table(options = {}) {
 
   // Create wrapper (for responsive scrolling)
   const wrapper = document.createElement('div');
-  wrapper.className = `bsi-table-wrapper ${responsive ? 'bsi-table-wrapper--responsive' : ''} ${className}`.trim();
+  wrapper.className =
+    `bsi-table-wrapper ${responsive ? 'bsi-table-wrapper--responsive' : ''} ${className}`.trim();
 
   // Create table
   const table = document.createElement('table');
@@ -126,7 +127,11 @@ export function Table(options = {}) {
               colTh.classList.toggle('bsi-table__th--desc', sortDirection === 'desc');
             } else {
               colTh.setAttribute('aria-sort', 'none');
-              colTh.classList.remove('bsi-table__th--sorted', 'bsi-table__th--asc', 'bsi-table__th--desc');
+              colTh.classList.remove(
+                'bsi-table__th--sorted',
+                'bsi-table__th--asc',
+                'bsi-table__th--desc'
+              );
             }
           }
         });
@@ -195,7 +200,8 @@ export function Table(options = {}) {
 
       columns.forEach((column) => {
         const td = document.createElement('td');
-        td.className = `bsi-table__td ${column.align ? `bsi-table__td--${column.align}` : ''}`.trim();
+        td.className =
+          `bsi-table__td ${column.align ? `bsi-table__td--${column.align}` : ''}`.trim();
         td.setAttribute('role', 'cell');
 
         // Handle custom cell renderer

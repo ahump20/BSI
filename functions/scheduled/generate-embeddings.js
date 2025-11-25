@@ -22,9 +22,9 @@ export async function onRequest(context) {
   // }
 
   try {
-
     // Step 1: Query all games with descriptions from D1
-    const gamesQuery = await env.DB.prepare(`
+    const gamesQuery = await env.DB.prepare(
+      `
       SELECT
         id,
         sport,
@@ -40,7 +40,8 @@ export async function onRequest(context) {
       FROM games
       WHERE description IS NOT NULL
       ORDER BY game_date DESC
-    `).all();
+    `
+    ).all();
 
     const games = gamesQuery.results || [];
 
@@ -48,7 +49,7 @@ export async function onRequest(context) {
       return Response.json({
         success: true,
         message: 'No games to process',
-        processed: 0
+        processed: 0,
       });
     }
 
@@ -57,7 +58,7 @@ export async function onRequest(context) {
       total: games.length,
       success: 0,
       failed: 0,
-      errors: []
+      errors: [],
     };
 
     // Process in batches of 10 for better performance
@@ -71,7 +72,7 @@ export async function onRequest(context) {
           try {
             // Generate embedding using Workers AI
             const embeddingResult = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-              text: game.description
+              text: game.description,
             });
 
             // Extract the embedding vector
@@ -96,7 +97,7 @@ export async function onRequest(context) {
               game_date: game.game_date,
               season: game.season,
               week: game.week || 0,
-              description: game.description.substring(0, 500)
+              description: game.description.substring(0, 500),
             };
 
             // Insert into Vectorize
@@ -104,18 +105,17 @@ export async function onRequest(context) {
               {
                 id: vectorId,
                 values: embedding,
-                metadata
-              }
+                metadata,
+              },
             ]);
 
             results.success++;
-
           } catch (error) {
             results.failed++;
             results.errors.push({
               game_id: game.game_id,
               sport: game.sport,
-              error: error.message
+              error: error.message,
             });
             console.error(`❌ Failed for ${game.sport}-${game.game_id}:`, error.message);
           }
@@ -130,15 +130,17 @@ export async function onRequest(context) {
       success: true,
       message: 'Embedding generation complete',
       results,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('❌ Embedding generation failed:', error);
-    return Response.json({
-      success: false,
-      error: error.message,
-      stack: error.stack
-    }, { status: 500 });
+    return Response.json(
+      {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+      },
+      { status: 500 }
+    );
   }
 }

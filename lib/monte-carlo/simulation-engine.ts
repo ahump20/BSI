@@ -64,15 +64,15 @@ export interface Schedule {
 export class MonteCarloSimulationEngine {
   private readonly SIMULATIONS = 10000;
   private readonly SPORT_EXPONENTS = {
-    SEC: 2.37,   // College Football
-    NFL: 2.37,   // Professional Football
-    MLB: 1.83    // Baseball
+    SEC: 2.37, // College Football
+    NFL: 2.37, // Professional Football
+    MLB: 1.83, // Baseball
   };
 
   private readonly HOME_ADVANTAGE = {
-    SEC: 0.08,   // 8% boost for home games
-    NFL: 0.06,   // 6% boost for home games
-    MLB: 0.04    // 4% boost for home games
+    SEC: 0.08, // 8% boost for home games
+    NFL: 0.06, // 6% boost for home games
+    MLB: 0.04, // 4% boost for home games
   };
 
   /**
@@ -114,7 +114,7 @@ export class MonteCarloSimulationEngine {
     const formPct = weightedSum / totalWeight;
 
     // Convert to multiplier: 0.90 to 1.10
-    return 0.90 + (formPct * 0.20);
+    return 0.9 + formPct * 0.2;
   }
 
   /**
@@ -127,10 +127,7 @@ export class MonteCarloSimulationEngine {
    * - Recent form
    * - Injury impact
    */
-  private calculateGameWinProbability(
-    teamStats: TeamStats,
-    opponent: Schedule
-  ): number {
+  private calculateGameWinProbability(teamStats: TeamStats, opponent: Schedule): number {
     // Base win probability from Pythagorean expectation
     const baseProbability = this.calculatePythagoreanExpectation(
       teamStats.pointsFor,
@@ -171,16 +168,13 @@ export class MonteCarloSimulationEngine {
   /**
    * Simulate a Single Season
    */
-  private simulateSeason(
-    teamStats: TeamStats,
-    schedule: Schedule[]
-  ): number {
+  private simulateSeason(teamStats: TeamStats, schedule: Schedule[]): number {
     let wins = teamStats.wins; // Start with current wins
 
     // Only simulate remaining games
-    const remainingGames = schedule.filter(game => !game.completed);
+    const remainingGames = schedule.filter((game) => !game.completed);
 
-    remainingGames.forEach(game => {
+    remainingGames.forEach((game) => {
       const winProbability = this.calculateGameWinProbability(teamStats, game);
       const randomValue = Math.random();
 
@@ -204,9 +198,9 @@ export class MonteCarloSimulationEngine {
   ): number {
     // Historical playoff win thresholds
     const PLAYOFF_THRESHOLDS = {
-      SEC: totalGames * 0.75,  // ~75% win rate for SEC Championship consideration
+      SEC: totalGames * 0.75, // ~75% win rate for SEC Championship consideration
       NFL: totalGames * 0.5625, // 9+ wins typically makes playoffs (9/16 = 0.5625)
-      MLB: totalGames * 0.525   // ~85 wins for playoffs (85/162 = 0.525)
+      MLB: totalGames * 0.525, // ~85 wins for playoffs (85/162 = 0.525)
     };
 
     const threshold = PLAYOFF_THRESHOLDS[sport];
@@ -225,10 +219,7 @@ export class MonteCarloSimulationEngine {
    * Calculate Division Win Probability
    * Assumes team needs to be in top 20% of win total
    */
-  private calculateDivisionWinProbability(
-    winDistribution: number[],
-    totalGames: number
-  ): number {
+  private calculateDivisionWinProbability(winDistribution: number[], totalGames: number): number {
     const divisionThreshold = totalGames * 0.65; // Need 65%+ win rate
     let divisionWinCount = 0;
 
@@ -251,9 +242,9 @@ export class MonteCarloSimulationEngine {
     totalGames: number
   ): number {
     const CHAMPIONSHIP_THRESHOLDS = {
-      SEC: totalGames * 0.85,  // 85%+ win rate
-      NFL: totalGames * 0.75,  // 12+ wins
-      MLB: totalGames * 0.60   // 97+ wins
+      SEC: totalGames * 0.85, // 85%+ win rate
+      NFL: totalGames * 0.75, // 12+ wins
+      MLB: totalGames * 0.6, // 97+ wins
     };
 
     const threshold = CHAMPIONSHIP_THRESHOLDS[sport];
@@ -281,8 +272,8 @@ export class MonteCarloSimulationEngine {
     schedule: Schedule[],
     simulations: number = this.SIMULATIONS
   ): SimulationResult {
-    const totalGames = teamStats.wins + teamStats.losses +
-                       schedule.filter(g => !g.completed).length;
+    const totalGames =
+      teamStats.wins + teamStats.losses + schedule.filter((g) => !g.completed).length;
 
     // Initialize win distribution array
     const winCounts: number[] = new Array(totalGames + 1).fill(0);
@@ -298,7 +289,7 @@ export class MonteCarloSimulationEngine {
     }
 
     // Convert counts to probabilities
-    const winDistribution = winCounts.map(count => count / simulations);
+    const winDistribution = winCounts.map((count) => count / simulations);
 
     // Calculate statistics
     const projectedWins = totalWins / simulations;
@@ -312,9 +303,10 @@ export class MonteCarloSimulationEngine {
     };
 
     // Calculate standard deviation
-    const variance = allWins.reduce((sum, wins) => {
-      return sum + Math.pow(wins - projectedWins, 2);
-    }, 0) / simulations;
+    const variance =
+      allWins.reduce((sum, wins) => {
+        return sum + Math.pow(wins - projectedWins, 2);
+      }, 0) / simulations;
     const standardDeviation = Math.sqrt(variance);
 
     // Calculate probabilities
@@ -354,15 +346,15 @@ export class MonteCarloSimulationEngine {
       championshipProbability: Math.round(championshipProbability * 1000) / 10,
       confidenceInterval: {
         lower: percentile(0.05),
-        median: percentile(0.50),
-        upper: percentile(0.95)
+        median: percentile(0.5),
+        upper: percentile(0.95),
       },
       metadata: {
         timestamp: new Date().toISOString(),
         pythagoreanExpectation: Math.round(pythagoreanExpectation * 1000) / 10,
         averageWinProbability: Math.round(pythagoreanExpectation * 100 * 10) / 10,
-        standardDeviation: Math.round(standardDeviation * 100) / 100
-      }
+        standardDeviation: Math.round(standardDeviation * 100) / 100,
+      },
     };
   }
 
@@ -374,7 +366,7 @@ export class MonteCarloSimulationEngine {
     schedules: Map<string, Schedule[]>,
     simulations: number = this.SIMULATIONS
   ): SimulationResult[] {
-    return teams.map(team => {
+    return teams.map((team) => {
       const schedule = schedules.get(team.teamId) || [];
       return this.simulate(team, schedule, simulations);
     });

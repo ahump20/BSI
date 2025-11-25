@@ -97,7 +97,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     let searchRequest: SearchRequest;
 
     if (request.method === 'POST') {
-      searchRequest = await request.json() as SearchRequest;
+      searchRequest = (await request.json()) as SearchRequest;
     } else {
       // GET request - parse query parameters
       const url = new URL(request.url);
@@ -105,26 +105,36 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         query: url.searchParams.get('query') || url.searchParams.get('q') || '',
         sport: url.searchParams.get('sport') || undefined,
         topK: url.searchParams.get('topK') ? parseInt(url.searchParams.get('topK')!) : undefined,
-        minRelevance: url.searchParams.get('minRelevance') ? parseFloat(url.searchParams.get('minRelevance')!) : undefined,
+        minRelevance: url.searchParams.get('minRelevance')
+          ? parseFloat(url.searchParams.get('minRelevance')!)
+          : undefined,
       };
     }
 
     // Validate query
     if (!searchRequest.query || searchRequest.query.trim().length === 0) {
-      return new Response(JSON.stringify({
-        error: 'Missing query parameter',
-        message: 'Please provide a search query via "query" parameter (GET) or request body (POST)',
-        example: {
-          GET: '/api/copilot/search?query=close+games+this+week',
-          POST: { query: 'close games this week', sport: 'NFL', topK: 10 }
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'Missing query parameter',
+            message:
+              'Please provide a search query via "query" parameter (GET) or request body (POST)',
+            example: {
+              GET: '/api/copilot/search?query=close+games+this+week',
+              POST: { query: 'close games this week', sport: 'NFL', topK: 10 },
+            },
+          },
+          null,
+          2
+        ),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
         }
-      }, null, 2), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders,
-        }
-      });
+      );
     }
 
     // Set defaults
@@ -147,23 +157,30 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         env.ANALYTICS.writeDataPoint({
           blobs: ['copilot_search', 'cache_hit'],
           doubles: [1],
-          indexes: [sport || 'all']
+          indexes: [sport || 'all'],
         });
       }
 
-      return new Response(JSON.stringify({
-        ...cached,
-        cached: true,
-        cacheAge: Math.floor((Date.now() - new Date(cached.timestamp).getTime()) / 1000) + 's'
-      }, null, 2), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Cache': 'HIT',
-          'X-Search-Query': query,
-          ...corsHeaders,
+      return new Response(
+        JSON.stringify(
+          {
+            ...cached,
+            cached: true,
+            cacheAge: Math.floor((Date.now() - new Date(cached.timestamp).getTime()) / 1000) + 's',
+          },
+          null,
+          2
+        ),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Cache': 'HIT',
+            'X-Search-Query': query,
+            ...corsHeaders,
+          },
         }
-      });
+      );
     }
 
     // Step 1: Generate embedding for query using Workers AI
@@ -173,7 +190,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     try {
       const embedResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-        text: query
+        text: query,
       });
 
       queryEmbedding = embedResponse.data?.[0];
@@ -187,17 +204,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       console.log(`Embedding generated in ${embeddingTime}ms (768 dimensions)`);
     } catch (error) {
       console.error('Embedding generation failed:', error);
-      return new Response(JSON.stringify({
-        error: 'Embedding generation failed',
-        message: error instanceof Error ? error.message : String(error),
-        timestamp: new Date().toISOString()
-      }, null, 2), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders,
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'Embedding generation failed',
+            message: error instanceof Error ? error.message : String(error),
+            timestamp: new Date().toISOString(),
+          },
+          null,
+          2
+        ),
+        {
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
         }
-      });
+      );
     }
 
     // Step 2: Search Vectorize index
@@ -222,27 +246,38 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       vectorSearchCompleted = true;
 
       const vectorSearchTime = Date.now() - vectorSearchStart;
-      console.log(`Vectorize search completed in ${vectorSearchTime}ms (${vectorMatches.length} matches)`);
+      console.log(
+        `Vectorize search completed in ${vectorSearchTime}ms (${vectorMatches.length} matches)`
+      );
     } catch (error) {
       console.error('Vectorize search failed:', error);
-      return new Response(JSON.stringify({
-        error: 'Vector search failed',
-        message: error instanceof Error ? error.message : String(error),
-        note: 'This may indicate that embeddings have not been generated yet. Run the embedding generation script first.',
-        timestamp: new Date().toISOString()
-      }, null, 2), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders,
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'Vector search failed',
+            message: error instanceof Error ? error.message : String(error),
+            note: 'This may indicate that embeddings have not been generated yet. Run the embedding generation script first.',
+            timestamp: new Date().toISOString(),
+          },
+          null,
+          2
+        ),
+        {
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
         }
-      });
+      );
     }
 
     // Filter by minimum relevance score
-    const relevantMatches = vectorMatches.filter(match => match.score >= minRelevance);
+    const relevantMatches = vectorMatches.filter((match) => match.score >= minRelevance);
 
-    console.log(`Filtered to ${relevantMatches.length} matches above ${minRelevance} relevance threshold`);
+    console.log(
+      `Filtered to ${relevantMatches.length} matches above ${minRelevance} relevance threshold`
+    );
 
     // Step 3: Fetch game details from D1 database
     const dbLookupStart = Date.now();
@@ -250,7 +285,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     if (relevantMatches.length > 0) {
       // Extract game IDs from vector matches
-      const gameIds = relevantMatches.map(match => {
+      const gameIds = relevantMatches.map((match) => {
         // Vector ID format: "game-{game_id}"
         return parseInt(match.id.replace('game-', ''));
       });
@@ -264,13 +299,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         ORDER BY game_date DESC
       `;
 
-      const { results: games } = await env.DB.prepare(query).bind(...gameIds).all();
+      const { results: games } = await env.DB.prepare(query)
+        .bind(...gameIds)
+        .all();
 
       // Map games with relevance scores
       for (const game of games) {
         const gameRecord = game as any;
         const matchId = `game-${gameRecord.id}`;
-        const match = relevantMatches.find(m => m.id === matchId);
+        const match = relevantMatches.find((m) => m.id === matchId);
 
         if (match) {
           results.push({
@@ -284,7 +321,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             status: gameRecord.status,
             stadium_name: gameRecord.stadium_name,
             relevanceScore: Math.round(match.score * 1000) / 1000, // Round to 3 decimals
-            matchReason: match.metadata?.description || undefined
+            matchReason: match.metadata?.description || undefined,
           });
         }
       }
@@ -293,7 +330,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const dbLookupTime = Date.now() - dbLookupStart;
     const totalTime = Date.now() - startTime;
 
-    console.log(`Database lookup completed in ${dbLookupTime}ms (${results.length} games enriched)`);
+    console.log(
+      `Database lookup completed in ${dbLookupTime}ms (${results.length} games enriched)`
+    );
 
     // Build response
     const response: SearchResponse = {
@@ -308,8 +347,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         embeddingTime: `${Date.now() - embeddingStart}ms`,
         vectorSearchTime: `${Date.now() - vectorSearchStart}ms`,
         databaseLookupTime: `${dbLookupTime}ms`,
-        totalTime: `${totalTime}ms`
-      }
+        totalTime: `${totalTime}ms`,
+      },
     };
 
     // Store in cache (3-minute TTL)
@@ -320,13 +359,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       env.ANALYTICS.writeDataPoint({
         blobs: ['copilot_search', 'success', sport || 'all'],
         doubles: [
-          totalTime,                         // Index 0: Total time
-          results.length,                    // Index 1: Results count
-          Date.now() - embeddingStart,       // Index 2: Embedding time
-          Date.now() - vectorSearchStart,    // Index 3: Vector search time
-          dbLookupTime                       // Index 4: DB lookup time
+          totalTime, // Index 0: Total time
+          results.length, // Index 1: Results count
+          Date.now() - embeddingStart, // Index 2: Embedding time
+          Date.now() - vectorSearchStart, // Index 3: Vector search time
+          dbLookupTime, // Index 4: DB lookup time
         ],
-        indexes: [query.substring(0, 50)]  // First 50 chars for grouping
+        indexes: [query.substring(0, 50)], // First 50 chars for grouping
       });
     }
 
@@ -339,9 +378,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         'X-Results-Count': results.length.toString(),
         'X-Total-Time': `${totalTime}ms`,
         ...corsHeaders,
-      }
+      },
     });
-
   } catch (error) {
     console.error('Semantic search error:', error);
 
@@ -350,20 +388,27 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       env.ANALYTICS.writeDataPoint({
         blobs: ['copilot_search', 'error', error instanceof Error ? error.name : 'unknown'],
         doubles: [1, Date.now() - startTime],
-        indexes: [error instanceof Error ? error.message.substring(0, 50) : 'unknown']
+        indexes: [error instanceof Error ? error.message.substring(0, 50) : 'unknown'],
       });
     }
 
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : String(error),
-      timestamp: new Date().toISOString()
-    }, null, 2), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        ...corsHeaders,
+    return new Response(
+      JSON.stringify(
+        {
+          error: 'Internal server error',
+          message: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+        },
+        null,
+        2
+      ),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
       }
-    });
+    );
   }
 };

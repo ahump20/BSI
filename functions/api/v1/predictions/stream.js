@@ -20,7 +20,7 @@ import {
   getStreamStatus,
   getPredictionMetrics,
   stopPredictionStream,
-  identifyKeyMoments
+  identifyKeyMoments,
 } from '../../../../lib/ml/prediction-stream-manager.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
@@ -81,8 +81,8 @@ export async function onRequest(context) {
           meta: {
             oldestTimestamp: history.length > 0 ? history[0].timestamp : null,
             latestTimestamp: history.length > 0 ? history[history.length - 1].timestamp : null,
-            dataPoints: history.length
-          }
+            dataPoints: history.length,
+          },
         };
         break;
 
@@ -121,7 +121,9 @@ export async function onRequest(context) {
         break;
 
       default:
-        throw new Error(`Unknown action: ${action}. Valid actions: init, live, history, status, metrics, poll, stop`);
+        throw new Error(
+          `Unknown action: ${action}. Valid actions: init, live, history, status, metrics, poll, stop`
+        );
     }
 
     return new Response(JSON.stringify(result), {
@@ -129,24 +131,27 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': action === 'live' || action === 'poll'
-          ? 'no-cache, no-store, must-revalidate'
-          : 'public, max-age=60, s-maxage=120'
-      }
+        'Cache-Control':
+          action === 'live' || action === 'poll'
+            ? 'no-cache, no-store, must-revalidate'
+            : 'public, max-age=60, s-maxage=120',
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to process prediction stream request',
-      message: error.message,
-      action
-    }), {
-      status: error.message.includes('required') ? 400 : 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to process prediction stream request',
+        message: error.message,
+        action,
+      }),
+      {
+        status: error.message.includes('required') ? 400 : 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -160,16 +165,19 @@ async function handleSSEPolling(gameId, env) {
     const streamStatus = await getStreamStatus(gameId, env);
 
     if (streamStatus.status === 'not_initialized') {
-      return new Response(JSON.stringify({
-        error: 'Stream not initialized',
-        gameId
-      }), {
-        status: 404,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          error: 'Stream not initialized',
+          gameId,
+        }),
+        {
+          status: 404,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     }
 
     // Check for broadcast message in KV
@@ -186,8 +194,8 @@ async function handleSSEPolling(gameId, env) {
           ...corsHeaders,
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          Connection: 'keep-alive'
-        }
+          Connection: 'keep-alive',
+        },
       });
     } else {
       // No new data, return empty SSE response
@@ -197,22 +205,24 @@ async function handleSSEPolling(gameId, env) {
           ...corsHeaders,
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          Connection: 'keep-alive'
-        }
+          Connection: 'keep-alive',
+        },
       });
     }
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'SSE polling failed',
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'SSE polling failed',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 

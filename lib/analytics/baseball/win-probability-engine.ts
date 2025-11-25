@@ -66,15 +66,15 @@ export interface WinProbPoint {
 const WIN_EXPECTANCY_MATRIX: Record<number, Record<number, Record<number, number>>> = {
   // Simplified matrix - full implementation would have all 24 base-out states per inning
   1: {
-    0: { 0: 0.50, 1: 0.54, 2: 0.57, 3: 0.61, 4: 0.64, 5: 0.68, 6: 0.71, 7: 0.74 },
-    1: { 0: 0.47, 1: 0.50, 2: 0.53, 3: 0.56, 4: 0.60, 5: 0.63, 6: 0.66, 7: 0.69 },
-    2: { 0: 0.44, 1: 0.46, 2: 0.49, 3: 0.51, 4: 0.55, 5: 0.58, 6: 0.60, 7: 0.63 }
+    0: { 0: 0.5, 1: 0.54, 2: 0.57, 3: 0.61, 4: 0.64, 5: 0.68, 6: 0.71, 7: 0.74 },
+    1: { 0: 0.47, 1: 0.5, 2: 0.53, 3: 0.56, 4: 0.6, 5: 0.63, 6: 0.66, 7: 0.69 },
+    2: { 0: 0.44, 1: 0.46, 2: 0.49, 3: 0.51, 4: 0.55, 5: 0.58, 6: 0.6, 7: 0.63 },
   },
   9: {
-    0: { 0: 0.50, 1: 0.60, 2: 0.68, 3: 0.75, 4: 0.80, 5: 0.85, 6: 0.90, 7: 0.93 },
-    1: { 0: 0.45, 1: 0.55, 2: 0.63, 3: 0.70, 4: 0.75, 5: 0.80, 6: 0.85, 7: 0.88 },
-    2: { 0: 0.40, 1: 0.48, 2: 0.56, 3: 0.63, 4: 0.68, 5: 0.73, 6: 0.78, 7: 0.82 }
-  }
+    0: { 0: 0.5, 1: 0.6, 2: 0.68, 3: 0.75, 4: 0.8, 5: 0.85, 6: 0.9, 7: 0.93 },
+    1: { 0: 0.45, 1: 0.55, 2: 0.63, 3: 0.7, 4: 0.75, 5: 0.8, 6: 0.85, 7: 0.88 },
+    2: { 0: 0.4, 1: 0.48, 2: 0.56, 3: 0.63, 4: 0.68, 5: 0.73, 6: 0.78, 7: 0.82 },
+  },
   // Additional innings would be interpolated
 };
 
@@ -89,10 +89,7 @@ export class LiveWinProbabilityEngine {
   static calculateWinProbability(gameState: GameState): WinProbability {
     try {
       // Step 1: Base probability from team strength (Log5)
-      const baseProbability = this.log5(
-        gameState.homeTeamStrength,
-        gameState.awayTeamStrength
-      );
+      const baseProbability = this.log5(gameState.homeTeamStrength, gameState.awayTeamStrength);
 
       // Step 2: Adjust for score differential
       const scoreDiffAdjustment = this.scoreAdjustment(
@@ -121,17 +118,13 @@ export class LiveWinProbabilityEngine {
       // Step 5: Combine methods (weighted average)
       // Win expectancy: 70%, Team strength: 30%
       const combinedProbability =
-        (winExpectancy * 0.70) +
-        ((baseProbability + scoreDiffAdjustment) * 0.30);
+        winExpectancy * 0.7 + (baseProbability + scoreDiffAdjustment) * 0.3;
 
       // Clamp to valid range
       const homeWinProb = Math.max(0.01, Math.min(0.99, combinedProbability));
 
       // Determine momentum
-      const momentum = this.determineMomentum(
-        homeWinProb,
-        gameState.leadChanged
-      );
+      const momentum = this.determineMomentum(homeWinProb, gameState.leadChanged);
 
       return {
         homeWinProbability: Math.round(homeWinProb * 1000) / 1000,
@@ -145,18 +138,18 @@ export class LiveWinProbabilityEngine {
           'Bill James (1981) - The Bill James Baseball Abstract',
           'Tango, Lichtman, Dolphin (2007) - The Book: Playing the Percentages',
           'Fangraphs Leverage Index methodology (2002-2024)',
-          'Baseball Prospectus Win Expectancy research (1999-2024)'
+          'Baseball Prospectus Win Expectancy research (1999-2024)',
         ],
         lastUpdated: new Date().toLocaleString('en-US', {
-          timeZone: 'America/Chicago'
-        })
+          timeZone: 'America/Chicago',
+        }),
       };
     } catch (error) {
       console.error('Win probability calculation error:', error);
       // Return neutral probability on error
       return {
-        homeWinProbability: 0.500,
-        awayWinProbability: 0.500,
+        homeWinProbability: 0.5,
+        awayWinProbability: 0.5,
         winProbabilityAdded: 0,
         leverageIndex: 1.0,
         criticalMoment: false,
@@ -164,8 +157,8 @@ export class LiveWinProbabilityEngine {
         methodology: 'Error - returned neutral probability',
         citations: [],
         lastUpdated: new Date().toLocaleString('en-US', {
-          timeZone: 'America/Chicago'
-        })
+          timeZone: 'America/Chicago',
+        }),
       };
     }
   }
@@ -178,8 +171,8 @@ export class LiveWinProbabilityEngine {
    * Where A and B are team winning percentages
    */
   private static log5(teamA: number, teamB: number): number {
-    if (teamA <= 0 || teamA >= 1) teamA = 0.500;
-    if (teamB <= 0 || teamB >= 1) teamB = 0.500;
+    if (teamA <= 0 || teamA >= 1) teamA = 0.5;
+    if (teamB <= 0 || teamB >= 1) teamB = 0.5;
 
     return (teamA - teamA * teamB) / (teamA + teamB - 2 * teamA * teamB);
   }
@@ -195,8 +188,8 @@ export class LiveWinProbabilityEngine {
     totalGames: number
   ): number {
     // More weight to current score late in season
-    const seasonWeight = 1 - (gamesRemaining / totalGames);
-    const runValue = 0.10; // Each run worth ~10% win probability
+    const seasonWeight = 1 - gamesRemaining / totalGames;
+    const runValue = 0.1; // Each run worth ~10% win probability
 
     // Diminishing returns: tanh function
     const adjustment = Math.tanh(scoreDiff * runValue) * 0.3 * seasonWeight;
@@ -217,15 +210,13 @@ export class LiveWinProbabilityEngine {
   ): number {
     // Convert runners to binary code (0-7)
     const runnersCode =
-      (runners.first ? 1 : 0) +
-      (runners.second ? 2 : 0) +
-      (runners.third ? 4 : 0);
+      (runners.first ? 1 : 0) + (runners.second ? 2 : 0) + (runners.third ? 4 : 0);
 
     // Clamp inning to available data
     const matrixInning = Math.min(Math.max(inning, 1), 9);
 
     // Get base expectancy
-    let baseExpectancy = WIN_EXPECTANCY_MATRIX[matrixInning]?.[outs]?.[runnersCode] || 0.50;
+    let baseExpectancy = WIN_EXPECTANCY_MATRIX[matrixInning]?.[outs]?.[runnersCode] || 0.5;
 
     // Adjust for bottom of inning (home team batting)
     if (half === 'bottom') {
@@ -236,7 +227,7 @@ export class LiveWinProbabilityEngine {
     const scoreAdjustment = 1 / (1 + Math.exp(-scoreDiff * 0.5));
 
     // Combine base expectancy with score (70% score, 30% base)
-    const combinedExpectancy = (scoreAdjustment * 0.70) + (baseExpectancy * 0.30);
+    const combinedExpectancy = scoreAdjustment * 0.7 + baseExpectancy * 0.3;
 
     return combinedExpectancy;
   }
@@ -263,20 +254,14 @@ export class LiveWinProbabilityEngine {
 
     // Runners factor (more runners = higher leverage)
     const runnersCount =
-      (runners.first ? 1 : 0) +
-      (runners.second ? 1 : 0) +
-      (runners.third ? 1 : 0);
-    const runnersFactor = 1 + (runnersCount * 0.2);
+      (runners.first ? 1 : 0) + (runners.second ? 1 : 0) + (runners.third ? 1 : 0);
+    const runnersFactor = 1 + runnersCount * 0.2;
 
     // Outs factor (2 outs = highest leverage)
-    const outsFactor = outs === 2 ? 1.3 : (outs === 1 ? 1.1 : 1.0);
+    const outsFactor = outs === 2 ? 1.3 : outs === 1 ? 1.1 : 1.0;
 
     // Combine factors
-    const leverageIndex =
-      inningFactor *
-      scoreCloseness *
-      runnersFactor *
-      outsFactor;
+    const leverageIndex = inningFactor * scoreCloseness * runnersFactor * outsFactor;
 
     return Math.max(0.1, Math.min(3.0, leverageIndex));
   }
@@ -301,10 +286,7 @@ export class LiveWinProbabilityEngine {
    * Calculate Win Probability Added (WPA) for a specific play
    * Measures how much a single play changed win probability
    */
-  static calculateWPA(
-    beforeState: GameState,
-    afterState: GameState
-  ): number {
+  static calculateWPA(beforeState: GameState, afterState: GameState): number {
     const beforeProb = this.calculateWinProbability(beforeState);
     const afterProb = this.calculateWinProbability(afterState);
 
@@ -318,10 +300,8 @@ export class LiveWinProbabilityEngine {
    * Generate complete game timeline of win probability
    * Useful for post-game analysis and visualization
    */
-  static generateGameTimeline(
-    plays: GameState[]
-  ): WinProbPoint[] {
-    return plays.map(play => {
+  static generateGameTimeline(plays: GameState[]): WinProbPoint[] {
+    return plays.map((play) => {
       const winProb = this.calculateWinProbability(play);
 
       return {
@@ -330,10 +310,12 @@ export class LiveWinProbabilityEngine {
         outs: play.outs,
         homeWinProb: winProb.homeWinProbability * 100,
         criticalMoment: winProb.criticalMoment,
-        description: play.lastPlay || `${play.half} ${play.inning}, ${play.outs} out${play.outs !== 1 ? 's' : ''}`,
+        description:
+          play.lastPlay ||
+          `${play.half} ${play.inning}, ${play.outs} out${play.outs !== 1 ? 's' : ''}`,
         timestamp: new Date().toLocaleString('en-US', {
-          timeZone: 'America/Chicago'
-        })
+          timeZone: 'America/Chicago',
+        }),
       };
     });
   }

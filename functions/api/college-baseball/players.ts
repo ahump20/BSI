@@ -28,7 +28,12 @@ const COLLEGE_BASEBALL_TEAMS: CollegeBaseballTeam[] = [
   { espnId: '51', slug: 'florida', name: 'Florida Gators', conference: 'SEC' },
   { espnId: '54', slug: 'georgia', name: 'Georgia Bulldogs', conference: 'SEC' },
   { espnId: '2', slug: 'auburn', name: 'Auburn Tigers', conference: 'SEC' },
-  { espnId: '97', slug: 'mississippi-state', name: 'Mississippi State Bulldogs', conference: 'SEC' },
+  {
+    espnId: '97',
+    slug: 'mississippi-state',
+    name: 'Mississippi State Bulldogs',
+    conference: 'SEC',
+  },
   { espnId: '116', slug: 'ole-miss', name: 'Ole Miss Rebels', conference: 'SEC' },
   { espnId: '77', slug: 'kentucky', name: 'Kentucky Wildcats', conference: 'SEC' },
   { espnId: '219', slug: 'vanderbilt', name: 'Vanderbilt Commodores', conference: 'SEC' },
@@ -110,13 +115,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Apply conference filter
     if (conferenceFilter) {
-      teamsToFetch = teamsToFetch.filter(t => t.conference === conferenceFilter);
+      teamsToFetch = teamsToFetch.filter((t) => t.conference === conferenceFilter);
     }
 
     // Apply team filter
     if (teamFilter) {
-      teamsToFetch = teamsToFetch.filter(t =>
-        t.slug.includes(teamFilter) || t.name.toLowerCase().includes(teamFilter)
+      teamsToFetch = teamsToFetch.filter(
+        (t) => t.slug.includes(teamFilter) || t.name.toLowerCase().includes(teamFilter)
       );
     }
 
@@ -172,7 +177,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             continue;
           }
 
-          const headshotUrl = player.headshot?.href ||
+          const headshotUrl =
+            player.headshot?.href ||
             `https://a.espncdn.com/i/headshots/college-baseball/players/full/${player.id}.png`;
 
           allPlayers.push({

@@ -428,10 +428,13 @@ export function withLogging(
       requestLogger.info('Request started');
       const response = await handler(request, env, ctx, requestLogger);
 
-      requestLogger.info({
-        status: response.status,
-        statusText: response.statusText,
-      }, 'Request completed');
+      requestLogger.info(
+        {
+          status: response.status,
+          statusText: response.statusText,
+        },
+        'Request completed'
+      );
 
       stopTimer();
 

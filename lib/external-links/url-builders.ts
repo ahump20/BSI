@@ -54,7 +54,10 @@ export function getBaseballReferencePlayerUrl(
  * Generate a Baseball Savant (Statcast) player URL from MLBAM ID
  */
 export function getBaseballSavantUrl(mlbamId: number, playerName: string): string {
-  const slug = playerName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z-]/g, '');
+  const slug = playerName
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z-]/g, '');
   return `https://baseballsavant.mlb.com/savant-player/${slug}-${mlbamId}`;
 }
 
@@ -71,7 +74,10 @@ export function getFangraphsSearchUrl(playerName: string): string {
  * Generate ESPN MLB player URL
  */
 export function getESPNMLBPlayerUrl(espnId: string | number, playerName: string): string {
-  const slug = playerName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z-]/g, '');
+  const slug = playerName
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z-]/g, '');
   return `https://www.espn.com/mlb/player/_/id/${espnId}/${slug}`;
 }
 
@@ -80,14 +86,36 @@ export function getESPNMLBPlayerUrl(espnId: string | number, playerName: string)
  */
 export function getMLBTeamUrl(teamAbbrev: string): string {
   const abbrevMap: Record<string, string> = {
-    'STL': 'cardinals', 'NYY': 'yankees', 'BOS': 'redsox', 'LAD': 'dodgers',
-    'CHC': 'cubs', 'SF': 'giants', 'ATL': 'braves', 'HOU': 'astros',
-    'PHI': 'phillies', 'NYM': 'mets', 'SD': 'padres', 'TEX': 'rangers',
-    'SEA': 'mariners', 'MIN': 'twins', 'CLE': 'guardians', 'TB': 'rays',
-    'BAL': 'orioles', 'TOR': 'bluejays', 'CWS': 'whitesox', 'KC': 'royals',
-    'DET': 'tigers', 'OAK': 'athletics', 'LAA': 'angels', 'ARI': 'dbacks',
-    'COL': 'rockies', 'MIA': 'marlins', 'MIL': 'brewers', 'CIN': 'reds',
-    'PIT': 'pirates', 'WSH': 'nationals'
+    STL: 'cardinals',
+    NYY: 'yankees',
+    BOS: 'redsox',
+    LAD: 'dodgers',
+    CHC: 'cubs',
+    SF: 'giants',
+    ATL: 'braves',
+    HOU: 'astros',
+    PHI: 'phillies',
+    NYM: 'mets',
+    SD: 'padres',
+    TEX: 'rangers',
+    SEA: 'mariners',
+    MIN: 'twins',
+    CLE: 'guardians',
+    TB: 'rays',
+    BAL: 'orioles',
+    TOR: 'bluejays',
+    CWS: 'whitesox',
+    KC: 'royals',
+    DET: 'tigers',
+    OAK: 'athletics',
+    LAA: 'angels',
+    ARI: 'dbacks',
+    COL: 'rockies',
+    MIA: 'marlins',
+    MIL: 'brewers',
+    CIN: 'reds',
+    PIT: 'pirates',
+    WSH: 'nationals',
   };
   const slug = abbrevMap[teamAbbrev.toUpperCase()] || teamAbbrev.toLowerCase();
   return `https://www.mlb.com/${slug}`;
@@ -144,7 +172,10 @@ export function getProFootballReferenceUrl(
  * Generate ESPN NFL player URL
  */
 export function getESPNNFLPlayerUrl(espnId: string | number, playerName: string): string {
-  const slug = playerName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z-]/g, '');
+  const slug = playerName
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z-]/g, '');
   return `https://www.espn.com/nfl/player/_/id/${espnId}/${slug}`;
 }
 
@@ -152,7 +183,10 @@ export function getESPNNFLPlayerUrl(espnId: string | number, playerName: string)
  * Generate NFL.com player URL
  */
 export function getNFLOfficialPlayerUrl(playerName: string): string {
-  const slug = playerName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z-]/g, '');
+  const slug = playerName
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z-]/g, '');
   return `https://www.nfl.com/players/${slug}/`;
 }
 
@@ -192,33 +226,33 @@ export interface CollegeTeamLinks {
  * Map of school slugs to official athletic site domains
  */
 const SCHOOL_DOMAINS: Record<string, string> = {
-  'texas': 'texaslonghorns.com',
+  texas: 'texaslonghorns.com',
   'texas-am': '12thman.com',
-  'lsu': 'lsusports.net',
-  'florida': 'floridagators.com',
-  'tennessee': 'utsports.com',
-  'vanderbilt': 'vucommodores.com',
-  'arkansas': 'arkansasrazorbacks.com',
+  lsu: 'lsusports.net',
+  florida: 'floridagators.com',
+  tennessee: 'utsports.com',
+  vanderbilt: 'vucommodores.com',
+  arkansas: 'arkansasrazorbacks.com',
   'ole-miss': 'olemisssports.com',
   'mississippi-state': 'hailstate.com',
-  'auburn': 'auburntigers.com',
-  'alabama': 'rolltide.com',
-  'georgia': 'georgiadogs.com',
+  auburn: 'auburntigers.com',
+  alabama: 'rolltide.com',
+  georgia: 'georgiadogs.com',
   'south-carolina': 'gamecocksonline.com',
-  'kentucky': 'ukathletics.com',
-  'missouri': 'mutigers.com',
-  'oklahoma': 'soonersports.com',
-  'tcu': 'gofrogs.com',
+  kentucky: 'ukathletics.com',
+  missouri: 'mutigers.com',
+  oklahoma: 'soonersports.com',
+  tcu: 'gofrogs.com',
   'oklahoma-state': 'okstate.com',
-  'baylor': 'baylorbears.com',
+  baylor: 'baylorbears.com',
   'texas-tech': 'texastech.com',
-  'stanford': 'gostanford.com',
+  stanford: 'gostanford.com',
   'oregon-state': 'osubeavers.com',
   'wake-forest': 'godeacs.com',
-  'virginia': 'virginiasports.com',
+  virginia: 'virginiasports.com',
   'nc-state': 'gopack.com',
-  'miami': 'miamihurricanes.com',
-  'clemson': 'clemsontigers.com',
+  miami: 'miamihurricanes.com',
+  clemson: 'clemsontigers.com',
   'notre-dame': 'und.com',
 };
 
@@ -226,22 +260,22 @@ const SCHOOL_DOMAINS: Record<string, string> = {
  * Map of school slugs to ESPN team IDs
  */
 const ESPN_TEAM_IDS: Record<string, string> = {
-  'texas': '251',
+  texas: '251',
   'texas-am': '245',
-  'lsu': '99',
-  'florida': '57',
-  'tennessee': '2633',
-  'vanderbilt': '238',
-  'arkansas': '8',
+  lsu: '99',
+  florida: '57',
+  tennessee: '2633',
+  vanderbilt: '238',
+  arkansas: '8',
   'ole-miss': '145',
   'mississippi-state': '344',
-  'auburn': '2',
-  'alabama': '333',
-  'georgia': '61',
+  auburn: '2',
+  alabama: '333',
+  georgia: '61',
   'south-carolina': '2579',
-  'kentucky': '96',
-  'missouri': '142',
-  'oklahoma': '201',
+  kentucky: '96',
+  missouri: '142',
+  oklahoma: '201',
 };
 
 /**
@@ -286,17 +320,17 @@ export function getRivalsUrl(schoolSlug: string): string {
  * Get SBNation team blog URL
  */
 const SBNATION_SITES: Record<string, string> = {
-  'texas': 'burntorangenation.com',
+  texas: 'burntorangenation.com',
   'texas-am': 'goodbullhunting.com',
-  'lsu': 'andthevalleyshook.com',
-  'florida': 'alligatorarmy.com',
-  'tennessee': 'rockytoptalk.com',
-  'arkansas': 'arkansasfight.com',
+  lsu: 'andthevalleyshook.com',
+  florida: 'alligatorarmy.com',
+  tennessee: 'rockytoptalk.com',
+  arkansas: 'arkansasfight.com',
   'ole-miss': 'redfiredmind.com',
-  'auburn': 'collegeandmagnolia.com',
-  'alabama': 'rollbamaroll.com',
-  'georgia': 'dawgsports.com',
-  'oklahoma': 'crimsonandcreammachine.com',
+  auburn: 'collegeandmagnolia.com',
+  alabama: 'rollbamaroll.com',
+  georgia: 'dawgsports.com',
+  oklahoma: 'crimsonandcreammachine.com',
 };
 
 export function getSBNationUrl(schoolSlug: string): string | undefined {
@@ -369,7 +403,20 @@ export function getPrepBaseballReportSearchUrl(playerName: string): string {
 export interface ExternalLink {
   name: string;
   url: string;
-  icon: 'espn' | 'bbref' | 'savant' | 'fangraphs' | 'official' | '247' | 'on3' | 'rivals' | 'd1baseball' | 'pfr' | 'nfl' | 'pg' | 'maxpreps';
+  icon:
+    | 'espn'
+    | 'bbref'
+    | 'savant'
+    | 'fangraphs'
+    | 'official'
+    | '247'
+    | 'on3'
+    | 'rivals'
+    | 'd1baseball'
+    | 'pfr'
+    | 'nfl'
+    | 'pg'
+    | 'maxpreps';
   category: 'stats' | 'news' | 'recruiting' | 'official';
 }
 
@@ -388,18 +435,14 @@ export function getPlayerExternalLinksArray(
   const links: ExternalLink[] = [];
 
   if (sport === 'baseball') {
-    const mlbLinks = getMLBPlayerExternalLinks(
-      playerName,
-      options?.mlbamId,
-      options?.teamAbbrev
-    );
+    const mlbLinks = getMLBPlayerExternalLinks(playerName, options?.mlbamId, options?.teamAbbrev);
 
     if (mlbLinks.baseballReference) {
       links.push({
         name: 'Baseball-Reference',
         url: mlbLinks.baseballReference,
         icon: 'bbref',
-        category: 'stats'
+        category: 'stats',
       });
     }
     if (mlbLinks.baseballSavant) {
@@ -407,7 +450,7 @@ export function getPlayerExternalLinksArray(
         name: 'Baseball Savant',
         url: mlbLinks.baseballSavant,
         icon: 'savant',
-        category: 'stats'
+        category: 'stats',
       });
     }
     if (mlbLinks.fangraphs) {
@@ -415,7 +458,7 @@ export function getPlayerExternalLinksArray(
         name: 'FanGraphs',
         url: mlbLinks.fangraphs,
         icon: 'fangraphs',
-        category: 'stats'
+        category: 'stats',
       });
     }
     if (mlbLinks.espn) {
@@ -423,7 +466,7 @@ export function getPlayerExternalLinksArray(
         name: 'ESPN',
         url: mlbLinks.espn,
         icon: 'espn',
-        category: 'news'
+        category: 'news',
       });
     }
     if (mlbLinks.mlbOfficial) {
@@ -431,7 +474,7 @@ export function getPlayerExternalLinksArray(
         name: 'MLB.com',
         url: mlbLinks.mlbOfficial,
         icon: 'official',
-        category: 'official'
+        category: 'official',
       });
     }
   } else if (sport === 'football') {
@@ -442,7 +485,7 @@ export function getPlayerExternalLinksArray(
         name: 'Pro-Football-Reference',
         url: nflLinks.proFootballReference,
         icon: 'pfr',
-        category: 'stats'
+        category: 'stats',
       });
     }
     if (nflLinks.espn) {
@@ -450,7 +493,7 @@ export function getPlayerExternalLinksArray(
         name: 'ESPN',
         url: nflLinks.espn,
         icon: 'espn',
-        category: 'news'
+        category: 'news',
       });
     }
     if (nflLinks.nflOfficial) {
@@ -458,7 +501,7 @@ export function getPlayerExternalLinksArray(
         name: 'NFL.com',
         url: nflLinks.nflOfficial,
         icon: 'nfl',
-        category: 'official'
+        category: 'official',
       });
     }
   }

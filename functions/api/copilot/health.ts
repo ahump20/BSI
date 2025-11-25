@@ -42,26 +42,26 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const testQuery = await env.DB.prepare('SELECT 1 as test').first();
 
     // Count teams to verify data exists
-    const teamCount = await env.DB
-      .prepare('SELECT COUNT(*) as count FROM teams')
-      .first() as { count: number } | null;
+    const teamCount = (await env.DB.prepare('SELECT COUNT(*) as count FROM teams').first()) as {
+      count: number;
+    } | null;
 
     // Count games
-    const gameCount = await env.DB
-      .prepare('SELECT COUNT(*) as count FROM games')
-      .first() as { count: number } | null;
+    const gameCount = (await env.DB.prepare('SELECT COUNT(*) as count FROM games').first()) as {
+      count: number;
+    } | null;
 
     checks.push({
       service: 'D1 Database',
       status: testQuery && teamCount ? 'healthy' : 'degraded',
       responseTime: `${Date.now() - d1Start}ms`,
-      details: `${teamCount?.count || 0} teams, ${gameCount?.count || 0} games`
+      details: `${teamCount?.count || 0} teams, ${gameCount?.count || 0} games`,
     });
   } catch (error) {
     checks.push({
       service: 'D1 Database',
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 
@@ -85,13 +85,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     checks.push({
       service: 'KV Namespace (CACHE)',
       status: readValue === testValue ? 'healthy' : 'degraded',
-      responseTime: `${Date.now() - kvStart}ms`
+      responseTime: `${Date.now() - kvStart}ms`,
     });
   } catch (error) {
     checks.push({
       service: 'KV Namespace (CACHE)',
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 
@@ -108,13 +108,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       service: 'R2 Bucket (EMBEDDINGS)',
       status: 'healthy',
       responseTime: `${Date.now() - r2Start}ms`,
-      details: `${objects.objects.length} objects accessible`
+      details: `${objects.objects.length} objects accessible`,
     });
   } catch (error) {
     checks.push({
       service: 'R2 Bucket (EMBEDDINGS)',
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 
@@ -130,20 +130,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Query (don't insert, just test query capability)
     const results = await env.VECTOR_INDEX.query(testVector, {
       topK: 1,
-      returnMetadata: true
+      returnMetadata: true,
     });
 
     checks.push({
       service: 'Vectorize Index',
       status: 'healthy',
       responseTime: `${Date.now() - vecStart}ms`,
-      details: `${results.matches?.length || 0} indexed vectors`
+      details: `${results.matches?.length || 0} indexed vectors`,
     });
   } catch (error) {
     checks.push({
       service: 'Vectorize Index',
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 
@@ -154,7 +154,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const aiEmbedStart = Date.now();
 
     const embedResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-      text: 'health check test'
+      text: 'health check test',
     });
 
     const embedding = embedResponse.data?.[0];
@@ -164,13 +164,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       service: 'Workers AI (Embeddings)',
       status: isValid ? 'healthy' : 'degraded',
       responseTime: `${Date.now() - aiEmbedStart}ms`,
-      details: `bge-base-en-v1.5 (${embedding?.length || 0}d vector)`
+      details: `bge-base-en-v1.5 (${embedding?.length || 0}d vector)`,
     });
   } catch (error) {
     checks.push({
       service: 'Workers AI (Embeddings)',
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 
@@ -183,9 +183,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const llmResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
       messages: [
         { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: 'Say "OK" if you receive this message.' }
+        { role: 'user', content: 'Say "OK" if you receive this message.' },
       ],
-      max_tokens: 10
+      max_tokens: 10,
     });
 
     const responseText = llmResponse.response || '';
@@ -194,13 +194,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       service: 'Workers AI (LLM)',
       status: responseText.length > 0 ? 'healthy' : 'degraded',
       responseTime: `${Date.now() - aiLLMStart}ms`,
-      details: `llama-3.1-8b-instruct (${responseText.length} chars)`
+      details: `llama-3.1-8b-instruct (${responseText.length} chars)`,
     });
   } catch (error) {
     checks.push({
       service: 'Workers AI (LLM)',
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 
@@ -211,9 +211,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const summary = {
     total: checks.length,
-    healthy: checks.filter(c => c.status === 'healthy').length,
-    degraded: checks.filter(c => c.status === 'degraded').length,
-    unhealthy: checks.filter(c => c.status === 'unhealthy').length
+    healthy: checks.filter((c) => c.status === 'healthy').length,
+    degraded: checks.filter((c) => c.status === 'degraded').length,
+    unhealthy: checks.filter((c) => c.status === 'unhealthy').length,
   };
 
   // Determine overall status
@@ -237,22 +237,22 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     phase2_features: {
       semantic_search: overallStatus === 'healthy',
       rag_insights: overallStatus === 'healthy',
-      embedding_generation: checks.find(c => c.service.includes('Embeddings'))?.status === 'healthy',
-      vector_search: checks.find(c => c.service.includes('Vectorize'))?.status === 'healthy',
-      ai_chat: checks.find(c => c.service.includes('LLM'))?.status === 'healthy'
-    }
+      embedding_generation:
+        checks.find((c) => c.service.includes('Embeddings'))?.status === 'healthy',
+      vector_search: checks.find((c) => c.service.includes('Vectorize'))?.status === 'healthy',
+      ai_chat: checks.find((c) => c.service.includes('LLM'))?.status === 'healthy',
+    },
   };
 
   // Set HTTP status code
-  const statusCode = overallStatus === 'healthy' ? 200 :
-                     overallStatus === 'degraded' ? 503 : 500;
+  const statusCode = overallStatus === 'healthy' ? 200 : overallStatus === 'degraded' ? 503 : 500;
 
   return new Response(JSON.stringify(response, null, 2), {
     status: statusCode,
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': 'no-cache, no-store, must-revalidate'
-    }
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+    },
   });
 };

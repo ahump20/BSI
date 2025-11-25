@@ -26,12 +26,7 @@
  */
 
 import { DurableObject } from 'cloudflare:workers';
-import type {
-  GameState,
-  WinProbability,
-  Alert,
-  AlertPreferences
-} from '../lib/types';
+import type { GameState, WinProbability, Alert, AlertPreferences } from '../lib/types';
 import { LiveWinProbabilityEngine } from '../lib/analytics/baseball/win-probability-engine';
 import { alertEngine } from '../lib/notifications/smart-alert-engine';
 
@@ -102,7 +97,7 @@ export class GameBroadcaster extends DurableObject {
 
       return new Response(null, {
         status: 101,
-        webSocket: client
+        webSocket: client,
       });
     }
 
@@ -123,10 +118,7 @@ export class GameBroadcaster extends DurableObject {
   /**
    * Handle new WebSocket connection
    */
-  private async handleWebSocketConnection(
-    webSocket: WebSocket,
-    request: Request
-  ): Promise<void> {
+  private async handleWebSocketConnection(webSocket: WebSocket, request: Request): Promise<void> {
     // Accept the WebSocket connection
     this.ctx.acceptWebSocket(webSocket);
 
@@ -139,7 +131,7 @@ export class GameBroadcaster extends DurableObject {
       userId,
       gameIds: new Set(),
       connectedAt: new Date().toISOString(),
-      lastActivity: new Date().toISOString()
+      lastActivity: new Date().toISOString(),
     };
 
     this.sessions.set(webSocket, metadata);
@@ -150,9 +142,9 @@ export class GameBroadcaster extends DurableObject {
         type: 'game_update',
         data: {
           gameState: this.gameState,
-          winProbability: this.winProbability
+          winProbability: this.winProbability,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -164,9 +156,10 @@ export class GameBroadcaster extends DurableObject {
    */
   async webSocketMessage(webSocket: WebSocket, message: string | ArrayBuffer): Promise<void> {
     try {
-      const data: WebSocketMessage = typeof message === 'string'
-        ? JSON.parse(message)
-        : JSON.parse(new TextDecoder().decode(message as ArrayBuffer));
+      const data: WebSocketMessage =
+        typeof message === 'string'
+          ? JSON.parse(message)
+          : JSON.parse(new TextDecoder().decode(message as ArrayBuffer));
 
       const metadata = this.sessions.get(webSocket);
       if (!metadata) {
@@ -189,7 +182,7 @@ export class GameBroadcaster extends DurableObject {
         case 'ping':
           this.sendMessage(webSocket, {
             type: 'pong',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           break;
 
@@ -248,7 +241,7 @@ export class GameBroadcaster extends DurableObject {
     this.sendMessage(webSocket, {
       type: 'subscribe',
       data: { gameId, success: true },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -272,7 +265,7 @@ export class GameBroadcaster extends DurableObject {
     this.sendMessage(webSocket, {
       type: 'unsubscribe',
       data: { gameId, success: true },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -299,9 +292,9 @@ export class GameBroadcaster extends DurableObject {
       type: 'game_update',
       data: {
         gameState,
-        winProbability
+        winProbability,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     let activeCount = 0;
@@ -336,7 +329,7 @@ export class GameBroadcaster extends DurableObject {
     this.sendMessage(webSocket, {
       type: 'error' as any,
       data: { error },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -345,17 +338,14 @@ export class GameBroadcaster extends DurableObject {
    */
   private getGameState(): Response {
     if (!this.gameState || !this.winProbability) {
-      return Response.json(
-        { error: 'No game state available' },
-        { status: 404 }
-      );
+      return Response.json({ error: 'No game state available' }, { status: 404 });
     }
 
     return Response.json({
       gameState: this.gameState,
       winProbability: this.winProbability,
       subscriberCount: this.sessions.size,
-      lastUpdated: this.winProbability.lastUpdated
+      lastUpdated: this.winProbability.lastUpdated,
     });
   }
 
@@ -365,7 +355,7 @@ export class GameBroadcaster extends DurableObject {
   private getSubscriberCount(): Response {
     return Response.json({
       count: this.sessions.size,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -381,7 +371,7 @@ export class GameBroadcaster extends DurableObject {
       gameState: this.gameState,
       winProbability: this.winProbability,
       lastUpdated: new Date().toISOString(),
-      subscriberCount: this.sessions.size
+      subscriberCount: this.sessions.size,
     };
 
     await this.state.storage.put('snapshot', snapshot);
@@ -402,7 +392,7 @@ export class GameBroadcaster extends DurableObject {
       }
     });
 
-    staleConnections.forEach(webSocket => {
+    staleConnections.forEach((webSocket) => {
       webSocket.close(1000, 'Connection timeout');
       this.sessions.delete(webSocket);
     });
@@ -465,7 +455,7 @@ export class AlertBroadcaster extends DurableObject {
 
       return new Response(null, {
         status: 101,
-        webSocket: client
+        webSocket: client,
       });
     }
 
@@ -487,10 +477,7 @@ export class AlertBroadcaster extends DurableObject {
   /**
    * Handle WebSocket connection
    */
-  private async handleWebSocketConnection(
-    webSocket: WebSocket,
-    request: Request
-  ): Promise<void> {
+  private async handleWebSocketConnection(webSocket: WebSocket, request: Request): Promise<void> {
     this.ctx.acceptWebSocket(webSocket);
 
     const url = new URL(request.url);
@@ -510,15 +497,16 @@ export class AlertBroadcaster extends DurableObject {
    */
   async webSocketMessage(webSocket: WebSocket, message: string | ArrayBuffer): Promise<void> {
     try {
-      const data: WebSocketMessage = typeof message === 'string'
-        ? JSON.parse(message)
-        : JSON.parse(new TextDecoder().decode(message as ArrayBuffer));
+      const data: WebSocketMessage =
+        typeof message === 'string'
+          ? JSON.parse(message)
+          : JSON.parse(new TextDecoder().decode(message as ArrayBuffer));
 
       switch (data.type) {
         case 'ping':
           this.sendMessage({
             type: 'pong',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           break;
 
@@ -569,7 +557,7 @@ export class AlertBroadcaster extends DurableObject {
       this.sendMessage({
         type: 'alert',
         data: alert,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } else {
       // Otherwise, queue for later delivery
@@ -594,19 +582,19 @@ export class AlertBroadcaster extends DurableObject {
 
     // Check quiet hours
     if (this.alertPreferences.quietHours) {
-      const now = new Date().toLocaleString('en-US', {
-        timeZone: 'America/Chicago',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit'
-      }).split(', ')[1];
+      const now = new Date()
+        .toLocaleString('en-US', {
+          timeZone: 'America/Chicago',
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+        .split(', ')[1];
 
       const { start, end } = this.alertPreferences.quietHours;
 
       // Handle overnight quiet hours
-      const isQuietTime = start > end
-        ? now >= start || now < end
-        : now >= start && now < end;
+      const isQuietTime = start > end ? now >= start || now < end : now >= start && now < end;
 
       if (isQuietTime) {
         return false;
@@ -631,7 +619,7 @@ export class AlertBroadcaster extends DurableObject {
       this.sendMessage({
         type: 'alert',
         data: alert,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -664,13 +652,10 @@ export class AlertBroadcaster extends DurableObject {
 
       return Response.json({
         success: true,
-        preferences
+        preferences,
       });
     } catch (error) {
-      return Response.json(
-        { error: 'Invalid preferences data' },
-        { status: 400 }
-      );
+      return Response.json({ error: 'Invalid preferences data' }, { status: 400 });
     }
   }
 
@@ -681,7 +666,7 @@ export class AlertBroadcaster extends DurableObject {
     return Response.json({
       queue: this.alertQueue,
       count: this.alertQueue.length,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -696,7 +681,7 @@ export class AlertBroadcaster extends DurableObject {
     await this.state.storage.put('user_data', {
       userId: this.userId,
       preferences: this.alertPreferences,
-      queue: this.alertQueue
+      queue: this.alertQueue,
     });
   }
 
@@ -706,7 +691,7 @@ export class AlertBroadcaster extends DurableObject {
   async alarm(): Promise<void> {
     // Clear old alerts from queue (older than 1 hour)
     const oneHourAgo = Date.now() - 60 * 60 * 1000;
-    this.alertQueue = this.alertQueue.filter(alert => {
+    this.alertQueue = this.alertQueue.filter((alert) => {
       const alertTime = new Date(alert.timestamp).getTime();
       return alertTime > oneHourAgo;
     });
@@ -756,12 +741,12 @@ export default {
     if (url.pathname === '/health') {
       return Response.json({
         status: 'healthy',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
     return new Response('Not found', { status: 404 });
-  }
+  },
 };
 
 // ============================================================================

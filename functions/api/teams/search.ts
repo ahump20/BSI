@@ -58,15 +58,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     query: url.searchParams.get('q') || '',
     sport: url.searchParams.get('sport') || undefined,
     conference: url.searchParams.get('conference') || undefined,
-    limit: parseInt(url.searchParams.get('limit') || '20', 10)
+    limit: parseInt(url.searchParams.get('limit') || '20', 10),
   };
 
   // Validate query
   if (params.query.length < 2) {
-    return Response.json(
-      { error: 'Query must be at least 2 characters' },
-      { status: 400 }
-    );
+    return Response.json({ error: 'Query must be at least 2 characters' }, { status: 400 });
   }
 
   try {
@@ -78,8 +75,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       return Response.json(cached, {
         headers: {
           'Cache-Control': 'public, max-age=60, s-maxage=300',
-          'X-Cache-Status': 'hit'
-        }
+          'X-Cache-Status': 'hit',
+        },
       });
     }
 
@@ -88,21 +85,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Cache results for 5 minutes
     await env.KV.put(cacheKey, JSON.stringify(results), {
-      expirationTtl: 300
+      expirationTtl: 300,
     });
 
     return Response.json(results, {
       headers: {
         'Cache-Control': 'public, max-age=60, s-maxage=300',
-        'X-Cache-Status': 'miss'
-      }
+        'X-Cache-Status': 'miss',
+      },
     });
   } catch (error) {
     console.error('Team search error:', error);
     return Response.json(
       {
         error: 'Search failed',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -122,7 +119,7 @@ function buildCacheKey(params: SearchParams): string {
     params.query.toLowerCase(),
     params.sport || 'all',
     params.conference || 'all',
-    params.limit || 20
+    params.limit || 20,
   ];
   return parts.join(':');
 }
@@ -184,7 +181,7 @@ async function searchTeams(params: SearchParams, env: Env): Promise<Team[]> {
     `%${query}%`, // name contains
     `%${query}%`, // abbreviation contains
     `%${query}%`, // city contains
-    `%${query}%`  // conference contains
+    `%${query}%`, // conference contains
   ];
 
   if (params.sport) {
@@ -198,7 +195,9 @@ async function searchTeams(params: SearchParams, env: Env): Promise<Team[]> {
   binds.push(params.limit || 20);
 
   // Execute query
-  const results = await env.DB.prepare(sql).bind(...binds).all();
+  const results = await env.DB.prepare(sql)
+    .bind(...binds)
+    .all();
 
   if (!results.success) {
     throw new Error('Database query failed');
@@ -217,7 +216,7 @@ async function searchTeams(params: SearchParams, env: Env): Promise<Team[]> {
     winPct: row.winPct || undefined,
     ranking: row.ranking || undefined,
     city: row.city || undefined,
-    state: row.state || undefined
+    state: row.state || undefined,
   }));
 }
 

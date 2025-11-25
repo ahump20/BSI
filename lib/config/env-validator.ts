@@ -95,14 +95,7 @@ export function getEnv(env?: any): Env {
 export function checkForWeakSecrets(env?: any): string[] {
   const envSource = env || (typeof process !== 'undefined' ? process.env : {});
   const warnings: string[] = [];
-  const weakPatterns = [
-    'CHANGE_ME',
-    'password',
-    'secret',
-    'admin',
-    '123456',
-    'blaze',
-  ];
+  const weakPatterns = ['CHANGE_ME', 'password', 'secret', 'admin', '123456', 'blaze'];
 
   const secretFields = [
     'POSTGRES_PASSWORD',

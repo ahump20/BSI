@@ -28,45 +28,54 @@ export async function onRequestGet({ env, request }) {
     const consent = await env.CACHE.get(consentKey, 'json');
 
     if (!consent) {
-      return new Response(JSON.stringify({
-        hasConsent: false,
-        preferences: {
-          essential: true,
-          analytics: false,
-          timestamp: null
+      return new Response(
+        JSON.stringify({
+          hasConsent: false,
+          preferences: {
+            essential: true,
+            analytics: false,
+            timestamp: null,
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store, must-revalidate',
+          },
         }
-      }), {
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        hasConsent: true,
+        preferences: consent,
+      }),
+      {
         status: 200,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-store, must-revalidate'
-        }
-      });
-    }
-
-    return new Response(JSON.stringify({
-      hasConsent: true,
-      preferences: consent
-    }), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store, must-revalidate'
+          'Cache-Control': 'no-store, must-revalidate',
+        },
       }
-    });
+    );
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to retrieve consent preferences',
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to retrieve consent preferences',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -77,15 +86,18 @@ export async function onRequestPost({ env, request }) {
 
     // Validate preferences
     if (!preferences || typeof preferences !== 'object') {
-      return new Response(JSON.stringify({
-        error: 'Invalid consent preferences'
-      }), {
-        status: 400,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid consent preferences',
+        }),
+        {
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     }
 
     // Ensure essential cookies are always enabled
@@ -110,31 +122,37 @@ export async function onRequestPost({ env, request }) {
       env.ANALYTICS.writeDataPoint({
         blobs: ['cookie_consent_updated'],
         doubles: [preferences.analytics ? 1 : 0],
-        indexes: [validatedPreferences.timestamp.split('T')[0]] // Date only
+        indexes: [validatedPreferences.timestamp.split('T')[0]], // Date only
       });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      preferences: validatedPreferences
-    }), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        preferences: validatedPreferences,
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to save consent preferences',
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to save consent preferences',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -146,7 +164,7 @@ async function hashIP(ip) {
   const data = encoder.encode(ip + 'salt'); // Add salt for security
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 
   return hashHex.substring(0, 16); // Truncate for storage efficiency
 }

@@ -11,9 +11,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  CheckCircle, XCircle, AlertTriangle, Info, X, Loader2
-} from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Info, X, Loader2 } from 'lucide-react';
 
 // ==================== TYPES ====================
 
@@ -74,11 +72,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateToast = useCallback((id: string, updates: Partial<Toast>) => {
-    setToasts((prev) =>
-      prev.map((toast) =>
-        toast.id === id ? { ...toast, ...updates } : toast
-      )
-    );
+    setToasts((prev) => prev.map((toast) => (toast.id === id ? { ...toast, ...updates } : toast)));
   }, []);
 
   const clearToasts = useCallback(() => {
@@ -86,9 +80,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <ToastContext.Provider
-      value={{ toasts, addToast, removeToast, updateToast, clearToasts }}
-    >
+    <ToastContext.Provider value={{ toasts, addToast, removeToast, updateToast, clearToasts }}>
       {children}
       <ToastContainer />
     </ToastContext.Provider>
@@ -133,13 +125,7 @@ const bgColorMap: Record<ToastType, string> = {
   loading: 'from-orange-900/90 to-orange-950/90 border-orange-500/30',
 };
 
-function ToastItem({
-  toast,
-  onDismiss,
-}: {
-  toast: Toast;
-  onDismiss: (id: string) => void;
-}) {
+function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
@@ -180,9 +166,7 @@ function ToastItem({
           {/* Content */}
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-white text-sm">{toast.title}</h3>
-            {toast.description && (
-              <p className="mt-1 text-sm text-white/70">{toast.description}</p>
-            )}
+            {toast.description && <p className="mt-1 text-sm text-white/70">{toast.description}</p>}
             {toast.action && (
               <button
                 onClick={toast.action.onClick}
@@ -239,8 +223,7 @@ export function useToastHelpers() {
     warning: (title: string, description?: string) =>
       addToast({ type: 'warning', title, description }),
 
-    info: (title: string, description?: string) =>
-      addToast({ type: 'info', title, description }),
+    info: (title: string, description?: string) => addToast({ type: 'info', title, description }),
 
     loading: (title: string, description?: string) =>
       addToast({ type: 'loading', title, description, dismissible: false }),
@@ -263,9 +246,7 @@ export function useToastHelpers() {
         const data = await promise;
         updateToast(id, {
           type: 'success',
-          title: typeof messages.success === 'function'
-            ? messages.success(data)
-            : messages.success,
+          title: typeof messages.success === 'function' ? messages.success(data) : messages.success,
           dismissible: true,
           duration: 5000,
         });
@@ -273,9 +254,7 @@ export function useToastHelpers() {
       } catch (err) {
         updateToast(id, {
           type: 'error',
-          title: typeof messages.error === 'function'
-            ? messages.error(err)
-            : messages.error,
+          title: typeof messages.error === 'function' ? messages.error(err) : messages.error,
           dismissible: true,
           duration: 8000,
         });

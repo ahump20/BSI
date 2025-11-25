@@ -108,7 +108,7 @@ export async function fetchWithCache<T>(
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  const data = await response.json() as T;
+  const data = (await response.json()) as T;
 
   // Cache successful responses
   apiCache.set(cacheKey, data, options?.ttl);

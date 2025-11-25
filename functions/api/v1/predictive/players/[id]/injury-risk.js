@@ -66,17 +66,23 @@ export async function onRequest(context) {
     // Validate parameters
     const validSports = ['college-baseball', 'college-football', 'mlb', 'nfl', 'nba'];
     if (!validSports.includes(sport)) {
-      return jsonResponse({
-        error: 'Invalid sport parameter',
-        valid_sports: validSports
-      }, 400);
+      return jsonResponse(
+        {
+          error: 'Invalid sport parameter',
+          valid_sports: validSports,
+        },
+        400
+      );
     }
 
     if (lookbackDays < 1 || lookbackDays > 90) {
-      return jsonResponse({
-        error: 'Invalid lookback_days parameter',
-        message: 'Must be between 1 and 90 days'
-      }, 400);
+      return jsonResponse(
+        {
+          error: 'Invalid lookback_days parameter',
+          message: 'Must be between 1 and 90 days',
+        },
+        400
+      );
     }
 
     // Check cache first (1 hour TTL for injury risk - updates more frequently than projections)
@@ -86,18 +92,21 @@ export async function onRequest(context) {
       return jsonResponse({
         ...cached,
         cached: true,
-        cache_age_seconds: Math.floor((Date.now() - cached.generated_at) / 1000)
+        cache_age_seconds: Math.floor((Date.now() - cached.generated_at) / 1000),
       });
     }
 
     // Get player data
     const player = await getPlayerData(env.DB, playerId, sport);
     if (!player) {
-      return jsonResponse({
-        error: 'Player not found',
-        player_id: playerId,
-        sport
-      }, 404);
+      return jsonResponse(
+        {
+          error: 'Player not found',
+          player_id: playerId,
+          sport,
+        },
+        404
+      );
     }
 
     // Get workload data for the lookback period
@@ -111,13 +120,7 @@ export async function onRequest(context) {
 
     if (!riskScore || isStale(riskScore.updated_at)) {
       // Calculate new risk score
-      riskScore = await calculateInjuryRisk(
-        player,
-        workloadData,
-        sport,
-        model,
-        lookbackDays
-      );
+      riskScore = await calculateInjuryRisk(player, workloadData, sport, model, lookbackDays);
 
       // Store risk score in database
       await storeRiskScore(env.DB, riskScore);
@@ -133,34 +136,38 @@ export async function onRequest(context) {
         name: player.name,
         position: player.position,
         current_level: player.level,
-        age: calculateAge(player.birth_date)
+        age: calculateAge(player.birth_date),
       },
       risk_assessment: {
         risk_index: riskScore.risk_index,
         risk_category: riskScore.risk_category,
         confidence: 0.75, // Baseline confidence
-        last_updated: new Date(riskScore.updated_at * 1000).toISOString()
+        last_updated: new Date(riskScore.updated_at * 1000).toISOString(),
       },
       risk_factors: riskScore.reasons ? JSON.parse(riskScore.reasons) : [],
       workload_metrics: riskScore.workload_metrics ? JSON.parse(riskScore.workload_metrics) : {},
-      recommendations: riskScore.recommended_actions ? JSON.parse(riskScore.recommended_actions) : [],
+      recommendations: riskScore.recommended_actions
+        ? JSON.parse(riskScore.recommended_actions)
+        : [],
       historical_risk: {
         previous_injuries: historicalInjuries,
-        injury_prone_rating: calculateInjuryProneRating(historicalInjuries)
+        injury_prone_rating: calculateInjuryProneRating(historicalInjuries),
       },
-      model: model ? {
-        id: model.model_id,
-        name: model.model_name,
-        version: model.version,
-        trained_at: new Date(model.trained_at * 1000).toISOString()
-      } : null,
+      model: model
+        ? {
+            id: model.model_id,
+            name: model.model_name,
+            version: model.version,
+            trained_at: new Date(model.trained_at * 1000).toISOString(),
+          }
+        : null,
       meta: {
         data_source: 'Blaze Predictive Intelligence Engine',
         sport,
         lookback_days: lookbackDays,
         timezone: 'America/Chicago',
-        generated_at: Date.now()
-      }
+        generated_at: Date.now(),
+      },
     };
 
     // Cache for 1 hour
@@ -171,18 +178,20 @@ export async function onRequest(context) {
       env.ANALYTICS?.writeDataPoint({
         blobs: [`injury_risk_${riskScore.risk_category}`],
         doubles: [riskScore.risk_index],
-        indexes: [playerId, sport]
+        indexes: [playerId, sport],
       });
     }
 
     return jsonResponse(response);
-
   } catch (error) {
-    return jsonResponse({
-      error: 'Internal server error',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    }, 500);
+    return jsonResponse(
+      {
+        error: 'Internal server error',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+      },
+      500
+    );
   }
 }
 
@@ -190,7 +199,9 @@ export async function onRequest(context) {
  * Get player data from database
  */
 async function getPlayerData(db, playerId, sport) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT
       player_id,
       name,
@@ -201,7 +212,10 @@ async function getPlayerData(db, playerId, sport) {
     FROM players
     WHERE player_id = ? AND sport = ?
     LIMIT 1
-  `).bind(playerId, sport).first();
+  `
+    )
+    .bind(playerId, sport)
+    .first();
 
   return result;
 }
@@ -210,9 +224,11 @@ async function getPlayerData(db, playerId, sport) {
  * Get workload data for lookback period
  */
 async function getWorkloadData(db, playerId, lookbackDays) {
-  const cutoffTime = Math.floor(Date.now() / 1000) - (lookbackDays * 86400);
+  const cutoffTime = Math.floor(Date.now() / 1000) - lookbackDays * 86400;
 
-  const results = await db.prepare(`
+  const results = await db
+    .prepare(
+      `
     SELECT
       game_id,
       game_date,
@@ -225,7 +241,10 @@ async function getWorkloadData(db, playerId, lookbackDays) {
     WHERE player_id = ?
       AND game_date >= ?
     ORDER BY game_date DESC
-  `).bind(playerId, cutoffTime).all();
+  `
+    )
+    .bind(playerId, cutoffTime)
+    .all();
 
   return results.results || [];
 }
@@ -234,7 +253,9 @@ async function getWorkloadData(db, playerId, lookbackDays) {
  * Get active model
  */
 async function getActiveModel(db, sport, modelType) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT *
     FROM predictive_models
     WHERE sport = ?
@@ -242,7 +263,10 @@ async function getActiveModel(db, sport, modelType) {
       AND status = 'active'
     ORDER BY trained_at DESC
     LIMIT 1
-  `).bind(sport, modelType).first();
+  `
+    )
+    .bind(sport, modelType)
+    .first();
 
   return result;
 }
@@ -251,14 +275,19 @@ async function getActiveModel(db, sport, modelType) {
  * Get existing risk score
  */
 async function getExistingRiskScore(db, playerId, sport) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT *
     FROM injury_risk_scores
     WHERE player_id = ?
       AND sport = ?
     ORDER BY updated_at DESC
     LIMIT 1
-  `).bind(playerId, sport).first();
+  `
+    )
+    .bind(playerId, sport)
+    .first();
 
   return result;
 }
@@ -267,7 +296,7 @@ async function getExistingRiskScore(db, playerId, sport) {
  * Check if risk score is stale (older than 6 hours)
  */
 function isStale(updatedAt) {
-  const sixHoursAgo = Math.floor(Date.now() / 1000) - (6 * 3600);
+  const sixHoursAgo = Math.floor(Date.now() / 1000) - 6 * 3600;
   return updatedAt < sixHoursAgo;
 }
 
@@ -328,7 +357,7 @@ async function calculateInjuryRisk(player, workloadData, sport, model, lookbackD
     recommended_actions: JSON.stringify(recommendations),
     workload_metrics: JSON.stringify(workloadMetrics),
     model_id: model?.model_id || null,
-    updated_at: Math.floor(Date.now() / 1000)
+    updated_at: Math.floor(Date.now() / 1000),
   };
 }
 
@@ -345,7 +374,7 @@ function calculateWorkloadMetrics(workloadData, lookbackDays) {
     season_total: aggregateWorkload(workloadData),
     appearances_last_7: last7Days.length,
     appearances_last_14: last14Days.length,
-    appearances_season: workloadData.length
+    appearances_season: workloadData.length,
   };
 }
 
@@ -359,8 +388,8 @@ function aggregateWorkload(games) {
     total_pitches: games.reduce((sum, g) => sum + (g.pitches_thrown || 0), 0),
     total_innings: games.reduce((sum, g) => sum + (g.innings_pitched || 0), 0),
     avg_velocity: games.reduce((sum, g) => sum + (g.velocity_avg || 0), 0) / games.length,
-    max_velocity: Math.max(...games.map(g => g.velocity_max || 0)),
-    avg_rest_days: games.reduce((sum, g) => sum + (g.rest_days || 0), 0) / games.length
+    max_velocity: Math.max(...games.map((g) => g.velocity_max || 0)),
+    avg_rest_days: games.reduce((sum, g) => sum + (g.rest_days || 0), 0) / games.length,
   };
 }
 
@@ -379,7 +408,7 @@ function analyzePitchCount(metrics, riskFactors) {
       factor: 'High weekly pitch count',
       severity: 'high',
       contribution_pct: 25,
-      details: `${pitchesLast7} pitches in last 7 days (safe limit: 150)`
+      details: `${pitchesLast7} pitches in last 7 days (safe limit: 150)`,
     });
   } else if (pitchesLast7 > 120) {
     risk += 10;
@@ -387,7 +416,7 @@ function analyzePitchCount(metrics, riskFactors) {
       factor: 'Elevated weekly pitch count',
       severity: 'moderate',
       contribution_pct: 10,
-      details: `${pitchesLast7} pitches in last 7 days`
+      details: `${pitchesLast7} pitches in last 7 days`,
     });
   }
 
@@ -397,7 +426,7 @@ function analyzePitchCount(metrics, riskFactors) {
       factor: 'High bi-weekly pitch count',
       severity: 'high',
       contribution_pct: 20,
-      details: `${pitchesLast14} pitches in last 14 days (safe limit: 250)`
+      details: `${pitchesLast14} pitches in last 14 days (safe limit: 250)`,
     });
   }
 
@@ -423,7 +452,7 @@ function analyzeVelocityDrop(metrics, riskFactors) {
       factor: 'Significant velocity drop',
       severity: 'critical',
       contribution_pct: 30,
-      details: `Average velocity down ${velocityDrop.toFixed(1)} mph from season average`
+      details: `Average velocity down ${velocityDrop.toFixed(1)} mph from season average`,
     });
   } else if (velocityDrop >= 2) {
     risk += 15;
@@ -431,7 +460,7 @@ function analyzeVelocityDrop(metrics, riskFactors) {
       factor: 'Moderate velocity drop',
       severity: 'high',
       contribution_pct: 15,
-      details: `Average velocity down ${velocityDrop.toFixed(1)} mph from season average`
+      details: `Average velocity down ${velocityDrop.toFixed(1)} mph from season average`,
     });
   }
 
@@ -444,7 +473,8 @@ function analyzeVelocityDrop(metrics, riskFactors) {
 function analyzeRestDays(workloadData, sport, riskFactors) {
   if (workloadData.length < 2) return 0;
 
-  const avgRestDays = workloadData.reduce((sum, g) => sum + (g.rest_days || 0), 0) / workloadData.length;
+  const avgRestDays =
+    workloadData.reduce((sum, g) => sum + (g.rest_days || 0), 0) / workloadData.length;
   let risk = 0;
 
   if (sport === 'college-baseball') {
@@ -454,7 +484,7 @@ function analyzeRestDays(workloadData, sport, riskFactors) {
         factor: 'Insufficient rest',
         severity: 'high',
         contribution_pct: 20,
-        details: `Average ${avgRestDays.toFixed(1)} rest days (recommended: 3+ days)`
+        details: `Average ${avgRestDays.toFixed(1)} rest days (recommended: 3+ days)`,
       });
     }
   }
@@ -484,7 +514,7 @@ function analyzeConsecutiveAppearances(workloadData, riskFactors) {
       factor: 'Multiple consecutive appearances',
       severity: 'high',
       contribution_pct: 25,
-      details: `${consecutiveCount} consecutive appearances with minimal rest`
+      details: `${consecutiveCount} consecutive appearances with minimal rest`,
     });
   } else if (consecutiveCount >= 2) {
     risk += 10;
@@ -492,7 +522,7 @@ function analyzeConsecutiveAppearances(workloadData, riskFactors) {
       factor: 'Back-to-back appearances',
       severity: 'moderate',
       contribution_pct: 10,
-      details: `${consecutiveCount} consecutive appearances`
+      details: `${consecutiveCount} consecutive appearances`,
     });
   }
 
@@ -512,7 +542,7 @@ function analyzeSeasonWorkload(metrics, sport, riskFactors) {
       factor: 'High season workload',
       severity: 'moderate',
       contribution_pct: 15,
-      details: `${seasonInnings.toFixed(1)} innings pitched this season`
+      details: `${seasonInnings.toFixed(1)} innings pitched this season`,
     });
   }
 
@@ -529,19 +559,21 @@ function generateRecommendations(riskCategory, riskFactors, position) {
     recommendations.push({
       action: 'Immediate rest required',
       priority: 'critical',
-      rationale: 'Risk index above 75. Player should not pitch/play until risk factors are addressed.'
+      rationale:
+        'Risk index above 75. Player should not pitch/play until risk factors are addressed.',
     });
   } else if (riskCategory === 'high') {
     recommendations.push({
       action: 'Significant rest recommended',
       priority: 'high',
-      rationale: 'Risk index between 50-74. Recommend 3-5 days rest and workload monitoring.'
+      rationale: 'Risk index between 50-74. Recommend 3-5 days rest and workload monitoring.',
     });
   } else if (riskCategory === 'moderate') {
     recommendations.push({
       action: 'Monitor closely',
       priority: 'medium',
-      rationale: 'Risk index between 25-49. Continue normal schedule but watch for additional risk factors.'
+      rationale:
+        'Risk index between 25-49. Continue normal schedule but watch for additional risk factors.',
     });
   }
 
@@ -551,7 +583,7 @@ function generateRecommendations(riskCategory, riskFactors, position) {
       recommendations.push({
         action: 'Reduce pitch count per appearance',
         priority: 'high',
-        rationale: 'Lower pitch count to 75-85 per outing until risk normalizes.'
+        rationale: 'Lower pitch count to 75-85 per outing until risk normalizes.',
       });
     }
 
@@ -559,7 +591,8 @@ function generateRecommendations(riskCategory, riskFactors, position) {
       recommendations.push({
         action: 'Biomechanics evaluation',
         priority: 'high',
-        rationale: 'Velocity drop may indicate fatigue or mechanical issues. Consider evaluation by pitching coach or physical therapist.'
+        rationale:
+          'Velocity drop may indicate fatigue or mechanical issues. Consider evaluation by pitching coach or physical therapist.',
       });
     }
 
@@ -567,7 +600,7 @@ function generateRecommendations(riskCategory, riskFactors, position) {
       recommendations.push({
         action: 'Increase rest intervals',
         priority: 'high',
-        rationale: 'Ensure minimum 3 days rest between pitching appearances.'
+        rationale: 'Ensure minimum 3 days rest between pitching appearances.',
       });
     }
   }
@@ -579,32 +612,39 @@ function generateRecommendations(riskCategory, riskFactors, position) {
  * Store risk score in database
  */
 async function storeRiskScore(db, riskScore) {
-  await db.prepare(`
+  await db
+    .prepare(
+      `
     INSERT OR REPLACE INTO injury_risk_scores (
       risk_id, player_id, sport, position,
       risk_index, risk_category, reasons, recommended_actions,
       workload_metrics, model_id, updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).bind(
-    riskScore.risk_id,
-    riskScore.player_id,
-    riskScore.sport,
-    riskScore.position,
-    riskScore.risk_index,
-    riskScore.risk_category,
-    riskScore.reasons,
-    riskScore.recommended_actions,
-    riskScore.workload_metrics,
-    riskScore.model_id,
-    riskScore.updated_at
-  ).run();
+  `
+    )
+    .bind(
+      riskScore.risk_id,
+      riskScore.player_id,
+      riskScore.sport,
+      riskScore.position,
+      riskScore.risk_index,
+      riskScore.risk_category,
+      riskScore.reasons,
+      riskScore.recommended_actions,
+      riskScore.workload_metrics,
+      riskScore.model_id,
+      riskScore.updated_at
+    )
+    .run();
 }
 
 /**
  * Get historical injuries
  */
 async function getHistoricalInjuries(db, playerId) {
-  const results = await db.prepare(`
+  const results = await db
+    .prepare(
+      `
     SELECT
       injury_type,
       injury_date,
@@ -614,7 +654,10 @@ async function getHistoricalInjuries(db, playerId) {
     WHERE player_id = ?
     ORDER BY injury_date DESC
     LIMIT 10
-  `).bind(playerId).all();
+  `
+    )
+    .bind(playerId)
+    .all();
 
   return results.results || [];
 }
@@ -631,7 +674,8 @@ function calculateInjuryProneRating(injuries) {
   // Add recency factor (more recent injuries increase rating)
   for (const injury of injuries) {
     const daysAgo = (Date.now() / 1000 - injury.injury_date) / 86400;
-    if (daysAgo < 365) rating += 15; // Within last year
+    if (daysAgo < 365)
+      rating += 15; // Within last year
     else if (daysAgo < 730) rating += 5; // 1-2 years ago
   }
 
@@ -662,7 +706,7 @@ function jsonResponse(data, status = 200) {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': status === 200 ? 'public, max-age=3600' : 'no-cache'
-    }
+      'Cache-Control': status === 200 ? 'public, max-age=3600' : 'no-cache',
+    },
   });
 }

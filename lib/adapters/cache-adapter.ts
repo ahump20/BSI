@@ -69,11 +69,7 @@ export class CacheAdapter {
   /**
    * Set data in cache with TTL
    */
-  async set<T>(
-    key: string,
-    value: T,
-    options: CacheOptions = {}
-  ): Promise<void> {
+  async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
     if (!this.kv) {
       return;
     }
@@ -151,7 +147,9 @@ export class CacheAdapter {
   /**
    * Warm cache with predefined data
    */
-  async warm(keys: Array<{ key: string; fetcher: () => Promise<any>; ttl?: number }>): Promise<void> {
+  async warm(
+    keys: Array<{ key: string; fetcher: () => Promise<any>; ttl?: number }>
+  ): Promise<void> {
     const promises = keys.map(async ({ key, fetcher, ttl }) => {
       try {
         const data = await fetcher();

@@ -165,11 +165,7 @@ export function ScaleIn({
 /**
  * Staggered children animation container
  */
-export function StaggerContainer({
-  children,
-  className = '',
-  once = true,
-}: AnimatedSectionProps) {
+export function StaggerContainer({ children, className = '', once = true }: AnimatedSectionProps) {
   const ref = React.useRef(null);
   const isInView = useInView(ref, { once, margin: '-100px' });
 
@@ -383,11 +379,7 @@ export function GlowOnHover({
   glowColor?: string;
 }) {
   return (
-    <motion.div
-      className={`relative ${className}`}
-      whileHover="hover"
-      initial="rest"
-    >
+    <motion.div className={`relative ${className}`} whileHover="hover" initial="rest">
       <motion.div
         className="absolute inset-0 rounded-inherit pointer-events-none"
         variants={{

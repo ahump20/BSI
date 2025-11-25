@@ -92,12 +92,14 @@ export class WinProbabilitySocket {
     });
 
     // Send initial connection confirmation
-    server.send(JSON.stringify({
-      type: 'connected',
-      sessionId,
-      gameId,
-      timestamp: new Date().toISOString()
-    }));
+    server.send(
+      JSON.stringify({
+        type: 'connected',
+        sessionId,
+        gameId,
+        timestamp: new Date().toISOString(),
+      })
+    );
 
     // Send current win probability immediately
     await this.sendCurrentWinProbability(server, gameId);
@@ -113,7 +115,7 @@ export class WinProbabilitySocket {
 
     return new Response(null, {
       status: 101,
-      webSocket: client
+      webSocket: client,
     });
   }
 
@@ -126,10 +128,12 @@ export class WinProbabilitySocket {
 
       switch (data.type) {
         case 'ping':
-          socket.send(JSON.stringify({
-            type: 'pong',
-            timestamp: new Date().toISOString()
-          }));
+          socket.send(
+            JSON.stringify({
+              type: 'pong',
+              timestamp: new Date().toISOString(),
+            })
+          );
           break;
 
         case 'subscribe':
@@ -146,17 +150,21 @@ export class WinProbabilitySocket {
           break;
 
         default:
-          socket.send(JSON.stringify({
-            type: 'error',
-            message: 'Unknown message type'
-          }));
+          socket.send(
+            JSON.stringify({
+              type: 'error',
+              message: 'Unknown message type',
+            })
+          );
       }
     } catch (error) {
       console.error('Message handling error:', error);
-      socket.send(JSON.stringify({
-        type: 'error',
-        message: 'Invalid message format'
-      }));
+      socket.send(
+        JSON.stringify({
+          type: 'error',
+          message: 'Invalid message format',
+        })
+      );
     }
   }
 
@@ -219,35 +227,40 @@ export class WinProbabilitySocket {
       );
 
       if (!response.ok) {
-        socket.send(JSON.stringify({
-          type: 'error',
-          message: 'Failed to fetch win probability'
-        }));
+        socket.send(
+          JSON.stringify({
+            type: 'error',
+            message: 'Failed to fetch win probability',
+          })
+        );
         return;
       }
 
       const data = await response.json();
 
       // Send to client
-      socket.send(JSON.stringify({
-        type: 'win_prob_update',
-        gameId,
-        timestamp: new Date().toISOString(),
-        home_win_pct: data.current_probability?.home_win_pct,
-        away_win_pct: data.current_probability?.away_win_pct,
-        confidence_interval: data.current_probability?.confidence_interval,
-        situation: data.situation,
-        change_pct: data.probability_change?.change_pct || 0,
-        leverage_index: data.probability_change?.leverage_index || 1.0,
-        game_status: data.game.status
-      }));
-
+      socket.send(
+        JSON.stringify({
+          type: 'win_prob_update',
+          gameId,
+          timestamp: new Date().toISOString(),
+          home_win_pct: data.current_probability?.home_win_pct,
+          away_win_pct: data.current_probability?.away_win_pct,
+          confidence_interval: data.current_probability?.confidence_interval,
+          situation: data.situation,
+          change_pct: data.probability_change?.change_pct || 0,
+          leverage_index: data.probability_change?.leverage_index || 1.0,
+          game_status: data.game.status,
+        })
+      );
     } catch (error) {
       console.error('Error sending win probability:', error);
-      socket.send(JSON.stringify({
-        type: 'error',
-        message: 'Internal server error'
-      }));
+      socket.send(
+        JSON.stringify({
+          type: 'error',
+          message: 'Internal server error',
+        })
+      );
     }
   }
 
@@ -280,7 +293,7 @@ export class WinProbabilitySocket {
         situation: data.situation,
         change_pct: data.probability_change?.change_pct || 0,
         leverage_index: data.probability_change?.leverage_index || 1.0,
-        game_status: data.game.status
+        game_status: data.game.status,
       });
 
       // Send to all subscribers
@@ -296,7 +309,6 @@ export class WinProbabilitySocket {
         clearInterval(this.updateIntervals.get(gameId));
         this.updateIntervals.delete(gameId);
       }
-
     } catch (error) {
       console.error('Broadcast error:', error);
     }
@@ -309,18 +321,18 @@ export class WinProbabilitySocket {
     const stats = {
       total_sessions: this.sessions.size,
       active_games: this.gameSubscriptions.size,
-      games: []
+      games: [],
     };
 
     for (const [gameId, subscribers] of this.gameSubscriptions) {
       stats.games.push({
         gameId,
-        subscribers: subscribers.size
+        subscribers: subscribers.size,
       });
     }
 
     return new Response(JSON.stringify(stats, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
@@ -340,5 +352,5 @@ export default {
     }
 
     return new Response('Not found', { status: 404 });
-  }
+  },
 };

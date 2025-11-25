@@ -24,20 +24,23 @@ export async function onRequest({ request, env }) {
     const data = await fetchVerifiedNFL(teamId);
     return new Response(JSON.stringify(data), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
     // Return truth-enforced error response
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch NFL data',
-      message: error.message,
-      truthLabel: 'ERROR STATE - NO FABRICATED DATA',
-      dataSource: 'N/A - Service Unavailable',
-      lastUpdated: new Date().toISOString()
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch NFL data',
+        message: error.message,
+        truthLabel: 'ERROR STATE - NO FABRICATED DATA',
+        dataSource: 'N/A - Service Unavailable',
+        lastUpdated: new Date().toISOString(),
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }
 
@@ -50,7 +53,7 @@ async function fetchVerifiedNFL(teamId) {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -79,8 +82,8 @@ async function fetchVerifiedNFL(teamId) {
         lastUpdated: new Date().toISOString(),
         truthLabel: 'LIVE DATA - ESPN VERIFIED',
         // NO FABRICATED ELO CALCULATIONS
-        note: 'Advanced analytics require historical data validation'
-      }
+        note: 'Advanced analytics require historical data validation',
+      },
     };
   } catch (error) {
     throw new Error(`ESPN NFL API Error: ${error.message}`);

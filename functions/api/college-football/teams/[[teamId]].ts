@@ -51,7 +51,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   try {
     // Check for API key
-    const apiKey = env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
+    const apiKey =
+      env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
     if (!apiKey) {
       return new Response(
         JSON.stringify({
@@ -119,7 +120,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Parse include parameter
     const includeParam = url.searchParams.get('include') || 'roster,stats';
-    const include = new Set(includeParam.split(',').map(s => s.trim()));
+    const include = new Set(includeParam.split(',').map((s) => s.trim()));
 
     // Initialize adapter
     const adapter = new CFBDAdapter(apiKey, env.CACHE);
@@ -161,11 +162,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Roster
     if (include.has('roster')) {
       promises.push(
-        adapter.fetchRoster(team.school, season)
-          .catch(err => {
-            console.error('Roster fetch error:', err);
-            return null;
-          })
+        adapter.fetchRoster(team.school, season).catch((err) => {
+          console.error('Roster fetch error:', err);
+          return null;
+        })
       );
     } else {
       promises.push(Promise.resolve(null));
@@ -174,9 +174,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Stats
     if (include.has('stats')) {
       promises.push(
-        adapter.fetchTeamStats(season, team.school)
-          .then(stats => stats[0] || null)
-          .catch(err => {
+        adapter
+          .fetchTeamStats(season, team.school)
+          .then((stats) => stats[0] || null)
+          .catch((err) => {
             console.error('Stats fetch error:', err);
             return null;
           })
@@ -188,11 +189,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Games
     if (include.has('games')) {
       promises.push(
-        adapter.fetchGames(season, 1, 'regular', undefined, team.school)
-          .catch(err => {
-            console.error('Games fetch error:', err);
-            return null;
-          })
+        adapter.fetchGames(season, 1, 'regular', undefined, team.school).catch((err) => {
+          console.error('Games fetch error:', err);
+          return null;
+        })
       );
     } else {
       promises.push(Promise.resolve(null));
@@ -201,11 +201,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Rankings
     if (include.has('rankings')) {
       promises.push(
-        adapter.fetchAPTop25(season)
-          .catch(err => {
-            console.error('Rankings fetch error:', err);
-            return null;
-          })
+        adapter.fetchAPTop25(season).catch((err) => {
+          console.error('Rankings fetch error:', err);
+          return null;
+        })
       );
     } else {
       promises.push(Promise.resolve(null));
@@ -279,7 +278,7 @@ async function handleAllTeams(
   // Group by conference
   const byConference: Record<string, any[]> = {};
 
-  teams.forEach(team => {
+  teams.forEach((team) => {
     const conf = team.conference || 'Independent';
     if (!byConference[conf]) {
       byConference[conf] = [];
@@ -300,7 +299,7 @@ async function handleAllTeams(
   const response = {
     totalTeams: teams.length,
     byConference,
-    teams: teams.map(t => ({
+    teams: teams.map((t) => ({
       id: t.id,
       school: t.school,
       mascot: t.mascot,

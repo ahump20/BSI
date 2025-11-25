@@ -24,8 +24,7 @@ export const ok = (data, init = {}) =>
   });
 
 export const err = (error, status = 500, init = {}) => {
-  const message =
-    error instanceof Error && error.message ? error.message : 'Internal Server Error';
+  const message = error instanceof Error && error.message ? error.message : 'Internal Server Error';
 
   return new Response(
     JSON.stringify({
@@ -37,7 +36,7 @@ export const err = (error, status = 500, init = {}) => {
         ...corsHeaders,
         ...(init.headers || {}),
       },
-    },
+    }
   );
 };
 
@@ -85,7 +84,7 @@ export const cache = async (env, key, fetcher, ttl = 300) => {
         data: fresh,
         expires: now + ttl * 1000,
       }),
-      { expirationTtl: ttl },
+      { expirationTtl: ttl }
     );
   } catch (error) {
     // Cache write failure - non-critical, continue with fresh data
@@ -125,7 +124,7 @@ export const withRetry = async (fn, maxRetries = 3, baseDelay = 250) => {
         // Exponential backoff with jitter
         const jitter = Math.random() * 100;
         const delay = baseDelay * Math.pow(2, attempt) + jitter;
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
@@ -145,7 +144,7 @@ export const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
   try {
     const response = await fetch(url, {
       ...options,
-      signal
+      signal,
     });
     return response;
   } catch (error) {
@@ -180,7 +179,9 @@ export const validateNFLRecord = (team) => {
   }
 
   if (currentWins + currentLosses !== gamesPlayed) {
-    errors.push(`Wins (${currentWins}) + Losses (${currentLosses}) != Games Played (${gamesPlayed})`);
+    errors.push(
+      `Wins (${currentWins}) + Losses (${currentLosses}) != Games Played (${gamesPlayed})`
+    );
   }
 
   if (errors.length > 0) {
@@ -193,8 +194,8 @@ export const validateNFLRecord = (team) => {
       wins: currentWins,
       losses: currentLosses,
       gamesPlayed,
-      displayRecord: `${currentWins}-${currentLosses}`
-    }
+      displayRecord: `${currentWins}-${currentLosses}`,
+    },
   };
 };
 
@@ -212,9 +213,8 @@ export const rateLimit = async (env, request, maxRequests = 100, windowMs = 6000
     return { allowed: true, remaining: maxRequests, resetAt: null };
   }
 
-  const ip = request.headers.get('CF-Connecting-IP') ||
-             request.headers.get('X-Forwarded-For') ||
-             'unknown';
+  const ip =
+    request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
 
   const now = Date.now();
   const windowKey = Math.floor(now / windowMs);
@@ -230,18 +230,18 @@ export const rateLimit = async (env, request, maxRequests = 100, windowMs = 6000
         allowed: false,
         remaining: 0,
         resetAt,
-        retryAfter: Math.ceil((resetAt - now) / 1000)
+        retryAfter: Math.ceil((resetAt - now) / 1000),
       };
     }
 
     await store.put(rateLimitKey, String(count + 1), {
-      expirationTtl: Math.ceil(windowMs / 1000) + 10
+      expirationTtl: Math.ceil(windowMs / 1000) + 10,
     });
 
     return {
       allowed: true,
       remaining: maxRequests - count - 1,
-      resetAt: new Date((windowKey + 1) * windowMs)
+      resetAt: new Date((windowKey + 1) * windowMs),
     };
   } catch (error) {
     return { allowed: true, remaining: maxRequests, resetAt: null };
@@ -256,15 +256,15 @@ export const rateLimitError = (resetAt, retryAfter) => {
     JSON.stringify({
       error: 'Too Many Requests',
       message: 'Rate limit exceeded. Please try again later.',
-      retryAfter: retryAfter || 60
+      retryAfter: retryAfter || 60,
     }),
     {
       status: 429,
       headers: {
         ...corsHeaders,
         'Retry-After': String(retryAfter || 60),
-        'X-RateLimit-Reset': resetAt ? resetAt.toISOString() : ''
-      }
+        'X-RateLimit-Reset': resetAt ? resetAt.toISOString() : '',
+      },
     }
   );
 };
@@ -326,8 +326,8 @@ export const validateMLBRecord = (team) => {
       losses,
       gamesPlayed,
       winningPercentage,
-      displayRecord: `${wins}-${losses}`
-    }
+      displayRecord: `${wins}-${losses}`,
+    },
   };
 };
 
@@ -374,7 +374,7 @@ export const validateNBARecord = (team) => {
       losses,
       gamesPlayed,
       winningPercentage,
-      displayRecord: `${wins}-${losses}`
-    }
+      displayRecord: `${wins}-${losses}`,
+    },
   };
 };

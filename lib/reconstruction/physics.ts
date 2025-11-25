@@ -48,11 +48,11 @@ function degreesToRadians(degrees: number): number {
 function calculateAirDensity(elevation: number, temperatureF: number): number {
   // Simplified barometric formula
   const seaLevelPressure = 29.92; // inHg
-  const pressureRatio = Math.pow(1 - (elevation / 145442), 5.255);
+  const pressureRatio = Math.pow(1 - elevation / 145442, 5.255);
   const pressure = seaLevelPressure * pressureRatio;
 
   // Ideal gas law adjustment for temperature
-  const temperatureK = ((temperatureF - 32) * 5/9) + 273.15;
+  const temperatureK = ((temperatureF - 32) * 5) / 9 + 273.15;
   const densityRatio = (pressure / seaLevelPressure) * (288.15 / temperatureK);
 
   return AIR_DENSITY_SEA_LEVEL * densityRatio;
@@ -101,7 +101,8 @@ function calculateMagnusForce(
   const spinRadPerSec = (spinRate * 2 * Math.PI) / 60;
 
   // Magnus force magnitude
-  const magnusMagnitude = MAGNUS_COEFFICIENT * airDensity * BASEBALL_CROSS_SECTION * spinRadPerSec * speed;
+  const magnusMagnitude =
+    MAGNUS_COEFFICIENT * airDensity * BASEBALL_CROSS_SECTION * spinRadPerSec * speed;
 
   // Decompose spin axis
   const spinAxisRad = degreesToRadians(spinAxis);
@@ -166,15 +167,9 @@ export function simulateBattedBall(
   const velocity = { ...initialVelocity };
 
   // Physics parameters
-  const airDensity = calculateAirDensity(
-    physics.stadium.elevation,
-    statcast.temperature ?? 70
-  );
+  const airDensity = calculateAirDensity(physics.stadium.elevation, statcast.temperature ?? 70);
 
-  const windEffect = calculateWindEffect(
-    physics.wind.speed,
-    physics.wind.direction
-  );
+  const windEffect = calculateWindEffect(physics.wind.speed, physics.wind.direction);
 
   const spinRate = statcast.spinRate ?? 2000; // rpm (typical backspin)
   const spinAxis = 0; // Pure backspin for batted balls
@@ -233,9 +228,7 @@ export function simulateBattedBall(
   }
 
   // Calculate total distance
-  const totalDistance = landingPoint
-    ? Math.sqrt(landingPoint.x ** 2 + landingPoint.z ** 2)
-    : 0;
+  const totalDistance = landingPoint ? Math.sqrt(landingPoint.x ** 2 + landingPoint.z ** 2) : 0;
 
   return {
     points,
@@ -359,7 +352,7 @@ export function calculateOptimalFielderPosition(
   // Calculate distance fielder needs to travel
   const distanceToOptimal = Math.sqrt(
     (optimalPosition.x - currentFielderPosition.x) ** 2 +
-    (optimalPosition.z - currentFielderPosition.y) ** 2
+      (optimalPosition.z - currentFielderPosition.y) ** 2
   );
 
   // Time to intercept
@@ -393,9 +386,7 @@ export function simulateDefensivePlay(
   const landingPoint = ballTrajectory.landingPoint;
 
   if (!landingPoint) {
-    return [
-      { time: 0, position: { x: fielderStartPosition.x, y: 0, z: fielderStartPosition.y } },
-    ];
+    return [{ time: 0, position: { x: fielderStartPosition.x, y: 0, z: fielderStartPosition.y } }];
   }
 
   const fielderPath: Array<{ time: number; position: { x: number; y: number; z: number } }> = [];

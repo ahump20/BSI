@@ -78,7 +78,7 @@ export class LeverageEquivalencyIndex {
    * @returns Scarcity multiplier (0.0-1.0)
    */
   private computeScarcity(ctx: PlayContext): number {
-    if (ctx.sport === "baseball") {
+    if (ctx.sport === 'baseball') {
       return this.computeBaseballScarcity(ctx);
     } else {
       return this.computeFootballScarcity(ctx);

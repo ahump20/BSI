@@ -24,7 +24,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 94,
     recentForm: [1, 1, 1, 1, 1], // Last 5 games
     strengthOfSchedule: 0.62,
-    injuryImpact: 0.98
+    injuryImpact: 0.98,
   },
   {
     teamId: 'VAN',
@@ -36,7 +36,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 86,
     recentForm: [1, 1, 1, 1, 1],
     strengthOfSchedule: 0.58,
-    injuryImpact: 0.96
+    injuryImpact: 0.96,
   },
   {
     teamId: 'MO',
@@ -48,7 +48,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 73,
     recentForm: [1, 1, 1, 1, 1],
     strengthOfSchedule: 0.56,
-    injuryImpact: 0.95
+    injuryImpact: 0.95,
   },
   {
     teamId: 'TAMU',
@@ -60,7 +60,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 96,
     recentForm: [1, 1, 1, 1],
     strengthOfSchedule: 0.63,
-    injuryImpact: 0.93
+    injuryImpact: 0.93,
   },
   {
     teamId: 'OK',
@@ -71,8 +71,8 @@ const SEC_TEAMS: TeamStats[] = [
     pointsFor: 125,
     pointsAgainst: 36,
     recentForm: [1, 1, 1, 1],
-    strengthOfSchedule: 0.60,
-    injuryImpact: 0.94
+    strengthOfSchedule: 0.6,
+    injuryImpact: 0.94,
   },
   {
     teamId: 'TENN',
@@ -84,7 +84,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 145,
     recentForm: [1, 1, 1, 0, 1],
     strengthOfSchedule: 0.61,
-    injuryImpact: 0.92
+    injuryImpact: 0.92,
   },
   {
     teamId: 'TEXAS',
@@ -96,7 +96,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 61,
     recentForm: [1, 1, 0, 1, 1],
     strengthOfSchedule: 0.65,
-    injuryImpact: 0.91
+    injuryImpact: 0.91,
   },
   {
     teamId: 'ALA',
@@ -108,7 +108,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 66,
     recentForm: [1, 1, 1, 0],
     strengthOfSchedule: 0.68,
-    injuryImpact: 0.95
+    injuryImpact: 0.95,
   },
   {
     teamId: 'UGA',
@@ -119,8 +119,8 @@ const SEC_TEAMS: TeamStats[] = [
     pointsFor: 138,
     pointsAgainst: 78,
     recentForm: [1, 1, 1, 0],
-    strengthOfSchedule: 0.70,
-    injuryImpact: 0.96
+    strengthOfSchedule: 0.7,
+    injuryImpact: 0.96,
   },
   {
     teamId: 'LSU',
@@ -132,7 +132,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 66,
     recentForm: [1, 0, 1, 1],
     strengthOfSchedule: 0.59,
-    injuryImpact: 0.90
+    injuryImpact: 0.9,
   },
   {
     teamId: 'SC',
@@ -144,7 +144,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 94,
     recentForm: [1, 1, 0, 0, 1],
     strengthOfSchedule: 0.55,
-    injuryImpact: 0.88
+    injuryImpact: 0.88,
   },
   {
     teamId: 'FLA',
@@ -155,8 +155,8 @@ const SEC_TEAMS: TeamStats[] = [
     pointsFor: 187,
     pointsAgainst: 150,
     recentForm: [0, 1, 0, 1, 0],
-    strengthOfSchedule: 0.60,
-    injuryImpact: 0.85
+    strengthOfSchedule: 0.6,
+    injuryImpact: 0.85,
   },
   {
     teamId: 'UK',
@@ -168,7 +168,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 104,
     recentForm: [1, 0, 1, 0],
     strengthOfSchedule: 0.58,
-    injuryImpact: 0.87
+    injuryImpact: 0.87,
   },
   {
     teamId: 'AUB',
@@ -180,7 +180,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 82,
     recentForm: [1, 0, 1, 0],
     strengthOfSchedule: 0.61,
-    injuryImpact: 0.86
+    injuryImpact: 0.86,
   },
   {
     teamId: 'ARK',
@@ -192,7 +192,7 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 64,
     recentForm: [0, 1, 0, 0],
     strengthOfSchedule: 0.57,
-    injuryImpact: 0.84
+    injuryImpact: 0.84,
   },
   {
     teamId: 'MISS',
@@ -204,8 +204,8 @@ const SEC_TEAMS: TeamStats[] = [
     pointsAgainst: 148,
     recentForm: [0, 0, 1, 0, 1],
     strengthOfSchedule: 0.59,
-    injuryImpact: 0.82
-  }
+    injuryImpact: 0.82,
+  },
 ];
 
 /**
@@ -223,7 +223,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 71,
     recentForm: [1, 1, 0, 1], // Last 4 games
     strengthOfSchedule: 0.48,
-    injuryImpact: 0.96
+    injuryImpact: 0.96,
   },
   {
     teamId: 'BUF',
@@ -235,7 +235,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 90,
     recentForm: [1, 1, 1, 1],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.94
+    injuryImpact: 0.94,
   },
   {
     teamId: 'PHI',
@@ -246,8 +246,8 @@ const NFL_TEAMS: TeamStats[] = [
     pointsFor: 108,
     pointsAgainst: 88,
     recentForm: [1, 1, 1, 1],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.97
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.97,
   },
   {
     teamId: 'DET',
@@ -259,7 +259,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 88,
     recentForm: [0, 1, 1, 1],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.94
+    injuryImpact: 0.94,
   },
   {
     teamId: 'SF',
@@ -271,7 +271,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 76,
     recentForm: [1, 1, 1, 0],
     strengthOfSchedule: 0.55,
-    injuryImpact: 0.78
+    injuryImpact: 0.78,
   },
   {
     teamId: 'DAL',
@@ -284,7 +284,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 132,
     recentForm: [0, 0, 1, 0], // Tie vs Packers in Week 4
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.88
+    injuryImpact: 0.88,
   },
   {
     teamId: 'BAL',
@@ -296,7 +296,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 133,
     recentForm: [0, 1, 0, 0],
     strengthOfSchedule: 0.53,
-    injuryImpact: 0.91
+    injuryImpact: 0.91,
   },
   {
     teamId: 'PIT',
@@ -307,8 +307,8 @@ const NFL_TEAMS: TeamStats[] = [
     pointsFor: 96,
     pointsAgainst: 98,
     recentForm: [1, 1, 0, 1],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.93
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.93,
   },
   {
     teamId: 'LAC',
@@ -320,7 +320,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 76,
     recentForm: [1, 0, 1, 0],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.88
+    injuryImpact: 0.88,
   },
   {
     teamId: 'MIN',
@@ -332,7 +332,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 88,
     recentForm: [1, 0, 1, 0],
     strengthOfSchedule: 0.48,
-    injuryImpact: 0.92
+    injuryImpact: 0.92,
   },
   {
     teamId: 'GB',
@@ -345,7 +345,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 95,
     recentForm: [1, 1, 0, 0], // Last result was tie vs Cowboys
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.91
+    injuryImpact: 0.91,
   },
   {
     teamId: 'TB',
@@ -357,7 +357,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 88,
     recentForm: [1, 1, 1, 0],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.87
+    injuryImpact: 0.87,
   },
   {
     teamId: 'SEA',
@@ -368,8 +368,8 @@ const NFL_TEAMS: TeamStats[] = [
     pointsFor: 95,
     pointsAgainst: 82,
     recentForm: [1, 1, 0, 1],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.89
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.89,
   },
   {
     teamId: 'LAR',
@@ -381,7 +381,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 71,
     recentForm: [1, 0, 1, 1],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.86
+    injuryImpact: 0.86,
   },
   {
     teamId: 'ATL',
@@ -393,7 +393,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 89,
     recentForm: [1, 0, 1, 0],
     strengthOfSchedule: 0.48,
-    injuryImpact: 0.88
+    injuryImpact: 0.88,
   },
   {
     teamId: 'HOU',
@@ -405,7 +405,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 51,
     recentForm: [0, 1, 0, 0],
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.84
+    injuryImpact: 0.84,
   },
   {
     teamId: 'DEN',
@@ -417,7 +417,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 67,
     recentForm: [1, 1, 0, 0],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.92
+    injuryImpact: 0.92,
   },
   {
     teamId: 'MIA',
@@ -429,7 +429,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 118,
     recentForm: [0, 1, 0, 0],
     strengthOfSchedule: 0.54,
-    injuryImpact: 0.80
+    injuryImpact: 0.8,
   },
   {
     teamId: 'IND',
@@ -441,7 +441,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 83,
     recentForm: [1, 1, 1, 0],
     strengthOfSchedule: 0.48,
-    injuryImpact: 0.91
+    injuryImpact: 0.91,
   },
   {
     teamId: 'JAX',
@@ -452,8 +452,8 @@ const NFL_TEAMS: TeamStats[] = [
     pointsFor: 96,
     pointsAgainst: 72,
     recentForm: [1, 1, 0, 1],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.88
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.88,
   },
   {
     teamId: 'TEN',
@@ -465,7 +465,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 120,
     recentForm: [0, 0, 0, 0],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.75
+    injuryImpact: 0.75,
   },
   {
     teamId: 'NE',
@@ -477,7 +477,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 81,
     recentForm: [1, 0, 1, 0],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.87
+    injuryImpact: 0.87,
   },
   {
     teamId: 'NYJ',
@@ -489,7 +489,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 120,
     recentForm: [0, 0, 0, 0],
     strengthOfSchedule: 0.53,
-    injuryImpact: 0.78
+    injuryImpact: 0.78,
   },
   {
     teamId: 'CIN',
@@ -501,7 +501,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 119,
     recentForm: [0, 1, 0, 1],
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.85
+    injuryImpact: 0.85,
   },
   {
     teamId: 'CLE',
@@ -512,8 +512,8 @@ const NFL_TEAMS: TeamStats[] = [
     pointsFor: 56,
     pointsAgainst: 102,
     recentForm: [0, 0, 1, 0],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.80
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.8,
   },
   {
     teamId: 'LV',
@@ -525,7 +525,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 99,
     recentForm: [0, 1, 0, 0],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.83
+    injuryImpact: 0.83,
   },
   {
     teamId: 'WAS',
@@ -537,7 +537,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 91,
     recentForm: [1, 0, 1, 0],
     strengthOfSchedule: 0.48,
-    injuryImpact: 0.89
+    injuryImpact: 0.89,
   },
   {
     teamId: 'NYG',
@@ -549,7 +549,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 101,
     recentForm: [0, 1, 0, 0],
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.82
+    injuryImpact: 0.82,
   },
   {
     teamId: 'CHI',
@@ -560,8 +560,8 @@ const NFL_TEAMS: TeamStats[] = [
     pointsFor: 88,
     pointsAgainst: 85,
     recentForm: [1, 0, 1, 0],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.86
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.86,
   },
   {
     teamId: 'NO',
@@ -573,7 +573,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 115,
     recentForm: [0, 0, 0, 0],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.77
+    injuryImpact: 0.77,
   },
   {
     teamId: 'CAR',
@@ -585,7 +585,7 @@ const NFL_TEAMS: TeamStats[] = [
     pointsAgainst: 98,
     recentForm: [0, 0, 1, 0],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.81
+    injuryImpact: 0.81,
   },
   {
     teamId: 'ARI',
@@ -596,9 +596,9 @@ const NFL_TEAMS: TeamStats[] = [
     pointsFor: 94,
     pointsAgainst: 92,
     recentForm: [1, 0, 1, 0],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.84
-  }
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.84,
+  },
 ];
 
 /**
@@ -616,7 +616,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 645,
     recentForm: [1, 1, 1, 0, 1],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.94
+    injuryImpact: 0.94,
   },
   {
     teamId: 'ATL',
@@ -628,7 +628,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 672,
     recentForm: [1, 1, 0, 1, 1],
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.92
+    injuryImpact: 0.92,
   },
   {
     teamId: 'BAL',
@@ -640,7 +640,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 658,
     recentForm: [1, 1, 1, 1, 1],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.96
+    injuryImpact: 0.96,
   },
   {
     teamId: 'HOU',
@@ -651,8 +651,8 @@ const MLB_TEAMS: TeamStats[] = [
     pointsFor: 765,
     pointsAgainst: 698,
     recentForm: [1, 0, 1, 1, 0],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.89
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.89,
   },
   {
     teamId: 'TEX',
@@ -664,7 +664,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 712,
     recentForm: [1, 1, 1, 0, 1],
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.91
+    injuryImpact: 0.91,
   },
   {
     teamId: 'NYY',
@@ -676,7 +676,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 678,
     recentForm: [1, 1, 1, 1, 0],
     strengthOfSchedule: 0.48,
-    injuryImpact: 0.93
+    injuryImpact: 0.93,
   },
   {
     teamId: 'TB',
@@ -688,7 +688,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 715,
     recentForm: [1, 0, 1, 0, 1],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.87
+    injuryImpact: 0.87,
   },
   {
     teamId: 'TOR',
@@ -699,8 +699,8 @@ const MLB_TEAMS: TeamStats[] = [
     pointsFor: 768,
     pointsAgainst: 698,
     recentForm: [1, 1, 0, 1, 1],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.90
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.9,
   },
   {
     teamId: 'MIN',
@@ -712,7 +712,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 705,
     recentForm: [1, 0, 1, 1, 0],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.88
+    injuryImpact: 0.88,
   },
   {
     teamId: 'CLE',
@@ -724,7 +724,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 682,
     recentForm: [1, 1, 1, 0, 1],
     strengthOfSchedule: 0.48,
-    injuryImpact: 0.91
+    injuryImpact: 0.91,
   },
   {
     teamId: 'STL',
@@ -736,7 +736,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 785,
     recentForm: [0, 1, 0, 0, 1],
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.82
+    injuryImpact: 0.82,
   },
   {
     teamId: 'MIL',
@@ -748,7 +748,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 672,
     recentForm: [1, 1, 1, 1, 0],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.92
+    injuryImpact: 0.92,
   },
   {
     teamId: 'CHC',
@@ -759,8 +759,8 @@ const MLB_TEAMS: TeamStats[] = [
     pointsFor: 735,
     pointsAgainst: 728,
     recentForm: [1, 0, 1, 0, 1],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.86
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.86,
   },
   {
     teamId: 'SD',
@@ -772,7 +772,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 665,
     recentForm: [1, 1, 1, 1, 1],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.94
+    injuryImpact: 0.94,
   },
   {
     teamId: 'ARI',
@@ -784,7 +784,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 695,
     recentForm: [1, 1, 0, 1, 1],
     strengthOfSchedule: 0.51,
-    injuryImpact: 0.90
+    injuryImpact: 0.9,
   },
   {
     teamId: 'SF',
@@ -796,7 +796,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 742,
     recentForm: [0, 1, 1, 0, 1],
     strengthOfSchedule: 0.52,
-    injuryImpact: 0.85
+    injuryImpact: 0.85,
   },
   {
     teamId: 'PHI',
@@ -808,7 +808,7 @@ const MLB_TEAMS: TeamStats[] = [
     pointsAgainst: 675,
     recentForm: [1, 1, 1, 0, 1],
     strengthOfSchedule: 0.49,
-    injuryImpact: 0.93
+    injuryImpact: 0.93,
   },
   {
     teamId: 'NYM',
@@ -819,9 +819,9 @@ const MLB_TEAMS: TeamStats[] = [
     pointsFor: 775,
     pointsAgainst: 702,
     recentForm: [1, 1, 0, 1, 1],
-    strengthOfSchedule: 0.50,
-    injuryImpact: 0.89
-  }
+    strengthOfSchedule: 0.5,
+    injuryImpact: 0.89,
+  },
 ];
 
 /**
@@ -832,7 +832,7 @@ function generateSchedule(
   currentWins: number,
   currentLosses: number,
   totalGames: number,
-  avgOpponentStrength: number = 0.50
+  avgOpponentStrength: number = 0.5
 ): Schedule[] {
   const gamesPlayed = currentWins + currentLosses;
   const remainingGames = totalGames - gamesPlayed;
@@ -841,15 +841,13 @@ function generateSchedule(
   for (let i = 0; i < remainingGames; i++) {
     // Vary opponent strength with some randomness
     const strengthVariation = (Math.random() - 0.5) * 0.3;
-    const opponentStrength = Math.max(0.2, Math.min(0.8,
-      avgOpponentStrength + strengthVariation
-    ));
+    const opponentStrength = Math.max(0.2, Math.min(0.8, avgOpponentStrength + strengthVariation));
 
     schedule.push({
       opponent: `Opponent ${i + 1}`,
       location: i % 3 === 0 ? 'home' : i % 3 === 1 ? 'away' : 'neutral',
       opponentStrength,
-      completed: false
+      completed: false,
     });
   }
 
@@ -870,8 +868,8 @@ export async function runAllSimulations(): Promise<{
   // SEC Simulations (14-game regular season)
   console.log('🏈 Running SEC simulations...');
   const secSchedules = new Map<string, Schedule[]>();
-  SEC_TEAMS.forEach(team => {
-    secSchedules.set(team.teamId, generateSchedule(team.wins, team.losses, 14, 0.60));
+  SEC_TEAMS.forEach((team) => {
+    secSchedules.set(team.teamId, generateSchedule(team.wins, team.losses, 14, 0.6));
   });
   const secResults = monteCarloEngine.batchSimulate(SEC_TEAMS, secSchedules);
   console.log(`✅ Completed ${secResults.length} SEC team simulations\n`);
@@ -879,8 +877,8 @@ export async function runAllSimulations(): Promise<{
   // NFL Simulations (17-game regular season)
   console.log('🏈 Running NFL simulations...');
   const nflSchedules = new Map<string, Schedule[]>();
-  NFL_TEAMS.forEach(team => {
-    nflSchedules.set(team.teamId, generateSchedule(team.wins, team.losses, 17, 0.50));
+  NFL_TEAMS.forEach((team) => {
+    nflSchedules.set(team.teamId, generateSchedule(team.wins, team.losses, 17, 0.5));
   });
   const nflResults = monteCarloEngine.batchSimulate(NFL_TEAMS, nflSchedules);
   console.log(`✅ Completed ${nflResults.length} NFL team simulations\n`);
@@ -888,8 +886,8 @@ export async function runAllSimulations(): Promise<{
   // MLB Simulations (162-game regular season)
   console.log('⚾ Running MLB simulations...');
   const mlbSchedules = new Map<string, Schedule[]>();
-  MLB_TEAMS.forEach(team => {
-    mlbSchedules.set(team.teamId, generateSchedule(team.wins, team.losses, 162, 0.50));
+  MLB_TEAMS.forEach((team) => {
+    mlbSchedules.set(team.teamId, generateSchedule(team.wins, team.losses, 162, 0.5));
   });
   const mlbResults = monteCarloEngine.batchSimulate(MLB_TEAMS, mlbSchedules);
   console.log(`✅ Completed ${mlbResults.length} MLB team simulations\n`);
@@ -899,12 +897,14 @@ export async function runAllSimulations(): Promise<{
   console.log(`  SEC Teams: ${secResults.length}`);
   console.log(`  NFL Teams: ${nflResults.length}`);
   console.log(`  MLB Teams: ${mlbResults.length}`);
-  console.log(`  Total Simulations: ${(secResults.length + nflResults.length + mlbResults.length) * 10000}`);
+  console.log(
+    `  Total Simulations: ${(secResults.length + nflResults.length + mlbResults.length) * 10000}`
+  );
 
   return {
     sec: secResults,
     nfl: nflResults,
-    mlb: mlbResults
+    mlb: mlbResults,
   };
 }
 

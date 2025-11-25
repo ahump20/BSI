@@ -151,8 +151,9 @@ function calculateLeverageIndex(
   const inningFactor = Math.min(1, (inning - 1) / 8); // Increases through 9th inning
   const outsFactor = [0.8, 0.9, 1.0][outs] ?? 1.0;
 
-  const runnersOnBase = (runners.first ? 1 : 0) + (runners.second ? 1 : 0) + (runners.third ? 1 : 0);
-  const runnersFactor = 1 + (runnersOnBase * 0.3);
+  const runnersOnBase =
+    (runners.first ? 1 : 0) + (runners.second ? 1 : 0) + (runners.third ? 1 : 0);
+  const runnersFactor = 1 + runnersOnBase * 0.3;
 
   const scoreDiffFactor = 1 / (1 + Math.abs(scoreDiff) * 0.3);
 
@@ -167,8 +168,8 @@ function calculateWinProbDelta(
   afterState: { inning: number; outs: number; runners: string; score: number }
 ): number {
   // Simplified WP calculation - in production, use lookup tables
-  const beforeWP = 0.5 + (beforeState.score * 0.1);
-  const afterWP = 0.5 + (afterState.score * 0.1);
+  const beforeWP = 0.5 + beforeState.score * 0.1;
+  const afterWP = 0.5 + afterState.score * 0.1;
 
   return afterWP - beforeWP;
 }
@@ -180,10 +181,7 @@ function calculateWinProbDelta(
 /**
  * Detect analytically significant MLB events
  */
-function detectMLBEvents(
-  gameData: MLBGameData,
-  previousPlays: Set<number>
-): LiveEvent[] {
+function detectMLBEvents(gameData: MLBGameData, previousPlays: Set<number>): LiveEvent[] {
   const events: LiveEvent[] = [];
   const plays = gameData.liveData.plays.allPlays;
 
@@ -227,7 +225,9 @@ function detectMLBEvents(
 
       if (significanceScore >= 40) {
         // This is an analytically interesting batted ball
-        events.push(createMLBEvent(gameData, play, 'batted_ball', significanceScore, hitData, null));
+        events.push(
+          createMLBEvent(gameData, play, 'batted_ball', significanceScore, hitData, null)
+        );
       }
     }
 
@@ -265,7 +265,9 @@ function detectMLBEvents(
         if (estimatedCatchDifficulty > 1.2) {
           // Difficult catch
           const significanceScore = 50 + estimatedCatchDifficulty * 10;
-          events.push(createMLBEvent(gameData, play, 'defensive_play', significanceScore, hitData, null));
+          events.push(
+            createMLBEvent(gameData, play, 'defensive_play', significanceScore, hitData, null)
+          );
         }
       }
     }
@@ -291,7 +293,9 @@ function detectMLBEvents(
 
       if (leverageIndex >= 1.5) {
         const significanceScore = 60 + leverageIndex * 10;
-        events.push(createMLBEvent(gameData, play, 'scoring_play', significanceScore, hitData, null));
+        events.push(
+          createMLBEvent(gameData, play, 'scoring_play', significanceScore, hitData, null)
+        );
       }
     }
   }
@@ -341,16 +345,21 @@ function createMLBEvent(
         hitDistance: hitData.totalDistance,
       }
     : pitchData
-    ? {
-        pitchVelocity: pitchData.startSpeed,
-        spinRate: pitchData.breaks?.spinRate,
-        breakDistance: pitchData.breaks?.breakLength,
-      }
-    : null;
+      ? {
+          pitchVelocity: pitchData.startSpeed,
+          spinRate: pitchData.breaks?.spinRate,
+          breakDistance: pitchData.breaks?.breakLength,
+        }
+      : null;
 
   const scoreDiff = Math.abs(linescore.teams.home.runs - linescore.teams.away.runs);
   const runners = { first: false, second: false, third: false }; // Simplified
-  const leverageIndex = calculateLeverageIndex(play.about.inning, play.count.outs, runners, scoreDiff);
+  const leverageIndex = calculateLeverageIndex(
+    play.about.inning,
+    play.count.outs,
+    runners,
+    scoreDiff
+  );
 
   return {
     sport: 'mlb',
@@ -518,7 +527,9 @@ export class LiveMonitor {
         )
         .run();
 
-      console.log(`Detected event: ${eventId} - ${event.eventType} (score: ${event.significanceScore})`);
+      console.log(
+        `Detected event: ${eventId} - ${event.eventType} (score: ${event.significanceScore})`
+      );
     }
 
     // Update KV with processed plays
@@ -545,8 +556,10 @@ export class LiveMonitor {
     const gameState: GameState = {
       period: gameData.status.period,
       clock: gameData.status.displayClock,
-      homeScore: gameData.competitions[0].competitors.find((c) => c.homeAway === 'home')?.score || '0',
-      awayScore: gameData.competitions[0].competitors.find((c) => c.homeAway === 'away')?.score || '0',
+      homeScore:
+        gameData.competitions[0].competitors.find((c) => c.homeAway === 'home')?.score || '0',
+      awayScore:
+        gameData.competitions[0].competitors.find((c) => c.homeAway === 'away')?.score || '0',
       isActive: gameData.status.type.state === 'in',
     };
 
@@ -588,7 +601,9 @@ export class LiveMonitor {
         )
         .run();
 
-      console.log(`Detected NFL event: ${eventId} - ${event.eventType} (score: ${event.significanceScore})`);
+      console.log(
+        `Detected NFL event: ${eventId} - ${event.eventType} (score: ${event.significanceScore})`
+      );
     }
 
     // Update KV with processed plays
@@ -658,7 +673,9 @@ export class LiveMonitor {
         )
         .run();
 
-      console.log(`Detected NBA event: ${eventId} - ${event.eventType} (score: ${event.significanceScore})`);
+      console.log(
+        `Detected NBA event: ${eventId} - ${event.eventType} (score: ${event.significanceScore})`
+      );
     }
 
     // Update KV with processed plays
@@ -669,7 +686,9 @@ export class LiveMonitor {
    * Stop monitoring a game
    */
   async stopMonitoring(liveGameId: string): Promise<void> {
-    await this.env.DB.prepare('UPDATE live_games SET is_active = 0 WHERE id = ?').bind(liveGameId).run();
+    await this.env.DB.prepare('UPDATE live_games SET is_active = 0 WHERE id = ?')
+      .bind(liveGameId)
+      .run();
 
     console.log(`Stopped monitoring: ${liveGameId}`);
   }
@@ -678,7 +697,9 @@ export class LiveMonitor {
    * Get all active monitors
    */
   async getActiveMonitors(): Promise<LiveGame[]> {
-    const result = await this.env.DB.prepare('SELECT * FROM live_games WHERE is_active = 1').all<LiveGame>();
+    const result = await this.env.DB.prepare(
+      'SELECT * FROM live_games WHERE is_active = 1'
+    ).all<LiveGame>();
 
     return result.results ?? [];
   }
@@ -764,10 +785,7 @@ async function fetchNFLGame(gameId: string): Promise<NFLGameData | null> {
 /**
  * Detect significant NFL events from game data
  */
-function detectNFLEvents(
-  gameData: NFLGameData,
-  previousPlays: Set<string>
-): LiveEvent[] {
+function detectNFLEvents(gameData: NFLGameData, previousPlays: Set<string>): LiveEvent[] {
   const events: LiveEvent[] = [];
   const competition = gameData.competitions[0];
   if (!competition) return events;
@@ -795,7 +813,8 @@ function detectNFLEvents(
 
     // Big plays (yards gained)
     const yards = Math.abs(play.statYardage);
-    if (yards >= 40) significanceScore += 40; // Explosive plays
+    if (yards >= 40)
+      significanceScore += 40; // Explosive plays
     else if (yards >= 25) significanceScore += 30;
     else if (yards >= 15) significanceScore += 20;
 
@@ -835,8 +854,12 @@ function detectNFLEvents(
     // Only store events with significance >= 40
     if (significanceScore >= 40) {
       // Calculate win probability delta (simplified)
-      const homeScore = parseInt(competition.competitors.find((c) => c.homeAway === 'home')?.score || '0');
-      const awayScore = parseInt(competition.competitors.find((c) => c.homeAway === 'away')?.score || '0');
+      const homeScore = parseInt(
+        competition.competitors.find((c) => c.homeAway === 'home')?.score || '0'
+      );
+      const awayScore = parseInt(
+        competition.competitors.find((c) => c.homeAway === 'away')?.score || '0'
+      );
       const scoreDiff = Math.abs(homeScore - awayScore);
 
       const winProbDelta = calculateNFLWinProbDelta(
@@ -899,18 +922,22 @@ function calculateNFLWinProbDelta(
 
   if (isScoring) {
     // Touchdowns are typically worth 10-15% win probability
-    if (period <= 2) delta = 0.08; // Early game
-    else if (period === 3) delta = 0.12; // Third quarter
+    if (period <= 2)
+      delta = 0.08; // Early game
+    else if (period === 3)
+      delta = 0.12; // Third quarter
     else if (period === 4) {
-      if (secondsRemaining > 300) delta = 0.15; // 5+ minutes left
-      else if (secondsRemaining > 120) delta = 0.25; // 2-5 minutes
-      else delta = 0.40; // Under 2 minutes
+      if (secondsRemaining > 300)
+        delta = 0.15; // 5+ minutes left
+      else if (secondsRemaining > 120)
+        delta = 0.25; // 2-5 minutes
+      else delta = 0.4; // Under 2 minutes
     } else {
-      delta = 0.50; // Overtime scoring
+      delta = 0.5; // Overtime scoring
     }
   } else {
     // Big plays swing win probability based on game situation
-    if (yards >= 40) delta = 0.10;
+    if (yards >= 40) delta = 0.1;
     else if (yards >= 25) delta = 0.06;
     else delta = 0.03;
 
@@ -935,12 +962,14 @@ function calculateNFLLeverageIndex(
   distance: number
 ): number {
   // Base leverage increases through the game
-  let leverage = 0.5 + (period / 8); // 0.625 in Q1, 1.125 in Q4
+  let leverage = 0.5 + period / 8; // 0.625 in Q1, 1.125 in Q4
 
   // Time factor (peaks in final 5 minutes of 4th quarter)
   if (period === 4) {
-    if (secondsRemaining <= 120) leverage *= 2.5; // Under 2 minutes
-    else if (secondsRemaining <= 300) leverage *= 1.8; // Under 5 minutes
+    if (secondsRemaining <= 120)
+      leverage *= 2.5; // Under 2 minutes
+    else if (secondsRemaining <= 300)
+      leverage *= 1.8; // Under 5 minutes
     else if (secondsRemaining <= 600) leverage *= 1.3; // Under 10 minutes
   }
 
@@ -948,9 +977,12 @@ function calculateNFLLeverageIndex(
   if (period >= 5) leverage = 3.0;
 
   // Score differential (close games have higher leverage)
-  if (scoreDiff <= 3) leverage *= 1.5; // One-score game
-  else if (scoreDiff <= 7) leverage *= 1.3; // One-possession game
-  else if (scoreDiff <= 14) leverage *= 1.1; // Two-possession game
+  if (scoreDiff <= 3)
+    leverage *= 1.5; // One-score game
+  else if (scoreDiff <= 7)
+    leverage *= 1.3; // One-possession game
+  else if (scoreDiff <= 14)
+    leverage *= 1.1; // Two-possession game
   else leverage *= 0.7; // Blowout
 
   // Down and distance (4th down is critical)
@@ -1219,8 +1251,10 @@ function calculateNBAWinProbDelta(
     }
 
     // Amplify for close games
-    if (scoreDiff <= 3) delta *= 1.8; // One-possession game
-    else if (scoreDiff <= 6) delta *= 1.4; // Two-possession game
+    if (scoreDiff <= 3)
+      delta *= 1.8; // One-possession game
+    else if (scoreDiff <= 6)
+      delta *= 1.4; // Two-possession game
     else if (scoreDiff <= 10) delta *= 1.1; // Competitive game
   } else {
     // Defensive plays (blocks, steals)
@@ -1230,16 +1264,20 @@ function calculateNBAWinProbDelta(
     }
   }
 
-  return Math.min(delta, 0.50); // Cap at 50%
+  return Math.min(delta, 0.5); // Cap at 50%
 }
 
 /**
  * Calculate leverage index for NBA game situations
  * Based on quarter, time remaining, score differential
  */
-function calculateNBALeverageIndex(period: number, secondsRemaining: number, scoreDiff: number): number {
+function calculateNBALeverageIndex(
+  period: number,
+  secondsRemaining: number,
+  scoreDiff: number
+): number {
   // Base leverage increases through the game
-  let leverage = 0.4 + (period / 8); // 0.525 in Q1, 0.9 in Q4
+  let leverage = 0.4 + period / 8; // 0.525 in Q1, 0.9 in Q4
 
   // Time factor (peaks in final 2 minutes of 4th quarter/OT)
   if (period >= 4) {
@@ -1260,10 +1298,14 @@ function calculateNBALeverageIndex(period: number, secondsRemaining: number, sco
   if (period >= 5) leverage *= 1.5; // OT amplification
 
   // Score differential (close games have higher leverage)
-  if (scoreDiff <= 3) leverage *= 2.0; // One-possession game
-  else if (scoreDiff <= 6) leverage *= 1.6; // Two-possession game
-  else if (scoreDiff <= 10) leverage *= 1.3; // Competitive game
-  else if (scoreDiff <= 15) leverage *= 1.0; // Moderate gap
+  if (scoreDiff <= 3)
+    leverage *= 2.0; // One-possession game
+  else if (scoreDiff <= 6)
+    leverage *= 1.6; // Two-possession game
+  else if (scoreDiff <= 10)
+    leverage *= 1.3; // Competitive game
+  else if (scoreDiff <= 15)
+    leverage *= 1.0; // Moderate gap
   else leverage *= 0.6; // Blowout
 
   return Math.min(leverage, 5.0); // Cap at 5.0 (NBA has higher leverage than NFL due to more possessions)

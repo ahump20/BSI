@@ -24,17 +24,14 @@ interface StripeSession {
 }
 
 async function getStripeSession(secretKey: string, sessionId: string): Promise<StripeSession> {
-  const response = await fetch(
-    `https://api.stripe.com/v1/checkout/sessions/${sessionId}`,
-    {
-      headers: {
-        'Authorization': `Bearer ${secretKey}`,
-      },
-    }
-  );
+  const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+    },
+  });
 
   if (!response.ok) {
-    const error = await response.json() as { error?: { message?: string } };
+    const error = (await response.json()) as { error?: { message?: string } };
     throw new Error(error.error?.message || 'Failed to retrieve session');
   }
 
@@ -67,44 +64,56 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   try {
     if (!env.STRIPE_SECRET_KEY) {
       console.error('STRIPE_SECRET_KEY not configured');
-      return new Response(JSON.stringify({
-        error: 'Payment system not configured'
-      }), { status: 500, headers: corsHeaders });
+      return new Response(
+        JSON.stringify({
+          error: 'Payment system not configured',
+        }),
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     const url = new URL(request.url);
     const sessionId = url.searchParams.get('session_id');
 
     if (!sessionId) {
-      return new Response(JSON.stringify({
-        error: 'Missing session_id parameter'
-      }), { status: 400, headers: corsHeaders });
+      return new Response(
+        JSON.stringify({
+          error: 'Missing session_id parameter',
+        }),
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     if (!sessionId.startsWith('cs_')) {
-      return new Response(JSON.stringify({
-        error: 'Invalid session_id format'
-      }), { status: 400, headers: corsHeaders });
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid session_id format',
+        }),
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     const session = await getStripeSession(env.STRIPE_SECRET_KEY, sessionId);
 
-    const customerEmail = session.customer_details?.email ||
-                          session.customer_email ||
-                          null;
+    const customerEmail = session.customer_details?.email || session.customer_email || null;
 
-    return new Response(JSON.stringify({
-      status: session.status,
-      customer_email: customerEmail,
-      subscription_id: session.subscription,
-      tier: session.metadata?.tier || null,
-      payment_status: session.payment_status,
-    }), { status: 200, headers: corsHeaders });
-
+    return new Response(
+      JSON.stringify({
+        status: session.status,
+        customer_email: customerEmail,
+        subscription_id: session.subscription,
+        tier: session.metadata?.tier || null,
+        payment_status: session.payment_status,
+      }),
+      { status: 200, headers: corsHeaders }
+    );
   } catch (error) {
     console.error('Session status error:', error);
-    return new Response(JSON.stringify({
-      error: error instanceof Error ? error.message : 'Failed to retrieve session status'
-    }), { status: 500, headers: corsHeaders });
+    return new Response(
+      JSON.stringify({
+        error: error instanceof Error ? error.message : 'Failed to retrieve session status',
+      }),
+      { status: 500, headers: corsHeaders }
+    );
   }
 };

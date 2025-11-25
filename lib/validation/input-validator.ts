@@ -67,7 +67,11 @@ export const playerIdSchema = z.object({
 
 // Season validation
 export const seasonSchema = z.object({
-  season: z.number().int().min(2000).max(new Date().getFullYear() + 1),
+  season: z
+    .number()
+    .int()
+    .min(2000)
+    .max(new Date().getFullYear() + 1),
 });
 
 // Sport type
@@ -99,7 +103,11 @@ export const liveGameRequestSchema = z.object({
 // Player statistics query
 export const playerStatsQuerySchema = z.object({
   playerId: z.number().int().positive(),
-  season: z.number().int().min(2000).max(new Date().getFullYear() + 1),
+  season: z
+    .number()
+    .int()
+    .min(2000)
+    .max(new Date().getFullYear() + 1),
   statType: z.enum(['batting', 'pitching', 'fielding', 'rushing', 'passing', 'receiving']),
   gameType: z.enum(['R', 'P', 'S', 'A']).optional(), // Regular, Playoffs, Spring, All-Star
 });
@@ -107,7 +115,11 @@ export const playerStatsQuerySchema = z.object({
 // Conference standings
 export const conferenceStandingsSchema = z.object({
   conferenceId: z.number().int().positive(),
-  season: z.number().int().min(2000).max(new Date().getFullYear() + 1),
+  season: z
+    .number()
+    .int()
+    .min(2000)
+    .max(new Date().getFullYear() + 1),
   division: z.string().max(50).optional(),
 });
 
@@ -116,7 +128,10 @@ export const conferenceStandingsSchema = z.object({
 // User registration
 export const userRegistrationSchema = z.object({
   email: emailSchema,
-  password: z.string().min(8).max(128)
+  password: z
+    .string()
+    .min(8)
+    .max(128)
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number')
@@ -145,7 +160,11 @@ export const apiKeyCreateSchema = z.object({
 
 export const fileUploadSchema = z.object({
   fileName: z.string().max(255),
-  fileSize: z.number().int().positive().max(100 * 1024 * 1024), // 100MB max
+  fileSize: z
+    .number()
+    .int()
+    .positive()
+    .max(100 * 1024 * 1024), // 100MB max
   mimeType: z.enum([
     'image/jpeg',
     'image/png',
@@ -324,9 +343,7 @@ export function withValidation<T>(
     }
 
     if (!validation.valid || !validation.data) {
-      return createValidationErrorResponse(
-        validation.errors || new z.ZodError([])
-      );
+      return createValidationErrorResponse(validation.errors || new z.ZodError([]));
     }
 
     return handler(request, env, ctx, validation.data);

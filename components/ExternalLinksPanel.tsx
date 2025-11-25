@@ -2,10 +2,7 @@
 
 import React from 'react';
 import { ExternalLink as ExternalLinkIcon } from 'lucide-react';
-import {
-  getPlayerExternalLinksArray,
-  type ExternalLink
-} from '../lib/external-links/url-builders';
+import { getPlayerExternalLinksArray, type ExternalLink } from '../lib/external-links/url-builders';
 
 /**
  * BLAZE SPORTS INTEL | External Links Panel
@@ -32,46 +29,24 @@ interface ExternalLinksPanelProps {
 const SourceIcons: Record<string, React.ReactNode> = {
   espn: (
     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.75c-5.385 0-9.75-4.365-9.75-9.75S6.615 2.25 12 2.25s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/>
-      <text x="6" y="16" fontSize="10" fontWeight="bold">E</text>
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.75c-5.385 0-9.75-4.365-9.75-9.75S6.615 2.25 12 2.25s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z" />
+      <text x="6" y="16" fontSize="10" fontWeight="bold">
+        E
+      </text>
     </svg>
   ),
-  bbref: (
-    <span className="text-xs font-bold">BR</span>
-  ),
-  savant: (
-    <span className="text-xs font-bold">SC</span>
-  ),
-  fangraphs: (
-    <span className="text-xs font-bold">FG</span>
-  ),
-  official: (
-    <ExternalLinkIcon className="w-4 h-4" />
-  ),
-  pfr: (
-    <span className="text-xs font-bold">PFR</span>
-  ),
-  nfl: (
-    <span className="text-xs font-bold">NFL</span>
-  ),
-  '247': (
-    <span className="text-xs font-bold">247</span>
-  ),
-  on3: (
-    <span className="text-xs font-bold">ON3</span>
-  ),
-  rivals: (
-    <span className="text-xs font-bold">RIV</span>
-  ),
-  d1baseball: (
-    <span className="text-xs font-bold">D1</span>
-  ),
-  pg: (
-    <span className="text-xs font-bold">PG</span>
-  ),
-  maxpreps: (
-    <span className="text-xs font-bold">MP</span>
-  ),
+  bbref: <span className="text-xs font-bold">BR</span>,
+  savant: <span className="text-xs font-bold">SC</span>,
+  fangraphs: <span className="text-xs font-bold">FG</span>,
+  official: <ExternalLinkIcon className="w-4 h-4" />,
+  pfr: <span className="text-xs font-bold">PFR</span>,
+  nfl: <span className="text-xs font-bold">NFL</span>,
+  '247': <span className="text-xs font-bold">247</span>,
+  on3: <span className="text-xs font-bold">ON3</span>,
+  rivals: <span className="text-xs font-bold">RIV</span>,
+  d1baseball: <span className="text-xs font-bold">D1</span>,
+  pg: <span className="text-xs font-bold">PG</span>,
+  maxpreps: <span className="text-xs font-bold">MP</span>,
 };
 
 // Color schemes for categories
@@ -128,18 +103,16 @@ export default function ExternalLinksPanel({
           <ExternalLinkButton key={link.name} link={link} />
         ))}
         {links.length > 4 && (
-          <span className="text-xs text-gray-500 self-center">
-            +{links.length - 4} more
-          </span>
+          <span className="text-xs text-gray-500 self-center">+{links.length - 4} more</span>
         )}
       </div>
     );
   }
 
   // Full variant with categories
-  const statLinks = links.filter(l => l.category === 'stats');
-  const newsLinks = links.filter(l => l.category === 'news');
-  const officialLinks = links.filter(l => l.category === 'official');
+  const statLinks = links.filter((l) => l.category === 'stats');
+  const newsLinks = links.filter((l) => l.category === 'news');
+  const officialLinks = links.filter((l) => l.category === 'official');
 
   return (
     <div className={`space-y-3 ${className}`}>

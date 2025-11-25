@@ -54,7 +54,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Parse query parameters
     const url = new URL(request.url);
-    const season = parseInt(url.searchParams.get('season') || new Date().getFullYear().toString(), 10);
+    const season = parseInt(
+      url.searchParams.get('season') || new Date().getFullYear().toString(),
+      10
+    );
     const stat = (url.searchParams.get('stat') || 'bat') as 'bat' | 'pit';
     const pos = url.searchParams.get('pos') || 'all';
     const lg = (url.searchParams.get('lg') || 'all') as 'all' | 'al' | 'nl';
@@ -152,9 +155,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         dataSource: 'FanGraphs',
         lastUpdated: new Date().toISOString(),
         timezone: 'America/Chicago',
-        description: category === 'batting'
-          ? 'MLB batting leaderboard with advanced sabermetrics (wOBA, wRC+, WAR)'
-          : 'MLB pitching leaderboard with advanced metrics (FIP, xFIP, SIERA, WAR)',
+        description:
+          category === 'batting'
+            ? 'MLB batting leaderboard with advanced sabermetrics (wOBA, wRC+, WAR)'
+            : 'MLB pitching leaderboard with advanced metrics (FIP, xFIP, SIERA, WAR)',
       },
     };
 

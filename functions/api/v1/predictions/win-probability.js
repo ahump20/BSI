@@ -9,7 +9,10 @@
  * - GET /api/v1/predictions/win-probability/trend?gameId=123
  */
 
-import { calculateWinProbability, calculateWinProbabilityTrend } from '../../../../lib/ml/win-probability-model.js';
+import {
+  calculateWinProbability,
+  calculateWinProbabilityTrend,
+} from '../../../../lib/ml/win-probability-model.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
 export async function onRequest(context) {
@@ -51,21 +54,23 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=30, s-maxage=60' // Short cache for live data
-      }
+        'Cache-Control': 'public, max-age=30, s-maxage=60', // Short cache for live data
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to calculate win probability',
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to calculate win probability',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -75,7 +80,8 @@ export async function onRequest(context) {
 async function fetchGameState(env, gameId, sport) {
   try {
     // Query current game state from D1 database
-    const game = await env.DB.prepare(`
+    const game = await env.DB.prepare(
+      `
       SELECT
         game_id,
         sport,
@@ -97,7 +103,10 @@ async function fetchGameState(env, gameId, sport) {
         status
       FROM historical_games
       WHERE game_id = ? AND sport = ?
-    `).bind(gameId, sport).first();
+    `
+    )
+      .bind(gameId, sport)
+      .first();
 
     if (!game) {
       throw new Error(`Game ${gameId} not found`);
@@ -110,7 +119,7 @@ async function fetchGameState(env, gameId, sport) {
       awayTeam: game.away_team_id,
       homeScore: game.home_score || 0,
       awayScore: game.away_score || 0,
-      status: game.status
+      status: game.status,
     };
 
     // Sport-specific fields
@@ -142,7 +151,6 @@ async function fetchGameState(env, gameId, sport) {
     }
 
     return gameState;
-
   } catch (error) {
     throw error;
   }
@@ -164,7 +172,7 @@ function generateDemoWinProbability(sport) {
       possession: 'home',
       down: 1,
       distance: 10,
-      yardLine: 45
+      yardLine: 45,
     },
     MLB: {
       sport: 'MLB',
@@ -175,7 +183,7 @@ function generateDemoWinProbability(sport) {
       homeScore: 4,
       awayScore: 3,
       outs: 2,
-      runnersOn: ['2B']
+      runnersOn: ['2B'],
     },
     NBA: {
       sport: 'NBA',
@@ -185,8 +193,8 @@ function generateDemoWinProbability(sport) {
       timeRemaining: 120, // 2:00 left
       homeScore: 108,
       awayScore: 105,
-      possession: 'away'
-    }
+      possession: 'away',
+    },
   };
 
   const gameState = demoGameState[sport] || demoGameState['NFL'];
@@ -202,42 +210,45 @@ function generateDemoWinProbability(sport) {
       level: 'high',
       interval: {
         lower: 0.65,
-        upper: 0.79
+        upper: 0.79,
       },
-      standardError: 0.07
+      standardError: 0.07,
     },
     factors: {
       scoreDifferential: {
         value: gameState.homeScore - gameState.awayScore,
         impact: 0.18,
-        description: `${gameState.homeScore - gameState.awayScore} point lead`
+        description: `${gameState.homeScore - gameState.awayScore} point lead`,
       },
       timeRemaining: {
         value: gameState.timeRemaining || (gameState.inning ? 9 - gameState.inning : 180),
         impact: -0.05,
-        description: sport === 'MLB' ? `Bottom ${gameState.inning}` : `${Math.floor(gameState.timeRemaining / 60)}:${String(gameState.timeRemaining % 60).padStart(2, '0')} remaining`
+        description:
+          sport === 'MLB'
+            ? `Bottom ${gameState.inning}`
+            : `${Math.floor(gameState.timeRemaining / 60)}:${String(gameState.timeRemaining % 60).padStart(2, '0')} remaining`,
       },
       possession: {
         value: gameState.possession === 'home' ? 1 : -1,
         impact: 0.03,
-        description: `${gameState.possession} possession`
+        description: `${gameState.possession} possession`,
       },
       teamStrength: {
         homePower: 0.62,
         awayPower: 0.58,
-        impact: 0.06
-      }
+        impact: 0.06,
+      },
     },
     keyMoments: [
       {
         type: 'critical_period',
         description: 'Final minutes - every play critical',
         winProbSwing: 'high',
-        currentProb: 0.72
-      }
+        currentProb: 0.72,
+      },
     ],
     disclaimer: 'Demo data for testing purposes',
     lastUpdated: new Date().toISOString(),
-    timezone: 'America/Chicago'
+    timezone: 'America/Chicago',
   };
 }

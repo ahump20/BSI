@@ -21,7 +21,7 @@ export async function onRequest(context: any) {
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
-    'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+    'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
   };
 
   // Handle OPTIONS request
@@ -55,7 +55,7 @@ export async function onRequest(context: any) {
       return new Response(
         JSON.stringify({
           error: 'Invalid sport parameter',
-          message: 'Valid options: sec, nfl, mlb, all'
+          message: 'Valid options: sec, nfl, mlb, all',
         }),
         { status: 400, headers }
       );
@@ -63,13 +63,13 @@ export async function onRequest(context: any) {
 
     return new Response(JSON.stringify(filteredData), {
       status: 200,
-      headers
+      headers,
     });
   } catch (error: any) {
     return new Response(
       JSON.stringify({
         error: 'Failed to load simulation data',
-        message: error.message
+        message: error.message,
       }),
       { status: 500, headers }
     );

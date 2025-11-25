@@ -95,17 +95,29 @@ const columnDefinitions: Record<SectionKey, ColumnConfig[]> = {
   hitters: [
     { key: 'name', label: 'Hitter', tooltip: 'Player name and split' },
     { key: 'xBA', label: 'xBA', tooltip: 'Expected batting average (tracking & contact quality)' },
-    { key: 'xSLG', label: 'xSLG', tooltip: 'Expected slugging based on exit velocity & launch angle' },
+    {
+      key: 'xSLG',
+      label: 'xSLG',
+      tooltip: 'Expected slugging based on exit velocity & launch angle',
+    },
     { key: 'hardHitRate', label: 'Hard Hit%', tooltip: 'Percent of batted balls ≥95 mph' },
     { key: 'barrelRate', label: 'Barrel%', tooltip: 'Barrel rate (ideal EV/LA window)' },
     { key: 'trend', label: 'Trend', tooltip: 'Rolling five-game expected OPS sparkbar' },
-    { key: 'sprayDistribution', label: 'Spray', tooltip: 'Pull / Center / Oppo distribution last 15 PA' },
+    {
+      key: 'sprayDistribution',
+      label: 'Spray',
+      tooltip: 'Pull / Center / Oppo distribution last 15 PA',
+    },
     { key: 'highlight', label: 'Highlight', tooltip: 'Diamond Pro clip' },
   ],
   pitchers: [
     { key: 'name', label: 'Pitcher', tooltip: 'Pitcher name and split' },
     { key: 'stuffPlus', label: 'Stuff+', tooltip: 'Stuff+ index (100 = NCAA average)' },
-    { key: 'pitchQuality', label: 'Pitch Qlty', tooltip: 'Pitch quality score blending tunneling and execution' },
+    {
+      key: 'pitchQuality',
+      label: 'Pitch Qlty',
+      tooltip: 'Pitch quality score blending tunneling and execution',
+    },
     { key: 'whiffRate', label: 'Whiff%', tooltip: 'Swinging-strike percentage' },
     { key: 'chaseRate', label: 'Chase%', tooltip: 'Out-of-zone swing rate' },
     { key: 'avgVelo', label: 'Velo', tooltip: 'Average fastball velocity (mph)' },
@@ -116,7 +128,11 @@ const columnDefinitions: Record<SectionKey, ColumnConfig[]> = {
     { key: 'name', label: 'Defender', tooltip: 'Player name and split' },
     { key: 'defenderRange', label: 'Range', tooltip: 'Defender range score (0-100 scale)' },
     { key: 'outsAboveAverage', label: 'OAA', tooltip: 'Outs above average for the season' },
-    { key: 'successRate', label: 'Success%', tooltip: 'Conversion rate on defensive opportunities' },
+    {
+      key: 'successRate',
+      label: 'Success%',
+      tooltip: 'Conversion rate on defensive opportunities',
+    },
     { key: 'armStrength', label: 'Arm', tooltip: 'Avg. arm strength (mph) when available' },
     { key: 'trend', label: 'Trend', tooltip: 'Rolling range trend sparkbar' },
     { key: 'highlight', label: 'Highlight', tooltip: 'Diamond Pro clip' },
@@ -261,9 +277,7 @@ const defaultSorter = (key: string, direction: SortDirection) => {
     }
 
     if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return direction === 'asc'
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
+      return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
     }
 
     return 0;
@@ -319,7 +333,11 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
   }, [activeSection]);
 
   if (!data) {
-    return <div className="advanced-placeholder">Advanced metrics are not available for this matchup yet.</div>;
+    return (
+      <div className="advanced-placeholder">
+        Advanced metrics are not available for this matchup yet.
+      </div>
+    );
   }
 
   const columns = columnDefinitions[activeSection];
@@ -341,7 +359,8 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
       return null;
     }
     for (const highlightId of row.highlightIds) {
-      const clip = mediaLookup.get(highlightId) || mediaLookup.get(`${row.playerId}:${highlightId}`);
+      const clip =
+        mediaLookup.get(highlightId) || mediaLookup.get(`${row.playerId}:${highlightId}`);
       if (clip) return clip;
     }
     return null;
@@ -373,11 +392,17 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                   key={column.key}
                   style={column.width ? { width: column.width } : undefined}
                   title={column.tooltip}
-                  onClick={() => column.key !== 'highlight' && column.isSortable !== false && handleSort(column.key)}
+                  onClick={() =>
+                    column.key !== 'highlight' &&
+                    column.isSortable !== false &&
+                    handleSort(column.key)
+                  }
                   className={column.key === sortKey ? `sorted-${sortDirection}` : undefined}
                 >
                   {column.label}
-                  {column.key === sortKey && <span className="sort-indicator">{sortDirection === 'asc' ? '▲' : '▼'}</span>}
+                  {column.key === sortKey && (
+                    <span className="sort-indicator">{sortDirection === 'asc' ? '▲' : '▼'}</span>
+                  )}
                 </th>
               ))}
             </tr>
@@ -391,7 +416,9 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                       <td key={column.key}>
                         <div className="player-id">
                           <span className="player-name">{row.name}</span>
-                          <span className="player-team">{row.team} · {row.side === 'home' ? 'Home' : 'Away'}</span>
+                          <span className="player-team">
+                            {row.team} · {row.side === 'home' ? 'Home' : 'Away'}
+                          </span>
                         </div>
                       </td>
                     );
@@ -417,7 +444,10 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                     const clip = resolveClip(row);
                     return (
                       <td key={column.key}>
-                        <MediaThumbnail clip={clip} onClick={(selected) => setActiveClip(selected)} />
+                        <MediaThumbnail
+                          clip={clip}
+                          onClick={(selected) => setActiveClip(selected)}
+                        />
                       </td>
                     );
                   }
@@ -428,7 +458,13 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                     return <td key={column.key}>{formatDecimal(value)}</td>;
                   }
 
-                  if (column.key === 'hardHitRate' || column.key === 'barrelRate' || column.key === 'whiffRate' || column.key === 'chaseRate' || column.key === 'successRate') {
+                  if (
+                    column.key === 'hardHitRate' ||
+                    column.key === 'barrelRate' ||
+                    column.key === 'whiffRate' ||
+                    column.key === 'chaseRate' ||
+                    column.key === 'successRate'
+                  ) {
                     return <td key={column.key}>{formatPercent(value)}</td>;
                   }
 
@@ -436,7 +472,12 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                     return <td key={column.key}>{formatNumber(value, 1)}</td>;
                   }
 
-                  if (column.key === 'defenderRange' || column.key === 'stuffPlus' || column.key === 'pitchQuality' || column.key === 'outsAboveAverage') {
+                  if (
+                    column.key === 'defenderRange' ||
+                    column.key === 'stuffPlus' ||
+                    column.key === 'pitchQuality' ||
+                    column.key === 'outsAboveAverage'
+                  ) {
                     return <td key={column.key}>{formatNumber(value)}</td>;
                   }
 
@@ -449,8 +490,13 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
       </div>
 
       <footer className="advanced-metrics__footer">
-        <span>Diamond Pro metrics refreshed {data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString() : 'recently'}.</span>
-        <span className="advanced-metrics__powered">Powered by Stripe entitlements · Highlight ingest placeholder.</span>
+        <span>
+          Diamond Pro metrics refreshed{' '}
+          {data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString() : 'recently'}.
+        </span>
+        <span className="advanced-metrics__powered">
+          Powered by Stripe entitlements · Highlight ingest placeholder.
+        </span>
       </footer>
 
       <MediaModal clip={activeClip} onClose={() => setActiveClip(null)} />

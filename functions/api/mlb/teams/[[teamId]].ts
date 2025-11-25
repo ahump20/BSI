@@ -101,7 +101,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Parse include parameter
     const includeParam = url.searchParams.get('include') || 'roster,stats,standings';
-    const include = new Set(includeParam.split(',').map(s => s.trim()));
+    const include = new Set(includeParam.split(',').map((s) => s.trim()));
 
     const rosterType = url.searchParams.get('rosterType') || '40Man';
     const scheduleStart = url.searchParams.get('scheduleStart');
@@ -144,7 +144,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Schedule
     if (include.has('schedule')) {
       promises.push(
-        adapter.fetchSchedule(teamIdNum, season, scheduleStart || undefined, scheduleEnd || undefined)
+        adapter.fetchSchedule(
+          teamIdNum,
+          season,
+          scheduleStart || undefined,
+          scheduleEnd || undefined
+        )
       );
     } else {
       promises.push(Promise.resolve(null));
@@ -175,9 +180,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Add quick access helpers
     if (standings) {
-      const teamRecord = standings.teamRecords.find(
-        (tr: any) => tr.team.id === teamIdNum
-      );
+      const teamRecord = standings.teamRecords.find((tr: any) => tr.team.id === teamIdNum);
       if (teamRecord) {
         response.quickStats = {
           record: `${teamRecord.wins}-${teamRecord.losses}`,
@@ -254,7 +257,7 @@ async function handleAllTeams(
   // Group by division
   const byDivision: Record<string, any[]> = {};
 
-  teams.forEach(team => {
+  teams.forEach((team) => {
     const divisionKey = `${team.league.name}_${team.division.name}`;
     if (!byDivision[divisionKey]) {
       byDivision[divisionKey] = [];
@@ -272,7 +275,7 @@ async function handleAllTeams(
     season,
     totalTeams: teams.length,
     byDivision,
-    teams: teams.map(t => ({
+    teams: teams.map((t) => ({
       id: t.id,
       name: t.name,
       abbreviation: t.abbreviation,

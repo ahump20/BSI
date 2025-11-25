@@ -15,7 +15,7 @@ import {
   predictInjuryImpact,
   analyzeTeamInjuries,
   compareTeamInjuries,
-  trackRecoveryTimeline
+  trackRecoveryTimeline,
 } from '../../../../lib/ml/injury-impact-predictor.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
@@ -90,21 +90,23 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300, s-maxage=600' // 5-10 min cache
-      }
+        'Cache-Control': 'public, max-age=300, s-maxage=600', // 5-10 min cache
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to analyze injury impact',
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to analyze injury impact',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -113,7 +115,8 @@ export async function onRequest(context) {
  */
 async function fetchInjuryDetails(env, playerId, sport) {
   try {
-    const injury = await env.DB.prepare(`
+    const injury = await env.DB.prepare(
+      `
       SELECT
         ci.player_id,
         ci.player_name,
@@ -129,7 +132,10 @@ async function fetchInjuryDetails(env, playerId, sport) {
       WHERE ci.player_id = ? AND ci.sport = ?
       ORDER BY ci.injury_date DESC
       LIMIT 1
-    `).bind(playerId, sport).first();
+    `
+    )
+      .bind(playerId, sport)
+      .first();
 
     if (!injury) {
       throw new Error(`No injury found for player ${playerId}`);
@@ -142,9 +148,8 @@ async function fetchInjuryDetails(env, playerId, sport) {
       sport: injury.sport,
       position: injury.position,
       severity: injury.severity,
-      expectedReturn: injury.expected_return
+      expectedReturn: injury.expected_return,
     };
-
   } catch (error) {
     throw error;
   }
@@ -160,7 +165,7 @@ function generateDemoInjuryImpact(sport) {
         id: 'demo_player_001',
         name: 'Patrick Mahomes',
         team: 'KC',
-        position: 'QB'
+        position: 'QB',
       },
       injury: {
         severity: 'moderate',
@@ -168,20 +173,20 @@ function generateDemoInjuryImpact(sport) {
         projectedGamesMissed: {
           min: 2,
           expected: 3,
-          max: 5
-        }
+          max: 5,
+        },
       },
       impact: {
         qualityDropoff: 0.35,
         positionalImportance: 1.0,
         winProbabilityChange: 12.5,
         seasonWinChange: 0.4,
-        severity: 'major'
+        severity: 'major',
       },
       replacement: {
         quality: 0.42,
         comparison: 'downgrade',
-        dropoffMagnitude: 0.35
+        dropoffMagnitude: 0.35,
       },
       historical: {
         comparableInjuries: [
@@ -190,33 +195,33 @@ function generateDemoInjuryImpact(sport) {
             position: 'QB',
             severity: 'moderate',
             games_missed: 3,
-            impact: 0.11
+            impact: 0.11,
           },
           {
             player_name: 'Lamar Jackson',
             position: 'QB',
             severity: 'moderate',
             games_missed: 4,
-            impact: 0.13
-          }
+            impact: 0.13,
+          },
         ],
-        avgImpact: 0.12
+        avgImpact: 0.12,
       },
       confidence: {
         level: 'high',
         factors: [
           'Player sample: 80 games',
           'Replacement data: available',
-          'Historical comp: 5 injuries'
-        ]
-      }
+          'Historical comp: 5 injuries',
+        ],
+      },
     },
     MLB: {
       player: {
         id: 'demo_player_002',
         name: 'Shohei Ohtani',
         team: 'LAD',
-        position: 'SP'
+        position: 'SP',
       },
       injury: {
         severity: 'major',
@@ -224,20 +229,20 @@ function generateDemoInjuryImpact(sport) {
         projectedGamesMissed: {
           min: 8,
           expected: 12,
-          max: 20
-        }
+          max: 20,
+        },
       },
       impact: {
         qualityDropoff: 0.28,
-        positionalImportance: 0.90,
+        positionalImportance: 0.9,
         winProbabilityChange: 8.2,
         seasonWinChange: 1.0,
-        severity: 'major'
+        severity: 'major',
       },
       replacement: {
         quality: 0.48,
         comparison: 'downgrade',
-        dropoffMagnitude: 0.28
+        dropoffMagnitude: 0.28,
       },
       historical: {
         comparableInjuries: [
@@ -246,26 +251,26 @@ function generateDemoInjuryImpact(sport) {
             position: 'SP',
             severity: 'major',
             games_missed: 15,
-            impact: 0.09
-          }
+            impact: 0.09,
+          },
         ],
-        avgImpact: 0.09
+        avgImpact: 0.09,
       },
       confidence: {
         level: 'high',
         factors: [
           'Player sample: 150 games',
           'Replacement data: available',
-          'Historical comp: 3 injuries'
-        ]
-      }
+          'Historical comp: 3 injuries',
+        ],
+      },
     },
     NBA: {
       player: {
         id: 'demo_player_003',
         name: 'LeBron James',
         team: 'LAL',
-        position: 'SF'
+        position: 'SF',
       },
       injury: {
         severity: 'minor',
@@ -273,20 +278,20 @@ function generateDemoInjuryImpact(sport) {
         projectedGamesMissed: {
           min: 1,
           expected: 2,
-          max: 3
-        }
+          max: 3,
+        },
       },
       impact: {
         qualityDropoff: 0.22,
         positionalImportance: 0.75,
         winProbabilityChange: 6.1,
         seasonWinChange: 0.1,
-        severity: 'moderate'
+        severity: 'moderate',
       },
       replacement: {
         quality: 0.58,
         comparison: 'downgrade',
-        dropoffMagnitude: 0.22
+        dropoffMagnitude: 0.22,
       },
       historical: {
         comparableInjuries: [
@@ -295,20 +300,20 @@ function generateDemoInjuryImpact(sport) {
             position: 'SF',
             severity: 'minor',
             games_missed: 2,
-            impact: 0.05
-          }
+            impact: 0.05,
+          },
         ],
-        avgImpact: 0.05
+        avgImpact: 0.05,
       },
       confidence: {
         level: 'high',
         factors: [
           'Player sample: 250 games',
           'Replacement data: available',
-          'Historical comp: 8 injuries'
-        ]
-      }
-    }
+          'Historical comp: 8 injuries',
+        ],
+      },
+    },
   };
 
   const demo = demoData[sport] || demoData['NFL'];
@@ -317,6 +322,6 @@ function generateDemoInjuryImpact(sport) {
     ...demo,
     disclaimer: 'Demo data for testing purposes',
     lastUpdated: new Date().toISOString(),
-    timezone: 'America/Chicago'
+    timezone: 'America/Chicago',
   };
 }

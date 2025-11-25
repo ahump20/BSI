@@ -49,11 +49,7 @@ export class ErrorHandler {
       onError?: (error: Error) => void;
     } = {}
   ): Promise<T | FallbackData<T>> {
-    const {
-      retries = this.MAX_RETRIES,
-      retryDelay = this.DEFAULT_RETRY_DELAY,
-      onError,
-    } = options;
+    const { retries = this.MAX_RETRIES, retryDelay = this.DEFAULT_RETRY_DELAY, onError } = options;
 
     let lastError: Error | null = null;
 
@@ -116,23 +112,22 @@ export class ErrorHandler {
       }
 
       // Retry network and temporary errors
-      return [
-        ErrorCode.NETWORK_ERROR,
-        ErrorCode.API_UNAVAILABLE,
-      ].includes(error.code);
+      return [ErrorCode.NETWORK_ERROR, ErrorCode.API_UNAVAILABLE].includes(error.code);
     }
 
     // Retry network-related errors
-    return error.message.includes('fetch') ||
-           error.message.includes('network') ||
-           error.message.includes('timeout');
+    return (
+      error.message.includes('fetch') ||
+      error.message.includes('network') ||
+      error.message.includes('timeout')
+    );
   }
 
   /**
    * Sleep utility for retry delays
    */
   private static sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**

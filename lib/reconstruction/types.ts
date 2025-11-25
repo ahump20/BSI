@@ -340,7 +340,11 @@ export interface ContentQueueItem {
 
 export interface SystemMetric {
   id: string;
-  metricType: 'reconstruction_time' | 'prediction_accuracy' | 'api_latency' | 'event_detection_rate';
+  metricType:
+    | 'reconstruction_time'
+    | 'prediction_accuracy'
+    | 'api_latency'
+    | 'event_detection_rate';
   sport: Sport;
   value: number;
   unit: 'milliseconds' | 'percentage' | 'count' | 'events_per_minute';

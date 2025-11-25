@@ -11,12 +11,14 @@ type SportConfig = {
 const SPORT_PATHS: Record<SportKey, SportConfig> = {
   football: {
     base: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football',
-    scoreboard: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard',
+    scoreboard:
+      'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard',
     rankings: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings',
   },
   baseball: {
     base: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball',
-    scoreboard: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard',
+    scoreboard:
+      'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard',
     rankings: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings',
   },
 };
@@ -94,9 +96,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             })),
             meta: {
               dataSource:
-                sport === 'baseball'
-                  ? 'ESPN College Baseball API'
-                  : 'ESPN College Football API',
+                sport === 'baseball' ? 'ESPN College Baseball API' : 'ESPN College Football API',
               lastUpdated: new Date().toISOString(),
               sport,
             },
@@ -156,11 +156,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               wins: record?.stats?.find((s: any) => s.name === 'wins')?.value || 0,
               losses: record?.stats?.find((s: any) => s.name === 'losses')?.value || 0,
               conference:
-                record?.stats?.find((s: any) => s.name === 'vsConf' || s.name === 'vs. Conf.')?.displayValue ||
-                '0-0',
+                record?.stats?.find((s: any) => s.name === 'vsConf' || s.name === 'vs. Conf.')
+                  ?.displayValue || '0-0',
               neutral:
-                record?.stats?.find((s: any) => s.name === 'neutral' || s.name === 'vsNeutral')?.displayValue ||
-                null,
+                record?.stats?.find((s: any) => s.name === 'neutral' || s.name === 'vsNeutral')
+                  ?.displayValue || null,
             },
           },
           roster:
@@ -179,10 +179,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             })) ?? [],
           schedule: schedule?.events ?? [],
           meta: {
-            dataSource:
-              sport === 'baseball'
-                ? 'ESPN College Baseball API'
-                : 'ESPN NCAA API',
+            dataSource: sport === 'baseball' ? 'ESPN College Baseball API' : 'ESPN NCAA API',
             lastUpdated: new Date().toISOString(),
             season: schedule?.season?.year || new Date().getFullYear(),
             sport,
@@ -242,13 +239,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               teams: event?.competitions?.[0]?.competitors ?? [],
               venue: event?.competitions?.[0]?.venue ?? null,
               broadcasts: event?.competitions?.[0]?.broadcasts ?? [],
-              notes: sport === 'baseball' ? event?.series ?? null : null,
+              notes: sport === 'baseball' ? (event?.series ?? null) : null,
             })) ?? [],
           meta: {
-            dataSource:
-              sport === 'baseball'
-                ? 'ESPN College Baseball API'
-                : 'ESPN NCAA API',
+            dataSource: sport === 'baseball' ? 'ESPN College Baseball API' : 'ESPN NCAA API',
             lastUpdated: new Date().toISOString(),
             sport,
           },
@@ -294,16 +288,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const payload = await response.json();
         rankings = {
           timestamp: new Date().toISOString(),
-          rankings: payload?.rankings?.map((poll: any) => ({
-            name: poll?.name ?? null,
-            type: poll?.type ?? null,
-            ranks: poll?.ranks?.slice(0, 25) ?? [],
-          })) ?? [],
+          rankings:
+            payload?.rankings?.map((poll: any) => ({
+              name: poll?.name ?? null,
+              type: poll?.type ?? null,
+              ranks: poll?.ranks?.slice(0, 25) ?? [],
+            })) ?? [],
           meta: {
-            dataSource:
-              sport === 'baseball'
-                ? 'ESPN College Baseball API'
-                : 'ESPN NCAA API',
+            dataSource: sport === 'baseball' ? 'ESPN College Baseball API' : 'ESPN NCAA API',
             lastUpdated: new Date().toISOString(),
             sport,
           },
@@ -335,23 +327,26 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       {
         status: 404,
         headers,
-      },
+      }
     );
   } catch (error: any) {
     console.error('NCAA API error:', error);
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error?.message ?? 'Unknown error',
-    }), {
-      status: 500,
-      headers,
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Internal server error',
+        message: error?.message ?? 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers,
+      }
+    );
   }
 };
 
-function resolveSport(raw: string | null):
-  | { sport: SportKey; endpoints: SportConfig }
-  | { error: string } {
+function resolveSport(
+  raw: string | null
+): { sport: SportKey; endpoints: SportConfig } | { error: string } {
   const normalized = (raw || 'football').toLowerCase();
   if (normalized in SPORT_PATHS) {
     return {

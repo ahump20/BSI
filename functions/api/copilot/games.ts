@@ -118,18 +118,25 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cached = await env.CACHE.get(cacheKey, 'json');
       if (cached) {
         const cachedData = cached as GamesResponse;
-        return new Response(JSON.stringify({
-          ...cachedData,
-          source: 'cache',
-          responseTime: `${Date.now() - startTime}ms`
-        }, null, 2), {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Data-Source': 'kv-cache',
-            ...corsHeaders,
+        return new Response(
+          JSON.stringify(
+            {
+              ...cachedData,
+              source: 'cache',
+              responseTime: `${Date.now() - startTime}ms`,
+            },
+            null,
+            2
+          ),
+          {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Data-Source': 'kv-cache',
+              ...corsHeaders,
+            },
           }
-        });
+        );
       }
     } catch (error) {
       console.warn('Cache read failed:', error);
@@ -198,7 +205,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Execute query
     const queryStart = Date.now();
-    const { results } = await env.DB.prepare(query).bind(...params).all();
+    const { results } = await env.DB.prepare(query)
+      .bind(...params)
+      .all();
     const queryTime = Date.now() - queryStart;
 
     console.log(`D1 query completed in ${queryTime}ms, returned ${results.length} games`);
@@ -206,21 +215,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const games = results as GameRecord[];
 
     // Calculate game status counts
-    const liveGamesCount = games.filter(g =>
-      g.status === 'InProgress' || g.status === 'Live'
+    const liveGamesCount = games.filter(
+      (g) => g.status === 'InProgress' || g.status === 'Live'
     ).length;
 
-    const completedGamesCount = games.filter(g =>
-      g.status === 'Final' || g.status === 'Completed'
+    const completedGamesCount = games.filter(
+      (g) => g.status === 'Final' || g.status === 'Completed'
     ).length;
 
-    const scheduledGamesCount = games.filter(g =>
-      g.status === 'Scheduled' || g.status === 'Upcoming'
+    const scheduledGamesCount = games.filter(
+      (g) => g.status === 'Scheduled' || g.status === 'Upcoming'
     ).length;
 
     // Group games by date
     const gamesByDateMap = new Map<string, GameRecord[]>();
-    games.forEach(game => {
+    games.forEach((game) => {
       const gameDate = game.game_date.split('T')[0]; // Extract YYYY-MM-DD
       if (!gamesByDateMap.has(gameDate)) {
         gamesByDateMap.set(gameDate, []);
@@ -228,25 +237,29 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       gamesByDateMap.get(gameDate)!.push(game);
     });
 
-    const gamesByDate: GamesByDate[] = Array.from(gamesByDateMap.entries()).map(([date, games]) => ({
-      date,
-      games
-    })).sort((a, b) => b.date.localeCompare(a.date)); // Most recent first
+    const gamesByDate: GamesByDate[] = Array.from(gamesByDateMap.entries())
+      .map(([date, games]) => ({
+        date,
+        games,
+      }))
+      .sort((a, b) => b.date.localeCompare(a.date)); // Most recent first
 
     // Group games by sport
     const gamesBySportMap = new Map<string, GameRecord[]>();
-    games.forEach(game => {
+    games.forEach((game) => {
       if (!gamesBySportMap.has(game.sport)) {
         gamesBySportMap.set(game.sport, []);
       }
       gamesBySportMap.get(game.sport)!.push(game);
     });
 
-    const gamesBySport: GamesBySport[] = Array.from(gamesBySportMap.entries()).map(([sport, games]) => ({
-      sport,
-      count: games.length,
-      games
-    })).sort((a, b) => b.count - a.count); // Most games first
+    const gamesBySport: GamesBySport[] = Array.from(gamesBySportMap.entries())
+      .map(([sport, games]) => ({
+        sport,
+        count: games.length,
+        games,
+      }))
+      .sort((a, b) => b.count - a.count); // Most games first
 
     // Build response
     const response: GamesResponse = {
@@ -263,7 +276,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       completedGamesCount,
       scheduledGamesCount,
       timestamp: new Date().toISOString(),
-      source: 'database'
+      source: 'database',
     };
 
     // Determine cache TTL based on game status
@@ -278,7 +291,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Cache the response
     try {
       await env.CACHE.put(cacheKey, JSON.stringify(response), {
-        expirationTtl: cacheTTL
+        expirationTtl: cacheTTL,
       });
       console.log(`Cached response with TTL ${cacheTTL}s`);
     } catch (error) {
@@ -288,38 +301,51 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     const totalTime = Date.now() - startTime;
 
-    return new Response(JSON.stringify({
-      ...response,
-      responseTime: `${totalTime}ms`,
-      performance: {
-        queryTime: `${queryTime}ms`,
-        totalTime: `${totalTime}ms`,
-        cacheTTL: `${cacheTTL}s`
+    return new Response(
+      JSON.stringify(
+        {
+          ...response,
+          responseTime: `${totalTime}ms`,
+          performance: {
+            queryTime: `${queryTime}ms`,
+            totalTime: `${totalTime}ms`,
+            cacheTTL: `${cacheTTL}s`,
+          },
+        },
+        null,
+        2
+      ),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Data-Source': 'database',
+          'X-Query-Time': `${queryTime}ms`,
+          'X-Cache-TTL': `${cacheTTL}`,
+          ...corsHeaders,
+        },
       }
-    }, null, 2), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Data-Source': 'database',
-        'X-Query-Time': `${queryTime}ms`,
-        'X-Cache-TTL': `${cacheTTL}`,
-        ...corsHeaders,
-      }
-    });
-
+    );
   } catch (error) {
     console.error('Games API error:', error);
 
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : String(error),
-      timestamp: new Date().toISOString()
-    }, null, 2), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        ...corsHeaders,
+    return new Response(
+      JSON.stringify(
+        {
+          error: 'Internal server error',
+          message: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+        },
+        null,
+        2
+      ),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
       }
-    });
+    );
   }
 };
