@@ -16,4 +16,4 @@ messages:
       or use Netlify; all deployments are done through Cloudflare.
   - role: user
     content: '{{user_query}}'
-model: openai/gpt-4o
+model: openai/gpt-5
