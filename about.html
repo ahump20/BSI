@@ -21,6 +21,9 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <!-- Playfair Display for elegant quotes -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             /* Brand Colors */
@@ -684,6 +687,261 @@
                 min-height: 300px;
             }
         }
+
+        /* Steinbeck Quote Section */
+        .steinbeck-section {
+            padding: var(--section-padding) 2rem;
+            background: linear-gradient(180deg, rgba(191, 87, 0, 0.08) 0%, transparent 50%, rgba(191, 87, 0, 0.05) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .steinbeck-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--burnt-orange), transparent);
+        }
+
+        .steinbeck-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .steinbeck-quote {
+            font-family: var(--font-display);
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .steinbeck-quote::before {
+            content: '"';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8rem;
+            font-family: var(--font-display);
+            color: var(--burnt-orange);
+            opacity: 0.15;
+            line-height: 1;
+        }
+
+        .steinbeck-attribution {
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            color: var(--burnt-orange-light);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .steinbeck-source {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            font-weight: 400;
+        }
+
+        /* Personal Philosophy Section */
+        .philosophy-section {
+            padding: var(--section-padding) 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(191, 87, 0, 0.05) 100%);
+        }
+
+        .philosophy-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .philosophy-card {
+            background: linear-gradient(135deg, rgba(191, 87, 0, 0.1) 0%, var(--glass) 100%);
+            border: 2px solid var(--burnt-orange);
+            border-radius: 24px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .philosophy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(191, 87, 0, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .philosophy-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--burnt-orange-light);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .philosophy-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+
+        .philosophy-text {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto;
+            font-style: italic;
+        }
+
+        .philosophy-text .emphasis {
+            color: var(--burnt-orange-light);
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* Birth Certificate Section */
+        .birth-certificate-section {
+            padding: var(--section-padding) 2rem;
+        }
+
+        .birth-certificate-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .birth-certificate-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .birth-certificate-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .birth-certificate-image {
+            width: 100%;
+            border-radius: 16px;
+            border: 3px solid var(--burnt-orange);
+            box-shadow: var(--glow-orange), 0 20px 40px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .birth-certificate-image:hover {
+            transform: scale(1.02);
+        }
+
+        .birth-certificate-content {
+            padding: 2rem 0;
+        }
+
+        .birth-certificate-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .birth-certificate-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .birth-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .birth-detail-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--burnt-orange) 0%, var(--burnt-orange-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .birth-detail-text {
+            flex: 1;
+        }
+
+        .birth-detail-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .birth-detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Childhood Longhorns Photo */
+        .childhood-photo-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .childhood-photo-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .childhood-photo-caption {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .childhood-photo-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .childhood-photo-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -727,6 +985,33 @@
                 <div style="margin-top: 2rem;">
                     <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem;">Austin Humphrey</h2>
                     <p style="color: var(--burnt-orange-light); font-weight: 600; font-size: 1.125rem;">Founder & Lead Analyst</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Steinbeck Quote Section -->
+        <section class="steinbeck-section" data-aos="fade-up">
+            <div class="steinbeck-container">
+                <blockquote class="steinbeck-quote">
+                    I have said that Texas is a state of mind, but I think it is more than that. It is a mystique closely approximating a religion. And this is true to the extent that people either passionately love Texas or passionately hate it and, as in other religions, few people dare to inspect it for fear of losing their bearings in mystery or paradox. But I think there will be little quarrel with my feeling that Texas is one thing. For all its enormous range of space, climate, and physical appearance, and for all the internal squabbles, contentions, and strivings, Texas has a tight cohesiveness perhaps stronger than any other section of America. Rich, poor, Panhandle, Gulf, city, country, Texas is the obsession, the proper study, and the passionate possession of all Texans.
+                </blockquote>
+                <div class="steinbeck-attribution">— John Steinbeck</div>
+                <div class="steinbeck-source">Travels with Charley: In Search of America, 1962</div>
+            </div>
+        </section>
+
+        <!-- Personal Philosophy Section -->
+        <section class="philosophy-section" data-aos="fade-up">
+            <div class="philosophy-container">
+                <div class="philosophy-card">
+                    <div class="philosophy-label">My Philosophy</div>
+                    <h2 class="philosophy-title">What Texas Means to Me</h2>
+                    <p class="philosophy-text">
+                        For myself, personally, I think Texas is <span class="emphasis">how you choose to treat the best and worst of us</span>.
+                        A covenant with oneself and the company he keeps to never allow each other to <span class="emphasis">never stop dreaming beyond the horizon</span>,
+                        regardless of race, ethnicity, religion, or even birth soil.
+                        <span class="emphasis">A home, a family, a philosophy.</span>
+                    </p>
                 </div>
             </div>
         </section>
@@ -846,6 +1131,126 @@
                                 <p>DKR-Texas Memorial Stadium, 1998</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Birth Certificate Section -->
+        <section class="birth-certificate-section">
+            <div class="birth-certificate-container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">The Official Record</h2>
+                    <div class="section-divider"></div>
+                </div>
+
+                <div class="birth-certificate-grid" data-aos="fade-up" data-aos-delay="100">
+                    <div>
+                        <img
+                            src="/images/birth-certificate.jpg"
+                            alt="Official Tennessee Birth Certificate for John Austin Humphrey, born August 17, 1995 in Memphis"
+                            class="birth-certificate-image"
+                        >
+                    </div>
+                    <div class="birth-certificate-content">
+                        <h3 class="birth-certificate-title">State of Tennessee Certificate of Live Birth</h3>
+                        <div class="birth-certificate-details">
+                            <div class="birth-detail">
+                                <div class="birth-detail-icon">
+                                    <i class="fas fa-baby"></i>
+                                </div>
+                                <div class="birth-detail-text">
+                                    <div class="birth-detail-label">Child's Name</div>
+                                    <div class="birth-detail-value">John Austin Humphrey</div>
+                                </div>
+                            </div>
+                            <div class="birth-detail">
+                                <div class="birth-detail-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="birth-detail-text">
+                                    <div class="birth-detail-label">Date of Birth</div>
+                                    <div class="birth-detail-value">August 17, 1995 — Same as Davy Crockett</div>
+                                </div>
+                            </div>
+                            <div class="birth-detail">
+                                <div class="birth-detail-icon">
+                                    <i class="fas fa-hospital"></i>
+                                </div>
+                                <div class="birth-detail-text">
+                                    <div class="birth-detail-label">Place of Birth</div>
+                                    <div class="birth-detail-value">Baptist Memorial Hospital East, Memphis, TN</div>
+                                </div>
+                            </div>
+                            <div class="birth-detail">
+                                <div class="birth-detail-icon">
+                                    <i class="fas fa-flag"></i>
+                                </div>
+                                <div class="birth-detail-text">
+                                    <div class="birth-detail-label">Father's Birthplace</div>
+                                    <div class="birth-detail-value">Texas — The Lone Star State</div>
+                                </div>
+                            </div>
+                            <div class="birth-detail">
+                                <div class="birth-detail-icon">
+                                    <i class="fas fa-mountain"></i>
+                                </div>
+                                <div class="birth-detail-text">
+                                    <div class="birth-detail-label">The Texas Soil</div>
+                                    <div class="birth-detail-value">From West Columbia — Birthplace of the Republic</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Destined for Texas - Childhood Photo Section -->
+        <section class="origin-section" style="padding-top: 0;">
+            <div class="origin-container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">Destined for Texas</h2>
+                    <div class="section-divider"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; align-items: start;" data-aos="fade-up">
+                    <div class="childhood-photo-card">
+                        <img
+                            src="/images/austin-childhood-longhorns.jpeg"
+                            alt="Young Austin wearing a Texas Longhorns t-shirt, destined for Hook 'Em since childhood"
+                            class="childhood-photo-image"
+                        >
+                        <div class="childhood-photo-caption">
+                            <h4 class="childhood-photo-title">Hook 'Em From Day One</h4>
+                            <p class="childhood-photo-text">
+                                Texas wasn't just where my family came from — it was where I was always headed.
+                                Some things are written in the stars. Some are written in burnt orange.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="story-card" style="padding: 2.5rem;">
+                        <div class="story-label">The Newspaper Article</div>
+                        <h3 class="story-title" style="font-size: 1.75rem;">"Tennessee birth will be on Texas soil"</h3>
+                        <p class="story-text">
+                            The <strong>El Campo Leader-News</strong> ran the story on <span class="story-highlight">May 6, 1995</span> —
+                            three months before I was born. The article detailed how my family carried on a tradition spanning
+                            <span class="story-highlight">127 years</span> of Texans ensuring their children would be born on Texas soil,
+                            no matter where life took them.
+                        </p>
+                        <p class="story-text">
+                            My father, <span class="story-highlight">John Dean Humphrey</span>, son of El Campo's Bill and Helen Humphrey,
+                            brought dirt from West Columbia — where Sam Houston was inaugurated as the first President of the Republic of Texas —
+                            to ensure that when I came into this world, my first cry would be on Texas soil.
+                        </p>
+                        <p class="story-text" style="margin-top: 1.5rem;">
+                            <em>"And just to be on the safe side, there will be the pearl of Texas, the seal of Texas,
+                            and a Lone Star emblazoned receiving blanket. And the 'Right Texas Stuff' for blastoff."</em>
+                        </p>
+                        <p class="story-text" style="color: var(--text-muted); font-size: 0.9rem;">
+                            — El Campo Leader-News, May 6, 1995
+                        </p>
                     </div>
                 </div>
             </div>
@@ -989,7 +1394,10 @@
     <!-- Footer -->
     <footer class="footer">
         <p class="footer-text">
-            &copy; 2025 <a href="/">Blaze Sports Intel</a>. Built in Texas.
+            &copy; 2025 <a href="/">Blaze Sports Intel</a>. Built with <span style="color: var(--burnt-orange-light);">passion</span> in Boerne, Texas.
+        </p>
+        <p class="footer-text" style="margin-top: 0.5rem; font-style: italic; opacity: 0.6;">
+            Born on Texas Soil. Dreaming Beyond the Horizon.
         </p>
     </footer>
 
