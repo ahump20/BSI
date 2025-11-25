@@ -36,13 +36,13 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 
 #### @deployment-integration-specialist
 **Use Case:** Analyze and migrate features from legacy deployments
-**Platform:** Consolidates from Netlify/Replit to Cloudflare Pages
+**Platform:** Consolidates legacy deployments to Cloudflare Pages exclusively
 **When to Use:** When integrating features from other platforms
 
 ```bash
 # Example usage
 "Check if there's a better version of this feature on our legacy deployments"
-"Migrate the 3D dashboard from the old Netlify site"
+"Migrate the 3D dashboard from legacy deployments to Cloudflare Pages"
 ```
 
 #### @cloudflare-domain-manager
