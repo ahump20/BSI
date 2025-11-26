@@ -8,6 +8,7 @@
 interface Env {
   DB: D1Database;
   KV: KVNamespace;
+  ANALYTICS?: AnalyticsEngineDataset;
 }
 
 interface ScoreSubmission {
@@ -191,7 +192,28 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     await env.KV.delete('blitz:leaderboard:alltime');
     await env.KV.delete('blitz:leaderboard:daily');
 
-    // 4. Get player's current rank
+    // 4. Track analytics
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: [
+          'game_play',         // event type
+          'blitz_football',    // game name
+          teamId,              // team used
+          stats.result,        // game result (touchdown, turnover, timeout)
+          stats.touchdowns > 0 ? 'scored_td' : 'no_td',
+        ],
+        doubles: [
+          score,                   // final score
+          stats.yardsGained,       // yards
+          stats.touchdowns,        // touchdowns
+          stats.longestPlay,       // longest play
+          stats.durationSeconds,   // play time
+        ],
+        indexes: [playerId],
+      });
+    }
+
+    // 5. Get player's current rank
     const rankResult = await env.DB.prepare(`
       SELECT COUNT(*) + 1 as rank FROM blitz_players
       WHERE high_score > ?

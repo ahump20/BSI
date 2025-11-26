@@ -8,6 +8,7 @@
 interface Env {
   DB: D1Database;
   KV: KVNamespace;
+  ANALYTICS?: AnalyticsEngineDataset;
 }
 
 interface ScoreSubmission {
@@ -182,7 +183,28 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     await env.KV.delete('leaderboard:alltime');
     await env.KV.delete('leaderboard:daily');
 
-    // 4. Get player's current rank
+    // 4. Track analytics
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: [
+          'game_play',           // event type
+          'backyard_baseball',   // game name
+          characterId,           // character used
+          fieldId || 'default',  // field played
+          stats.homeRuns > 0 ? 'home_run_hit' : 'no_home_run',
+        ],
+        doubles: [
+          score,                     // final score
+          stats.totalHits,           // hits
+          stats.homeRuns,            // home runs
+          stats.longestStreak,       // streak
+          stats.durationSeconds,     // play time
+        ],
+        indexes: [playerId],
+      });
+    }
+
+    // 5. Get player's current rank
     const rankResult = await env.DB.prepare(`
       SELECT COUNT(*) + 1 as rank FROM backyard_players
       WHERE high_score > ?
