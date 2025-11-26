@@ -464,25 +464,38 @@ const FeedbackWidget = {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         }
 
-        // Collect feedback data
+        // Map widget categories to API-valid categories
+        const categoryMap = {
+            'bug': 'bug',
+            'feature': 'feature',
+            'data': 'data-quality',
+            'performance': 'performance',
+            'ui': 'other',
+            'general': 'other'
+        };
+
+        // Collect feedback data (API expects 'comment' not 'message')
         const feedbackData = {
-            rating,
-            category,
-            message,
-            email,
+            rating: rating || 3,  // Default to 3 if no rating
+            category: categoryMap[category] || 'other',
+            comment: message || 'No comment provided',  // API requires comment
             page: window.location.pathname,
-            timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent,
             screenSize: `${window.innerWidth}x${window.innerHeight}`
         };
 
         try {
-            // ✅ PHASE 18: Send feedback to API endpoint
-            await fetch('/api/feedback', {
+            // Send to feedback API endpoint
+            const response = await fetch('/api/feedback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(feedbackData)
             });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Failed to submit feedback');
+            }
 
             // Show success state
             this.showSuccess();
