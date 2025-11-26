@@ -14,4 +14,4 @@ drf_spectacular_sidecar
 
 # Optional libraries for data validation or debugging
 python-dotenv==1.0.0      # For managing environment variables (if needed)
-pytest==7.4.0             # For testing
+pytest==9.0.1             # For testing
