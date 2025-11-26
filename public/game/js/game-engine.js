@@ -249,7 +249,7 @@ export class GameEngine {
 
         // Determine hit type based on distance
         if (distance < 50) {
-            this.infield Hit('single');
+            this.infieldHit('single');
         } else if (distance < 100) {
             this.infieldHit('double');
         } else if (distance < fenceDistance * 0.85) {

@@ -49,7 +49,7 @@ export class SportsDataIOAdapter {
       throw new Error(`SportsDataIO API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     // Transform to standard format
     return data.map((game: any) => this.transformGame(game));
@@ -74,7 +74,7 @@ export class SportsDataIOAdapter {
       throw new Error(`SportsDataIO API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     // Find team by ID
     const teamData = data.find((team: any) => team.TeamID.toString() === teamId);

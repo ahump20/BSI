@@ -20,10 +20,10 @@ const DATABASE_NAME = 'blazesports-db';
 
 // Current season years
 const CURRENT_SEASON = {
-  NFL: 2024,    // 2024 season (Sep 2024 - Feb 2025)
-  MLB: 2024,    // 2024 season (Apr - Oct 2024)
-  CFB: 2024,    // 2024 season (Aug - Jan 2025)
-  CBB: 2024     // 2024-2025 season (Nov 2024 - Apr 2025)
+  NFL: 2025,    // 2025 season (Sep 2025 - Feb 2026)
+  MLB: 2025,    // 2025 season (Apr - Oct 2025)
+  CFB: 2025,    // 2025 season (Aug - Jan 2026)
+  CBB: 2025     // 2025-2026 season (Nov 2025 - Apr 2026)
 };
 
 // API Configuration
@@ -36,7 +36,7 @@ const API_ENDPOINTS = {
   },
   MLB: {
     teams: `/mlb/scores/json/teams`,
-    games: `/mlb/scores/json/Games/2024` // Full 2024 season
+    games: `/mlb/scores/json/Games/${CURRENT_SEASON.MLB}` // Full season
   },
   CFB: {
     teams: `/cfb/scores/json/Teams`,

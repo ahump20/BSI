@@ -39,7 +39,7 @@ export default function GameCenter({
       setError(null);
 
       const response = await fetch('/api/college-baseball/games');
-      const result = await response.json();
+      const result = (await response.json()) as { success: boolean; data: Game[]; error?: string };
 
       if (result.success) {
         setGames(result.data);
@@ -62,7 +62,7 @@ export default function GameCenter({
         const cache = await caches.open('college-baseball-v1');
         const cached = await cache.match('/api/college-baseball/games');
         if (cached) {
-          const result = await cached.json();
+          const result = (await cached.json()) as { data: Game[] };
           setGames(result.data);
         }
       }

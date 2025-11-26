@@ -121,13 +121,17 @@ export function PortalTracker() {
       const response = await fetch('/api/recruiting/portal-activity');
       if (!response.ok) throw new Error('Failed to fetch portal data');
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        entries: PortalEntry[];
+        stats: PortalStats;
+        conferenceFlows: ConferenceFlow[];
+      };
       setEntries(data.entries);
       setStats(data.stats);
       setConferenceFlows(data.conferenceFlows);
 
       // Calculate NIL valuations for entries missing them
-      const entriesWithNIL = data.entries.map((entry: PortalEntry) => {
+      const entriesWithNIL = (data.entries as PortalEntry[]).map((entry: PortalEntry) => {
         if (!entry.nilValuation) {
           entry.nilValuation = NILCalculator.calculateValuation(entry.metrics);
         }
@@ -924,10 +928,6 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '24px',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    ':hover': {
-      transform: 'translateY(-2px)',
-      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-    },
   },
   entryHeader: {
     display: 'flex',

@@ -433,9 +433,13 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                   }
 
                   if (column.key === 'sprayDistribution') {
+                    const sprayData =
+                      'sprayDistribution' in row
+                        ? (row as AdvancedHitterMetric).sprayDistribution
+                        : undefined;
                     return (
                       <td key={column.key}>
-                        <SprayDistribution spray={row.sprayDistribution} />
+                        <SprayDistribution spray={sprayData} />
                       </td>
                     );
                   }

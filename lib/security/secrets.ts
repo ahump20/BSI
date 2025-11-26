@@ -167,7 +167,7 @@ export class SecretsManager {
           const result = schema.safeParse(value);
 
           if (!result.success) {
-            invalid.push(`${name}: ${result.error.errors[0].message}`);
+            invalid.push(`${name}: ${result.error.issues[0].message}`);
           }
         }
       } catch (error) {

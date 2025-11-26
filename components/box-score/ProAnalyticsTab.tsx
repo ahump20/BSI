@@ -89,7 +89,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
 
       // Fetch player data from API
       const response = await fetch(`/api/college-baseball/game/${gameId}/advanced-stats`);
-      const data = await response.json();
+      const data = (await response.json()) as { batting: any[]; pitching: any[] };
 
       // Calculate expected metrics for batters
       const battingStats: PlayerBattingStats[] = data.batting.map((player: any) => {
@@ -98,7 +98,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
         // Calculate aggregate expected metrics
         const expectedMetrics =
           battedBalls.length > 0
-            ? ExpectedMetricsCalculator.calculateExpectedMetrics({
+            ? ExpectedMetricsCalculator.calculateExpectedBA({
                 exitVelocity: player.avgExitVelo,
                 launchAngle: player.avgLaunchAngle,
                 sprayAngle: 0, // Center field default
@@ -125,18 +125,19 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
 
       // Calculate Stuff+ for pitchers
       const pitchingStats: PitcherStuffStats[] = data.pitching.map((pitcher: any) => {
-        const pitches: PitchData[] = pitcher.pitches || [];
+        const pitches: any[] = pitcher.pitches || [];
 
         // Calculate Stuff+ for primary pitch
         const primaryPitch = pitches[0];
         const stuffRating = primaryPitch
           ? ExpectedMetricsCalculator.calculateStuffPlus({
-              pitchType: primaryPitch.type,
+              pitchType: primaryPitch.pitchType || primaryPitch.type || 'FB',
               velocity: primaryPitch.velocity,
               spinRate: primaryPitch.spinRate,
               horizontalBreak: primaryPitch.horizontalBreak,
               verticalBreak: primaryPitch.verticalBreak,
               extension: primaryPitch.extension || 6.0,
+              releaseHeight: primaryPitch.releaseHeight || 5.5,
               level: 'college',
             })
           : undefined;
@@ -144,7 +145,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
         return {
           playerId: pitcher.id,
           name: pitcher.name,
-          pitchType: primaryPitch?.type || 'FB',
+          pitchType: primaryPitch?.pitchType || primaryPitch?.type || 'FB',
           pitchCount: pitcher.pitchCount,
           avgVelocity: pitcher.avgVelocity,
           avgSpinRate: pitcher.avgSpinRate,

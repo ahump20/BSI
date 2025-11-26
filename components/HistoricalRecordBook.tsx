@@ -398,7 +398,7 @@ export function HistoricalRecordBook({
         if (!response.ok) {
           throw new Error(`Failed to fetch records: ${response.status}`);
         }
-        const result = await response.json();
+        const result = (await response.json()) as RecordBookData;
         setData(result);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load record book');

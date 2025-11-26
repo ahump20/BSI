@@ -197,7 +197,10 @@ export class CacheAdapter {
       const list = await this.kv.list({ prefix: prefix || this.namespace });
       return {
         keys: list.keys.length,
-        estimatedSize: list.keys.reduce((sum, key) => sum + (key.metadata?.size || 0), 0),
+        estimatedSize: list.keys.reduce(
+          (sum, key) => sum + ((key.metadata as { size?: number } | undefined)?.size || 0),
+          0
+        ),
       };
     } catch (error) {
       console.error('Cache stats error:', error);

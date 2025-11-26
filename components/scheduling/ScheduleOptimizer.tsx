@@ -148,7 +148,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const result = await response.json();
+      const result = (await response.json()) as SimulationData;
       setData(result);
     } catch (error) {
       console.error('Failed to fetch optimization data:', error);

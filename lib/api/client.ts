@@ -46,7 +46,7 @@ export async function apiClient<T>(endpoint: string, options?: RequestInit): Pro
 
     // Try to get error details from response body
     try {
-      const body = await response.json();
+      const body = (await response.json()) as { error?: string; code?: string };
       if (body.error) {
         error.message = body.error;
         error.code = body.code;
