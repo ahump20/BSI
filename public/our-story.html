@@ -465,6 +465,120 @@
       font-size: 0.8125rem;
       color: rgba(250, 250, 250, 0.4);
     }
+
+    /* Athlete's Foundation Section */
+    .athlete-section {
+      padding: 6rem 1.5rem;
+      background: var(--bsi-midnight);
+      position: relative;
+    }
+    .athlete-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(191, 87, 0, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%);
+    }
+    .athlete-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .athlete-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .athlete-header .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bsi-burnt-orange);
+      display: block;
+      margin-bottom: 1rem;
+    }
+    .athlete-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .athlete-header h2 .accent { color: var(--bsi-burnt-orange); }
+
+    .athlete-hero-image {
+      margin-bottom: 4rem;
+    }
+    .athlete-hero-image img {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: 8px;
+      filter: sepia(10%) contrast(1.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+    .athlete-hero-image figcaption {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(250, 250, 250, 0.5);
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .athlete-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+    }
+    .athlete-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .athlete-block.reverse { direction: rtl; }
+    .athlete-block.reverse > * { direction: ltr; }
+    @media (max-width: 800px) {
+      .athlete-block, .athlete-block.reverse {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        direction: ltr;
+      }
+    }
+    .athlete-image img {
+      width: 100%;
+      border-radius: 8px;
+      filter: sepia(15%) contrast(1.05);
+    }
+    .athlete-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .athlete-content h3 .accent { color: var(--bsi-burnt-orange); }
+    .athlete-content p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(250, 250, 250, 0.8);
+    }
+
+    /* Dual image layout for youth baseball */
+    .story-image--dual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .story-image--dual .secondary {
+      object-fit: cover;
+      height: 100%;
+    }
+    @media (max-width: 600px) {
+      .story-image--dual {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -564,9 +678,10 @@
       </div>
 
       <div class="story-block">
-        <figure class="story-image">
+        <figure class="story-image story-image--dual">
           <img src="/images/dad-and-kid.jpg" alt="Young Austin with his dad, holding a baseball bat and glove">
-          <figcaption>Ready for the Bartlett Blaze—the team that gave our dog his name.</figcaption>
+          <img src="/images/youth-dbacks-baseball.jpg" alt="Austin's youth D-backs team with trophies" class="secondary" loading="lazy">
+          <figcaption>The Bartlett Blaze and youth D-backs—where it all started.</figcaption>
         </figure>
         <div class="story-content">
           <h3>Where <span class="accent">Blaze</span> Comes From</h3>
@@ -602,6 +717,51 @@
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- Athlete's Foundation Section -->
+  <section class="athlete-section">
+    <div class="athlete-container">
+
+      <!-- Section Header -->
+      <div class="athlete-header">
+        <span class="section-eyebrow">The Foundation</span>
+        <h2>Before I Covered the Game, <span class="accent">I Played It</span></h2>
+      </div>
+
+      <!-- Hero Image - Breaking Tackle -->
+      <figure class="athlete-hero-image">
+        <img src="/images/austin-football-action.png" alt="Austin Humphrey #20 breaking a tackle for Boerne Champion Chargers" loading="lazy">
+        <figcaption>Friday nights in Texas—#20, Boerne Champion Chargers.</figcaption>
+      </figure>
+
+      <!-- Story Grid -->
+      <div class="athlete-grid">
+
+        <!-- Team Photo Block -->
+        <div class="athlete-block">
+          <figure class="athlete-image">
+            <img src="/images/chargers-team-2013.jpg" alt="Boerne Champion Chargers team photo with Austin Humphrey" loading="lazy">
+          </figure>
+          <div class="athlete-content">
+            <h3>Charger <span class="accent">#20</span></h3>
+            <p>High school ball in Texas isn't just a sport—it's a way of life. Playing for Boerne Champion taught me what it meant to prepare, compete, and leave everything on the field.</p>
+          </div>
+        </div>
+
+        <!-- Grit/Crutches Block -->
+        <div class="athlete-block reverse">
+          <figure class="athlete-image">
+            <img src="/images/austin-crutches-grit.jpg" alt="Austin Humphrey on crutches with teammates" loading="lazy">
+          </figure>
+          <div class="athlete-content">
+            <h3>The Part They <span class="accent">Don't Show</span></h3>
+            <p>Sports aren't all touchdowns and highlight reels. Sometimes you're on the sideline, watching your teammates play without you. That teaches you something no stat sheet captures—grit, perspective, and what it means to come back.</p>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 

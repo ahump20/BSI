@@ -41,7 +41,7 @@ async function fetchScores(sport: Sport): Promise<Game[]> {
       // Return mock data for development
       return getMockGames(sport);
     }
-    const data = await res.json();
+    const data = (await res.json()) as { games?: Game[]; data?: Game[] };
     return data.games || data.data || [];
   } catch {
     // Return mock data if API fails

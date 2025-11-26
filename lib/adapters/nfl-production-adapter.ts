@@ -333,17 +333,13 @@ export class NFLProductionAdapter {
     }
 
     // Fetch from ESPN API
-    const response = await this.client.fetch<T>(url, {
-      headers: {
-        'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-        Accept: 'application/json',
-      },
-    });
+    const apiResponse = await this.client.fetch<T>('espn', url, {});
+    const data = apiResponse.data as T;
 
     // Store in KV cache
-    if (this.cache) {
+    if (this.cache && data) {
       try {
-        await this.cache.put(cacheKey, JSON.stringify(response), {
+        await this.cache.put(cacheKey, JSON.stringify(data), {
           expirationTtl: ttl,
         });
       } catch (error) {
@@ -351,7 +347,7 @@ export class NFLProductionAdapter {
       }
     }
 
-    return response;
+    return data;
   }
 
   // ==========================================================================

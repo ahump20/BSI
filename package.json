@@ -92,5 +92,10 @@
   },
   "optionalDependencies": {
     "@cloudflare/workerd-darwin-arm64": "^1.20251106.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": ">=0.25.0"
+    }
   }
 }

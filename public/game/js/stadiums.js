@@ -223,6 +223,139 @@ export const STADIUMS = [
             condition: 'clear'
         },
         unlockCondition: 'win40'
+    },
+    // NEW STADIUMS
+    {
+        id: 'galveston-beach',
+        name: 'Galveston Beach Diamond',
+        location: 'Galveston, TX',
+        description: 'Sandy beach field with ocean spray and seagull hazards',
+        theme: 'beach',
+        environment: {
+            background: '#00CED1',
+            grass: '#F4A460',
+            dirt: '#DEB887',
+            fence: '#8B4513'
+        },
+        dimensions: {
+            leftField: 175,
+            centerField: 195,
+            rightField: 185
+        },
+        features: [
+            {
+                type: 'hazard',
+                name: 'Tide Pool',
+                position: { x: -160, y: 160 },
+                effect: 'Balls landing in tide pool are ground rule doubles'
+            },
+            {
+                type: 'obstacle',
+                name: 'Seagull Flock',
+                position: { x: 50, y: 180 },
+                effect: 'Random seagulls can deflect fly balls'
+            },
+            {
+                type: 'bonus',
+                name: 'Sandcastle Tower',
+                position: { x: 170, y: 170 },
+                effect: 'Home runs that knock down the sandcastle earn 200 bonus points'
+            }
+        ],
+        weather: {
+            wind: { x: 1.2, y: 0.5 },
+            temperature: 88,
+            condition: 'sunny'
+        },
+        unlockCondition: 'win50'
+    },
+    {
+        id: 'marfa-lights',
+        name: 'Marfa Mystery Field',
+        location: 'Marfa, TX',
+        description: 'Desert field under the mysterious Marfa lights at dusk',
+        theme: 'desert-night',
+        environment: {
+            background: '#4B0082',
+            grass: '#6B8E23',
+            dirt: '#D2691E',
+            fence: '#8B0000'
+        },
+        dimensions: {
+            leftField: 205,
+            centerField: 250,
+            rightField: 200
+        },
+        features: [
+            {
+                type: 'visual',
+                name: 'Marfa Lights',
+                position: { x: 0, y: 50 },
+                effect: 'Mysterious floating lights occasionally illuminate the outfield'
+            },
+            {
+                type: 'obstacle',
+                name: 'Tumbleweeds',
+                position: { x: -100, y: 180 },
+                effect: 'Rolling tumbleweeds can knock ground balls off course'
+            },
+            {
+                type: 'bonus',
+                name: 'Art Installation',
+                position: { x: 200, y: 220 },
+                effect: 'Home runs hitting the art piece score triple points'
+            }
+        ],
+        weather: {
+            wind: { x: -0.8, y: 0.2 },
+            temperature: 72,
+            condition: 'dusk'
+        },
+        unlockCondition: 'win60'
+    },
+    {
+        id: 'nasa-training',
+        name: 'NASA Training Grounds',
+        location: 'Houston, TX (Space Center)',
+        description: 'Futuristic field at the astronaut training facility',
+        theme: 'space',
+        environment: {
+            background: '#1C1C1C',
+            grass: '#228B22',
+            dirt: '#A9A9A9',
+            fence: '#C0C0C0'
+        },
+        dimensions: {
+            leftField: 200,
+            centerField: 235,
+            rightField: 200
+        },
+        features: [
+            {
+                type: 'modifier',
+                name: 'Low Gravity Zone',
+                position: { x: 0, y: 100 },
+                effect: 'Fly balls in center field stay airborne 20% longer'
+            },
+            {
+                type: 'obstacle',
+                name: 'Rover',
+                position: { x: -150, y: 190 },
+                effect: 'The roving Mars robot can catch ground balls'
+            },
+            {
+                type: 'bonus',
+                name: 'Rocket Launchpad',
+                position: { x: 0, y: 230 },
+                effect: 'Home runs over center trigger a rocket launch animation and 500 bonus points'
+            }
+        ],
+        weather: {
+            wind: { x: 0, y: 0 },
+            temperature: 70,
+            condition: 'indoor'
+        },
+        unlockCondition: 'championship-win'
     }
 ];
 

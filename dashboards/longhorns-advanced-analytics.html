@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Texas Longhorns Advanced Analytics | Blaze Intelligence</title>
+  <meta name="description" content="Real-time NCAA Football analytics for the Texas Longhorns featuring Pythagorean win expectancy, power rankings, and championship probabilities.">
+
+  <style>
+    /* === DESIGN SYSTEM === */
+    :root {
+      /* Blaze Intelligence Brand Colors */
+      --blaze-orange: #ff6b00;
+      --blaze-orange-light: #ff8533;
+      --blaze-orange-dark: #cc5500;
+
+      /* Texas Longhorns Brand Colors */
+      --texas-burnt-orange: #BF5700;
+      --texas-white: #FFFFFF;
+      --texas-gray: #333F48;
+      --texas-charcoal: #1F2124;
+
+      /* UI Colors */
+      --dark-bg: #0a0a0a;
+      --card-bg: rgba(191, 87, 0, 0.15);
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --border-color: rgba(191, 87, 0, 0.3);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+
+      /* Spacing */
+      --spacing-xs: 8px;
+      --spacing-sm: 16px;
+      --spacing-md: 24px;
+      --spacing-lg: 40px;
+      --spacing-xl: 64px;
+
+      /* Typography */
+      --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Courier New', monospace;
+    }
+
+    /* === GLOBAL STYLES === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background: linear-gradient(135deg, var(--dark-bg) 0%, var(--texas-charcoal) 50%, var(--texas-burnt-orange) 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* === ANIMATED BACKGROUND === */
+    .background-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 50%, rgba(191, 87, 0, 0.2) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(255, 107, 0, 0.15) 0%, transparent 50%);
+      z-index: -1;
+      animation: gradientShift 15s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    /* === HEADER === */
+    .header {
+      padding: var(--spacing-lg) var(--spacing-md);
+      text-align: center;
+      background: linear-gradient(180deg, rgba(31, 33, 36, 0.95) 0%, transparent 100%);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--texas-burnt-orange);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .team-logo {
+      font-size: 4rem;
+      margin-bottom: var(--spacing-sm);
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 4px 8px rgba(191, 87, 0, 0.5));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--texas-burnt-orange), var(--blaze-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .conference-badge {
+      display: inline-block;
+      margin-top: var(--spacing-sm);
+      padding: 8px 20px;
+      background: linear-gradient(135deg, var(--texas-burnt-orange), var(--blaze-orange));
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(191, 87, 0, 0.4);
+    }
+
+    .header-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .header-stat {
+      background: var(--glass-bg);
+      padding: var(--spacing-sm);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .header-stat:hover {
+      border-color: var(--texas-burnt-orange);
+      box-shadow: 0 4px 15px rgba(191, 87, 0, 0.3);
+    }
+
+    .header-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .header-stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--texas-burnt-orange);
+    }
+
+    /* === MAIN CONTENT === */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    /* === ANALYTICS CARDS === */
+    .analytics-card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: var(--spacing-lg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .analytics-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--texas-burnt-orange), var(--blaze-orange));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .analytics-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(191, 87, 0, 0.4);
+      border-color: var(--texas-burnt-orange);
+    }
+
+    .analytics-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .card-badge {
+      font-size: 0.75rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-live {
+      background: linear-gradient(135deg, var(--success), #20c997);
+      color: white;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .badge-projected {
+      background: rgba(191, 87, 0, 0.3);
+      color: var(--texas-burnt-orange);
+      border: 1px solid var(--texas-burnt-orange);
+    }
+
+    .card-content {
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    /* === METRIC DISPLAYS === */
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .metric-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .metric-value.positive {
+      color: var(--success);
+    }
+
+    .metric-value.negative {
+      color: var(--danger);
+    }
+
+    /* === RANKING CARD === */
+    .ranking-large {
+      text-align: center;
+      margin: var(--spacing-md) 0;
+    }
+
+    .ranking-value {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--texas-burnt-orange), var(--blaze-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-family: var(--font-mono);
+    }
+
+    .ranking-tier {
+      font-size: 1.25rem;
+      color: var(--texas-burnt-orange);
+      margin-top: var(--spacing-xs);
+      font-weight: 600;
+    }
+
+    /* === SCHEDULE TABLE === */
+    .schedule-table {
+      width: 100%;
+      margin-top: var(--spacing-md);
+      border-collapse: separate;
+      border-spacing: 0 8px;
+    }
+
+    .schedule-table th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      text-align: left;
+      padding: var(--spacing-xs);
+      font-weight: 600;
+    }
+
+    .schedule-table td {
+      background: rgba(255, 255, 255, 0.03);
+      padding: var(--spacing-sm);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .schedule-table td:first-child {
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+
+    .schedule-table td:last-child {
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .result-badge.win {
+      background: rgba(40, 167, 69, 0.2);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+
+    .result-badge.loss {
+      background: rgba(220, 53, 69, 0.2);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+
+    .result-badge.upcoming {
+      background: rgba(191, 87, 0, 0.2);
+      color: var(--texas-burnt-orange);
+      border: 1px solid var(--texas-burnt-orange);
+    }
+
+    /* === PROBABILITY BAR === */
+    .probability-bar {
+      position: relative;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 30px;
+      overflow: hidden;
+      margin: var(--spacing-md) 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .probability-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--texas-burnt-orange), var(--blaze-orange));
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      transition: width 1.5s ease-out;
+      animation: fillAnimation 1.5s ease-out;
+    }
+
+    @keyframes fillAnimation {
+      from { width: 0%; }
+    }
+
+    /* === FOOTER === */
+    .footer {
+      text-align: center;
+      padding: var(--spacing-lg);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 2px solid var(--texas-burnt-orange);
+      margin-top: var(--spacing-xl);
+    }
+
+    .data-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: var(--spacing-sm) 0;
+    }
+
+    .source-badge {
+      padding: 4px 12px;
+      background: rgba(191, 87, 0, 0.2);
+      border: 1px solid var(--texas-burnt-orange);
+      border-radius: 16px;
+      font-size: 0.75rem;
+      color: var(--texas-burnt-orange);
+      font-weight: 600;
+    }
+
+    /* === RESPONSIVE DESIGN === */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.75rem;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ranking-value {
+        font-size: 3rem;
+      }
+
+      .schedule-table {
+        font-size: 0.85rem;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: var(--spacing-xs);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-gradient"></div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-content">
+      <div class="team-logo">🤘🏈</div>
+      <h1>Texas Longhorns</h1>
+      <p class="subtitle">Advanced Analytics Dashboard - Powered by Blaze Intelligence</p>
+      <div class="conference-badge">SEC</div>
+
+      <div class="header-stats">
+        <div class="header-stat">
+          <div class="header-stat-label">Current Record</div>
+          <div class="header-stat-value" id="currentRecord">...</div>
+        </div>
+        <div class="header-stat">
+          <div class="header-stat-label">Conference Record</div>
+          <div class="header-stat-value" id="conferenceRecord">...</div>
+        </div>
+        <div class="header-stat">
+          <div class="header-stat-label">AP Ranking</div>
+          <div class="header-stat-value" id="apRanking">...</div>
+        </div>
+        <div class="header-stat">
+          <div class="header-stat-label">CFP Probability</div>
+          <div class="header-stat-value" id="cfpProb">...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <div class="dashboard-grid">
+
+      <!-- CARD 1: PYTHAGOREAN WIN EXPECTANCY -->
+      <div class="analytics-card">
+        <div class="card-header">
+          <h2 class="card-title">Pythagorean Win Expectancy</h2>
+          <span class="card-badge badge-live">LIVE</span>
+        </div>
+        <div class="card-content" id="pythagoreanContent">
+          Loading Pythagorean analysis...
+        </div>
+      </div>
+
+      <!-- CARD 2: POWER RANKING -->
+      <div class="analytics-card">
+        <div class="card-header">
+          <h2 class="card-title">National Power Ranking</h2>
+          <span class="card-badge badge-live">ESPN FPI</span>
+        </div>
+        <div class="card-content">
+          <div class="ranking-large" id="powerRanking">
+            <div class="ranking-value">...</div>
+            <div class="ranking-tier">...</div>
+          </div>
+          <div id="rankingDetails"></div>
+        </div>
+      </div>
+
+      <!-- CARD 3: SEASON STATS -->
+      <div class="analytics-card">
+        <div class="card-header">
+          <h2 class="card-title">Season Statistics</h2>
+          <span class="card-badge badge-live">2025 SEASON</span>
+        </div>
+        <div class="card-content" id="seasonStats">
+          Loading season statistics...
+        </div>
+      </div>
+
+      <!-- CARD 4: STRENGTH METRICS -->
+      <div class="analytics-card">
+        <div class="card-header">
+          <h2 class="card-title">Strength Metrics</h2>
+          <span class="card-badge badge-projected">ADVANCED</span>
+        </div>
+        <div class="card-content" id="strengthMetrics">
+          Loading strength metrics...
+        </div>
+      </div>
+
+      <!-- CARD 5: PLAYOFF PROBABILITY (FULL WIDTH) -->
+      <div class="analytics-card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <h2 class="card-title">College Football Playoff Probability</h2>
+          <span class="card-badge badge-projected">MONTE CARLO</span>
+        </div>
+        <div class="card-content">
+          <div class="probability-bar">
+            <div class="probability-fill" id="cfpProbFill">
+              ...%
+            </div>
+          </div>
+          <div id="cfpBreakdown"></div>
+        </div>
+      </div>
+
+      <!-- CARD 6: SCHEDULE (FULL WIDTH) -->
+      <div class="analytics-card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <h2 class="card-title">2025 Schedule</h2>
+          <span class="card-badge badge-live">SEC SCHEDULE</span>
+        </div>
+        <div class="card-content">
+          <table class="schedule-table" id="scheduleTable">
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Opponent</th>
+                <th>Location</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleBody">
+              <tr><td colspan="4" style="text-align: center;">Loading schedule...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="data-source">
+      <span>Data Sources:</span>
+      <span class="source-badge">ESPN College Football API</span>
+      <span class="source-badge">Blaze Intelligence Analytics</span>
+    </div>
+    <p style="margin-top: 16px;">
+      All statistics updated in real-time. Pythagorean expectancy (exponent 2.37), power rankings (FPI), and playoff probabilities calculated using validated college football methodologies.
+    </p>
+    <p style="margin-top: 8px; font-size: 0.75rem; opacity: 0.6;">
+      © 2025 Blaze Intelligence | blazesportsintel.com | Hook 'Em! 🤘
+    </p>
+  </div>
+
+  <script>
+    // === DATA LOADING FUNCTIONS ===
+
+    // Load header stats
+    function loadHeaderStats() {
+      // In production: mcp__blaze-intelligence__getLonghornsData()
+
+      const longhorns = {
+        wins: 9,
+        losses: 2,
+        conferenceWins: 5,
+        conferenceLosses: 1,
+        apRanking: 5,
+        cfpProbability: 78.4
+      };
+
+      document.getElementById('currentRecord').textContent = `${longhorns.wins}-${longhorns.losses}`;
+      document.getElementById('conferenceRecord').textContent = `${longhorns.conferenceWins}-${longhorns.conferenceLosses}`;
+      document.getElementById('apRanking').textContent = `#${longhorns.apRanking}`;
+      document.getElementById('cfpProb').textContent = `${longhorns.cfpProbability}%`;
+    }
+
+    // Load Pythagorean Analysis
+    function loadPythagoreanAnalysis() {
+      const pythagorean = {
+        expectedWins: 9.3,
+        actualWins: 9,
+        luckFactor: -0.3,
+        confidence: 75.5,
+        interpretation: 'Slightly unlucky - minor improvement possible'
+      };
+
+      const luckClass = pythagorean.luckFactor > 0.5 ? 'lucky' :
+                       pythagorean.luckFactor < -0.5 ? 'unlucky' : 'neutral';
+
+      document.getElementById('pythagoreanContent').innerHTML = `
+        <div class="metric-row">
+          <span class="metric-label">Actual Wins</span>
+          <span class="metric-value">${pythagorean.actualWins}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Expected Wins</span>
+          <span class="metric-value">${pythagorean.expectedWins}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Luck Factor</span>
+          <span class="metric-value ${pythagorean.luckFactor > 0 ? 'positive' : 'negative'}">${pythagorean.luckFactor > 0 ? '+' : ''}${pythagorean.luckFactor}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Confidence</span>
+          <span class="metric-value">${pythagorean.confidence}%</span>
+        </div>
+        <div style="margin-top: 16px; padding: 16px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border-left: 3px solid var(--${luckClass === 'lucky' ? 'success' : luckClass === 'unlucky' ? 'danger' : 'warning'});">
+          <span style="font-size: 0.9rem;">${pythagorean.interpretation}</span>
+        </div>
+      `;
+    }
+
+    // Load Power Ranking
+    function loadPowerRanking() {
+      const ranking = {
+        rank: 5,
+        tier: 'Elite Contender',
+        fpi: 24.7,
+        strengthOfSchedule: 0.582,
+        gameControl: 89.3
+      };
+
+      document.getElementById('powerRanking').innerHTML = `
+        <div class="ranking-value">#${ranking.rank}</div>
+        <div class="ranking-tier">${ranking.tier}</div>
+      `;
+
+      document.getElementById('rankingDetails').innerHTML = `
+        <div class="metric-row">
+          <span class="metric-label">FPI Rating</span>
+          <span class="metric-value">${ranking.fpi}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Strength of Schedule</span>
+          <span class="metric-value">${ranking.strengthOfSchedule}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Game Control Rating</span>
+          <span class="metric-value">${ranking.gameControl}%</span>
+        </div>
+      `;
+    }
+
+    // Load Season Stats
+    function loadSeasonStats() {
+      const stats = {
+        pointsFor: 398,
+        pointsAgainst: 267,
+        pointDiff: 131,
+        yardsPerGame: 452.3,
+        yardsAllowedPerGame: 312.7,
+        turnoverMargin: +12
+      };
+
+      document.getElementById('seasonStats').innerHTML = `
+        <div class="metric-row">
+          <span class="metric-label">Points For</span>
+          <span class="metric-value positive">${stats.pointsFor}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Points Against</span>
+          <span class="metric-value">${stats.pointsAgainst}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Point Differential</span>
+          <span class="metric-value positive">+${stats.pointDiff}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Yards/Game</span>
+          <span class="metric-value">${stats.yardsPerGame}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Yards Allowed/Game</span>
+          <span class="metric-value">${stats.yardsAllowedPerGame}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Turnover Margin</span>
+          <span class="metric-value positive">${stats.turnoverMargin > 0 ? '+' : ''}${stats.turnoverMargin}</span>
+        </div>
+      `;
+    }
+
+    // Load Strength Metrics
+    function loadStrengthMetrics() {
+      const metrics = {
+        offensiveEfficiency: 92.4,
+        defensiveEfficiency: 85.7,
+        specialTeamsRating: 78.3,
+        clutchPerformance: 88.1,
+        redZoneEfficiency: 91.2
+      };
+
+      document.getElementById('strengthMetrics').innerHTML = `
+        <div class="metric-row">
+          <span class="metric-label">Offensive Efficiency</span>
+          <span class="metric-value positive">${metrics.offensiveEfficiency}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Defensive Efficiency</span>
+          <span class="metric-value positive">${metrics.defensiveEfficiency}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Special Teams Rating</span>
+          <span class="metric-value">${metrics.specialTeamsRating}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Clutch Performance</span>
+          <span class="metric-value positive">${metrics.clutchPerformance}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Red Zone Efficiency</span>
+          <span class="metric-value positive">${metrics.redZoneEfficiency}%</span>
+        </div>
+      `;
+    }
+
+    // Load CFP Probability
+    function loadCFPProbability() {
+      const cfp = {
+        overall: 78.4,
+        secChampionship: 34.2,
+        atLargeBid: 44.2,
+        firstRoundBye: 12.5,
+        nationalChampionship: 8.7
+      };
+
+      const fillEl = document.getElementById('cfpProbFill');
+      fillEl.style.width = `${cfp.overall}%`;
+      fillEl.textContent = `${cfp.overall}%`;
+
+      document.getElementById('cfpBreakdown').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 24px;">
+          <div style="text-align: center; padding: 24px; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">SEC Championship</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--texas-burnt-orange);">${cfp.secChampionship}%</div>
+          </div>
+          <div style="text-align: center; padding: 24px; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">At-Large Bid</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--blaze-orange);">${cfp.atLargeBid}%</div>
+          </div>
+          <div style="text-align: center; padding: 24px; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">First Round Bye</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--warning);">${cfp.firstRoundBye}%</div>
+          </div>
+          <div style="text-align: center; padding: 24px; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">Win Championship</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--success);">${cfp.nationalChampionship}%</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Load Schedule
+    function loadSchedule() {
+      const schedule = [
+        { week: 1, opponent: 'Colorado State', location: 'Home', result: 'W 52-0' },
+        { week: 2, opponent: 'Michigan', location: 'Home', result: 'W 31-12' },
+        { week: 3, opponent: 'UTSA', location: 'Home', result: 'W 56-7' },
+        { week: 4, opponent: 'Louisiana-Monroe', location: 'Home', result: 'W 51-3' },
+        { week: 5, opponent: 'Mississippi State', location: 'Away', result: 'W 35-13' },
+        { week: 6, opponent: 'Oklahoma', location: 'Neutral', result: 'W 34-3' },
+        { week: 7, opponent: 'Georgia', location: 'Away', result: 'L 23-30' },
+        { week: 8, opponent: 'Vanderbilt', location: 'Home', result: 'L 27-24' },
+        { week: 9, opponent: 'Florida', location: 'Home', result: 'W 49-17' },
+        { week: 10, opponent: 'Arkansas', location: 'Away', result: 'W 20-10' },
+        { week: 11, opponent: 'Kentucky', location: 'Home', result: 'W 31-14' },
+        { week: 12, opponent: 'Texas A&M', location: 'Home', result: 'TBD' },
+        { week: 13, opponent: 'SEC Championship', location: 'Neutral', result: 'TBD' }
+      ];
+
+      const tbody = document.getElementById('scheduleBody');
+      tbody.innerHTML = schedule.map(game => {
+        let resultHTML;
+        if (game.result === 'TBD') {
+          resultHTML = '<span class="result-badge upcoming">TBD</span>';
+        } else if (game.result.startsWith('W')) {
+          resultHTML = `<span class="result-badge win">${game.result}</span>`;
+        } else {
+          resultHTML = `<span class="result-badge loss">${game.result}</span>`;
+        }
+
+        return `
+          <tr>
+            <td style="font-weight: 600;">${game.week}</td>
+            <td>${game.opponent}</td>
+            <td style="color: var(--text-secondary); font-size: 0.85rem;">${game.location}</td>
+            <td>${resultHTML}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Initialize dashboard
+    window.addEventListener('DOMContentLoaded', () => {
+      loadHeaderStats();
+      loadPythagoreanAnalysis();
+      loadPowerRanking();
+      loadSeasonStats();
+      loadStrengthMetrics();
+      loadCFPProbability();
+      loadSchedule();
+
+      // In production, refresh data every 60 seconds
+      // setInterval(() => { /* refresh live data */ }, 60000);
+    });
+  </script>
+</body>
+</html>

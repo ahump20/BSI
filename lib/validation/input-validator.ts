@@ -181,8 +181,8 @@ export const fileUploadSchema = z.object({
 
 export const webhookPayloadSchema = z.object({
   event: z.string().max(100),
-  timestamp: z.string().datetime(),
-  data: z.record(z.any()),
+  timestamp: z.string(),
+  data: z.record(z.string(), z.unknown()),
   signature: z.string().max(255),
 });
 
@@ -240,7 +240,7 @@ export async function validateRequestBody<T>(
       valid: false,
       errors: new z.ZodError([
         {
-          code: 'custom',
+          code: z.ZodIssueCode.custom,
           message: 'Invalid request body',
           path: [],
         },
@@ -290,7 +290,7 @@ export function validateQueryParams<T>(
       valid: false,
       errors: new z.ZodError([
         {
-          code: 'custom',
+          code: z.ZodIssueCode.custom,
           message: 'Invalid query parameters',
           path: [],
         },
@@ -303,7 +303,7 @@ export function validateQueryParams<T>(
  * Create validation error response
  */
 export function createValidationErrorResponse(errors: z.ZodError): Response {
-  const formattedErrors = errors.errors.map((err) => ({
+  const formattedErrors = errors.issues.map((err) => ({
     field: err.path.join('.'),
     message: err.message,
     code: err.code,

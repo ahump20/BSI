@@ -198,11 +198,12 @@ const MLBAnalyticsEngine = () => {
                 <div className="stat-card highlight">
                   <div className="stat-label">Pythagorean W-L</div>
                   <div className="stat-value">
-                    {pyth.expectedWins}-{(162 - parseFloat(pyth.expectedWins)).toFixed(1)}
+                    {pyth?.expectedWins}-
+                    {pyth?.expectedWins ? (162 - parseFloat(pyth.expectedWins)).toFixed(1) : '-'}
                   </div>
                   <div className="stat-meta">
-                    Difference: {pyth.difference > 0 ? '+' : ''}
-                    {pyth.difference} wins
+                    Difference: {pyth?.difference && parseFloat(pyth.difference) > 0 ? '+' : ''}
+                    {pyth?.difference} wins
                   </div>
                 </div>
 

@@ -29,6 +29,7 @@ export interface Team {
   record: Record;
   ranking?: number;
   rpi?: number;
+  score?: number;
 }
 
 export interface Record {

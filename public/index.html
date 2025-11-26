@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blaze Sports Intel — Born to Blaze the Path Less Beaten</title>
-    <meta name="description" content="Sports analytics for the games big media ignores. College baseball coverage ESPN won't give you. Born in Memphis, rooted in Texas soil. Courage. Grit. Leadership.">
-    <meta property="og:title" content="Blaze Sports Intel">
-    <meta property="og:description" content="Born in Memphis. Rooted in Texas soil. Covering the sports that deserve better.">
+    <title>Blaze Sports Intel — The College Baseball Coverage ESPN Won't Give You</title>
+    <meta name="description" content="Real-time analytics, complete box scores, and comprehensive coverage for college baseball—one of only three revenue-generating NCAA sports that big media ignores. Born in Memphis, rooted in Texas soil.">
+    <meta property="og:title" content="Blaze Sports Intel — College Baseball Analytics">
+    <meta property="og:description" content="The coverage ESPN won't give you. Real-time scores, complete box scores, advanced analytics for college baseball.">
     <meta property="og:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://blazesportsintel.com">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Blaze Sports Intel">
-    <meta name="twitter:description" content="Born in Memphis. Rooted in Texas soil. The sports coverage ESPN won't give you.">
+    <meta name="twitter:title" content="Blaze Sports Intel — College Baseball Analytics">
+    <meta name="twitter:description" content="The coverage ESPN won't give you. Real-time scores, complete box scores, advanced analytics.">
     <meta name="twitter:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
     <link rel="canonical" href="https://blazesportsintel.com">
 
@@ -30,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <link rel="icon" type="image/png" href="./images/bsi-logo-nav.png">
     <style>
         :root {
             --bsi-burnt-orange: #BF5700;
@@ -42,18 +42,23 @@
             --bsi-warm-white: #FAFAFA;
             --bsi-ember: #FF6B35;
             --bsi-flame: #E85D04;
+            --bsi-success: #10B981;
+            --bsi-muted: #6B7280;
             --font-display: 'Playfair Display', Georgia, serif;
             --font-body: 'Source Serif 4', Georgia, serif;
             --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
             --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
             --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
-            --space-6: 1.5rem; --space-8: 2rem; --space-12: 3rem; --space-16: 4rem; --space-24: 6rem;
+            --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+            --space-12: 3rem; --space-16: 4rem; --space-20: 5rem; --space-24: 6rem;
             --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
-            --duration-normal: 300ms; --duration-slow: 500ms;
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --duration-fast: 150ms; --duration-normal: 300ms; --duration-slow: 500ms;
+            --shadow-glow: 0 0 40px rgba(191, 87, 0, 0.15);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { font-size: 16px; scroll-behavior: smooth; }
-        body { font-family: var(--font-body); background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         img { max-width: 100%; height: auto; display: block; }
         a { color: inherit; text-decoration: none; }
         h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
@@ -65,17 +70,37 @@
         @media (min-width: 768px) { section { padding: var(--space-24) 0; } }
 
         /* Navigation */
-        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: var(--space-3) 0; background: rgba(13, 13, 13, 0.95); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: var(--space-3) 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); transition: all var(--duration-normal) var(--ease-out); }
+        .nav.scrolled { padding: var(--space-2) 0; background: rgba(13, 13, 13, 0.98); }
         .nav-inner { display: flex; justify-content: space-between; align-items: center; }
         .logo { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-display); font-weight: 700; font-size: 1.125rem; }
-        .logo-img { height: 48px; width: auto; filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3)); }
+        .logo-img { height: 44px; width: auto; filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3)); transition: transform var(--duration-normal) var(--ease-out); }
+        .logo:hover .logo-img { transform: scale(1.05); }
         .logo-text { display: none; }
-        @media (min-width: 640px) { .logo-text { display: block; } .logo-img { height: 52px; } }
-        .nav-links { display: none; gap: var(--space-8); list-style: none; font-family: var(--font-ui); font-size: 0.9rem; font-weight: 500; }
-        .nav-links a { color: var(--bsi-cream); opacity: 0.7; transition: all var(--duration-normal) var(--ease-out); }
-        .nav-links a:hover { opacity: 1; color: var(--bsi-ember); }
+        @media (min-width: 640px) { .logo-text { display: block; } .logo-img { height: 48px; } }
+        .nav-links { display: none; gap: var(--space-8); list-style: none; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; }
+        .nav-links a { color: var(--bsi-cream); opacity: 0.7; transition: all var(--duration-normal) var(--ease-out); position: relative; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--bsi-ember); transition: width var(--duration-normal) var(--ease-out); }
+        .nav-links a:hover { opacity: 1; }
+        .nav-links a:hover::after { width: 100%; }
         @media (min-width: 768px) { .nav-links { display: flex; } }
-        
+
+        /* Dropdown Navigation */
+        .nav-dropdown { position: relative; }
+        .dropdown-trigger { cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .dropdown-arrow { font-size: 0.65em; transition: transform var(--duration-normal) var(--ease-out); }
+        .nav-dropdown:hover .dropdown-arrow { transform: rotate(180deg); }
+        .dropdown-menu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px); min-width: 220px; background: rgba(13, 13, 13, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 8px; padding: var(--space-3) 0; opacity: 0; visibility: hidden; transition: all var(--duration-normal) var(--ease-out); list-style: none; z-index: 1000; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+        .nav-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .dropdown-menu li a { display: block; padding: var(--space-2) var(--space-4); color: var(--bsi-cream); opacity: 0.8; font-size: 0.875rem; transition: all var(--duration-fast) var(--ease-out); }
+        .dropdown-menu li a:hover { background: rgba(191, 87, 0, 0.2); opacity: 1; }
+        .dropdown-menu li a::after { display: none; }
+        .dropdown-header { padding: var(--space-2) var(--space-4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); font-weight: 600; opacity: 1 !important; }
+        .dropdown-divider { height: 1px; background: rgba(191, 87, 0, 0.2); margin: var(--space-2) 0; }
+
+        .nav-cta { display: none; }
+        @media (min-width: 1024px) { .nav-cta { display: block; } }
+
         /* Mobile Menu */
         .mobile-menu-btn { display: flex; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: var(--space-2); }
         .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: var(--bsi-cream); transition: all var(--duration-normal) var(--ease-out); }
@@ -83,50 +108,85 @@
         .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
         .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
         @media (min-width: 768px) { .mobile-menu-btn { display: none; } }
-        .mobile-menu { position: fixed; top: 68px; left: 0; right: 0; background: rgba(13, 13, 13, 0.98); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); padding: var(--space-8); transform: translateY(-100%); opacity: 0; transition: all var(--duration-normal) var(--ease-out); pointer-events: none; border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+        .mobile-menu { position: fixed; top: 68px; left: 0; right: 0; background: rgba(13, 13, 13, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: var(--space-8); transform: translateY(-100%); opacity: 0; transition: all var(--duration-normal) var(--ease-out); pointer-events: none; border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
         .mobile-menu.active { transform: translateY(0); opacity: 1; pointer-events: auto; }
         .mobile-menu ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-4); }
         .mobile-menu a { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 500; color: var(--bsi-cream); display: block; padding: var(--space-3) 0; border-bottom: 1px solid rgba(250, 248, 245, 0.1); }
+        .mobile-dropdown-header { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 500; color: var(--bsi-ember); display: block; padding: var(--space-3) 0; border-bottom: 1px solid rgba(250, 248, 245, 0.1); }
+        .mobile-submenu { padding-left: var(--space-4); margin-top: var(--space-2); }
+        .mobile-submenu a { font-size: 0.95rem; opacity: 0.8; }
+        .mobile-submenu a:hover { opacity: 1; color: var(--bsi-ember); }
         @media (min-width: 768px) { .mobile-menu { display: none; } }
 
         /* Hero */
-        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; padding-top: 80px; overflow: hidden; }
-        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 20% 20%, rgba(191, 87, 0, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%); pointer-events: none; }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; padding-top: 100px; padding-bottom: var(--space-16); overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 20% 20%, rgba(191, 87, 0, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 100%, rgba(139, 69, 19, 0.08) 0%, transparent 40%); pointer-events: none; }
         .hero-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-12); align-items: center; position: relative; z-index: 1; }
-        @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.2fr 1fr; } }
+        @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.3fr 1fr; gap: var(--space-16); } }
         .hero-content { position: relative; z-index: 1; }
-        .hero-tagline { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-4); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.2s forwards; }
-        .hero-title { font-size: clamp(2.25rem, 7vw, 4.5rem); font-weight: 700; line-height: 1.05; margin-bottom: var(--space-6); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.4s forwards; }
-        .hero-subtitle { font-size: clamp(1rem, 2.5vw, 1.375rem); font-family: var(--font-body); font-weight: 400; line-height: 1.6; color: rgba(250, 248, 245, 0.8); max-width: 540px; margin-bottom: var(--space-8); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.6s forwards; }
-        .hero-cta { display: flex; flex-wrap: wrap; gap: var(--space-4); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.8s forwards; }
-        .hero-visual { display: none; opacity: 0; animation: fadeIn 1s var(--ease-out) 0.6s forwards; }
+        .hero-badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: rgba(191, 87, 0, 0.1); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 100px; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); margin-bottom: var(--space-6); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.2s forwards; }
+        .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--bsi-success); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .hero-title { font-size: clamp(2.5rem, 7vw, 4rem); font-weight: 700; line-height: 1.05; margin-bottom: var(--space-6); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.3s forwards; }
+        .hero-problem { font-size: clamp(1.0625rem, 2.5vw, 1.25rem); font-family: var(--font-body); font-weight: 400; line-height: 1.6; color: rgba(250, 248, 245, 0.85); max-width: 560px; margin-bottom: var(--space-6); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.4s forwards; }
+        .hero-problem strong { color: var(--bsi-cream); font-weight: 600; }
+        .hero-solution { font-size: 1rem; font-family: var(--font-ui); color: var(--bsi-gold); margin-bottom: var(--space-8); padding-left: var(--space-4); border-left: 3px solid var(--bsi-burnt-orange); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.5s forwards; }
+        .hero-cta { display: flex; flex-wrap: wrap; gap: var(--space-4); opacity: 0; animation: fadeInUp 0.8s var(--ease-out) 0.6s forwards; }
+        .hero-visual { display: none; opacity: 0; animation: fadeIn 1s var(--ease-out) 0.5s forwards; }
         @media (min-width: 1024px) { .hero-visual { display: block; } }
         .hero-image-wrapper { position: relative; }
-        .hero-image-wrapper::before { content: ''; position: absolute; inset: -20px; background: linear-gradient(135deg, rgba(191, 87, 0, 0.3), rgba(139, 69, 19, 0.2)); border-radius: 20px; transform: rotate(3deg); z-index: -1; }
-        .hero-image { border-radius: 16px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4); }
-        .hero-badge { position: absolute; bottom: -20px; right: -20px; background: var(--bsi-charcoal); padding: var(--space-4) var(--space-6); border-radius: 12px; border: 1px solid rgba(191, 87, 0, 0.3); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
-        .hero-badge-text { font-family: var(--font-ui); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-1); }
-        .hero-badge-value { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--bsi-cream); }
+        .hero-image-wrapper::before { content: ''; position: absolute; inset: -20px; background: linear-gradient(135deg, rgba(191, 87, 0, 0.25), rgba(139, 69, 19, 0.15)); border-radius: 24px; transform: rotate(2deg); z-index: -1; }
+        .hero-image { border-radius: 20px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4), var(--shadow-glow); }
+        .hero-stats { position: absolute; bottom: -30px; left: -20px; right: -20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+        .hero-stat { background: var(--bsi-charcoal); padding: var(--space-4); border-radius: 12px; border: 1px solid rgba(191, 87, 0, 0.2); text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .hero-stat-value { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--bsi-ember); }
+        .hero-stat-label { font-family: var(--font-ui); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(250, 248, 245, 0.5); margin-top: var(--space-1); }
 
-        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-4) var(--space-6); font-family: var(--font-ui); font-size: 0.9rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all var(--duration-normal) var(--ease-out); border: none; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-6); font-family: var(--font-ui); font-size: 0.9rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all var(--duration-normal) var(--ease-out); border: none; text-align: center; }
         .btn-primary { background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); color: white; box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4); }
+        .btn-primary:active { transform: translateY(0); }
         .btn-secondary { background: transparent; color: var(--bsi-cream); border: 1px solid rgba(250, 248, 245, 0.3); }
-        .btn-secondary:hover { background: rgba(250, 248, 245, 0.1); border-color: rgba(250, 248, 245, 0.5); }
+        .btn-secondary:hover { background: rgba(250, 248, 245, 0.08); border-color: rgba(250, 248, 245, 0.5); }
+        .btn-sm { padding: var(--space-2) var(--space-4); font-size: 0.8125rem; }
+        .btn-lg { padding: var(--space-5) var(--space-8); font-size: 1rem; }
+
+        /* Platform Section */
+        .platform { background: var(--bsi-charcoal); position: relative; overflow: hidden; }
+        .platform::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(191, 87, 0, 0.3), transparent); }
+        .platform-header { text-align: center; margin-bottom: var(--space-12); }
+        .platform-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-3); }
+        .platform-header h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: var(--space-4); }
+        .platform-header p { font-size: 1.0625rem; color: rgba(250, 248, 245, 0.7); max-width: 600px; margin: 0 auto; }
+        .platform-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
+        @media (min-width: 640px) { .platform-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .platform-grid { grid-template-columns: repeat(3, 1fr); } }
+        .platform-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: var(--space-8); position: relative; overflow: hidden; transition: all var(--duration-normal) var(--ease-out); }
+        .platform-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember)); opacity: 0; transition: opacity var(--duration-normal) var(--ease-out); }
+        .platform-card:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(191, 87, 0, 0.2); transform: translateY(-4px); }
+        .platform-card:hover::before { opacity: 1; }
+        .platform-icon { width: 48px; height: 48px; margin-bottom: var(--space-5); background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .platform-icon svg { width: 24px; height: 24px; stroke: var(--bsi-ember); fill: none; stroke-width: 1.5; }
+        .platform-card h3 { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-3); color: var(--bsi-cream); }
+        .platform-card p { font-size: 0.9375rem; color: rgba(250, 248, 245, 0.6); line-height: 1.6; margin-bottom: var(--space-4); }
+        .platform-features { list-style: none; }
+        .platform-features li { font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 248, 245, 0.5); padding: var(--space-2) 0; display: flex; align-items: center; gap: var(--space-2); }
+        .platform-features li::before { content: ''; width: 4px; height: 4px; background: var(--bsi-burnt-orange); border-radius: 50%; }
 
         /* Values Banner */
-        .values-banner { background: linear-gradient(90deg, var(--bsi-charcoal), var(--bsi-midnight)); padding: var(--space-8) 0; border-top: 1px solid rgba(191, 87, 0, 0.2); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+        .values-banner { background: linear-gradient(90deg, var(--bsi-charcoal), var(--bsi-midnight)); padding: var(--space-8) 0; border-top: 1px solid rgba(191, 87, 0, 0.15); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
         .values-grid { display: flex; justify-content: center; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
         .value-item { display: flex; align-items: center; gap: var(--space-3); }
-        .value-icon { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(139, 69, 19, 0.2)); display: flex; align-items: center; justify-content: center; }
+        .value-icon { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); display: flex; align-items: center; justify-content: center; }
         .value-icon svg { width: 20px; height: 20px; stroke: var(--bsi-burnt-orange); fill: none; stroke-width: 2; }
-        .value-text { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--bsi-gold); }
-        .value-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bsi-burnt-orange); }
+        .value-text { font-family: var(--font-ui); font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--bsi-gold); }
+        .value-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(191, 87, 0, 0.5); }
 
         /* Origin Section */
         .origin { background: var(--bsi-cream); color: var(--bsi-charcoal); position: relative; overflow: hidden; }
         .origin::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; }
         .origin-header { text-align: center; margin-bottom: var(--space-12); position: relative; z-index: 1; }
+        .origin-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-texas-soil); margin-bottom: var(--space-3); }
         .origin-header h2 { font-size: clamp(1.75rem, 5vw, 3rem); color: var(--bsi-charcoal); margin-bottom: var(--space-4); }
         .origin-header p { font-size: 1.0625rem; color: rgba(26, 26, 26, 0.7); max-width: 600px; margin: 0 auto; }
         .origin-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-12); position: relative; z-index: 1; }
@@ -142,7 +202,7 @@
         .media-item { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15); }
         .media-item img { width: 100%; height: auto; object-fit: cover; }
         .media-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: var(--space-4); background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent); color: var(--bsi-cream); font-family: var(--font-ui); font-size: 0.8rem; line-height: 1.4; }
-        
+
         /* Birth Certificate Section */
         .birth-proof { background: var(--bsi-midnight); padding: var(--space-12) 0; }
         .birth-proof-inner { display: grid; grid-template-columns: 1fr; gap: var(--space-8); align-items: center; }
@@ -151,24 +211,25 @@
         .birth-proof-text p { font-size: 1rem; color: rgba(250, 248, 245, 0.7); line-height: 1.6; margin-bottom: var(--space-4); }
         .birth-proof-facts { display: flex; gap: var(--space-6); margin-top: var(--space-6); }
         .birth-fact { text-align: center; }
-        .birth-fact-value { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--bsi-burnt-orange); }
-        .birth-fact-label { font-family: var(--font-ui); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(250, 248, 245, 0.5); margin-top: var(--space-1); }
+        .birth-fact-value { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: var(--bsi-burnt-orange); }
+        .birth-fact-label { font-family: var(--font-ui); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(250, 248, 245, 0.5); margin-top: var(--space-1); }
         .birth-proof-image { position: relative; }
         .birth-proof-image img { border-radius: 8px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); border: 1px solid rgba(191, 87, 0, 0.2); }
         .birth-proof-image::after { content: 'CERTIFIED COPY'; position: absolute; top: 20px; right: 20px; font-family: var(--font-ui); font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); background: rgba(13, 13, 13, 0.9); padding: var(--space-2) var(--space-3); border-radius: 4px; }
 
         /* Philosophy */
         .philosophy { background: var(--bsi-charcoal); position: relative; }
-        .philosophy::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 70%, rgba(139, 69, 19, 0.1) 0%, transparent 50%); pointer-events: none; }
+        .philosophy::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 70%, rgba(139, 69, 19, 0.08) 0%, transparent 50%); pointer-events: none; }
         .philosophy-content { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
         .philosophy-quote { font-family: var(--font-display); font-size: clamp(1.125rem, 2.5vw, 1.5rem); font-style: italic; line-height: 1.6; margin-bottom: var(--space-8); color: rgba(250, 248, 245, 0.9); }
         .philosophy-quote cite { display: block; margin-top: var(--space-4); font-family: var(--font-ui); font-style: normal; font-size: 0.875rem; color: var(--bsi-burnt-orange); }
-        .philosophy-personal { font-size: 1.0625rem; line-height: 1.7; color: var(--bsi-cream); padding-top: var(--space-8); border-top: 1px solid rgba(191, 87, 0, 0.3); }
+        .philosophy-personal { font-size: 1.0625rem; line-height: 1.7; color: var(--bsi-cream); padding-top: var(--space-8); border-top: 1px solid rgba(191, 87, 0, 0.2); }
         .philosophy-personal strong { color: var(--bsi-burnt-orange); }
 
         /* Gallery */
         .gallery { background: var(--bsi-midnight); padding: var(--space-16) 0; }
         .gallery-header { text-align: center; margin-bottom: var(--space-12); }
+        .gallery-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-3); }
         .gallery-header h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: var(--space-4); }
         .gallery-header p { font-size: 1rem; color: rgba(250, 248, 245, 0.6); max-width: 500px; margin: 0 auto; }
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
@@ -178,7 +239,7 @@
         .gallery-item:hover { transform: scale(1.02); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--duration-slow) var(--ease-out); }
         .gallery-item:hover img { transform: scale(1.1); }
-        .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 50%); opacity: 0; transition: opacity var(--duration-normal) var(--ease-out); }
+        .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent 60%); opacity: 0; transition: opacity var(--duration-normal) var(--ease-out); }
         .gallery-item:hover::after { opacity: 1; }
         .gallery-item .caption { position: absolute; bottom: var(--space-3); left: var(--space-3); right: var(--space-3); font-family: var(--font-ui); font-size: 0.75rem; color: var(--bsi-cream); opacity: 0; transform: translateY(10px); transition: all var(--duration-normal) var(--ease-out); z-index: 1; line-height: 1.3; }
         .gallery-item:hover .caption { opacity: 1; transform: translateY(0); }
@@ -188,19 +249,45 @@
         /* Coverage */
         .coverage { background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%); }
         .coverage-header { text-align: center; margin-bottom: var(--space-12); }
+        .coverage-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-3); }
         .coverage-header h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: var(--space-4); }
         .coverage-header p { font-size: 1rem; color: rgba(250, 248, 245, 0.7); max-width: 550px; margin: 0 auto; }
         .coverage-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
         @media (min-width: 640px) { .coverage-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 1024px) { .coverage-grid { grid-template-columns: repeat(4, 1fr); } }
-        .coverage-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(191, 87, 0, 0.1); border-radius: 16px; padding: var(--space-6); text-align: center; transition: all var(--duration-normal) var(--ease-out); }
-        .coverage-card:hover { background: rgba(191, 87, 0, 0.05); border-color: rgba(191, 87, 0, 0.3); transform: translateY(-4px); }
-        .coverage-card.primary { background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); border-color: var(--bsi-burnt-orange); }
-        .coverage-icon { width: 56px; height: 56px; margin: 0 auto var(--space-4); background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(139, 69, 19, 0.15)); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .coverage-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: var(--space-6); text-align: center; transition: all var(--duration-normal) var(--ease-out); }
+        .coverage-card:hover { background: rgba(191, 87, 0, 0.05); border-color: rgba(191, 87, 0, 0.2); transform: translateY(-4px); }
+        .coverage-card.primary { background: linear-gradient(135deg, rgba(191, 87, 0, 0.12), rgba(139, 69, 19, 0.08)); border-color: rgba(191, 87, 0, 0.3); }
+        .coverage-card.primary:hover { border-color: var(--bsi-burnt-orange); }
+        .coverage-icon { width: 56px; height: 56px; margin: 0 auto var(--space-4); background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
         .coverage-icon svg { width: 28px; height: 28px; stroke: var(--bsi-ember); fill: none; stroke-width: 1.5; }
         .coverage-card h3 { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-2); }
-        .coverage-card p { font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); line-height: 1.5; }
-        .coverage-card .badge { display: inline-block; margin-top: var(--space-4); padding: var(--space-1) var(--space-3); background: var(--bsi-burnt-orange); color: white; font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 100px; }
+        .coverage-card p { font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); line-height: 1.5; margin-bottom: var(--space-4); }
+        .coverage-card .badge { display: inline-block; padding: var(--space-1) var(--space-3); background: var(--bsi-burnt-orange); color: white; font-family: var(--font-ui); font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 100px; }
+        .coverage-features { list-style: none; text-align: left; margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid rgba(255, 255, 255, 0.06); }
+        .coverage-features li { font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 248, 245, 0.5); padding: var(--space-2) 0; display: flex; align-items: center; gap: var(--space-2); }
+        .coverage-features li svg { width: 14px; height: 14px; stroke: var(--bsi-success); flex-shrink: 0; }
+
+        /* Blaze Conversations */
+        .conversations { background: var(--bsi-midnight); position: relative; overflow: hidden; }
+        .conversations::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 30%, rgba(191, 87, 0, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(255, 107, 53, 0.05) 0%, transparent 40%); pointer-events: none; }
+        .conversations-header { text-align: center; margin-bottom: var(--space-12); position: relative; z-index: 1; }
+        .conversations-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-ember); margin-bottom: var(--space-3); }
+        .conversations-header h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: var(--space-4); }
+        .conversations-header p { font-size: 1rem; color: rgba(250, 248, 245, 0.7); max-width: 550px; margin: 0 auto; }
+        .conversations-featured { display: grid; grid-template-columns: 1fr; gap: var(--space-8); position: relative; z-index: 1; }
+        @media (min-width: 1024px) { .conversations-featured { grid-template-columns: 1.5fr 1fr; gap: var(--space-12); align-items: start; } }
+        .video-wrapper { position: relative; }
+        .video-wrapper::before { content: ''; position: absolute; inset: -8px; background: linear-gradient(135deg, rgba(191, 87, 0, 0.3), rgba(139, 69, 19, 0.2)); border-radius: 16px; z-index: -1; filter: blur(20px); opacity: 0.6; }
+        .video-container { border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 40px rgba(191, 87, 0, 0.1); }
+        .video-info { padding: var(--space-4) 0; }
+        .video-badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: rgba(191, 87, 0, 0.12); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 100px; font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); margin-bottom: var(--space-5); }
+        .video-badge svg { width: 12px; height: 12px; }
+        .video-info h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); margin-bottom: var(--space-4); line-height: 1.25; color: var(--bsi-cream); }
+        .video-info p { font-size: 1rem; line-height: 1.7; color: rgba(250, 248, 245, 0.7); margin-bottom: var(--space-6); }
+        .video-meta { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+        .meta-item { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 248, 245, 0.5); }
+        .meta-item svg { width: 16px; height: 16px; stroke: var(--bsi-burnt-orange); }
 
         /* About */
         .about { background: var(--bsi-cream); color: var(--bsi-charcoal); }
@@ -208,7 +295,8 @@
         @media (min-width: 768px) { .about-grid { grid-template-columns: 1fr 1.3fr; } }
         .about-image { position: relative; }
         .about-image img { border-radius: 16px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2); }
-        .about-image::before { content: ''; position: absolute; top: 20px; left: 20px; right: -20px; bottom: -20px; background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil)); border-radius: 16px; z-index: -1; opacity: 0.3; }
+        .about-image::before { content: ''; position: absolute; top: 20px; left: 20px; right: -20px; bottom: -20px; background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil)); border-radius: 16px; z-index: -1; opacity: 0.25; }
+        .about-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-texas-soil); margin-bottom: var(--space-3); }
         .about-content h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); margin-bottom: var(--space-6); color: var(--bsi-charcoal); }
         .about-content p { font-size: 1rem; line-height: 1.7; margin-bottom: var(--space-4); }
         .about-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-6); margin-top: var(--space-8); padding-top: var(--space-8); border-top: 1px solid rgba(26, 26, 26, 0.1); }
@@ -216,73 +304,298 @@
         .fact-item .number { font-size: 1.75rem; font-weight: 700; color: var(--bsi-burnt-orange); line-height: 1; margin-bottom: var(--space-2); }
         .fact-item .label { font-size: 0.8125rem; color: rgba(26, 26, 26, 0.6); line-height: 1.3; }
 
+        /* Newsletter CTA */
+        .newsletter { background: var(--bsi-charcoal); position: relative; overflow: hidden; }
+        .newsletter::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(191, 87, 0, 0.1) 0%, transparent 60%); pointer-events: none; }
+        .newsletter-inner { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+        .newsletter-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-3); }
+        .newsletter h2 { font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: var(--space-4); }
+        .newsletter p { font-size: 1rem; color: rgba(250, 248, 245, 0.7); margin-bottom: var(--space-8); }
+        .newsletter-form { display: flex; flex-direction: column; gap: var(--space-3); }
+        @media (min-width: 480px) { .newsletter-form { flex-direction: row; } }
+        .newsletter-input { flex: 1; padding: var(--space-4) var(--space-5); font-family: var(--font-ui); font-size: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: var(--bsi-cream); transition: all var(--duration-normal) var(--ease-out); }
+        .newsletter-input::placeholder { color: rgba(250, 248, 245, 0.4); }
+        .newsletter-input:focus { outline: none; border-color: var(--bsi-burnt-orange); background: rgba(255, 255, 255, 0.08); }
+        .newsletter-note { font-family: var(--font-ui); font-size: 0.75rem; color: rgba(250, 248, 245, 0.4); margin-top: var(--space-4); }
+
         /* Footer */
-        .footer { background: var(--bsi-midnight); padding: var(--space-16) 0 var(--space-8); border-top: 1px solid rgba(191, 87, 0, 0.2); }
+        .footer { background: var(--bsi-midnight); padding: var(--space-16) 0 var(--space-8); border-top: 1px solid rgba(191, 87, 0, 0.15); }
         .footer-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-8); margin-bottom: var(--space-12); }
-        @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
-        .footer-brand { max-width: 350px; }
+        @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
+        .footer-brand { max-width: 300px; }
         .footer-brand .logo { margin-bottom: var(--space-4); }
-        .footer-brand p { font-size: 0.9375rem; color: rgba(250, 248, 245, 0.6); line-height: 1.6; }
-        .footer-values { display: flex; gap: var(--space-4); margin-top: var(--space-4); font-family: var(--font-ui); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-gold); }
-        .footer-links h4 { font-family: var(--font-ui); font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-4); }
+        .footer-brand p { font-size: 0.9375rem; color: rgba(250, 248, 245, 0.6); line-height: 1.6; margin-bottom: var(--space-4); }
+        .footer-values { display: flex; gap: var(--space-4); font-family: var(--font-ui); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-gold); }
+        .footer-links h4 { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-4); }
         .footer-links ul { list-style: none; }
         .footer-links li { margin-bottom: var(--space-2); }
-        .footer-links a { font-family: var(--font-ui); font-size: 0.9375rem; color: rgba(250, 248, 245, 0.6); transition: color var(--duration-normal) var(--ease-out); }
+        .footer-links a { font-family: var(--font-ui); font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); transition: color var(--duration-normal) var(--ease-out); }
         .footer-links a:hover { color: var(--bsi-cream); }
-        .footer-bottom { display: flex; flex-direction: column; gap: var(--space-4); padding-top: var(--space-8); border-top: 1px solid rgba(250, 248, 245, 0.1); font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 248, 245, 0.4); }
+        .footer-bottom { display: flex; flex-direction: column; gap: var(--space-4); padding-top: var(--space-8); border-top: 1px solid rgba(250, 248, 245, 0.08); font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 248, 245, 0.4); }
         @media (min-width: 768px) { .footer-bottom { flex-direction: row; justify-content: space-between; align-items: center; } }
         .footer-tagline { font-family: var(--font-display); font-style: italic; color: var(--bsi-burnt-orange); }
+        .footer-legal { display: flex; gap: var(--space-4); }
+        .footer-legal a { color: rgba(250, 248, 245, 0.4); transition: color var(--duration-normal); }
+        .footer-legal a:hover { color: rgba(250, 248, 245, 0.7); }
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s var(--ease-out); }
         .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
 
-        /* Hero Video Reel */
-        .hero-reel { background: var(--bsi-midnight); padding: 0; position: relative; }
-        .hero-reel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to bottom, var(--bsi-midnight), transparent); z-index: 5; pointer-events: none; }
-        .hero-reel::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to top, var(--bsi-midnight), transparent); z-index: 5; pointer-events: none; }
-        .hero-reel-inner { max-width: 1400px; margin: 0 auto; padding: 0 var(--space-4); }
-        .hero-reel-video { position: relative; padding-top: 56.25%; background: var(--bsi-charcoal); border-radius: 8px; overflow: hidden; }
-        .hero-reel-video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .hero-reel-caption { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .hero-reel-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); }
-        .hero-reel-title { margin: var(--space-1) 0 0 0; font-family: var(--font-ui); font-size: 1rem; font-weight: 500; color: var(--bsi-cream); }
-        .hero-reel-desc { font-family: var(--font-body); font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); max-width: 400px; text-align: right; }
-        .hero-reel-tap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); background: var(--bsi-charcoal); cursor: pointer; }
-        .hero-reel-tap-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--bsi-burnt-orange); display: flex; align-items: center; justify-content: center; transition: transform var(--duration-normal) var(--ease-out), background var(--duration-normal) var(--ease-out); }
-        .hero-reel-tap-btn:hover { transform: scale(1.1); background: var(--bsi-ember); }
-        .hero-reel-tap-btn svg { width: 24px; height: 28px; fill: white; margin-left: 4px; }
-        .hero-reel-tap-text { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; color: rgba(250, 248, 245, 0.8); }
-        @media (max-width: 767px) { .hero-reel-caption { flex-direction: column; align-items: flex-start; gap: var(--space-2); } .hero-reel-desc { text-align: left; max-width: none; } }
+        /* ========================================
+           2025 CUTTING-EDGE CSS FEATURES
+        ======================================== */
+
+        /* View Transitions API - Smooth page transitions */
+        @view-transition {
+            navigation: auto;
+        }
+
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation-duration: 0.4s;
+            animation-timing-function: var(--ease-out);
+        }
+
+        ::view-transition-old(root) {
+            animation-name: fade-and-scale-out;
+        }
+
+        ::view-transition-new(root) {
+            animation-name: fade-and-scale-in;
+        }
+
+        @keyframes fade-and-scale-out {
+            to { opacity: 0; transform: scale(0.95); }
+        }
+
+        @keyframes fade-and-scale-in {
+            from { opacity: 0; transform: scale(1.05); }
+        }
+
+        /* Scroll-Driven Animations - Elements animate as you scroll */
+        @supports (animation-timeline: scroll()) {
+            .reveal {
+                animation: scroll-reveal linear both;
+                animation-timeline: view();
+                animation-range: entry 0% entry 100%;
+            }
+
+            @keyframes scroll-reveal {
+                from { opacity: 0; transform: translateY(60px) scale(0.95); }
+                to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+
+            /* Hero parallax on scroll */
+            .hero::before {
+                animation: parallax-bg linear;
+                animation-timeline: scroll();
+                animation-range: 0% 100%;
+            }
+
+            @keyframes parallax-bg {
+                to { transform: translateY(-30%); opacity: 0; }
+            }
+
+            /* Gallery items stagger in */
+            .gallery-item {
+                animation: gallery-pop linear both;
+                animation-timeline: view();
+                animation-range: entry 0% entry 80%;
+            }
+
+            @keyframes gallery-pop {
+                from { opacity: 0; transform: scale(0.8) rotate(-2deg); }
+                to { opacity: 1; transform: scale(1) rotate(0deg); }
+            }
+
+            /* Coverage cards slide up */
+            .coverage-card {
+                animation: card-slide linear both;
+                animation-timeline: view();
+                animation-range: entry 10% entry 90%;
+            }
+
+            @keyframes card-slide {
+                from { opacity: 0; transform: translateY(40px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            /* Progress bar on scroll */
+            .nav::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 2px;
+                background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember));
+                animation: scroll-progress linear;
+                animation-timeline: scroll();
+            }
+
+            @keyframes scroll-progress {
+                from { width: 0%; }
+                to { width: 100%; }
+            }
+        }
+
+        /* Enhanced Glassmorphism with saturate() */
+        .glass {
+            background: rgba(13, 13, 13, 0.6);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-light {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* Container Queries for responsive cards */
+        @supports (container-type: inline-size) {
+            .coverage-grid, .platform-grid {
+                container-type: inline-size;
+            }
+
+            @container (min-width: 400px) {
+                .coverage-card, .platform-card {
+                    padding: var(--space-8);
+                }
+                .coverage-icon, .platform-icon {
+                    width: 64px;
+                    height: 64px;
+                }
+                .coverage-icon svg, .platform-icon svg {
+                    width: 32px;
+                    height: 32px;
+                }
+            }
+        }
+
+        /* color-mix() for dynamic hover states */
+        @supports (color: color-mix(in oklch, red, blue)) {
+            .btn-primary:hover {
+                background: linear-gradient(135deg,
+                    color-mix(in oklch, var(--bsi-burnt-orange), white 15%),
+                    color-mix(in oklch, var(--bsi-ember), white 15%)
+                );
+            }
+
+            .coverage-card:hover {
+                background: color-mix(in oklch, var(--bsi-burnt-orange), transparent 92%);
+            }
+
+            .nav-links a:hover {
+                color: color-mix(in oklch, var(--bsi-ember), white 20%);
+            }
+        }
+
+        /* :has() selector - Parent-based styling */
+        @supports selector(:has(*)) {
+            /* Style nav when mobile menu is active */
+            body:has(.mobile-menu.active) {
+                overflow: hidden;
+            }
+
+            /* Style coverage section when primary card is hovered */
+            .coverage-grid:has(.coverage-card.primary:hover) .coverage-card:not(.primary) {
+                opacity: 0.7;
+            }
+
+            /* Highlight gallery when featured item is hovered */
+            .gallery-grid:has(.gallery-item.featured:hover) .gallery-item:not(.featured) {
+                filter: brightness(0.7);
+            }
+        }
+
+        /* Subgrid for aligned layouts */
+        @supports (grid-template-columns: subgrid) {
+            .coverage-card {
+                display: grid;
+                grid-template-rows: auto 1fr auto;
+            }
+        }
+
+        /* Smooth focus styles with :focus-visible */
+        :focus-visible {
+            outline: 2px solid var(--bsi-ember);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        /* Print styles for accessibility */
+        @media print {
+            .nav, .mobile-menu, .newsletter, .hero-cta { display: none; }
+            body { background: white; color: black; }
+            .hero { min-height: auto; padding: 2rem 0; }
+        }
     </style>
 </head>
 <body>
     <nav class="nav">
         <div class="container nav-inner">
             <a href="/" class="logo">
-                <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+                <img src="./images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
                 <span class="logo-text">Blaze Sports Intel</span>
             </a>
             <ul class="nav-links">
-                <li><a href="/coverage">Coverage</a></li>
+                <li><a href="#platform">Platform</a></li>
+                <li><a href="#origin">Our Story</a></li>
+                <li><a href="#coverage">Coverage</a></li>
                 <li><a href="/analytics">Analytics</a></li>
-                <li><a href="/pricing">Pricing</a></li>
-                <li><a href="/our-story">Our Story</a></li>
-                <li><a href="/login">Sign In</a></li>
+                <li class="nav-dropdown">
+                    <a href="#" class="dropdown-trigger">Dashboards <span class="dropdown-arrow">▼</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">League Analytics</li>
+                        <li><a href="/dashboards/mlb-league-analytics">MLB</a></li>
+                        <li><a href="/dashboards/nfl-league-analytics">NFL</a></li>
+                        <li><a href="/dashboards/nba-league-analytics">NBA</a></li>
+                        <li><a href="/dashboards/ncaa-football-league-analytics">NCAA Football</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li class="dropdown-header">Team Analytics</li>
+                        <li><a href="/dashboards/cardinals-advanced-analytics">St. Louis Cardinals</a></li>
+                        <li><a href="/dashboards/titans-advanced-analytics">Tennessee Titans</a></li>
+                        <li><a href="/dashboards/grizzlies-advanced-analytics">Memphis Grizzlies</a></li>
+                        <li><a href="/dashboards/longhorns-advanced-analytics">Texas Longhorns</a></li>
+                    </ul>
+                </li>
+                <li><a href="#about">About</a></li>
             </ul>
-            <button type="button" class="mobile-menu-btn" aria-label="Toggle menu">
+            <a href="/analytics" class="btn btn-primary btn-sm nav-cta">Launch Analytics</a>
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
                 <span></span><span></span><span></span>
             </button>
         </div>
     </nav>
     <div class="mobile-menu">
         <ul>
-            <li><a href="/coverage">Coverage</a></li>
+            <li><a href="#platform">Platform</a></li>
+            <li><a href="#origin">Our Story</a></li>
+            <li><a href="#coverage">Coverage</a></li>
             <li><a href="/analytics">Analytics</a></li>
-            <li><a href="/pricing">Pricing</a></li>
-            <li><a href="/our-story">Our Story</a></li>
-            <li><a href="/login">Sign In</a></li>
+            <li class="mobile-dropdown">
+                <span class="mobile-dropdown-header">Dashboards</span>
+                <ul class="mobile-submenu">
+                    <li><a href="/dashboards/mlb-league-analytics">MLB League</a></li>
+                    <li><a href="/dashboards/nfl-league-analytics">NFL League</a></li>
+                    <li><a href="/dashboards/nba-league-analytics">NBA League</a></li>
+                    <li><a href="/dashboards/ncaa-football-league-analytics">NCAA Football</a></li>
+                    <li><a href="/dashboards/cardinals-advanced-analytics">Cardinals</a></li>
+                    <li><a href="/dashboards/titans-advanced-analytics">Titans</a></li>
+                    <li><a href="/dashboards/grizzlies-advanced-analytics">Grizzlies</a></li>
+                    <li><a href="/dashboards/longhorns-advanced-analytics">Longhorns</a></li>
+                </ul>
+            </li>
+            <li><a href="#about">About</a></li>
+            <li><a href="/analytics">Launch Analytics</a></li>
         </ul>
     </div>
 
@@ -290,72 +603,39 @@
         <div class="container">
             <div class="hero-grid">
                 <div class="hero-content">
-                    <p class="hero-tagline">Est. August 17, 1995 — Memphis, TN on Texas Soil</p>
-                    <h1 class="hero-title">Born to <span class="text-gradient">Blaze</span> the Path Less Beaten</h1>
-                    <p class="hero-subtitle">Sports analytics for the games big media ignores. The college baseball coverage ESPN won't give you. Real data, real stories, zero corporate slop.</p>
+                    <div class="hero-badge">
+                        <span>Now Live — 2025 Season</span>
+                    </div>
+                    <h1 class="hero-title">The College Baseball Coverage <span class="text-gradient">ESPN Won't Give You</span></h1>
+                    <p class="hero-problem">College baseball is one of <strong>only three revenue-generating NCAA sports</strong>. Yet ESPN broadcasts cornhole, axe throwing, and spelling bees while ignoring complete box scores and advanced analytics for 300+ D1 programs.</p>
+                    <p class="hero-solution">We built what should already exist: real-time scores, complete box scores, and the analytics infrastructure college baseball deserves.</p>
                     <div class="hero-cta">
-                        <a href="#origin" class="btn btn-primary">Read Our Story →</a>
-                        <a href="/analytics" class="btn btn-secondary">Explore Analytics</a>
+                        <a href="/analytics" class="btn btn-primary btn-lg">Explore Live Analytics</a>
+                        <a href="#origin" class="btn btn-secondary">Read Our Story</a>
                     </div>
                 </div>
                 <div class="hero-visual">
                     <div class="hero-image-wrapper">
-                        <img src="/images/texas-soil.jpg" alt="The original Texas soil from West Columbia and newspaper clipping from 1995" class="hero-image">
-                        <div class="hero-badge">
-                            <p class="hero-badge-text">Family Tradition</p>
-                            <p class="hero-badge-value">127+ Years</p>
+                        <img src="./images/texas-soil.jpg" alt="The original Texas soil from West Columbia and newspaper clipping from 1995" class="hero-image">
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <div class="hero-stat-value">300+</div>
+                                <div class="hero-stat-label">D1 Programs</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="hero-stat-value">Real-Time</div>
+                                <div class="hero-stat-label">Live Scores</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="hero-stat-value">Complete</div>
+                                <div class="hero-stat-label">Box Scores</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Hero Video Reel - Cloudflare Stream -->
-    <section class="hero-reel" id="hero-reel">
-        <div class="hero-reel-inner">
-            <div class="hero-reel-video" id="heroVideoContainer">
-                <!-- Mobile: Tap to play overlay -->
-                <div class="hero-reel-tap" id="heroTapOverlay" style="display: none;">
-                    <div class="hero-reel-tap-btn">
-                        <svg viewBox="0 0 28 32"><path d="M28 16L0 32V0L28 16Z"/></svg>
-                    </div>
-                    <span class="hero-reel-tap-text">Tap to play</span>
-                </div>
-                <!-- Desktop: Autoplay muted loop -->
-                <iframe
-                    id="heroVideoFrame"
-                    src="https://customer-mpdvoybjqct2pzls.cloudflarestream.com/803f4d36546295cf91c3660e160bc9e7/iframe?autoplay=true&muted=true&loop=true&controls=false&preload=metadata"
-                    title="The Conversation - Blaze Sports Intel"
-                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-                    allowfullscreen
-                ></iframe>
-            </div>
-            <div class="hero-reel-caption">
-                <div>
-                    <span class="hero-reel-label">Featured</span>
-                    <h3 class="hero-reel-title">The Conversation</h3>
-                </div>
-                <p class="hero-reel-desc">Sports intelligence beyond the box score.</p>
-            </div>
-        </div>
-    </section>
-    <script>
-        // Mobile: Show tap overlay instead of autoplay (respects data usage)
-        (function() {
-            const isMobile = window.innerWidth < 768;
-            const overlay = document.getElementById('heroTapOverlay');
-            const frame = document.getElementById('heroVideoFrame');
-            if (isMobile && overlay && frame) {
-                overlay.style.display = 'flex';
-                frame.src = ''; // Don't load video until tapped
-                overlay.addEventListener('click', function() {
-                    overlay.style.display = 'none';
-                    frame.src = 'https://customer-mpdvoybjqct2pzls.cloudflarestream.com/803f4d36546295cf91c3660e160bc9e7/iframe?autoplay=true&muted=true&loop=true&controls=false&preload=metadata';
-                });
-            }
-        })();
-    </script>
 
     <section class="values-banner">
         <div class="container">
@@ -384,9 +664,58 @@
         </div>
     </section>
 
+    <section class="platform" id="platform">
+        <div class="container">
+            <header class="platform-header reveal">
+                <p class="platform-label">What We Deliver</p>
+                <h2>The Analytics Infrastructure <span class="text-gradient">College Baseball Deserves</span></h2>
+                <p>Built from the ground up on Cloudflare's edge network for sub-50ms response times. Mobile-first. Real-time. No compromises.</p>
+            </header>
+            <div class="platform-grid">
+                <article class="platform-card reveal">
+                    <div class="platform-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <h3>Real-Time Scores</h3>
+                    <p>Live game updates as they happen. No more refreshing ESPN for scores they'll never show you.</p>
+                    <ul class="platform-features">
+                        <li>All 300+ D1 programs</li>
+                        <li>Conference tournaments</li>
+                        <li>NCAA regionals & CWS</li>
+                    </ul>
+                </article>
+                <article class="platform-card reveal reveal-delay-1">
+                    <div class="platform-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    </div>
+                    <h3>Complete Box Scores</h3>
+                    <p>Full batting lines, pitching stats, and play-by-play—not the abbreviated garbage you get elsewhere.</p>
+                    <ul class="platform-features">
+                        <li>Batting & pitching lines</li>
+                        <li>Situational stats</li>
+                        <li>Play-by-play data</li>
+                    </ul>
+                </article>
+                <article class="platform-card reveal reveal-delay-2">
+                    <div class="platform-icon">
+                        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <h3>Advanced Analytics</h3>
+                    <p>The predictive models and sabermetric depth that MLB teams pay millions for—applied to college baseball.</p>
+                    <ul class="platform-features">
+                        <li>WAR calculations</li>
+                        <li>Predictive models</li>
+                        <li>Historical comparisons</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
     <section class="origin" id="origin">
         <div class="container">
             <header class="origin-header reveal">
+                <p class="origin-label">Our Story</p>
                 <h2>Tennessee Birth on <span class="text-orange">Texas Soil</span></h2>
                 <p>Before there was a brand, there was a promise. A covenant between a father from Texas and his son about to be born in Tennessee.</p>
             </header>
@@ -406,7 +735,7 @@
                 </div>
                 <div class="origin-media reveal">
                     <div class="media-item">
-                        <img src="/images/texas-soil.jpg" alt="The original Texas soil from West Columbia and the 1995 newspaper clipping" loading="lazy">
+                        <img src="./images/texas-soil.jpg" alt="The original Texas soil from West Columbia and the 1995 newspaper clipping" loading="lazy">
                         <span class="media-caption">The original Texas soil from West Columbia and the <em>El Campo Leader-News</em> clipping—still in my possession 30 years later.</span>
                     </div>
                 </div>
@@ -433,7 +762,7 @@
                     </div>
                 </div>
                 <div class="birth-proof-image">
-                    <img src="/images/birth-certificate.jpg" alt="Tennessee birth certificate for John Austin Humphrey" loading="lazy">
+                    <img src="./images/birth-certificate.jpg" alt="Tennessee birth certificate for John Austin Humphrey" loading="lazy">
                 </div>
             </div>
         </div>
@@ -454,28 +783,51 @@
     <section class="gallery" id="gallery">
         <div class="container">
             <header class="gallery-header reveal">
-                <h2>The <span class="text-gradient">Journey</span></h2>
-                <p>From the Bartlett Blaze to Blaze Sports Intel. Memphis roots, Texas soul, sports in the blood.</p>
+                <p class="gallery-label">The Journey</p>
+                <h2>From the Bartlett Blaze to <span class="text-gradient">Blaze Sports Intel</span></h2>
+                <p>Memphis roots, Texas soul, sports in the blood.</p>
             </header>
             <div class="gallery-grid">
                 <div class="gallery-item featured reveal">
-                    <img src="/images/blaze-and-austin.jpg" alt="Austin with his dachshund Blaze" loading="lazy">
-                    <span class="caption">Blaze the dachshund—named after the Bartlett Blaze baseball team, and the namesake of this company.</span>
+                    <img src="./images/football-tivy-td.jpg" alt="Austin Humphrey scoring touchdown against Kerrville Tivy" loading="lazy">
+                    <span class="caption">Scoring the first TD to tie up Boerne Champion against our biggest rival, Kerrville Tivy. #20, RB/FB.</span>
                 </div>
                 <div class="gallery-item reveal">
-                    <img src="/images/dad-and-kid.jpg" alt="Young Austin with his dad ready for baseball" loading="lazy">
+                    <img src="./images/football-marble-falls-td.png" alt="Austin Humphrey breaking tackle against Marble Falls" loading="lazy">
+                    <span class="caption">Screen pass TD on the first play vs Marble Falls—a game that set state passing records and landed on ESPN.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/football-beck-action.png" alt="Austin Humphrey carrying the ball" loading="lazy">
+                    <span class="caption">Friday night lights at Boerne Champion. Beck Photography.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/baseball-sliders-texas-tech.jpg" alt="South Texas Sliders baseball team at Texas Tech" loading="lazy">
+                    <span class="caption">South Texas Sliders at Texas Tech. Started that day against the #1 team in the country.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/blaze-and-austin.jpg" alt="Austin with his dachshund Blaze" loading="lazy">
+                    <span class="caption">Blaze the dachshund—namesake of this company, named after the Bartlett Blaze.</span>
+                </div>
+                <div class="gallery-item reveal">
+                    <img src="./images/dad-and-kid.jpg" alt="Young Austin with his dad ready for baseball" loading="lazy">
                     <span class="caption">Ready for the Bartlett Blaze with Dad, circa 1999.</span>
                 </div>
-                <div class="gallery-item reveal">
-                    <img src="/images/longhorns-kid.jpg" alt="Young Austin in Longhorns gear" loading="lazy">
-                    <span class="caption">Burnt orange in the blood before I could spell it.</span>
+                <div class="gallery-item featured reveal" style="aspect-ratio: 16/9;">
+                    <iframe
+                        src="https://customer-mpdvoybjqct2pzls.cloudflarestream.com/d209ed2b18035be778d1c664420a4ed0/iframe?poster=https%3A%2F%2Fcustomer-mpdvoybjqct2pzls.cloudflarestream.com%2Fd209ed2b18035be778d1c664420a4ed0%2Fthumbnails%2Fthumbnail.jpg&autoplay=false&muted=true&controls=true"
+                        style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%; border-radius: 12px;"
+                        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                        allowfullscreen="true"
+                        loading="lazy"
+                    ></iframe>
+                    <span class="caption" style="z-index: 10;">First touch at RB, 7th grade. 70 yards to the house on the first play of the season. This is where it started.</span>
                 </div>
                 <div class="gallery-item reveal">
-                    <img src="/images/titans-halloween.jpg" alt="Young Austin as Eddie George for Halloween" loading="lazy">
-                    <span class="caption">Eddie George (#27) for Halloween—Memphis born, football obsessed.</span>
+                    <img src="./images/football-team-friday-night.jpg" alt="Boerne Champion football team photo" loading="lazy">
+                    <span class="caption">Chargers teammates with the band playing behind us. This is Texas high school football.</span>
                 </div>
                 <div class="gallery-item reveal">
-                    <img src="/images/headshot.jpg" alt="Austin Humphrey professional headshot" loading="lazy">
+                    <img src="./images/headshot.jpg" alt="Austin Humphrey professional headshot" loading="lazy">
                     <span class="caption">Still blazing the path, just with better lighting.</span>
                 </div>
             </div>
@@ -485,8 +837,9 @@
     <section class="coverage" id="coverage">
         <div class="container">
             <header class="coverage-header reveal">
-                <h2>What We <span class="text-gradient">Cover</span></h2>
-                <p>The sports that deserve better. The stories big media ignores. The data they refuse to provide.</p>
+                <p class="coverage-label">Sports Coverage</p>
+                <h2>The Sports That <span class="text-gradient">Deserve Better</span></h2>
+                <p>The stories big media ignores. The data they refuse to provide. We're building what should already exist.</p>
             </header>
             <div class="coverage-grid">
                 <article class="coverage-card primary reveal">
@@ -494,30 +847,92 @@
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2c2.5 2 4 5.5 4 10s-1.5 8-4 10"/><path d="M12 2c-2.5 2-4 5.5-4 10s1.5 8 4 10"/></svg>
                     </div>
                     <h3>College Baseball</h3>
-                    <p>Full box scores, comprehensive stats, and the coverage ESPN won't give one of college sports' three revenue-generating programs.</p>
+                    <p>Complete coverage for one of college sports' three revenue-generating programs.</p>
                     <span class="badge">Primary Focus</span>
+                    <ul class="coverage-features">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>All 300+ D1 programs</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Complete box scores</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Real-time updates</li>
+                    </ul>
                 </article>
                 <article class="coverage-card reveal">
                     <div class="coverage-icon">
                         <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6v12"/><path d="M6.5 8.5L17.5 15.5"/><path d="M17.5 8.5L6.5 15.5"/></svg>
                     </div>
                     <h3>College Football</h3>
-                    <p>FCS and Group of Five coverage that goes beyond the Power Four obsession. Every team matters.</p>
+                    <p>FCS and Group of Five coverage beyond the Power Four obsession.</p>
+                    <ul class="coverage-features">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>FCS coverage</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Group of Five depth</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Transfer portal intel</li>
+                    </ul>
                 </article>
                 <article class="coverage-card reveal">
                     <div class="coverage-icon">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
                     </div>
                     <h3>MLB</h3>
-                    <p>Advanced analytics, predictive intelligence, and the context mainstream coverage lacks.</p>
+                    <p>Advanced analytics and predictive intelligence with context.</p>
+                    <ul class="coverage-features">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Predictive models</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Prospect tracking</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Historical analysis</li>
+                    </ul>
                 </article>
                 <article class="coverage-card reveal">
                     <div class="coverage-icon">
                         <svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6v12"/></svg>
                     </div>
                     <h3>NFL</h3>
-                    <p>Beyond fantasy points—real analysis of scheme, personnel, and the decisions that decide games.</p>
+                    <p>Scheme analysis and personnel decisions—not fantasy noise.</p>
+                    <ul class="coverage-features">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Scheme breakdowns</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Personnel analysis</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Draft intelligence</li>
+                    </ul>
                 </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blaze Conversations: Original Intellectual Content -->
+    <section class="conversations" id="conversations">
+        <div class="container">
+            <header class="conversations-header reveal">
+                <p class="conversations-label">Blaze Conversations</p>
+                <h2>The Ideas ESPN Won't Explore</h2>
+                <p>Original research and analysis where sports meets science, technology, and human potential.</p>
+            </header>
+            <div class="conversations-featured reveal">
+                <div class="video-wrapper">
+                    <div class="video-container" style="position: relative; padding-top: 57.70833333333333%;">
+                        <iframe
+                            src="https://customer-mpdvoybjqct2pzls.cloudflarestream.com/138facaf760c65e9b4efab3715ae6f50/iframe?poster=https%3A%2F%2Fcustomer-mpdvoybjqct2pzls.cloudflarestream.com%2F138facaf760c65e9b4efab3715ae6f50%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600&title=AI+in+Sports+%26+The+Ability+of+Psychedelics+in+Neurobiological+Regeneration+%26+Rejuvination"
+                            loading="lazy"
+                            style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%; border-radius: 12px;"
+                            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                            allowfullscreen="true"
+                        ></iframe>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <div class="video-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <span>Featured Lecture</span>
+                    </div>
+                    <h3>AI in Sports & The Ability of Psychedelics in Neurobiological Regeneration</h3>
+                    <p>A deep dive into how artificial intelligence is reshaping sports analytics—and the emerging science of psychedelic compounds in treating CTE and brain injuries. From a master's class discussion that bridges data science, neurobiology, and the future of athlete care.</p>
+                    <div class="video-meta">
+                        <span class="meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Full Lecture
+                        </span>
+                        <span class="meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                            Academic Research
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -526,13 +941,15 @@
         <div class="container">
             <div class="about-grid">
                 <div class="about-image reveal">
-                    <img src="/images/headshot.jpg" alt="Austin Humphrey" loading="lazy">
+                    <img src="./images/football-marble-falls-td.png" alt="Austin Humphrey scoring against Marble Falls in a state-record-setting game" loading="lazy">
                 </div>
                 <div class="about-content reveal">
+                    <p class="about-label">Founder</p>
                     <h2>The Human Behind the Data</h2>
-                    <p>I'm Austin Humphrey—UT Austin grad (International Relations, Economics minor), Full Sail MS in Entertainment Business, former data-driven advertising specialist at Spectrum Reach, and a guy who landed in the top 10% nationally at Northwestern Mutual.</p>
-                    <p>But those are just resume bullets. What matters is this: I grew up driving from Memphis to Austin every year for Thanksgiving and Longhorn football—same four season tickets my family's held for 40+ years. I was there when Ricky Williams broke the rushing record against A&M. My grandfather Bill built banks in El Campo after growing up with nothing in west Texas. This isn't a startup pivot—it's a calling.</p>
-                    <p>Blaze Sports Intel exists because ESPN has systematically neglected college baseball—one of only three revenue-generating college sports—and I got tired of waiting for someone else to fix it.</p>
+                    <p>I'm Austin Humphrey—Boerne Champion #20, two-sport athlete who played running back on Friday nights and started against the #1 baseball team in the country at Texas Tech for the South Texas Sliders. UT Austin grad, Full Sail MS, former top 10% nationally at Northwestern Mutual.</p>
+                    <p>In September 2012, I scored on a screen pass on the first play against Todd Dodge's Marble Falls squad—a game where the opposing QB threw for 724 yards (state record, 2nd in national history), our QB threw for 595 yards (4th in state history), and the combined 1,310 passing yards set an unofficial state record. Texas Monthly named it one of the "Five Most Memorable Sports Stories of 2012." That play landed on ESPN. I know what it feels like to be in the arena.</p>
+                    <p>But those are just stories. What matters: I grew up driving from Memphis to Austin every Thanksgiving for Longhorn football—same four season tickets my family's held for 40+ years. I was there when Ricky Williams broke the rushing record against A&M. My grandfather Bill built banks in El Campo after growing up with nothing in west Texas. This isn't a startup pivot—it's a calling.</p>
+                    <p>Blaze Sports Intel exists because ESPN broadcasts cornhole while ignoring college baseball—one of only three revenue-generating college sports—and I got tired of waiting for someone else to fix it.</p>
                     <div class="about-facts">
                         <div class="fact-item"><span class="number">40+</span><span class="label">Years of family Longhorn season tickets</span></div>
                         <div class="fact-item"><span class="number">127+</span><span class="label">Years of Humphreys born on Texas soil</span></div>
@@ -542,12 +959,27 @@
         </div>
     </section>
 
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-inner reveal">
+                <p class="newsletter-label">Stay Updated</p>
+                <h2>Get the Coverage ESPN Won't Give You</h2>
+                <p>Real-time updates, weekly insights, and platform announcements delivered to your inbox. No spam, no corporate slop—just the analysis that matters.</p>
+                <form class="newsletter-form" action="#" method="POST">
+                    <input type="email" class="newsletter-input" placeholder="Enter your email" required aria-label="Email address">
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+                <p class="newsletter-note">Join fans who care about the sports big media ignores.</p>
+            </div>
+        </div>
+    </section>
+
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="/" class="logo">
-                        <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+                        <img src="./images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
                     </a>
                     <p>Born in Memphis. Rooted in Texas soil. Covering the sports that deserve better.</p>
                     <div class="footer-values">
@@ -557,6 +989,15 @@
                         <span>•</span>
                         <span>Leadership</span>
                     </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="/analytics">Live Analytics</a></li>
+                        <li><a href="/scores">Live Scores</a></li>
+                        <li><a href="/standings">Standings</a></li>
+                        <li><a href="/stats">Statistics</a></li>
+                    </ul>
                 </div>
                 <div class="footer-links">
                     <h4>Coverage</h4>
@@ -571,219 +1012,43 @@
                     <h4>Company</h4>
                     <ul>
                         <li><a href="#origin">Our Story</a></li>
+                        <li><a href="#conversations">Conversations</a></li>
                         <li><a href="#about">About</a></li>
-                        <li><a href="/analytics">Analytics</a></li>
+                        <li><a href="mailto:austin@blazesportsintel.com">Contact</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
                 <p>© 2025 Blaze Sports Intel. Built on Cloudflare.</p>
-                <p class="footer-tagline">Born in Memphis. Rooted in Texas soil. Blazing the path less beaten.</p>
+                <p class="footer-tagline">Born to Blaze the Path Less Beaten</p>
+                <div class="footer-legal">
+                    <a href="/privacy">Privacy</a>
+                    <a href="/terms">Terms</a>
+                </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // ========================================
-        // PWA - Service Worker Registration
-        // ========================================
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', async () => {
-                try {
-                    const registration = await navigator.serviceWorker.register('/sw.js');
-                    console.log('[BSI] Service Worker registered:', registration.scope);
-
-                    // Check for updates
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('[BSI] New version available! Reload to update.');
-                            }
-                        });
-                    });
-                } catch (error) {
-                    console.log('[BSI] Service Worker registration failed:', error);
-                }
-            });
-        }
-
-        // ========================================
-        // PWA Install Prompt
-        // ========================================
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            // Could show custom install button here
-            console.log('[BSI] Install prompt ready');
-        });
-
-        window.addEventListener('appinstalled', () => {
-            console.log('[BSI] App installed successfully');
-            deferredPrompt = null;
-        });
-
-        // ========================================
-        // Web Share API - Native Sharing
-        // ========================================
-        function shareContent(title, text, url) {
-            if (navigator.share) {
-                navigator.share({
-                    title: title || 'Blaze Sports Intel',
-                    text: text || 'Born to Blaze the Path Less Beaten',
-                    url: url || window.location.href
-                })
-                .then(() => {
-                    console.log('[BSI] Content shared successfully');
-                    // Haptic feedback on success
-                    if (navigator.vibrate) navigator.vibrate(50);
-                })
-                .catch((error) => {
-                    if (error.name !== 'AbortError') {
-                        console.log('[BSI] Share failed:', error);
-                    }
-                });
-            } else {
-                // Fallback: copy to clipboard
-                navigator.clipboard.writeText(url || window.location.href)
-                    .then(() => alert('Link copied to clipboard!'));
-            }
-        }
-
-        // Add share buttons dynamically (optional)
-        window.addEventListener('DOMContentLoaded', () => {
-            if (navigator.share) {
-                const heroBtn = document.querySelector('.hero-cta');
-                if (heroBtn) {
-                    const shareBtn = document.createElement('button');
-                    shareBtn.className = 'btn btn-secondary';
-                    shareBtn.innerHTML = 'Share Story →';
-                    shareBtn.onclick = () => shareContent(
-                        'Blaze Sports Intel - Our Story',
-                        'Sports analytics for the games big media ignores. Born in Memphis, rooted in Texas soil.',
-                        window.location.origin + '#origin'
-                    );
-                    heroBtn.appendChild(shareBtn);
-                }
-            }
-        });
-
-        // ========================================
-        // Haptic Feedback for Interactions
-        // ========================================
-        function hapticFeedback(pattern = [50]) {
-            if (navigator.vibrate) {
-                navigator.vibrate(pattern);
-            }
-        }
-
-        // Add haptics to buttons
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.btn, .nav-links a, .mobile-menu a').forEach(el => {
-                el.addEventListener('click', () => hapticFeedback([25]));
-            });
-        });
-
-        // ========================================
-        // Screen Wake Lock - Keep screen on
-        // ========================================
-        let wakeLock = null;
-        async function requestWakeLock() {
-            if ('wakeLock' in navigator) {
-                try {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    wakeLock.addEventListener('release', () => {
-                        console.log('[BSI] Screen wake lock released');
-                    });
-                    console.log('[BSI] Screen wake lock active');
-                } catch (err) {
-                    console.log('[BSI] Wake lock error:', err);
-                }
-            }
-        }
-
-        // Request wake lock when user starts reading
-        let scrollDepth = 0;
+        // Navigation scroll behavior
+        const nav = document.querySelector('.nav');
         window.addEventListener('scroll', () => {
-            const depth = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-            if (depth > 0.2 && scrollDepth < 0.2 && !wakeLock) {
-                requestWakeLock();
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
             }
-            scrollDepth = depth;
-        });
+        }, { passive: true });
 
-        // Release wake lock when user leaves
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden' && wakeLock) {
-                wakeLock.release();
-                wakeLock = null;
-            }
-        });
-
-        // ========================================
-        // View Transitions API
-        // ========================================
-        function navigateWithTransition(url) {
-            if (!document.startViewTransition) {
-                window.location.href = url;
-                return;
-            }
-
-            document.startViewTransition(() => {
-                window.location.href = url;
-            });
-        }
-
-        // Apply transitions to navigation links
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('a[href^="/"]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    if (link.target !== '_blank' && document.startViewTransition) {
-                        e.preventDefault();
-                        navigateWithTransition(link.href);
-                    }
-                });
-            });
-        });
-
-        // ========================================
-        // Dark Mode Toggle with Persistence
-        // ========================================
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-        const savedTheme = localStorage.getItem('bsi-theme');
-
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('bsi-theme', theme);
-        }
-
-        // Initialize theme
-        if (savedTheme) {
-            setTheme(savedTheme);
-        } else if (prefersDark.matches) {
-            setTheme('dark');
-        }
-
-        // Listen for system theme changes
-        prefersDark.addEventListener('change', (e) => {
-            if (!localStorage.getItem('bsi-theme')) {
-                setTheme(e.matches ? 'dark' : 'light');
-            }
-        });
-
-        // ========================================
         // Mobile menu toggle
-        // ========================================
         const menuBtn = document.querySelector('.mobile-menu-btn');
         const mobileMenu = document.querySelector('.mobile-menu');
         menuBtn?.addEventListener('click', () => {
             menuBtn.classList.toggle('active');
             mobileMenu.classList.toggle('active');
-            hapticFeedback([30]);
+            if (navigator.vibrate) navigator.vibrate([30]);
         });
 
-        // Close mobile menu on link click
         document.querySelectorAll('.mobile-menu a').forEach(link => {
             link.addEventListener('click', () => {
                 menuBtn.classList.remove('active');
@@ -791,39 +1056,65 @@
             });
         });
 
-        // ========================================
         // Reveal animations
-        // ========================================
         const reveals = document.querySelectorAll('.reveal');
         const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
         reveals.forEach(reveal => revealObserver.observe(reveal));
 
-        // ========================================
-        // Smooth scroll
-        // ========================================
+        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    hapticFeedback([20]);
+                    const offset = 80;
+                    const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    if (navigator.vibrate) navigator.vibrate([20]);
                 }
             });
         });
 
-        // ========================================
-        // Performance Monitoring
-        // ========================================
-        window.addEventListener('load', () => {
-            if (window.performance && window.performance.timing) {
-                const perfData = window.performance.timing;
-                const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
-                console.log('[BSI] Page load time:', pageLoadTime + 'ms');
-            }
+        // Newsletter form handler
+        const newsletterForm = document.querySelector('.newsletter-form');
+        newsletterForm?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = newsletterForm.querySelector('button');
+            const originalText = button.textContent;
+            button.textContent = 'Subscribing...';
+            button.disabled = true;
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            button.textContent = 'Subscribed!';
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+                newsletterForm.reset();
+            }, 2000);
         });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    await navigator.serviceWorker.register('/sw.js');
+                } catch (error) {
+                    console.log('[BSI] SW registration failed:', error);
+                }
+            });
+        }
     </script>
 </body>
 </html>

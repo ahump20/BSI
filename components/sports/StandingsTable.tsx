@@ -30,7 +30,7 @@ async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
     if (!res.ok) {
       return getMockStandings(sport);
     }
-    const data = await res.json();
+    const data = (await res.json()) as { standings?: TeamStanding[]; data?: TeamStanding[] };
     return data.standings || data.data || [];
   } catch {
     return getMockStandings(sport);

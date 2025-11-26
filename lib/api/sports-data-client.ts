@@ -415,12 +415,12 @@ export class SportsDataClient {
   /**
    * Create error response
    */
-  private errorResponse(
+  private errorResponse<T>(
     message: string,
     status: number,
     provider: string,
     retryable: boolean
-  ): ApiResponse<never> {
+  ): ApiResponse<T> {
     return {
       success: false,
       data: undefined,

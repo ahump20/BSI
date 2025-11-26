@@ -151,7 +151,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
       const data = await response.json();
       metrics.record(path, Date.now() - start);
-      return data;
+      return data as T;
     });
   } catch (error) {
     metrics.record(path, Date.now() - start, true);

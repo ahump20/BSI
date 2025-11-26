@@ -51,7 +51,7 @@ export function validateEnv(env?: any): { valid: boolean; errors?: string[] } {
     return { valid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map((err) => {
+      const errors = error.issues.map((err) => {
         const field = err.path.join('.');
         return `${field}: ${err.message}`;
       });
