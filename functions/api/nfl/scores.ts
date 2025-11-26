@@ -24,7 +24,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   }
 
@@ -47,11 +47,11 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
         JSON.stringify({
           error: 'Failed to fetch NFL scores',
           details: response.error,
-          source: response.source
+          source: response.source,
         }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
     }
@@ -60,16 +60,16 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
 
     // Categorize games by status
     const categorized = {
-      live: games.filter(g => g.Status === 'InProgress' || g.Status === 'Halftime'),
-      final: games.filter(g => g.Status === 'Final' || g.Status === 'F/OT'),
-      scheduled: games.filter(g => g.Status === 'Scheduled' || g.Status === 'Pregame')
+      live: games.filter((g) => g.Status === 'InProgress' || g.Status === 'Halftime'),
+      final: games.filter((g) => g.Status === 'Final' || g.Status === 'F/OT'),
+      scheduled: games.filter((g) => g.Status === 'Scheduled' || g.Status === 'Pregame'),
     };
 
     return new Response(
       JSON.stringify({
         success: true,
         season: season || new Date().getFullYear(),
-        week: week || (games[0]?.Week || 1),
+        week: week || games[0]?.Week || 1,
         games: categorized,
         rawData: games,
         source: response.source,
@@ -81,8 +81,8 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
           dataProvider: 'SportsDataIO',
           timezone: 'America/Chicago',
           cached: response.source.cacheHit,
-          updateFrequency: categorized.live.length > 0 ? '30 seconds' : '5 minutes'
-        }
+          updateFrequency: categorized.live.length > 0 ? '30 seconds' : '5 minutes',
+        },
       }),
       {
         status: 200,
@@ -90,10 +90,9 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
           ...corsHeaders,
           'Content-Type': 'application/json',
           // Live games: 30s cache, otherwise 5min
-          'Cache-Control': categorized.live.length > 0
-            ? 'public, max-age=30'
-            : 'public, max-age=300'
-        }
+          'Cache-Control':
+            categorized.live.length > 0 ? 'public, max-age=30' : 'public, max-age=300',
+        },
       }
     );
   } catch (error) {
@@ -102,11 +101,11 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       JSON.stringify({
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }

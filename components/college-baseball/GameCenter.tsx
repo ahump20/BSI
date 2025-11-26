@@ -3,7 +3,7 @@
 /**
  * Mobile-First Game Center Component
  * Displays live college baseball games with 30s auto-refresh
- * 
+ *
  * Features:
  * - Thumb-friendly navigation
  * - Pull-to-refresh
@@ -20,10 +20,10 @@ interface GameCenterProps {
   refreshInterval?: number;
 }
 
-export default function GameCenter({ 
-  initialGames = [], 
+export default function GameCenter({
+  initialGames = [],
   autoRefresh = true,
-  refreshInterval = 30000 // 30 seconds
+  refreshInterval = 30000, // 30 seconds
 }: GameCenterProps) {
   const [games, setGames] = useState<Game[]>(initialGames);
   const [loading, setLoading] = useState(false);
@@ -39,12 +39,12 @@ export default function GameCenter({
       setError(null);
 
       const response = await fetch('/api/college-baseball/games');
-      const result = await response.json();
+      const result = (await response.json()) as { success: boolean; data: Game[]; error?: string };
 
       if (result.success) {
         setGames(result.data);
         setLastUpdate(new Date());
-        
+
         // Cache for offline
         if ('caches' in window) {
           const cache = await caches.open('college-baseball-v1');
@@ -56,13 +56,13 @@ export default function GameCenter({
     } catch (err) {
       console.error('Failed to fetch games:', err);
       setError('Unable to load games. Showing cached data if available.');
-      
+
       // Try to load from cache
       if ('caches' in window) {
         const cache = await caches.open('college-baseball-v1');
         const cached = await cache.match('/api/college-baseball/games');
         if (cached) {
-          const result = await cached.json();
+          const result = (await cached.json()) as { data: Game[] };
           setGames(result.data);
         }
       }
@@ -75,7 +75,7 @@ export default function GameCenter({
   useEffect(() => {
     if (autoRefresh) {
       const interval = setInterval(() => {
-        const hasLiveGames = games.some(g => g.status === 'live');
+        const hasLiveGames = games.some((g) => g.status === 'live');
         if (hasLiveGames) {
           fetchGames(false); // Refresh without loading indicator
         }
@@ -93,7 +93,7 @@ export default function GameCenter({
   }, [initialGames, fetchGames]);
 
   // Filter games
-  const filteredGames = games.filter(game => {
+  const filteredGames = games.filter((game) => {
     if (filter === 'all') return true;
     return game.status === filter;
   });
@@ -108,26 +108,24 @@ export default function GameCenter({
       {/* Header */}
       <div className="game-center-header">
         <h1 className="title">College Baseball</h1>
-        <div className="last-update">
-          Updated {lastUpdate.toLocaleTimeString()}
-        </div>
+        <div className="last-update">Updated {lastUpdate.toLocaleTimeString()}</div>
       </div>
 
       {/* Filter tabs */}
       <div className="filter-tabs">
-        <button 
+        <button
           className={`tab ${filter === 'all' ? 'active' : ''}`}
           onClick={() => setFilter('all')}
         >
           All Games
         </button>
-        <button 
+        <button
           className={`tab ${filter === 'live' ? 'active' : ''}`}
           onClick={() => setFilter('live')}
         >
           Live
         </button>
-        <button 
+        <button
           className={`tab ${filter === 'scheduled' ? 'active' : ''}`}
           onClick={() => setFilter('scheduled')}
         >
@@ -136,11 +134,7 @@ export default function GameCenter({
       </div>
 
       {/* Error message */}
-      {error && (
-        <div className="error-banner">
-          {error}
-        </div>
-      )}
+      {error && <div className="error-banner">{error}</div>}
 
       {/* Loading state */}
       {loading && games.length === 0 && (
@@ -152,15 +146,15 @@ export default function GameCenter({
 
       {/* Game list */}
       <div className="game-list">
-        {filteredGames.map(game => (
-          <GameCard 
-            key={game.id} 
+        {filteredGames.map((game) => (
+          <GameCard
+            key={game.id}
             game={game}
             isSelected={selectedGame === game.id}
             onClick={() => setSelectedGame(game.id)}
           />
         ))}
-        
+
         {filteredGames.length === 0 && !loading && (
           <div className="empty-state">
             <p>No games {filter !== 'all' ? filter : 'available'}</p>
@@ -169,11 +163,7 @@ export default function GameCenter({
       </div>
 
       {/* Refresh button */}
-      <button 
-        className="refresh-button"
-        onClick={handleRefresh}
-        disabled={loading}
-      >
+      <button className="refresh-button" onClick={handleRefresh} disabled={loading}>
         {loading ? 'Refreshing...' : 'Refresh'}
       </button>
 
@@ -262,7 +252,9 @@ export default function GameCenter({
         }
 
         @keyframes spin {
-          to { transform: rotate(360deg); }
+          to {
+            transform: rotate(360deg);
+          }
         }
 
         .game-list {
@@ -321,9 +313,9 @@ interface GameCardProps {
 function GameCard({ game, isSelected, onClick }: GameCardProps) {
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
-  
+
   return (
-    <div 
+    <div
       className={`game-card ${isSelected ? 'selected' : ''} ${isLive ? 'live' : ''}`}
       onClick={onClick}
     >
@@ -348,14 +340,18 @@ function GameCard({ game, isSelected, onClick }: GameCardProps) {
         {/* Away team */}
         <div className="team">
           <div className="team-name">{game.awayTeam.shortName}</div>
-          <div className="team-record">({game.awayTeam.record.wins}-{game.awayTeam.record.losses})</div>
+          <div className="team-record">
+            ({game.awayTeam.record.wins}-{game.awayTeam.record.losses})
+          </div>
           {(isLive || isFinal) && <div className="score">{game.awayTeam.score}</div>}
         </div>
 
         {/* Home team */}
         <div className="team">
           <div className="team-name">{game.homeTeam.shortName}</div>
-          <div className="team-record">({game.homeTeam.record.wins}-{game.homeTeam.record.losses})</div>
+          <div className="team-record">
+            ({game.homeTeam.record.wins}-{game.homeTeam.record.losses})
+          </div>
           {(isLive || isFinal) && <div className="score">{game.homeTeam.score}</div>}
         </div>
       </div>
@@ -406,8 +402,13 @@ function GameCard({ game, isSelected, onClick }: GameCardProps) {
         }
 
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         .game-info {

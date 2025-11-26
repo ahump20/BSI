@@ -25,7 +25,7 @@ export async function scheduled(event, env, ctx) {
     nfl: { success: 0, failed: 0 },
     nba: { success: 0, failed: 0 },
     ncaa_football: { success: 0, failed: 0 },
-    ncaa_baseball: { success: 0, failed: 0 }
+    ncaa_baseball: { success: 0, failed: 0 },
   };
 
   console.log('🔄 Starting historical data ingestion...');
@@ -41,7 +41,7 @@ export async function scheduled(event, env, ctx) {
       ingestNFLHistorical(env, seasons, results),
       ingestNBAHistorical(env, seasons, results),
       ingestNCAAFootballHistorical(env, seasons, results),
-      ingestNCAABaseballHistorical(env, seasons, results)
+      ingestNCAABaseballHistorical(env, seasons, results),
     ]);
 
     // Log summary to Analytics Engine
@@ -52,21 +52,20 @@ export async function scheduled(event, env, ctx) {
         results.nfl.success + results.nfl.failed,
         results.nba.success + results.nba.failed,
         results.ncaa_football.success + results.ncaa_football.failed,
-        results.ncaa_baseball.success + results.ncaa_baseball.failed
+        results.ncaa_baseball.success + results.ncaa_baseball.failed,
       ],
-      indexes: ['daily_ingestion', new Date().toISOString().split('T')[0]]
+      indexes: ['daily_ingestion', new Date().toISOString().split('T')[0]],
     });
 
     const duration = Date.now() - startTime;
     console.log(`✅ Historical ingestion complete in ${duration}ms`, results);
-
   } catch (error) {
     console.error('❌ Historical ingestion failed:', error);
 
     await env.ANALYTICS?.writeDataPoint({
       blobs: ['historical_ingestion_error'],
       doubles: [1],
-      indexes: [error.message]
+      indexes: [error.message],
     });
   }
 }
@@ -78,10 +77,14 @@ async function ingestMLBHistorical(env, seasons, results) {
   for (const season of seasons) {
     try {
       // Check if season already ingested
-      const existing = await env.DB.prepare(`
+      const existing = await env.DB.prepare(
+        `
         SELECT COUNT(*) as count FROM historical_games
         WHERE sport = 'MLB' AND season = ?
-      `).bind(season).first();
+      `
+      )
+        .bind(season)
+        .first();
 
       if (existing.count > 1000) {
         console.log(`⏩ MLB ${season} already ingested (${existing.count} games)`);
@@ -93,8 +96,8 @@ async function ingestMLBHistorical(env, seasons, results) {
       const response = await fetch(scheduleUrl, {
         headers: {
           'User-Agent': 'BlazeSportsIntel/1.0',
-          Accept: 'application/json'
-        }
+          Accept: 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -123,7 +126,7 @@ async function ingestMLBHistorical(env, seasons, results) {
               attendance: game.attendance || null,
               game_duration_minutes: game.gameInfo?.duration || null,
               innings: game.linescore?.currentInning || 9,
-              status: 'final'
+              status: 'final',
             });
           }
         }
@@ -135,7 +138,6 @@ async function ingestMLBHistorical(env, seasons, results) {
         results.mlb.success += games.length;
         console.log(`✅ Ingested ${games.length} MLB games for ${season}`);
       }
-
     } catch (error) {
       console.error(`❌ MLB ${season} ingestion failed:`, error);
       results.mlb.failed += 1;
@@ -155,10 +157,14 @@ async function ingestNFLHistorical(env, seasons, results) {
 
   for (const season of seasons) {
     try {
-      const existing = await env.DB.prepare(`
+      const existing = await env.DB.prepare(
+        `
         SELECT COUNT(*) as count FROM historical_games
         WHERE sport = 'NFL' AND season = ?
-      `).bind(season).first();
+      `
+      )
+        .bind(season)
+        .first();
 
       if (existing.count > 200) {
         console.log(`⏩ NFL ${season} already ingested (${existing.count} games)`);
@@ -193,13 +199,13 @@ async function ingestNFLHistorical(env, seasons, results) {
               away_score: game.AwayScore,
               venue: game.StadiumDetails?.Name || null,
               attendance: game.Attendance || null,
-              status: 'final'
+              status: 'final',
             });
           }
         }
 
         // Rate limit: 1 request per second
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
       if (games.length > 0) {
@@ -207,7 +213,6 @@ async function ingestNFLHistorical(env, seasons, results) {
         results.nfl.success += games.length;
         console.log(`✅ Ingested ${games.length} NFL games for ${season}`);
       }
-
     } catch (error) {
       console.error(`❌ NFL ${season} ingestion failed:`, error);
       results.nfl.failed += 1;
@@ -227,10 +232,14 @@ async function ingestNBAHistorical(env, seasons, results) {
 
   for (const season of seasons) {
     try {
-      const existing = await env.DB.prepare(`
+      const existing = await env.DB.prepare(
+        `
         SELECT COUNT(*) as count FROM historical_games
         WHERE sport = 'NBA' AND season = ?
-      `).bind(season).first();
+      `
+      )
+        .bind(season)
+        .first();
 
       if (existing.count > 1000) {
         console.log(`⏩ NBA ${season} already ingested (${existing.count} games)`);
@@ -238,7 +247,7 @@ async function ingestNBAHistorical(env, seasons, results) {
       }
 
       // NBA season format: 2024 = 2023-24 season
-      const seasonStr = `${season-1}-${season.toString().slice(-2)}`;
+      const seasonStr = `${season - 1}-${season.toString().slice(-2)}`;
       const url = `https://api.sportsdata.io/v3/nba/scores/json/Games/${season}?key=${API_KEY}`;
 
       const response = await fetch(url);
@@ -265,7 +274,7 @@ async function ingestNBAHistorical(env, seasons, results) {
             away_score: game.AwayScore,
             venue: game.Stadium || null,
             attendance: game.Attendance || null,
-            status: 'final'
+            status: 'final',
           });
         }
       }
@@ -275,7 +284,6 @@ async function ingestNBAHistorical(env, seasons, results) {
         results.nba.success += games.length;
         console.log(`✅ Ingested ${games.length} NBA games for ${season}`);
       }
-
     } catch (error) {
       console.error(`❌ NBA ${season} ingestion failed:`, error);
       results.nba.failed += 1;
@@ -289,10 +297,14 @@ async function ingestNBAHistorical(env, seasons, results) {
 async function ingestNCAAFootballHistorical(env, seasons, results) {
   for (const season of seasons) {
     try {
-      const existing = await env.DB.prepare(`
+      const existing = await env.DB.prepare(
+        `
         SELECT COUNT(*) as count FROM historical_games
         WHERE sport = 'NCAA_FOOTBALL' AND season = ?
-      `).bind(season).first();
+      `
+      )
+        .bind(season)
+        .first();
 
       if (existing.count > 500) {
         console.log(`⏩ NCAA Football ${season} already ingested (${existing.count} games)`);
@@ -308,8 +320,8 @@ async function ingestNCAAFootballHistorical(env, seasons, results) {
         const response = await fetch(url, {
           headers: {
             'User-Agent': 'BlazeSportsIntel/1.0',
-            Accept: 'application/json'
-          }
+            Accept: 'application/json',
+          },
         });
 
         if (!response.ok) continue;
@@ -319,8 +331,8 @@ async function ingestNCAAFootballHistorical(env, seasons, results) {
         for (const event of data.events || []) {
           if (event.status.type.completed) {
             const competition = event.competitions[0];
-            const homeTeam = competition.competitors.find(c => c.homeAway === 'home');
-            const awayTeam = competition.competitors.find(c => c.homeAway === 'away');
+            const homeTeam = competition.competitors.find((c) => c.homeAway === 'home');
+            const awayTeam = competition.competitors.find((c) => c.homeAway === 'away');
 
             games.push({
               game_id: `ncaaf_${event.id}`,
@@ -337,13 +349,13 @@ async function ingestNCAAFootballHistorical(env, seasons, results) {
               away_score: parseInt(awayTeam.score),
               venue: competition.venue?.fullName || null,
               attendance: competition.attendance || null,
-              status: 'final'
+              status: 'final',
             });
           }
         }
 
         // Rate limit
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       if (games.length > 0) {
@@ -351,7 +363,6 @@ async function ingestNCAAFootballHistorical(env, seasons, results) {
         results.ncaa_football.success += games.length;
         console.log(`✅ Ingested ${games.length} NCAA Football games for ${season}`);
       }
-
     } catch (error) {
       console.error(`❌ NCAA Football ${season} ingestion failed:`, error);
       results.ncaa_football.failed += 1;
@@ -378,33 +389,38 @@ async function batchInsertGames(db, games) {
     const batch = games.slice(i, i + batchSize);
 
     for (const game of batch) {
-      await db.prepare(`
+      await db
+        .prepare(
+          `
         INSERT OR IGNORE INTO historical_games (
           game_id, sport, season, season_type, week, game_date,
           home_team_id, home_team_name, away_team_id, away_team_name,
           home_score, away_score, venue, attendance, game_duration_minutes,
           innings, status, ingested_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).bind(
-        game.game_id,
-        game.sport,
-        game.season,
-        game.season_type || null,
-        game.week || null,
-        game.game_date,
-        game.home_team_id,
-        game.home_team_name,
-        game.away_team_id,
-        game.away_team_name,
-        game.home_score,
-        game.away_score,
-        game.venue,
-        game.attendance,
-        game.game_duration_minutes || null,
-        game.innings || null,
-        game.status,
-        new Date().toISOString()
-      ).run();
+      `
+        )
+        .bind(
+          game.game_id,
+          game.sport,
+          game.season,
+          game.season_type || null,
+          game.week || null,
+          game.game_date,
+          game.home_team_id,
+          game.home_team_name,
+          game.away_team_id,
+          game.away_team_name,
+          game.home_score,
+          game.away_score,
+          game.venue,
+          game.attendance,
+          game.game_duration_minutes || null,
+          game.innings || null,
+          game.status,
+          new Date().toISOString()
+        )
+        .run();
     }
   }
 }

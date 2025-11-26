@@ -1,847 +1,430 @@
-# Deployment Runbook
+# Sports Data QC - Production Deployment Guide
 
-Version: 1.0.0
-Platform: Cloudflare Pages + Functions
-Last Updated: November 6, 2025
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Environment Setup](#environment-setup)
-- [Local Development](#local-development)
-- [Staging Deployment](#staging-deployment)
-- [Production Deployment](#production-deployment)
-- [Rollback Procedures](#rollback-procedures)
-- [Monitoring and Verification](#monitoring-and-verification)
-- [Database Migrations](#database-migrations)
-- [Environment Variables](#environment-variables)
-- [Troubleshooting](#troubleshooting)
-- [Post-Deployment Checklist](#post-deployment-checklist)
+This document provides instructions for deploying the Sports Data QC system to production on Cloudflare Workers.
 
 ## Overview
 
-Blaze Sports Intel uses **Cloudflare Pages** for hosting with **Cloudflare Functions** for API endpoints. The deployment process includes:
-
-- **Source Control:** GitHub repository (ahump20/BSI)
-- **Build System:** Cloudflare Pages automatic builds
-- **API Layer:** Cloudflare Pages Functions (Cloudflare Workers runtime)
-- **Database:** Cloudflare D1 (SQLite)
-- **Cache:** Cloudflare KV
-- **Storage:** Cloudflare R2
-- **CDN:** Cloudflare global edge network
-
-### Deployment Environments
-
-| Environment | URL | Branch | Purpose |
-|-------------|-----|--------|---------|
-| Local | `localhost:8788` | `*` | Development and testing |
-| Preview | `[commit-hash].blazesportsintel.pages.dev` | `feature/*` | PR review and testing |
-| Staging | `staging.blazesportsintel.pages.dev` | `dev` | Pre-production validation |
-| Production | `blazesportsintel.com` | `main` | Live site |
+The QC system consists of:
+1. **QC Skill Library** - Core validation logic (`lib/skills/sports-data-qc/`)
+2. **Ingest Worker** - Integrated QC into data ingestion pipeline (`workers/ingest/`)
+3. **QC Worker** - Standalone QC API service (`workers/qc/`)
 
 ## Prerequisites
 
-### Required Software
+- Cloudflare account with Workers enabled
+- Wrangler CLI installed: `npm install -g wrangler`
+- Authenticated with Wrangler: `wrangler login`
+- KV namespace created for QC reports
+- R2 bucket created for report archival
 
-1. **Node.js** v20.x or higher
-   ```bash
-   node --version  # Should be ≥ v20.0.0
-   ```
+## Step 1: Create Required Resources
 
-2. **npm** v10.x or higher
-   ```bash
-   npm --version  # Should be ≥ v10.0.0
-   ```
-
-3. **Wrangler CLI** (Cloudflare development toolkit)
-   ```bash
-   npm install -g wrangler@latest
-   wrangler --version  # Should be ≥ v3.0.0
-   ```
-
-4. **Git** latest version
-   ```bash
-   git --version
-   ```
-
-### Required Access
-
-- **GitHub:** Write access to ahump20/BSI repository
-- **Cloudflare:** Admin access to Blaze Sports Intel account
-- **Cloudflare API Token:** With Pages, Workers, D1, KV, and R2 permissions
-- **API Keys:** SportsDataIO, MLB Stats API (stored in environment variables)
-
-### Verification
-
-Run this command to verify all prerequisites:
+### Create KV Namespace for QC Reports
 
 ```bash
-./scripts/verify-deployment-setup.sh
-```
+# Production KV namespace
+wrangler kv:namespace create "CACHE"
+# Note the ID returned, e.g., "abc123..."
 
-## Environment Setup
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/ahump20/BSI.git
-cd BSI
-```
-
-### 2. Install Dependencies
-
-```bash
-npm ci
-```
-
-Use `npm ci` instead of `npm install` for reproducible builds.
-
-### 3. Configure Wrangler
-
-Login to Cloudflare:
-
-```bash
-wrangler login
-```
-
-This opens a browser window for OAuth authentication.
-
-### 4. Set Up Environment Variables
-
-#### Local Development (.dev.vars)
-
-Create `.dev.vars` file for local development:
-
-```bash
-cp .dev.vars.example .dev.vars
-```
-
-Edit `.dev.vars` with your API keys:
-
-```ini
-# Sports Data APIs
-SPORTSDATA_API_KEY=your_sportsdata_key
-MLB_STATS_API_KEY=your_mlb_key
-
-# AI Services
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_anthropic_key
-
-# Cloudflare
-CLOUDFLARE_ACCOUNT_ID=your_account_id
-CLOUDFLARE_API_TOKEN=your_api_token
-```
-
-**⚠️ Security:** Never commit `.dev.vars` to version control (already in .gitignore)
-
-#### Production Secrets
-
-Set production secrets using Wrangler:
-
-```bash
-# Set each secret individually
-wrangler pages secret put SPORTSDATA_API_KEY --project-name blazesportsintel
-wrangler pages secret put MLB_STATS_API_KEY --project-name blazesportsintel
-wrangler pages secret put OPENAI_API_KEY --project-name blazesportsintel
-wrangler pages secret put ANTHROPIC_API_KEY --project-name blazesportsintel
-
-# Verify secrets (shows names only, not values)
-wrangler pages secret list --project-name blazesportsintel
-```
-
-### 5. Configure Cloudflare Services
-
-#### D1 Database
-
-```bash
-# Create D1 database (if not exists)
-wrangler d1 create blazesports-db
-
-# Run migrations
-wrangler d1 execute blazesports-db --remote --file=./migrations/001-initial-schema.sql
-wrangler d1 execute blazesports-db --remote --file=./migrations/002-add-indexes.sql
-```
-
-#### KV Namespaces
-
-```bash
-# Create KV namespaces
+# Preview KV namespace
 wrangler kv:namespace create "CACHE" --preview
-wrangler kv:namespace create "CACHE" --env production
-
-# Note the namespace IDs and update wrangler.toml
+# Note the preview ID
 ```
 
-#### R2 Buckets
+### Create R2 Bucket for Report Archival
 
 ```bash
-# Create R2 buckets
-wrangler r2 bucket create blazesports-assets
-wrangler r2 bucket create blazesports-backups
+# Create production bucket
+wrangler r2 bucket create bsi-qc-reports
+
+# Create preview bucket
+wrangler r2 bucket create bsi-qc-reports-preview
 ```
 
-## Local Development
+## Step 2: Configure Environment Variables
 
-### Start Development Server
+### Update wrangler.toml
+
+Edit `workers/qc/wrangler.toml` and replace placeholder IDs:
+
+```toml
+[[kv_namespaces]]
+binding = "CACHE"
+id = "YOUR_KV_NAMESPACE_ID"  # Replace with actual ID from Step 1
+preview_id = "YOUR_PREVIEW_KV_NAMESPACE_ID"  # Replace with preview ID
+```
+
+### Set Secrets
 
 ```bash
-npm run dev
+cd workers/qc
+
+# Set QC API secret (generate a strong random key)
+wrangler secret put QC_API_SECRET
+# Enter your secret key when prompted
+
+# Optional: Set secrets for staging environment
+wrangler secret put QC_API_SECRET --env staging
 ```
 
-This starts Wrangler's local development server at `http://localhost:8788`
+## Step 3: Deploy QC Worker
 
-**Features:**
-- Hot reload on file changes
-- Simulated Cloudflare environment
-- Local D1 database (SQLite)
-- Local KV store
-- Function debugging with source maps
-
-### Testing Locally
+### Deploy to Staging (Test First)
 
 ```bash
-# Run all tests
-npm run test
+cd workers/qc
 
-# Run specific test suites
-npm run test:unit          # Unit tests
-npm run test:integration   # Integration tests
-npm run test:accessibility # Accessibility tests
+# Deploy to staging environment
+wrangler deploy --env staging
 
-# Run with coverage
-npm run test:coverage
+# Test staging endpoint
+curl https://qc-staging.blazesportsintel.com/health
 ```
 
-### Build for Production
-
-Test production build locally:
+### Deploy to Production
 
 ```bash
-# Build static assets and functions
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-### Verify Build Artifacts
-
-```bash
-# Check output directory
-ls -la dist/
-
-# Verify critical files exist
-ls dist/index.html
-ls dist/css/
-ls dist/js/
-ls functions/
-```
-
-## Staging Deployment
-
-### Automatic Preview Deployments
-
-Every pull request automatically deploys to a preview URL:
-
-```
-https://[commit-hash].blazesportsintel.pages.dev
-```
-
-**Process:**
-1. Push commits to feature branch
-2. Create pull request
-3. Cloudflare Pages builds automatically
-4. Preview URL posted as PR comment
-5. Test on preview URL
-6. Merge when approved
-
-### Manual Staging Deploy
-
-Deploy to staging environment manually:
-
-```bash
-# Switch to dev branch
-git checkout dev
-git pull origin dev
-
-# Build and deploy to staging
-npm run build
-wrangler pages deploy dist \
-  --project-name blazesportsintel \
-  --branch dev \
-  --env staging
-
-# Verify deployment
-curl -I https://staging.blazesportsintel.pages.dev/health
-```
-
-### Staging Verification
-
-Test all critical paths on staging:
-
-```bash
-# Run smoke tests
-./scripts/smoke-test.sh https://staging.blazesportsintel.pages.dev
-
-# Check endpoints
-curl https://staging.blazesportsintel.pages.dev/api/mlb/standings
-curl https://staging.blazesportsintel.pages.dev/api/nfl/standings
-curl https://staging.blazesportsintel.pages.dev/api/health
-
-# Run Lighthouse audit
-npx lighthouse https://staging.blazesportsintel.pages.dev --view
-```
-
-## Production Deployment
-
-### Pre-Deployment Checklist
-
-Before deploying to production:
-
-- [ ] All tests pass (`npm run test`)
-- [ ] Linting passes (`npm run lint`)
-- [ ] TypeScript compiles (`npm run typecheck`)
-- [ ] Staging deployment tested and verified
-- [ ] Database migrations prepared (if applicable)
-- [ ] Environment variables verified
-- [ ] Rollback plan prepared
-- [ ] Team notified of deployment window
-- [ ] Monitoring dashboard open
-
-### Method 1: Automated Deployment (Recommended)
-
-**Via GitHub:**
-
-1. **Merge to main branch**
-   ```bash
-   git checkout main
-   git pull origin main
-   git merge dev
-   git push origin main
-   ```
-
-2. **Cloudflare Pages auto-deploys**
-   - Triggered by push to main
-   - Build process runs automatically
-   - Deployment completes in 2-5 minutes
-
-3. **Monitor deployment**
-   - Visit [Cloudflare Dashboard > Pages](https://dash.cloudflare.com/pages)
-   - Check build logs for errors
-   - Verify deployment status
-
-### Method 2: Manual Deployment
-
-**Via Wrangler CLI:**
-
-```bash
-# Ensure you're on main branch
-git checkout main
-git pull origin main
-
-# Build production assets
-npm run build
+cd workers/qc
 
 # Deploy to production
-wrangler pages deploy dist \
-  --project-name blazesportsintel \
-  --branch main \
-  --commit-message "Deploy v1.0.0" \
-  --commit-dirty=false
+wrangler deploy --env production
 
-# Deployment info displayed:
-# Deployment ID: abc123def456
-# URL: https://blazesportsintel.com
-```
-
-### Post-Deployment Verification
-
-#### 1. Health Check
-
-```bash
-curl https://blazesportsintel.com/api/health
+# Verify deployment
+curl https://qc.blazesportsintel.com/health
 ```
 
 Expected response:
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2025-11-06T22:00:00Z",
-  "services": {
-    "database": "operational",
-    "cache": "operational"
-  }
+  "status": "ok",
+  "service": "sports-data-qc",
+  "timestamp": "2025-03-15T10:00:00.000Z",
+  "version": "1.0.0"
 }
 ```
 
-#### 2. Critical Endpoints
+## Step 4: Deploy Updated Ingest Worker
+
+The ingest worker now includes QC validation. Deploy the updated version:
 
 ```bash
-# Test MLB endpoint
-curl https://blazesportsintel.com/api/mlb/standings | jq '.standings | length'
+cd workers/ingest
 
-# Test NFL endpoint
-curl https://blazesportsintel.com/api/nfl/standings | jq '.standings | length'
-
-# Test AI Copilot
-curl -X POST https://blazesportsintel.com/api/copilot/status
+# Deploy with updated QC integration
+wrangler deploy
 ```
 
-#### 3. Frontend Verification
+## Step 5: Verify Integration
 
-Open browser and verify:
-- [ ] Homepage loads correctly
-- [ ] All images and styles load
-- [ ] Navigation works
-- [ ] MLB dashboard displays data
-- [ ] NFL dashboard displays data
-- [ ] Search functionality works
-- [ ] No console errors
-
-#### 4. Performance Check
+### Test QC Validation API
 
 ```bash
-# Run Lighthouse audit
-npx lighthouse https://blazesportsintel.com \
-  --only-categories=performance,accessibility,seo \
-  --output=html \
-  --output-path=./lighthouse-report.html \
-  --view
+# Set your API secret
+export QC_API_SECRET="your-secret-key"
 
-# Expected scores:
-# Performance: 90+
-# Accessibility: 95+
-# SEO: 90+
-```
-
-## Rollback Procedures
-
-### Scenario 1: Recent Deployment Issues
-
-If issues detected within 1 hour of deployment:
-
-#### Via Cloudflare Dashboard
-
-1. Navigate to [Cloudflare Pages](https://dash.cloudflare.com/pages)
-2. Select "blazesportsintel" project
-3. Click "Deployments" tab
-4. Find previous working deployment
-5. Click "..." menu > "Rollback to this deployment"
-6. Confirm rollback
-
-#### Via Wrangler CLI
-
-```bash
-# List recent deployments
-wrangler pages deployment list --project-name blazesportsintel
-
-# Rollback to specific deployment
-wrangler pages deployment rollback [deployment-id] \
-  --project-name blazesportsintel
-
-# Example:
-wrangler pages deployment rollback abc123def456 \
-  --project-name blazesportsintel
-```
-
-### Scenario 2: Database Migration Issues
-
-If database migration fails:
-
-```bash
-# 1. Identify last good migration
-wrangler d1 execute blazesports-db --remote \
-  --command="SELECT * FROM _migrations ORDER BY applied_at DESC LIMIT 5;"
-
-# 2. Rollback migration (if rollback script exists)
-wrangler d1 execute blazesports-db --remote \
-  --file=./migrations/002-rollback.sql
-
-# 3. Verify database state
-wrangler d1 execute blazesports-db --remote \
-  --command="SELECT name FROM sqlite_master WHERE type='table';"
-```
-
-### Scenario 3: Partial Outage
-
-If only specific services affected:
-
-1. **Identify affected service**
-   ```bash
-   curl https://blazesportsintel.com/api/health
-   ```
-
-2. **Check service-specific logs**
-   ```bash
-   wrangler pages deployment tail --project-name blazesportsintel
-   ```
-
-3. **Disable affected feature** (feature flag)
-   ```bash
-   wrangler kv:key put "feature:copilot:enabled" "false" \
-     --namespace-id=YOUR_NAMESPACE_ID
-   ```
-
-4. **Deploy fix**
-   ```bash
-   # Quick fix and deploy
-   git checkout -b hotfix/fix-copilot
-   # Make changes
-   git commit -m "fix(copilot): resolve API timeout issue"
-   git push origin hotfix/fix-copilot
-   # Create PR with "HOTFIX" label
-   # Merge after expedited review
-   ```
-
-## Monitoring and Verification
-
-### Real-Time Monitoring
-
-#### Cloudflare Analytics
-
-- **URL:** [dash.cloudflare.com/analytics](https://dash.cloudflare.com/analytics)
-- **Metrics:**
-  - Requests per second
-  - Bandwidth usage
-  - Response time (p50, p95, p99)
-  - Error rate (4xx, 5xx)
-  - Cache hit rate
-
-#### Wrangler Tail (Live Logs)
-
-```bash
-# Stream live logs
-wrangler pages deployment tail --project-name blazesportsintel
-
-# Filter by status
-wrangler pages deployment tail --project-name blazesportsintel \
-  --status error
-
-# Filter by method
-wrangler pages deployment tail --project-name blazesportsintel \
-  --method POST
-```
-
-### Performance Monitoring
-
-#### Core Web Vitals
-
-Monitor from Real User Monitoring (RUM):
-
-```bash
-# Query Analytics Engine
-curl -X POST "https://api.cloudflare.com/client/v4/accounts/YOUR_ACCOUNT_ID/analytics_engine/sql" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
+# Test validation endpoint with sample data
+curl -X POST https://qc.blazesportsintel.com/qc/validate \
+  -H "Authorization: Bearer $QC_API_SECRET" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "SELECT AVG(lcp) as avg_lcp, AVG(fid) as avg_fid, AVG(cls) as avg_cls FROM web_vitals WHERE timestamp > NOW() - INTERVAL '\''1 hour'\'';"
+    "games": [
+      {
+        "game_id": "test-001",
+        "timestamp": "2025-03-15T14:00:00-05:00",
+        "season": 2025,
+        "home_team": "Texas",
+        "away_team": "Oklahoma",
+        "home_score": 5,
+        "away_score": 3,
+        "status": "FINAL",
+        "metadata": {
+          "source_url": "https://test.com",
+          "scrape_timestamp": "2025-03-15T18:00:00-05:00",
+          "confidence_score": 0.95,
+          "provider_name": "NCAA_API"
+        }
+      }
+    ],
+    "data_source": "TEST_API"
   }'
 ```
 
-#### API Response Times
-
-```bash
-# Test endpoint latency
-time curl -s https://blazesportsintel.com/api/mlb/standings > /dev/null
-
-# Expected: < 500ms
+Expected response:
+```json
+{
+  "success": true,
+  "report_id": "qc-20250315-abc123",
+  "summary": {
+    "total_records": 1,
+    "records_passed": 1,
+    "records_flagged": 0,
+    "records_rejected": 0,
+    "failure_rate": "0.0000"
+  },
+  "report_url": "/qc/report/qc-20250315-abc123",
+  "duration_ms": 25
+}
 ```
 
-### Error Tracking
-
-#### Check Error Rates
+### Retrieve QC Report
 
 ```bash
-# Last 24 hours
-wrangler pages deployment tail --project-name blazesportsintel \
-  --status error \
-  --since 24h \
-  | wc -l
+# Get report in JSON format
+curl https://qc.blazesportsintel.com/qc/report/qc-20250315-abc123
 
-# Expected: < 10 errors per 10,000 requests (0.1%)
+# Get report in HTML format (for browser viewing)
+curl https://qc.blazesportsintel.com/qc/report/qc-20250315-abc123?format=html
+
+# Get report in Markdown format
+curl https://qc.blazesportsintel.com/qc/report/qc-20250315-abc123?format=markdown
 ```
 
-## Database Migrations
-
-### Creating a Migration
+### List Recent Reports
 
 ```bash
-# Create new migration file
-npm run migration:create add_player_stats_table
+# List last 50 reports
+curl https://qc.blazesportsintel.com/qc/reports
 
-# Edit generated file in migrations/
-# Example: migrations/003-add-player-stats.sql
+# List last 100 reports
+curl https://qc.blazesportsintel.com/qc/reports?limit=100
 ```
 
-**Migration file format:**
+## Step 6: Monitor QC Metrics
+
+### Cloudflare Dashboard
+
+1. Go to Cloudflare Dashboard → Workers & Pages
+2. Select `bsi-qc-worker`
+3. View Analytics Engine data for QC metrics:
+   - `qc_validate` - Validation requests by data source
+   - `qc_metrics` - Pass/fail/flag counts
+   - `qc_rejection` - High failure rate incidents
+
+### Analytics Queries
 
 ```sql
--- migrations/003-add-player-stats.sql
-
--- Up migration
-CREATE TABLE IF NOT EXISTS player_stats (
-  player_id INTEGER PRIMARY KEY,
-  season INTEGER NOT NULL,
-  team_id INTEGER NOT NULL,
-  games_played INTEGER DEFAULT 0,
-  batting_average REAL DEFAULT 0.000,
-  home_runs INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX idx_player_stats_season ON player_stats(season);
-CREATE INDEX idx_player_stats_team ON player_stats(team_id);
-
--- Rollback migration (in separate file: 003-rollback.sql)
--- DROP TABLE player_stats;
+-- Query Analytics Engine for QC metrics
+SELECT
+  blob1 as event_type,
+  blob2 as data_source,
+  double1 as total_records,
+  double2 as records_passed,
+  double3 as records_flagged,
+  double4 as records_rejected,
+  timestamp
+FROM ANALYTICS_ENGINE_DATASET
+WHERE blob1 = 'qc_metrics'
+ORDER BY timestamp DESC
+LIMIT 100
 ```
 
-### Running Migrations
+## Step 7: Scheduled Jobs
+
+The QC worker includes a scheduled job that runs daily at 3am UTC:
+
+```toml
+[triggers]
+crons = ["0 3 * * *"]  # Daily batch QC
+```
+
+### Verify Cron Trigger
 
 ```bash
-# Test on local D1
-wrangler d1 execute blazesports-db --local \
-  --file=./migrations/003-add-player-stats.sql
+# Check cron triggers in Cloudflare dashboard
+wrangler triggers
 
-# Verify locally
-wrangler d1 execute blazesports-db --local \
-  --command="SELECT name FROM sqlite_master WHERE type='table';"
-
-# Run on production (after testing)
-wrangler d1 execute blazesports-db --remote \
-  --file=./migrations/003-add-player-stats.sql
-
-# Record migration
-wrangler d1 execute blazesports-db --remote \
-  --command="INSERT INTO _migrations (version, name, applied_at) VALUES (3, 'add_player_stats_table', CURRENT_TIMESTAMP);"
+# Test scheduled function manually
+wrangler triggers cron "0 3 * * *"
 ```
 
-### Migration Checklist
+## API Endpoints Reference
 
-Before running production migrations:
+### Public Endpoints (CORS Enabled)
 
-- [ ] Migration tested on local D1
-- [ ] Rollback script prepared
-- [ ] Database backup created
-- [ ] Team notified
-- [ ] Deployment window scheduled
-- [ ] Monitoring dashboard open
+- `GET /health` - Health check (no auth required)
+- `GET /qc/reports` - List recent reports (no auth required)
+- `GET /qc/report/:id` - Get specific report (no auth required)
 
-## Environment Variables
+### Protected Endpoints (Require Authorization)
 
-### Managing Secrets
+- `POST /qc/validate` - Validate sports data (requires Bearer token)
 
-#### List all secrets
+### Authentication
+
+All protected endpoints require Bearer token authentication:
 
 ```bash
-wrangler pages secret list --project-name blazesportsintel
+Authorization: Bearer YOUR_QC_API_SECRET
 ```
 
-#### Add/Update secret
+## Integration with Existing Scrapers
+
+The ingest worker (`workers/ingest/index.ts`) now automatically validates all scraped data before D1 ingestion:
+
+### What Changed
+
+1. **Automatic QC** - All games fetched from providers are validated
+2. **Failure Threshold** - Batches with >20% failure rate are rejected
+3. **QC Reports** - Saved to KV with 24hr TTL
+4. **Analytics Tracking** - QC metrics logged to Analytics Engine
+
+### Configuration
+
+QC settings in `ingestLiveGames()`:
+
+```typescript
+{
+  mad_threshold: 5.0,
+  auto_reject_failures: true,
+  auto_reject_outliers: false,
+  include_flagged: true,
+  min_confidence_score: 0.7
+}
+```
+
+### Monitoring Ingest QC
+
+Check logs for QC output:
 
 ```bash
-wrangler pages secret put SECRET_NAME --project-name blazesportsintel
-# Prompts for value (hidden input)
+# Tail ingest worker logs
+wrangler tail --name bsi-ingest-worker
+
+# Look for lines containing:
+# [Ingest] Running QC validation on scraped data...
+# [Ingest] QC passed: X/Y games validated
+# [Ingest] QC Report ID: qc-...
 ```
-
-#### Delete secret
-
-```bash
-wrangler pages secret delete SECRET_NAME --project-name blazesportsintel
-```
-
-### Required Environment Variables
-
-**Production:**
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `SPORTSDATA_API_KEY` | SportsDataIO API key | Yes |
-| `MLB_STATS_API_KEY` | MLB Stats API key | No (uses public endpoints) |
-| `OPENAI_API_KEY` | OpenAI API for Copilot | Yes (for AI features) |
-| `ANTHROPIC_API_KEY` | Anthropic Claude API | Yes (for AI features) |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID | Yes |
-| `DATABASE_URL` | D1 database connection | Auto-configured |
-| `KV_NAMESPACE_ID` | KV namespace for cache | Auto-configured |
-| `R2_BUCKET_NAME` | R2 bucket for assets | Auto-configured |
 
 ## Troubleshooting
 
-### Build Failures
+### High QC Failure Rate
 
-#### Issue: Build times out
-
-```bash
-# Check build logs
-wrangler pages deployment tail --project-name blazesportsintel
-
-# Common causes:
-# - Large dependencies (reduce bundle size)
-# - Infinite loops in build scripts
-# - Network timeouts fetching dependencies
+If you see errors like:
+```
+[Ingest] QC failure rate too high: 25.0%
 ```
 
-**Solution:**
+**Actions:**
+1. Retrieve QC report: `curl https://qc.blazesportsintel.com/qc/report/REPORT_ID`
+2. Check `recommendations` array for specific issues
+3. Review validation failures by type
+4. Fix scraper logic or adjust thresholds
 
-```bash
-# Optimize build
-npm run build -- --no-minify  # Debug build issues
-npm run build -- --analyze    # Analyze bundle size
-```
+### Missing Reports
 
-#### Issue: Module not found
+If reports are not found in KV:
 
-```bash
-# Verify dependencies installed
-npm ci
-
-# Check for missing files
-npm run typecheck
-```
+1. Check R2 bucket: `wrangler r2 object get bsi-qc-reports/qc-reports/REPORT_ID.json`
+2. Verify KV namespace ID in wrangler.toml
+3. Check TTL settings (default 7 days for QC reports)
 
 ### Deployment Failures
 
-#### Issue: Functions not deploying
-
 ```bash
-# Verify functions directory structure
-ls -R functions/
+# Check for syntax errors
+cd workers/qc
+npx tsc --noEmit index.ts
 
-# Check wrangler.toml configuration
-cat wrangler.toml | grep -A 5 "functions"
+# Check worker logs
+wrangler tail
+
+# Rollback to previous version
+wrangler rollback
 ```
 
-#### Issue: Environment variables not available
+## Performance Tuning
+
+### QC Pipeline Performance
+
+Current benchmarks:
+- Small batches (<100 records): ~10-50ms
+- Medium batches (100-1000): ~50-200ms
+- Large batches (>1000): Use batch processing
+
+### Optimization Options
+
+1. **Adjust MAD threshold** - Higher = fewer outliers flagged
+2. **Disable outlier detection** - Set `auto_reject_outliers: false`
+3. **Lower confidence threshold** - Accept more data
+4. **Batch processing** - Use `runQCPipelineBatch` for >1000 records
+
+## Security
+
+### API Secret Rotation
 
 ```bash
-# Verify secrets set
-wrangler pages secret list --project-name blazesportsintel
+# Generate new secret
+NEW_SECRET=$(openssl rand -base64 32)
 
-# Re-add if missing
-wrangler pages secret put MISSING_SECRET --project-name blazesportsintel
+# Update in Cloudflare
+wrangler secret put QC_API_SECRET
+# Enter new secret when prompted
+
+# Update in application configuration
+# Update any scrapers or services using the API
 ```
 
-### Runtime Errors
+### Access Control
 
-#### Issue: 500 Internal Server Error
+- QC reports are publicly readable (no sensitive data)
+- Validation API requires authentication
+- Rate limiting: 100 req/min per IP (Cloudflare automatic)
+
+## Costs
+
+### Cloudflare Workers Pricing
+
+- **Workers Requests**: $0.50 per million requests (beyond free tier)
+- **KV Reads**: $0.50 per million reads
+- **KV Writes**: $5.00 per million writes
+- **R2 Storage**: $0.015 per GB/month
+- **R2 Operations**: $4.50 per million Class A ops
+
+### Estimated Monthly Costs
+
+Assuming 1 million validation requests/month:
+- Workers: ~$0.50
+- KV: ~$1.00
+- R2: ~$0.10
+- **Total: ~$1.60/month**
+
+## Rollback Plan
+
+If issues arise in production:
 
 ```bash
-# Check real-time logs
-wrangler pages deployment tail --project-name blazesportsintel --status error
+# List recent deployments
+wrangler deployments list
 
-# Common causes:
-# - Unhandled exceptions
-# - Database connection errors
-# - Missing environment variables
+# Rollback to specific deployment
+wrangler rollback --message "Rollback due to QC issues"
+
+# Or deploy previous version manually
+git checkout <previous-commit>
+wrangler deploy
 ```
 
-#### Issue: API returning stale data
+## Support
 
-```bash
-# Clear KV cache
-wrangler kv:key delete "cache:mlb:standings" \
-  --namespace-id=YOUR_NAMESPACE_ID
+For issues or questions:
+1. Check logs: `wrangler tail`
+2. Review QC reports for validation details
+3. Check Analytics Engine for trends
+4. File issue on GitHub with QC report ID
 
-# Verify data freshness
-curl https://blazesportsintel.com/api/mlb/standings | jq '.lastUpdated'
-```
+## Next Steps
 
-### Performance Issues
+1. ✅ Deploy QC worker to production
+2. ✅ Deploy updated ingest worker
+3. ✅ Monitor QC metrics in Analytics Engine
+4. 🔄 Integrate with additional scrapers (ESPN, NCAA)
+5. 🔄 Set up alerting for high failure rates
+6. 🔄 Create QC dashboard for visualization
 
-#### Issue: Slow response times
+## Documentation Links
 
-```bash
-# Check Cloudflare Analytics
-# Identify slow endpoints
-
-# Enable detailed timing
-wrangler pages deployment tail --project-name blazesportsintel \
-  | grep "duration"
-```
-
-**Solutions:**
-
-1. **Add caching**
-   ```javascript
-   // Cache responses in KV
-   const cached = await env.CACHE.get(cacheKey);
-   if (cached) return new Response(cached);
-   ```
-
-2. **Optimize database queries**
-   ```sql
-   -- Add indexes
-   CREATE INDEX idx_games_date ON games(game_date);
-   ```
-
-3. **Reduce bundle size**
-   ```bash
-   npm run build -- --analyze
-   # Remove unused dependencies
-   ```
-
-## Post-Deployment Checklist
-
-### Immediate (0-15 minutes)
-
-- [ ] Deployment completed successfully
-- [ ] Health check returns 200 OK
-- [ ] Homepage loads correctly
-- [ ] Critical API endpoints responding
-- [ ] No 5xx errors in logs
-- [ ] Cache hit rate normal (>80%)
-- [ ] Response times under 500ms
-
-### Short-term (15-60 minutes)
-
-- [ ] All pages verified manually
-- [ ] Search functionality tested
-- [ ] AI Copilot responding
-- [ ] Database queries performing well
-- [ ] No unusual error patterns
-- [ ] Lighthouse scores meet targets
-- [ ] Mobile site tested
-- [ ] Social share previews working
-
-### Long-term (1-24 hours)
-
-- [ ] Monitor error rates (should be <0.1%)
-- [ ] Check performance metrics (p95 < 1s)
-- [ ] Verify cache efficiency (hit rate >85%)
-- [ ] Monitor user feedback
-- [ ] Check third-party API usage
-- [ ] Verify data freshness
-- [ ] Review analytics for anomalies
-
-### Weekly
-
-- [ ] Review deployment logs
-- [ ] Check for dependency updates
-- [ ] Verify backup integrity
-- [ ] Review security advisories
-- [ ] Update documentation if needed
-
----
-
-## Emergency Contacts
-
-**On-Call Engineer:** Austin Humphrey
-- **Email:** austin@blazesportsintel.com
-- **Phone:** (210) 273-5538
-
-**Cloudflare Support:**
-- **Dashboard:** [dash.cloudflare.com/support](https://dash.cloudflare.com/support)
-- **Docs:** [developers.cloudflare.com](https://developers.cloudflare.com)
-
-**Status Pages:**
-- **Cloudflare:** [cloudflarestatus.com](https://www.cloudflarestatus.com)
-- **Blaze Sports Intel:** [status.blazesportsintel.com](https://status.blazesportsintel.com)
-
----
-
-**Last Updated:** November 6, 2025
-**Runbook Version:** 1.0.0
-**Platform:** Cloudflare Pages + Functions
-**Maintainer:** Austin Humphrey
+- [QC Skill Documentation](./lib/skills/sports-data-qc/SKILL.md)
+- [Validation Rules Reference](./lib/skills/sports-data-qc/references/validation_rules.md)
+- [Example Usage](./lib/skills/sports-data-qc/examples/README.md)
+- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)

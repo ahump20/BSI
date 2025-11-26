@@ -50,7 +50,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   try {
     // Check for API key
-    const apiKey = env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
+    const apiKey =
+      env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
     if (!apiKey) {
       return new Response(
         JSON.stringify({
@@ -224,15 +225,9 @@ async function handleGamesList(
 ): Promise<Response> {
   const url = new URL(request.url);
 
-  const year = parseInt(
-    url.searchParams.get('year') || new Date().getFullYear().toString(),
-    10
-  );
+  const year = parseInt(url.searchParams.get('year') || new Date().getFullYear().toString(), 10);
 
-  const week = parseInt(
-    url.searchParams.get('week') || '1',
-    10
-  );
+  const week = parseInt(url.searchParams.get('week') || '1', 10);
 
   const seasonType = (url.searchParams.get('seasonType') || 'regular') as 'regular' | 'postseason';
   const conference = url.searchParams.get('conference') || undefined;
@@ -246,17 +241,18 @@ async function handleGamesList(
     week,
     seasonType,
     totalGames: games.length,
-    games: format === 'compact'
-      ? games.map(g => ({
-          id: g.id,
-          homeTeam: g.homeTeam,
-          awayTeam: g.awayTeam,
-          homePoints: g.homePoints,
-          awayPoints: g.awayPoints,
-          status: getGameState(g),
-          startDate: g.startDate,
-        }))
-      : games,
+    games:
+      format === 'compact'
+        ? games.map((g) => ({
+            id: g.id,
+            homeTeam: g.homeTeam,
+            awayTeam: g.awayTeam,
+            homePoints: g.homePoints,
+            awayPoints: g.awayPoints,
+            status: getGameState(g),
+            startDate: g.startDate,
+          }))
+        : games,
     meta: {
       dataSource: 'College Football Data API',
       lastUpdated: new Date().toISOString(),
@@ -278,7 +274,7 @@ async function handleGamesList(
   }
 
   // Determine cache TTL based on games status
-  const allCompleted = games.every(g => g.completed);
+  const allCompleted = games.every((g) => g.completed);
   const cacheControl = allCompleted
     ? 'public, max-age=3600, s-maxage=86400' // 1hr client, 24hr CDN for completed
     : 'public, max-age=30, s-maxage=300'; // 30s client, 5min CDN for live

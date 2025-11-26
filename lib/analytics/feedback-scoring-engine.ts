@@ -217,11 +217,7 @@ export class FeedbackScoringEngine {
     // Posture openness
     if (vision?.body) {
       const postureScore =
-        vision.body.posture === 'open'
-          ? 90
-          : vision.body.posture === 'neutral'
-          ? 70
-          : 50;
+        vision.body.posture === 'open' ? 90 : vision.body.posture === 'neutral' ? 70 : 50;
       score += postureScore * 0.25;
       totalWeight += 0.25;
     }
@@ -242,10 +238,7 @@ export class FeedbackScoringEngine {
 
     // Filler words (inverse)
     if (audio?.speech) {
-      const totalFillerWords = audio.speech.filler_words.reduce(
-        (sum, fw) => sum + fw.count,
-        0
-      );
+      const totalFillerWords = audio.speech.filler_words.reduce((sum, fw) => sum + fw.count, 0);
       const wordCount = audio.speech.word_count || 1;
       const fillerRatio = totalFillerWords / wordCount;
       const fillerScore = Math.max(0, 100 - fillerRatio * 300);
@@ -258,10 +251,7 @@ export class FeedbackScoringEngine {
 
     // Apply baseline adjustment if available
     if (baseline?.baseline_confidence) {
-      return this.applyBaselineAdjustment(
-        finalScore,
-        baseline.baseline_confidence
-      );
+      return this.applyBaselineAdjustment(finalScore, baseline.baseline_confidence);
     }
 
     return Math.round(Math.max(0, Math.min(100, finalScore)));
@@ -300,8 +290,7 @@ export class FeedbackScoringEngine {
 
     // Vocal variety
     if (audio?.tone) {
-      const pitchRange =
-        audio.tone.pitch_range[1] - audio.tone.pitch_range[0];
+      const pitchRange = audio.tone.pitch_range[1] - audio.tone.pitch_range[0];
       const volumeRange = audio.tone.volume_variance;
       const vocalVariety = Math.min((pitchRange / 3 + volumeRange * 5) / 2, 100);
       score += vocalVariety * 0.25;
@@ -318,10 +307,7 @@ export class FeedbackScoringEngine {
     const finalScore = totalWeight > 0 ? score / totalWeight : 70;
 
     if (baseline?.baseline_engagement) {
-      return this.applyBaselineAdjustment(
-        finalScore,
-        baseline.baseline_engagement
-      );
+      return this.applyBaselineAdjustment(finalScore, baseline.baseline_engagement);
     }
 
     return Math.round(Math.max(0, Math.min(100, finalScore)));
@@ -361,23 +347,18 @@ export class FeedbackScoringEngine {
 
     // Logical flow (approximated by pause patterns)
     if (audio?.speech) {
-      const strategicPauses = audio.speech.pause_data.filter(
-        (p) => p.type === 'strategic'
-      ).length;
+      const strategicPauses = audio.speech.pause_data.filter((p) => p.type === 'strategic').length;
       const hesitationPauses = audio.speech.pause_data.filter(
         (p) => p.type === 'hesitation'
       ).length;
-      const flowScore = Math.min((strategicPauses * 15 - hesitationPauses * 10), 100);
+      const flowScore = Math.min(strategicPauses * 15 - hesitationPauses * 10, 100);
       score += Math.max(flowScore, 50) * 0.25;
       totalWeight += 0.25;
     }
 
     // Filler word ratio (inverse)
     if (audio?.speech) {
-      const totalFillerWords = audio.speech.filler_words.reduce(
-        (sum, fw) => sum + fw.count,
-        0
-      );
+      const totalFillerWords = audio.speech.filler_words.reduce((sum, fw) => sum + fw.count, 0);
       const wordCount = audio.speech.word_count || 1;
       const fillerRatio = totalFillerWords / wordCount;
       const fillerScore = Math.max(0, 100 - fillerRatio * 400);
@@ -469,10 +450,7 @@ export class FeedbackScoringEngine {
    * Calculate overall charisma score
    * Meta-score combining all dimensions with special weighting
    */
-  private calculateCharismaScore(
-    scores: FeedbackScores,
-    input: FeedbackInput
-  ): number {
+  private calculateCharismaScore(scores: FeedbackScores, input: FeedbackInput): number {
     // Base charisma from core scores
     const baseCharisma =
       scores.confidence * 0.25 +
@@ -486,7 +464,8 @@ export class FeedbackScoringEngine {
 
     // High energy + high authenticity = charisma boost
     if (
-      input.vision?.body?.energy_level && input.vision.body.energy_level > 70 &&
+      input.vision?.body?.energy_level &&
+      input.vision.body.energy_level > 70 &&
       scores.authenticity > 75
     ) {
       multiplier *= 1.15;
@@ -494,8 +473,10 @@ export class FeedbackScoringEngine {
 
     // Strong vocal variety + good eye contact = charisma boost
     if (
-      input.audio?.tone?.pitch_variance && input.audio.tone.pitch_variance > 15 &&
-      input.vision?.facial?.eye_contact && input.vision.facial.eye_contact > 75
+      input.audio?.tone?.pitch_variance &&
+      input.audio.tone.pitch_variance > 15 &&
+      input.vision?.facial?.eye_contact &&
+      input.vision.facial.eye_contact > 75
     ) {
       multiplier *= 1.1;
     }
@@ -513,19 +494,13 @@ export class FeedbackScoringEngine {
   /**
    * Generate actionable suggestions based on scores and metrics
    */
-  private generateSuggestions(
-    input: FeedbackInput,
-    scores: FeedbackScores
-  ): FeedbackSuggestion[] {
+  private generateSuggestions(input: FeedbackInput, scores: FeedbackScores): FeedbackSuggestion[] {
     const suggestions: FeedbackSuggestion[] = [];
 
     // Confidence suggestions
     if (scores.confidence < 60) {
       if (input.audio?.speech) {
-        const fillerCount = input.audio.speech.filler_words.reduce(
-          (sum, fw) => sum + fw.count,
-          0
-        );
+        const fillerCount = input.audio.speech.filler_words.reduce((sum, fw) => sum + fw.count, 0);
         if (fillerCount > 5) {
           suggestions.push({
             category: 'speech',
@@ -618,10 +593,7 @@ export class FeedbackScoringEngine {
 
     // Professional presence suggestions
     if (scores.professionalPresence < 60) {
-      if (
-        input.vision?.professional &&
-        input.vision.professional.lighting_quality < 50
-      ) {
+      if (input.vision?.professional && input.vision.professional.lighting_quality < 50) {
         suggestions.push({
           category: 'professional',
           priority: 'medium',
@@ -693,14 +665,9 @@ export class FeedbackScoringEngine {
 
     const recentScores = this.previousScores.slice(-5); // Last 5 scores
     const avgPrevious = {
-      confidence:
-        recentScores.reduce((sum, s) => sum + s.confidence, 0) /
-        recentScores.length,
-      engagement:
-        recentScores.reduce((sum, s) => sum + s.engagement, 0) /
-        recentScores.length,
-      clarity:
-        recentScores.reduce((sum, s) => sum + s.clarity, 0) / recentScores.length,
+      confidence: recentScores.reduce((sum, s) => sum + s.confidence, 0) / recentScores.length,
+      engagement: recentScores.reduce((sum, s) => sum + s.engagement, 0) / recentScores.length,
+      clarity: recentScores.reduce((sum, s) => sum + s.clarity, 0) / recentScores.length,
     };
 
     return {

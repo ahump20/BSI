@@ -88,11 +88,7 @@ export class SecretsManager {
    * @param required - Whether the secret is required (throws if missing)
    * @returns Secret value or null
    */
-  async getSecret(
-    name: string,
-    cfEnv?: any,
-    required: boolean = true
-  ): Promise<string | null> {
+  async getSecret(name: string, cfEnv?: any, required: boolean = true): Promise<string | null> {
     try {
       // Check cache first
       const cached = this.secretsCache.get(name);
@@ -171,7 +167,7 @@ export class SecretsManager {
           const result = schema.safeParse(value);
 
           if (!result.success) {
-            invalid.push(`${name}: ${result.error.errors[0].message}`);
+            invalid.push(`${name}: ${result.error.issues[0].message}`);
           }
         }
       } catch (error) {
@@ -264,8 +260,8 @@ export class SecretsManager {
     }
 
     // Fallback for Node.js
-    const crypto = require('crypto');
-    return crypto.randomBytes(length).toString('base64');
+    const nodeCrypto = require('crypto');
+    return nodeCrypto.randomBytes(length).toString('base64');
   }
 }
 
@@ -279,7 +275,10 @@ let globalSecretsManager: SecretsManager | null = null;
  */
 export function getSecretsManager(env?: Environment): SecretsManager {
   if (!globalSecretsManager) {
-    const environment = env || (typeof process !== 'undefined' ? process.env.NODE_ENV as Environment : null) || 'development';
+    const environment =
+      env ||
+      (typeof process !== 'undefined' ? (process.env.NODE_ENV as Environment) : null) ||
+      'development';
     globalSecretsManager = new SecretsManager(environment);
   }
   return globalSecretsManager;
@@ -288,7 +287,11 @@ export function getSecretsManager(env?: Environment): SecretsManager {
 /**
  * Helper to get a secret value
  */
-export async function getSecret(name: string, cfEnv?: any, required: boolean = true): Promise<string | null> {
+export async function getSecret(
+  name: string,
+  cfEnv?: any,
+  required: boolean = true
+): Promise<string | null> {
   const manager = getSecretsManager();
   return manager.getSecret(name, cfEnv, required);
 }

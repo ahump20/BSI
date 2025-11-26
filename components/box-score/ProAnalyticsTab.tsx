@@ -16,7 +16,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ExpectedMetricsCalculator, BattedBallData, ExpectedMetrics, StuffRating, PitchData } from '../../lib/analytics/baseball/expected-metrics-calculator';
+import {
+  ExpectedMetricsCalculator,
+  BattedBallData,
+  ExpectedMetrics,
+  StuffRating,
+  PitchData,
+} from '../../lib/analytics/baseball/expected-metrics-calculator';
 
 interface ProAnalyticsTabProps {
   teamId: string;
@@ -59,7 +65,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
   teamId,
   gameId,
   userTier,
-  onUpgradeClick
+  onUpgradeClick,
 }) => {
   const [battingData, setBattingData] = useState<PlayerBattingStats[]>([]);
   const [pitchingData, setPitchingData] = useState<PitcherStuffStats[]>([]);
@@ -83,21 +89,22 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
 
       // Fetch player data from API
       const response = await fetch(`/api/college-baseball/game/${gameId}/advanced-stats`);
-      const data = await response.json();
+      const data = (await response.json()) as { batting: any[]; pitching: any[] };
 
       // Calculate expected metrics for batters
       const battingStats: PlayerBattingStats[] = data.batting.map((player: any) => {
         const battedBalls: BattedBallData[] = player.battedBalls || [];
 
         // Calculate aggregate expected metrics
-        const expectedMetrics = battedBalls.length > 0
-          ? ExpectedMetricsCalculator.calculateExpectedMetrics({
-              exitVelocity: player.avgExitVelo,
-              launchAngle: player.avgLaunchAngle,
-              sprayAngle: 0, // Center field default
-              batType: 'bbcor' // College baseball
-            })
-          : undefined;
+        const expectedMetrics =
+          battedBalls.length > 0
+            ? ExpectedMetricsCalculator.calculateExpectedBA({
+                exitVelocity: player.avgExitVelo,
+                launchAngle: player.avgLaunchAngle,
+                sprayAngle: 0, // Center field default
+                batType: 'bbcor', // College baseball
+              })
+            : undefined;
 
         return {
           playerId: player.id,
@@ -112,32 +119,33 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
           hardHitRate: player.hardHitRate,
           barrelRate: player.barrelRate,
           avgExitVelo: player.avgExitVelo,
-          avgLaunchAngle: player.avgLaunchAngle
+          avgLaunchAngle: player.avgLaunchAngle,
         };
       });
 
       // Calculate Stuff+ for pitchers
       const pitchingStats: PitcherStuffStats[] = data.pitching.map((pitcher: any) => {
-        const pitches: PitchData[] = pitcher.pitches || [];
+        const pitches: any[] = pitcher.pitches || [];
 
         // Calculate Stuff+ for primary pitch
         const primaryPitch = pitches[0];
         const stuffRating = primaryPitch
           ? ExpectedMetricsCalculator.calculateStuffPlus({
-              pitchType: primaryPitch.type,
+              pitchType: primaryPitch.pitchType || primaryPitch.type || 'FB',
               velocity: primaryPitch.velocity,
               spinRate: primaryPitch.spinRate,
               horizontalBreak: primaryPitch.horizontalBreak,
               verticalBreak: primaryPitch.verticalBreak,
               extension: primaryPitch.extension || 6.0,
-              level: 'college'
+              releaseHeight: primaryPitch.releaseHeight || 5.5,
+              level: 'college',
             })
           : undefined;
 
         return {
           playerId: pitcher.id,
           name: pitcher.name,
-          pitchType: primaryPitch?.type || 'FB',
+          pitchType: primaryPitch?.pitchType || primaryPitch?.type || 'FB',
           pitchCount: pitcher.pitchCount,
           avgVelocity: pitcher.avgVelocity,
           avgSpinRate: pitcher.avgSpinRate,
@@ -145,7 +153,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
           avgVerticalBreak: pitcher.avgVerticalBreak,
           stuffRating,
           whiffRate: pitcher.whiffRate,
-          swingMissRate: pitcher.swingMissRate
+          swingMissRate: pitcher.swingMissRate,
         };
       });
 
@@ -162,9 +170,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
     <div className="upgrade-prompt">
       <div className="upgrade-icon">💎</div>
       <h3>Diamond Pro Analytics</h3>
-      <p>
-        Unlock advanced metrics ESPN doesn't show for college baseball:
-      </p>
+      <p>Unlock advanced metrics ESPN doesn't show for college baseball:</p>
       <ul>
         <li>✅ Expected Batting Average (xBA) with BBCOR adjustments</li>
         <li>✅ Expected Slugging (xSLG) and Expected wOBA (xWOBA)</li>
@@ -177,8 +183,8 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
       </button>
       <div className="upgrade-note">
         <small>
-          These metrics are not available on ESPN for college baseball.
-          BlazeSportsIntel provides professional-grade analytics for the college game.
+          These metrics are not available on ESPN for college baseball. BlazeSportsIntel provides
+          professional-grade analytics for the college game.
         </small>
       </div>
     </div>
@@ -251,21 +257,27 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
                     <td className="expected stat-value">
                       {player.expectedMetrics?.xBA.toFixed(3) || 'N/A'}
                     </td>
-                    <td className={`diff ${xBADiff > 0 ? 'positive' : xBADiff < 0 ? 'negative' : ''}`}>
+                    <td
+                      className={`diff ${xBADiff > 0 ? 'positive' : xBADiff < 0 ? 'negative' : ''}`}
+                    >
                       {xBADiff !== 0 ? (xBADiff > 0 ? '+' : '') + xBADiff.toFixed(3) : '-'}
                     </td>
                     <td className="stat-value">{player.slg.toFixed(3)}</td>
                     <td className="expected stat-value">
                       {player.expectedMetrics?.xSLG.toFixed(3) || 'N/A'}
                     </td>
-                    <td className={`diff ${xSLGDiff > 0 ? 'positive' : xSLGDiff < 0 ? 'negative' : ''}`}>
+                    <td
+                      className={`diff ${xSLGDiff > 0 ? 'positive' : xSLGDiff < 0 ? 'negative' : ''}`}
+                    >
                       {xSLGDiff !== 0 ? (xSLGDiff > 0 ? '+' : '') + xSLGDiff.toFixed(3) : '-'}
                     </td>
                     <td className="stat-value">{player.woba.toFixed(3)}</td>
                     <td className="expected stat-value">
                       {player.expectedMetrics?.xWOBA.toFixed(3) || 'N/A'}
                     </td>
-                    <td className={`diff ${xWOBADiff > 0 ? 'positive' : xWOBADiff < 0 ? 'negative' : ''}`}>
+                    <td
+                      className={`diff ${xWOBADiff > 0 ? 'positive' : xWOBADiff < 0 ? 'negative' : ''}`}
+                    >
                       {xWOBADiff !== 0 ? (xWOBADiff > 0 ? '+' : '') + xWOBADiff.toFixed(3) : '-'}
                     </td>
                     <td>{(player.barrelRate * 100).toFixed(1)}%</td>
@@ -279,14 +291,16 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
 
         <div className="table-footer">
           <p className="methodology-note">
-            <strong>Expected metrics</strong> calculated using Statcast methodology adapted for college baseball (BBCOR bat adjustments).
-            <strong> Diff</strong> shows players outperforming (+) or underperforming (-) their expected stats based on batted ball quality.
+            <strong>Expected metrics</strong> calculated using Statcast methodology adapted for
+            college baseball (BBCOR bat adjustments).
+            <strong> Diff</strong> shows players outperforming (+) or underperforming (-) their
+            expected stats based on batted ball quality.
           </p>
           <p className="citation-note">
             <small>
-              Methodology: MLB Statcast (2015-2024), Nathan (2003-2024) |
-              BBCOR adjustment factor: 1.04x |
-              Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}
+              Methodology: MLB Statcast (2015-2024), Nathan (2003-2024) | BBCOR adjustment factor:
+              1.04x | Last updated:{' '}
+              {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}
             </small>
           </p>
         </div>
@@ -331,9 +345,14 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
             <tbody>
               {sortedData.map((pitcher) => {
                 const stuffValue = pitcher.stuffRating?.stuffPlus || 100;
-                const stuffClass = stuffValue >= 120 ? 'elite' :
-                                  stuffValue >= 105 ? 'above-avg' :
-                                  stuffValue >= 95 ? 'avg' : 'below-avg';
+                const stuffClass =
+                  stuffValue >= 120
+                    ? 'elite'
+                    : stuffValue >= 105
+                      ? 'above-avg'
+                      : stuffValue >= 95
+                        ? 'avg'
+                        : 'below-avg';
 
                 return (
                   <tr key={pitcher.playerId}>
@@ -342,8 +361,14 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
                     <td>{pitcher.pitchCount}</td>
                     <td>{pitcher.avgVelocity.toFixed(1)} mph</td>
                     <td>{pitcher.avgSpinRate.toFixed(0)} rpm</td>
-                    <td>{pitcher.avgHorizontalBreak > 0 ? '+' : ''}{pitcher.avgHorizontalBreak.toFixed(1)}"</td>
-                    <td>{pitcher.avgVerticalBreak > 0 ? '+' : ''}{pitcher.avgVerticalBreak.toFixed(1)}"</td>
+                    <td>
+                      {pitcher.avgHorizontalBreak > 0 ? '+' : ''}
+                      {pitcher.avgHorizontalBreak.toFixed(1)}"
+                    </td>
+                    <td>
+                      {pitcher.avgVerticalBreak > 0 ? '+' : ''}
+                      {pitcher.avgVerticalBreak.toFixed(1)}"
+                    </td>
                     <td className={`stuff-plus ${stuffClass}`}>
                       <strong>{stuffValue}</strong>
                     </td>
@@ -360,14 +385,14 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
         <div className="table-footer">
           <p className="methodology-note">
             <strong>Stuff+</strong> measures pitch quality on a 100-centered scale (100 = average).
-            Components: velocity (35%), spin rate (30%), movement (35%).
-            Adapted from Driveline Baseball research for college baseball.
+            Components: velocity (35%), spin rate (30%), movement (35%). Adapted from Driveline
+            Baseball research for college baseball.
           </p>
           <p className="citation-note">
             <small>
-              Methodology: Driveline Baseball (2017-2024), Sarris (2018) |
-              Level adjustment: 0.96x for college |
-              Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}
+              Methodology: Driveline Baseball (2017-2024), Sarris (2018) | Level adjustment: 0.96x
+              for college | Last updated:{' '}
+              {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}
             </small>
           </p>
         </div>
@@ -794,7 +819,8 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
             font-size: 12px;
           }
 
-          th, td {
+          th,
+          td {
             padding: 10px 6px;
           }
         }
@@ -823,7 +849,8 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
             font-size: 11px;
           }
 
-          th, td {
+          th,
+          td {
             padding: 8px 4px;
           }
 

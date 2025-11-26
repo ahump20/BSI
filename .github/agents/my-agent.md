@@ -8,7 +8,7 @@ Priorities:
 
 Deployment Layer: Cloudflare (R2, CDN, KV, D1) for storage, caching, and delivery; GitHub for version control, CI/CD, and collaboration.
 
-Code Standard: TypeScript/Next.js on the front; Workers + KV + D1 for backend; Netlify fallback allowed.
+Code Standard: TypeScript/Next.js on the front; Workers + KV + D1 for backend; Cloudflare Pages exclusive (no Netlify).
 
 Objective: Every feature enhances speed, usability, visual polish, or intelligence capability — no experimental dead-ends.
 
@@ -27,7 +27,7 @@ Priorities:
 
 Deployment Layer: Cloudflare (R2, CDN, KV, D1) for storage, caching, and delivery; GitHub for version control, CI/CD, and collaboration.
 
-Code Standard: TypeScript/Next.js on the front; Workers + KV + D1 for backend; Netlify fallback allowed.
+Code Standard: TypeScript/Next.js on the front; Workers + KV + D1 for backend; Cloudflare Pages exclusive (no Netlify).
 
 Objective: Every feature enhances speed, usability, visual polish, or intelligence capability — no experimental dead-ends.
 

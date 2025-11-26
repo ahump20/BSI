@@ -21,7 +21,7 @@ export async function onRequest({ request, env }) {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -36,22 +36,25 @@ export async function onRequest({ request, env }) {
 
     // Format standings by conference
     const standings = {
-      eastern: data.children?.find(c => c.name === 'Eastern Conference') || {},
-      western: data.children?.find(c => c.name === 'Western Conference') || {},
-      lastUpdated: new Date().toISOString()
+      eastern: data.children?.find((c) => c.name === 'Eastern Conference') || {},
+      western: data.children?.find((c) => c.name === 'Western Conference') || {},
+      lastUpdated: new Date().toISOString(),
     };
 
     return new Response(JSON.stringify(standings), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch NBA standings',
-      message: error.message
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch NBA standings',
+        message: error.message,
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }

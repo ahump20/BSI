@@ -31,14 +31,18 @@ export async function onRequest(context) {
 
   // Check if D1 database is available
   if (!env.DB) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Historical database not configured',
-      message: 'D1 database is not available. Run scripts/deploy-d1-schema.sh to set up the database.'
-    }), {
-      status: 503,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Historical database not configured',
+        message:
+          'D1 database is not available. Run scripts/deploy-d1-schema.sh to set up the database.',
+      }),
+      {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   try {
@@ -58,16 +62,18 @@ export async function onRequest(context) {
     } else {
       return await handleOverviewStats(env.DB, season, corsHeaders);
     }
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to fetch historical stats',
-      message: error.message
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to fetch historical stats',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 }
 
@@ -76,27 +82,37 @@ export async function onRequest(context) {
  */
 async function handleTeamStats(db, teamId, season, corsHeaders) {
   // Check if season has any games in the database
-  const seasonExists = await db.prepare(`
+  const seasonExists = await db
+    .prepare(
+      `
     SELECT COUNT(*) AS count
     FROM games g
     JOIN seasons s ON g.season_id = s.season_id
     WHERE s.year = ?
-  `).bind(season).first();
+  `
+    )
+    .bind(season)
+    .first();
 
   if (!seasonExists || seasonExists.count === 0) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Data missing',
-      message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
-      season: parseInt(season)
-    }), {
-      status: 404,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Data missing',
+        message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
+        season: parseInt(season),
+      }),
+      {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Get team info
-  const team = await db.prepare(`
+  const team = await db
+    .prepare(
+      `
     SELECT
       t.team_id,
       t.espn_id,
@@ -112,21 +128,29 @@ async function handleTeamStats(db, teamId, season, corsHeaders) {
     FROM teams t
     LEFT JOIN conferences c ON t.conference_id = c.conference_id
     WHERE t.espn_id = ?
-  `).bind(teamId).first();
+  `
+    )
+    .bind(teamId)
+    .first();
 
   if (!team) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Team not found',
-      message: `No team found with ID: ${teamId}`
-    }), {
-      status: 404,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Team not found',
+        message: `No team found with ID: ${teamId}`,
+      }),
+      {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Get season stats
-  const seasonStats = await db.prepare(`
+  const seasonStats = await db
+    .prepare(
+      `
     SELECT
       s.year AS season,
       tss.wins,
@@ -152,10 +176,15 @@ async function handleTeamStats(db, teamId, season, corsHeaders) {
     JOIN seasons s ON tss.season_id = s.season_id
     WHERE tss.team_id = ?
       AND s.year = ?
-  `).bind(team.team_id, season).first();
+  `
+    )
+    .bind(team.team_id, season)
+    .first();
 
   // Get recent games
-  const recentGames = await db.prepare(`
+  const recentGames = await db
+    .prepare(
+      `
     SELECT
       g.game_id,
       g.espn_id,
@@ -181,27 +210,39 @@ async function handleTeamStats(db, teamId, season, corsHeaders) {
       AND g.status = 'final'
     ORDER BY g.game_date DESC
     LIMIT 10
-  `).bind(
-    team.team_id, team.team_id, team.team_id, team.team_id, team.team_id,
-    team.team_id, team.team_id, season
-  ).all();
+  `
+    )
+    .bind(
+      team.team_id,
+      team.team_id,
+      team.team_id,
+      team.team_id,
+      team.team_id,
+      team.team_id,
+      team.team_id,
+      season
+    )
+    .all();
 
-  return new Response(JSON.stringify({
-    success: true,
-    team,
-    seasonStats: seasonStats || null,
-    recentGames: recentGames.results || [],
-    season: parseInt(season),
-    dataSource: 'D1 Historical Database',
-    timestamp: new Date().toISOString()
-  }), {
-    status: 200,
-    headers: {
-      ...corsHeaders,
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600'
+  return new Response(
+    JSON.stringify({
+      success: true,
+      team,
+      seasonStats: seasonStats || null,
+      recentGames: recentGames.results || [],
+      season: parseInt(season),
+      dataSource: 'D1 Historical Database',
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+      },
     }
-  });
+  );
 }
 
 /**
@@ -209,7 +250,9 @@ async function handleTeamStats(db, teamId, season, corsHeaders) {
  */
 async function handlePlayerStats(db, playerId, season, corsHeaders) {
   // Get player info
-  const player = await db.prepare(`
+  const player = await db
+    .prepare(
+      `
     SELECT
       p.player_id,
       p.espn_id,
@@ -229,43 +272,59 @@ async function handlePlayerStats(db, playerId, season, corsHeaders) {
       p.draft_team
     FROM players p
     WHERE p.espn_id = ?
-  `).bind(playerId).first();
+  `
+    )
+    .bind(playerId)
+    .first();
 
   if (!player) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Player not found',
-      message: `No player found with ID: ${playerId}`
-    }), {
-      status: 404,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Player not found',
+        message: `No player found with ID: ${playerId}`,
+      }),
+      {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Check if player has any stats in the database
-  const playerHasStats = await db.prepare(`
+  const playerHasStats = await db
+    .prepare(
+      `
     SELECT COUNT(*) AS count
     FROM player_season_stats
     WHERE player_id = ?
-  `).bind(player.player_id).first();
+  `
+    )
+    .bind(player.player_id)
+    .first();
 
   if (!playerHasStats || playerHasStats.count === 0) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Data missing',
-      message: `No statistics found for player ${player.full_name}. This data may not have been ingested yet.`,
-      player: {
-        id: player.player_id,
-        name: player.full_name
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Data missing',
+        message: `No statistics found for player ${player.full_name}. This data may not have been ingested yet.`,
+        player: {
+          id: player.player_id,
+          name: player.full_name,
+        },
+      }),
+      {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
-    }), {
-      status: 404,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    );
   }
 
   // Get season-by-season stats
-  const careerStats = await db.prepare(`
+  const careerStats = await db
+    .prepare(
+      `
     SELECT
       s.year AS season,
       t.name AS team_name,
@@ -301,7 +360,10 @@ async function handlePlayerStats(db, playerId, season, corsHeaders) {
       AND tr.season_id = pss.season_id
     WHERE pss.player_id = ?
     ORDER BY s.year DESC
-  `).bind(player.player_id).all();
+  `
+    )
+    .bind(player.player_id)
+    .all();
 
   // Calculate career totals
   const careerTotals = {
@@ -313,10 +375,10 @@ async function handlePlayerStats(db, playerId, season, corsHeaders) {
     stolen_bases: 0,
     games_pitched: 0,
     wins: 0,
-    saves: 0
+    saves: 0,
   };
 
-  (careerStats.results || []).forEach(season => {
+  (careerStats.results || []).forEach((season) => {
     careerTotals.games_played += season.games_played || 0;
     careerTotals.at_bats += season.at_bats || 0;
     careerTotals.hits += season.hits || 0;
@@ -333,21 +395,24 @@ async function handlePlayerStats(db, playerId, season, corsHeaders) {
     careerTotals.batting_average = (careerTotals.hits / careerTotals.at_bats).toFixed(3);
   }
 
-  return new Response(JSON.stringify({
-    success: true,
-    player,
-    careerStats: careerStats.results || [],
-    careerTotals,
-    dataSource: 'D1 Historical Database',
-    timestamp: new Date().toISOString()
-  }), {
-    status: 200,
-    headers: {
-      ...corsHeaders,
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600'
+  return new Response(
+    JSON.stringify({
+      success: true,
+      player,
+      careerStats: careerStats.results || [],
+      careerTotals,
+      dataSource: 'D1 Historical Database',
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+      },
     }
-  });
+  );
 }
 
 /**
@@ -355,27 +420,37 @@ async function handlePlayerStats(db, playerId, season, corsHeaders) {
  */
 async function handleConferenceStats(db, conferenceAbbr, season, corsHeaders) {
   // Check if season has any games in the database
-  const seasonExists = await db.prepare(`
+  const seasonExists = await db
+    .prepare(
+      `
     SELECT COUNT(*) AS count
     FROM games g
     JOIN seasons s ON g.season_id = s.season_id
     WHERE s.year = ?
-  `).bind(season).first();
+  `
+    )
+    .bind(season)
+    .first();
 
   if (!seasonExists || seasonExists.count === 0) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Data missing',
-      message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
-      season: parseInt(season),
-      conference: conferenceAbbr
-    }), {
-      status: 404,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Data missing',
+        message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
+        season: parseInt(season),
+        conference: conferenceAbbr,
+      }),
+      {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
-  const standings = await db.prepare(`
+  const standings = await db
+    .prepare(
+      `
     SELECT
       t.name AS team,
       t.abbreviation AS team_abbr,
@@ -398,24 +473,30 @@ async function handleConferenceStats(db, conferenceAbbr, season, corsHeaders) {
     WHERE c.abbreviation = ?
       AND s.year = ?
     ORDER BY tss.conference_wins DESC, tss.wins DESC
-  `).bind(conferenceAbbr, season).all();
+  `
+    )
+    .bind(conferenceAbbr, season)
+    .all();
 
-  return new Response(JSON.stringify({
-    success: true,
-    conference: conferenceAbbr,
-    season: parseInt(season),
-    standings: standings.results || [],
-    count: standings.results?.length || 0,
-    dataSource: 'D1 Historical Database',
-    timestamp: new Date().toISOString()
-  }), {
-    status: 200,
-    headers: {
-      ...corsHeaders,
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600'
+  return new Response(
+    JSON.stringify({
+      success: true,
+      conference: conferenceAbbr,
+      season: parseInt(season),
+      standings: standings.results || [],
+      count: standings.results?.length || 0,
+      dataSource: 'D1 Historical Database',
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+      },
     }
-  });
+  );
 }
 
 /**
@@ -423,27 +504,37 @@ async function handleConferenceStats(db, conferenceAbbr, season, corsHeaders) {
  */
 async function handleOverviewStats(db, season, corsHeaders) {
   // Check if season has any games in the database
-  const seasonExists = await db.prepare(`
+  const seasonExists = await db
+    .prepare(
+      `
     SELECT COUNT(*) AS count
     FROM games g
     JOIN seasons s ON g.season_id = s.season_id
     WHERE s.year = ?
-  `).bind(season).first();
+  `
+    )
+    .bind(season)
+    .first();
 
   if (!seasonExists || seasonExists.count === 0) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Data missing',
-      message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
-      season: parseInt(season)
-    }), {
-      status: 404,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Data missing',
+        message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
+        season: parseInt(season),
+      }),
+      {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Top teams by wins
-  const topTeams = await db.prepare(`
+  const topTeams = await db
+    .prepare(
+      `
     SELECT
       t.name AS team,
       c.abbreviation AS conference,
@@ -458,10 +549,15 @@ async function handleOverviewStats(db, season, corsHeaders) {
     WHERE s.year = ?
     ORDER BY tss.wins DESC, tss.rpi DESC
     LIMIT 25
-  `).bind(season).all();
+  `
+    )
+    .bind(season)
+    .all();
 
   // Batting leaders
-  const battingLeaders = await db.prepare(`
+  const battingLeaders = await db
+    .prepare(
+      `
     SELECT
       p.full_name AS player,
       t.abbreviation AS team,
@@ -477,21 +573,27 @@ async function handleOverviewStats(db, season, corsHeaders) {
       AND pss.at_bats >= 100
     ORDER BY pss.batting_average DESC
     LIMIT 10
-  `).bind(season).all();
+  `
+    )
+    .bind(season)
+    .all();
 
-  return new Response(JSON.stringify({
-    success: true,
-    season: parseInt(season),
-    topTeams: topTeams.results || [],
-    battingLeaders: battingLeaders.results || [],
-    dataSource: 'D1 Historical Database',
-    timestamp: new Date().toISOString()
-  }), {
-    status: 200,
-    headers: {
-      ...corsHeaders,
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600'
+  return new Response(
+    JSON.stringify({
+      success: true,
+      season: parseInt(season),
+      topTeams: topTeams.results || [],
+      battingLeaders: battingLeaders.results || [],
+      dataSource: 'D1 Historical Database',
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+      },
     }
-  });
+  );
 }

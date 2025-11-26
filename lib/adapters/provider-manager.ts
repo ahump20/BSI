@@ -17,7 +17,7 @@ import type {
   GamesQueryParams,
   TeamStatsQueryParams,
   ProviderGame,
-  ProviderTeamStats
+  ProviderTeamStats,
 } from '../../workers/ingest/types';
 
 interface CircuitBreakerState {
@@ -46,7 +46,7 @@ export class ProviderManager {
     this.circuitBreakers = new Map([
       ['sportsDataIO', { failures: 0, lastFailure: null, isOpen: false }],
       ['ncaaAPI', { failures: 0, lastFailure: null, isOpen: false }],
-      ['espnAPI', { failures: 0, lastFailure: null, isOpen: false }]
+      ['espnAPI', { failures: 0, lastFailure: null, isOpen: false }],
     ]);
   }
 
@@ -60,7 +60,7 @@ export class ProviderManager {
     }> = [
       { name: 'sportsDataIO', adapter: this.sportsDataIO },
       { name: 'ncaaAPI', adapter: this.ncaaAPI },
-      { name: 'espnAPI', adapter: this.espnAPI }
+      { name: 'espnAPI', adapter: this.espnAPI },
     ];
 
     for (const { name, adapter } of providers) {
@@ -105,7 +105,7 @@ export class ProviderManager {
     }> = [
       { name: 'sportsDataIO', adapter: this.sportsDataIO },
       { name: 'ncaaAPI', adapter: this.ncaaAPI },
-      { name: 'espnAPI', adapter: this.espnAPI }
+      { name: 'espnAPI', adapter: this.espnAPI },
     ];
 
     for (const { name, adapter } of providers) {

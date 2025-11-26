@@ -43,8 +43,8 @@ export interface FamousPlay extends LEIResult {
  */
 export function davidFreese2011WS(): FamousPlay {
   const ctx: PlayContext = {
-    sport: "baseball",
-    playoff_round: "championship",
+    sport: 'baseball',
+    playoff_round: 'championship',
     pre_play_win_prob: 0.078,
     post_play_win_prob: 0.605,
     outs_remaining: 1,
@@ -57,11 +57,11 @@ export function davidFreese2011WS(): FamousPlay {
 
   return {
     ...result,
-    play_id: "2011-WS-G6-B9-FREESE-TRIPLE",
-    description: "David Freese game-tying triple",
-    players: ["David Freese"],
-    context: "2011 World Series Game 6, Bottom 9th, 2 outs, 2 strikes, down 2 runs",
-    source: "Baseball-Reference Win Expectancy",
+    play_id: '2011-WS-G6-B9-FREESE-TRIPLE',
+    description: 'David Freese game-tying triple',
+    players: ['David Freese'],
+    context: '2011 World Series Game 6, Bottom 9th, 2 outs, 2 strikes, down 2 runs',
+    source: 'Baseball-Reference Win Expectancy',
   };
 }
 
@@ -84,8 +84,8 @@ export function davidFreese2011WS(): FamousPlay {
  */
 export function marioManningham2012SB(): FamousPlay {
   const ctx: PlayContext = {
-    sport: "football",
-    playoff_round: "championship",
+    sport: 'football',
+    playoff_round: 'championship',
     pre_play_win_prob: 0.52,
     post_play_win_prob: 0.68,
     time_remaining: 246, // 4:06
@@ -98,11 +98,11 @@ export function marioManningham2012SB(): FamousPlay {
 
   return {
     ...result,
-    play_id: "2012-SB46-Q4-MANNINGHAM-CATCH",
-    description: "Mario Manningham sideline catch",
-    players: ["Mario Manningham", "Eli Manning"],
-    context: "Super Bowl XLVI, 4:06 remaining, tie game, Giants driving",
-    source: "nflfastR EPA model converted to WP via logistic regression",
+    play_id: '2012-SB46-Q4-MANNINGHAM-CATCH',
+    description: 'Mario Manningham sideline catch',
+    players: ['Mario Manningham', 'Eli Manning'],
+    context: 'Super Bowl XLVI, 4:06 remaining, tie game, Giants driving',
+    source: 'nflfastR EPA model converted to WP via logistic regression',
   };
 }
 
@@ -125,10 +125,10 @@ export function marioManningham2012SB(): FamousPlay {
  */
 export function aaronBoone2003ALCS(): FamousPlay {
   const ctx: PlayContext = {
-    sport: "baseball",
-    playoff_round: "conference",
-    pre_play_win_prob: 0.50,
-    post_play_win_prob: 1.00,
+    sport: 'baseball',
+    playoff_round: 'conference',
+    pre_play_win_prob: 0.5,
+    post_play_win_prob: 1.0,
     outs_remaining: 3, // Extra innings
     strikes_remaining: 2,
     score_differential: 0,
@@ -139,11 +139,11 @@ export function aaronBoone2003ALCS(): FamousPlay {
 
   return {
     ...result,
-    play_id: "2003-ALCS-G7-B11-BOONE-HR",
-    description: "Aaron Boone walk-off home run",
-    players: ["Aaron Boone"],
-    context: "2003 ALCS Game 7, Bottom 11th, tie game vs Red Sox",
-    source: "Baseball-Reference Win Expectancy (estimated)",
+    play_id: '2003-ALCS-G7-B11-BOONE-HR',
+    description: 'Aaron Boone walk-off home run',
+    players: ['Aaron Boone'],
+    context: '2003 ALCS Game 7, Bottom 11th, tie game vs Red Sox',
+    source: 'Baseball-Reference Win Expectancy (estimated)',
   };
 }
 
@@ -166,10 +166,10 @@ export function aaronBoone2003ALCS(): FamousPlay {
  */
 export function malcolmButler2015SB(): FamousPlay {
   const ctx: PlayContext = {
-    sport: "football",
-    playoff_round: "championship",
+    sport: 'football',
+    playoff_round: 'championship',
     pre_play_win_prob: 0.35,
-    post_play_win_prob: 1.00,
+    post_play_win_prob: 1.0,
     time_remaining: 20,
     timeouts_remaining: 1,
     score_differential: -4,
@@ -180,11 +180,11 @@ export function malcolmButler2015SB(): FamousPlay {
 
   return {
     ...result,
-    play_id: "2015-SB49-Q4-BUTLER-INT",
-    description: "Malcolm Butler goal line interception",
-    players: ["Malcolm Butler", "Russell Wilson"],
-    context: "Super Bowl XLIX, 20 seconds left, Seahawks at 1-yard line",
-    source: "nflfastR Win Probability model",
+    play_id: '2015-SB49-Q4-BUTLER-INT',
+    description: 'Malcolm Butler goal line interception',
+    players: ['Malcolm Butler', 'Russell Wilson'],
+    context: 'Super Bowl XLIX, 20 seconds left, Seahawks at 1-yard line',
+    source: 'nflfastR Win Probability model',
   };
 }
 
@@ -221,17 +221,17 @@ export function validateLEIScoring(): {
   const sorted = [...plays].sort((a, b) => b.lei - a.lei);
 
   const expectedOrder = [
-    "Malcolm Butler INT",
-    "David Freese triple",
-    "Aaron Boone HR",
-    "Manningham catch",
+    'Malcolm Butler INT',
+    'David Freese triple',
+    'Aaron Boone HR',
+    'Manningham catch',
   ];
 
   const actualOrder = sorted.map((p) => {
-    if (p.description.includes("Butler")) return "Malcolm Butler INT";
-    if (p.description.includes("Freese")) return "David Freese triple";
-    if (p.description.includes("Boone")) return "Aaron Boone HR";
-    if (p.description.includes("Manningham")) return "Manningham catch";
+    if (p.description.includes('Butler')) return 'Malcolm Butler INT';
+    if (p.description.includes('Freese')) return 'David Freese triple';
+    if (p.description.includes('Boone')) return 'Aaron Boone HR';
+    if (p.description.includes('Manningham')) return 'Manningham catch';
     return p.description;
   });
 

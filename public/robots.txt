@@ -1,20 +1,27 @@
-# Blaze Sports Intel - Robots.txt
-# Updated: 2025-01-11
+# Blaze Sports Intel - robots.txt
+# https://blazesportsintel.com
 
 User-agent: *
 Allow: /
 
-# Disallow admin/utility pages
-Disallow: /api/
-Disallow: /_redirects
-Disallow: /.well-known/
-
-# Allow important API documentation
-Allow: /api-docs
-Allow: /api-status
-
-# Sitemap
+# Sitemap location
 Sitemap: https://blazesportsintel.com/sitemap.xml
 
-# Crawl-delay for politeness (optional, adjust if needed)
-# Crawl-delay: 1
+# Disallow demo/test pages
+Disallow: /components/
+Disallow: /*-demo.html
+Disallow: /*-optimized.html
+Disallow: /offline.html
+
+# Allow AI crawlers for AI Search
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Cloudflare-AI
+Allow: /

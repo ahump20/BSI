@@ -65,7 +65,7 @@ export class LLMProvider {
       throw new Error(`Anthropic API error (${response.status}): ${errorText}`);
     }
 
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
 
     return {
       content: data.content[0].text,
@@ -112,7 +112,7 @@ export class LLMProvider {
       throw new Error(`OpenAI API error (${response.status}): ${errorText}`);
     }
 
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
 
     return {
       content: data.choices[0].message.content,
@@ -161,7 +161,7 @@ export class LLMProvider {
       throw new Error(`Gemini API error (${response.status}): ${errorText}`);
     }
 
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
 
     // Gemini response structure
     const content = data.candidates[0].content.parts[0].text;
@@ -199,8 +199,11 @@ export class LLMProvider {
       console.error(`[LLMProvider] ${provider} failed:`, error);
 
       // Try fallback providers
-      const fallbackProviders: Array<'anthropic' | 'openai' | 'gemini'> = ['anthropic', 'openai', 'gemini']
-        .filter(p => p !== provider) as Array<'anthropic' | 'openai' | 'gemini'>;
+      const fallbackProviders: Array<'anthropic' | 'openai' | 'gemini'> = [
+        'anthropic',
+        'openai',
+        'gemini',
+      ].filter((p) => p !== provider) as Array<'anthropic' | 'openai' | 'gemini'>;
 
       for (const fallback of fallbackProviders) {
         try {
@@ -244,7 +247,7 @@ export class LLMProvider {
         if (attempt < maxRetries - 1) {
           const delay = initialDelayMs * Math.pow(2, attempt);
           console.log(`[LLMProvider] Retrying in ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
     }

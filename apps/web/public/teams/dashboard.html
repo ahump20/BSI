@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Team Dashboard | Blaze Sports Intel</title>
+    <meta name="description" id="pageDescription" content="Real-time analytics dashboard powered by Blaze Sports Intel">
+
+    <!-- BSI Design System Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* Team Colors (dynamically set) */
+            --primary-color: #BF5700;
+            --secondary-color: #FFFFFF;
+
+            /* BSI Primary Colors */
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-ember: #FF6B35;
+            --bsi-titan-blue: #4B92DB;
+            --bsi-cardinal-red: #C41E3A;
+
+            /* BSI Semantic Colors */
+            --bsi-success: #2E7D32;
+            --bsi-warning: #F9A825;
+            --bsi-danger: #C62828;
+            --bsi-info: #1976D2;
+
+            /* Typography */
+            --font-display: 'Playfair Display', 'Georgia', serif;
+            --font-body: 'Source Serif 4', 'Georgia', serif;
+            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+            --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+            /* Legacy tokens (mapped to BSI) */
+            --blaze-orange: var(--bsi-ember);
+            --dark-bg: var(--bsi-charcoal);
+            --card-bg: rgba(28, 28, 32, 0.95);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --success: var(--bsi-success);
+            --warning: var(--bsi-warning);
+            --danger: var(--bsi-danger);
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: linear-gradient(135deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        /* Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-brand-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--bsi-burnt-orange);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 18px;
+            color: white;
+        }
+
+        .nav-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-brand-name {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+            line-height: 1.1;
+        }
+
+        .nav-brand-tagline {
+            font-family: var(--font-body);
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            font-family: var(--font-ui);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--bsi-burnt-orange); }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="%23ffffff" opacity="0.03"/></svg>');
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0) translateX(0); }
+            to { transform: translateY(-100px) translateX(100px); }
+        }
+
+        .header-content { position: relative; z-index: 1; }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .team-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .team-logo img {
+            max-width: 80px;
+            max-height: 80px;
+            object-fit: contain;
+        }
+
+        .team-info h1 {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .team-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .header-stat {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .header-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blaze-orange), var(--primary-color));
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(255, 107, 0, 0.15);
+            border-color: rgba(255, 107, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .card-badge {
+            background: var(--blaze-orange);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .metric-row:last-child { border-bottom: none; }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+
+        /* Full Width Card */
+        .card.full-width { grid-column: 1 / -1; }
+
+        /* Probability Bar */
+        .probability-bar {
+            width: 100%;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--blaze-orange));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            transition: width 1s ease-out;
+            position: relative;
+        }
+
+        .probability-fill::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-box {
+            background: var(--glass-bg);
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-box-value {
+            font-family: var(--font-mono);
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--bsi-burnt-orange);
+        }
+
+        /* Schedule List */
+        .schedule-game {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .game-opponent {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .game-opponent img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .game-result {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .game-result.win { color: var(--success); }
+        .game-result.loss { color: var(--danger); }
+
+        /* Data Source Footer */
+        .data-source {
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .data-source-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .data-source-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .source-badge {
+            background: rgba(255, 107, 0, 0.1);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 11px;
+            color: var(--blaze-orange);
+            font-weight: 600;
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--blaze-orange);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 20px;
+        }
+
+        .loading-screen .loading {
+            width: 48px;
+            height: 48px;
+            border-width: 4px;
+        }
+
+        /* League Selector */
+        .league-nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .league-btn {
+            padding: 10px 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .league-btn:hover,
+        .league-btn.active {
+            background: var(--blaze-orange);
+            border-color: var(--blaze-orange);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .team-info h1 { font-size: 28px; }
+            .header { padding: 24px; }
+            .header-stats { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="top-nav">
+            <a href="/" class="nav-brand">
+                <div class="nav-brand-logo">B</div>
+                <div class="nav-brand-text">
+                    <span class="nav-brand-name">Blaze Sports Intel</span>
+                    <span class="nav-brand-tagline">Born to Blaze the Path Less Beaten</span>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="/teams">All Teams</a>
+                <a href="/teams#mlb">MLB</a>
+                <a href="/teams#nfl">NFL</a>
+                <a href="/teams#nba">NBA</a>
+                <a href="/teams#ncaaf">NCAA</a>
+            </div>
+        </nav>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="loading-screen">
+            <div class="loading"></div>
+            <p>Loading team data...</p>
+        </div>
+
+        <!-- Main Content (hidden until loaded) -->
+        <div id="mainContent" style="display: none;">
+            <!-- Header -->
+            <div class="header" id="teamHeader">
+                <div class="header-content">
+                    <div class="team-header">
+                        <div class="team-logo">
+                            <img id="teamLogo" src="" alt="Team Logo">
+                        </div>
+                        <div class="team-info">
+                            <h1 id="teamName">Loading...</h1>
+                            <div class="team-meta">
+                                <span id="teamDivision"></span>
+                                <span id="teamConference"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="header-stats">
+                        <div class="header-stat">
+                            <div class="header-stat-label">Record</div>
+                            <div class="header-stat-value" id="teamRecord">-</div>
+                        </div>
+                        <div class="header-stat">
+                            <div class="header-stat-label">Win %</div>
+                            <div class="header-stat-value" id="teamWinPct">-</div>
+                        </div>
+                        <div class="header-stat">
+                            <div class="header-stat-label">Division Rank</div>
+                            <div class="header-stat-value" id="teamDivRank">-</div>
+                        </div>
+                        <div class="header-stat">
+                            <div class="header-stat-label">Streak</div>
+                            <div class="header-stat-value" id="teamStreak">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Season Overview -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Season Overview</h2>
+                        <span class="card-badge" id="seasonBadge">2025</span>
+                    </div>
+                    <div id="seasonOverview">
+                        <div class="metric-row">
+                            <span class="metric-label">Home Record</span>
+                            <span class="metric-value" id="homeRecord">-</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Away Record</span>
+                            <span class="metric-value" id="awayRecord">-</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Conference Rank</span>
+                            <span class="metric-value" id="confRank">-</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Games Back</span>
+                            <span class="metric-value" id="gamesBack">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Stats -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Key Statistics</h2>
+                        <span class="card-badge">Live</span>
+                    </div>
+                    <div id="keyStats"></div>
+                </div>
+
+                <!-- Performance Metrics (Full Width) -->
+                <div class="card full-width">
+                    <div class="card-header">
+                        <h2 class="card-title">Performance Analysis</h2>
+                        <span class="card-badge" id="performanceBadge">Analytics</span>
+                    </div>
+                    <div id="performanceAnalysis">
+                        <p style="margin-bottom: 16px; color: var(--text-secondary);">Point/Run Differential</p>
+                        <div class="probability-bar">
+                            <div class="probability-fill" id="diffBar" style="width: 50%;">+0</div>
+                        </div>
+                        <div class="stats-grid" id="performanceStats"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Sources -->
+            <div class="data-source">
+                <div class="data-source-title">Data Sources & Last Updated</div>
+                <div class="data-source-badges">
+                    <span class="source-badge" id="dataSourceBadge">SportsDataIO</span>
+                    <span class="source-badge">ESPN</span>
+                    <span class="source-badge">Blaze Intelligence</span>
+                </div>
+                <p style="margin-top: 12px; font-size: 12px; color: var(--text-secondary); font-family: var(--font-mono);">
+                    Last Updated: <span id="lastUpdate">-</span>
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <footer style="margin-top: 48px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.08); text-align: center;">
+                <p style="font-family: var(--font-body); font-size: 14px; color: var(--text-secondary); font-style: italic; margin-bottom: 8px;">
+                    "Born in Memphis. Rooted in Texas soil. Blazing the path less beaten."
+                </p>
+                <p style="font-family: var(--font-ui); font-size: 12px; color: rgba(255,255,255,0.4);">
+                    <span style="color: var(--bsi-burnt-orange);">Blaze Sports Intel</span> — The Deep South's Sports Authority
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+
+        // Support both /teams/mlb/STL and /teams/dashboard.html?league=mlb&team=STL
+        let league = urlParams.get('league') || pathParts[1] || 'mlb';
+        let teamId = urlParams.get('team') || pathParts[2] || 'STL';
+
+        async function loadTeamDashboard() {
+            try {
+                const response = await fetch(`/api/teams/${league}/${teamId}`);
+                const data = await response.json();
+
+                if (!data.ok && !data.team) {
+                    throw new Error(data.error || 'Failed to load team data');
+                }
+
+                renderDashboard(data);
+            } catch (error) {
+                console.error('Failed to load team data:', error);
+                // Show error state
+                document.getElementById('loadingScreen').innerHTML = `
+                    <p style="color: var(--danger);">Failed to load team data</p>
+                    <p style="color: var(--text-secondary); font-size: 14px;">${error.message}</p>
+                    <a href="/teams/${league}" style="color: var(--blaze-orange); margin-top: 20px;">View all ${league.toUpperCase()} teams</a>
+                `;
+            }
+        }
+
+        function renderDashboard(data) {
+            const team = data.team;
+            const record = data.record;
+            const standings = data.standings;
+            const stats = data.stats;
+
+            // Update CSS variables for team colors
+            document.documentElement.style.setProperty('--primary-color', team.primaryColor);
+            document.documentElement.style.setProperty('--secondary-color', team.secondaryColor);
+
+            // Update page title
+            document.title = `${team.name} Dashboard | Blaze Sports Intel`;
+            document.getElementById('pageDescription').content = `Real-time ${team.name} analytics - Record: ${record.wins}-${record.losses}, ${record.divisionRank}`;
+
+            // Header
+            document.getElementById('teamLogo').src = team.logo;
+            document.getElementById('teamName').textContent = team.name;
+            document.getElementById('teamDivision').textContent = standings.division;
+            document.getElementById('teamConference').textContent = standings.conference;
+
+            // Header stats
+            document.getElementById('teamRecord').textContent = record.ties
+                ? `${record.wins}-${record.losses}-${record.ties}`
+                : `${record.wins}-${record.losses}`;
+            document.getElementById('teamWinPct').textContent = record.winPct;
+            document.getElementById('teamDivRank').textContent = record.divisionRank.split(' in ')[0];
+            document.getElementById('teamStreak').textContent = record.streak;
+
+            // Season Overview
+            document.getElementById('homeRecord').textContent = stats.homeRecord || 'N/A';
+            document.getElementById('awayRecord').textContent = stats.awayRecord || 'N/A';
+            document.getElementById('confRank').textContent = record.conferenceRank;
+            document.getElementById('gamesBack').textContent = standings.gamesBack || '0';
+
+            // Key Stats (league-specific)
+            renderKeyStats(stats, league);
+
+            // Performance Analysis
+            renderPerformance(stats, league);
+
+            // Data source and timestamp
+            document.getElementById('dataSourceBadge').textContent = data.dataSource;
+            document.getElementById('lastUpdate').textContent = new Date(data.lastUpdate).toLocaleString('en-US', {
+                timeZone: 'America/Chicago',
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+
+            // Show content, hide loading
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        function renderKeyStats(stats, league) {
+            const container = document.getElementById('keyStats');
+            let html = '';
+
+            if (league === 'mlb') {
+                html = `
+                    <div class="metric-row">
+                        <span class="metric-label">Runs Scored</span>
+                        <span class="metric-value">${stats.runsScored || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Runs Allowed</span>
+                        <span class="metric-value">${stats.runsAllowed || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Team Batting Avg</span>
+                        <span class="metric-value">${stats.battingAverage || '.000'}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Team ERA</span>
+                        <span class="metric-value">${stats.era || '0.00'}</span>
+                    </div>
+                `;
+            } else if (league === 'nfl' || league === 'ncaaf') {
+                html = `
+                    <div class="metric-row">
+                        <span class="metric-label">Points For</span>
+                        <span class="metric-value">${stats.pointsFor || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Points Against</span>
+                        <span class="metric-value">${stats.pointsAgainst || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Turnovers</span>
+                        <span class="metric-value">${stats.turnovers || 0}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Takeaways</span>
+                        <span class="metric-value">${stats.takeaways || 0}</span>
+                    </div>
+                `;
+            } else if (league === 'nba') {
+                html = `
+                    <div class="metric-row">
+                        <span class="metric-label">Points Per Game</span>
+                        <span class="metric-value">${stats.pointsPerGame?.toFixed(1) || '0.0'}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Opp Points Per Game</span>
+                        <span class="metric-value">${stats.pointsAllowedPerGame?.toFixed(1) || '0.0'}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Rebounds Per Game</span>
+                        <span class="metric-value">${stats.reboundsPerGame?.toFixed(1) || '0.0'}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Assists Per Game</span>
+                        <span class="metric-value">${stats.assistsPerGame?.toFixed(1) || '0.0'}</span>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderPerformance(stats, league) {
+            let differential, maxDiff, label;
+
+            if (league === 'mlb') {
+                differential = stats.runDifferential || 0;
+                maxDiff = 200;
+                label = 'Run Differential';
+            } else {
+                differential = stats.pointDifferential || 0;
+                maxDiff = league === 'nba' ? 15 : 150;
+                label = 'Point Differential';
+            }
+
+            // Calculate bar width (50% = 0, 100% = max positive, 0% = max negative)
+            const pct = Math.min(100, Math.max(0, 50 + (differential / maxDiff) * 50));
+            const diffBar = document.getElementById('diffBar');
+            diffBar.style.width = `${pct}%`;
+            diffBar.textContent = (differential > 0 ? '+' : '') + differential;
+            diffBar.style.background = differential >= 0
+                ? 'linear-gradient(90deg, var(--primary-color), var(--success))'
+                : 'linear-gradient(90deg, var(--danger), var(--primary-color))';
+
+            // Performance stats grid
+            const performanceStats = document.getElementById('performanceStats');
+            if (league === 'mlb') {
+                performanceStats.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-box-label">Runs Scored</div>
+                        <div class="stat-box-value">${stats.runsScored || 0}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Runs Allowed</div>
+                        <div class="stat-box-value">${stats.runsAllowed || 0}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Differential</div>
+                        <div class="stat-box-value" style="color: ${differential >= 0 ? 'var(--success)' : 'var(--danger)'}">${differential > 0 ? '+' : ''}${differential}</div>
+                    </div>
+                `;
+            } else if (league === 'nfl' || league === 'ncaaf') {
+                performanceStats.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-box-label">Off Yards</div>
+                        <div class="stat-box-value">${stats.offensiveYards || 0}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Def Yards</div>
+                        <div class="stat-box-value">${stats.defensiveYards || 0}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Turnover Diff</div>
+                        <div class="stat-box-value">${(stats.takeaways || 0) - (stats.turnovers || 0)}</div>
+                    </div>
+                `;
+            } else if (league === 'nba') {
+                performanceStats.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-box-label">PPG</div>
+                        <div class="stat-box-value">${stats.pointsPerGame?.toFixed(1) || '0.0'}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Opp PPG</div>
+                        <div class="stat-box-value">${stats.pointsAllowedPerGame?.toFixed(1) || '0.0'}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-label">Net Rating</div>
+                        <div class="stat-box-value" style="color: ${differential >= 0 ? 'var(--success)' : 'var(--danger)'}">${differential > 0 ? '+' : ''}${differential.toFixed(1)}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadTeamDashboard);
+    </script>
+</body>
+</html>

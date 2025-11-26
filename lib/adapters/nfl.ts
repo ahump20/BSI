@@ -65,17 +65,16 @@ function toTeamRecordViewModel(data: unknown): TeamRecordViewModel | null {
   }
 
   // Extract wins, losses, ties from stats array
-  const winsEntry = stats.find(s => s.name === 'wins');
-  const lossesEntry = stats.find(s => s.name === 'losses');
-  const tiesEntry = stats.find(s => s.name === 'ties');
-  const winPctEntry = stats.find(s => s.name === 'winPercent');
+  const winsEntry = stats.find((s) => s.name === 'wins');
+  const lossesEntry = stats.find((s) => s.name === 'losses');
+  const tiesEntry = stats.find((s) => s.name === 'ties');
+  const winPctEntry = stats.find((s) => s.name === 'winPercent');
 
   const wins = typeof winsEntry?.value === 'number' ? winsEntry.value : null;
   const losses = typeof lossesEntry?.value === 'number' ? lossesEntry.value : null;
   const ties = typeof tiesEntry?.value === 'number' ? tiesEntry.value : null;
-  const winPercentage = typeof winPctEntry?.value === 'number'
-    ? winPctEntry.value.toFixed(3)
-    : null;
+  const winPercentage =
+    typeof winPctEntry?.value === 'number' ? winPctEntry.value.toFixed(3) : null;
 
   if (wins === null && losses === null && ties === null) {
     return null;
@@ -93,23 +92,26 @@ function toTeamRecordViewModel(data: unknown): TeamRecordViewModel | null {
 
 export function toTeamCardView(data: unknown): TeamCardViewModel {
   const source = (data as { team?: unknown; analytics?: unknown }) ?? {};
-  const team = (source.team as {
-    name?: unknown;
-    displayName?: unknown;
-    abbreviation?: unknown;
-    location?: unknown;
-    record?: unknown;
-    venue?: unknown;
-    groups?: unknown;
-  }) ?? {};
+  const team =
+    (source.team as {
+      name?: unknown;
+      displayName?: unknown;
+      abbreviation?: unknown;
+      location?: unknown;
+      record?: unknown;
+      venue?: unknown;
+      groups?: unknown;
+    }) ?? {};
 
-  const venue = (team.venue as { fullName?: unknown; address?: { city?: unknown; state?: unknown } }) ?? {};
+  const venue =
+    (team.venue as { fullName?: unknown; address?: { city?: unknown; state?: unknown } }) ?? {};
   const groups = (team.groups as { parent?: { name?: unknown } }) ?? {};
-  const analytics = (source.analytics as {
-    dataSource?: unknown;
-    lastUpdated?: unknown;
-    truthLabel?: unknown;
-  }) ?? {};
+  const analytics =
+    (source.analytics as {
+      dataSource?: unknown;
+      lastUpdated?: unknown;
+      truthLabel?: unknown;
+    }) ?? {};
 
   // Extract conference and division from groups structure
   const parentName = typeof groups.parent?.name === 'string' ? groups.parent.name : '';
@@ -170,10 +172,12 @@ export function toStandingsView(data: unknown): StandingsViewModel {
 
   // Find AFC South division (Titans' division)
   const afcSouth = standings.find((division) => {
-    return typeof division.division === 'string' &&
-           division.division.toLowerCase().includes('south') &&
-           typeof division.conference === 'string' &&
-           division.conference.toLowerCase().includes('afc');
+    return (
+      typeof division.division === 'string' &&
+      division.division.toLowerCase().includes('south') &&
+      typeof division.conference === 'string' &&
+      division.conference.toLowerCase().includes('afc')
+    );
   });
 
   const rows = Array.isArray(afcSouth?.teams)
@@ -190,7 +194,11 @@ export function toStandingsView(data: unknown): StandingsViewModel {
           const ties = Number(entry.ties) || 0;
           const conferenceRank = Number(entry.conferenceRank);
 
-          if (!Number.isFinite(divisionRank) || !Number.isFinite(wins) || !Number.isFinite(losses)) {
+          if (
+            !Number.isFinite(divisionRank) ||
+            !Number.isFinite(wins) ||
+            !Number.isFinite(losses)
+          ) {
             return null;
           }
 
@@ -215,7 +223,9 @@ export function toStandingsView(data: unknown): StandingsViewModel {
     division: afcSouth?.division || 'AFC South',
     rows,
     lastUpdated: typeof standingsData?.lastUpdated === 'string' ? standingsData.lastUpdated : null,
-    dataSource: typeof standingsData?.dataSource === 'string' ? standingsData.dataSource : 'ESPN API',
-    truthLabel: typeof standingsData?.truthLabel === 'string' ? standingsData.truthLabel : 'LIVE DATA',
+    dataSource:
+      typeof standingsData?.dataSource === 'string' ? standingsData.dataSource : 'ESPN API',
+    truthLabel:
+      typeof standingsData?.truthLabel === 'string' ? standingsData.truthLabel : 'LIVE DATA',
   };
 }

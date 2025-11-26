@@ -44,7 +44,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   try {
     // Check for API key
-    const apiKey = env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
+    const apiKey =
+      env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
     if (!apiKey) {
       return new Response(
         JSON.stringify({
@@ -63,10 +64,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Parse query parameters
     const url = new URL(request.url);
-    const year = parseInt(
-      url.searchParams.get('year') || new Date().getFullYear().toString(),
-      10
-    );
+    const year = parseInt(url.searchParams.get('year') || new Date().getFullYear().toString(), 10);
     const week = url.searchParams.get('week')
       ? parseInt(url.searchParams.get('week')!, 10)
       : undefined;
@@ -79,9 +77,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const scoreboard = await adapter.fetchScoreboard(year, week, conference);
 
     // Categorize games by status
-    const liveGames = scoreboard.games.filter(g => getGameState(g) === 'live');
-    const completedGames = scoreboard.games.filter(g => g.completed);
-    const upcomingGames = scoreboard.games.filter(g => !g.completed && getGameState(g) === 'scheduled');
+    const liveGames = scoreboard.games.filter((g) => getGameState(g) === 'live');
+    const completedGames = scoreboard.games.filter((g) => g.completed);
+    const upcomingGames = scoreboard.games.filter(
+      (g) => !g.completed && getGameState(g) === 'scheduled'
+    );
 
     const response = {
       season: scoreboard.season,
@@ -91,7 +91,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       liveGames: liveGames.length,
       completedGames: completedGames.length,
       upcomingGames: upcomingGames.length,
-      games: scoreboard.games.map(game => ({
+      games: scoreboard.games.map((game) => ({
         id: game.id,
         status: getGameState(game),
         startDate: game.startDate,
@@ -117,21 +117,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         excitementIndex: game.excitementIndex,
       })),
       byStatus: {
-        live: liveGames.map(g => ({
+        live: liveGames.map((g) => ({
           id: g.id,
           homeTeam: g.homeTeam,
           homeScore: g.homePoints,
           awayTeam: g.awayTeam,
           awayScore: g.awayPoints,
         })),
-        completed: completedGames.map(g => ({
+        completed: completedGames.map((g) => ({
           id: g.id,
           homeTeam: g.homeTeam,
           homeScore: g.homePoints,
           awayTeam: g.awayTeam,
           awayScore: g.awayPoints,
         })),
-        upcoming: upcomingGames.map(g => ({
+        upcoming: upcomingGames.map((g) => ({
           id: g.id,
           homeTeam: g.homeTeam,
           awayTeam: g.awayTeam,

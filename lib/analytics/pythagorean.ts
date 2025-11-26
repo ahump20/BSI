@@ -39,10 +39,10 @@ export interface SeasonProjection {
  * Derived from empirical analysis and regression
  */
 const PYTHAGOREAN_EXPONENTS = {
-  football: 2.37,      // NFL/College Football
-  baseball: 1.83,      // MLB/College Baseball
-  basketball: 13.91,   // NBA/College Basketball
-  hockey: 2.0,         // NHL/College Hockey
+  football: 2.37, // NFL/College Football
+  baseball: 1.83, // MLB/College Baseball
+  basketball: 13.91, // NBA/College Basketball
+  hockey: 2.0, // NHL/College Hockey
 } as const;
 
 export class PythagoreanAnalyzer {
@@ -89,10 +89,7 @@ export class PythagoreanAnalyzer {
   /**
    * Project final season record
    */
-  static projectSeason(
-    currentStats: TeamStats,
-    totalGames: number
-  ): SeasonProjection {
+  static projectSeason(currentStats: TeamStats, totalGames: number): SeasonProjection {
     const analysis = this.analyze(currentStats);
     const remainingGames = totalGames - currentStats.gamesPlayed;
     const expectedWinPct = analysis.expectedWinPct;
@@ -123,14 +120,11 @@ export class PythagoreanAnalyzer {
   /**
    * Calculate strength of schedule adjustment
    */
-  static adjustForStrengthOfSchedule(
-    baseExpectedWins: number,
-    opponentAvgWinPct: number
-  ): number {
+  static adjustForStrengthOfSchedule(baseExpectedWins: number, opponentAvgWinPct: number): number {
     // Adjust based on opponent strength
     // Stronger schedule (>0.500) increases expected wins
     // Weaker schedule (<0.500) decreases expected wins
-    const adjustment = (opponentAvgWinPct - 0.500) * 2;
+    const adjustment = (opponentAvgWinPct - 0.5) * 2;
     return baseExpectedWins * (1 + adjustment);
   }
 
@@ -155,7 +149,10 @@ export class PythagoreanAnalyzer {
   /**
    * Compare two teams using Pythagorean ratings
    */
-  static compareTeams(team1: TeamStats, team2: TeamStats): {
+  static compareTeams(
+    team1: TeamStats,
+    team2: TeamStats
+  ): {
     team1WinProbability: number;
     team2WinProbability: number;
     favorite: 'team1' | 'team2' | 'tossup';
@@ -167,7 +164,8 @@ export class PythagoreanAnalyzer {
     const team2Rating = team2Analysis.expectedWinPct;
 
     // Log5 method for win probability
-    const team1WinProb = (team1Rating - team1Rating * team2Rating) /
+    const team1WinProb =
+      (team1Rating - team1Rating * team2Rating) /
       (team1Rating + team2Rating - 2 * team1Rating * team2Rating);
 
     const team1WinProbability = Math.round(team1WinProb * 1000) / 10;
@@ -195,7 +193,7 @@ export class PythagoreanAnalyzer {
     const runDiffPerGame = (runsScored - runsAllowed) / gamesPlayed;
 
     // Empirical formula: Each +1 run differential ≈ 10 points of OPS
-    const rating = 50 + (runDiffPerGame * 10);
+    const rating = 50 + runDiffPerGame * 10;
 
     return Math.max(0, Math.min(100, Math.round(rating * 10) / 10));
   }
@@ -213,7 +211,7 @@ export class PythagoreanAnalyzer {
 
     // Sport-specific scaling
     const scale = sport === 'football' ? 2 : sport === 'hockey' ? 1 : 0.5;
-    const rating = 50 + (pointDiffPerGame * scale);
+    const rating = 50 + pointDiffPerGame * scale;
 
     return Math.max(0, Math.min(100, Math.round(rating * 10) / 10));
   }
@@ -237,7 +235,10 @@ export class PythagoreanAnalyzer {
   /**
    * Generate comprehensive team rating
    */
-  static generateComprehensiveRating(stats: TeamStats, recentGames?: Array<{ won: boolean }>): {
+  static generateComprehensiveRating(
+    stats: TeamStats,
+    recentGames?: Array<{ won: boolean }>
+  ): {
     pythagoreanRating: number;
     differentialRating: number;
     momentumRating: number;
@@ -246,15 +247,25 @@ export class PythagoreanAnalyzer {
     const pythagAnalysis = this.analyze(stats);
     const pythagoreanRating = Math.round(pythagAnalysis.expectedWinPct * 100);
 
-    const differentialRating = stats.sport === 'baseball'
-      ? this.calculateRunDifferentialRating(stats.pointsFor, stats.pointsAgainst, stats.gamesPlayed)
-      : this.calculatePointDifferentialRating(stats.pointsFor, stats.pointsAgainst, stats.gamesPlayed, stats.sport);
+    const differentialRating =
+      stats.sport === 'baseball'
+        ? this.calculateRunDifferentialRating(
+            stats.pointsFor,
+            stats.pointsAgainst,
+            stats.gamesPlayed
+          )
+        : this.calculatePointDifferentialRating(
+            stats.pointsFor,
+            stats.pointsAgainst,
+            stats.gamesPlayed,
+            stats.sport
+          );
 
     const momentumRating = recentGames ? this.calculateMomentum(recentGames) : 0;
 
     // Composite: 50% Pythagorean, 30% Differential, 20% Momentum
     const compositeRating = Math.round(
-      (pythagoreanRating * 0.5 + differentialRating * 0.3 + (50 + momentumRating * 20) * 0.2)
+      pythagoreanRating * 0.5 + differentialRating * 0.3 + (50 + momentumRating * 20) * 0.2
     );
 
     return {
@@ -271,9 +282,6 @@ export function analyzePythagorean(stats: TeamStats): PythagoreanResult {
   return PythagoreanAnalyzer.analyze(stats);
 }
 
-export function projectSeasonRecord(
-  stats: TeamStats,
-  totalGames: number
-): SeasonProjection {
+export function projectSeasonRecord(stats: TeamStats, totalGames: number): SeasonProjection {
   return PythagoreanAnalyzer.projectSeason(stats, totalGames);
 }

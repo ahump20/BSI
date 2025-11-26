@@ -162,7 +162,10 @@ export interface NBAGame {
 
   teams: {
     away: {
-      team: Pick<NBATeam, 'id' | 'displayName' | 'abbreviation' | 'logos' | 'conference' | 'division'>;
+      team: Pick<
+        NBATeam,
+        'id' | 'displayName' | 'abbreviation' | 'logos' | 'conference' | 'division'
+      >;
       score: number;
       record: string;
       rank?: number;
@@ -173,7 +176,10 @@ export interface NBAGame {
       }>;
     };
     home: {
-      team: Pick<NBATeam, 'id' | 'displayName' | 'abbreviation' | 'logos' | 'conference' | 'division'>;
+      team: Pick<
+        NBATeam,
+        'id' | 'displayName' | 'abbreviation' | 'logos' | 'conference' | 'division'
+      >;
       score: number;
       record: string;
       rank?: number;
@@ -249,7 +255,8 @@ export class NBAProductionAdapter {
   private client: SportsDataClient;
   private cache: KVNamespace | null;
 
-  private static readonly ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
+  private static readonly ESPN_BASE =
+    'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
 
   private static readonly CACHE_KEYS = {
     TEAM: (teamId: string) => `nba:team:${teamId}`,
@@ -278,11 +285,7 @@ export class NBAProductionAdapter {
   // CORE FETCH UTILITIES
   // ==========================================================================
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try KV cache first
     if (this.cache) {
       try {
@@ -296,17 +299,13 @@ export class NBAProductionAdapter {
     }
 
     // Fetch from ESPN API
-    const response = await this.client.fetch<T>(url, {
-      headers: {
-        'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
-        'Accept': 'application/json',
-      },
-    });
+    const apiResponse = await this.client.fetch<T>('espn', url, {});
+    const data = apiResponse.data as T;
 
     // Store in KV cache
-    if (this.cache) {
+    if (this.cache && data) {
       try {
-        await this.cache.put(cacheKey, JSON.stringify(response), {
+        await this.cache.put(cacheKey, JSON.stringify(data), {
           expirationTtl: ttl,
         });
       } catch (error) {
@@ -314,7 +313,7 @@ export class NBAProductionAdapter {
       }
     }
 
-    return response;
+    return data;
   }
 
   // ==========================================================================
@@ -363,11 +362,9 @@ export class NBAProductionAdapter {
     const url = `${NBAProductionAdapter.ESPN_BASE}/teams?season=${year}&limit=30`;
     const cacheKey = `nba:teams:all:${year}`;
 
-    const data = await this.fetchWithCache<{ sports: Array<{ leagues: Array<{ teams: NBATeam[] }> }> }>(
-      url,
-      cacheKey,
-      NBAProductionAdapter.CACHE_TTL.TEAM
-    );
+    const data = await this.fetchWithCache<{
+      sports: Array<{ leagues: Array<{ teams: NBATeam[] }> }>;
+    }>(url, cacheKey, NBAProductionAdapter.CACHE_TTL.TEAM);
 
     const teams = data.sports?.[0]?.leagues?.[0]?.teams || [];
     return teams;
@@ -590,24 +587,25 @@ export class NBAProductionAdapter {
 
   private parseStandingsStats(stats: any[]): NBAStandings['conferences'][0]['teams'][0]['stats'] {
     return {
-      wins: stats.find(s => s.name === 'wins')?.value || 0,
-      losses: stats.find(s => s.name === 'losses')?.value || 0,
-      winPercent: stats.find(s => s.name === 'winPercent')?.value || 0,
-      conferenceWins: stats.find(s => s.name === 'conferenceWins')?.value || 0,
-      conferenceLosses: stats.find(s => s.name === 'conferenceLosses')?.value || 0,
-      divisionWins: stats.find(s => s.name === 'divisionWins')?.value || 0,
-      divisionLosses: stats.find(s => s.name === 'divisionLosses')?.value || 0,
-      homeWins: stats.find(s => s.name === 'homeWins')?.value || 0,
-      homeLosses: stats.find(s => s.name === 'homeLosses')?.value || 0,
-      roadWins: stats.find(s => s.name === 'awayWins')?.value || 0,
-      roadLosses: stats.find(s => s.name === 'awayLosses')?.value || 0,
-      last10Wins: stats.find(s => s.name === 'l10Wins')?.value || 0,
-      last10Losses: stats.find(s => s.name === 'l10Losses')?.value || 0,
-      streak: stats.find(s => s.name === 'streak')?.displayValue || '-',
-      pointsFor: stats.find(s => s.name === 'pointsFor')?.value || 0,
-      pointsAgainst: stats.find(s => s.name === 'pointsAgainst')?.value || 0,
-      pointDifferential: (stats.find(s => s.name === 'pointsFor')?.value || 0) -
-                          (stats.find(s => s.name === 'pointsAgainst')?.value || 0),
+      wins: stats.find((s) => s.name === 'wins')?.value || 0,
+      losses: stats.find((s) => s.name === 'losses')?.value || 0,
+      winPercent: stats.find((s) => s.name === 'winPercent')?.value || 0,
+      conferenceWins: stats.find((s) => s.name === 'conferenceWins')?.value || 0,
+      conferenceLosses: stats.find((s) => s.name === 'conferenceLosses')?.value || 0,
+      divisionWins: stats.find((s) => s.name === 'divisionWins')?.value || 0,
+      divisionLosses: stats.find((s) => s.name === 'divisionLosses')?.value || 0,
+      homeWins: stats.find((s) => s.name === 'homeWins')?.value || 0,
+      homeLosses: stats.find((s) => s.name === 'homeLosses')?.value || 0,
+      roadWins: stats.find((s) => s.name === 'awayWins')?.value || 0,
+      roadLosses: stats.find((s) => s.name === 'awayLosses')?.value || 0,
+      last10Wins: stats.find((s) => s.name === 'l10Wins')?.value || 0,
+      last10Losses: stats.find((s) => s.name === 'l10Losses')?.value || 0,
+      streak: stats.find((s) => s.name === 'streak')?.displayValue || '-',
+      pointsFor: stats.find((s) => s.name === 'pointsFor')?.value || 0,
+      pointsAgainst: stats.find((s) => s.name === 'pointsAgainst')?.value || 0,
+      pointDifferential:
+        (stats.find((s) => s.name === 'pointsFor')?.value || 0) -
+        (stats.find((s) => s.name === 'pointsAgainst')?.value || 0),
     };
   }
 }

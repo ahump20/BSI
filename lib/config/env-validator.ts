@@ -51,7 +51,7 @@ export function validateEnv(env?: any): { valid: boolean; errors?: string[] } {
     return { valid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map((err) => {
+      const errors = error.issues.map((err) => {
         const field = err.path.join('.');
         return `${field}: ${err.message}`;
       });
@@ -95,14 +95,7 @@ export function getEnv(env?: any): Env {
 export function checkForWeakSecrets(env?: any): string[] {
   const envSource = env || (typeof process !== 'undefined' ? process.env : {});
   const warnings: string[] = [];
-  const weakPatterns = [
-    'CHANGE_ME',
-    'password',
-    'secret',
-    'admin',
-    '123456',
-    'blaze',
-  ];
+  const weakPatterns = ['CHANGE_ME', 'password', 'secret', 'admin', '123456', 'blaze'];
 
   const secretFields = [
     'POSTGRES_PASSWORD',

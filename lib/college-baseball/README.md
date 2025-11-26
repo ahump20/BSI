@@ -18,7 +18,7 @@ Mobile-first platform for NCAA Division I baseball coverage with live scoring, a
 ### Data Flow
 
 ```
-Data Sources (D1Baseball, NCAA) 
+Data Sources (D1Baseball, NCAA)
   → Cloudflare Edge Workers
   → KV Cache (15-30s TTL for live)
   → API Response
@@ -28,13 +28,13 @@ Data Sources (D1Baseball, NCAA)
 
 ### Caching Strategy
 
-| Data Type | Live TTL | Final TTL | Rationale |
-|-----------|----------|-----------|-----------|
-| Game List | 30s | 5m | Real-time score updates |
-| Box Scores | 15s | 1h | Detailed stats refresh |
-| Standings | 5m | 5m | Infrequent changes |
-| Team Pages | 1h | 1h | Static content |
-| Player Pages | 1h | 1h | Static content |
+| Data Type    | Live TTL | Final TTL | Rationale               |
+| ------------ | -------- | --------- | ----------------------- |
+| Game List    | 30s      | 5m        | Real-time score updates |
+| Box Scores   | 15s      | 1h        | Detailed stats refresh  |
+| Standings    | 5m       | 5m        | Infrequent changes      |
+| Team Pages   | 1h       | 1h        | Static content          |
+| Player Pages | 1h       | 1h        | Static content          |
 
 ## API Endpoints
 
@@ -45,12 +45,14 @@ GET /api/college-baseball/games
 ```
 
 Query parameters:
+
 - `date` - YYYY-MM-DD format (default: today)
 - `conference` - Filter by conference (e.g., "SEC")
 - `status` - Filter by status: live, scheduled, final
 - `team` - Filter by team ID
 
 Response:
+
 ```json
 {
   "success": true,
@@ -68,7 +70,9 @@ Response:
         "score": 4,
         "record": { "wins": 15, "losses": 3 }
       },
-      "awayTeam": { /* ... */ },
+      "awayTeam": {
+        /* ... */
+      },
       "venue": "Alex Box Stadium",
       "tv": "SEC Network"
     }
@@ -85,6 +89,7 @@ GET /api/college-baseball/boxscore?gameId={id}
 ```
 
 Response includes:
+
 - Game status and inning
 - Line scores (runs per inning)
 - Batting statistics (all players)
@@ -98,6 +103,7 @@ GET /api/college-baseball/standings?conference={conf}
 ```
 
 Response includes:
+
 - Team rankings
 - Overall and conference records
 - RPI and strength of schedule
@@ -112,13 +118,11 @@ Mobile-first React component for displaying live games.
 ```tsx
 import GameCenter from '@/components/college-baseball/GameCenter';
 
-<GameCenter 
-  autoRefresh={true}
-  refreshInterval={30000}
-/>
+<GameCenter autoRefresh={true} refreshInterval={30000} />;
 ```
 
 Features:
+
 - Pull-to-refresh
 - Filter by status
 - Auto-refresh for live games
@@ -130,10 +134,10 @@ Features:
 Automated content generation for previews and recaps.
 
 ```typescript
-import { 
-  generateGamePreview, 
+import {
+  generateGamePreview,
   generateGameRecap,
-  generateInningUpdate 
+  generateInningUpdate,
 } from '@/lib/college-baseball/nlg-templates';
 
 // Generate preview
@@ -155,7 +159,7 @@ import {
   requestNotificationPermission,
   subscribeToPushNotifications,
   saveNotificationPreferences,
-  createGameStartNotification
+  createGameStartNotification,
 } from '@/lib/college-baseball/push-notifications';
 
 // Request permission
@@ -171,7 +175,7 @@ saveNotificationPreferences({
   inningUpdates: false,
   finalScore: true,
   favoriteTeams: ['lsu', 'tennessee'],
-  quietHours: { start: '22:00', end: '08:00' }
+  quietHours: { start: '22:00', end: '08:00' },
 });
 
 // Create notification payload
@@ -183,6 +187,7 @@ const notification = createGameStartNotification(game);
 All configuration is in `/lib/college-baseball/config.ts`.
 
 Key settings:
+
 - **Divisions**: D1, D2, D3, JUCO
 - **Conferences**: SEC, ACC, Big 12, Pac-12, Big Ten
 - **Data Sources**: D1Baseball (priority 1), NCAA Stats (priority 2)
@@ -190,10 +195,10 @@ Key settings:
 - **Feature Flags**: Enable/disable MVP features
 
 ```typescript
-import { 
+import {
   COLLEGE_BASEBALL_CONFIG,
   getCacheTTL,
-  isFeatureEnabled 
+  isFeatureEnabled,
 } from '@/lib/college-baseball/config';
 
 // Get cache TTL
@@ -210,6 +215,7 @@ if (isFeatureEnabled('pushNotifications')) {
 All types are in `/lib/college-baseball/types.ts`.
 
 Key types:
+
 - `Game` - Complete game information
 - `BoxScore` - Full box score data
 - `Team` - Team metadata and record
@@ -222,6 +228,7 @@ Key types:
 View the working demo at `/college-baseball-demo.html`.
 
 Features demonstrated:
+
 - Live game updates
 - Filter tabs (all, live, scheduled, final)
 - Auto-refresh every 30 seconds
@@ -265,6 +272,7 @@ curl "http://localhost:8788/api/college-baseball/standings?conference=SEC"
 ## Roadmap
 
 ### Phase 1: MVP (Complete)
+
 - ✅ API endpoints for games, box scores, standings
 - ✅ Mobile-first Game Center component
 - ✅ Caching strategy with Cloudflare KV
@@ -272,6 +280,7 @@ curl "http://localhost:8788/api/college-baseball/standings?conference=SEC"
 - ✅ Push notification infrastructure
 
 ### Phase 2: Data Integration (Next)
+
 - [ ] D1Baseball scraper implementation
 - [ ] NCAA Stats scraper implementation
 - [ ] Data reconciliation layer
@@ -279,6 +288,7 @@ curl "http://localhost:8788/api/college-baseball/standings?conference=SEC"
 - [ ] Monitoring and alerting
 
 ### Phase 3: Enhanced Features (Post-MVP)
+
 - [ ] Team pages with roster and schedule
 - [ ] Player pages with career stats
 - [ ] Advanced metrics (xBA, wOBA, FIP)
@@ -287,6 +297,7 @@ curl "http://localhost:8788/api/college-baseball/standings?conference=SEC"
 - [ ] Native iOS app with Swift
 
 ### Phase 4: Monetization
+
 - [ ] Diamond Pro subscription ($4.99/month)
 - [ ] Payment processing integration
 - [ ] Ad integration for free tier
@@ -295,17 +306,18 @@ curl "http://localhost:8788/api/college-baseball/standings?conference=SEC"
 
 ## Performance Targets
 
-| Metric | Target | Current |
-|--------|--------|---------|
-| API Response (p95) | <200ms | TBD |
-| Cache Hit Ratio | >80% | TBD |
-| Data Staleness | <1%/week | TBD |
-| DAU (launch) | 20k-75k | TBD |
-| Conversion to Paid | 2-8% | TBD |
+| Metric             | Target   | Current |
+| ------------------ | -------- | ------- |
+| API Response (p95) | <200ms   | TBD     |
+| Cache Hit Ratio    | >80%     | TBD     |
+| Data Staleness     | <1%/week | TBD     |
+| DAU (launch)       | 20k-75k  | TBD     |
+| Conversion to Paid | 2-8%     | TBD     |
 
 ## Support
 
 For questions or issues:
+
 - See full integration guide: `/docs/COLLEGE-BASEBALL-INTEGRATION.md`
 - GitHub Issues: https://github.com/ahump20/BSI/issues
 - Email: support@blazesportsintel.com

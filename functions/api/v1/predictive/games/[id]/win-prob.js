@@ -71,10 +71,13 @@ export async function onRequest(context) {
     // Validate sport
     const validSports = ['college-baseball', 'college-football', 'mlb', 'nfl'];
     if (!validSports.includes(sport)) {
-      return jsonResponse({
-        error: 'Invalid sport parameter',
-        valid_sports: validSports
-      }, 400);
+      return jsonResponse(
+        {
+          error: 'Invalid sport parameter',
+          valid_sports: validSports,
+        },
+        400
+      );
     }
 
     // Check cache - very short TTL for live games (30 seconds)
@@ -84,18 +87,21 @@ export async function onRequest(context) {
       return jsonResponse({
         ...cached,
         cached: true,
-        cache_age_seconds: Math.floor((Date.now() - cached.generated_at) / 1000)
+        cache_age_seconds: Math.floor((Date.now() - cached.generated_at) / 1000),
       });
     }
 
     // Get game data
     const game = await getGameData(env.DB, gameId, sport);
     if (!game) {
-      return jsonResponse({
-        error: 'Game not found',
-        game_id: gameId,
-        sport
-      }, 404);
+      return jsonResponse(
+        {
+          error: 'Game not found',
+          game_id: gameId,
+          sport,
+        },
+        404
+      );
     }
 
     // Get active win probability model
@@ -132,37 +138,41 @@ export async function onRequest(context) {
         home_team: {
           id: game.home_team_id,
           name: game.home_team_name,
-          score: game.home_score
+          score: game.home_score,
         },
         away_team: {
           id: game.away_team_id,
           name: game.away_team_name,
-          score: game.away_score
+          score: game.away_score,
         },
         status: game.status,
         is_final: game.status === 'final',
-        game_date: new Date(game.game_date * 1000).toISOString()
+        game_date: new Date(game.game_date * 1000).toISOString(),
       },
-      current_probability: winProb ? {
-        home_win_pct: winProb.home_win_prob,
-        away_win_pct: 1 - winProb.home_win_prob,
-        tie_pct: winProb.tie_prob || 0,
-        confidence_interval: {
-          lower: winProb.lower_ci,
-          upper: winProb.upper_ci
-        }
-      } : null,
+      current_probability: winProb
+        ? {
+            home_win_pct: winProb.home_win_prob,
+            away_win_pct: 1 - winProb.home_win_prob,
+            tie_pct: winProb.tie_prob || 0,
+            confidence_interval: {
+              lower: winProb.lower_ci,
+              upper: winProb.upper_ci,
+            },
+          }
+        : null,
       situation: winProb ? JSON.parse(winProb.game_situation) : null,
       probability_change: probabilityChange,
       key_moments: keyMoments,
       probability_timeline: includeHistory ? timeline : null,
-      model: model ? {
-        id: model.model_id,
-        name: model.model_name,
-        version: model.version,
-        sport: model.sport,
-        trained_at: new Date(model.trained_at * 1000).toISOString()
-      } : null,
+      model: model
+        ? {
+            id: model.model_id,
+            name: model.model_name,
+            version: model.version,
+            sport: model.sport,
+            trained_at: new Date(model.trained_at * 1000).toISOString(),
+          }
+        : null,
       meta: {
         data_source: 'Blaze Predictive Intelligence Engine',
         sport,
@@ -170,8 +180,11 @@ export async function onRequest(context) {
         last_updated: winProb ? new Date(winProb.updated_at * 1000).toISOString() : null,
         timezone: 'America/Chicago',
         generated_at: Date.now(),
-        industry_first: sport === 'college-baseball' ? 'First pitch-by-pitch win probability for college baseball' : null
-      }
+        industry_first:
+          sport === 'college-baseball'
+            ? 'First pitch-by-pitch win probability for college baseball'
+            : null,
+      },
     };
 
     // Cache for 30 seconds if live, 5 minutes if final
@@ -179,13 +192,15 @@ export async function onRequest(context) {
     await env.CACHE?.put(cacheKey, JSON.stringify(response), { expirationTtl: cacheTTL });
 
     return jsonResponse(response);
-
   } catch (error) {
-    return jsonResponse({
-      error: 'Internal server error',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    }, 500);
+    return jsonResponse(
+      {
+        error: 'Internal server error',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+      },
+      500
+    );
   }
 }
 
@@ -193,7 +208,9 @@ export async function onRequest(context) {
  * Get game data from database
  */
 async function getGameData(db, gameId, sport) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT
       game_id,
       sport,
@@ -215,7 +232,10 @@ async function getGameData(db, gameId, sport) {
     FROM games
     WHERE game_id = ? AND sport = ?
     LIMIT 1
-  `).bind(gameId, sport).first();
+  `
+    )
+    .bind(gameId, sport)
+    .first();
 
   return result;
 }
@@ -224,7 +244,9 @@ async function getGameData(db, gameId, sport) {
  * Get active model
  */
 async function getActiveModel(db, sport, modelType) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT *
     FROM predictive_models
     WHERE sport = ?
@@ -232,7 +254,10 @@ async function getActiveModel(db, sport, modelType) {
       AND status = 'active'
     ORDER BY trained_at DESC
     LIMIT 1
-  `).bind(sport, modelType).first();
+  `
+    )
+    .bind(sport, modelType)
+    .first();
 
   return result;
 }
@@ -241,13 +266,18 @@ async function getActiveModel(db, sport, modelType) {
  * Get current win probability
  */
 async function getCurrentWinProbability(db, gameId) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT *
     FROM win_probability
     WHERE game_id = ?
     ORDER BY sequence DESC
     LIMIT 1
-  `).bind(gameId).first();
+  `
+    )
+    .bind(gameId)
+    .first();
 
   return result;
 }
@@ -257,7 +287,7 @@ async function getCurrentWinProbability(db, gameId) {
  */
 function isStale(updatedAt, thresholdSeconds) {
   const now = Math.floor(Date.now() / 1000);
-  return (now - updatedAt) > thresholdSeconds;
+  return now - updatedAt > thresholdSeconds;
 }
 
 /**
@@ -300,7 +330,7 @@ async function calculateWinProbability(env, game, sport, model) {
     leverage_index: parseFloat(leverageIndex.toFixed(2)),
     change_from_prev: parseFloat(change.toFixed(3)),
     model_id: model?.model_id || null,
-    updated_at: Math.floor(Date.now() / 1000)
+    updated_at: Math.floor(Date.now() / 1000),
   };
 }
 
@@ -318,7 +348,7 @@ function extractGameSituation(game, sport) {
       base_state: game.base_state || '___', // "_1_" means runner on second
       score_differential: scoreDiff,
       home_score: game.home_score,
-      away_score: game.away_score
+      away_score: game.away_score,
     };
   } else if (sport === 'college-football' || sport === 'nfl') {
     return {
@@ -329,7 +359,7 @@ function extractGameSituation(game, sport) {
       score_differential: scoreDiff,
       home_score: game.home_score,
       away_score: game.away_score,
-      time_remaining: game.time_remaining || '15:00'
+      time_remaining: game.time_remaining || '15:00',
     };
   }
 
@@ -351,7 +381,7 @@ function calculateBaseballWinProbability(game, situation) {
 
   // Inning adjustment
   const inningFactor = inning / 9; // Later innings have more certainty
-  const certaintyMultiplier = 0.5 + (inningFactor * 0.5);
+  const certaintyMultiplier = 0.5 + inningFactor * 0.5;
 
   // Outs adjustment
   const outsFactor = outs * 0.02; // Each out slightly favors defense
@@ -363,7 +393,8 @@ function calculateBaseballWinProbability(game, situation) {
 
   // Extreme inning adjustment
   if (inning >= 9) {
-    if (score_differential > 3) prob = 0.95; // Almost certain
+    if (score_differential > 3)
+      prob = 0.95; // Almost certain
     else if (score_differential < -3) prob = 0.05;
   }
 
@@ -385,7 +416,7 @@ function calculateFootballWinProbability(game, situation) {
 
   // Quarter/time adjustment
   const quarterFactor = quarter / 4;
-  const certaintyMultiplier = 0.4 + (quarterFactor * 0.6);
+  const certaintyMultiplier = 0.4 + quarterFactor * 0.6;
 
   // Field position adjustment (home team has ball if score_differential >= 0)
   if (field_position) {
@@ -432,7 +463,7 @@ function calculateLeverageIndex(situation, sport) {
     const scoreLeverage = Math.abs(score_differential) <= 2 ? 1.5 : 0.8;
     const outsLeverage = outs === 2 ? 1.3 : 1.0;
     const runnersOn = (base_state?.match(/[123]/g) || []).length;
-    const runnerLeverage = 1 + (runnersOn * 0.2);
+    const runnerLeverage = 1 + runnersOn * 0.2;
 
     return inningLeverage * scoreLeverage * outsLeverage * runnerLeverage;
   } else {
@@ -441,7 +472,7 @@ function calculateLeverageIndex(situation, sport) {
     // Late quarter + close game + key down = high leverage
     const quarterLeverage = quarter >= 3 ? 1.5 : 1.0;
     const scoreLeverage = Math.abs(score_differential) <= 7 ? 1.5 : 0.8;
-    const downLeverage = (down === 3 || down === 4) ? 1.4 : 1.0;
+    const downLeverage = down === 3 || down === 4 ? 1.4 : 1.0;
 
     return quarterLeverage * scoreLeverage * downLeverage;
   }
@@ -451,35 +482,42 @@ function calculateLeverageIndex(situation, sport) {
  * Store win probability in database
  */
 async function storeWinProbability(db, winProb) {
-  await db.prepare(`
+  await db
+    .prepare(
+      `
     INSERT INTO win_probability (
       prob_id, game_id, sport, sequence,
       home_win_prob, tie_prob, lower_ci, upper_ci,
       game_situation, leverage_index, change_from_prev,
       model_id, updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).bind(
-    winProb.prob_id,
-    winProb.game_id,
-    winProb.sport,
-    winProb.sequence,
-    winProb.home_win_prob,
-    winProb.tie_prob,
-    winProb.lower_ci,
-    winProb.upper_ci,
-    winProb.game_situation,
-    winProb.leverage_index,
-    winProb.change_from_prev,
-    winProb.model_id,
-    winProb.updated_at
-  ).run();
+  `
+    )
+    .bind(
+      winProb.prob_id,
+      winProb.game_id,
+      winProb.sport,
+      winProb.sequence,
+      winProb.home_win_prob,
+      winProb.tie_prob,
+      winProb.lower_ci,
+      winProb.upper_ci,
+      winProb.game_situation,
+      winProb.leverage_index,
+      winProb.change_from_prev,
+      winProb.model_id,
+      winProb.updated_at
+    )
+    .run();
 }
 
 /**
  * Get probability timeline
  */
 async function getProbabilityTimeline(db, gameId) {
-  const results = await db.prepare(`
+  const results = await db
+    .prepare(
+      `
     SELECT
       sequence,
       home_win_prob,
@@ -490,16 +528,19 @@ async function getProbabilityTimeline(db, gameId) {
     FROM win_probability
     WHERE game_id = ?
     ORDER BY sequence ASC
-  `).bind(gameId).all();
+  `
+    )
+    .bind(gameId)
+    .all();
 
-  return (results.results || []).map(row => ({
+  return (results.results || []).map((row) => ({
     sequence: row.sequence,
     timestamp: new Date(row.updated_at * 1000).toISOString(),
     home_win_pct: row.home_win_prob,
     away_win_pct: 1 - row.home_win_prob,
     situation: JSON.parse(row.game_situation),
     leverage_index: row.leverage_index,
-    change: row.change_from_prev
+    change: row.change_from_prev,
   }));
 }
 
@@ -513,7 +554,7 @@ function identifyKeyMoments(timeline) {
     const change = Math.abs(timeline[i].change);
 
     // Consider it a key moment if probability changed by more than 10%
-    if (change >= 0.10) {
+    if (change >= 0.1) {
       keyMoments.push({
         sequence: timeline[i].sequence,
         situation: timeline[i].situation,
@@ -521,7 +562,7 @@ function identifyKeyMoments(timeline) {
         probability_after: timeline[i].home_win_pct,
         change_pct: timeline[i].change,
         leverage_index: timeline[i].leverage_index,
-        timestamp: timeline[i].timestamp
+        timestamp: timeline[i].timestamp,
       });
     }
   }
@@ -536,7 +577,9 @@ function identifyKeyMoments(timeline) {
  * Get last probability change (for UI display)
  */
 async function getLastProbabilityChange(db, gameId) {
-  const results = await db.prepare(`
+  const results = await db
+    .prepare(
+      `
     SELECT
       home_win_prob,
       change_from_prev,
@@ -546,7 +589,10 @@ async function getLastProbabilityChange(db, gameId) {
     WHERE game_id = ?
     ORDER BY sequence DESC
     LIMIT 2
-  `).bind(gameId).all();
+  `
+    )
+    .bind(gameId)
+    .all();
 
   if (!results.results || results.results.length < 2) return null;
 
@@ -556,7 +602,7 @@ async function getLastProbabilityChange(db, gameId) {
   return {
     last_event: describeLastEvent(situation),
     change_pct: current.change_from_prev,
-    leverage_index: current.leverage_index
+    leverage_index: current.leverage_index,
   };
 }
 
@@ -590,7 +636,7 @@ function jsonResponse(data, status = 200) {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': status === 200 ? 'public, max-age=30' : 'no-cache'
-    }
+      'Cache-Control': status === 200 ? 'public, max-age=30' : 'no-cache',
+    },
   });
 }

@@ -11,7 +11,11 @@
  *   - includeSplits: boolean (default: true)
  */
 
-import { MlbAdapter, calculateAdvancedBattingStats, calculateAdvancedPitchingStats } from '../../../../lib/adapters/mlb-adapter';
+import {
+  MlbAdapter,
+  calculateAdvancedBattingStats,
+  calculateAdvancedPitchingStats,
+} from '../../../../lib/adapters/mlb-adapter';
 
 interface Env {
   CACHE: KVNamespace;
@@ -76,7 +80,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Parse query parameters
     const url = new URL(request.url);
-    const season = parseInt(url.searchParams.get('season') || new Date().getFullYear().toString(), 10);
+    const season = parseInt(
+      url.searchParams.get('season') || new Date().getFullYear().toString(),
+      10
+    );
     const includeGameLog = url.searchParams.get('includeGameLog') === 'true';
     const includeSplits = url.searchParams.get('includeSplits') !== 'false'; // Default true
 
@@ -87,8 +94,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const playerInfo = await adapter.fetchPlayerInfo(playerIdNum);
 
     // Determine if player is batter or pitcher
-    const isPitcher = playerInfo.primaryPosition.code === '1' ||
-                     playerInfo.primaryPosition.type === 'Pitcher';
+    const isPitcher =
+      playerInfo.primaryPosition.code === '1' || playerInfo.primaryPosition.type === 'Pitcher';
     const statGroup = isPitcher ? 'pitching' : 'hitting';
 
     // Fetch season stats

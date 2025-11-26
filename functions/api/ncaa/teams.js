@@ -1,4 +1,12 @@
-import { cache, createTimeoutSignal, err, ok, preflight, rateLimit, rateLimitError } from '../_utils.js';
+import {
+  cache,
+  createTimeoutSignal,
+  err,
+  ok,
+  preflight,
+  rateLimit,
+  rateLimitError,
+} from '../_utils.js';
 
 const DEFAULT_TEAM_ID = '251';
 const DEFAULT_SEASON = new Date().getUTCFullYear().toString();
@@ -50,7 +58,7 @@ export async function onRequest(context) {
       env,
       `ncaa:team:${sport}:${teamId}:${season}`,
       async () => fetchTeamData(baseUrl, teamId, season, sport),
-      ttl,
+      ttl
     );
 
     return ok(data, {
@@ -76,12 +84,10 @@ async function fetchTeamData(baseUrl, teamId, season, sport) {
   const stats = Array.isArray(team?.team?.statistics)
     ? team.team.statistics
     : Array.isArray(team?.team?.stats)
-    ? team.team.stats
-    : [];
+      ? team.team.stats
+      : [];
 
-  const recordItem = Array.isArray(team?.team?.record?.items)
-    ? team.team.record.items[0]
-    : null;
+  const recordItem = Array.isArray(team?.team?.record?.items) ? team.team.record.items[0] : null;
 
   const conference = Array.isArray(team?.team?.groups)
     ? sanitizeConference(team.team.groups[0])
@@ -114,10 +120,7 @@ async function fetchTeamData(baseUrl, teamId, season, sport) {
     },
     meta: {
       sport,
-      dataSource:
-        sport === 'baseball'
-          ? 'ESPN College Baseball API'
-          : 'ESPN College Football API',
+      dataSource: sport === 'baseball' ? 'ESPN College Baseball API' : 'ESPN College Football API',
       lastUpdated: new Date().toISOString(),
       season: schedule?.season?.year?.toString() || season,
     },
@@ -220,7 +223,10 @@ function buildRecord(record, sport) {
 
   return {
     overall: record.summary ?? '0-0',
-    conference: getDisplayValue(stats, sport === 'baseball' ? ['vsConf', 'vs. Conf.'] : ['vsConf', 'vs. Conf.']),
+    conference: getDisplayValue(
+      stats,
+      sport === 'baseball' ? ['vsConf', 'vs. Conf.'] : ['vsConf', 'vs. Conf.']
+    ),
     home: getDisplayValue(stats, ['home']),
     away: getDisplayValue(stats, ['away', 'road']),
     neutral: getDisplayValue(stats, ['neutral', 'vsNeutral']),
@@ -337,7 +343,7 @@ function calculatePythagorean(stats, sport) {
 
 function calculateSOS(scheduleEvents, teamId) {
   const completedGames = scheduleEvents.filter((game) =>
-    Boolean(game?.competitions?.[0]?.status?.type?.completed),
+    Boolean(game?.competitions?.[0]?.status?.type?.completed)
   );
 
   if (completedGames.length === 0) {

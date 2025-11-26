@@ -198,24 +198,28 @@ async function logPrediction(
 ) {
   try {
     // Log to D1 for audit trail
-    await env.DB.prepare(`
+    await env.DB.prepare(
+      `
       INSERT INTO prediction_log (
         prediction_id, model_id, entity_type, entity_id,
         features_json, prediction_value, prediction_proba,
         top_contributors_json, timestamp
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      `pred_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      modelId,
-      'play',
-      entityId || 'unknown',
-      JSON.stringify(features),
-      prediction,
-      probability || null,
-      JSON.stringify(topContributors),
-      new Date().toISOString()
-    ).run();
+    `
+    )
+      .bind(
+        `pred_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        modelId,
+        'play',
+        entityId || 'unknown',
+        JSON.stringify(features),
+        prediction,
+        probability || null,
+        JSON.stringify(topContributors),
+        new Date().toISOString()
+      )
+      .run();
 
     // Log to Analytics Engine
     env.ANALYTICS.writeDataPoint({
@@ -236,10 +240,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ params, env }) => {
   const modelKey = (params.model as string[])?.[0];
 
   if (!modelKey) {
-    return new Response(
-      JSON.stringify({ error: 'Model key required' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: 'Model key required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -254,7 +258,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ params, env }) => {
         league: artifact.league,
         algo: artifact.algo,
         performance: artifact.performance,
-        features: artifact.features.map(f => ({
+        features: artifact.features.map((f) => ({
           name: f.name,
           unit: f.unit,
         })),
@@ -267,10 +271,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ params, env }) => {
       }
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: (error as Error).message }),
-      { status: 404, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
 
@@ -278,10 +282,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, params, env }
   const modelKey = (params.model as string[])?.[0];
 
   if (!modelKey) {
-    return new Response(
-      JSON.stringify({ error: 'Model key required' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: 'Model key required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -289,10 +293,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, params, env }
     const body = await request.json<PredictionRequest>();
 
     if (!body.features || typeof body.features !== 'object') {
-      return new Response(
-        JSON.stringify({ error: 'Invalid request: features object required' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'Invalid request: features object required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     // 2. Load model
@@ -331,17 +335,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, params, env }
     );
 
     // 6. Return response
-    return new Response(
-      JSON.stringify(response),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-store',  // Predictions should not be cached
-          'X-Model-ID': artifact.model_id,
-          'X-Model-Performance': `AUC=${artifact.performance.auc_roc.toFixed(3)}`,
-        },
-      }
-    );
+    return new Response(JSON.stringify(response), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store', // Predictions should not be cached
+        'X-Model-ID': artifact.model_id,
+        'X-Model-Performance': `AUC=${artifact.performance.auc_roc.toFixed(3)}`,
+      },
+    });
   } catch (error) {
     return new Response(
       JSON.stringify({

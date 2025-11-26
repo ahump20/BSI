@@ -15,7 +15,7 @@ import type {
   GamesQueryParams,
   TeamStatsQueryParams,
   ProviderGame,
-  ProviderTeamStats
+  ProviderTeamStats,
 } from '../../workers/ingest/types';
 
 export class SportsDataIOAdapter {
@@ -41,15 +41,15 @@ export class SportsDataIOAdapter {
     const response = await fetch(url, {
       headers: {
         'Ocp-Apim-Subscription-Key': this.apiKey,
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     });
 
     if (!response.ok) {
       throw new Error(`SportsDataIO API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     // Transform to standard format
     return data.map((game: any) => this.transformGame(game));
@@ -66,15 +66,15 @@ export class SportsDataIOAdapter {
     const response = await fetch(url, {
       headers: {
         'Ocp-Apim-Subscription-Key': this.apiKey,
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     });
 
     if (!response.ok) {
       throw new Error(`SportsDataIO API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     // Find team by ID
     const teamData = data.find((team: any) => team.TeamID.toString() === teamId);
@@ -117,12 +117,13 @@ export class SportsDataIOAdapter {
       awayScore: game.AwayTeamScore ?? null,
       venueId: game.StadiumID?.toString(),
       currentInning: game.Inning ?? undefined,
-      currentInningHalf: game.InningHalf === 'T' ? 'TOP' : game.InningHalf === 'B' ? 'BOTTOM' : undefined,
+      currentInningHalf:
+        game.InningHalf === 'T' ? 'TOP' : game.InningHalf === 'B' ? 'BOTTOM' : undefined,
       balls: game.Balls ?? undefined,
       strikes: game.Strikes ?? undefined,
       outs: game.Outs ?? undefined,
       providerName: 'SportsDataIO',
-      feedPrecision: 'EVENT' // SportsDataIO provides event-level data
+      feedPrecision: 'EVENT', // SportsDataIO provides event-level data
     };
   }
 
@@ -146,7 +147,7 @@ export class SportsDataIOAdapter {
       fieldingPct: teamData.FieldingPercentage ?? 0,
       rpi: undefined, // SportsDataIO doesn't provide RPI directly
       strengthOfSched: undefined, // SportsDataIO doesn't provide SOS directly
-      pythagWins: undefined // Will be calculated separately
+      pythagWins: undefined, // Will be calculated separately
     };
   }
 }

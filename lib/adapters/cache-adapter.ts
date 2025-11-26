@@ -69,11 +69,7 @@ export class CacheAdapter {
   /**
    * Set data in cache with TTL
    */
-  async set<T>(
-    key: string,
-    value: T,
-    options: CacheOptions = {}
-  ): Promise<void> {
+  async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
     if (!this.kv) {
       return;
     }
@@ -151,7 +147,9 @@ export class CacheAdapter {
   /**
    * Warm cache with predefined data
    */
-  async warm(keys: Array<{ key: string; fetcher: () => Promise<any>; ttl?: number }>): Promise<void> {
+  async warm(
+    keys: Array<{ key: string; fetcher: () => Promise<any>; ttl?: number }>
+  ): Promise<void> {
     const promises = keys.map(async ({ key, fetcher, ttl }) => {
       try {
         const data = await fetcher();
@@ -199,7 +197,10 @@ export class CacheAdapter {
       const list = await this.kv.list({ prefix: prefix || this.namespace });
       return {
         keys: list.keys.length,
-        estimatedSize: list.keys.reduce((sum, key) => sum + (key.metadata?.size || 0), 0),
+        estimatedSize: list.keys.reduce(
+          (sum, key) => sum + ((key.metadata as { size?: number } | undefined)?.size || 0),
+          0
+        ),
       };
     } catch (error) {
       console.error('Cache stats error:', error);

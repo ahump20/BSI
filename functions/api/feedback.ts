@@ -164,7 +164,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Store in D1 Database (permanent storage)
     try {
       // Create feedback table if it doesn't exist
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         CREATE TABLE IF NOT EXISTS feedback (
           id TEXT PRIMARY KEY,
           rating INTEGER NOT NULL,
@@ -176,13 +177,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           timestamp TEXT NOT NULL,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
-      `).run();
+      `
+      ).run();
 
       // Insert feedback
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         INSERT INTO feedback (id, rating, category, comment, page, user_agent, screen_size, timestamp)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `)
+      `
+      )
         .bind(
           feedbackData.id,
           feedbackData.rating,
@@ -201,13 +205,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Store in KV (recent feedback cache - 7 days retention)
     try {
-      await env.CACHE?.put(
-        `feedback:${feedbackId}`,
-        JSON.stringify(feedbackData),
-        {
-          expirationTtl: 60 * 60 * 24 * 7, // 7 days
-        }
-      );
+      await env.CACHE?.put(`feedback:${feedbackId}`, JSON.stringify(feedbackData), {
+        expirationTtl: 60 * 60 * 24 * 7, // 7 days
+      });
 
       // Update recent feedback list
       const recentKey = 'feedback:recent';

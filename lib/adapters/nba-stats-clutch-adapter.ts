@@ -163,7 +163,8 @@ export class NBAStatsClutchAdapter {
 
     // NBA Stats API requires specific headers to avoid 403 errors
     this.headers = {
-      'User-Agent': config.userAgent || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'User-Agent':
+        config.userAgent || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       Referer: config.referer || 'https://stats.nba.com/',
       Origin: 'https://stats.nba.com',
       Accept: 'application/json, text/plain, */*',
@@ -204,7 +205,11 @@ export class NBAStatsClutchAdapter {
   async getClutchPlayerStats(
     season: string = '2024-25',
     seasonType: 'Regular Season' | 'Playoffs' = 'Regular Season',
-    clutchTime: 'Last 5 Minutes' | 'Last 3 Minutes' | 'Last 1 Minute' | 'Last 30 Seconds' = 'Last 5 Minutes',
+    clutchTime:
+      | 'Last 5 Minutes'
+      | 'Last 3 Minutes'
+      | 'Last 1 Minute'
+      | 'Last 30 Seconds' = 'Last 5 Minutes',
     pointDiff: number = 5
   ): Promise<any[]> {
     const params = new URLSearchParams({
@@ -367,7 +372,7 @@ export class NBAStatsClutchAdapter {
     const actions: ClutchPlayerAction[] = [];
 
     for (const situation of clutchSituations) {
-      const eventsInWindow = playByPlayData.filter(event => {
+      const eventsInWindow = playByPlayData.filter((event) => {
         const eventTime = this.parseEventTimestamp(event);
         return eventTime >= situation.start_timestamp && eventTime <= situation.end_timestamp;
       });
@@ -397,7 +402,7 @@ export class NBAStatsClutchAdapter {
 
     // NBA standard: Last 5:00 of 4th quarter or OT, margin ≤5
     const isLateGame = period >= criteria.minPeriod;
-    const isLastMinutes = gameClock <= (criteria.lastMinutes * 60);
+    const isLastMinutes = gameClock <= criteria.lastMinutes * 60;
     const isCloseGame = scoreMargin <= criteria.maxMargin;
 
     return isLateGame && isLastMinutes && isCloseGame;
@@ -424,7 +429,7 @@ export class NBAStatsClutchAdapter {
   private parseScore(scoreString: string | null): { homeScore: number; awayScore: number } {
     if (!scoreString) return { homeScore: 0, awayScore: 0 };
 
-    const parts = scoreString.split('-').map(s => parseInt(s.trim(), 10));
+    const parts = scoreString.split('-').map((s) => parseInt(s.trim(), 10));
     return {
       homeScore: parts[0] || 0,
       awayScore: parts[1] || 0,
@@ -498,15 +503,17 @@ export class NBAStatsClutchAdapter {
       case EVENT_MSG_TYPES.FIELD_GOAL_MISSED:
         actionType = 'field_goal_missed';
         isSuccessful = false;
-        actionSubtype = event.HOMEDESCRIPTION?.includes('3PT') || event.VISITORDESCRIPTION?.includes('3PT')
-          ? 'three_pointer'
-          : 'two_pointer';
+        actionSubtype =
+          event.HOMEDESCRIPTION?.includes('3PT') || event.VISITORDESCRIPTION?.includes('3PT')
+            ? 'three_pointer'
+            : 'two_pointer';
         break;
 
       case EVENT_MSG_TYPES.FREE_THROW:
         actionType = 'free_throw';
-        isSuccessful = event.HOMEDESCRIPTION?.includes('MISS') === false &&
-                       event.VISITORDESCRIPTION?.includes('MISS') === false;
+        isSuccessful =
+          event.HOMEDESCRIPTION?.includes('MISS') === false &&
+          event.VISITORDESCRIPTION?.includes('MISS') === false;
         pointsScored = isSuccessful ? 1 : 0;
         break;
 
@@ -613,7 +620,7 @@ export class NBAStatsClutchAdapter {
    * Sleep utility
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

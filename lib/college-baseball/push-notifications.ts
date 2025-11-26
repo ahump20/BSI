@@ -1,7 +1,7 @@
 /**
  * Push Notification System for College Baseball
  * Granular controls for game alerts without spam
- * 
+ *
  * Features:
  * - Game start notifications
  * - Live inning updates
@@ -74,7 +74,7 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
     // Subscribe to push notifications
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(getVapidPublicKey()) as BufferSource
+      applicationServerKey: urlBase64ToUint8Array(getVapidPublicKey()) as BufferSource,
     });
 
     // Send subscription to server
@@ -120,7 +120,7 @@ export function saveNotificationPreferences(preferences: NotificationPreferences
  */
 export function loadNotificationPreferences(): NotificationPreferences {
   const stored = localStorage.getItem('college-baseball:notification-prefs');
-  
+
   if (stored) {
     return JSON.parse(stored);
   }
@@ -133,7 +133,7 @@ export function loadNotificationPreferences(): NotificationPreferences {
     finalScore: true,
     importantPlays: false,
     favoriteTeams: [],
-    favoritePlayers: []
+    favoritePlayers: [],
   };
 }
 
@@ -167,10 +167,10 @@ export function shouldSendNotification(
 
   // Check if notification is for a favorite team
   if (preferences.favoriteTeams.length > 0) {
-    const isFavoriteTeam = 
+    const isFavoriteTeam =
       preferences.favoriteTeams.includes(payload.data.homeTeam) ||
       preferences.favoriteTeams.includes(payload.data.awayTeam);
-    
+
     if (!isFavoriteTeam) {
       return false;
     }
@@ -191,20 +191,20 @@ export function shouldSendNotification(
  */
 export async function showLocalNotification(payload: NotificationPayload): Promise<void> {
   const permission = await requestNotificationPermission();
-  
+
   if (permission !== 'granted') {
     console.warn('Notification permission not granted');
     return;
   }
 
   const registration = await navigator.serviceWorker.ready;
-  
+
   await registration.showNotification(payload.title, {
     body: payload.body,
     icon: '/assets/icon-192.png',
     badge: '/assets/badge-72.png',
     tag: `game-${payload.gameId}`,
-    data: payload.data
+    data: payload.data,
   });
 }
 
@@ -219,10 +219,8 @@ function getVapidPublicKey(): string {
 }
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
 
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
@@ -238,9 +236,9 @@ async function saveSubscriptionToServer(subscription: PushSubscription): Promise
     await fetch('/api/college-baseball/notifications/subscribe', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(subscription)
+      body: JSON.stringify(subscription),
     });
   } catch (error) {
     console.error('Failed to save subscription to server:', error);
@@ -252,9 +250,9 @@ async function removeSubscriptionFromServer(subscription: PushSubscription): Pro
     await fetch('/api/college-baseball/notifications/unsubscribe', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(subscription)
+      body: JSON.stringify(subscription),
     });
   } catch (error) {
     console.error('Failed to remove subscription from server:', error);
@@ -264,7 +262,7 @@ async function removeSubscriptionFromServer(subscription: PushSubscription): Pro
 function isInQuietHours(quietHours: { start: string; end: string }): boolean {
   const now = new Date();
   const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-  
+
   // Simple time comparison (assumes same day)
   return currentTime >= quietHours.start && currentTime <= quietHours.end;
 }
@@ -281,8 +279,8 @@ export function createGameStartNotification(game: any): NotificationPayload {
     data: {
       homeTeam: game.homeTeam.id,
       awayTeam: game.awayTeam.id,
-      url: `/games/${game.id}`
-    }
+      url: `/games/${game.id}`,
+    },
   };
 }
 
@@ -290,9 +288,11 @@ export function createGameStartNotification(game: any): NotificationPayload {
  * Create notification payload for final score
  */
 export function createFinalScoreNotification(game: any, boxScore: any): NotificationPayload {
-  const winner = boxScore.homeTeam.score > boxScore.awayTeam.score ? boxScore.homeTeam : boxScore.awayTeam;
-  const loser = boxScore.homeTeam.score > boxScore.awayTeam.score ? boxScore.awayTeam : boxScore.homeTeam;
-  
+  const winner =
+    boxScore.homeTeam.score > boxScore.awayTeam.score ? boxScore.homeTeam : boxScore.awayTeam;
+  const loser =
+    boxScore.homeTeam.score > boxScore.awayTeam.score ? boxScore.awayTeam : boxScore.homeTeam;
+
   return {
     type: 'final-score',
     gameId: game.id,
@@ -303,7 +303,7 @@ export function createFinalScoreNotification(game: any, boxScore: any): Notifica
       awayTeam: boxScore.awayTeam.team.id,
       homeScore: boxScore.homeTeam.score,
       awayScore: boxScore.awayTeam.score,
-      url: `/games/${game.id}`
-    }
+      url: `/games/${game.id}`,
+    },
   };
 }

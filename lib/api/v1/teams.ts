@@ -110,12 +110,7 @@ export interface TeamDetailResponse extends Team {
  * List teams with filters
  */
 export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse> {
-  const {
-    conference,
-    division,
-    limit = 50,
-    offset = 0,
-  } = params;
+  const { conference, division, limit = 50, offset = 0 } = params;
 
   // Validate and clamp limit
   const safeLimit = Math.min(Math.max(limit, 1), 100);
@@ -147,9 +142,7 @@ export async function getTeams(params: TeamsQueryParams): Promise<TeamsResponse>
           },
         },
       },
-      orderBy: [
-        { school: 'asc' },
-      ],
+      orderBy: [{ school: 'asc' }],
       take: safeLimit,
       skip: offset,
     }),
@@ -185,10 +178,7 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
         },
       },
       players: {
-        orderBy: [
-          { position: 'asc' },
-          { lastName: 'asc' },
-        ],
+        orderBy: [{ position: 'asc' }, { lastName: 'asc' }],
         select: {
           id: true,
           firstName: true,
@@ -298,7 +288,9 @@ export async function getTeamBySlug(slug: string): Promise<TeamDetailResponse | 
     opponentScore: game.opponentScore ?? undefined,
     result:
       game.status === 'FINAL' && game.teamScore !== null && game.opponentScore !== null
-        ? (game.teamScore > game.opponentScore ? 'W' : 'L')
+        ? game.teamScore > game.opponentScore
+          ? 'W'
+          : 'L'
         : null,
   }));
 

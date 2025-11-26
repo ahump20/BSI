@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse all 299 Division I baseball programs, FCS football teams, and more—the teams ESPN ignores.">
+  <title>Teams | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-success: #22C55E;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: color 0.15s ease;
+    }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: color 0.15s ease;
+      position: relative;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+    
+    .hero {
+      padding: calc(80px + 4rem) 1.5rem 3rem;
+      background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+      text-align: center;
+    }
+    .hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle {
+      font-size: 1.0625rem;
+      color: rgba(250, 250, 250, 0.8);
+    }
+    
+    .search-section {
+      padding: 2rem 1.5rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      color: var(--bsi-warm-white);
+      background: rgba(13, 13, 13, 0.5);
+      border: 1px solid rgba(191, 87, 0, 0.3);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .search-input::placeholder { color: rgba(250, 250, 250, 0.4); }
+    .search-input:focus { border-color: var(--bsi-burnt-orange); }
+    
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.7);
+      background: transparent;
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.1);
+    }
+    
+    .teams-section {
+      padding: 4rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .teams-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .conference-group {
+      margin-bottom: 3rem;
+    }
+    .conference-title {
+      font-family: var(--font-ui);
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .team-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.1);
+      border-radius: 8px;
+      padding: 1.25rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+    .team-card:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-2px);
+    }
+    .team-name {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .team-location {
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.6);
+    }
+    
+    .stats-bar {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-charcoal);
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .stats-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    }
+    .stat-item .stat-number {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--bsi-burnt-orange);
+    }
+    .stat-item .stat-label {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-top: 0.25rem;
+    }
+    
+    .tools-nav {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .tools-nav-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .tools-nav-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 250, 0.5);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .tools-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .tools-nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: all 0.2s ease;
+    }
+    .tools-nav-link:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-burnt-orange);
+    }
+    .tools-nav-link.current {
+      border-color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.1);
+      color: var(--bsi-burnt-orange);
+    }
+    
+    .footer {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      text-align: center;
+    }
+    .footer-tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 0.75rem;
+    }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/bsi-logo.png" alt="Blaze Sports Intel">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/teams" class="nav-link active">Teams</a>
+        <a href="/analytics" class="nav-link">Analytics</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Team Directory</p>
+      <h1 class="hero-title">Every Team. <span class="accent">Not Just the Top 25.</span></h1>
+      <p class="hero-subtitle">
+        Browse all 299 Division I baseball programs, 130+ FBS football teams, and the FCS programs 
+        that ESPN pretends don't exist.
+      </p>
+    </div>
+  </section>
+
+  <section class="search-section">
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="Search teams by name, conference, or location...">
+      <div class="filters">
+        <button class="filter-btn active">All Sports</button>
+        <button class="filter-btn">Baseball</button>
+        <button class="filter-btn">Football</button>
+        <button class="filter-btn">FCS</button>
+        <button class="filter-btn">Group of Five</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <p class="stat-number">299</p>
+        <p class="stat-label">D1 Baseball Programs</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-number">133</p>
+        <p class="stat-label">FBS Football Teams</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-number">130</p>
+        <p class="stat-label">FCS Football Teams</p>
+      </div>
+      <div class="stat-item">
+        <p class="stat-number">32</p>
+        <p class="stat-label">Conferences Tracked</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="teams-section">
+    <div class="teams-container">
+      <div class="conference-group">
+        <h2 class="conference-title">SEC Baseball</h2>
+        <div class="teams-grid">
+          <a href="/teams/texas" class="team-card"><p class="team-name">Texas Longhorns</p><p class="team-location">Austin, TX</p></a>
+          <a href="/teams/lsu" class="team-card"><p class="team-name">LSU Tigers</p><p class="team-location">Baton Rouge, LA</p></a>
+          <a href="/teams/vanderbilt" class="team-card"><p class="team-name">Vanderbilt Commodores</p><p class="team-location">Nashville, TN</p></a>
+          <a href="/teams/florida" class="team-card"><p class="team-name">Florida Gators</p><p class="team-location">Gainesville, FL</p></a>
+          <a href="/teams/arkansas" class="team-card"><p class="team-name">Arkansas Razorbacks</p><p class="team-location">Fayetteville, AR</p></a>
+          <a href="/teams/tennessee" class="team-card"><p class="team-name">Tennessee Volunteers</p><p class="team-location">Knoxville, TN</p></a>
+          <a href="/teams/ole-miss" class="team-card"><p class="team-name">Ole Miss Rebels</p><p class="team-location">Oxford, MS</p></a>
+          <a href="/teams/mississippi-state" class="team-card"><p class="team-name">Mississippi State</p><p class="team-location">Starkville, MS</p></a>
+        </div>
+      </div>
+      
+      <div class="conference-group">
+        <h2 class="conference-title">Big 12 Baseball</h2>
+        <div class="teams-grid">
+          <a href="/teams/tcu" class="team-card"><p class="team-name">TCU Horned Frogs</p><p class="team-location">Fort Worth, TX</p></a>
+          <a href="/teams/oklahoma-state" class="team-card"><p class="team-name">Oklahoma State</p><p class="team-location">Stillwater, OK</p></a>
+          <a href="/teams/west-virginia" class="team-card"><p class="team-name">West Virginia</p><p class="team-location">Morgantown, WV</p></a>
+          <a href="/teams/kansas-state" class="team-card"><p class="team-name">Kansas State</p><p class="team-location">Manhattan, KS</p></a>
+          <a href="/teams/baylor" class="team-card"><p class="team-name">Baylor Bears</p><p class="team-location">Waco, TX</p></a>
+          <a href="/teams/texas-tech" class="team-card"><p class="team-name">Texas Tech</p><p class="team-location">Lubbock, TX</p></a>
+        </div>
+      </div>
+      
+      <div class="conference-group">
+        <h2 class="conference-title">ACC Baseball</h2>
+        <div class="teams-grid">
+          <a href="/teams/wake-forest" class="team-card"><p class="team-name">Wake Forest</p><p class="team-location">Winston-Salem, NC</p></a>
+          <a href="/teams/virginia" class="team-card"><p class="team-name">Virginia Cavaliers</p><p class="team-location">Charlottesville, VA</p></a>
+          <a href="/teams/nc-state" class="team-card"><p class="team-name">NC State Wolfpack</p><p class="team-location">Raleigh, NC</p></a>
+          <a href="/teams/clemson" class="team-card"><p class="team-name">Clemson Tigers</p><p class="team-location">Clemson, SC</p></a>
+          <a href="/teams/miami" class="team-card"><p class="team-name">Miami Hurricanes</p><p class="team-location">Coral Gables, FL</p></a>
+          <a href="/teams/florida-state" class="team-card"><p class="team-name">Florida State</p><p class="team-location">Tallahassee, FL</p></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools-nav">
+    <div class="tools-nav-inner">
+      <p class="tools-nav-title">Analytics Tools</p>
+      <div class="tools-nav-grid">
+        <a href="/teams" class="tools-nav-link current">Teams</a>
+        <a href="/live-scoreboards" class="tools-nav-link">Live Scoreboards</a>
+        <a href="/predictive-models" class="tools-nav-link">Predictive Models</a>
+        <a href="/historical-research" class="tools-nav-link">Historical Research</a>
+        <a href="/recruiting-intel" class="tools-nav-link">Recruiting Intel</a>
+        <a href="/push-alerts" class="tools-nav-link">Push Alerts</a>
+        <a href="/3d-visualizations" class="tools-nav-link">3D Visualizations</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+</body>
+</html>

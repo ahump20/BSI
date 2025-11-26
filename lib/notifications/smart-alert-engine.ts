@@ -16,7 +16,11 @@
  * Timezone: America/Chicago
  */
 
-import { GameState, WinProbability, LiveWinProbabilityEngine } from '../analytics/baseball/win-probability-engine';
+import {
+  GameState,
+  WinProbability,
+  LiveWinProbabilityEngine,
+} from '../analytics/baseball/win-probability-engine';
 
 export interface AlertPreferences {
   userId: string;
@@ -108,10 +112,7 @@ export class SmartAlertEngine {
    * @param userPreferences User alert preferences
    * @returns Array of generated alerts
    */
-  processGameUpdate(
-    gameState: GameState,
-    userPreferences: AlertPreferences
-  ): Alert[] {
+  processGameUpdate(gameState: GameState, userPreferences: AlertPreferences): Alert[] {
     const alerts: Alert[] = [];
 
     // Check if user is watching this game
@@ -143,52 +144,27 @@ export class SmartAlertEngine {
     }
 
     if (userPreferences.alertTypes.leadChange) {
-      const leadChangeAlert = this.checkLeadChange(
-        gameState,
-        winProb,
-        userPreferences,
-        history
-      );
+      const leadChangeAlert = this.checkLeadChange(gameState, winProb, userPreferences, history);
       if (leadChangeAlert) alerts.push(leadChangeAlert);
     }
 
     if (userPreferences.alertTypes.closeGame) {
-      const closeGameAlert = this.checkCloseGame(
-        gameState,
-        winProb,
-        userPreferences,
-        history
-      );
+      const closeGameAlert = this.checkCloseGame(gameState, winProb, userPreferences, history);
       if (closeGameAlert) alerts.push(closeGameAlert);
     }
 
     if (userPreferences.alertTypes.upsetAlert) {
-      const upsetAlert = this.checkUpsetAlert(
-        gameState,
-        winProb,
-        userPreferences,
-        history
-      );
+      const upsetAlert = this.checkUpsetAlert(gameState, winProb, userPreferences, history);
       if (upsetAlert) alerts.push(upsetAlert);
     }
 
     if (userPreferences.alertTypes.walkOff) {
-      const walkOffAlert = this.checkWalkOffScenario(
-        gameState,
-        winProb,
-        userPreferences,
-        history
-      );
+      const walkOffAlert = this.checkWalkOffScenario(gameState, winProb, userPreferences, history);
       if (walkOffAlert) alerts.push(walkOffAlert);
     }
 
     if (userPreferences.alertTypes.momentumShift) {
-      const momentumAlert = this.checkMomentumShift(
-        gameState,
-        winProb,
-        userPreferences,
-        history
-      );
+      const momentumAlert = this.checkMomentumShift(gameState, winProb, userPreferences, history);
       if (momentumAlert) alerts.push(momentumAlert);
     }
 
@@ -196,7 +172,7 @@ export class SmartAlertEngine {
     this.updateGameHistory(gameState, winProb, history);
 
     // Queue alerts for delivery
-    alerts.forEach(alert => this.queueAlert(alert, userPreferences));
+    alerts.forEach((alert) => this.queueAlert(alert, userPreferences));
 
     return alerts;
   }
@@ -220,7 +196,8 @@ export class SmartAlertEngine {
     }
 
     const title = `🔥 High Leverage: ${gameState.homeTeam} vs ${gameState.awayTeam}`;
-    const message = `Leverage Index: ${winProb.leverageIndex.toFixed(2)} | ` +
+    const message =
+      `Leverage Index: ${winProb.leverageIndex.toFixed(2)} | ` +
       `${gameState.half === 'top' ? '▲' : '▼'} ${gameState.inning}th, ${gameState.outs} out | ` +
       `${gameState.homeTeam} ${winProb.homeWinProbability.toFixed(1)}% win prob`;
 
@@ -244,8 +221,8 @@ export class SmartAlertEngine {
     prefs: AlertPreferences,
     history: GameHistory
   ): Alert | null {
-    const currentLead = gameState.scoreDiff > 0 ? 'home' :
-                       gameState.scoreDiff < 0 ? 'away' : 'tied';
+    const currentLead =
+      gameState.scoreDiff > 0 ? 'home' : gameState.scoreDiff < 0 ? 'away' : 'tied';
 
     if (currentLead === history.lastLead) {
       return null;
@@ -272,7 +249,8 @@ export class SmartAlertEngine {
       priority = 'critical';
     }
 
-    const message = `${gameState.half === 'top' ? '▲' : '▼'} ${gameState.inning}th inning | ` +
+    const message =
+      `${gameState.half === 'top' ? '▲' : '▼'} ${gameState.inning}th inning | ` +
       `${gameState.homeTeam} win prob: ${(winProb.homeWinProbability * 100).toFixed(1)}%`;
 
     return this.createAlert(
@@ -308,7 +286,8 @@ export class SmartAlertEngine {
     }
 
     const title = `⚖️ Tight Game: ${gameState.homeTeam} vs ${gameState.awayTeam}`;
-    const message = `${gameState.inning >= 9 ? 'Late innings' : `${gameState.inning}th inning`} | ` +
+    const message =
+      `${gameState.inning >= 9 ? 'Late innings' : `${gameState.inning}th inning`} | ` +
       `${gameState.homeTeam} ${(winProb.homeWinProbability * 100).toFixed(1)}% win prob | ` +
       `Score: ${gameState.homeTeam} ${Math.max(0, gameState.scoreDiff)}-` +
       `${Math.max(0, -gameState.scoreDiff)} ${gameState.awayTeam}`;
@@ -338,17 +317,16 @@ export class SmartAlertEngine {
       return null;
     }
 
-    const wasUnderdog = history.pregameHomeProb < (1 - prefs.upsetThreshold);
+    const wasUnderdog = history.pregameHomeProb < 1 - prefs.upsetThreshold;
     if (!wasUnderdog) {
       return null;
     }
 
     // Check if underdog is now winning with > 70% probability
-    const underdogWinProb = history.pregameUnderdog === 'home'
-      ? winProb.homeWinProbability
-      : winProb.awayWinProbability;
+    const underdogWinProb =
+      history.pregameUnderdog === 'home' ? winProb.homeWinProbability : winProb.awayWinProbability;
 
-    if (underdogWinProb < 0.70) {
+    if (underdogWinProb < 0.7) {
       return null;
     }
 
@@ -357,12 +335,12 @@ export class SmartAlertEngine {
       return null;
     }
 
-    const underdogTeam = history.pregameUnderdog === 'home'
-      ? gameState.homeTeam
-      : gameState.awayTeam;
+    const underdogTeam =
+      history.pregameUnderdog === 'home' ? gameState.homeTeam : gameState.awayTeam;
 
     const title = `🎯 Upset Alert: ${underdogTeam} Leading!`;
-    const message = `Pregame underdog now at ${(underdogWinProb * 100).toFixed(1)}% win probability | ` +
+    const message =
+      `Pregame underdog now at ${(underdogWinProb * 100).toFixed(1)}% win probability | ` +
       `${gameState.inning >= 9 ? 'Late innings' : `${gameState.inning}th inning`}`;
 
     return this.createAlert(
@@ -407,7 +385,8 @@ export class SmartAlertEngine {
     }
 
     const title = `💥 Walk-Off Opportunity: ${gameState.homeTeam}`;
-    const message = `Bottom ${gameState.inning}th, ${gameState.outs} out | ` +
+    const message =
+      `Bottom ${gameState.inning}th, ${gameState.outs} out | ` +
       `${gameState.homeTeam} has ${(winProb.homeWinProbability * 100).toFixed(1)}% win probability`;
 
     return this.createAlert(
@@ -441,12 +420,12 @@ export class SmartAlertEngine {
       return null;
     }
 
-    const swingDirection = winProb.homeWinProbability > history.lastWinProb
-      ? gameState.homeTeam
-      : gameState.awayTeam;
+    const swingDirection =
+      winProb.homeWinProbability > history.lastWinProb ? gameState.homeTeam : gameState.awayTeam;
 
     const title = `🌊 Momentum Shift: ${swingDirection}`;
-    const message = `${(wpa * 100).toFixed(1)}% win probability swing | ` +
+    const message =
+      `${(wpa * 100).toFixed(1)}% win probability swing | ` +
       `${gameState.half === 'top' ? '▲' : '▼'} ${gameState.inning}th inning`;
 
     return this.createAlert(
@@ -490,10 +469,10 @@ export class SmartAlertEngine {
         half: gameState.half,
         score: `${gameState.homeTeam} ${Math.max(0, gameState.scoreDiff)}-${Math.max(0, -gameState.scoreDiff)} ${gameState.awayTeam}`,
         leverageIndex: winProb.leverageIndex,
-        wpa: winProb.winProbabilityAdded
+        wpa: winProb.winProbabilityAdded,
       },
       deliveryStatus: {},
-      delivered: false
+      delivered: false,
     };
   }
 
@@ -504,7 +483,7 @@ export class SmartAlertEngine {
     this.alertQueue.push(alert);
 
     // Attempt immediate delivery
-    this.deliverAlert(alert, prefs).catch(error => {
+    this.deliverAlert(alert, prefs).catch((error) => {
       console.error('Alert delivery failed:', error);
       alert.delivered = false;
     });
@@ -579,8 +558,7 @@ export class SmartAlertEngine {
    * Helper methods
    */
   private isWatchingGame(gameState: GameState, prefs: AlertPreferences): boolean {
-    return prefs.teams.includes(gameState.homeTeam) ||
-           prefs.teams.includes(gameState.awayTeam);
+    return prefs.teams.includes(gameState.homeTeam) || prefs.teams.includes(gameState.awayTeam);
   }
 
   private isQuietHours(prefs: AlertPreferences): boolean {
@@ -588,12 +566,14 @@ export class SmartAlertEngine {
       return false;
     }
 
-    const now = new Date().toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit'
-    }).split(', ')[1];
+    const now = new Date()
+      .toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+      .split(', ')[1];
 
     const { start, end } = prefs.quietHours;
 
@@ -611,7 +591,7 @@ export class SmartAlertEngine {
         gameId: gameState.gameId,
         lastWinProb: 0.5,
         lastLead: 'tied',
-        alertsSent: new Set()
+        alertsSent: new Set(),
       });
     }
     return this.gameHistories.get(gameState.gameId)!;
@@ -623,8 +603,7 @@ export class SmartAlertEngine {
     history: GameHistory
   ): void {
     history.lastWinProb = winProb.homeWinProbability;
-    history.lastLead = gameState.scoreDiff > 0 ? 'home' :
-                      gameState.scoreDiff < 0 ? 'away' : 'tied';
+    history.lastLead = gameState.scoreDiff > 0 ? 'home' : gameState.scoreDiff < 0 ? 'away' : 'tied';
   }
 
   /**
@@ -638,7 +617,7 @@ export class SmartAlertEngine {
    * Clear delivered alerts
    */
   clearDeliveredAlerts(): void {
-    this.alertQueue = this.alertQueue.filter(alert => !alert.delivered);
+    this.alertQueue = this.alertQueue.filter((alert) => !alert.delivered);
   }
 
   /**

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Complete | Blaze Sports Intel</title>
+    <meta name="description" content="Thank you for subscribing to Blaze Sports Intel.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blaze: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                            950: '#431407',
+                        },
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        terminal: {
+                            bg: '#050505',
+                            panel: '#0a0a0a',
+                            border: '#1f1f1f',
+                            text: '#a1a1aa',
+                            accent: '#f97316',
+                            success: '#10b981',
+                            danger: '#ef4444',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        header: ['Oswald', 'sans-serif'],
+                    },
+                }
+            }
+        };
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .success-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pop 0.5s ease-out;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(249, 115, 22, 0.2);
+            border-top: 3px solid #f97316;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-item {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideIn 0.4s ease-out forwards;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.2s; }
+        .feature-item:nth-child(2) { animation-delay: 0.3s; }
+        .feature-item:nth-child(3) { animation-delay: 0.4s; }
+        .feature-item:nth-child(4) { animation-delay: 0.5s; }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-200 font-sans antialiased">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blaze-500 to-blaze-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-fire text-white text-lg"></i>
+                </div>
+                <span class="font-header text-xl tracking-wide text-white">BLAZE SPORTS INTEL</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-xl">
+            <!-- Loading State -->
+            <div id="loading-state" class="glass-card rounded-2xl p-12">
+                <div class="flex flex-col items-center justify-center">
+                    <div class="loading-spinner mb-4"></div>
+                    <p class="text-slate-400">Confirming your payment...</p>
+                </div>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-state" class="hidden">
+                <div class="glass-card rounded-2xl p-8 text-center">
+                    <div class="flex justify-center mb-6">
+                        <div class="success-icon">
+                            <i class="fas fa-check text-white text-3xl"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="text-3xl font-bold text-white mb-3">Welcome to Blaze Sports Intel!</h1>
+                    <p class="text-slate-400 mb-6">
+                        Your subscription is now active. A confirmation email has been sent to
+                        <span id="customer-email" class="text-blaze-500 font-medium"></span>
+                    </p>
+
+                    <div class="bg-slate-800/50 rounded-xl p-6 mb-8">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center justify-center gap-2">
+                            <i class="fas fa-unlock-alt text-blaze-500"></i>
+                            You now have access to:
+                        </h3>
+                        <ul class="space-y-3 text-left">
+                            <li class="feature-item flex items-center gap-3 text-slate-300">
+                                <i class="fas fa-check-circle text-terminal-success"></i>
+                                Real-time sports analytics and live data
+                            </li>
+                            <li class="feature-item flex items-center gap-3 text-slate-300">
+                                <i class="fas fa-check-circle text-terminal-success"></i>
+                                Advanced prediction models and AI insights
+                            </li>
+                            <li class="feature-item flex items-center gap-3 text-slate-300">
+                                <i class="fas fa-check-circle text-terminal-success"></i>
+                                Historical data and trend analysis
+                            </li>
+                            <li class="feature-item flex items-center gap-3 text-slate-300">
+                                <i class="fas fa-check-circle text-terminal-success"></i>
+                                Priority support and exclusive features
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/dashboard" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blaze-500 hover:bg-blaze-600 text-white font-semibold rounded-xl transition-all transform hover:scale-105">
+                            <i class="fas fa-rocket"></i>
+                            Go to Dashboard
+                        </a>
+                        <a href="/" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-xl transition-colors">
+                            <i class="fas fa-home"></i>
+                            Return Home
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Tips -->
+                <div class="mt-8 glass-card rounded-xl p-6">
+                    <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Quick Start Tips</h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Check out the MLB dashboard for live Cardinals updates</p>
+                        <p><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Set up your favorite teams in your profile settings</p>
+                        <p><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Explore the AI prediction models for upcoming games</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden">
+                <div class="glass-card rounded-2xl p-8 text-center">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-3xl"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="text-2xl font-bold text-white mb-3">Payment Processing</h1>
+                    <p id="error-message" class="text-slate-400 mb-6">
+                        Your payment is being processed. This may take a moment.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/pricing" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blaze-500 hover:bg-blaze-600 text-white font-semibold rounded-lg transition-colors">
+                            <i class="fas fa-redo"></i>
+                            Try Again
+                        </a>
+                        <a href="mailto:support@blazesportsintel.com" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors">
+                            <i class="fas fa-envelope"></i>
+                            Contact Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Open State - Payment still in progress -->
+            <div id="open-state" class="hidden">
+                <div class="glass-card rounded-2xl p-8 text-center">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-clock text-blue-500 text-3xl"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="text-2xl font-bold text-white mb-3">Complete Your Payment</h1>
+                    <p class="text-slate-400 mb-6">
+                        Your checkout session is still open. Please complete your payment to continue.
+                    </p>
+
+                    <a href="/checkout" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blaze-500 hover:bg-blaze-600 text-white font-semibold rounded-xl transition-colors">
+                        <i class="fas fa-credit-card"></i>
+                        Return to Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Return Page Script -->
+    <script>
+        const loadingState = document.getElementById('loading-state');
+        const successState = document.getElementById('success-state');
+        const errorState = document.getElementById('error-state');
+        const openState = document.getElementById('open-state');
+        const customerEmail = document.getElementById('customer-email');
+        const errorMessage = document.getElementById('error-message');
+
+        async function checkSessionStatus() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const sessionId = urlParams.get('session_id');
+
+                if (!sessionId) {
+                    showError('No session ID provided. Please try the checkout process again.');
+                    return;
+                }
+
+                const response = await fetch(`/api/stripe/session-status?session_id=${sessionId}`);
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    showError(error.error || 'Unable to verify payment status.');
+                    return;
+                }
+
+                const session = await response.json();
+
+                switch (session.status) {
+                    case 'complete':
+                        showSuccess(session.customer_email);
+                        break;
+                    case 'open':
+                        showOpen();
+                        break;
+                    default:
+                        showError('Your payment session has expired. Please try again.');
+                }
+
+            } catch (error) {
+                console.error('Session status check error:', error);
+                showError('Unable to verify payment status. Please contact support if you were charged.');
+            }
+        }
+
+        function showSuccess(email) {
+            loadingState.classList.add('hidden');
+            successState.classList.remove('hidden');
+
+            if (email) {
+                customerEmail.textContent = email;
+            } else {
+                customerEmail.parentElement.classList.add('hidden');
+            }
+
+            // Trigger confetti
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#f97316', '#ea580c', '#10b981', '#fff7ed']
+                });
+            }, 300);
+        }
+
+        function showOpen() {
+            loadingState.classList.add('hidden');
+            openState.classList.remove('hidden');
+        }
+
+        function showError(message) {
+            loadingState.classList.add('hidden');
+            errorMessage.textContent = message;
+            errorState.classList.remove('hidden');
+        }
+
+        // Initialize
+        checkSessionStatus();
+    </script>
+    <!-- Cookie Consent Banner (GDPR/CCPA Compliance) -->
+    <script src="/components/cookie-banner.js"></script>
+</body>
+</html>

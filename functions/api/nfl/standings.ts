@@ -22,13 +22,15 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   }
 
   try {
     const url = new URL(request.url);
-    const season = url.searchParams.get('season') ? parseInt(url.searchParams.get('season')!) : undefined;
+    const season = url.searchParams.get('season')
+      ? parseInt(url.searchParams.get('season')!)
+      : undefined;
 
     // Create adapter with env API key
     const adapter = createSportsDataIOAdapter(env.SPORTSDATAIO_API_KEY);
@@ -41,11 +43,11 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
         JSON.stringify({
           error: 'Failed to fetch NFL standings',
           details: response.error,
-          source: response.source
+          source: response.source,
         }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
     }
@@ -54,25 +56,33 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     const standings = response.data;
     const organized = {
       afc: {
-        east: standings.filter(t => t.Conference === 'AFC' && t.Division === 'East')
+        east: standings
+          .filter((t) => t.Conference === 'AFC' && t.Division === 'East')
           .sort((a, b) => b.Wins - a.Wins),
-        north: standings.filter(t => t.Conference === 'AFC' && t.Division === 'North')
+        north: standings
+          .filter((t) => t.Conference === 'AFC' && t.Division === 'North')
           .sort((a, b) => b.Wins - a.Wins),
-        south: standings.filter(t => t.Conference === 'AFC' && t.Division === 'South')
+        south: standings
+          .filter((t) => t.Conference === 'AFC' && t.Division === 'South')
           .sort((a, b) => b.Wins - a.Wins),
-        west: standings.filter(t => t.Conference === 'AFC' && t.Division === 'West')
-          .sort((a, b) => b.Wins - a.Wins)
+        west: standings
+          .filter((t) => t.Conference === 'AFC' && t.Division === 'West')
+          .sort((a, b) => b.Wins - a.Wins),
       },
       nfc: {
-        east: standings.filter(t => t.Conference === 'NFC' && t.Division === 'East')
+        east: standings
+          .filter((t) => t.Conference === 'NFC' && t.Division === 'East')
           .sort((a, b) => b.Wins - a.Wins),
-        north: standings.filter(t => t.Conference === 'NFC' && t.Division === 'North')
+        north: standings
+          .filter((t) => t.Conference === 'NFC' && t.Division === 'North')
           .sort((a, b) => b.Wins - a.Wins),
-        south: standings.filter(t => t.Conference === 'NFC' && t.Division === 'South')
+        south: standings
+          .filter((t) => t.Conference === 'NFC' && t.Division === 'South')
           .sort((a, b) => b.Wins - a.Wins),
-        west: standings.filter(t => t.Conference === 'NFC' && t.Division === 'West')
-          .sort((a, b) => b.Wins - a.Wins)
-      }
+        west: standings
+          .filter((t) => t.Conference === 'NFC' && t.Division === 'West')
+          .sort((a, b) => b.Wins - a.Wins),
+      },
     };
 
     return new Response(
@@ -86,16 +96,16 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
           totalTeams: standings.length,
           dataProvider: 'SportsDataIO',
           timezone: 'America/Chicago',
-          cached: response.source.cacheHit
-        }
+          cached: response.source.cacheHit,
+        },
       }),
       {
         status: 200,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300' // 5 minutes
-        }
+          'Cache-Control': 'public, max-age=300', // 5 minutes
+        },
       }
     );
   } catch (error) {
@@ -104,11 +114,11 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       JSON.stringify({
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }

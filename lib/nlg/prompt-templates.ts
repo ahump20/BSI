@@ -147,20 +147,24 @@ Generate a data-driven game preview following the analysis guidelines above.`,
 };
 
 export function fillRecapTemplate(context: GameContext): string {
-  const { game, homeTeam, awayTeam, boxScore, topPerformers, keyMoments, historicalMatchup } = context;
+  const { game, homeTeam, awayTeam, boxScore, topPerformers, keyMoments, historicalMatchup } =
+    context;
 
   let userPrompt = RECAP_TEMPLATE.user
     .replace('{homeTeam.name}', homeTeam.name)
     .replace('{awayTeam.name}', awayTeam.name)
     .replace('{homeScore}', String(game.homeScore ?? 0))
     .replace('{awayScore}', String(game.awayScore ?? 0))
-    .replace('{game.scheduledAt}', new Date(game.scheduledAt).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: 'America/Chicago'
-    }))
+    .replace(
+      '{game.scheduledAt}',
+      new Date(game.scheduledAt).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'America/Chicago',
+      })
+    )
     .replace('{game.venueName}', game.venueName || 'Unknown Venue')
     .replace('{homeTeam.record}', homeTeam.record)
     .replace('{awayTeam.record}', awayTeam.record)
@@ -185,18 +189,21 @@ export function fillRecapTemplate(context: GameContext): string {
   if (topPerformers) {
     if (topPerformers.hitting && topPerformers.hitting.length > 0) {
       performersText += '### Hitting\n';
-      topPerformers.hitting.forEach(p => {
+      topPerformers.hitting.forEach((p) => {
         performersText += `- ${p.playerName} (${p.position}): ${p.stats}\n`;
       });
     }
     if (topPerformers.pitching && topPerformers.pitching.length > 0) {
       performersText += '\n### Pitching\n';
-      topPerformers.pitching.forEach(p => {
+      topPerformers.pitching.forEach((p) => {
         performersText += `- ${p.playerName}: ${p.stats}\n`;
       });
     }
   }
-  userPrompt = userPrompt.replace('{topPerformers}', performersText || 'No standout performances logged.');
+  userPrompt = userPrompt.replace(
+    '{topPerformers}',
+    performersText || 'No standout performances logged.'
+  );
 
   // Format key moments
   let momentsText = '';
@@ -218,31 +225,40 @@ export function fillRecapTemplate(context: GameContext): string {
       }
     }
   }
-  userPrompt = userPrompt.replace('{historicalMatchup}', historyText || 'First meeting this season.');
+  userPrompt = userPrompt.replace(
+    '{historicalMatchup}',
+    historyText || 'First meeting this season.'
+  );
 
   return userPrompt;
 }
 
-export function fillPreviewTemplate(context: GameContext, additionalContext?: {
-  homeTeamStats?: string;
-  awayTeamStats?: string;
-  probableStarters?: string;
-  stakes?: string;
-}): string {
+export function fillPreviewTemplate(
+  context: GameContext,
+  additionalContext?: {
+    homeTeamStats?: string;
+    awayTeamStats?: string;
+    probableStarters?: string;
+    stakes?: string;
+  }
+): string {
   const { game, homeTeam, awayTeam, historicalMatchup } = context;
 
   let userPrompt = PREVIEW_TEMPLATE.user
     .replace('{awayTeam.name}', awayTeam.name)
     .replace('{homeTeam.name}', homeTeam.name)
-    .replace('{game.scheduledAt}', new Date(game.scheduledAt).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: 'America/Chicago'
-    }))
+    .replace(
+      '{game.scheduledAt}',
+      new Date(game.scheduledAt).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'America/Chicago',
+      })
+    )
     .replace('{game.venueName}', game.venueName || 'Unknown Venue')
     .replace('{homeTeam.record}', homeTeam.record)
     .replace('{awayTeam.record}', awayTeam.record)
@@ -253,8 +269,14 @@ export function fillPreviewTemplate(context: GameContext, additionalContext?: {
 
   // Add additional context
   userPrompt = userPrompt
-    .replace('{homeTeamStats}', additionalContext?.homeTeamStats || 'Team batting avg: .XXX\nTeam ERA: X.XX')
-    .replace('{awayTeamStats}', additionalContext?.awayTeamStats || 'Team batting avg: .XXX\nTeam ERA: X.XX')
+    .replace(
+      '{homeTeamStats}',
+      additionalContext?.homeTeamStats || 'Team batting avg: .XXX\nTeam ERA: X.XX'
+    )
+    .replace(
+      '{awayTeamStats}',
+      additionalContext?.awayTeamStats || 'Team batting avg: .XXX\nTeam ERA: X.XX'
+    )
     .replace('{probableStarters}', additionalContext?.probableStarters || 'Starters TBA')
     .replace('{stakes}', additionalContext?.stakes || 'Regular season matchup');
 

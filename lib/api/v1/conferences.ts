@@ -31,10 +31,12 @@ export interface ConferencesQueryParams {
 }
 
 export interface ConferencesResponse {
-  conferences: Array<Conference & {
-    teamCount: number;
-    _count: { teams: number };
-  }>;
+  conferences: Array<
+    Conference & {
+      teamCount: number;
+      _count: { teams: number };
+    }
+  >;
   pagination: {
     total: number;
     limit: number;
@@ -123,11 +125,7 @@ export interface ConferenceStandingsResponse {
  * List conferences with optional division filter
  */
 export async function getConferences(params: ConferencesQueryParams): Promise<ConferencesResponse> {
-  const {
-    division,
-    limit = 50,
-    offset = 0,
-  } = params;
+  const { division, limit = 50, offset = 0 } = params;
 
   // Validate and clamp limit
   const safeLimit = Math.min(Math.max(limit, 1), 100);
@@ -148,10 +146,7 @@ export async function getConferences(params: ConferencesQueryParams): Promise<Co
           select: { teams: true },
         },
       },
-      orderBy: [
-        { division: 'asc' },
-        { name: 'asc' },
-      ],
+      orderBy: [{ division: 'asc' }, { name: 'asc' }],
       take: safeLimit,
       skip: offset,
     }),
@@ -214,11 +209,7 @@ export async function getConferenceStandings(
   slug: string,
   params: StandingsQueryParams = {}
 ): Promise<ConferenceStandingsResponse | null> {
-  const {
-    season = new Date().getFullYear(),
-    sortBy = 'winPct',
-    order = 'desc',
-  } = params;
+  const { season = new Date().getFullYear(), sortBy = 'winPct', order = 'desc' } = params;
 
   // Get conference
   const conference = await prisma.conference.findUnique({
@@ -276,70 +267,72 @@ export async function getConferenceStandings(
   });
 
   // Calculate standings
-  const standingsData = teams.map((team) => {
-    const stats = team.teamStats[0];
+  const standingsData = teams
+    .map((team) => {
+      const stats = team.teamStats[0];
 
-    if (!stats) {
-      return null;
-    }
+      if (!stats) {
+        return null;
+      }
 
-    const totalWins = stats.wins;
-    const totalLosses = stats.losses;
-    const winPct = totalWins / (totalWins + totalLosses || 1);
+      const totalWins = stats.wins;
+      const totalLosses = stats.losses;
+      const winPct = totalWins / (totalWins + totalLosses || 1);
 
-    const confWins = stats.confWins;
-    const confLosses = stats.confLosses;
-    const confWinPct = confWins / (confWins + confLosses || 1);
+      const confWins = stats.confWins;
+      const confLosses = stats.confLosses;
+      const confWinPct = confWins / (confWins + confLosses || 1);
 
-    // Calculate home/away records
-    const homeWins = team.homeGames.filter((g) => g.homeScore! > g.awayScore!).length;
-    const homeLosses = team.homeGames.filter((g) => g.homeScore! < g.awayScore!).length;
-    const awayWins = team.awayGames.filter((g) => g.awayScore! > g.homeScore!).length;
-    const awayLosses = team.awayGames.filter((g) => g.awayScore! < g.homeScore!).length;
+      // Calculate home/away records
+      const homeWins = team.homeGames.filter((g) => g.homeScore! > g.awayScore!).length;
+      const homeLosses = team.homeGames.filter((g) => g.homeScore! < g.awayScore!).length;
+      const awayWins = team.awayGames.filter((g) => g.awayScore! > g.homeScore!).length;
+      const awayLosses = team.awayGames.filter((g) => g.awayScore! < g.homeScore!).length;
 
-    const runDifferential = stats.runsScored - stats.runsAllowed;
+      const runDifferential = stats.runsScored - stats.runsAllowed;
 
-    return {
-      team: {
-        id: team.id,
-        name: team.name,
-        slug: team.slug,
-        school: team.school,
-        abbreviation: team.abbreviation,
-        logoUrl: team.logoUrl,
-      },
-      record: {
-        wins: totalWins,
-        losses: totalLosses,
-        winPct,
-        confWins,
-        confLosses,
-        confWinPct,
-        gamesBack: 0, // Will be calculated after sorting
-        streak: undefined, // TODO: Calculate from recent games
-      },
-      stats: {
-        runsScored: stats.runsScored,
-        runsAllowed: stats.runsAllowed,
-        runDifferential,
-        homeRecord: `${homeWins}-${homeLosses}`,
-        awayRecord: `${awayWins}-${awayLosses}`,
-      },
-      advanced: {
-        pythagWins: stats.pythagWins ?? undefined,
-        rpi: stats.rpi ?? undefined,
-        strengthOfSched: stats.strengthOfSched ?? undefined,
-      },
-      // Sorting keys
-      sortKeys: {
-        wins: totalWins,
-        winPct,
-        confWins,
-        confWinPct,
-        rpi: stats.rpi ?? 0,
-      },
-    };
-  }).filter((entry) => entry !== null);
+      return {
+        team: {
+          id: team.id,
+          name: team.name,
+          slug: team.slug,
+          school: team.school,
+          abbreviation: team.abbreviation,
+          logoUrl: team.logoUrl,
+        },
+        record: {
+          wins: totalWins,
+          losses: totalLosses,
+          winPct,
+          confWins,
+          confLosses,
+          confWinPct,
+          gamesBack: 0, // Will be calculated after sorting
+          streak: undefined, // TODO: Calculate from recent games
+        },
+        stats: {
+          runsScored: stats.runsScored,
+          runsAllowed: stats.runsAllowed,
+          runDifferential,
+          homeRecord: `${homeWins}-${homeLosses}`,
+          awayRecord: `${awayWins}-${awayLosses}`,
+        },
+        advanced: {
+          pythagWins: stats.pythagWins ?? undefined,
+          rpi: stats.rpi ?? undefined,
+          strengthOfSched: stats.strengthOfSched ?? undefined,
+        },
+        // Sorting keys
+        sortKeys: {
+          wins: totalWins,
+          winPct,
+          confWins,
+          confWinPct,
+          rpi: stats.rpi ?? 0,
+        },
+      };
+    })
+    .filter((entry) => entry !== null);
 
   // Sort standings
   standingsData.sort((a, b) => {
@@ -358,8 +351,7 @@ export async function getConferenceStandings(
   const leaderLosses = leader!.record.losses;
 
   const standings: TeamStanding[] = standingsData.map((entry, index) => {
-    const gamesBack =
-      ((leaderWins - entry!.record.wins) + (entry!.record.losses - leaderLosses)) / 2;
+    const gamesBack = (leaderWins - entry!.record.wins + (entry!.record.losses - leaderLosses)) / 2;
 
     return {
       rank: index + 1,

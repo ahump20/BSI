@@ -24,16 +24,19 @@ export async function onRequestGet({ env, request }) {
 
     // Validate user ID
     if (!userId || userId === 'anonymous') {
-      return new Response(JSON.stringify({
-        error: 'User ID required',
-        message: 'No personal data stored for anonymous users'
-      }), {
-        status: 400,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          error: 'User ID required',
+          message: 'No personal data stored for anonymous users',
+        }),
+        {
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     }
 
     // Collect all user data from various sources
@@ -47,13 +50,13 @@ export async function onRequestGet({ env, request }) {
         exportVersion: '1.0',
         timezone: 'America/Chicago',
         dataController: 'Blaze Sports Intel',
-        contactEmail: 'ahump20@outlook.com'
+        contactEmail: 'ahump20@outlook.com',
       },
       legalNotice: {
         gdprCompliance: 'This export fulfills your right of access under GDPR Article 15',
         ccpaCompliance: 'This export fulfills your right to know under CCPA',
         dataRetention: 'You may request deletion of this data at any time',
-        contactForQuestions: 'ahump20@outlook.com'
+        contactForQuestions: 'ahump20@outlook.com',
       },
       personalData: userData.personal || {},
       accountData: userData.account || {},
@@ -64,7 +67,7 @@ export async function onRequestGet({ env, request }) {
       dataSources: {
         essential: 'Data necessary for service provision',
         analytics: 'Anonymous analytics data (if consented)',
-        thirdParty: 'No personal data shared with third parties'
+        thirdParty: 'No personal data shared with third parties',
       },
       yourRights: {
         accessData: 'You have the right to access your data (this export)',
@@ -74,8 +77,8 @@ export async function onRequestGet({ env, request }) {
         dataPortability: 'You have the right to receive your data in a machine-readable format',
         objectToProcessing: 'You have the right to object to processing',
         withdrawConsent: 'You have the right to withdraw consent at any time',
-        contactToExercise: 'Email ahump20@outlook.com to exercise any of these rights'
-      }
+        contactToExercise: 'Email ahump20@outlook.com to exercise any of these rights',
+      },
     };
 
     // Log the export request (for compliance audit trail)
@@ -83,7 +86,7 @@ export async function onRequestGet({ env, request }) {
       env.ANALYTICS.writeDataPoint({
         blobs: ['gdpr_data_export'],
         doubles: [1],
-        indexes: [new Date().toISOString().split('T')[0]]
+        indexes: [new Date().toISOString().split('T')[0]],
       });
     }
 
@@ -94,23 +97,26 @@ export async function onRequestGet({ env, request }) {
         ...corsHeaders,
         'Content-Type': 'application/json',
         'Content-Disposition': `attachment; filename="blaze-sports-data-export-${userId}-${Date.now()}.json"`,
-        'Cache-Control': 'no-store, must-revalidate'
-      }
+        'Cache-Control': 'no-store, must-revalidate',
+      },
     });
   } catch (error) {
     console.error('Data export error:', error);
 
-    return new Response(JSON.stringify({
-      error: 'Data export failed',
-      message: error.message,
-      support: 'Contact ahump20@outlook.com for assistance'
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Data export failed',
+        message: error.message,
+        support: 'Contact ahump20@outlook.com for assistance',
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -121,7 +127,7 @@ async function collectUserData(env, userId) {
     game: {},
     preferences: {},
     consents: [],
-    activity: []
+    activity: [],
   };
 
   try {
@@ -134,10 +140,10 @@ async function collectUserData(env, userId) {
         timestamp: consent.timestamp,
         preferences: {
           essential: consent.essential,
-          analytics: consent.analytics
+          analytics: consent.analytics,
         },
         userAgent: consent.userAgent,
-        ipHash: consent.ipHash
+        ipHash: consent.ipHash,
       });
     }
 
@@ -150,7 +156,7 @@ async function collectUserData(env, userId) {
         favoriteTeams: prefs.favoriteTeams || [],
         notifications: prefs.notifications || false,
         timezone: prefs.timezone || 'America/Chicago',
-        displaySettings: prefs.displaySettings || {}
+        displaySettings: prefs.displaySettings || {},
       };
     }
 
@@ -163,7 +169,7 @@ async function collectUserData(env, userId) {
         achievements: gameSave.achievements || [],
         leaderboardEntries: gameSave.leaderboard || [],
         statistics: gameSave.stats || {},
-        lastPlayed: gameSave.lastPlayed
+        lastPlayed: gameSave.lastPlayed,
       };
     }
 
@@ -177,7 +183,7 @@ async function collectUserData(env, userId) {
         email: account.email, // Actual email if they have an account
         createdAt: account.createdAt,
         lastLogin: account.lastLogin,
-        emailVerified: account.emailVerified
+        emailVerified: account.emailVerified,
       };
     }
 
@@ -187,7 +193,6 @@ async function collectUserData(env, userId) {
     if (activity && Array.isArray(activity)) {
       data.activity = activity.slice(-100); // Last 100 activities
     }
-
   } catch (error) {
     console.error('Error collecting user data:', error);
     // Continue with partial data rather than failing
@@ -204,29 +209,35 @@ export async function onRequestDelete({ env, request }) {
     const confirmToken = url.searchParams.get('confirm');
 
     if (!userId || userId === 'anonymous') {
-      return new Response(JSON.stringify({
-        error: 'User ID required'
-      }), {
-        status: 400,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          error: 'User ID required',
+        }),
+        {
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     }
 
     // Require confirmation token for safety
     if (!confirmToken || confirmToken !== 'DELETE_MY_DATA') {
-      return new Response(JSON.stringify({
-        error: 'Confirmation required',
-        message: 'Add ?confirm=DELETE_MY_DATA to confirm deletion'
-      }), {
-        status: 400,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
+      return new Response(
+        JSON.stringify({
+          error: 'Confirmation required',
+          message: 'Add ?confirm=DELETE_MY_DATA to confirm deletion',
+        }),
+        {
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     }
 
     // Delete all user data
@@ -237,34 +248,40 @@ export async function onRequestDelete({ env, request }) {
       env.ANALYTICS.writeDataPoint({
         blobs: ['gdpr_data_deletion'],
         doubles: [1],
-        indexes: [new Date().toISOString().split('T')[0]]
+        indexes: [new Date().toISOString().split('T')[0]],
       });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'All your personal data has been permanently deleted',
-      deletedAt: new Date().toISOString(),
-      userId: userId
-    }), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'All your personal data has been permanently deleted',
+        deletedAt: new Date().toISOString(),
+        userId: userId,
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Deletion failed',
-      message: error.message,
-      support: 'Contact ahump20@outlook.com for assistance'
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Deletion failed',
+        message: error.message,
+        support: 'Contact ahump20@outlook.com for assistance',
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -275,11 +292,9 @@ async function deleteUserData(env, userId) {
     `game:${userId}`,
     `account:${userId}`,
     `activity:${userId}`,
-    `session:${userId}`
+    `session:${userId}`,
   ];
 
   // Delete all keys
-  await Promise.all(
-    keysToDelete.map(key => env.CACHE.delete(key))
-  );
+  await Promise.all(keysToDelete.map((key) => env.CACHE.delete(key)));
 }

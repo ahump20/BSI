@@ -63,7 +63,10 @@ const parseMetric = (value: number | string | undefined, fallback: number): numb
 
 const DEFAULT_OPPONENTS: OpponentSelection[] = [];
 
-const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ conference, teams }) => {
+const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({
+  conference,
+  teams,
+}) => {
   const [selectedTeamId, setSelectedTeamId] = useState<string>(() => teams?.[0]?.id ?? '');
   const [opponents, setOpponents] = useState<OpponentSelection[]>(DEFAULT_OPPONENTS);
   const [seriesLength, setSeriesLength] = useState<number>(3);
@@ -94,7 +97,10 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
     }
   }, [teams, selectedTeamId]);
 
-  const selectedTeam = useMemo(() => teams.find((team) => team.id === selectedTeamId), [teams, selectedTeamId]);
+  const selectedTeam = useMemo(
+    () => teams.find((team) => team.id === selectedTeamId),
+    [teams, selectedTeamId]
+  );
 
   const availableOpponents = useMemo(() => {
     return teams
@@ -199,14 +205,22 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
       setUpgradeMessage(result.upgradeMessage ?? null);
     } catch (simulationError) {
       console.error('Scheduling optimizer error', simulationError);
-      setError(simulationError instanceof Error ? simulationError.message : 'Unable to run simulation');
+      setError(
+        simulationError instanceof Error ? simulationError.message : 'Unable to run simulation'
+      );
     } finally {
       setIsLoading(false);
     }
   }, [conference, selectedTeam, opponents, isDiamondPro, iterations]);
 
   const renderMetricBar = useCallback(
-    (label: string, baseValue: number, change: number, format: (value: number) => string, positiveBetter = true) => {
+    (
+      label: string,
+      baseValue: number,
+      change: number,
+      format: (value: number) => string,
+      positiveBetter = true
+    ) => {
       const magnitude = Math.min(Math.abs(change) * (positiveBetter ? 160 : 220), 160);
       const directionClass = change >= 0 ? 'positive' : 'negative';
       return (
@@ -233,9 +247,7 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
 
   const scenarioHighlights = useMemo(() => {
     if (!projection?.scenarios?.length) return [];
-    return projection.scenarios
-      .filter((scenario) => scenario.label !== 'baseline')
-      .slice(0, 3);
+    return projection.scenarios.filter((scenario) => scenario.label !== 'baseline').slice(0, 3);
   }, [projection]);
 
   return (
@@ -322,7 +334,9 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
             onChange={(event) => setIterations(Number(event.target.value))}
           />
           <span className="optimizer-range-value">
-            {isDiamondPro ? `${iterations.toLocaleString()} runs` : 'Upgrade to Diamond Pro for Monte Carlo'}
+            {isDiamondPro
+              ? `${iterations.toLocaleString()} runs`
+              : 'Upgrade to Diamond Pro for Monte Carlo'}
           </span>
         </div>
       </div>
@@ -346,7 +360,9 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
                   <select
                     value={opponent.location}
                     onChange={(event) =>
-                      updateOpponent(opponent.teamId, { location: event.target.value as OpponentSelection['location'] })
+                      updateOpponent(opponent.teamId, {
+                        location: event.target.value as OpponentSelection['location'],
+                      })
                     }
                   >
                     <option value="home">Home</option>
@@ -362,7 +378,9 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
                     max="1"
                     step="0.01"
                     value={opponent.rpi}
-                    onChange={(event) => updateOpponent(opponent.teamId, { rpi: Number(event.target.value) })}
+                    onChange={(event) =>
+                      updateOpponent(opponent.teamId, { rpi: Number(event.target.value) })
+                    }
                   />
                 </label>
                 <label>
@@ -373,7 +391,9 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
                     max="1"
                     step="0.01"
                     value={opponent.sor}
-                    onChange={(event) => updateOpponent(opponent.teamId, { sor: Number(event.target.value) })}
+                    onChange={(event) =>
+                      updateOpponent(opponent.teamId, { sor: Number(event.target.value) })
+                    }
                   />
                 </label>
                 <label>
@@ -383,7 +403,9 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
                     min="1"
                     max="6"
                     value={opponent.games}
-                    onChange={(event) => updateOpponent(opponent.teamId, { games: Number(event.target.value) })}
+                    onChange={(event) =>
+                      updateOpponent(opponent.teamId, { games: Number(event.target.value) })
+                    }
                   />
                 </label>
               </div>
@@ -399,7 +421,9 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
           {isLoading ? 'Running simulation…' : 'Run projection'}
         </button>
         {!isDiamondPro && (
-          <span className="optimizer-upgrade-hint">Diamond Pro unlocks deeper simulations and full distributions.</span>
+          <span className="optimizer-upgrade-hint">
+            Diamond Pro unlocks deeper simulations and full distributions.
+          </span>
         )}
       </div>
 
@@ -413,8 +437,12 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({ con
               projection.delta.wins,
               (value) => value.toFixed(2)
             )}
-            {renderMetricBar('RPI shift', projection.baseline.rpi, projection.delta.rpi, (value) => value.toFixed(3))}
-            {renderMetricBar('SOR shift', projection.baseline.sor, projection.delta.sor, (value) => value.toFixed(3))}
+            {renderMetricBar('RPI shift', projection.baseline.rpi, projection.delta.rpi, (value) =>
+              value.toFixed(3)
+            )}
+            {renderMetricBar('SOR shift', projection.baseline.sor, projection.delta.sor, (value) =>
+              value.toFixed(3)
+            )}
           </div>
 
           {scenarioHighlights.length > 0 && (

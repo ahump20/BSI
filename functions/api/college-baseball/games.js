@@ -31,81 +31,89 @@ export async function onRequest(context) {
     const conference = url.searchParams.get('conference');
     const status = url.searchParams.get('status'); // live, scheduled, final
     const team = url.searchParams.get('team');
-    
+
     // Build cache key
     const cacheKey = `${CACHE_KEY_PREFIX}:${date}:${conference || 'all'}:${status || 'all'}:${team || 'all'}`;
-    
+
     // Check cache first
     if (env.CACHE) {
       const cached = await env.CACHE.get(cacheKey);
       if (cached) {
         const data = JSON.parse(cached);
-        return new Response(JSON.stringify({
-          success: true,
-          data: data.games,
-          cached: true,
-          cacheTime: data.timestamp,
-          source: 'cache'
-        }), {
-          status: 200,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-            'Cache-Control': 'public, max-age=30, stale-while-revalidate=15'
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: data.games,
+            cached: true,
+            cacheTime: data.timestamp,
+            source: 'cache',
+          }),
+          {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'Cache-Control': 'public, max-age=30, stale-while-revalidate=15',
+            },
           }
-        });
+        );
       }
     }
 
     // Fetch games from NCAA data sources
     const games = await fetchNCAAGames(date, { conference, status, team });
-    
+
     // Store in cache
     const cacheData = {
       games,
       timestamp: new Date().toISOString(),
-      filters: { date, conference, status, team }
+      filters: { date, conference, status, team },
     };
-    
+
     // Determine TTL based on game status
-    const hasLiveGames = games.some(g => g.status === 'live');
+    const hasLiveGames = games.some((g) => g.status === 'live');
     const cacheTTL = hasLiveGames ? 30 : 300; // 30s for live, 5m for scheduled
-    
+
     if (env.CACHE) {
       await env.CACHE.put(cacheKey, JSON.stringify(cacheData), {
-        expirationTtl: cacheTTL
+        expirationTtl: cacheTTL,
       });
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      data: games,
-      count: games.length,
-      cached: false,
-      timestamp: new Date().toISOString(),
-      source: 'live'
-    }), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'Cache-Control': `public, max-age=${cacheTTL}, stale-while-revalidate=${Math.floor(cacheTTL / 2)}`
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: games,
+        count: games.length,
+        cached: false,
+        timestamp: new Date().toISOString(),
+        source: 'live',
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': `public, max-age=${cacheTTL}, stale-while-revalidate=${Math.floor(cacheTTL / 2)}`,
+        },
       }
-    });
-
+    );
   } catch (error) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Failed to fetch college baseball games',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Failed to fetch college baseball games',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 

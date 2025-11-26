@@ -6,7 +6,11 @@
  * GET /api/live-events/reconstructions/:id - Get single reconstruction
  */
 
-import type { GetReconstructionsRequest, GetReconstructionsResponse, Reconstruction } from '../../../lib/reconstruction/types';
+import type {
+  GetReconstructionsRequest,
+  GetReconstructionsResponse,
+  Reconstruction,
+} from '../../../lib/reconstruction/types';
 
 interface Env {
   DB: D1Database;
@@ -75,7 +79,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       JOIN live_events le ON r.event_id = le.id
       ${whereClause}
     `;
-    const countResult = await context.env.DB.prepare(countQuery).bind(...params).first<{ count: number }>();
+    const countResult = await context.env.DB.prepare(countQuery)
+      .bind(...params)
+      .first<{ count: number }>();
     const total = countResult?.count ?? 0;
 
     // Get reconstructions
@@ -122,7 +128,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 };
 
-async function getSingleReconstruction(context: EventContext<Env, any, Record<string, unknown>>, id: string) {
+async function getSingleReconstruction(
+  context: EventContext<Env, any, Record<string, unknown>>,
+  id: string
+) {
   try {
     const result = await context.env.DB.prepare(
       `SELECT r.*, le.sport, le.event_type, le.game_timestamp, le.raw_data, le.statcast_data
@@ -151,7 +160,9 @@ async function getSingleReconstruction(context: EventContext<Env, any, Record<st
     };
 
     // Increment view count
-    await context.env.DB.prepare('UPDATE reconstructions SET view_count = view_count + 1 WHERE id = ?')
+    await context.env.DB.prepare(
+      'UPDATE reconstructions SET view_count = view_count + 1 WHERE id = ?'
+    )
       .bind(id)
       .run();
 

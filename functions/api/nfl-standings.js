@@ -22,13 +22,13 @@ export async function onRequest({ request, env }) {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
     // ESPN standings API is restricted, fetch team data for AFC South teams
     const afcSouthTeams = ['10', '11', '34', '30']; // TEN, IND, HOU, JAX
-    const teamPromises = afcSouthTeams.map(async teamId => {
+    const teamPromises = afcSouthTeams.map(async (teamId) => {
       try {
         const teamUrl = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${teamId}`;
         const teamResponse = await fetch(teamUrl, { headers });
@@ -40,7 +40,7 @@ export async function onRequest({ request, env }) {
         if (!team || !team.record) return null;
 
         const overallRecord = team.record.overall || '0-0';
-        const [wins, losses] = overallRecord.split('-').map(n => parseInt(n) || 0);
+        const [wins, losses] = overallRecord.split('-').map((n) => parseInt(n) || 0);
         const winPct = wins + losses > 0 ? (wins / (wins + losses)).toFixed(3) : '0.000';
 
         return {
@@ -53,7 +53,7 @@ export async function onRequest({ request, env }) {
           winPercentage: winPct,
           divisionRank: 0, // Would need standings API for actual rank
           conferenceRank: 0,
-          playoffSeed: null
+          playoffSeed: null,
         };
       } catch (error) {
         return null;
@@ -61,7 +61,7 @@ export async function onRequest({ request, env }) {
     });
 
     const teamResults = await Promise.all(teamPromises);
-    const validTeams = teamResults.filter(team => team !== null);
+    const validTeams = teamResults.filter((team) => team !== null);
 
     // Sort by win percentage (descending) then by wins (descending)
     validTeams.sort((a, b) => {
@@ -80,29 +80,34 @@ export async function onRequest({ request, env }) {
     const verifiedStandings = {
       season: new Date().getFullYear(),
       lastUpdated: new Date().toISOString(),
-      standings: [{
-        conference: 'AFC',
-        division: 'AFC South',
-        teams: validTeams
-      }],
+      standings: [
+        {
+          conference: 'AFC',
+          division: 'AFC South',
+          teams: validTeams,
+        },
+      ],
       dataSource: 'ESPN NFL Team APIs',
-      truthLabel: 'LIVE DATA - ESPN TEAM RECORDS'
+      truthLabel: 'LIVE DATA - ESPN TEAM RECORDS',
     };
 
     return new Response(JSON.stringify(verifiedStandings), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch NFL standings',
-      message: error.message,
-      truthLabel: 'ERROR STATE - NO FABRICATED DATA',
-      dataSource: 'N/A - Service Unavailable',
-      lastUpdated: new Date().toISOString()
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch NFL standings',
+        message: error.message,
+        truthLabel: 'ERROR STATE - NO FABRICATED DATA',
+        dataSource: 'N/A - Service Unavailable',
+        lastUpdated: new Date().toISOString(),
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }

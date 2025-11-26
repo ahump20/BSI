@@ -283,49 +283,49 @@ export interface StandingsRecord {
 // ============================================================================
 
 export const DEFAULT_SIT_CODES = [
-  'vr',    // vs Right-handed pitcher
-  'vl',    // vs Left-handed pitcher
-  'h',     // Home
-  'a',     // Away
-  'd',     // Day games
-  'n',     // Night games
+  'vr', // vs Right-handed pitcher
+  'vl', // vs Left-handed pitcher
+  'h', // Home
+  'a', // Away
+  'd', // Day games
+  'n', // Night games
   'preas', // Pre All-Star
   'posas', // Post All-Star
-  'val',   // vs AL
-  'vnl',   // vs NL
-  'r0',    // Runners on base: 0
-  'r123',  // Runners on base: 1-2-3
-  'ron',   // Runners on
-  'ac',    // Ahead in count
-  'bc',    // Behind in count
+  'val', // vs AL
+  'vnl', // vs NL
+  'r0', // Runners on base: 0
+  'r123', // Runners on base: 1-2-3
+  'ron', // Runners on
+  'ac', // Ahead in count
+  'bc', // Behind in count
 ] as const;
 
-export type SituationCode = typeof DEFAULT_SIT_CODES[number];
+export type SituationCode = (typeof DEFAULT_SIT_CODES)[number];
 
 // ============================================================================
 // Cache Configuration
 // ============================================================================
 
 interface CacheConfig {
-  playerInfo: number;        // 24 hours
-  seasonStats: number;       // 1 hour during season
-  statSplits: number;        // 6 hours
-  teamInfo: number;          // 24 hours
-  roster: number;            // 12 hours
-  standings: number;         // 30 minutes
-  schedule: number;          // 15 minutes
-  gameLog: number;           // 1 hour
+  playerInfo: number; // 24 hours
+  seasonStats: number; // 1 hour during season
+  statSplits: number; // 6 hours
+  teamInfo: number; // 24 hours
+  roster: number; // 12 hours
+  standings: number; // 30 minutes
+  schedule: number; // 15 minutes
+  gameLog: number; // 1 hour
 }
 
 const CACHE_TTLS: CacheConfig = {
-  playerInfo: 86400,      // 24 hours
-  seasonStats: 3600,      // 1 hour
-  statSplits: 21600,      // 6 hours
-  teamInfo: 86400,        // 24 hours
-  roster: 43200,          // 12 hours
-  standings: 1800,        // 30 minutes
-  schedule: 900,          // 15 minutes
-  gameLog: 3600,          // 1 hour
+  playerInfo: 86400, // 24 hours
+  seasonStats: 3600, // 1 hour
+  statSplits: 21600, // 6 hours
+  teamInfo: 86400, // 24 hours
+  roster: 43200, // 12 hours
+  standings: 1800, // 30 minutes
+  schedule: 900, // 15 minutes
+  gameLog: 3600, // 1 hour
 };
 
 // ============================================================================
@@ -365,11 +365,7 @@ export class MlbAdapter {
     }
   }
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try cache first
     const cached = await this.getCached<T>(cacheKey);
     if (cached) {
@@ -385,11 +381,7 @@ export class MlbAdapter {
     return data;
   }
 
-  private async fetchWithRetry<T>(
-    url: string,
-    maxRetries = 3,
-    timeout = 8000
-  ): Promise<T> {
+  private async fetchWithRetry<T>(url: string, maxRetries = 3, timeout = 8000): Promise<T> {
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -411,14 +403,14 @@ export class MlbAdapter {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        return await response.json() as T;
+        return (await response.json()) as T;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
 
         if (attempt < maxRetries - 1) {
           // Exponential backoff: 250ms, 500ms, 1000ms
           const delay = 250 * Math.pow(2, attempt);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
     }
@@ -481,7 +473,7 @@ export class MlbAdapter {
     }
 
     // Flatten all splits from all stat types
-    return stats.flatMap(statGroup => statGroup.splits || []);
+    return stats.flatMap((statGroup) => statGroup.splits || []);
   }
 
   /**
@@ -664,7 +656,7 @@ export class MlbAdapter {
     }
 
     // Flatten all team records from all divisions
-    return response.records.flatMap(division => division.teamRecords || []);
+    return response.records.flatMap((division) => division.teamRecords || []);
   }
 
   // ==========================================================================
@@ -716,20 +708,25 @@ export function calculateAdvancedBattingStats(stats: SeasonStats): {
   const iso = (parseFloat(stats.slg) - parseFloat(stats.avg)).toFixed(3);
 
   // BABIP = (H - HR) / (AB - K - HR + SF)
-  const babip = stats.atBats > 0
-    ? ((stats.hits - stats.homeRuns) /
-       (stats.atBats - stats.strikeOuts - stats.homeRuns + (stats.sacFlies || 0))).toFixed(3)
-    : '.000';
+  const babip =
+    stats.atBats > 0
+      ? (
+          (stats.hits - stats.homeRuns) /
+          (stats.atBats - stats.strikeOuts - stats.homeRuns + (stats.sacFlies || 0))
+        ).toFixed(3)
+      : '.000';
 
   // BB% = BB / PA
-  const bbPct = stats.plateAppearances > 0
-    ? ((stats.baseOnBalls / stats.plateAppearances) * 100).toFixed(1)
-    : '0.0';
+  const bbPct =
+    stats.plateAppearances > 0
+      ? ((stats.baseOnBalls / stats.plateAppearances) * 100).toFixed(1)
+      : '0.0';
 
   // K% = K / PA
-  const kPct = stats.plateAppearances > 0
-    ? ((stats.strikeOuts / stats.plateAppearances) * 100).toFixed(1)
-    : '0.0';
+  const kPct =
+    stats.plateAppearances > 0
+      ? ((stats.strikeOuts / stats.plateAppearances) * 100).toFixed(1)
+      : '0.0';
 
   return { iso, babip, bbPct, kPct };
 }
@@ -750,19 +747,18 @@ export function calculateAdvancedPitchingStats(stats: PitchingStats): {
 
   const kPer9 = ip > 0 ? ((stats.strikeOuts / ip) * 9).toFixed(2) : '0.00';
   const bbPer9 = ip > 0 ? ((stats.baseOnBalls / ip) * 9).toFixed(2) : '0.00';
-  const kPerBb = stats.baseOnBalls > 0
-    ? (stats.strikeOuts / stats.baseOnBalls).toFixed(2)
-    : stats.strikeOuts.toFixed(2);
+  const kPerBb =
+    stats.baseOnBalls > 0
+      ? (stats.strikeOuts / stats.baseOnBalls).toFixed(2)
+      : stats.strikeOuts.toFixed(2);
   const hPer9 = ip > 0 ? ((stats.hits / ip) * 9).toFixed(2) : '0.00';
   const hrPer9 = ip > 0 ? ((stats.homeRuns / ip) * 9).toFixed(2) : '0.00';
 
-  const kPct = stats.battersFaced > 0
-    ? ((stats.strikeOuts / stats.battersFaced) * 100).toFixed(1)
-    : '0.0';
+  const kPct =
+    stats.battersFaced > 0 ? ((stats.strikeOuts / stats.battersFaced) * 100).toFixed(1) : '0.0';
 
-  const bbPct = stats.battersFaced > 0
-    ? ((stats.baseOnBalls / stats.battersFaced) * 100).toFixed(1)
-    : '0.0';
+  const bbPct =
+    stats.battersFaced > 0 ? ((stats.baseOnBalls / stats.battersFaced) * 100).toFixed(1) : '0.0';
 
   return { kPer9, bbPer9, kPerBb, hPer9, hrPer9, kPct, bbPct };
 }
@@ -786,7 +782,7 @@ export function parseInningsPitched(ip: string): number {
   if (parts.length === 2) {
     const innings = parseInt(parts[0], 10) || 0;
     const thirds = parseInt(parts[1], 10) || 0;
-    return innings + (thirds / 3);
+    return innings + thirds / 3;
   }
   return parseFloat(ip) || 0;
 }

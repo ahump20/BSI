@@ -27,7 +27,7 @@ export async function onRequestGet({ request, env, ctx }) {
 
   try {
     // Route to appropriate data handler
-    switch(path) {
+    switch (path) {
       case '/mlb':
         return new Response(JSON.stringify(await getMLBData(env)), { headers });
 
@@ -50,29 +50,35 @@ export async function onRequestGet({ request, env, ctx }) {
         return new Response(JSON.stringify(await getChampionshipDashboard(env)), { headers });
 
       default:
-        return new Response(JSON.stringify({
-          status: 'success',
-          message: 'Blaze Sports Intel API - Deep South Sports Authority',
-          endpoints: [
-            '/api/sports-data/mlb',
-            '/api/sports-data/nfl',
-            '/api/sports-data/nba',
-            '/api/sports-data/ncaa',
-            '/api/sports-data/perfect-game',
-            '/api/sports-data/texas-hs',
-            '/api/sports-data/championship'
-          ],
-          documentation: 'https://blazesportsintel.com/api-docs'
-        }), { headers });
+        return new Response(
+          JSON.stringify({
+            status: 'success',
+            message: 'Blaze Sports Intel API - Deep South Sports Authority',
+            endpoints: [
+              '/api/sports-data/mlb',
+              '/api/sports-data/nfl',
+              '/api/sports-data/nba',
+              '/api/sports-data/ncaa',
+              '/api/sports-data/perfect-game',
+              '/api/sports-data/texas-hs',
+              '/api/sports-data/championship',
+            ],
+            documentation: 'https://blazesportsintel.com/api-docs',
+          }),
+          { headers }
+        );
     }
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Data fetch error',
-      message: error.message
-    }), {
-      status: 500,
-      headers
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Data fetch error',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers,
+      }
+    );
   }
 }
 
@@ -93,12 +99,12 @@ async function getMLBData(env) {
     league_data: {
       standings: {
         nl_central: {
-          cardinals: { wins: 83, losses: 79, pct: .512, gb: 0 },
-          brewers: { wins: 92, losses: 70, pct: .568, gb: -9 },
-          cubs: { wins: 83, losses: 79, pct: .512, gb: 0 },
-          reds: { wins: 77, losses: 85, pct: .475, gb: 6 },
-          pirates: { wins: 76, losses: 86, pct: .469, gb: 7 }
-        }
+          cardinals: { wins: 83, losses: 79, pct: 0.512, gb: 0 },
+          brewers: { wins: 92, losses: 70, pct: 0.568, gb: -9 },
+          cubs: { wins: 83, losses: 79, pct: 0.512, gb: 0 },
+          reds: { wins: 77, losses: 85, pct: 0.475, gb: 6 },
+          pirates: { wins: 76, losses: 86, pct: 0.469, gb: 7 },
+        },
       },
       analytics: {
         team_ops_plus: 98,
@@ -106,7 +112,7 @@ async function getMLBData(env) {
         pythagorean_wins: 81,
         run_differential: -12,
         clutch_rating: 'B+',
-        bullpen_fatigue_index: 0.72
+        bullpen_fatigue_index: 0.72,
       },
       prospects: {
         top_5: [
@@ -114,29 +120,29 @@ async function getMLBData(env) {
           { name: 'Masyn Wynn', position: 'SS', eta: '2024', grade: 55 },
           { name: 'Tink Hence', position: 'RHP', eta: '2025', grade: 50 },
           { name: 'Gordon Graceffo', position: 'RHP', eta: '2024', grade: 50 },
-          { name: 'Cooper Hjerpe', position: 'LHP', eta: '2025', grade: 50 }
-        ]
-      }
+          { name: 'Cooper Hjerpe', position: 'LHP', eta: '2025', grade: 50 },
+        ],
+      },
     },
     international_pipeline: {
       latin_america: {
         dominican_republic: 12,
         venezuela: 8,
         cuba: 3,
-        mexico: 2
+        mexico: 2,
       },
       asia_pacific: {
         japan: 1,
         korea: 2,
-        taiwan: 1
-      }
-    }
+        taiwan: 1,
+      },
+    },
   };
 
   // Cache in KV for 5 minutes
   if (env.SPORTS_CACHE) {
     await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
-      expirationTtl: 300
+      expirationTtl: 300,
     });
   }
 
@@ -159,11 +165,11 @@ async function getNFLData(env) {
     league_data: {
       standings: {
         afc_south: {
-          texans: { wins: 10, losses: 7, pct: .588 },
-          jaguars: { wins: 9, losses: 8, pct: .529 },
-          colts: { wins: 8, losses: 9, pct: .471 },
-          titans: { wins: 3, losses: 14, pct: .176 }
-        }
+          texans: { wins: 10, losses: 7, pct: 0.588 },
+          jaguars: { wins: 9, losses: 8, pct: 0.529 },
+          colts: { wins: 8, losses: 9, pct: 0.471 },
+          titans: { wins: 3, losses: 14, pct: 0.176 },
+        },
       },
       analytics: {
         dvoa_rank: 28,
@@ -171,7 +177,7 @@ async function getNFLData(env) {
         defensive_epa: 0.08,
         special_teams_dvoa: -2.1,
         qb_pressure_to_sack_rate: 0.21,
-        red_zone_efficiency: 0.48
+        red_zone_efficiency: 0.48,
       },
       draft_outlook: {
         projected_pick: 2,
@@ -179,15 +185,15 @@ async function getNFLData(env) {
         top_targets: [
           { name: 'Shedeur Sanders', position: 'QB', school: 'Colorado' },
           { name: 'Cam Ward', position: 'QB', school: 'Miami' },
-          { name: 'Will Campbell', position: 'OT', school: 'LSU' }
-        ]
-      }
-    }
+          { name: 'Will Campbell', position: 'OT', school: 'LSU' },
+        ],
+      },
+    },
   };
 
   if (env.SPORTS_CACHE) {
     await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
-      expirationTtl: 300
+      expirationTtl: 300,
     });
   }
 
@@ -210,8 +216,8 @@ async function getNBAData(env) {
     league_data: {
       standings: {
         western_conference: {
-          grizzlies: { wins: 27, losses: 55, pct: .329, rank: 13 }
-        }
+          grizzlies: { wins: 27, losses: 55, pct: 0.329, rank: 13 },
+        },
       },
       analytics: {
         offensive_rating: 110.2,
@@ -219,19 +225,19 @@ async function getNBAData(env) {
         net_rating: -8.2,
         pace: 99.8,
         true_shooting_pct: 0.542,
-        assist_ratio: 16.2
+        assist_ratio: 16.2,
       },
       roster_metrics: {
         ja_morant: { ppg: 25.1, apg: 8.1, per: 23.4, usage: 30.2 },
         jaren_jackson_jr: { ppg: 22.5, rpg: 5.5, bpg: 1.6, defensive_rating: 108.2 },
-        desmond_bane: { ppg: 24.7, three_pt_pct: 0.381, efg: 0.532 }
-      }
-    }
+        desmond_bane: { ppg: 24.7, three_pt_pct: 0.381, efg: 0.532 },
+      },
+    },
   };
 
   if (env.SPORTS_CACHE) {
     await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
-      expirationTtl: 300
+      expirationTtl: 300,
     });
   }
 
@@ -252,7 +258,7 @@ async function getNCAAData(env) {
     sport: 'NCAA',
     featured_teams: {
       football: 'Texas Longhorns',
-      baseball: 'SEC Conference'
+      baseball: 'SEC Conference',
     },
     football_data: {
       texas_longhorns: {
@@ -261,37 +267,37 @@ async function getNCAAData(env) {
         conference: 'SEC',
         bowl_result: 'CFP Semifinal',
         recruiting_rank: 4,
-        nil_valuation: '$1.8M team total'
+        nil_valuation: '$1.8M team total',
       },
       sec_standings: {
         georgia: { wins: 11, losses: 2, conf: '8-0' },
         alabama: { wins: 12, losses: 2, conf: '7-1' },
         texas: { wins: 13, losses: 2, conf: '7-1' },
         ole_miss: { wins: 11, losses: 3, conf: '6-2' },
-        tennessee: { wins: 10, losses: 3, conf: '6-2' }
-      }
+        tennessee: { wins: 10, losses: 3, conf: '6-2' },
+      },
     },
     baseball_data: {
       sec_tournament: {
         champion: 'Tennessee',
         runner_up: 'LSU',
-        mvp: 'Dylan Dreiling (Tennessee)'
+        mvp: 'Dylan Dreiling (Tennessee)',
       },
       college_world_series: {
         sec_teams: ['Tennessee', 'LSU', 'Texas A&M', 'Florida'],
-        champion: 'Tennessee'
+        champion: 'Tennessee',
       },
       draft_picks: {
         first_round: 8,
         total: 94,
-        top_pick: { name: 'Paul Skenes', school: 'LSU', pick: 1 }
-      }
-    }
+        top_pick: { name: 'Paul Skenes', school: 'LSU', pick: 1 },
+      },
+    },
   };
 
   if (env.SPORTS_CACHE) {
     await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
-      expirationTtl: 300
+      expirationTtl: 300,
     });
   }
 
@@ -315,40 +321,40 @@ async function getPerfectGameData(env) {
       upcoming: [
         { name: 'WWBA World Championship', location: 'Jupiter, FL', date: '2025-10-15' },
         { name: 'PG All-American Classic', location: 'San Diego, CA', date: '2025-08-10' },
-        { name: 'Texas State Championships', location: 'Houston, TX', date: '2025-07-20' }
-      ]
+        { name: 'Texas State Championships', location: 'Houston, TX', date: '2025-07-20' },
+      ],
     },
     rankings: {
       national_2026: [
         { rank: 1, name: 'Jackson Arnold', position: 'SS', state: 'TX', commitment: 'Texas' },
         { rank: 2, name: 'Blake Mitchell', position: 'RHP', state: 'GA', commitment: 'Georgia' },
-        { rank: 3, name: 'Carter Smith', position: 'OF', state: 'FL', commitment: 'Miami' }
+        { rank: 3, name: 'Carter Smith', position: 'OF', state: 'FL', commitment: 'Miami' },
       ],
       texas_2026: [
         { rank: 1, name: 'Jackson Arnold', position: 'SS', city: 'Houston', hs: 'Memorial' },
         { rank: 2, name: 'Diego Martinez', position: 'C', city: 'San Antonio', hs: 'Reagan' },
-        { rank: 3, name: 'Luke Thompson', position: 'RHP', city: 'Dallas', hs: 'Jesuit' }
-      ]
+        { rank: 3, name: 'Luke Thompson', position: 'RHP', city: 'Dallas', hs: 'Jesuit' },
+      ],
     },
     deep_south_pipeline: {
       texas: { committed: 142, uncommitted: 89, mlb_draft: 23 },
       louisiana: { committed: 67, uncommitted: 41, mlb_draft: 12 },
       mississippi: { committed: 34, uncommitted: 28, mlb_draft: 7 },
       alabama: { committed: 45, uncommitted: 31, mlb_draft: 9 },
-      georgia: { committed: 78, uncommitted: 52, mlb_draft: 15 }
+      georgia: { committed: 78, uncommitted: 52, mlb_draft: 15 },
     },
     velocity_leaders: {
       fastball: [
         { name: 'Blake Mitchell', velo: 97, state: 'GA', age: 17 },
         { name: 'Carlos Rodriguez', velo: 96, state: 'TX', age: 18 },
-        { name: 'Tyler Johnson', velo: 95, state: 'FL', age: 17 }
-      ]
-    }
+        { name: 'Tyler Johnson', velo: 95, state: 'FL', age: 17 },
+      ],
+    },
   };
 
   if (env.SPORTS_CACHE) {
     await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
-      expirationTtl: 300
+      expirationTtl: 300,
     });
   }
 
@@ -374,19 +380,19 @@ async function getTexasHSData(env) {
         { rank: 2, team: 'North Shore', record: '15-1', region: 'Houston' },
         { rank: 3, team: 'DeSoto', record: '13-2', region: 'DFW' },
         { rank: 4, team: 'Westlake', record: '14-1', region: 'Austin' },
-        { rank: 5, team: 'Katy', record: '13-2', region: 'Houston' }
+        { rank: 5, team: 'Katy', record: '13-2', region: 'Houston' },
       ],
       '5A_D1': [
         { rank: 1, team: 'Aledo', record: '16-0', region: 'Fort Worth' },
         { rank: 2, team: 'Longview', record: '14-1', region: 'East Texas' },
-        { rank: 3, team: 'College Station', record: '13-2', region: 'Central' }
-      ]
+        { rank: 3, team: 'College Station', record: '13-2', region: 'Central' },
+      ],
     },
     recruiting_pipeline: {
       power_5_commits: 234,
       g5_commits: 189,
       fcs_commits: 156,
-      d2_d3_commits: 267
+      d2_d3_commits: 267,
     },
     friday_night_lights: {
       game_of_week: {
@@ -394,31 +400,31 @@ async function getTexasHSData(env) {
         date: '2025-10-03',
         venue: 'Eagle Stadium',
         capacity: 12000,
-        broadcast: 'Bally Sports Southwest'
+        broadcast: 'Bally Sports Southwest',
       },
       attendance_leaders: [
         { stadium: 'Eagle Stadium', team: 'Allen', avg_attendance: 18500 },
         { stadium: 'Legacy Stadium', team: 'Katy', avg_attendance: 12500 },
-        { stadium: 'Berry Center', team: 'Cy-Fair', avg_attendance: 11000 }
-      ]
+        { stadium: 'Berry Center', team: 'Cy-Fair', avg_attendance: 11000 },
+      ],
     },
     player_rankings_2026: [
       { rank: 1, name: 'Arch Manning', position: 'QB', school: 'Isidore Newman', stars: 5 },
       { rank: 2, name: 'David Hicks', position: 'DE', school: 'Katy', stars: 5 },
-      { rank: 3, name: 'Jonah Williams', position: 'OT', school: 'Allen', stars: 4 }
+      { rank: 3, name: 'Jonah Williams', position: 'OT', school: 'Allen', stars: 4 },
     ],
     deep_south_coverage: {
       texas: { teams: 1240, classifications: 6 },
       louisiana: { teams: 402, classifications: 5 },
       mississippi: { teams: 256, classifications: 7 },
       alabama: { teams: 412, classifications: 7 },
-      georgia: { teams: 455, classifications: 8 }
-    }
+      georgia: { teams: 455, classifications: 8 },
+    },
   };
 
   if (env.SPORTS_CACHE) {
     await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
-      expirationTtl: 300
+      expirationTtl: 300,
     });
   }
 
@@ -433,7 +439,7 @@ async function getChampionshipDashboard(env) {
     getNBAData(env),
     getNCAAData(env),
     getPerfectGameData(env),
-    getTexasHSData(env)
+    getTexasHSData(env),
   ]);
 
   return {
@@ -443,32 +449,32 @@ async function getChampionshipDashboard(env) {
       mlb: {
         featured: 'St. Louis Cardinals',
         playoff_probability: '45.2%',
-        key_metric: mlb.league_data.analytics
+        key_metric: mlb.league_data.analytics,
       },
       nfl: {
         featured: 'Tennessee Titans',
         draft_position: 2,
-        key_metric: nfl.league_data.analytics
+        key_metric: nfl.league_data.analytics,
       },
       nba: {
         featured: 'Memphis Grizzlies',
         lottery_odds: '14.0%',
-        key_metric: nba.league_data.analytics
+        key_metric: nba.league_data.analytics,
       },
       ncaa: {
         football: ncaa.football_data.texas_longhorns,
-        baseball: ncaa.baseball_data.sec_tournament
+        baseball: ncaa.baseball_data.sec_tournament,
       },
       youth_pipeline: {
         perfect_game: perfectGame.rankings.national_2026[0],
-        texas_hs: texasHS.state_rankings['6A_D1'][0]
-      }
+        texas_hs: texasHS.state_rankings['6A_D1'][0],
+      },
     },
     deep_south_dominance: {
       message: 'From Friday Night Lights to Sunday in the Show',
       coverage: 'Comprehensive intelligence from youth leagues through the pros',
-      tradition: 'Where championship tradition meets next-generation analytics'
-    }
+      tradition: 'Where championship tradition meets next-generation analytics',
+    },
   };
 }
 

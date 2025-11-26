@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Championship Dashboard | Blaze Sports Intel</title>
+    <meta name="description" content="3D championship sports visualization powered by Babylon.js WebGPU. Real-time analytics, live game data, and interactive 3D stadium models.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- Babylon.js -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+
+    <style>
+        :root {
+            /* Burnt Orange Brand Colors */
+            --blaze-orange: #BF5700;
+            --blaze-ember: #CC6600;
+            --blaze-copper: #D97B38;
+            --blaze-sunset: #E69551;
+            --blaze-dark: #8B3A00;
+
+            /* Dark Theme Base */
+            --bg-primary: #0D0D12;
+            --bg-secondary: #1A1A24;
+            --bg-tertiary: #252532;
+            --bg-elevated: #2D2D3D;
+
+            /* Text Colors */
+            --text-primary: #F5F5F7;
+            --text-secondary: #C0C0C8;
+            --text-tertiary: #8E8E93;
+
+            /* Glass Morphism */
+            --glass-bg: rgba(26, 26, 36, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --status-success: #28a745;
+            --status-warning: #ffc107;
+            --status-danger: #dc3545;
+            --status-info: #17a2b8;
+
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Navigation */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 800;
+            transition: var(--transition-base);
+        }
+
+        .logo:hover {
+            color: var(--blaze-orange);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-base);
+        }
+
+        .nav-links a:hover {
+            color: var(--blaze-orange);
+        }
+
+        /* Page Header */
+        .page-header {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-sunset));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Controls Section */
+        .controls {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .control-group {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Sport Tabs */
+        .sport-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sport-tab {
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            color: var(--text-secondary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sport-tab:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .sport-tab.active {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            border-color: var(--blaze-copper);
+            color: white;
+            box-shadow: 0 0 20px rgba(191, 87, 0, 0.4);
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--glass-border);
+            transition: var(--transition-base);
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background: var(--text-secondary);
+            transition: var(--transition-base);
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            border-color: var(--blaze-copper);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+            background: white;
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(191, 87, 0, 0.4);
+        }
+
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        .refresh-btn i {
+            transition: var(--transition-base);
+        }
+
+        .refresh-btn.spinning i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 3D Canvas Container */
+        .canvas-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            height: 600px;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            outline: none;
+            cursor: grab;
+        }
+
+        #renderCanvas:active {
+            cursor: grabbing;
+        }
+
+        /* Performance Overlay */
+        .performance-overlay {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(13, 13, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 200px;
+            z-index: 10;
+        }
+
+        .performance-overlay h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .metric-label {
+            color: var(--text-tertiary);
+        }
+
+        .metric-value {
+            color: var(--blaze-orange);
+            font-weight: 600;
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+        }
+
+        .loading-container.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--glass-border);
+            border-top-color: var(--blaze-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .loading-container p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Error State */
+        .error-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+            max-width: 400px;
+        }
+
+        .error-container.active {
+            display: block;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: var(--status-danger);
+            margin-bottom: 1rem;
+        }
+
+        .error-container h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .error-container p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .retry-btn {
+            background: var(--status-danger);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Info Panel */
+        .info-panel {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: var(--transition-base);
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--blaze-orange);
+            box-shadow: 0 12px 32px rgba(191, 87, 0, 0.2);
+        }
+
+        .info-card h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card h4 i {
+            color: var(--blaze-orange);
+        }
+
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-description {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            line-height: 1.6;
+        }
+
+        /* Camera Controls */
+        .camera-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .camera-btn {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .camera-btn:hover {
+            background: var(--bg-elevated);
+            border-color: var(--blaze-orange);
+            color: var(--text-primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .canvas-wrapper {
+                height: 400px;
+            }
+
+            .performance-overlay {
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0.75rem;
+                min-width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .page-header {
+                padding: 0 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .controls {
+                padding: 0 1rem;
+            }
+
+            .canvas-container {
+                padding: 0 1rem;
+            }
+
+            .canvas-wrapper {
+                height: 300px;
+            }
+
+            .info-panel {
+                padding: 0 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <i class="fas fa-fire"></i>
+                <span>Blaze Sports Intel</span>
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/analytics">Analytics</a></li>
+                    <li><a href="/copilot">AI Copilot</a></li>
+                    <li><a href="/college-baseball">College Baseball</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Championship Dashboard</h1>
+        <p>3D sports visualization powered by Babylon.js WebGPU with real-time analytics</p>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <!-- Sport Selection -->
+        <div class="control-group">
+            <h3>Sport Selection</h3>
+            <div class="sport-tabs">
+                <button class="sport-tab active" data-sport="baseball" onclick="selectSport('baseball')">
+                    <i class="fas fa-baseball-ball"></i> Baseball
+                </button>
+                <button class="sport-tab" data-sport="football" onclick="selectSport('football')">
+                    <i class="fas fa-football-ball"></i> Football
+                </button>
+                <button class="sport-tab" data-sport="basketball" onclick="selectSport('basketball')">
+                    <i class="fas fa-basketball-ball"></i> Basketball
+                </button>
+                <button class="sport-tab" data-sport="track" onclick="selectSport('track')">
+                    <i class="fas fa-running"></i> Track & Field
+                </button>
+            </div>
+        </div>
+
+        <!-- Display Options -->
+        <div class="control-group">
+            <h3>Display Options</h3>
+            <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                <div class="toggle-container">
+                    <span class="toggle-label">Advanced Analytics</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="analyticsToggle" checked onchange="toggleAnalytics()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="refresh-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Camera Controls -->
+        <div class="control-group">
+            <h3>Camera Controls</h3>
+            <div class="camera-controls">
+                <button class="camera-btn" onclick="resetCamera()">
+                    <i class="fas fa-home"></i> Reset View
+                </button>
+                <button class="camera-btn" onclick="setCameraView('top')">
+                    <i class="fas fa-arrow-up"></i> Top View
+                </button>
+                <button class="camera-btn" onclick="setCameraView('side')">
+                    <i class="fas fa-arrows-alt-h"></i> Side View
+                </button>
+                <button class="camera-btn" onclick="setCameraView('front')">
+                    <i class="fas fa-arrow-right"></i> Front View
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D Canvas -->
+    <div class="canvas-container">
+        <div class="canvas-wrapper">
+            <canvas id="renderCanvas"></canvas>
+
+            <!-- Loading State -->
+            <div id="loadingContainer" class="loading-container active">
+                <div class="spinner"></div>
+                <p>Initializing 3D Environment...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorContainer" class="error-container">
+                <i class="fas fa-exclamation-triangle error-icon"></i>
+                <h3>Failed to Load Data</h3>
+                <p id="errorMessage">Unable to connect to the championship data API. Please try again.</p>
+                <button class="retry-btn" onclick="loadChampionshipData()">
+                    <i class="fas fa-redo"></i> Retry
+                </button>
+            </div>
+
+            <!-- Performance Overlay -->
+            <div class="performance-overlay">
+                <h4>Performance</h4>
+                <div class="metric">
+                    <span class="metric-label">FPS</span>
+                    <span class="metric-value" id="fpsValue">60</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Meshes</span>
+                    <span class="metric-value" id="meshCount">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Cache</span>
+                    <span class="metric-value" id="cacheStatus">MISS</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Edge</span>
+                    <span class="metric-value" id="edgeLocation">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <div class="info-grid">
+            <!-- Data Source -->
+            <div class="info-card">
+                <h4>
+                    <i class="fas fa-database"></i>
+                    Data Source
+                </h4>
+                <div class="info-value" id="dataSource">-</div>
+                <p class="info-description">Real-time sports data from multiple verified sources with automatic fallback</p>
+            </div>
+
+            <!-- Render Engine -->
+            <div class="info-card">
+                <h4>
+                    <i class="fas fa-cube"></i>
+                    Render Engine
+                </h4>
+                <div class="info-value" id="renderEngine">-</div>
+                <p class="info-description">Hardware-accelerated 3D graphics with WebGPU and WebGL2 fallback</p>
+            </div>
+
+            <!-- Performance Target -->
+            <div class="info-card">
+                <h4>
+                    <i class="fas fa-tachometer-alt"></i>
+                    Performance Target
+                </h4>
+                <div class="info-value" id="performanceTarget">-</div>
+                <p class="info-description">Optimized for smooth 60 FPS rendering on desktop and mobile devices</p>
+            </div>
+
+            <!-- Last Updated -->
+            <div class="info-card">
+                <h4>
+                    <i class="fas fa-clock"></i>
+                    Last Updated
+                </h4>
+                <div class="info-value" id="lastUpdated">-</div>
+                <p class="info-description">Data freshness timestamp in America/Chicago timezone</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentSport = 'baseball';
+        let includeAnalytics = true;
+        let canvas;
+        let engine;
+        let scene;
+        let camera;
+        let championshipData = null;
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeBabylon();
+            loadChampionshipData();
+        });
+
+        // Initialize Babylon.js
+        function initializeBabylon() {
+            canvas = document.getElementById('renderCanvas');
+
+            try {
+                // Create engine with WebGPU or WebGL2
+                engine = new BABYLON.Engine(canvas, true, {
+                    preserveDrawingBuffer: true,
+                    stencil: true
+                });
+
+                // Create scene
+                scene = new BABYLON.Scene(engine);
+                scene.clearColor = new BABYLON.Color4(0.05, 0.05, 0.07, 1);
+
+                // Create camera
+                camera = new BABYLON.ArcRotateCamera(
+                    "camera",
+                    Math.PI / 4,
+                    Math.PI / 3,
+                    12,
+                    BABYLON.Vector3.Zero(),
+                    scene
+                );
+                camera.attachControl(canvas, true);
+                camera.lowerRadiusLimit = 5;
+                camera.upperRadiusLimit = 30;
+                camera.wheelPrecision = 50;
+
+                // Add lights
+                const ambientLight = new BABYLON.HemisphericLight(
+                    "ambientLight",
+                    new BABYLON.Vector3(0, 1, 0),
+                    scene
+                );
+                ambientLight.intensity = 0.7;
+
+                const directionalLight = new BABYLON.DirectionalLight(
+                    "directionalLight",
+                    new BABYLON.Vector3(-1, -2, -1),
+                    scene
+                );
+                directionalLight.intensity = 0.5;
+
+                // Add ground
+                const ground = BABYLON.MeshBuilder.CreateGround(
+                    "ground",
+                    { width: 20, height: 20 },
+                    scene
+                );
+                const groundMaterial = new BABYLON.StandardMaterial("groundMat", scene);
+                groundMaterial.diffuseColor = new BABYLON.Color3(0.1, 0.1, 0.15);
+                groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+                ground.material = groundMaterial;
+
+                // Render loop
+                engine.runRenderLoop(() => {
+                    scene.render();
+                    updatePerformanceMetrics();
+                });
+
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    engine.resize();
+                });
+
+                console.log('✅ Babylon.js initialized successfully');
+            } catch (error) {
+                console.error('❌ Babylon.js initialization error:', error);
+                showError('Failed to initialize 3D graphics engine');
+            }
+        }
+
+        // Load Championship Data
+        async function loadChampionshipData() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            const errorContainer = document.getElementById('errorContainer');
+
+            loadingContainer.classList.add('active');
+            errorContainer.classList.remove('active');
+
+            try {
+                const response = await fetch('/api/mcp/championship-dashboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sport: currentSport,
+                        includeAnalytics: includeAnalytics
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                championshipData = await response.json();
+
+                // Update UI with metadata
+                updateMetadata(championshipData);
+
+                // Render 3D scene
+                render3DScene(championshipData);
+
+                console.log('✅ Championship data loaded:', championshipData);
+            } catch (error) {
+                console.error('❌ Data load error:', error);
+                document.getElementById('errorMessage').textContent = error.message;
+                errorContainer.classList.add('active');
+            } finally {
+                loadingContainer.classList.remove('active');
+            }
+        }
+
+        // Update Metadata
+        function updateMetadata(data) {
+            if (data.meta) {
+                document.getElementById('dataSource').textContent = data.meta.dataSource || '-';
+                document.getElementById('renderEngine').textContent = data.meta.renderEngine || '-';
+                document.getElementById('performanceTarget').textContent = data.meta.performanceTarget || '-';
+                document.getElementById('edgeLocation').textContent = data.meta.edgeLocation || '-';
+            }
+
+            if (data.timestamp) {
+                const timestamp = new Date(data.timestamp);
+                document.getElementById('lastUpdated').textContent = timestamp.toLocaleString('en-US', {
+                    timeZone: 'America/Chicago',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            if (data.visualization) {
+                document.getElementById('meshCount').textContent = data.visualization.meshCount || 0;
+            }
+        }
+
+        // Render 3D Scene
+        function render3DScene(data) {
+            if (!scene) return;
+
+            // Clear existing game objects (keep lights and ground)
+            scene.meshes.slice(1).forEach(mesh => {
+                if (mesh.name !== 'ground') {
+                    mesh.dispose();
+                }
+            });
+
+            // Render games
+            if (data.games && data.games.length > 0) {
+                data.games.forEach((game, index) => {
+                    renderGame(game, index);
+                });
+            }
+
+            // Update camera if specified
+            if (data.visualization && data.visualization.cameraPosition) {
+                const camPos = data.visualization.cameraPosition;
+                camera.alpha = camPos.alpha || camera.alpha;
+                camera.beta = camPos.beta || camera.beta;
+                camera.radius = camPos.radius || camera.radius;
+            }
+
+            console.log(`✅ Rendered ${data.games?.length || 0} games in 3D`);
+        }
+
+        // Render Individual Game
+        function renderGame(game, index) {
+            const spacing = 6;
+            const offsetX = (index % 3) * spacing - spacing;
+            const offsetZ = Math.floor(index / 3) * spacing - spacing;
+
+            // Home team (left)
+            if (game.teams && game.teams.home) {
+                const homeTeam = game.teams.home;
+                const homeBox = BABYLON.MeshBuilder.CreateBox(
+                    `home_${game.id}`,
+                    { size: 1 },
+                    scene
+                );
+                homeBox.position = new BABYLON.Vector3(
+                    offsetX - 2,
+                    0.5,
+                    offsetZ
+                );
+
+                const homeMaterial = new BABYLON.StandardMaterial(`homeMat_${game.id}`, scene);
+                homeMaterial.diffuseColor = BABYLON.Color3.FromHexString(homeTeam.color || '#ff6b00');
+                homeMaterial.emissiveColor = BABYLON.Color3.FromHexString(homeTeam.color || '#ff6b00').scale(0.2);
+                homeBox.material = homeMaterial;
+
+                // Score text (placeholder for advanced text rendering)
+                console.log(`Home: ${homeTeam.name} - ${homeTeam.score}`);
+            }
+
+            // Away team (right)
+            if (game.teams && game.teams.away) {
+                const awayTeam = game.teams.away;
+                const awayBox = BABYLON.MeshBuilder.CreateBox(
+                    `away_${game.id}`,
+                    { size: 1 },
+                    scene
+                );
+                awayBox.position = new BABYLON.Vector3(
+                    offsetX + 2,
+                    0.5,
+                    offsetZ
+                );
+
+                const awayMaterial = new BABYLON.StandardMaterial(`awayMat_${game.id}`, scene);
+                awayMaterial.diffuseColor = BABYLON.Color3.FromHexString(awayTeam.color || '#0066cc');
+                awayMaterial.emissiveColor = BABYLON.Color3.FromHexString(awayTeam.color || '#0066cc').scale(0.2);
+                awayBox.material = awayMaterial;
+
+                console.log(`Away: ${awayTeam.name} - ${awayTeam.score}`);
+            }
+
+            // Connection line
+            const line = BABYLON.MeshBuilder.CreateLines(
+                `line_${game.id}`,
+                {
+                    points: [
+                        new BABYLON.Vector3(offsetX - 2, 0.5, offsetZ),
+                        new BABYLON.Vector3(offsetX + 2, 0.5, offsetZ)
+                    ]
+                },
+                scene
+            );
+            line.color = new BABYLON.Color3(0.5, 0.5, 0.5);
+        }
+
+        // Update Performance Metrics
+        function updatePerformanceMetrics() {
+            if (!engine) return;
+
+            const fps = engine.getFps().toFixed(0);
+            document.getElementById('fpsValue').textContent = fps;
+        }
+
+        // Select Sport
+        function selectSport(sport) {
+            currentSport = sport;
+
+            // Update active tab
+            document.querySelectorAll('.sport-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.sport-tab[data-sport="${sport}"]`).classList.add('active');
+
+            // Reload data
+            loadChampionshipData();
+        }
+
+        // Toggle Analytics
+        function toggleAnalytics() {
+            includeAnalytics = document.getElementById('analyticsToggle').checked;
+            loadChampionshipData();
+        }
+
+        // Refresh Data
+        function refreshData() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.classList.add('spinning');
+
+            loadChampionshipData().finally(() => {
+                setTimeout(() => {
+                    btn.classList.remove('spinning');
+                }, 500);
+            });
+        }
+
+        // Reset Camera
+        function resetCamera() {
+            if (!camera) return;
+            camera.alpha = Math.PI / 4;
+            camera.beta = Math.PI / 3;
+            camera.radius = 12;
+        }
+
+        // Set Camera View
+        function setCameraView(view) {
+            if (!camera) return;
+
+            switch(view) {
+                case 'top':
+                    camera.alpha = 0;
+                    camera.beta = 0;
+                    camera.radius = 20;
+                    break;
+                case 'side':
+                    camera.alpha = Math.PI / 2;
+                    camera.beta = Math.PI / 2;
+                    camera.radius = 15;
+                    break;
+                case 'front':
+                    camera.alpha = 0;
+                    camera.beta = Math.PI / 2;
+                    camera.radius = 15;
+                    break;
+            }
+        }
+
+        // Show Error
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorContainer').classList.add('active');
+            document.getElementById('loadingContainer').classList.remove('active');
+        }
+
+        // Handle Cache Status from Response Headers
+        fetch('/api/mcp/championship-dashboard', { method: 'POST', body: JSON.stringify({ sport: 'baseball' }) })
+            .then(response => {
+                const cacheStatus = response.headers.get('X-Cache') || 'UNKNOWN';
+                document.getElementById('cacheStatus').textContent = cacheStatus;
+            })
+            .catch(() => {
+                document.getElementById('cacheStatus').textContent = 'ERROR';
+            });
+    </script>
+
+</body>
+</html>

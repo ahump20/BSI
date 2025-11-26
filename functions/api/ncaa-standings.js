@@ -21,7 +21,7 @@ export async function onRequest({ request, env }) {
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -30,7 +30,7 @@ export async function onRequest({ request, env }) {
     // Fetch both rankings and standings
     const [rankingsResponse, standingsResponse] = await Promise.all([
       fetch(`${baseUrl}/rankings`, { headers }),
-      fetch(`${baseUrl}/standings`, { headers })
+      fetch(`${baseUrl}/standings`, { headers }),
     ]);
 
     if (!rankingsResponse.ok) {
@@ -47,20 +47,23 @@ export async function onRequest({ request, env }) {
     const result = {
       rankings: rankingsData.rankings || [],
       conferences: standingsData.children || [],
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     return new Response(JSON.stringify(result), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch NCAA standings',
-      message: error.message
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch NCAA standings',
+        message: error.message,
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }

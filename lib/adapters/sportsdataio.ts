@@ -286,8 +286,6 @@ export interface NCAAFStanding {
   Conference: string;
   Division?: string;
   Rank?: number;
-  Wins: number;
-  Losses: number;
   GlobalTeamID: number;
 }
 
@@ -386,7 +384,8 @@ export class SportsDataIOAdapter {
 
   async getMLBScores(date?: string): Promise<ApiResponse<MLBGame[]>> {
     // Format: YYYY-MMM-DD (e.g., 2025-NOV-13)
-    const targetDate = date || DateTime.now().setZone('America/Chicago').toFormat('yyyy-MMM-dd').toUpperCase();
+    const targetDate =
+      date || DateTime.now().setZone('America/Chicago').toFormat('yyyy-MMM-dd').toUpperCase();
     return sportsDataClient.fetch<MLBGame[]>(
       this.provider,
       this.buildUrl('mlb/scores', `/json/GamesByDate/${targetDate}`),
@@ -463,7 +462,10 @@ export class SportsDataIOAdapter {
   private getCurrentNFLWeek(): number {
     // Simple estimation - Sept 1 = Week 1, add ~7 days per week
     const now = DateTime.now().setZone('America/Chicago');
-    const seasonStart = DateTime.fromObject({ year: now.year, month: 9, day: 1 }, { zone: 'America/Chicago' });
+    const seasonStart = DateTime.fromObject(
+      { year: now.year, month: 9, day: 1 },
+      { zone: 'America/Chicago' }
+    );
 
     if (now < seasonStart) {
       return 1; // Preseason/before season
@@ -497,7 +499,8 @@ export class SportsDataIOAdapter {
 
   async getNBAScores(date?: string): Promise<ApiResponse<NBAGame[]>> {
     // Format: YYYY-MMM-DD
-    const targetDate = date || DateTime.now().setZone('America/Chicago').toFormat('yyyy-MMM-dd').toUpperCase();
+    const targetDate =
+      date || DateTime.now().setZone('America/Chicago').toFormat('yyyy-MMM-dd').toUpperCase();
     return sportsDataClient.fetch<NBAGame[]>(
       this.provider,
       this.buildUrl('nba/scores', `/json/GamesByDate/${targetDate}`),
@@ -565,7 +568,10 @@ export class SportsDataIOAdapter {
   private getCurrentNCAAFWeek(): number {
     // College football season starts late August
     const now = DateTime.now().setZone('America/Chicago');
-    const seasonStart = DateTime.fromObject({ year: now.year, month: 8, day: 25 }, { zone: 'America/Chicago' });
+    const seasonStart = DateTime.fromObject(
+      { year: now.year, month: 8, day: 25 },
+      { zone: 'America/Chicago' }
+    );
 
     if (now < seasonStart) {
       return 1;
@@ -593,6 +599,7 @@ export function createSportsDataIOAdapter(apiKey: string): SportsDataIOAdapter {
  * Server-side only - uses process.env
  * For Cloudflare Functions, use createSportsDataIOAdapter(env.SPORTSDATAIO_API_KEY)
  */
-export const sportsDataIO = typeof process !== 'undefined' && process.env?.SPORTSDATAIO_API_KEY
-  ? new SportsDataIOAdapter(process.env.SPORTSDATAIO_API_KEY)
-  : null;
+export const sportsDataIO =
+  typeof process !== 'undefined' && process.env?.SPORTSDATAIO_API_KEY
+    ? new SportsDataIOAdapter(process.env.SPORTSDATAIO_API_KEY)
+    : null;

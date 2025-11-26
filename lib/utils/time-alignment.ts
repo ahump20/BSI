@@ -115,47 +115,56 @@ export class TimeAlignmentService {
     const windowEnd = gameDateLocal.set({ hour: 12, minute: 0, second: 0 }).toJSDate();
 
     // Filter readings within window
-    const pregameReadings = wearablesReadings.filter(r => {
+    const pregameReadings = wearablesReadings.filter((r) => {
       const readingTime = r.reading_timestamp;
-      return readingTime >= windowStart && readingTime <= windowEnd &&
-             r.quality_score >= this.config.qualityThreshold;
+      return (
+        readingTime >= windowStart &&
+        readingTime <= windowEnd &&
+        r.quality_score >= this.config.qualityThreshold
+      );
     });
 
     // Calculate baseline metrics
-    const hrvReadings = pregameReadings.filter(r => r.metric_type === 'hrv_rmssd');
-    const recoveryReadings = pregameReadings.filter(r => r.metric_type === 'recovery_score');
-    const sleepReadings = pregameReadings.filter(r => r.metric_type === 'sleep_performance');
-    const hrReadings = pregameReadings.filter(r => r.metric_type === 'heart_rate');
-    const strainReadings = pregameReadings.filter(r => r.metric_type === 'strain');
+    const hrvReadings = pregameReadings.filter((r) => r.metric_type === 'hrv_rmssd');
+    const recoveryReadings = pregameReadings.filter((r) => r.metric_type === 'recovery_score');
+    const sleepReadings = pregameReadings.filter((r) => r.metric_type === 'sleep_performance');
+    const hrReadings = pregameReadings.filter((r) => r.metric_type === 'heart_rate');
+    const strainReadings = pregameReadings.filter((r) => r.metric_type === 'strain');
 
     // Calculate 30-day HRV baseline (for deviation)
     const thirtyDaysAgo = new Date(gameDate.getTime() - 30 * 24 * 60 * 60 * 1000);
-    const historicalHrv = wearablesReadings.filter(r =>
-      r.metric_type === 'hrv_rmssd' &&
-      r.reading_timestamp >= thirtyDaysAgo &&
-      r.reading_timestamp < gameDate &&
-      r.quality_score >= this.config.qualityThreshold
+    const historicalHrv = wearablesReadings.filter(
+      (r) =>
+        r.metric_type === 'hrv_rmssd' &&
+        r.reading_timestamp >= thirtyDaysAgo &&
+        r.reading_timestamp < gameDate &&
+        r.quality_score >= this.config.qualityThreshold
     );
-    const historicalHrvAvg = this.average(historicalHrv.map(r => r.metric_value));
+    const historicalHrvAvg = this.average(historicalHrv.map((r) => r.metric_value));
 
-    const pregameHrvAvg = this.average(hrvReadings.map(r => r.metric_value));
-    const hrvDeviation = (historicalHrvAvg && pregameHrvAvg)
-      ? ((pregameHrvAvg - historicalHrvAvg) / historicalHrvAvg) * 100
-      : null;
+    const pregameHrvAvg = this.average(hrvReadings.map((r) => r.metric_value));
+    const hrvDeviation =
+      historicalHrvAvg && pregameHrvAvg
+        ? ((pregameHrvAvg - historicalHrvAvg) / historicalHrvAvg) * 100
+        : null;
 
-    const dataCompleteness = this.calculateDataCompleteness(
-      [hrvReadings, recoveryReadings, sleepReadings, hrReadings, strainReadings]
-    );
+    const dataCompleteness = this.calculateDataCompleteness([
+      hrvReadings,
+      recoveryReadings,
+      sleepReadings,
+      hrReadings,
+      strainReadings,
+    ]);
 
     return {
       player_id: playerId,
       game_date: gameDate,
       hrv_avg: pregameHrvAvg,
       hrv_baseline_deviation: hrvDeviation,
-      recovery_score: this.average(recoveryReadings.map(r => r.metric_value)),
-      sleep_performance: this.average(sleepReadings.map(r => r.metric_value)),
-      resting_hr: this.average(hrReadings.map(r => r.metric_value)),
-      strain: this.average(strainReadings.map(r => r.metric_value)),
+      recovery_score: this.average(recoveryReadings.map((r) => r.metric_value)),
+      sleep_performance: this.average(sleepReadings.map((r) => r.metric_value)),
+      resting_hr: this.average(hrReadings.map((r) => r.metric_value)),
+      strain: this.average(strainReadings.map((r) => r.metric_value)),
       data_completeness: dataCompleteness,
     };
   }
@@ -173,15 +182,16 @@ export class TimeAlignmentService {
     wearablesReadings: WearablesReading[]
   ): Promise<TimeAlignedData> {
     const eventTime = gameEvent.event_timestamp;
-    const windowStart = new Date(eventTime.getTime() - (this.config.lookbackHours * 3600000));
+    const windowStart = new Date(eventTime.getTime() - this.config.lookbackHours * 3600000);
     const windowEnd = eventTime;
 
     // Filter readings within window for this player
-    const relevantReadings = wearablesReadings.filter(r =>
-      r.player_id === gameEvent.player_id &&
-      r.reading_timestamp >= windowStart &&
-      r.reading_timestamp <= windowEnd &&
-      r.quality_score >= this.config.qualityThreshold
+    const relevantReadings = wearablesReadings.filter(
+      (r) =>
+        r.player_id === gameEvent.player_id &&
+        r.reading_timestamp >= windowStart &&
+        r.reading_timestamp <= windowEnd &&
+        r.quality_score >= this.config.qualityThreshold
     );
 
     if (relevantReadings.length === 0) {
@@ -310,8 +320,12 @@ export class TimeAlignmentService {
     readings: WearablesReading[]
   ): WearablesReading {
     return readings.reduce((closest, current) => {
-      const currentDelta = Math.abs(current.reading_timestamp.getTime() - targetTimestamp.getTime());
-      const closestDelta = Math.abs(closest.reading_timestamp.getTime() - targetTimestamp.getTime());
+      const currentDelta = Math.abs(
+        current.reading_timestamp.getTime() - targetTimestamp.getTime()
+      );
+      const closestDelta = Math.abs(
+        closest.reading_timestamp.getTime() - targetTimestamp.getTime()
+      );
       return currentDelta < closestDelta ? current : closest;
     });
   }
@@ -330,7 +344,7 @@ export class TimeAlignmentService {
     strain: number | null;
   } {
     const getClosestValue = (metricType: string): number | null => {
-      const filtered = readings.filter(r => r.metric_type === metricType);
+      const filtered = readings.filter((r) => r.metric_type === metricType);
       if (filtered.length === 0) return null;
       const closest = this.findClosestReading(targetTime, filtered);
       return closest.metric_value;
@@ -364,7 +378,7 @@ export class TimeAlignmentService {
     const hrvBonus = hasHRV ? 0.1 : 0.0;
 
     // Weighted average
-    const quality = (0.6 * timeQuality + 0.4 * wearableQuality) + hrvBonus;
+    const quality = 0.6 * timeQuality + 0.4 * wearableQuality + hrvBonus;
     return Math.min(parseFloat(quality.toFixed(2)), 1.0);
   }
 
@@ -374,7 +388,7 @@ export class TimeAlignmentService {
    */
   private calculateDataCompleteness(readingGroups: WearablesReading[][]): number {
     const expectedMetrics = 5; // hrv, recovery, sleep, hr, strain
-    const presentMetrics = readingGroups.filter(group => group.length > 0).length;
+    const presentMetrics = readingGroups.filter((group) => group.length > 0).length;
     return parseFloat((presentMetrics / expectedMetrics).toFixed(2));
   }
 
@@ -415,7 +429,9 @@ export class TimeAlignmentService {
 /**
  * Create time alignment service instance
  */
-export function createTimeAlignmentService(config?: Partial<AlignmentConfig>): TimeAlignmentService {
+export function createTimeAlignmentService(
+  config?: Partial<AlignmentConfig>
+): TimeAlignmentService {
   return new TimeAlignmentService(config);
 }
 

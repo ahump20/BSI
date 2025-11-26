@@ -47,7 +47,12 @@ export interface AuthResult {
   authenticated: boolean;
   user?: UserPayload | ApiKeyPayload;
   error?: string;
-  errorCode?: 'MISSING_TOKEN' | 'INVALID_TOKEN' | 'EXPIRED_TOKEN' | 'INVALID_API_KEY' | 'INSUFFICIENT_PERMISSIONS';
+  errorCode?:
+    | 'MISSING_TOKEN'
+    | 'INVALID_TOKEN'
+    | 'EXPIRED_TOKEN'
+    | 'INVALID_API_KEY'
+    | 'INSUFFICIENT_PERMISSIONS';
 }
 
 /**
@@ -92,7 +97,11 @@ class JWTService {
   /**
    * Create JWT token
    */
-  static async create(payload: UserPayload, secret: string, expiresIn: number = 3600): Promise<string> {
+  static async create(
+    payload: UserPayload,
+    secret: string,
+    expiresIn: number = 3600
+  ): Promise<string> {
     const header = {
       alg: 'HS256',
       typ: 'JWT',
@@ -136,8 +145,8 @@ class JWTService {
     }
 
     // Fallback for Node.js
-    const crypto = require('crypto');
-    const hmac = crypto.createHmac('sha256', secret);
+    const nodeCrypto = require('crypto');
+    const hmac = nodeCrypto.createHmac('sha256', secret);
     hmac.update(data);
     return hmac.digest('base64');
   }
@@ -322,7 +331,10 @@ export class AuthMiddleware {
   /**
    * Require specific permission
    */
-  async requirePermission(request: Request, ...permissions: string[]): Promise<UserPayload | ApiKeyPayload> {
+  async requirePermission(
+    request: Request,
+    ...permissions: string[]
+  ): Promise<UserPayload | ApiKeyPayload> {
     const user = await this.requireAuth(request);
 
     const userPermissions = user.permissions || [];
@@ -398,7 +410,12 @@ export function createAuthErrorResponse(result: AuthResult): Response {
  * Protect a Cloudflare Worker endpoint
  */
 export function withAuth(
-  handler: (request: Request, env: any, ctx: any, user: UserPayload | ApiKeyPayload) => Promise<Response>
+  handler: (
+    request: Request,
+    env: any,
+    ctx: any,
+    user: UserPayload | ApiKeyPayload
+  ) => Promise<Response>
 ) {
   return async (request: Request, env: any, ctx: any): Promise<Response> => {
     const auth = new AuthMiddleware(env);

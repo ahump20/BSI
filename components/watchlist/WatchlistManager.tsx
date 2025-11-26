@@ -88,21 +88,21 @@ const DEFAULT_PREFERENCES: AlertPreferences = {
     walkOff: true,
     momentumShift: false, // Disabled by default (can be noisy)
     gameStart: true,
-    gameEnd: true
+    gameEnd: true,
   },
   minLeverageThreshold: 1.8,
-  upsetThreshold: 0.30,
-  closeGameMargin: 0.10,
+  upsetThreshold: 0.3,
+  closeGameMargin: 0.1,
   quietHours: {
     start: '22:00',
-    end: '07:00'
+    end: '07:00',
   },
   deliveryMethods: {
     push: true,
     email: false,
     sms: false,
-    webSocket: true
-  }
+    webSocket: true,
+  },
 };
 
 // ============================================================================
@@ -112,13 +112,13 @@ const DEFAULT_PREFERENCES: AlertPreferences = {
 export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
   userId,
   websocketUrl = 'wss://blazesportsintel.com',
-  onAlertReceived
+  onAlertReceived,
 }) => {
   // State
   const [watchlist, setWatchlist] = useState<Team[]>([]);
   const [preferences, setPreferences] = useState<AlertPreferences>({
     ...DEFAULT_PREFERENCES,
-    userId
+    userId,
   });
   const [upcomingGames, setUpcomingGames] = useState<Map<string, UpcomingGame[]>>(new Map());
   const [searchQuery, setSearchQuery] = useState('');
@@ -224,10 +224,12 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
         setIsConnected(true);
 
         // Send preferences update
-        ws.send(JSON.stringify({
-          type: 'preferences',
-          data: preferences
-        }));
+        ws.send(
+          JSON.stringify({
+            type: 'preferences',
+            data: preferences,
+          })
+        );
       };
 
       ws.onmessage = (event) => {
@@ -236,7 +238,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
 
           if (message.type === 'alert') {
             const alert: Alert = message.data;
-            setAlerts(prev => [alert, ...prev].slice(0, 50)); // Keep last 50 alerts
+            setAlerts((prev) => [alert, ...prev].slice(0, 50)); // Keep last 50 alerts
 
             // Show notification
             showNotification(alert);
@@ -314,7 +316,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
         userId,
         teams,
         preferences: prefs,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
 
       localStorage.setItem(`watchlist_${userId}`, JSON.stringify(data));
@@ -327,7 +329,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
    * Add team to watchlist
    */
   const addTeam = (team: Team) => {
-    const isAlreadyWatched = watchlist.some(t => t.id === team.id);
+    const isAlreadyWatched = watchlist.some((t) => t.id === team.id);
     if (isAlreadyWatched) {
       return;
     }
@@ -335,7 +337,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
     const newWatchlist = [...watchlist, team];
     const newPreferences = {
       ...preferences,
-      teams: newWatchlist.map(t => t.id)
+      teams: newWatchlist.map((t) => t.id),
     };
 
     setWatchlist(newWatchlist);
@@ -351,10 +353,10 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
    * Remove team from watchlist
    */
   const removeTeam = (teamId: string) => {
-    const newWatchlist = watchlist.filter(t => t.id !== teamId);
+    const newWatchlist = watchlist.filter((t) => t.id !== teamId);
     const newPreferences = {
       ...preferences,
-      teams: newWatchlist.map(t => t.id)
+      teams: newWatchlist.map((t) => t.id),
     };
 
     setWatchlist(newWatchlist);
@@ -362,7 +364,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
     saveWatchlist(newWatchlist, newPreferences);
 
     // Remove upcoming games for this team
-    setUpcomingGames(prev => {
+    setUpcomingGames((prev) => {
       const updated = new Map(prev);
       updated.delete(teamId);
       return updated;
@@ -379,18 +381,20 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
 
     // Send preferences update via WebSocket
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({
-        type: 'preferences',
-        data: newPreferences
-      }));
+      wsRef.current.send(
+        JSON.stringify({
+          type: 'preferences',
+          data: newPreferences,
+        })
+      );
     }
 
     // Also update via HTTP
     fetch(`${websocketUrl}/ws/alerts/${userId}/preferences`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newPreferences)
-    }).catch(error => {
+      body: JSON.stringify(newPreferences),
+    }).catch((error) => {
       console.error('Failed to update preferences via HTTP:', error);
     });
   };
@@ -463,10 +467,10 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
         icon: '/logo.png',
         badge: '/logo.png',
         tag: alert.id,
-        requireInteraction: alert.priority === 'high'
+        requireInteraction: alert.priority === 'high',
       });
     } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
+      Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
           showNotification(alert);
         }
@@ -494,12 +498,10 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
 
     return (
       <div className="watchlist-grid">
-        {watchlist.map(team => (
+        {watchlist.map((team) => (
           <div key={team.id} className="team-card">
             <div className="team-header">
-              {team.logo && (
-                <img src={team.logo} alt={team.name} className="team-logo" />
-              )}
+              {team.logo && <img src={team.logo} alt={team.name} className="team-logo" />}
               <div className="team-info">
                 <h4>{team.name}</h4>
                 <div className="team-meta">
@@ -521,13 +523,13 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
             {upcomingGames.has(team.id) && upcomingGames.get(team.id)!.length > 0 && (
               <div className="upcoming-games">
                 <h5>Upcoming Games</h5>
-                {upcomingGames.get(team.id)!.map(game => (
+                {upcomingGames.get(team.id)!.map((game) => (
                   <div key={game.gameId} className="game-item">
                     <div className="game-date">
                       {new Date(game.date).toLocaleDateString('en-US', {
                         timeZone: 'America/Chicago',
                         month: 'short',
-                        day: 'numeric'
+                        day: 'numeric',
                       })}
                     </div>
                     <div className="game-details">
@@ -575,11 +577,9 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
 
       {searchResults.length > 0 && (
         <div className="search-results">
-          {searchResults.map(team => (
+          {searchResults.map((team) => (
             <div key={team.id} className="search-result-item">
-              {team.logo && (
-                <img src={team.logo} alt={team.name} className="team-logo-small" />
-              )}
+              {team.logo && <img src={team.logo} alt={team.name} className="team-logo-small" />}
               <div className="team-info">
                 <div className="team-name">{team.name}</div>
                 <div className="team-conference">{team.conference}</div>
@@ -587,18 +587,16 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
               <button
                 className="add-button"
                 onClick={() => addTeam(team)}
-                disabled={watchlist.some(t => t.id === team.id)}
+                disabled={watchlist.some((t) => t.id === team.id)}
               >
-                {watchlist.some(t => t.id === team.id) ? '✓ Watching' : '+ Add'}
+                {watchlist.some((t) => t.id === team.id) ? '✓ Watching' : '+ Add'}
               </button>
             </div>
           ))}
         </div>
       )}
 
-      {isSearching && (
-        <div className="search-loading">Searching...</div>
-      )}
+      {isSearching && <div className="search-loading">Searching...</div>}
     </div>
   );
 
@@ -621,13 +619,13 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
                 updatePreferences({
                   alertTypes: {
                     ...preferences.alertTypes,
-                    [key]: e.target.checked
-                  }
+                    [key]: e.target.checked,
+                  },
                 })
               }
             />
             <span className="preference-label">
-              {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+              {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
             </span>
           </label>
         ))}
@@ -649,7 +647,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
             value={preferences.minLeverageThreshold}
             onChange={(e) =>
               updatePreferences({
-                minLeverageThreshold: parseFloat(e.target.value)
+                minLeverageThreshold: parseFloat(e.target.value),
               })
             }
           />
@@ -667,7 +665,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
             value={preferences.upsetThreshold}
             onChange={(e) =>
               updatePreferences({
-                upsetThreshold: parseFloat(e.target.value)
+                upsetThreshold: parseFloat(e.target.value),
               })
             }
           />
@@ -687,8 +685,8 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
                 updatePreferences({
                   quietHours: {
                     ...preferences.quietHours!,
-                    start: e.target.value
-                  }
+                    start: e.target.value,
+                  },
                 })
               }
             />
@@ -702,8 +700,8 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
                 updatePreferences({
                   quietHours: {
                     ...preferences.quietHours!,
-                    end: e.target.value
-                  }
+                    end: e.target.value,
+                  },
                 })
               }
             />
@@ -723,14 +721,12 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
                 updatePreferences({
                   deliveryMethods: {
                     ...preferences.deliveryMethods,
-                    [key]: e.target.checked
-                  }
+                    [key]: e.target.checked,
+                  },
                 })
               }
             />
-            <span className="preference-label">
-              {key.charAt(0).toUpperCase() + key.slice(1)}
-            </span>
+            <span className="preference-label">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
           </label>
         ))}
       </div>
@@ -751,7 +747,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
 
     return (
       <div className="alerts-list">
-        {alerts.map(alert => (
+        {alerts.map((alert) => (
           <div key={alert.id} className={`alert-item priority-${alert.priority}`}>
             <div className="alert-header">
               <span className="alert-type">{alert.type.replace('_', ' ')}</span>
@@ -759,7 +755,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
                 {new Date(alert.timestamp).toLocaleTimeString('en-US', {
                   timeZone: 'America/Chicago',
                   hour: 'numeric',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}
               </span>
             </div>
@@ -1017,13 +1013,13 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
           cursor: pointer;
         }
 
-        .preference-item input[type="checkbox"] {
+        .preference-item input[type='checkbox'] {
           width: 16px;
           height: 16px;
           cursor: pointer;
         }
 
-        .preference-item input[type="range"] {
+        .preference-item input[type='range'] {
           flex: 1;
           margin-left: 12px;
         }
@@ -1046,7 +1042,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
           font-size: 14px;
         }
 
-        .quiet-hours input[type="time"] {
+        .quiet-hours input[type='time'] {
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 6px;

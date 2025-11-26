@@ -1,722 +1,447 @@
 # Unity WebGL Integration for Blaze Sports Intel
-## Professional 3D Sports Visualization Architecture
 
-**Version:** 1.0.0
-**Last Updated:** September 30, 2025
-**Technology Stack:** Unity 6, WebGL 2.0, Babylon.js 8.0, Three.js r128
+## Overview
+This document outlines the integration strategy for Unity 6 WebGL builds with the Blaze Sports Intelligence platform, enabling immersive 3D player analytics and biomechanics visualization.
 
----
+## Unity 6 WebGL Capabilities (2025)
 
-## 📚 Reference Repositories Analyzed
+### Key Features
+- **Mobile WebGL Support**: Official support for mobile browsers
+- **Universal Render Pipeline (URP)**: Optimized for web performance
+- **WebAssembly**: Fast loading and execution
+- **Real-time Analytics**: Built-in analytics integration
+- **Sub-2-second Load Times**: With proper optimization
 
-1. **CoplayDev/unity-mcp** - Unity MCP Bridge for Claude Code integration
-2. **BabylonJS/Babylon.js** - Official Babylon.js 8.0 with WebGPU support
-3. **mrdoob/three.js** - Three.js core library
-4. **pmndrs/react-three-fiber** - React bindings for Three.js
-5. **ahump20/3d-game-shaders-for-beginners** - Advanced shader techniques
-6. **ahump20/Babylon.js** - Custom Babylon.js fork
+### Performance Targets
+- 60 FPS on desktop (Chrome, Edge, Safari, Firefox)
+- 30-45 FPS on mobile devices
+- < 2 seconds initial load time
+- < 50 MB compressed build size
 
----
+## Integration Architecture
 
-## 🎯 Integration Overview
-
-### Why Unity + WebGL for Sports Analytics?
-
-1. **Performance:** Native C# execution compiled to WebAssembly
-2. **Physics:** Built-in physics engine for ball trajectory simulation
-3. **Animation:** Professional animation tools for player movements
-4. **Shaders:** Advanced shader support for visual effects
-5. **Asset Pipeline:** Efficient asset loading and management
-6. **Cross-Platform:** Desktop, mobile, and VR/AR support
-
----
-
-## 🏗️ Architecture Diagram
-
+### 1. Unity Project Structure
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Blaze Sports Intel Web                    │
-│                   (blazesportsintel.com)                     │
-├─────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────────────┐      ┌──────────────────┐            │
-│  │   React Frontend │◄────►│  Cloudflare API  │            │
-│  │   (Next.js)      │      │    (Workers)     │            │
-│  └────────┬─────────┘      └──────────────────┘            │
-│           │                                                  │
-│           │ WebGL Canvas                                    │
-│           ▼                                                  │
-│  ┌──────────────────────────────────────────────────┐      │
-│  │         Unity WebGL Build (Brotli)               │      │
-│  │  • Stadium visualization (60 FPS)                │      │
-│  │  • Player animations                              │      │
-│  │  • Ball physics simulation                        │      │
-│  │  • Real-time data integration                     │      │
-│  └─────────────┬────────────────────────────────────┘      │
-│                │                                             │
-│                │ JavaScript Bridge                           │
-│                ▼                                             │
-│  ┌──────────────────────────────────────────────────┐      │
-│  │         JavaScript ↔ Unity Bridge                │      │
-│  │  • SendMessage() to Unity                         │      │
-│  │  • Unity → JS callback functions                  │      │
-│  │  • Data serialization (JSON)                      │      │
-│  └──────────────────────────────────────────────────┘      │
-│                                                               │
-└─────────────────────────────────────────────────────────────┘
+BlazeSportsIntelUnity/
+├── Assets/
+│   ├── Scenes/
+│   │   ├── PlayerBiomechanics.unity
+│   │   ├── StadiumVisualization.unity
+│   │   └── TeamAnalytics.unity
+│   ├── Scripts/
+│   │   ├── BlazeAPIConnector.cs
+│   │   ├── BiomechanicsRenderer.cs
+│   │   ├── PlayerDataManager.cs
+│   │   └── WebGLCommunication.cs
+│   ├── Materials/
+│   │   └── BlazeSportsMaterials/
+│   └── Prefabs/
+│       ├── PlayerModel.prefab
+│       ├── StadiumPrefab.prefab
+│       └── DataVisualization.prefab
+└── ProjectSettings/
+    └── WebGL optimizations
 ```
 
----
+### 2. JavaScript Bridge Communication
 
-## 🚀 Implementation Steps
+Unity and web page communicate via JavaScript:
 
-### Phase 1: Unity Project Setup
-
-#### 1.1 Create Unity Project
-
-```bash
-# Unity 6.0 (2024 LTS) or later
-# Create new 3D project
-# Template: Universal Render Pipeline (URP)
-```
-
-#### 1.2 Project Settings for WebGL
-
-```csharp
-// Player Settings → WebGL Platform
-// Publishing Settings:
-- Compression Format: Brotli
-- Code Optimization: Master (Fastest)
-- Enable Exceptions: Explicitly Thrown
-- Data Caching: Enabled
-- Progressive Web App: Enabled
-
-// Quality Settings:
-- Anti-Aliasing: 4x MSAA
-- V Sync Count: Don't Sync
-- Pixel Light Count: 4
-- Shadow Quality: High
-- Shadow Resolution: Very High
-
-// Graphics Settings:
-- Color Space: Linear
-- Auto Graphics API: Off
-- Graphics API: WebGL 2.0
-```
-
-#### 1.3 Install Required Packages
-
-```json
-{
-  "dependencies": {
-    "com.unity.render-pipelines.universal": "16.0.0",
-    "com.unity.textmeshpro": "3.0.0",
-    "com.unity.cinemachine": "3.0.0",
-    "com.unity.postprocessing": "3.4.0"
-  }
-}
-```
-
----
-
-### Phase 2: Create Sports Visualization Scenes
-
-#### 2.1 Baseball Stadium Scene
-
-```csharp
-// Assets/Scripts/BlazeBaseballStadium.cs
-using UnityEngine;
-using UnityEngine.Rendering.Universal;
-
-public class BlazeBaseballStadium : MonoBehaviour
-{
-    [Header("Field Components")]
-    public GameObject infield;
-    public GameObject outfield;
-    public GameObject basePath;
-    public GameObject homeplate;
-
-    [Header("Lighting")]
-    public Light mainLight;
-    public Light fillLight;
-    public Volume postProcessVolume;
-
-    [Header("Camera")]
-    public Camera mainCamera;
-    public float orbitSpeed = 2f;
-    public float zoomSpeed = 5f;
-
-    private float currentOrbitAngle = 0f;
-
-    void Start()
-    {
-        InitializeStadium();
-        SetupLighting();
-        SetupPostProcessing();
-    }
-
-    void Update()
-    {
-        HandleCameraOrbit();
-    }
-
-    void InitializeStadium()
-    {
-        // Create field geometry
-        CreateInfield();
-        CreateOutfield();
-        CreateBases();
-        CreateFences();
-    }
-
-    void CreateInfield()
-    {
-        // Diamond shape
-        Vector3[] infieldPoints = {
-            new Vector3(0, 0, 0),      // Home plate
-            new Vector3(30, 0, 30),     // First base
-            new Vector3(60, 0, 60),     // Second base
-            new Vector3(30, 0, 90),     // Third base
-        };
-
-        // Create mesh from points
-        MeshFilter mf = infield.GetComponent<MeshFilter>();
-        mf.mesh = CreateDiamondMesh(infieldPoints);
-
-        // Apply grass material
-        MeshRenderer mr = infield.GetComponent<MeshRenderer>();
-        mr.material = Resources.Load<Material>("Materials/InfieldGrass");
-    }
-
-    void CreateOutfield()
-    {
-        // Circular outfield boundary
-        float radius = 120f;
-        int segments = 64;
-
-        Vector3[] vertices = new Vector3[segments + 2];
-        vertices[0] = new Vector3(60, 0, 60); // Center (second base)
-
-        for (int i = 0; i <= segments; i++)
-        {
-            float angle = i * Mathf.PI * 0.5f / segments - Mathf.PI * 0.25f;
-            float x = 60 + radius * Mathf.Cos(angle);
-            float z = 60 + radius * Mathf.Sin(angle);
-            vertices[i + 1] = new Vector3(x, 0, z);
-        }
-
-        MeshFilter mf = outfield.GetComponent<MeshFilter>();
-        mf.mesh = CreateFanMesh(vertices);
-
-        MeshRenderer mr = outfield.GetComponent<MeshRenderer>();
-        mr.material = Resources.Load<Material>("Materials/OutfieldGrass");
-    }
-
-    void SetupLighting()
-    {
-        // Main sunlight
-        mainLight.type = LightType.Directional;
-        mainLight.intensity = 1.2f;
-        mainLight.color = new Color(1f, 0.95f, 0.9f);
-        mainLight.shadows = LightShadows.Soft;
-
-        // Fill light for better shadows
-        fillLight.type = LightType.Directional;
-        fillLight.intensity = 0.4f;
-        fillLight.color = new Color(0.7f, 0.8f, 1f);
-    }
-
-    void SetupPostProcessing()
-    {
-        // Bloom for stadium lights
-        // Ambient Occlusion for depth
-        // Color Grading for visual appeal
-    }
-
-    void HandleCameraOrbit()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            float mouseX = Input.GetAxis("Mouse X");
-            currentOrbitAngle += mouseX * orbitSpeed;
-
-            float radius = 150f;
-            float height = 50f;
-
-            Vector3 newPos = new Vector3(
-                60 + radius * Mathf.Cos(currentOrbitAngle * Mathf.Deg2Rad),
-                height,
-                60 + radius * Mathf.Sin(currentOrbitAngle * Mathf.Deg2Rad)
-            );
-
-            mainCamera.transform.position = newPos;
-            mainCamera.transform.LookAt(new Vector3(60, 0, 60));
-        }
-    }
-
-    Mesh CreateDiamondMesh(Vector3[] points)
-    {
-        // Implement diamond mesh generation
-        Mesh mesh = new Mesh();
-        // ... mesh creation logic
-        return mesh;
-    }
-
-    Mesh CreateFanMesh(Vector3[] vertices)
-    {
-        // Implement fan-shaped mesh
-        Mesh mesh = new Mesh();
-        // ... mesh creation logic
-        return mesh;
+```javascript
+// From Web Page → Unity
+function sendDataToUnity(playerData) {
+    const unityInstance = window.unityInstance;
+    if (unityInstance) {
+        unityInstance.SendMessage(
+            'GameManager',
+            'ReceivePlayerData',
+            JSON.stringify(playerData)
+        );
     }
 }
+
+// From Unity → Web Page (implemented in Unity C#)
+// UnityWebGL.jslib file:
+mergeInto(LibraryManager.library, {
+    SendAnalyticsToWeb: function(dataPtr) {
+        const data = UTF8ToString(dataPtr);
+        window.parent.postMessage({
+            type: 'UNITY_ANALYTICS',
+            payload: JSON.parse(data)
+        }, '*');
+    }
+});
 ```
 
-#### 2.2 Ball Physics Simulation
+### 3. C# API Connector Script
 
 ```csharp
-// Assets/Scripts/BaseballPhysics.cs
+// BlazeAPIConnector.cs
 using UnityEngine;
-
-public class BaseballPhysics : MonoBehaviour
-{
-    [Header("Ball Properties")]
-    public float mass = 0.145f; // kg
-    public float diameter = 0.074f; // meters
-    public float dragCoefficient = 0.3f;
-
-    [Header("Physics")]
-    private Rigidbody rb;
-    private Vector3 velocity;
-    private Vector3 spin;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        rb.mass = mass;
-        rb.drag = dragCoefficient;
-        rb.useGravity = true;
-    }
-
-    public void SimulatePitch(float velocity, float angle, Vector3 spinAxis, float spinRate)
-    {
-        // Convert mph to m/s
-        float velocityMS = velocity * 0.44704f;
-
-        // Calculate initial velocity vector
-        Vector3 direction = Quaternion.Euler(0, 0, angle) * Vector3.forward;
-        this.velocity = direction * velocityMS;
-
-        // Apply spin
-        this.spin = spinAxis.normalized * spinRate;
-
-        // Launch ball
-        rb.velocity = this.velocity;
-        rb.angularVelocity = this.spin;
-    }
-
-    void FixedUpdate()
-    {
-        // Magnus effect (spin-induced movement)
-        Vector3 magnusForce = Vector3.Cross(spin, velocity) * 0.00001f;
-        rb.AddForce(magnusForce, ForceMode.Force);
-
-        // Air resistance
-        float speed = velocity.magnitude;
-        Vector3 dragForce = -velocity.normalized * dragCoefficient * speed * speed * 0.0001f;
-        rb.AddForce(dragForce, ForceMode.Force);
-    }
-}
-```
-
----
-
-### Phase 3: JavaScript ↔ Unity Bridge
-
-#### 3.1 Unity to JavaScript Communication
-
-```csharp
-// Assets/Scripts/BlazeAPIConnector.cs
-using UnityEngine;
-using System.Runtime.InteropServices;
-using Newtonsoft.Json;
+using UnityEngine.Networking;
+using System.Collections;
+using System.Collections.Generic;
 
 public class BlazeAPIConnector : MonoBehaviour
 {
-    [DllImport("__Internal")]
-    private static extern void SendToJavaScript(string data);
+    private const string API_BASE = "https://blazesportsintel.com/api";
 
-    [DllImport("__Internal")]
-    private static extern void RequestGameData(string gameId);
-
-    // Send data to JavaScript
-    public void SendPlayerStats(PlayerStats stats)
+    [System.Serializable]
+    public class PlayerBiomechanics
     {
-        string json = JsonConvert.SerializeObject(stats);
-        #if UNITY_WEBGL && !UNITY_EDITOR
-        SendToJavaScript(json);
-        #endif
+        public string playerId;
+        public string sport;
+        public float[] jointPositions;
+        public float velocity;
+        public float power;
+        public float efficiency;
     }
 
-    // Request data from JavaScript API
-    public void FetchGameData(string gameId)
+    public IEnumerator FetchPlayerData(string playerId, string sport)
     {
-        #if UNITY_WEBGL && !UNITY_EDITOR
-        RequestGameData(gameId);
-        #endif
-    }
+        string url = $"{API_BASE}/player/{sport}/{playerId}/biomechanics";
 
-    // Called from JavaScript
-    public void ReceiveGameData(string jsonData)
-    {
-        GameData data = JsonConvert.DeserializeObject<GameData>(jsonData);
-        UpdateVisualization(data);
-    }
-
-    void UpdateVisualization(GameData data)
-    {
-        // Update Unity scene with real data
-    }
-}
-
-[System.Serializable]
-public class PlayerStats
-{
-    public string playerId;
-    public string name;
-    public float battingAverage;
-    public int homeRuns;
-    public int rbi;
-}
-
-[System.Serializable]
-public class GameData
-{
-    public string gameId;
-    public string homeTeam;
-    public string awayTeam;
-    public int homeScore;
-    public int awayScore;
-    public int inning;
-}
-```
-
-#### 3.2 JavaScript Bridge Implementation
-
-```javascript
-// public/js/unity-bridge.js
-
-class UnityBridge {
-  constructor() {
-    this.unityInstance = null;
-    this.initialized = false;
-  }
-
-  async initialize(unityLoaderUrl, dataUrl) {
-    try {
-      const unityLoader = await import(unityLoaderUrl);
-
-      this.unityInstance = await unityLoader.createUnityInstance(
-        document.querySelector("#unity-canvas"),
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
-          dataUrl: dataUrl,
-          frameworkUrl: dataUrl.replace('.data', '.framework.js'),
-          codeUrl: dataUrl.replace('.data', '.wasm'),
-          streamingAssetsUrl: "StreamingAssets",
-          companyName: "BlazeSportsIntel",
-          productName: "BlazeSportsVisualization",
-          productVersion: "1.0.0",
-        },
-        (progress) => {
-          console.log(`Unity loading: ${Math.round(progress * 100)}%`);
-        }
-      );
+            request.SetRequestHeader("Accept", "application/json");
+            request.SetRequestHeader("User-Agent", "BlazeSportsIntel-Unity/1.0");
 
-      this.initialized = true;
-      console.log("Unity WebGL initialized successfully");
+            yield return request.SendWebRequest();
 
-      // Setup global bridge
-      window.unityBridge = this;
-
-    } catch (error) {
-      console.error("Failed to initialize Unity:", error);
-    }
-  }
-
-  // Send data from JavaScript to Unity
-  sendToUnity(gameObjectName, methodName, data) {
-    if (!this.initialized) {
-      console.warn("Unity not initialized");
-      return;
-    }
-
-    const jsonData = typeof data === 'string' ? data : JSON.stringify(data);
-    this.unityInstance.SendMessage(gameObjectName, methodName, jsonData);
-  }
-
-  // Receive data from Unity (called by Unity)
-  receiveFromUnity(data) {
-    const parsedData = JSON.parse(data);
-    console.log("Received from Unity:", parsedData);
-
-    // Trigger custom event
-    window.dispatchEvent(new CustomEvent('unityData', { detail: parsedData }));
-  }
-
-  // Send game data to Unity
-  async sendGameData(gameId) {
-    try {
-      const response = await fetch(`/api/sports/baseball/games/${gameId}`);
-      const gameData = await response.json();
-
-      this.sendToUnity(
-        "BlazeAPIConnector",
-        "ReceiveGameData",
-        JSON.stringify(gameData)
-      );
-    } catch (error) {
-      console.error("Failed to fetch game data:", error);
-    }
-  }
-
-  // Update stadium visualization
-  updateStadium(teamData) {
-    this.sendToUnity("BlazeBaseballStadium", "UpdateTeamColors", {
-      primaryColor: teamData.primaryColor,
-      secondaryColor: teamData.secondaryColor,
-      logoUrl: teamData.logoUrl
-    });
-  }
-
-  // Simulate pitch in Unity
-  simulatePitch(pitchData) {
-    this.sendToUnity("BaseballPhysics", "SimulatePitch", {
-      velocity: pitchData.velocity,
-      angle: pitchData.angle,
-      spinRate: pitchData.spinRate,
-      spinAxis: pitchData.spinAxis
-    });
-  }
-}
-
-// Global initialization
-window.initializeUnityBridge = async () => {
-  const bridge = new UnityBridge();
-  await bridge.initialize(
-    "/unity-builds/blaze-sports.loader.js",
-    "/unity-builds/blaze-sports.data"
-  );
-  return bridge;
-};
-```
-
----
-
-### Phase 4: Advanced Shader Effects
-
-#### 4.1 Custom Grass Shader (HLSL)
-
-```hlsl
-// Assets/Shaders/BlazeGrass.shader
-Shader "Blaze/Grass"
-{
-    Properties
-    {
-        _MainTex ("Grass Texture", 2D) = "white" {}
-        _BaseColor ("Base Color", Color) = (0.2, 0.6, 0.2, 1)
-        _TipColor ("Tip Color", Color) = (0.3, 0.8, 0.3, 1)
-        _WindStrength ("Wind Strength", Range(0, 1)) = 0.3
-        _WindSpeed ("Wind Speed", Range(0, 10)) = 2
-    }
-
-    SubShader
-    {
-        Tags { "RenderType"="Opaque" "RenderPipeline"="UniversalPipeline" }
-
-        Pass
-        {
-            HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-
-            struct Attributes
+            if (request.result == UnityWebRequest.Result.Success)
             {
-                float4 positionOS : POSITION;
-                float3 normalOS : NORMAL;
-                float2 uv : TEXCOORD0;
-            };
-
-            struct Varyings
-            {
-                float4 positionCS : SV_POSITION;
-                float3 normalWS : TEXCOORD0;
-                float2 uv : TEXCOORD1;
-                float3 worldPos : TEXCOORD2;
-            };
-
-            sampler2D _MainTex;
-            float4 _BaseColor;
-            float4 _TipColor;
-            float _WindStrength;
-            float _WindSpeed;
-
-            Varyings vert(Attributes input)
-            {
-                Varyings output;
-
-                // Wind animation
-                float windPhase = _Time.y * _WindSpeed + input.positionOS.x * 0.1;
-                float wind = sin(windPhase) * _WindStrength;
-                float4 pos = input.positionOS;
-                pos.x += wind * input.uv.y;
-
-                output.positionCS = TransformObjectToHClip(pos);
-                output.normalWS = TransformObjectToWorldNormal(input.normalOS);
-                output.uv = input.uv;
-                output.worldPos = TransformObjectToWorld(pos);
-
-                return output;
+                PlayerBiomechanics data = JsonUtility.FromJson<PlayerBiomechanics>(
+                    request.downloadHandler.text
+                );
+                ProcessBiomechanicsData(data);
             }
-
-            half4 frag(Varyings input) : SV_Target
+            else
             {
-                half4 texColor = tex2D(_MainTex, input.uv);
-                half4 grassColor = lerp(_BaseColor, _TipColor, input.uv.y);
-
-                // Lighting
-                float3 lightDir = normalize(_MainLightPosition.xyz);
-                float ndotl = saturate(dot(input.normalWS, lightDir));
-
-                half4 finalColor = texColor * grassColor * ndotl;
-                return finalColor;
+                Debug.LogError($"API Error: {request.error}");
+                LoadDemoData();
             }
-            ENDHLSL
         }
     }
-}
-```
 
-#### 4.2 Ball Trail Shader
-
-```hlsl
-// Assets/Shaders/BallTrail.shader
-Shader "Blaze/BallTrail"
-{
-    Properties
+    private void ProcessBiomechanicsData(PlayerBiomechanics data)
     {
-        _Color ("Trail Color", Color) = (1, 1, 1, 0.5)
-        _FadeDistance ("Fade Distance", Range(0, 10)) = 5
+        // Update 3D visualization
+        BiomechanicsRenderer renderer = GetComponent<BiomechanicsRenderer>();
+        renderer.UpdateVisualization(data);
+
+        // Send analytics back to web page
+        SendAnalyticsToWeb(JsonUtility.ToJson(new {
+            playerId = data.playerId,
+            metricsCalculated = true,
+            timestamp = System.DateTime.UtcNow.ToString("o")
+        }));
     }
 
-    SubShader
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void SendAnalyticsToWeb(string jsonData);
+
+    private void LoadDemoData()
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
-        Blend SrcAlpha OneMinusSrcAlpha
-        ZWrite Off
-        Cull Off
-
-        Pass
-        {
-            HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-
-            struct Attributes
-            {
-                float4 positionOS : POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            struct Varyings
-            {
-                float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            float4 _Color;
-            float _FadeDistance;
-
-            Varyings vert(Attributes input)
-            {
-                Varyings output;
-                output.positionCS = TransformObjectToHClip(input.positionOS);
-                output.uv = input.uv;
-                return output;
-            }
-
-            half4 frag(Varyings input) : SV_Target
-            {
-                float alpha = 1.0 - (input.uv.x / _FadeDistance);
-                alpha = saturate(alpha);
-
-                half4 color = _Color;
-                color.a *= alpha;
-
-                return color;
-            }
-            ENDHLSL
-        }
+        // Fallback demo data
+        PlayerBiomechanics demo = new PlayerBiomechanics {
+            playerId = "demo-001",
+            sport = "baseball",
+            velocity = 95.4f,
+            power = 87.2f,
+            efficiency = 0.92f
+        };
+        ProcessBiomechanicsData(demo);
     }
 }
 ```
 
----
+### 4. WebGL Build Settings
 
-### Phase 5: Build & Deploy
+**Unity Build Configuration:**
+- **Compression Format**: Brotli (best for web)
+- **Code Optimization**: Master (size and speed)
+- **Strip Engine Code**: Enabled
+- **Managed Stripping Level**: High
+- **Enable Exceptions**: None (for size reduction)
+- **Data Caching**: Enabled
 
-#### 5.1 Unity Build Settings
-
+**Build Command:**
 ```bash
-# Build for WebGL
-File → Build Settings
-Platform: WebGL
-Compression: Brotli
-Code Optimization: Master
-Memory Size: 512 MB (adjust based on needs)
-
-# Output folder: unity-builds/
-Build And Run
+# Unity build command (CI/CD)
+unity-editor \
+    -quit \
+    -batchmode \
+    -projectPath ./BlazeSportsIntelUnity \
+    -buildTarget WebGL \
+    -executeMethod WebGLBuilder.Build \
+    -logFile unity-build.log
 ```
 
-#### 5.2 Deployment to Cloudflare Pages
+### 5. HTML Integration
 
-```bash
-# Copy Unity build to public folder
-cp -r unity-builds/Build/* public/unity-builds/
+```html
+<!-- unity-player.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blaze Sports Intel - Unity Player Analytics</title>
+    <style>
+        #unity-container {
+            width: 100%;
+            height: 600px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        #unity-loading-bar {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .progress-bar {
+            width: 300px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b00, #ff8c00);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="unity-container">
+        <canvas id="unity-canvas"></canvas>
+        <div id="unity-loading-bar">
+            <div class="progress-bar">
+                <div class="progress-fill" id="unity-progress"></div>
+            </div>
+            <p style="color: white; text-align: center; margin-top: 10px;">
+                Loading Unity WebGL...
+            </p>
+        </div>
+    </div>
 
-# Deploy with Wrangler
-wrangler pages deploy public \
-  --project-name blazesportsintel \
-  --branch main \
-  --commit-dirty=true
+    <script src="Build/BlazeSportsIntel.loader.js"></script>
+    <script>
+        let unityInstance = null;
+
+        const loadingBar = document.getElementById('unity-loading-bar');
+        const progressFill = document.getElementById('unity-progress');
+
+        createUnityInstance(document.querySelector("#unity-canvas"), {
+            dataUrl: "Build/BlazeSportsIntel.data.br",
+            frameworkUrl: "Build/BlazeSportsIntel.framework.js.br",
+            codeUrl: "Build/BlazeSportsIntel.wasm.br",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "Blaze Intelligence",
+            productName: "Blaze Sports Intel",
+            productVersion: "3.0.0",
+        }, (progress) => {
+            // Update progress bar
+            progressFill.style.width = `${progress * 100}%`;
+        }).then((instance) => {
+            window.unityInstance = instance;
+            loadingBar.style.display = 'none';
+            console.log('✅ Unity WebGL loaded successfully');
+
+            // Send initial data to Unity
+            initializeUnityWithData();
+        }).catch((error) => {
+            console.error('❌ Unity load error:', error);
+            alert('Failed to load Unity WebGL. Please check console.');
+        });
+
+        async function initializeUnityWithData() {
+            try {
+                // Fetch player data from Blaze API
+                const response = await fetch('/api/player/baseball/player-001');
+                const playerData = await response.json();
+
+                // Send to Unity
+                window.unityInstance.SendMessage(
+                    'GameManager',
+                    'ReceivePlayerData',
+                    JSON.stringify(playerData)
+                );
+            } catch (error) {
+                console.error('Failed to initialize Unity data:', error);
+            }
+        }
+
+        // Listen for messages from Unity
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'UNITY_ANALYTICS') {
+                console.log('Unity Analytics:', event.data.payload);
+                // Process Unity analytics data
+                updateWebDashboard(event.data.payload);
+            }
+        });
+
+        function updateWebDashboard(analyticsData) {
+            // Update main dashboard with Unity-calculated metrics
+            document.dispatchEvent(new CustomEvent('unityAnalytics', {
+                detail: analyticsData
+            }));
+        }
+    </script>
+</body>
+</html>
 ```
 
+## Deployment Strategy
+
+### 1. Build Pipeline
+
+```yaml
+# .github/workflows/unity-build.yml
+name: Unity WebGL Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'unity/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: game-ci/unity-builder@v2
+        with:
+          targetPlatform: WebGL
+          buildName: BlazeSportsIntel
+
+      - name: Compress Build
+        run: |
+          cd build/WebGL/WebGL
+          brotli -q 11 Build/*.wasm
+          brotli -q 11 Build/*.js
+          brotli -q 11 Build/*.data
+
+      - name: Deploy to Cloudflare
+        run: |
+          npm install -g wrangler
+          wrangler pages deploy build/WebGL/WebGL \
+            --project-name blazesportsintel-unity \
+            --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+```
+
+### 2. Cloudflare Pages Configuration
+
+```toml
+# wrangler-unity.toml
+name = "blazesportsintel-unity"
+compatibility_date = "2025-01-01"
+
+[site]
+bucket = "./build/WebGL/WebGL"
+
+[[routes]]
+pattern = "/unity/*"
+custom_domain = true
+
+[build]
+command = "echo 'Pre-built Unity files'"
+cwd = "."
+watch_dirs = ["build/WebGL"]
+
+[env.production.vars]
+UNITY_VERSION = "6.0.0"
+COMPRESSION = "brotli"
+```
+
+### 3. Integration Points
+
+**Main Dashboard Integration:**
+```html
+<!-- In blaze-3d-sports-dashboard.html -->
+<div class="unity-section" style="margin-top: 2rem;">
+    <h2>🎮 Immersive Player Analytics (Unity WebGL)</h2>
+    <iframe
+        src="/unity-player.html"
+        width="100%"
+        height="600px"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope"
+        style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);"
+    ></iframe>
+</div>
+```
+
+## Performance Optimization
+
+### 1. Asset Optimization
+- Use texture atlases
+- Compress meshes
+- LOD (Level of Detail) for player models
+- Occlusion culling
+
+### 2. Code Optimization
+- Object pooling for frequently instantiated objects
+- Minimize GetComponent calls
+- Use coroutines for async operations
+- Cache references
+
+### 3. WebGL-Specific
+- Disable audio for web (optional)
+- Reduce quality settings for mobile
+- Use URP with optimized settings
+- Enable GPU instancing
+
+## Testing Strategy
+
+### Cross-Browser Testing
+- ✅ Chrome 120+ (WebGPU support)
+- ✅ Edge 120+
+- ✅ Safari 17+ (macOS Tahoe 26)
+- ✅ Firefox 141+ (Windows)
+- ⚠️ Mobile Safari (iOS 26+)
+- ⚠️ Chrome Android (with reduced quality)
+
+### Performance Benchmarks
+| Device | Target FPS | Load Time | Build Size |
+|--------|-----------|-----------|------------|
+| Desktop High-End | 60 | < 2s | 40 MB |
+| Desktop Mid-Range | 45 | < 3s | 40 MB |
+| Mobile High-End | 45 | < 4s | 30 MB |
+| Mobile Mid-Range | 30 | < 6s | 30 MB |
+
+## Next Steps
+
+1. **Create Unity Project**: Set up Unity 6 project with URP
+2. **Develop Player Model**: Create rigged 3D player model with biomechanics
+3. **API Integration**: Implement BlazeAPIConnector.cs
+4. **Build Pipeline**: Set up automated WebGL builds
+5. **Deploy to Cloudflare**: Integrate with main platform
+6. **Performance Testing**: Cross-browser and device testing
+7. **Documentation**: Complete API docs and user guides
+
+## Resources
+
+- **Unity Documentation**: https://docs.unity3d.com/Manual/webgl.html
+- **Babylon.js + Unity**: Can coexist on same page
+- **WebAssembly Performance**: https://webassembly.org/
+- **Cloudflare Workers**: https://developers.cloudflare.com/workers/
+
 ---
 
-## 📊 Performance Targets
-
-| Metric | Desktop | Mobile |
-|--------|---------|--------|
-| FPS | 60 | 30-45 |
-| Load Time | <5s | <10s |
-| Memory | <512MB | <256MB |
-| Build Size | <50MB | <30MB compressed |
-
----
-
-## 🎯 Next Steps
-
-1. **Implement Unity Project** with baseball stadium scene
-2. **Create JavaScript Bridge** for real-time data
-3. **Build WebGL** with Brotli compression
-4. **Deploy to Cloudflare** Pages
-5. **Integrate with React** frontend
-6. **Add More Sports** (football, basketball, track)
-
----
-
-**Status:** Documentation Complete
-**Ready for Implementation:** ✅
-**Estimated Time:** 8-10 hours for full Unity integration
+**Status**: Documentation Complete | Implementation Pending
+**Updated**: September 29, 2025
+**Author**: Blaze Sports Intel Development Team

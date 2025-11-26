@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Blaze Sports Intel covers what ESPN ignores—college baseball, FCS football, Group of Five programs, and every team that deserves real coverage.">
+  <title>Coverage | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: color 0.15s ease;
+    }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: color 0.15s ease;
+      position: relative;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--bsi-burnt-orange);
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+    
+    .hero {
+      padding: calc(80px + 5rem) 1.5rem 4rem;
+      background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+      text-align: center;
+    }
+    .hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.8);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .differentiators {
+      padding: 4rem 1.5rem;
+      background: var(--bsi-charcoal);
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .differentiators-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .differentiators-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .differentiators-title .accent { color: var(--bsi-burnt-orange); }
+    .differentiators-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+    @media (max-width: 900px) {
+      .differentiators-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .differentiators-grid { grid-template-columns: 1fr; }
+    }
+    .diff-item {
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .diff-stat {
+      font-family: var(--font-mono);
+      font-size: 2.5rem;
+      font-weight: 500;
+      color: var(--bsi-burnt-orange);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .diff-label {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 250, 250, 0.7);
+      line-height: 1.4;
+    }
+    
+    .sports-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .sports-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .sports-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .sport-card {
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      padding: 2.5rem;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .sport-card:hover {
+      border-color: rgba(191, 87, 0, 0.4);
+      transform: translateY(-4px);
+    }
+    .sport-card--primary {
+      border-color: var(--bsi-burnt-orange);
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.08) 0%, var(--bsi-charcoal) 100%);
+    }
+    .sport-card--primary:hover {
+      border-color: var(--bsi-ember);
+    }
+    
+    .sport-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .sport-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .sport-title .accent { color: var(--bsi-burnt-orange); }
+    .sport-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.375rem 0.75rem;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    
+    .sport-description {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.8);
+      margin-bottom: 1.5rem;
+    }
+    
+    .sport-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 250, 250, 0.9);
+    }
+    .feature-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--bsi-burnt-orange);
+    }
+    
+    .secondary-sports {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 900px) {
+      .secondary-sports { grid-template-columns: 1fr; }
+    }
+    
+    .why-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-cream);
+      color: var(--bsi-charcoal);
+    }
+    .why-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .why-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .why-title .accent { color: var(--bsi-burnt-orange); }
+    
+    .why-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+    @media (max-width: 700px) {
+      .why-content { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+    .why-problem h3, .why-solution h3 {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .why-problem h3 { color: var(--bsi-texas-soil); }
+    .why-solution h3 { color: var(--bsi-burnt-orange); }
+    .why-problem p, .why-solution p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(26, 26, 26, 0.85);
+      margin-bottom: 1rem;
+    }
+    
+    .principles-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-charcoal);
+    }
+    .principles-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .principles-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .principles-title .accent { color: var(--bsi-burnt-orange); }
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 800px) {
+      .principles-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .principles-grid { grid-template-columns: 1fr; }
+    }
+    .principle {
+      background: rgba(13, 13, 13, 0.5);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .principle-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 1rem;
+      color: var(--bsi-burnt-orange);
+    }
+    .principle-title {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .principle-desc {
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: rgba(250, 250, 250, 0.7);
+    }
+    
+    .scope-section {
+      padding: 4rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .scope-container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .scope-title {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 250, 0.5);
+      margin-bottom: 1rem;
+    }
+    .scope-text {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.7);
+    }
+    .scope-text strong {
+      color: rgba(250, 250, 250, 0.9);
+    }
+    
+    .cta-section {
+      padding: 5rem 1.5rem;
+      background: linear-gradient(135deg, rgba(139, 69, 19, 0.1) 0%, var(--bsi-midnight) 100%);
+      text-align: center;
+    }
+    .cta-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .cta-title .accent { color: var(--bsi-burnt-orange); }
+    .cta-text {
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.7);
+      margin-bottom: 2rem;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 2rem;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      border-radius: 6px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .cta-btn:hover {
+      background: var(--bsi-ember);
+      transform: translateY(-2px);
+    }
+    
+    .footer {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      text-align: center;
+    }
+    .footer-tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 0.75rem;
+    }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/bsi-logo.png" alt="Blaze Sports Intel">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/coverage" class="nav-link active">Coverage</a>
+        <a href="/analytics" class="nav-link">Analytics</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/our-story" class="nav-link">Our Story</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">What We Cover</p>
+      <h1 class="hero-title">The Sports <span class="accent">Big Media Ignores</span></h1>
+      <p class="hero-subtitle">
+        ESPN gives more airtime to cornhole than college baseball. We exist to cover what they refuse 
+        to—with real data, complete box scores, and professional analysis for every program.
+      </p>
+    </div>
+  </section>
+
+  <section class="differentiators">
+    <div class="differentiators-inner">
+      <h2 class="differentiators-title">Why <span class="accent">BSI Exists</span></h2>
+      <div class="differentiators-grid">
+        <div class="diff-item">
+          <p class="diff-stat">3</p>
+          <p class="diff-label">Revenue-generating college sports (baseball is one of them)</p>
+        </div>
+        <div class="diff-item">
+          <p class="diff-stat">0</p>
+          <p class="diff-label">ESPN box scores for college baseball games</p>
+        </div>
+        <div class="diff-item">
+          <p class="diff-stat">130+</p>
+          <p class="diff-label">FBS programs (media seriously covers about 25)</p>
+        </div>
+        <div class="diff-item">
+          <p class="diff-stat">299</p>
+          <p class="diff-label">D1 baseball programs we track</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sports-section">
+    <div class="sports-container">
+      <div class="sports-grid">
+        
+        <article class="sport-card sport-card--primary">
+          <div class="sport-header">
+            <h2 class="sport-title"><span class="accent">College Baseball</span></h2>
+            <span class="sport-badge">Primary Focus</span>
+          </div>
+          <p class="sport-description">
+            College baseball is one of only three revenue-generating college sports—alongside football and 
+            basketball. Yet ESPN provides virtually no coverage: no box scores, no standings pages worth using, 
+            no statistical depth. BSI fills that gap with complete game data, advanced analytics, and coverage 
+            of all 299 Division I programs—not just the teams that make the College World Series.
+          </p>
+          <div class="sport-features">
+            <div class="feature">
+              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span>Complete Box Scores</span>
+            </div>
+            <div class="feature">
+              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span>Advanced Statistics</span>
+            </div>
+            <div class="feature">
+              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span>All 299 D1 Programs</span>
+            </div>
+            <div class="feature">
+              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span>Recruiting Intelligence</span>
+            </div>
+            <div class="feature">
+              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span>Conference Coverage</span>
+            </div>
+            <div class="feature">
+              <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span>CWS Analysis</span>
+            </div>
+          </div>
+        </article>
+
+        <div class="secondary-sports">
+          <article class="sport-card">
+            <div class="sport-header">
+              <h2 class="sport-title">College <span class="accent">Football</span></h2>
+            </div>
+            <p class="sport-description">
+              Beyond the Power Four. FCS programs, Group of Five conferences, and the teams that ESPN's 
+              algorithm ignores. Real analysis, not hot takes.
+            </p>
+            <div class="sport-features">
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>FCS Coverage</span>
+              </div>
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Group of Five</span>
+              </div>
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Recruiting Intel</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="sport-card">
+            <div class="sport-header">
+              <h2 class="sport-title"><span class="accent">MLB</span></h2>
+            </div>
+            <p class="sport-description">
+              Statcast integration, advanced metrics, and predictive modeling. Following players from 
+              college through the pros with analytical continuity.
+            </p>
+            <div class="sport-features">
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Statcast Data</span>
+              </div>
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Predictive Models</span>
+              </div>
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Draft Tracking</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="sport-card">
+            <div class="sport-header">
+              <h2 class="sport-title"><span class="accent">NFL</span></h2>
+            </div>
+            <p class="sport-description">
+              Scheme analysis, personnel trends, and situational breakdowns. Analysis that goes deeper 
+              than fantasy points and gambling lines.
+            </p>
+            <div class="sport-features">
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Scheme Analysis</span>
+              </div>
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Personnel Trends</span>
+              </div>
+              <div class="feature">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>Game Breakdowns</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="why-section">
+    <div class="why-container">
+      <h2 class="why-title">The Problem <span class="accent">We're Solving</span></h2>
+      <div class="why-content">
+        <div class="why-problem">
+          <h3>The Gap</h3>
+          <p>
+            ESPN broadcasts professional cornhole, competitive eating, and the World Series of Poker. 
+            They'll give you live coverage of a spelling bee before they'll show you a college baseball 
+            box score.
+          </p>
+          <p>
+            FCS football barely exists in their coverage model. Group of Five programs are afterthoughts. 
+            If you're not a top-25 team in a Power Four conference, good luck finding any depth of analysis.
+          </p>
+          <p>
+            This isn't an accident—it's a business model. But it leaves millions of fans without the 
+            coverage their teams deserve.
+          </p>
+        </div>
+        <div class="why-solution">
+          <h3>Our Approach</h3>
+          <p>
+            BSI covers every D1 baseball program. We track FCS and Group of Five football with the same 
+            rigor as the SEC. Every team gets real data, real analysis, and real coverage.
+          </p>
+          <p>
+            We publish complete box scores—something ESPN simply doesn't do for college baseball. We 
+            cite our sources. We never fabricate data or present projections as facts.
+          </p>
+          <p>
+            The founder has personal loyalties (Longhorns, Cardinals, Grizzlies, Titans)—but professional 
+            coverage remains objective. Being a fan doesn't mean being a homer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="principles-section">
+    <div class="principles-container">
+      <h2 class="principles-title">Our <span class="accent">Editorial Standards</span></h2>
+      <div class="principles-grid">
+        <div class="principle">
+          <svg class="principle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <h3 class="principle-title">No Fake Data</h3>
+          <p class="principle-desc">Real endpoints, proper types, zero placeholders. Every number is verified.</p>
+        </div>
+        <div class="principle">
+          <svg class="principle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <h3 class="principle-title">Sources Cited</h3>
+          <p class="principle-desc">Every claim backed by evidence. Primary sources over aggregators.</p>
+        </div>
+        <div class="principle">
+          <svg class="principle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <h3 class="principle-title">Every Team Matters</h3>
+          <p class="principle-desc">Not just top 25. All 299 D1 baseball programs get coverage.</p>
+        </div>
+        <div class="principle">
+          <svg class="principle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="9" y1="21" x2="9" y2="9"/>
+          </svg>
+          <h3 class="principle-title">Professional Objectivity</h3>
+          <p class="principle-desc">Personal loyalties disclosed. Analysis remains impartial.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scope-section">
+    <div class="scope-container">
+      <h3 class="scope-title">Coverage Scope</h3>
+      <p class="scope-text">
+        BSI focuses exclusively on <strong>American football, baseball, and basketball</strong> at the college 
+        and professional levels. Soccer is outside our coverage area—there's no shortage of outlets covering 
+        that sport already.
+      </p>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-container">
+      <h2 class="cta-title">Ready to see the <span class="accent">analytics?</span></h2>
+      <p class="cta-text">
+        Live scoreboards, predictive models, and historical research—all built on real data.
+      </p>
+      <a href="/analytics" class="cta-btn">
+        Explore Analytics
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">© 2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+</body>
+</html>

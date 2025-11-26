@@ -1,4 +1,12 @@
-import { cache, createTimeoutSignal, err, ok, preflight, rateLimit, rateLimitError } from '../_utils.js';
+import {
+  cache,
+  createTimeoutSignal,
+  err,
+  ok,
+  preflight,
+  rateLimit,
+  rateLimitError,
+} from '../_utils.js';
 
 const SPORT_PATHS = {
   football: {
@@ -49,7 +57,7 @@ export async function onRequest(context) {
       env,
       `ncaa:standings:${sport}:${conference}:${division}`,
       async () => fetchStandings(conference, division, sport, endpoints),
-      300,
+      300
     );
 
     return ok(data, {
@@ -66,7 +74,8 @@ export async function onRequest(context) {
 async function fetchStandings(conference, division, sport, endpoints) {
   const signal = createTimeoutSignal(FETCH_TIMEOUT_MS);
   const standingsBase = endpoints.standings;
-  const standingsUrl = conference === 'all' ? standingsBase : `${standingsBase}?group=${conference}`;
+  const standingsUrl =
+    conference === 'all' ? standingsBase : `${standingsBase}?group=${conference}`;
   const standings = await fetchJson(standingsUrl, signal, 'standings');
 
   const conferences = Array.isArray(standings?.children) ? standings.children : [];
@@ -80,16 +89,11 @@ async function fetchStandings(conference, division, sport, endpoints) {
     rankings: {
       apTop25: await fetchRankings(endpoints.rankings, signal),
       cfpRankings:
-        sport === 'football'
-          ? await fetchRankings(`${endpoints.rankings}?type=cfp`, signal)
-          : [],
+        sport === 'football' ? await fetchRankings(`${endpoints.rankings}?type=cfp`, signal) : [],
     },
     meta: {
       sport,
-      dataSource:
-        sport === 'baseball'
-          ? 'ESPN College Baseball API'
-          : 'ESPN College Football API',
+      dataSource: sport === 'baseball' ? 'ESPN College Baseball API' : 'ESPN College Football API',
       lastUpdated: new Date().toISOString(),
     },
   };

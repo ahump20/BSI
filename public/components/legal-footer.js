@@ -181,7 +181,7 @@ class LegalFooter extends HTMLElement {
             <div class="footer-section">
               <h3>Contact & Support</h3>
               <ul>
-                <li><a href="mailto:ahump20@outlook.com">Email: ahump20@outlook.com</a></li>
+                <li><a href="/contact">Contact Us</a></li>
                 <li><a href="/about">About Us</a></li>
                 <li><a href="https://github.com/ahump20/BSI" target="_blank" rel="noopener">GitHub</a></li>
                 <li><a href="/sitemap.xml">Sitemap</a></li>
@@ -255,7 +255,7 @@ class LegalFooter extends HTMLElement {
 
       alert('Your data has been exported. Check your downloads folder.');
     } catch (error) {
-      alert('Failed to export data. Please contact support: ahump20@outlook.com');
+      alert('Failed to export data. Please use our contact form at /contact for support.');
       console.error('GDPR export error:', error);
     }
   }

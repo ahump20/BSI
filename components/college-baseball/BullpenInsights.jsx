@@ -13,7 +13,9 @@ function BullpenCard({ team }) {
     <article className="bullpen-card">
       <header className="bullpen-card__header">
         <h3>{team.team_name}</h3>
-        <span className="bullpen-card__updated">Updated {new Date(team.updated_at).toLocaleTimeString()}</span>
+        <span className="bullpen-card__updated">
+          Updated {new Date(team.updated_at).toLocaleTimeString()}
+        </span>
       </header>
       <div className="bullpen-card__metrics">
         <div className="metric">
@@ -26,7 +28,9 @@ function BullpenCard({ team }) {
         </div>
         <div className="metric">
           <span className="metric__label">TTO Penalty</span>
-          <span className="metric__value">{formatNumber(team.times_through_order_penalty, 2)} runs</span>
+          <span className="metric__value">
+            {formatNumber(team.times_through_order_penalty, 2)} runs
+          </span>
         </div>
         <div className="metric">
           <span className="metric__label">Leverage Pressure</span>
@@ -49,8 +53,12 @@ function BullpenCard({ team }) {
         <section className="bullpen-card__plan">
           <h4>Pitching Plan</h4>
           <ul className="plan-list">
-            <li><strong>Hook Window:</strong> {team.pitching_plan.hook_window}</li>
-            <li><strong>Leverage Focus:</strong> {team.pitching_plan.leverage_focus}</li>
+            <li>
+              <strong>Hook Window:</strong> {team.pitching_plan.hook_window}
+            </li>
+            <li>
+              <strong>Leverage Focus:</strong> {team.pitching_plan.leverage_focus}
+            </li>
             {team.pitching_plan.matchup_flags?.length ? (
               <li>
                 <strong>Flags:</strong>

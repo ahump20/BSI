@@ -16,7 +16,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
 
   if (request.method === 'OPTIONS') {
@@ -24,12 +24,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   if (request.method !== 'POST') {
-    return new Response(JSON.stringify({
-      error: 'Method not allowed. Use POST.'
-    }), {
-      status: 405,
-      headers
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Method not allowed. Use POST.',
+      }),
+      {
+        status: 405,
+        headers,
+      }
+    );
   }
 
   try {
@@ -37,12 +40,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const { teamData, sport } = body;
 
     if (!teamData || !sport) {
-      return new Response(JSON.stringify({
-        error: 'Missing required fields: teamData and sport'
-      }), {
-        status: 400,
-        headers
-      });
+      return new Response(
+        JSON.stringify({
+          error: 'Missing required fields: teamData and sport',
+        }),
+        {
+          status: 400,
+          headers,
+        }
+      );
     }
 
     // Create a detailed prompt for AI analysis
@@ -50,22 +56,30 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
 Team: ${teamData.name}
 Record: ${teamData.wins}-${teamData.losses}
-${sport === 'nfl' || sport === 'ncaa' ? `
+${
+  sport === 'nfl' || sport === 'ncaa'
+    ? `
 Points For: ${teamData.pointsFor}
 Points Against: ${teamData.pointsAgainst}
 Total Yards: ${teamData.totalYards}
 Turnover Margin: ${(teamData.takeaways || 0) - (teamData.turnovers || 0)}
-` : sport === 'mlb' ? `
+`
+    : sport === 'mlb'
+      ? `
 Runs Scored: ${teamData.runsScored}
 Runs Allowed: ${teamData.runsAllowed}
 Team Batting Average: ${teamData.battingAvg}
 Team ERA: ${teamData.era}
-` : sport === 'nba' ? `
+`
+      : sport === 'nba'
+        ? `
 Points Per Game: ${teamData.pointsPerGame}
 Points Allowed: ${teamData.pointsAllowed}
 Field Goal %: ${teamData.fieldGoalPct}%
 Rebounds Per Game: ${teamData.reboundsPerGame}
-` : ''}
+`
+        : ''
+}
 
 Provide a professional analysis focusing on:
 1. Overall performance assessment
@@ -80,14 +94,17 @@ Be specific with numbers and percentages. Sound authoritative and data-driven.`;
     if (env.SPORTS_CACHE) {
       const cached = await env.SPORTS_CACHE.get(cacheKey);
       if (cached) {
-        return new Response(JSON.stringify({
-          insight: cached,
-          cached: true,
-          timestamp: new Date().toISOString()
-        }), {
-          status: 200,
-          headers
-        });
+        return new Response(
+          JSON.stringify({
+            insight: cached,
+            cached: true,
+            timestamp: new Date().toISOString(),
+          }),
+          {
+            status: 200,
+            headers,
+          }
+        );
       }
     }
 
@@ -96,13 +113,13 @@ Be specific with numbers and percentages. Sound authoritative and data-driven.`;
       messages: [
         {
           role: 'system',
-          content: 'You are a professional sports analyst providing data-driven insights.'
+          content: 'You are a professional sports analyst providing data-driven insights.',
         },
         {
           role: 'user',
-          content: prompt
-        }
-      ]
+          content: prompt,
+        },
+      ],
     });
 
     const insight = aiResponse.response || 'Analysis unavailable at this time.';
@@ -110,28 +127,33 @@ Be specific with numbers and percentages. Sound authoritative and data-driven.`;
     // Cache for 1 hour
     if (env.SPORTS_CACHE) {
       await env.SPORTS_CACHE.put(cacheKey, insight, {
-        expirationTtl: 3600
+        expirationTtl: 3600,
       });
     }
 
-    return new Response(JSON.stringify({
-      insight,
-      cached: false,
-      timestamp: new Date().toISOString(),
-      model: '@cf/meta/llama-2-7b-chat-int8'
-    }), {
-      status: 200,
-      headers
-    });
-
+    return new Response(
+      JSON.stringify({
+        insight,
+        cached: false,
+        timestamp: new Date().toISOString(),
+        model: '@cf/meta/llama-2-7b-chat-int8',
+      }),
+      {
+        status: 200,
+        headers,
+      }
+    );
   } catch (error: any) {
     console.error('AI Insights error:', error);
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error.message
-    }), {
-      status: 500,
-      headers
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Internal server error',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers,
+      }
+    );
   }
 };

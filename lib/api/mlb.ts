@@ -1,5 +1,11 @@
 import { apiCache, cacheMetrics } from '../utils/cache';
-import { ApiError, ErrorCode, ErrorHandler, CircuitBreaker, DEFAULT_FALLBACKS } from '../utils/errors';
+import {
+  ApiError,
+  ErrorCode,
+  ErrorHandler,
+  CircuitBreaker,
+  DEFAULT_FALLBACKS,
+} from '../utils/errors';
 
 const DEFAULT_TEAM_ID = '138';
 const CACHE_TTL = 30000; // 30 seconds for MLB data
@@ -49,11 +55,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
         response.status
       );
     } else if (response.status === 404) {
-      throw new ApiError(
-        ErrorCode.INVALID_RESPONSE,
-        'Requested data not found',
-        response.status
-      );
+      throw new ApiError(ErrorCode.INVALID_RESPONSE, 'Requested data not found', response.status);
     } else {
       throw new ApiError(
         ErrorCode.INVALID_RESPONSE,
@@ -77,7 +79,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export async function getMlbTeam(
   teamId: string = DEFAULT_TEAM_ID,
   apiBase: string = resolveDefaultApiBase(),
-  fetcher: Fetcher = fetch,
+  fetcher: Fetcher = fetch
 ): Promise<unknown> {
   const url = buildUrl(apiBase, 'mlb', { teamId });
   const cacheKey = `mlb-team-${teamId}`;
@@ -143,7 +145,7 @@ export interface MlbStandingsResponse {
 
 export async function getMlbStandings(
   apiBase: string = resolveDefaultApiBase(),
-  fetcher: Fetcher = fetch,
+  fetcher: Fetcher = fetch
 ): Promise<MlbStandingsResponse> {
   const url = buildUrl(apiBase, 'mlb-standings');
   const cacheKey = 'mlb-standings';

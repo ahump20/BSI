@@ -98,34 +98,44 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     let insightRequest: InsightRequest;
 
     if (request.method === 'POST') {
-      insightRequest = await request.json() as InsightRequest;
+      insightRequest = (await request.json()) as InsightRequest;
     } else {
       const url = new URL(request.url);
       insightRequest = {
         question: url.searchParams.get('question') || url.searchParams.get('q') || '',
         sport: url.searchParams.get('sport') || undefined,
-        maxContext: url.searchParams.get('maxContext') ? parseInt(url.searchParams.get('maxContext')!) : undefined,
+        maxContext: url.searchParams.get('maxContext')
+          ? parseInt(url.searchParams.get('maxContext')!)
+          : undefined,
         tone: (url.searchParams.get('tone') as any) || undefined,
       };
     }
 
     // Validate question
     if (!insightRequest.question || insightRequest.question.trim().length === 0) {
-      return new Response(JSON.stringify({
-        error: 'Missing question parameter',
-        message: 'Please provide a question via "question" parameter (GET) or request body (POST)',
-        examples: [
-          'What are the closest games this season?',
-          'Which teams had the biggest wins?',
-          'Tell me about the Kansas City Chiefs performance'
-        ]
-      }, null, 2), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders,
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'Missing question parameter',
+            message:
+              'Please provide a question via "question" parameter (GET) or request body (POST)',
+            examples: [
+              'What are the closest games this season?',
+              'Which teams had the biggest wins?',
+              'Tell me about the Kansas City Chiefs performance',
+            ],
+          },
+          null,
+          2
+        ),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
         }
-      });
+      );
     }
 
     const question = insightRequest.question.trim();
@@ -147,23 +157,30 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         env.ANALYTICS.writeDataPoint({
           blobs: ['copilot_insight', 'cache_hit'],
           doubles: [1],
-          indexes: [sport || 'all']
+          indexes: [sport || 'all'],
         });
       }
 
-      return new Response(JSON.stringify({
-        ...cached,
-        cached: true,
-        cacheAge: Math.floor((Date.now() - new Date(cached.timestamp).getTime()) / 1000) + 's'
-      }, null, 2), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Cache': 'HIT',
-          'X-Question': question,
-          ...corsHeaders,
+      return new Response(
+        JSON.stringify(
+          {
+            ...cached,
+            cached: true,
+            cacheAge: Math.floor((Date.now() - new Date(cached.timestamp).getTime()) / 1000) + 's',
+          },
+          null,
+          2
+        ),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Cache': 'HIT',
+            'X-Question': question,
+            ...corsHeaders,
+          },
         }
-      });
+      );
     }
 
     // Step 1: Generate embedding for question
@@ -172,7 +189,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     try {
       const embedResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-        text: question
+        text: question,
       });
 
       questionEmbedding = embedResponse.data?.[0];
@@ -182,13 +199,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       }
     } catch (error) {
       console.error('Embedding generation failed:', error);
-      return new Response(JSON.stringify({
-        error: 'Embedding generation failed',
-        message: error instanceof Error ? error.message : String(error)
-      }, null, 2), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'Embedding generation failed',
+            message: error instanceof Error ? error.message : String(error),
+          },
+          null,
+          2
+        ),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        }
+      );
     }
 
     const embeddingTime = Date.now() - embeddingStart;
@@ -211,20 +235,27 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       vectorMatches = searchResults.matches || [];
     } catch (error) {
       console.error('Vectorize search failed:', error);
-      return new Response(JSON.stringify({
-        error: 'Vector search failed',
-        message: error instanceof Error ? error.message : String(error),
-        note: 'Ensure embeddings have been generated via /api/copilot/admin/generate-embeddings'
-      }, null, 2), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'Vector search failed',
+            message: error instanceof Error ? error.message : String(error),
+            note: 'Ensure embeddings have been generated via /api/copilot/admin/generate-embeddings',
+          },
+          null,
+          2
+        ),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        }
+      );
     }
 
     const vectorSearchTime = Date.now() - vectorSearchStart;
 
     // Filter by minimum relevance (0.5 threshold)
-    const relevantMatches = vectorMatches.filter(match => match.score >= 0.5);
+    const relevantMatches = vectorMatches.filter((match) => match.score >= 0.5);
 
     // Step 3: Extract context from top games
     const contextExtractionStart = Date.now();
@@ -233,7 +264,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     if (relevantMatches.length > 0) {
       const gameIds = relevantMatches
         .slice(0, maxContext)
-        .map(match => parseInt(match.id.replace('game-', '')));
+        .map((match) => parseInt(match.id.replace('game-', '')));
 
       const placeholders = gameIds.map(() => '?').join(',');
       const query = `
@@ -243,12 +274,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         ORDER BY game_date DESC
       `;
 
-      const { results: games } = await env.DB.prepare(query).bind(...gameIds).all();
+      const { results: games } = await env.DB.prepare(query)
+        .bind(...gameIds)
+        .all();
 
       for (const game of games) {
         const gameRecord = game as any;
         const matchId = `game-${gameRecord.id}`;
-        const match = relevantMatches.find(m => m.id === matchId);
+        const match = relevantMatches.find((m) => m.id === matchId);
 
         if (match) {
           gameContexts.push({
@@ -263,7 +296,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             stadium_name: gameRecord.stadium_name,
             season: gameRecord.season,
             week: gameRecord.week,
-            relevanceScore: Math.round(match.score * 1000) / 1000
+            relevanceScore: Math.round(match.score * 1000) / 1000,
           });
         }
       }
@@ -272,24 +305,34 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const contextExtractionTime = Date.now() - contextExtractionStart;
 
     if (gameContexts.length === 0) {
-      return new Response(JSON.stringify({
-        error: 'No relevant games found',
-        message: 'Could not find games relevant to your question. Try rephrasing or adding more context.',
-        question,
-        suggestion: 'Try asking about specific teams, scores, or game outcomes'
-      }, null, 2), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'No relevant games found',
+            message:
+              'Could not find games relevant to your question. Try rephrasing or adding more context.',
+            question,
+            suggestion: 'Try asking about specific teams, scores, or game outcomes',
+          },
+          null,
+          2
+        ),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        }
+      );
     }
 
     // Step 4: Build context for LLM
-    const contextText = gameContexts.map((game, idx) => {
-      const margin = game.home_score !== null && game.away_score !== null
-        ? Math.abs(game.home_score - game.away_score)
-        : null;
+    const contextText = gameContexts
+      .map((game, idx) => {
+        const margin =
+          game.home_score !== null && game.away_score !== null
+            ? Math.abs(game.home_score - game.away_score)
+            : null;
 
-      return `
+        return `
 Game ${idx + 1}:
 - Sport: ${game.sport}
 - Date: ${new Date(game.game_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -301,7 +344,8 @@ Game ${idx + 1}:
 - Season: ${game.season}${game.week ? `, Week ${game.week}` : ''}
 - Relevance: ${(game.relevanceScore * 100).toFixed(1)}%
       `.trim();
-    }).join('\n\n');
+      })
+      .join('\n\n');
 
     // Step 5: Generate insight using LLM
     const llmGenerationStart = Date.now();
@@ -312,11 +356,14 @@ Game ${idx + 1}:
       // Build system prompt based on tone
       let systemPrompt = '';
       if (tone === 'coaching') {
-        systemPrompt = 'You are a professional sports analyst providing insights to coaches. Be direct, actionable, and focus on strategic implications. Use concise language and cite specific games.';
+        systemPrompt =
+          'You are a professional sports analyst providing insights to coaches. Be direct, actionable, and focus on strategic implications. Use concise language and cite specific games.';
       } else if (tone === 'analyst') {
-        systemPrompt = 'You are a professional sports analyst. Provide detailed statistical analysis and tactical insights. Be thorough and analytical.';
+        systemPrompt =
+          'You are a professional sports analyst. Provide detailed statistical analysis and tactical insights. Be thorough and analytical.';
       } else {
-        systemPrompt = 'You are a friendly sports analyst. Provide engaging insights in conversational language while maintaining accuracy.';
+        systemPrompt =
+          'You are a friendly sports analyst. Provide engaging insights in conversational language while maintaining accuracy.';
       }
 
       const userPrompt = `Based on the following game data, answer this question: "${question}"
@@ -336,10 +383,10 @@ Answer:`;
       const llmResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
+          { role: 'user', content: userPrompt },
         ],
         max_tokens: 500,
-        temperature: 0.7
+        temperature: 0.7,
       });
 
       insight = llmResponse.response || 'Unable to generate insight. Please try again.';
@@ -348,21 +395,28 @@ Answer:`;
       // - Number of relevant games found
       // - Average relevance score
       // - Whether LLM generated a response
-      const avgRelevance = gameContexts.reduce((sum, game) => sum + game.relevanceScore, 0) / gameContexts.length;
+      const avgRelevance =
+        gameContexts.reduce((sum, game) => sum + game.relevanceScore, 0) / gameContexts.length;
       const contextQuality = Math.min(gameContexts.length / maxContext, 1.0);
-      confidence = (avgRelevance * 0.7 + contextQuality * 0.3);
-
+      confidence = avgRelevance * 0.7 + contextQuality * 0.3;
     } catch (error) {
       console.error('LLM generation failed:', error);
-      return new Response(JSON.stringify({
-        error: 'LLM generation failed',
-        message: error instanceof Error ? error.message : String(error),
-        question,
-        sources: gameContexts
-      }, null, 2), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
+      return new Response(
+        JSON.stringify(
+          {
+            error: 'LLM generation failed',
+            message: error instanceof Error ? error.message : String(error),
+            question,
+            sources: gameContexts,
+          },
+          null,
+          2
+        ),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        }
+      );
     }
 
     const llmGenerationTime = Date.now() - llmGenerationStart;
@@ -382,8 +436,8 @@ Answer:`;
         vectorSearchTime: `${vectorSearchTime}ms`,
         contextExtractionTime: `${contextExtractionTime}ms`,
         llmGenerationTime: `${llmGenerationTime}ms`,
-        totalTime: `${totalTime}ms`
-      }
+        totalTime: `${totalTime}ms`,
+      },
     };
 
     console.log(`RAG insight generated in ${totalTime}ms (confidence: ${confidence.toFixed(3)})`);
@@ -396,14 +450,14 @@ Answer:`;
       env.ANALYTICS.writeDataPoint({
         blobs: ['copilot_insight', 'success', sport || 'all', tone],
         doubles: [
-          totalTime,           // Index 0: Total time
-          confidence,          // Index 1: Confidence score
+          totalTime, // Index 0: Total time
+          confidence, // Index 1: Confidence score
           gameContexts.length, // Index 2: Number of sources
-          embeddingTime,       // Index 3: Embedding generation time
-          vectorSearchTime,    // Index 4: Vector search time
-          llmGenerationTime    // Index 5: LLM generation time
+          embeddingTime, // Index 3: Embedding generation time
+          vectorSearchTime, // Index 4: Vector search time
+          llmGenerationTime, // Index 5: LLM generation time
         ],
-        indexes: [question.substring(0, 50)] // First 50 chars of question for grouping
+        indexes: [question.substring(0, 50)], // First 50 chars of question for grouping
       });
     }
 
@@ -417,9 +471,8 @@ Answer:`;
         'X-Confidence': confidence.toFixed(3),
         'X-Total-Time': `${totalTime}ms`,
         ...corsHeaders,
-      }
+      },
     });
-
   } catch (error) {
     console.error('RAG insight error:', error);
 
@@ -428,20 +481,27 @@ Answer:`;
       env.ANALYTICS.writeDataPoint({
         blobs: ['copilot_insight', 'error', error instanceof Error ? error.name : 'unknown'],
         doubles: [1, Date.now() - startTime],
-        indexes: [error instanceof Error ? error.message.substring(0, 50) : 'unknown']
+        indexes: [error instanceof Error ? error.message.substring(0, 50) : 'unknown'],
       });
     }
 
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : String(error),
-      timestamp: new Date().toISOString()
-    }, null, 2), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        ...corsHeaders,
+    return new Response(
+      JSON.stringify(
+        {
+          error: 'Internal server error',
+          message: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+        },
+        null,
+        2
+      ),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
       }
-    });
+    );
   }
 };

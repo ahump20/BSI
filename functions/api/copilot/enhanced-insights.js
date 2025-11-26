@@ -13,31 +13,33 @@
 
 const PROVIDER_CONFIG = {
   gemini_pro: {
-    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent',
+    endpoint:
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent',
     strengths: ['statistical_analysis', 'multi_game_comparison', 'complex_reasoning'],
     maxTokens: 8000,
-    temperature: 0.3
+    temperature: 0.3,
   },
   gemini_flash: {
-    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-latest:generateContent',
+    endpoint:
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-latest:generateContent',
     strengths: ['real_time_updates', 'quick_facts', 'simple_queries'],
     maxTokens: 2000,
-    temperature: 0.2
+    temperature: 0.2,
   },
   gpt5: {
     endpoint: 'https://api.openai.com/v1/chat/completions',
     model: 'gpt-5-preview',
     strengths: ['natural_language', 'conversational', 'context_awareness'],
     maxTokens: 4000,
-    temperature: 0.4
+    temperature: 0.4,
   },
   claude_sonnet_45: {
     endpoint: 'https://api.anthropic.com/v1/messages',
     model: 'claude-sonnet-4-5-20250929',
     strengths: ['deep_reasoning', 'strategic_insights', 'nuanced_analysis'],
     maxTokens: 6000,
-    temperature: 0.5
-  }
+    temperature: 0.5,
+  },
 };
 
 /**
@@ -69,14 +71,15 @@ function selectProvider(query, context) {
  * Call Gemini API (Pro or Flash)
  */
 async function callGemini(query, context, env, isFlash = false) {
-  const apiKey = env.GOOGLE_GEMINI_API_KEY || env.GOOGLE_GEMINI_API_KEY_2 || env.GOOGLE_GEMINI_API_KEY_3;
+  const apiKey =
+    env.GOOGLE_GEMINI_API_KEY || env.GOOGLE_GEMINI_API_KEY_2 || env.GOOGLE_GEMINI_API_KEY_3;
   const config = isFlash ? PROVIDER_CONFIG.gemini_flash : PROVIDER_CONFIG.gemini_pro;
 
   const systemPrompt = `You are an expert sports analyst for Blaze Sports Intelligence.
 Analyze the provided game data and answer the user's question with precision and insight.
 
 Context from semantic search:
-${context.map(c => `- ${c.description} (Relevance: ${c.similarity.toFixed(2)})`).join('\n')}
+${context.map((c) => `- ${c.description} (Relevance: ${c.similarity.toFixed(2)})`).join('\n')}
 
 Guidelines:
 - Use exact statistics from the context
@@ -89,18 +92,22 @@ Guidelines:
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      contents: [{
-        parts: [{
-          text: `${systemPrompt}\n\nUser Question: ${query}`
-        }]
-      }],
+      contents: [
+        {
+          parts: [
+            {
+              text: `${systemPrompt}\n\nUser Question: ${query}`,
+            },
+          ],
+        },
+      ],
       generationConfig: {
         temperature: config.temperature,
         maxOutputTokens: config.maxTokens,
         topP: 0.95,
-        topK: 40
-      }
-    })
+        topK: 40,
+      },
+    }),
   });
 
   if (!response.ok) {
@@ -113,8 +120,8 @@ Guidelines:
     provider: isFlash ? 'gemini_flash' : 'gemini_pro',
     usage: {
       promptTokens: data.usageMetadata?.promptTokenCount || 0,
-      completionTokens: data.usageMetadata?.candidatesTokenCount || 0
-    }
+      completionTokens: data.usageMetadata?.candidatesTokenCount || 0,
+    },
   };
 }
 
@@ -127,7 +134,7 @@ async function callGPT5(query, context, env) {
   const systemPrompt = `You are an expert sports analyst for Blaze Sports Intelligence specializing in conversational insights and natural language understanding.
 
 Relevant game context from our database:
-${context.map(c => `- ${c.description} (Match: ${(c.similarity * 100).toFixed(0)}%)`).join('\n')}
+${context.map((c) => `- ${c.description} (Match: ${(c.similarity * 100).toFixed(0)}%)`).join('\n')}
 
 Provide clear, conversational insights while maintaining analytical rigor.`;
 
@@ -135,20 +142,20 @@ Provide clear, conversational insights while maintaining analytical rigor.`;
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`
+      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
       model: config.model,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: query }
+        { role: 'user', content: query },
       ],
       max_tokens: config.maxTokens,
       temperature: config.temperature,
       top_p: 0.95,
       frequency_penalty: 0.2,
-      presence_penalty: 0.1
-    })
+      presence_penalty: 0.1,
+    }),
   });
 
   if (!response.ok) {
@@ -161,8 +168,8 @@ Provide clear, conversational insights while maintaining analytical rigor.`;
     provider: 'gpt5',
     usage: {
       promptTokens: data.usage?.prompt_tokens || 0,
-      completionTokens: data.usage?.completion_tokens || 0
-    }
+      completionTokens: data.usage?.completion_tokens || 0,
+    },
   };
 }
 
@@ -175,7 +182,7 @@ async function callClaude45(query, context, env) {
   const systemPrompt = `You are an elite sports strategist and analyst for Blaze Sports Intelligence. Your specialty is deep reasoning and strategic insights that go beyond surface-level statistics.
 
 Game context with semantic relevance scores:
-${context.map(c => `- ${c.description} (Relevance: ${(c.similarity * 100).toFixed(1)}%)`).join('\n')}
+${context.map((c) => `- ${c.description} (Relevance: ${(c.similarity * 100).toFixed(1)}%)`).join('\n')}
 
 Provide nuanced, strategic insights that help coaches and analysts make better decisions.`;
 
@@ -184,18 +191,20 @@ Provide nuanced, strategic insights that help coaches and analysts make better d
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01'
+      'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
       model: config.model,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
       system: systemPrompt,
-      messages: [{
-        role: 'user',
-        content: query
-      }]
-    })
+      messages: [
+        {
+          role: 'user',
+          content: query,
+        },
+      ],
+    }),
   });
 
   if (!response.ok) {
@@ -208,8 +217,8 @@ Provide nuanced, strategic insights that help coaches and analysts make better d
     provider: 'claude_sonnet_45',
     usage: {
       promptTokens: data.usage?.input_tokens || 0,
-      completionTokens: data.usage?.output_tokens || 0
-    }
+      completionTokens: data.usage?.output_tokens || 0,
+    },
   };
 }
 
@@ -247,7 +256,7 @@ export async function onRequest(context) {
 
     // Step 1: Semantic search for relevant games
     const embeddingResult = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-      text: query
+      text: query,
     });
     const queryEmbedding = embeddingResult.data[0];
 
@@ -256,7 +265,7 @@ export async function onRequest(context) {
     const vectorResults = await env.VECTOR_INDEX.query(queryEmbedding, {
       topK: 5,
       returnMetadata: 'all',
-      filter: vectorFilter
+      filter: vectorFilter,
     });
 
     if (!vectorResults.matches || vectorResults.matches.length === 0) {
@@ -266,18 +275,18 @@ export async function onRequest(context) {
         insight: 'No relevant games found for your query. Try broadening your search.',
         provider: 'none',
         sources: [],
-        searchTime: Date.now() - startTime
+        searchTime: Date.now() - startTime,
       });
     }
 
     // Extract context from vector matches
-    const context = vectorResults.matches.map(match => ({
+    const context = vectorResults.matches.map((match) => ({
       description: match.metadata.description,
       sport: match.metadata.sport,
       teams: `${match.metadata.home_team} vs ${match.metadata.away_team}`,
       score: `${match.metadata.home_score}-${match.metadata.away_score}`,
       date: match.metadata.game_date,
-      similarity: match.score
+      similarity: match.score,
     }));
 
     // Step 2: Select AI provider (or use requested)
@@ -304,14 +313,17 @@ export async function onRequest(context) {
           const workersResult = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
             messages: [
               { role: 'system', content: 'You are a sports analyst.' },
-              { role: 'user', content: `Context: ${JSON.stringify(context)}\n\nQuestion: ${query}` }
+              {
+                role: 'user',
+                content: `Context: ${JSON.stringify(context)}\n\nQuestion: ${query}`,
+              },
             ],
-            max_tokens: 500
+            max_tokens: 500,
           });
           result = {
             text: workersResult.response || 'No insight available',
             provider: 'workers_ai_fallback',
-            usage: { promptTokens: 0, completionTokens: 0 }
+            usage: { promptTokens: 0, completionTokens: 0 },
           };
       }
     } catch (aiError) {
@@ -319,53 +331,58 @@ export async function onRequest(context) {
       const fallbackResult = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
         messages: [
           { role: 'system', content: 'You are a sports analyst.' },
-          { role: 'user', content: `Context: ${JSON.stringify(context)}\n\nQuestion: ${query}` }
+          { role: 'user', content: `Context: ${JSON.stringify(context)}\n\nQuestion: ${query}` },
         ],
-        max_tokens: 500
+        max_tokens: 500,
       });
       result = {
         text: fallbackResult.response || 'Analysis temporarily unavailable',
         provider: 'workers_ai_fallback',
-        usage: { promptTokens: 0, completionTokens: 0 }
+        usage: { promptTokens: 0, completionTokens: 0 },
       };
     }
 
     const totalTime = Date.now() - startTime;
 
-    return Response.json({
-      success: true,
-      query,
-      insight: result.text,
-      provider: result.provider,
-      sources: context,
-      confidence: vectorResults.matches[0].score,
-      performance: {
-        totalTime: `${totalTime}ms`,
-        searchTime: `${totalTime - 1000}ms`, // approximate
-        aiGenerationTime: `~1000ms`,
-        tokenUsage: result.usage
+    return Response.json(
+      {
+        success: true,
+        query,
+        insight: result.text,
+        provider: result.provider,
+        sources: context,
+        confidence: vectorResults.matches[0].score,
+        performance: {
+          totalTime: `${totalTime}ms`,
+          searchTime: `${totalTime - 1000}ms`, // approximate
+          aiGenerationTime: `~1000ms`,
+          tokenUsage: result.usage,
+        },
+        timestamp: new Date().toISOString(),
       },
-      timestamp: new Date().toISOString()
-    }, {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'X-Provider': result.provider,
-        'X-Search-Time': totalTime.toString()
+      {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-Provider': result.provider,
+          'X-Search-Time': totalTime.toString(),
+        },
       }
-    });
-
+    );
   } catch (error) {
-    return Response.json({
-      success: false,
-      error: error.message,
-      stack: error.stack
-    }, {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return Response.json(
+      {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+      },
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }

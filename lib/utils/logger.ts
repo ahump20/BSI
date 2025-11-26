@@ -316,10 +316,13 @@ export class Logger {
    */
   private sendToExternalServices(entry: LogEntry, error?: Error): void {
     // Send to Sentry
-    if (this.config.sendToSentry && typeof Sentry !== 'undefined') {
+    if (
+      this.config.sendToSentry &&
+      typeof globalThis !== 'undefined' &&
+      (globalThis as any).Sentry
+    ) {
       try {
-        // @ts-ignore
-        Sentry.captureException(error || new Error(entry.message), {
+        (globalThis as any).Sentry.captureException(error || new Error(entry.message), {
           level: entry.level === LogLevel.FATAL ? 'fatal' : 'error',
           contexts: {
             log: entry.context,
@@ -428,10 +431,13 @@ export function withLogging(
       requestLogger.info('Request started');
       const response = await handler(request, env, ctx, requestLogger);
 
-      requestLogger.info({
-        status: response.status,
-        statusText: response.statusText,
-      }, 'Request completed');
+      requestLogger.info(
+        {
+          status: response.status,
+          statusText: response.statusText,
+        },
+        'Request completed'
+      );
 
       stopTimer();
 

@@ -489,3 +489,189 @@ WHERE as_of_date = (
     AND fcs2.season = features_conference_strength.season
 )
 ORDER BY sport, league, season, elo_rank;
+
+-- ============================================================================
+-- FAN ENGAGEMENT & AI FEATURES (Phase 20)
+-- ============================================================================
+
+-- Daily Trivia System
+CREATE TABLE IF NOT EXISTS trivia_questions (
+  id TEXT PRIMARY KEY,
+  question TEXT NOT NULL,
+  answer TEXT NOT NULL,
+  options JSON NOT NULL,           -- ["Option A", "Option B", "Option C", "Option D"]
+  category TEXT NOT NULL CHECK(category IN ('baseball', 'football', 'basketball', 'history', 'records')),
+  difficulty INTEGER NOT NULL CHECK(difficulty BETWEEN 1 AND 3),
+  sport TEXT CHECK(sport IN ('baseball', 'football', 'basketball', NULL)),
+  explanation TEXT,                -- Why the answer is correct
+  source TEXT,                     -- Citation for the fact
+  active BOOLEAN DEFAULT TRUE,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_trivia_category ON trivia_questions(category);
+CREATE INDEX IF NOT EXISTS idx_trivia_difficulty ON trivia_questions(difficulty);
+CREATE INDEX IF NOT EXISTS idx_trivia_active ON trivia_questions(active);
+
+CREATE TABLE IF NOT EXISTS trivia_responses (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,                    -- NULL for anonymous
+  question_id TEXT NOT NULL REFERENCES trivia_questions(id),
+  selected_answer TEXT NOT NULL,
+  correct INTEGER NOT NULL CHECK(correct IN (0, 1)),
+  response_time_ms INTEGER,        -- How fast they answered
+  session_id TEXT,                 -- Group responses by session
+  answered_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_trivia_responses_user ON trivia_responses(user_id);
+CREATE INDEX IF NOT EXISTS idx_trivia_responses_question ON trivia_responses(question_id);
+CREATE INDEX IF NOT EXISTS idx_trivia_responses_date ON trivia_responses(answered_at);
+
+CREATE TABLE IF NOT EXISTS trivia_streaks (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  current_streak INTEGER DEFAULT 0,
+  best_streak INTEGER DEFAULT 0,
+  total_correct INTEGER DEFAULT 0,
+  total_attempted INTEGER DEFAULT 0,
+  last_played_date TEXT,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_trivia_streaks_user ON trivia_streaks(user_id);
+
+-- Beat the Line Predictions
+CREATE TABLE IF NOT EXISTS prediction_props (
+  id TEXT PRIMARY KEY,
+  sport TEXT NOT NULL CHECK(sport IN ('baseball', 'football', 'basketball')),
+  prop_type TEXT NOT NULL,         -- 'over_under', 'spread', 'moneyline', 'player_prop'
+  description TEXT NOT NULL,
+  line_value REAL,
+  game_id TEXT,
+  player_id TEXT,
+  expires_at TEXT NOT NULL,
+  result TEXT CHECK(result IN ('over', 'under', 'push', 'pending', NULL)),
+  actual_value REAL,
+  source TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_props_sport ON prediction_props(sport);
+CREATE INDEX IF NOT EXISTS idx_props_expires ON prediction_props(expires_at);
+CREATE INDEX IF NOT EXISTS idx_props_result ON prediction_props(result);
+
+CREATE TABLE IF NOT EXISTS user_predictions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  prop_id TEXT NOT NULL REFERENCES prediction_props(id),
+  prediction TEXT NOT NULL CHECK(prediction IN ('over', 'under', 'home', 'away')),
+  confidence INTEGER CHECK(confidence BETWEEN 1 AND 5),
+  result TEXT CHECK(result IN ('correct', 'incorrect', 'push', 'pending')),
+  points_earned INTEGER DEFAULT 0,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_predictions_user ON user_predictions(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_predictions_prop ON user_predictions(prop_id);
+CREATE INDEX IF NOT EXISTS idx_user_predictions_result ON user_predictions(result);
+
+-- AI Query Log (for Natural Language Stat Query)
+CREATE TABLE IF NOT EXISTS ai_queries (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  query_text TEXT NOT NULL,
+  parsed_intent JSON,              -- {"entity": "player", "stat": "ERA", "timeframe": "last_week"}
+  response_text TEXT NOT NULL,
+  response_data JSON,              -- Structured data returned
+  model TEXT NOT NULL,             -- 'llama-3.1-8b-instruct'
+  latency_ms INTEGER,
+  tokens_used INTEGER,
+  sources_cited JSON,              -- ["Baseball-Reference", "NCAA Stats"]
+  feedback_rating INTEGER CHECK(feedback_rating BETWEEN 1 AND 5),
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_queries_user ON ai_queries(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_queries_date ON ai_queries(created_at);
+
+-- AI Scouting Report Cache
+CREATE TABLE IF NOT EXISTS ai_scouting_reports (
+  id TEXT PRIMARY KEY,
+  player_id TEXT NOT NULL,
+  report_type TEXT NOT NULL CHECK(report_type IN ('brief', 'full', 'draft')),
+  report_text TEXT NOT NULL,
+  key_stats JSON NOT NULL,         -- Verified stats used in report
+  strengths JSON,                  -- ["Power hitter", "Plate discipline"]
+  weaknesses JSON,                 -- ["Strikeout prone", "Slow runner"]
+  comparable_players JSON,         -- ["Player A", "Player B"]
+  projection_grade TEXT,           -- "55", "60", etc.
+  model TEXT NOT NULL,
+  generated_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL,        -- Reports cache for 1 hour
+  fact_checked BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX IF NOT EXISTS idx_scouting_player ON ai_scouting_reports(player_id);
+CREATE INDEX IF NOT EXISTS idx_scouting_expires ON ai_scouting_reports(expires_at);
+
+-- Transfer Portal Predictions
+CREATE TABLE IF NOT EXISTS portal_entries (
+  id TEXT PRIMARY KEY,
+  player_id TEXT NOT NULL,
+  player_name TEXT NOT NULL,
+  position TEXT,
+  origin_school TEXT NOT NULL,
+  origin_conference TEXT,
+  entry_date TEXT NOT NULL,
+  status TEXT CHECK(status IN ('in_portal', 'committed', 'withdrawn')),
+  destination_school TEXT,
+  destination_conference TEXT,
+  commitment_date TEXT,
+  nil_estimate REAL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_portal_status ON portal_entries(status);
+CREATE INDEX IF NOT EXISTS idx_portal_entry_date ON portal_entries(entry_date);
+
+CREATE TABLE IF NOT EXISTS portal_predictions (
+  id TEXT PRIMARY KEY,
+  portal_entry_id TEXT NOT NULL REFERENCES portal_entries(id),
+  predicted_school TEXT NOT NULL,
+  probability REAL NOT NULL CHECK(probability BETWEEN 0 AND 1),
+  factors JSON,                    -- ["NIL opportunity", "Playing time", "Conference move"]
+  model_version TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_portal_preds_entry ON portal_predictions(portal_entry_id);
+
+-- Guess the Stat Game
+CREATE TABLE IF NOT EXISTS guess_stat_rounds (
+  id TEXT PRIMARY KEY,
+  player_id TEXT NOT NULL,
+  stat_type TEXT NOT NULL,         -- 'batting_avg', 'era', 'home_runs', etc.
+  actual_value REAL NOT NULL,
+  hint_level_1 TEXT NOT NULL,      -- "This SEC slugger..."
+  hint_level_2 TEXT,               -- "He hit 15+ HR..."
+  hint_level_3 TEXT,               -- Player silhouette clue
+  active_date TEXT NOT NULL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_guess_stat_date ON guess_stat_rounds(active_date);
+
+CREATE TABLE IF NOT EXISTS guess_stat_attempts (
+  id TEXT PRIMARY KEY,
+  round_id TEXT NOT NULL REFERENCES guess_stat_rounds(id),
+  user_id TEXT,
+  guessed_value REAL NOT NULL,
+  error_pct REAL NOT NULL,         -- |guess - actual| / actual * 100
+  hints_used INTEGER DEFAULT 0,
+  score INTEGER NOT NULL,          -- Points earned
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_guess_attempts_round ON guess_stat_attempts(round_id);
+CREATE INDEX IF NOT EXISTS idx_guess_attempts_user ON guess_stat_attempts(user_id);

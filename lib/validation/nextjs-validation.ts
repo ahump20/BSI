@@ -10,9 +10,7 @@ import { ZodSchema, ZodError } from 'zod';
 /**
  * Validation result type
  */
-type ValidationResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: NextResponse };
+type ValidationResult<T> = { success: true; data: T } | { success: false; error: NextResponse };
 
 /**
  * Validates Next.js request query parameters
@@ -20,10 +18,7 @@ type ValidationResult<T> =
  * @param schema - Zod schema for validation
  * @returns Validation result with typed data or error response
  */
-export function validateQuery<T>(
-  request: NextRequest,
-  schema: ZodSchema<T>
-): ValidationResult<T> {
+export function validateQuery<T>(request: NextRequest, schema: ZodSchema<T>): ValidationResult<T> {
   try {
     const searchParams = request.nextUrl.searchParams;
     const queryObject: Record<string, string | string[]> = {};
@@ -47,10 +42,10 @@ export function validateQuery<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = error.errors.map((err) => ({
         field: err.path.join('.') || 'query',
         message: err.message,
-        code: err.code
+        code: err.code,
       }));
 
       return {
@@ -59,10 +54,10 @@ export function validateQuery<T>(
           {
             error: 'Validation Error',
             message: 'Invalid query parameters',
-            details: formattedErrors
+            details: formattedErrors,
           },
           { status: 400 }
-        )
+        ),
       };
     }
 
@@ -71,10 +66,10 @@ export function validateQuery<T>(
       error: NextResponse.json(
         {
           error: 'Validation Error',
-          message: 'An unexpected validation error occurred'
+          message: 'An unexpected validation error occurred',
         },
         { status: 400 }
-      )
+      ),
     };
   }
 }
@@ -95,10 +90,10 @@ export async function validateBody<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = error.errors.map((err) => ({
         field: err.path.join('.') || 'body',
         message: err.message,
-        code: err.code
+        code: err.code,
       }));
 
       return {
@@ -107,10 +102,10 @@ export async function validateBody<T>(
           {
             error: 'Validation Error',
             message: 'Invalid request body',
-            details: formattedErrors
+            details: formattedErrors,
           },
           { status: 400 }
-        )
+        ),
       };
     }
 
@@ -121,10 +116,10 @@ export async function validateBody<T>(
         error: NextResponse.json(
           {
             error: 'Validation Error',
-            message: 'Invalid JSON in request body'
+            message: 'Invalid JSON in request body',
           },
           { status: 400 }
-        )
+        ),
       };
     }
 
@@ -133,10 +128,10 @@ export async function validateBody<T>(
       error: NextResponse.json(
         {
           error: 'Validation Error',
-          message: 'An unexpected validation error occurred'
+          message: 'An unexpected validation error occurred',
         },
         { status: 400 }
-      )
+      ),
     };
   }
 }
@@ -156,10 +151,10 @@ export function validateParams<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = error.errors.map((err) => ({
         field: err.path.join('.') || 'params',
         message: err.message,
-        code: err.code
+        code: err.code,
       }));
 
       return {
@@ -168,10 +163,10 @@ export function validateParams<T>(
           {
             error: 'Validation Error',
             message: 'Invalid path parameters',
-            details: formattedErrors
+            details: formattedErrors,
           },
           { status: 400 }
-        )
+        ),
       };
     }
 
@@ -180,10 +175,10 @@ export function validateParams<T>(
       error: NextResponse.json(
         {
           error: 'Validation Error',
-          message: 'An unexpected validation error occurred'
+          message: 'An unexpected validation error occurred',
         },
         { status: 400 }
-      )
+      ),
     };
   }
 }
@@ -195,11 +190,7 @@ export function validateParams<T>(
  * @param schemas - Validation schemas
  * @returns Validation result with typed data or error response
  */
-export async function validateRequest<
-  TQuery = unknown,
-  TBody = unknown,
-  TParams = unknown
->(
+export async function validateRequest<TQuery = unknown, TBody = unknown, TParams = unknown>(
   request: NextRequest,
   params: Record<string, string | string[]> | undefined,
   schemas: {
@@ -263,7 +254,7 @@ export function createValidationError(
     {
       error: 'Validation Error',
       message,
-      details
+      details,
     },
     { status: 400 }
   );
@@ -275,5 +266,5 @@ export default {
   validateParams,
   validateRequest,
   isValidationSuccess,
-  createValidationError
+  createValidationError,
 };

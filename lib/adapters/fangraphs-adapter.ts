@@ -22,74 +22,74 @@ export interface FanGraphsBattingStats {
   teamname: string;
 
   // Basic stats
-  G: number;           // Games
-  PA: number;          // Plate Appearances
-  AB: number;          // At Bats
-  H: number;           // Hits
-  '1B': number;        // Singles
-  '2B': number;        // Doubles
-  '3B': number;        // Triples
-  HR: number;          // Home Runs
-  R: number;           // Runs
-  RBI: number;         // Runs Batted In
-  BB: number;          // Walks
-  IBB: number;         // Intentional Walks
-  SO: number;          // Strikeouts
-  HBP: number;         // Hit By Pitch
-  SF: number;          // Sacrifice Flies
-  SH: number;          // Sacrifice Hits
-  GDP: number;         // Grounded Into Double Play
-  SB: number;          // Stolen Bases
-  CS: number;          // Caught Stealing
-  AVG: number;         // Batting Average
+  G: number; // Games
+  PA: number; // Plate Appearances
+  AB: number; // At Bats
+  H: number; // Hits
+  '1B': number; // Singles
+  '2B': number; // Doubles
+  '3B': number; // Triples
+  HR: number; // Home Runs
+  R: number; // Runs
+  RBI: number; // Runs Batted In
+  BB: number; // Walks
+  IBB: number; // Intentional Walks
+  SO: number; // Strikeouts
+  HBP: number; // Hit By Pitch
+  SF: number; // Sacrifice Flies
+  SH: number; // Sacrifice Hits
+  GDP: number; // Grounded Into Double Play
+  SB: number; // Stolen Bases
+  CS: number; // Caught Stealing
+  AVG: number; // Batting Average
 
   // Advanced rate stats
-  'BB%': number;       // Walk Percentage
-  'K%': number;        // Strikeout Percentage
-  'BB/K': number;      // Walk to Strikeout Ratio
-  OBP: number;         // On-Base Percentage
-  SLG: number;         // Slugging Percentage
-  OPS: number;         // On-Base Plus Slugging
-  ISO: number;         // Isolated Power
-  BABIP: number;       // Batting Average on Balls In Play
+  'BB%': number; // Walk Percentage
+  'K%': number; // Strikeout Percentage
+  'BB/K': number; // Walk to Strikeout Ratio
+  OBP: number; // On-Base Percentage
+  SLG: number; // Slugging Percentage
+  OPS: number; // On-Base Plus Slugging
+  ISO: number; // Isolated Power
+  BABIP: number; // Batting Average on Balls In Play
 
   // Advanced metrics - the real value of FanGraphs
-  'wOBA': number;      // Weighted On-Base Average
-  'wRC+': number;      // Weighted Runs Created Plus (100 = league average)
-  BsR: number;         // Base Running Runs
-  Off: number;         // Offensive Runs Above Average
-  Def: number;         // Defensive Runs Above Average
-  WAR: number;         // Wins Above Replacement
+  wOBA: number; // Weighted On-Base Average
+  'wRC+': number; // Weighted Runs Created Plus (100 = league average)
+  BsR: number; // Base Running Runs
+  Off: number; // Offensive Runs Above Average
+  Def: number; // Defensive Runs Above Average
+  WAR: number; // Wins Above Replacement
 
   // Plate discipline
-  'O-Swing%': number;  // Outside Swing %
-  'Z-Swing%': number;  // Inside Zone Swing %
-  'Swing%': number;    // Overall Swing %
+  'O-Swing%': number; // Outside Swing %
+  'Z-Swing%': number; // Inside Zone Swing %
+  'Swing%': number; // Overall Swing %
   'O-Contact%': number; // Outside Contact %
   'Z-Contact%': number; // Inside Zone Contact %
-  'Contact%': number;  // Overall Contact %
-  'Zone%': number;     // Zone %
+  'Contact%': number; // Overall Contact %
+  'Zone%': number; // Zone %
   'F-Strike%': number; // First Pitch Strike %
-  'SwStr%': number;    // Swinging Strike %
+  'SwStr%': number; // Swinging Strike %
 
   // Batted ball data
-  'LD%': number;       // Line Drive %
-  'GB%': number;       // Ground Ball %
-  'FB%': number;       // Fly Ball %
-  'IFFB%': number;     // Infield Fly Ball %
-  'HR/FB': number;     // Home Run per Fly Ball
-  'IFH%': number;      // Infield Hit %
-  'BUH%': number;      // Bunt Hit %
-  'Pull%': number;     // Pull %
-  'Cent%': number;     // Center %
-  'Oppo%': number;     // Opposite Field %
-  'Soft%': number;     // Soft Contact %
-  'Med%': number;      // Medium Contact %
-  'Hard%': number;     // Hard Contact %
+  'LD%': number; // Line Drive %
+  'GB%': number; // Ground Ball %
+  'FB%': number; // Fly Ball %
+  'IFFB%': number; // Infield Fly Ball %
+  'HR/FB': number; // Home Run per Fly Ball
+  'IFH%': number; // Infield Hit %
+  'BUH%': number; // Bunt Hit %
+  'Pull%': number; // Pull %
+  'Cent%': number; // Center %
+  'Oppo%': number; // Opposite Field %
+  'Soft%': number; // Soft Contact %
+  'Med%': number; // Medium Contact %
+  'Hard%': number; // Hard Contact %
 
   // Position
-  Pos: string;         // Position
-  Age: number;         // Age
+  Pos: string; // Position
+  Age: number; // Age
 }
 
 export interface FanGraphsPitchingStats {
@@ -100,94 +100,94 @@ export interface FanGraphsPitchingStats {
   teamname: string;
 
   // Basic stats
-  W: number;           // Wins
-  L: number;           // Losses
-  SV: number;          // Saves
-  G: number;           // Games
-  GS: number;          // Games Started
-  IP: number;          // Innings Pitched
-  TBF: number;         // Total Batters Faced
-  H: number;           // Hits
-  R: number;           // Runs
-  ER: number;          // Earned Runs
-  HR: number;          // Home Runs
-  BB: number;          // Walks
-  IBB: number;         // Intentional Walks
-  HBP: number;         // Hit Batsmen
-  WP: number;          // Wild Pitches
-  BK: number;          // Balks
-  SO: number;          // Strikeouts
+  W: number; // Wins
+  L: number; // Losses
+  SV: number; // Saves
+  G: number; // Games
+  GS: number; // Games Started
+  IP: number; // Innings Pitched
+  TBF: number; // Total Batters Faced
+  H: number; // Hits
+  R: number; // Runs
+  ER: number; // Earned Runs
+  HR: number; // Home Runs
+  BB: number; // Walks
+  IBB: number; // Intentional Walks
+  HBP: number; // Hit Batsmen
+  WP: number; // Wild Pitches
+  BK: number; // Balks
+  SO: number; // Strikeouts
 
   // Traditional metrics
-  ERA: number;         // Earned Run Average
-  WHIP: number;        // Walks + Hits per Inning Pitched
-  'K/9': number;       // Strikeouts per 9 innings
-  'BB/9': number;      // Walks per 9 innings
-  'K/BB': number;      // Strikeout to Walk Ratio
-  'H/9': number;       // Hits per 9 innings
-  'HR/9': number;      // Home Runs per 9 innings
-  AVG: number;         // Batting Average Against
+  ERA: number; // Earned Run Average
+  WHIP: number; // Walks + Hits per Inning Pitched
+  'K/9': number; // Strikeouts per 9 innings
+  'BB/9': number; // Walks per 9 innings
+  'K/BB': number; // Strikeout to Walk Ratio
+  'H/9': number; // Hits per 9 innings
+  'HR/9': number; // Home Runs per 9 innings
+  AVG: number; // Batting Average Against
 
   // Advanced metrics - FanGraphs specialties
-  'FIP': number;       // Fielding Independent Pitching
-  'xFIP': number;      // Expected FIP
-  'SIERA': number;     // Skill-Interactive ERA
-  'K%': number;        // Strikeout Percentage
-  'BB%': number;       // Walk Percentage
-  'K-BB%': number;     // K% minus BB%
-  'BABIP': number;     // Batting Average on Balls in Play
-  'LOB%': number;      // Left On Base Percentage
-  'GB%': number;       // Ground Ball Percentage
-  'HR/FB': number;     // Home Run per Fly Ball
-  'E-F': number;       // ERA minus FIP
-  'FIP-': number;      // FIP scaled (100 = league average)
-  'xFIP-': number;     // xFIP scaled (100 = league average)
-  WAR: number;         // Wins Above Replacement
+  FIP: number; // Fielding Independent Pitching
+  xFIP: number; // Expected FIP
+  SIERA: number; // Skill-Interactive ERA
+  'K%': number; // Strikeout Percentage
+  'BB%': number; // Walk Percentage
+  'K-BB%': number; // K% minus BB%
+  BABIP: number; // Batting Average on Balls in Play
+  'LOB%': number; // Left On Base Percentage
+  'GB%': number; // Ground Ball Percentage
+  'HR/FB': number; // Home Run per Fly Ball
+  'E-F': number; // ERA minus FIP
+  'FIP-': number; // FIP scaled (100 = league average)
+  'xFIP-': number; // xFIP scaled (100 = league average)
+  WAR: number; // Wins Above Replacement
 
   // Pitch types and velocity
-  'FA%': number;       // Fastball %
-  'FT%': number;       // Two-seam Fastball %
-  'FC%': number;       // Cutter %
-  'FS%': number;       // Splitter %
-  'FO%': number;       // Forkball %
-  'SI%': number;       // Sinker %
-  'SL%': number;       // Slider %
-  'CU%': number;       // Curveball %
-  'CH%': number;       // Changeup %
-  'KN%': number;       // Knuckleball %
-  'vFA': number;       // Fastball Velocity (mph)
-  'vFC': number;       // Cutter Velocity
-  'vFS': number;       // Splitter Velocity
-  'vSI': number;       // Sinker Velocity
-  'vSL': number;       // Slider Velocity
-  'vCU': number;       // Curveball Velocity
-  'vCH': number;       // Changeup Velocity
+  'FA%': number; // Fastball %
+  'FT%': number; // Two-seam Fastball %
+  'FC%': number; // Cutter %
+  'FS%': number; // Splitter %
+  'FO%': number; // Forkball %
+  'SI%': number; // Sinker %
+  'SL%': number; // Slider %
+  'CU%': number; // Curveball %
+  'CH%': number; // Changeup %
+  'KN%': number; // Knuckleball %
+  vFA: number; // Fastball Velocity (mph)
+  vFC: number; // Cutter Velocity
+  vFS: number; // Splitter Velocity
+  vSI: number; // Sinker Velocity
+  vSL: number; // Slider Velocity
+  vCU: number; // Curveball Velocity
+  vCH: number; // Changeup Velocity
 
   // Batted ball data
-  'LD%': number;       // Line Drive %
-  'FB%': number;       // Fly Ball %
-  'IFFB%': number;     // Infield Fly Ball %
-  'IFH%': number;      // Infield Hit %
-  'Pull%': number;     // Pull %
-  'Cent%': number;     // Center %
-  'Oppo%': number;     // Opposite Field %
-  'Soft%': number;     // Soft Contact %
-  'Med%': number;      // Medium Contact %
-  'Hard%': number;     // Hard Contact %
+  'LD%': number; // Line Drive %
+  'FB%': number; // Fly Ball %
+  'IFFB%': number; // Infield Fly Ball %
+  'IFH%': number; // Infield Hit %
+  'Pull%': number; // Pull %
+  'Cent%': number; // Center %
+  'Oppo%': number; // Opposite Field %
+  'Soft%': number; // Soft Contact %
+  'Med%': number; // Medium Contact %
+  'Hard%': number; // Hard Contact %
 
   // Plate discipline
-  'O-Swing%': number;  // Outside Swing %
-  'Z-Swing%': number;  // Inside Zone Swing %
-  'Swing%': number;    // Overall Swing %
+  'O-Swing%': number; // Outside Swing %
+  'Z-Swing%': number; // Inside Zone Swing %
+  'Swing%': number; // Overall Swing %
   'O-Contact%': number; // Outside Contact %
   'Z-Contact%': number; // Inside Zone Contact %
-  'Contact%': number;  // Overall Contact %
-  'Zone%': number;     // Zone %
+  'Contact%': number; // Overall Contact %
+  'Zone%': number; // Zone %
   'F-Strike%': number; // First Pitch Strike %
-  'SwStr%': number;    // Swinging Strike %
+  'SwStr%': number; // Swinging Strike %
 
   // Position
-  Age: number;         // Age
+  Age: number; // Age
 }
 
 export interface FanGraphsLeaderboardOptions {
@@ -260,17 +260,17 @@ export interface PlayerProjection {
 // ============================================================================
 
 interface CacheConfig {
-  leaderboards: number;    // 1 hour - leaderboards change frequently
-  playerStats: number;     // 6 hours - individual player stats
-  projections: number;     // 24 hours - projections updated daily
-  advancedStats: number;   // 6 hours - advanced metrics
+  leaderboards: number; // 1 hour - leaderboards change frequently
+  playerStats: number; // 6 hours - individual player stats
+  projections: number; // 24 hours - projections updated daily
+  advancedStats: number; // 6 hours - advanced metrics
 }
 
 const CACHE_TTLS: CacheConfig = {
-  leaderboards: 3600,      // 1 hour
-  playerStats: 21600,      // 6 hours
-  projections: 86400,      // 24 hours
-  advancedStats: 21600,    // 6 hours
+  leaderboards: 3600, // 1 hour
+  playerStats: 21600, // 6 hours
+  projections: 86400, // 24 hours
+  advancedStats: 21600, // 6 hours
 };
 
 // ============================================================================
@@ -310,11 +310,7 @@ export class FanGraphsAdapter {
     }
   }
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try cache first
     const cached = await this.getCached<T>(cacheKey);
     if (cached) {
@@ -330,11 +326,7 @@ export class FanGraphsAdapter {
     return data;
   }
 
-  private async fetchWithRetry<T>(
-    url: string,
-    maxRetries = 3,
-    timeout = 10000
-  ): Promise<T> {
+  private async fetchWithRetry<T>(url: string, maxRetries = 3, timeout = 10000): Promise<T> {
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -357,14 +349,14 @@ export class FanGraphsAdapter {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        return await response.json() as T;
+        return (await response.json()) as T;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
 
         if (attempt < maxRetries - 1) {
           // Exponential backoff: 250ms, 500ms, 1000ms
           const delay = 250 * Math.pow(2, attempt);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
     }
@@ -545,11 +537,7 @@ export class FanGraphsAdapter {
     const cacheKey = `fangraphs:discipline:${stats}:${playerId}:${currentSeason}`;
 
     try {
-      const response = await this.fetchWithCache<any[]>(
-        url,
-        cacheKey,
-        CACHE_TTLS.advancedStats
-      );
+      const response = await this.fetchWithCache<any[]>(url, cacheKey, CACHE_TTLS.advancedStats);
 
       return response.length > 0 ? response[0] : null;
     } catch (error) {
@@ -582,11 +570,7 @@ export class FanGraphsAdapter {
     const cacheKey = `fangraphs:battedball:${stats}:${playerId}:${currentSeason}`;
 
     try {
-      const response = await this.fetchWithCache<any[]>(
-        url,
-        cacheKey,
-        CACHE_TTLS.advancedStats
-      );
+      const response = await this.fetchWithCache<any[]>(url, cacheKey, CACHE_TTLS.advancedStats);
 
       return response.length > 0 ? response[0] : null;
     } catch (error) {
@@ -661,10 +645,7 @@ export function mlbToFanGraphsId(mlbId: number): number | null {
  * Calculate park-adjusted wRC+
  * wRC+ of 100 is league average, >100 is above average
  */
-export function calculateParkAdjustedWRC(
-  wRC: number,
-  parkFactor: number = 100
-): number {
+export function calculateParkAdjustedWRC(wRC: number, parkFactor: number = 100): number {
   return Math.round((wRC / parkFactor) * 100);
 }
 
@@ -678,10 +659,10 @@ export function calculateFIP(
   bb: number,
   k: number,
   ip: number,
-  fipConstant: number = 3.10
+  fipConstant: number = 3.1
 ): number {
   if (ip === 0) return 0;
-  return ((13 * hr + 3 * bb - 2 * k) / ip) + fipConstant;
+  return (13 * hr + 3 * bb - 2 * k) / ip + fipConstant;
 }
 
 /**
@@ -694,11 +675,11 @@ export function calculateXFIP(
   k: number,
   ip: number,
   leagueHRperFB: number = 0.105,
-  fipConstant: number = 3.10
+  fipConstant: number = 3.1
 ): number {
   if (ip === 0) return 0;
   const expectedHR = fb * leagueHRperFB;
-  return ((13 * expectedHR + 3 * bb - 2 * k) / ip) + fipConstant;
+  return (13 * expectedHR + 3 * bb - 2 * k) / ip + fipConstant;
 }
 
 /**

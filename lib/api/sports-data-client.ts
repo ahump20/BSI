@@ -87,13 +87,15 @@ export class SportsDataClient {
    */
   private initializeProviders(env?: any): void {
     // Get API keys from env bindings (Workers) or process.env (Node.js)
-    const sportsDataIOKey = env?.SPORTSDATAIO_API_KEY ||
-                           (typeof process !== 'undefined' ? process.env?.SPORTSDATAIO_API_KEY : null) ||
-                           '';
+    const sportsDataIOKey =
+      env?.SPORTSDATAIO_API_KEY ||
+      (typeof process !== 'undefined' ? process.env?.SPORTSDATAIO_API_KEY : null) ||
+      '';
 
-    const cfbdKey = env?.COLLEGEFOOTBALLDATA_API_KEY ||
-                   (typeof process !== 'undefined' ? process.env?.COLLEGEFOOTBALLDATA_API_KEY : null) ||
-                   '';
+    const cfbdKey =
+      env?.COLLEGEFOOTBALLDATA_API_KEY ||
+      (typeof process !== 'undefined' ? process.env?.COLLEGEFOOTBALLDATA_API_KEY : null) ||
+      '';
 
     // SportsDataIO - Comprehensive pro/college sports data
     this.configs.set('sportsdataio', {
@@ -101,11 +103,11 @@ export class SportsDataClient {
       apiKey: sportsDataIOKey,
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
-        'Accept': 'application/json'
+        Accept: 'application/json',
       },
       timeout: 10000,
       retries: 3,
-      cacheTTL: 300 // 5 minutes
+      cacheTTL: 300, // 5 minutes
     });
 
     // MLB StatsAPI - Official MLB data (FREE)
@@ -113,11 +115,11 @@ export class SportsDataClient {
       baseUrl: 'https://statsapi.mlb.com/api/v1',
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
-        'Accept': 'application/json'
+        Accept: 'application/json',
       },
       timeout: 8000,
       retries: 3,
-      cacheTTL: 60 // 1 minute for live data
+      cacheTTL: 60, // 1 minute for live data
     });
 
     // ESPN API - Live scores, standings, college sports
@@ -125,12 +127,12 @@ export class SportsDataClient {
       baseUrl: 'https://site.api.espn.com/apis/site/v2/sports',
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
-        'Accept': 'application/json',
-        'Referer': 'https://blazesportsintel.com'
+        Accept: 'application/json',
+        Referer: 'https://blazesportsintel.com',
       },
       timeout: 8000,
       retries: 3,
-      cacheTTL: 180 // 3 minutes
+      cacheTTL: 180, // 3 minutes
     });
 
     // College Football Data API
@@ -139,11 +141,11 @@ export class SportsDataClient {
       apiKey: cfbdKey,
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
-        'Accept': 'application/json'
+        Accept: 'application/json',
       },
       timeout: 10000,
       retries: 3,
-      cacheTTL: 300
+      cacheTTL: 300,
     });
   }
 
@@ -177,8 +179,13 @@ export class SportsDataClient {
         return {
           success: true,
           data: cached,
-          source: this.buildDataSource(provider, endpoint, true, options.customTTL || config.cacheTTL!),
-          error: null
+          source: this.buildDataSource(
+            provider,
+            endpoint,
+            true,
+            options.customTTL || config.cacheTTL!
+          ),
+          error: null,
         };
       }
     }
@@ -198,7 +205,7 @@ export class SportsDataClient {
         success: true,
         data,
         source: this.buildDataSource(provider, url, false, ttl),
-        error: null
+        error: null,
       };
     } catch (error) {
       const apiError = error as ApiError;
@@ -206,7 +213,7 @@ export class SportsDataClient {
         success: false,
         data: undefined,
         source: this.buildDataSource(provider, url, false, 0),
-        error: apiError
+        error: apiError,
       };
     }
   }
@@ -237,7 +244,7 @@ export class SportsDataClient {
 
       const response = await fetch(url, {
         headers,
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeout);
@@ -312,7 +319,7 @@ export class SportsDataClient {
       this.rateLimits.set(provider, {
         limit,
         remaining,
-        reset: reset * 1000 // Convert to ms
+        reset: reset * 1000, // Convert to ms
       });
     }
   }
@@ -320,11 +327,7 @@ export class SportsDataClient {
   /**
    * Build full URL with query parameters
    */
-  private buildUrl(
-    baseUrl: string,
-    endpoint: string,
-    params?: Record<string, string>
-  ): string {
+  private buildUrl(baseUrl: string, endpoint: string, params?: Record<string, string>): string {
     const url = new URL(endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`);
 
     if (params) {
@@ -369,7 +372,7 @@ export class SportsDataClient {
   private setCache(key: string, data: unknown, ttlSeconds: number): void {
     this.cache.set(key, {
       data,
-      expires: Date.now() + (ttlSeconds * 1000)
+      expires: Date.now() + ttlSeconds * 1000,
     });
   }
 
@@ -387,7 +390,7 @@ export class SportsDataClient {
       url,
       retrievedAt: DateTime.now().setZone('America/Chicago').toISO() || new Date().toISOString(),
       cacheHit,
-      ttl
+      ttl,
     };
   }
 
@@ -405,24 +408,24 @@ export class SportsDataClient {
       status,
       provider,
       timestamp: DateTime.now().setZone('America/Chicago').toISO() || new Date().toISOString(),
-      retryable
+      retryable,
     };
   }
 
   /**
    * Create error response
    */
-  private errorResponse(
+  private errorResponse<T>(
     message: string,
     status: number,
     provider: string,
     retryable: boolean
-  ): ApiResponse<never> {
+  ): ApiResponse<T> {
     return {
       success: false,
       data: undefined,
       source: this.buildDataSource(provider, '', false, 0),
-      error: this.createError(message, status, provider, retryable)
+      error: this.createError(message, status, provider, retryable),
     };
   }
 
@@ -430,7 +433,7 @@ export class SportsDataClient {
    * Sleep utility for delays
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -461,7 +464,7 @@ export class SportsDataClient {
 
     return {
       size: this.cache.size,
-      providers
+      providers,
     };
   }
 
@@ -492,9 +495,7 @@ export class SportsDataClient {
  *   const data = await client.fetch('espn', '/football/nfl/scoreboard');
  * }
  */
-export const sportsDataClient = typeof process !== 'undefined'
-  ? new SportsDataClient()
-  : null; // null in Workers - must use createSportsDataClient(env)
+export const sportsDataClient = typeof process !== 'undefined' ? new SportsDataClient() : null; // null in Workers - must use createSportsDataClient(env)
 
 /**
  * Factory function for creating SportsDataClient in Cloudflare Workers

@@ -81,10 +81,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const teamId = params.teamId as string;
 
   if (!teamId) {
-    return Response.json(
-      { error: 'Missing teamId parameter' },
-      { status: 400 }
-    );
+    return Response.json({ error: 'Missing teamId parameter' }, { status: 400 });
   }
 
   // Extract query parameters
@@ -94,7 +91,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     completed: url.searchParams.get('completed') === 'true',
     conference: url.searchParams.get('conference') === 'true',
     limit: parseInt(url.searchParams.get('limit') || '20', 10),
-    offset: parseInt(url.searchParams.get('offset') || '0', 10)
+    offset: parseInt(url.searchParams.get('offset') || '0', 10),
   };
 
   try {
@@ -106,8 +103,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       return Response.json(cached, {
         headers: {
           'Cache-Control': 'public, max-age=300, s-maxage=3600',
-          'X-Cache-Status': 'hit'
-        }
+          'X-Cache-Status': 'hit',
+        },
       });
     }
 
@@ -116,21 +113,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Cache for 1 hour
     await env.KV.put(cacheKey, JSON.stringify(schedule), {
-      expirationTtl: 3600
+      expirationTtl: 3600,
     });
 
     return Response.json(schedule, {
       headers: {
         'Cache-Control': 'public, max-age=300, s-maxage=3600',
-        'X-Cache-Status': 'miss'
-      }
+        'X-Cache-Status': 'miss',
+      },
     });
   } catch (error) {
     console.error('Schedule fetch error:', error);
     return Response.json(
       {
         error: 'Failed to fetch schedule',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -152,7 +149,7 @@ function buildCacheKey(params: ScheduleParams): string {
     params.completed ? 'completed' : '',
     params.conference ? 'conference' : '',
     params.limit || 20,
-    params.offset || 0
+    params.offset || 0,
   ];
   return parts.filter(Boolean).join(':');
 }
@@ -160,14 +157,11 @@ function buildCacheKey(params: ScheduleParams): string {
 /**
  * Fetch team schedule from database and external APIs
  */
-async function fetchTeamSchedule(
-  params: ScheduleParams,
-  env: Env
-): Promise<ScheduleResponse> {
+async function fetchTeamSchedule(params: ScheduleParams, env: Env): Promise<ScheduleResponse> {
   // First, get team info
-  const team = await env.DB.prepare(
-    'SELECT id, name, abbreviation FROM teams WHERE id = ?'
-  ).bind(params.teamId).first();
+  const team = await env.DB.prepare('SELECT id, name, abbreviation FROM teams WHERE id = ?')
+    .bind(params.teamId)
+    .first();
 
   if (!team) {
     throw new Error('Team not found');
@@ -229,7 +223,9 @@ async function fetchTeamSchedule(
   binds.push(params.limit || 20, params.offset || 0);
 
   // Execute query
-  const results = await env.DB.prepare(sql).bind(...binds).all();
+  const results = await env.DB.prepare(sql)
+    .bind(...binds)
+    .all();
 
   if (!results.success) {
     throw new Error('Database query failed');
@@ -246,7 +242,7 @@ async function fetchTeamSchedule(
       abbreviation: row.opponent_abbr,
       logo: row.opponent_logo || undefined,
       ranking: row.opponent_ranking || undefined,
-      record: row.opponent_record || undefined
+      record: row.opponent_record || undefined,
     },
     venue: row.venue,
     city: row.city || undefined,
@@ -254,26 +250,34 @@ async function fetchTeamSchedule(
     homeAway: row.homeAway,
     conferenceGame: row.conferenceGame === 1,
     broadcast: row.broadcast || undefined,
-    result: row.status ? {
-      status: row.status,
-      homeScore: row.homeScore || undefined,
-      awayScore: row.awayScore || undefined,
-      winner: row.winner || undefined
-    } : undefined
+    result: row.status
+      ? {
+          status: row.status,
+          homeScore: row.homeScore || undefined,
+          awayScore: row.awayScore || undefined,
+          winner: row.winner || undefined,
+        }
+      : undefined,
   }));
 
   // Get counts for metadata
   const totalCount = await env.DB.prepare(
     'SELECT COUNT(*) as count FROM games WHERE homeTeamId = ? OR awayTeamId = ?'
-  ).bind(params.teamId, params.teamId).first<{ count: number }>();
+  )
+    .bind(params.teamId, params.teamId)
+    .first<{ count: number }>();
 
   const upcomingCount = await env.DB.prepare(
-    'SELECT COUNT(*) as count FROM games WHERE (homeTeamId = ? OR awayTeamId = ?) AND date >= ? AND status = \'scheduled\''
-  ).bind(params.teamId, params.teamId, now).first<{ count: number }>();
+    "SELECT COUNT(*) as count FROM games WHERE (homeTeamId = ? OR awayTeamId = ?) AND date >= ? AND status = 'scheduled'"
+  )
+    .bind(params.teamId, params.teamId, now)
+    .first<{ count: number }>();
 
   const completedCount = await env.DB.prepare(
-    'SELECT COUNT(*) as count FROM games WHERE (homeTeamId = ? OR awayTeamId = ?) AND status = \'final\''
-  ).bind(params.teamId, params.teamId).first<{ count: number }>();
+    "SELECT COUNT(*) as count FROM games WHERE (homeTeamId = ? OR awayTeamId = ?) AND status = 'final'"
+  )
+    .bind(params.teamId, params.teamId)
+    .first<{ count: number }>();
 
   return {
     teamId: team.id as string,
@@ -284,8 +288,8 @@ async function fetchTeamSchedule(
       upcoming: upcomingCount?.count || 0,
       completed: completedCount?.count || 0,
       dataSource: 'BlazeSportsIntel DB',
-      lastUpdated: new Date().toISOString()
-    }
+      lastUpdated: new Date().toISOString(),
+    },
   };
 }
 

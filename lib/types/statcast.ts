@@ -23,27 +23,27 @@ export interface BattedBallEvent {
   opponent: string;
 
   // Ball tracking data
-  exitVelocity?: number;        // mph
-  launchAngle?: number;         // degrees
-  hitDistance?: number;         // feet
-  hangTime?: number;            // seconds
+  exitVelocity?: number; // mph
+  launchAngle?: number; // degrees
+  hitDistance?: number; // feet
+  hangTime?: number; // seconds
 
   // Calculated metrics
-  xBA?: number;                 // Expected batting average (0-1)
-  estimatedBA?: number;         // Similar to xBA
-  estimatedWOBA?: number;       // Expected weighted on-base average
+  xBA?: number; // Expected batting average (0-1)
+  estimatedBA?: number; // Similar to xBA
+  estimatedWOBA?: number; // Expected weighted on-base average
 
   // Pitch data
-  pitchType?: string;           // FF, SL, CH, etc.
-  pitchSpeed?: number;          // mph
+  pitchType?: string; // FF, SL, CH, etc.
+  pitchSpeed?: number; // mph
 
   // Result
-  result: string;               // Single, Double, HR, Out, etc.
-  events: string;               // Detailed event description
+  result: string; // Single, Double, HR, Out, etc.
+  events: string; // Detailed event description
   description?: string;
 
   // Barrel classification
-  isBarrel: boolean;            // True if exit velocity + launch angle in optimal range
+  isBarrel: boolean; // True if exit velocity + launch angle in optimal range
 
   // Hit location
   hitCoordinateX?: number;
@@ -69,30 +69,30 @@ export interface StatcastPlayerSummary {
     battingAverage: number;
 
     // Statcast metrics
-    avgExitVelocity: number;      // Average exit velocity (mph)
-    maxExitVelocity: number;      // Max exit velocity (mph)
-    avgLaunchAngle: number;       // Average launch angle (degrees)
+    avgExitVelocity: number; // Average exit velocity (mph)
+    maxExitVelocity: number; // Max exit velocity (mph)
+    avgLaunchAngle: number; // Average launch angle (degrees)
 
     // Expected outcomes
-    xBA: number;                  // Expected batting average
-    xSLG: number;                 // Expected slugging percentage
-    xWOBA: number;                // Expected weighted on-base average
-    xWOBACON: number;             // xWOBA on contact
+    xBA: number; // Expected batting average
+    xSLG: number; // Expected slugging percentage
+    xWOBA: number; // Expected weighted on-base average
+    xWOBACON: number; // xWOBA on contact
 
     // Barrel metrics
-    barrelRate: number;           // % of batted balls that are barrels
-    barrels: number;              // Total barrels
-    barrelPerPA: number;          // Barrels per plate appearance
+    barrelRate: number; // % of batted balls that are barrels
+    barrels: number; // Total barrels
+    barrelPerPA: number; // Barrels per plate appearance
 
     // Sweet spot metrics
-    sweetSpotPercent: number;     // % of balls hit at 8-32 degree launch angle
+    sweetSpotPercent: number; // % of balls hit at 8-32 degree launch angle
 
     // Hard hit metrics
-    hardHitPercent: number;       // % of balls hit 95+ mph
-    avgHitDistance: number;       // Average distance on balls in play
+    hardHitPercent: number; // % of balls hit 95+ mph
+    avgHitDistance: number; // Average distance on balls in play
 
     // Sprint speed
-    sprintSpeed?: number;         // ft/sec (if available)
+    sprintSpeed?: number; // ft/sec (if available)
   };
 
   // Sample size
@@ -122,32 +122,32 @@ export interface StatcastPitcherSummary {
     era: number;
 
     // Statcast metrics
-    avgExitVelocityAllowed: number;   // Avg exit velocity against (mph)
-    maxExitVelocityAllowed: number;   // Max exit velocity against (mph)
-    avgLaunchAngleAllowed: number;    // Avg launch angle against (degrees)
+    avgExitVelocityAllowed: number; // Avg exit velocity against (mph)
+    maxExitVelocityAllowed: number; // Max exit velocity against (mph)
+    avgLaunchAngleAllowed: number; // Avg launch angle against (degrees)
 
     // Expected outcomes
-    xBA: number;                      // Expected batting average against
-    xSLG: number;                     // Expected slugging against
-    xWOBA: number;                    // Expected weighted on-base against
-    xERA: number;                     // Expected ERA
+    xBA: number; // Expected batting average against
+    xSLG: number; // Expected slugging against
+    xWOBA: number; // Expected weighted on-base against
+    xERA: number; // Expected ERA
 
     // Barrel metrics
-    barrelRateAllowed: number;        // % of batted balls that are barrels
-    barrelsAllowed: number;           // Total barrels allowed
+    barrelRateAllowed: number; // % of batted balls that are barrels
+    barrelsAllowed: number; // Total barrels allowed
 
     // Hard hit metrics
-    hardHitPercentAllowed: number;    // % of balls hit 95+ mph
-    avgHitDistanceAllowed: number;    // Average distance allowed
+    hardHitPercentAllowed: number; // % of balls hit 95+ mph
+    avgHitDistanceAllowed: number; // Average distance allowed
 
     // Pitch arsenal
-    fastballVelocity: number;         // Average fastball velocity
-    maxFastballVelocity: number;      // Max fastball velocity
-    spinRate?: number;                // Average spin rate (rpm)
+    fastballVelocity: number; // Average fastball velocity
+    maxFastballVelocity: number; // Max fastball velocity
+    spinRate?: number; // Average spin rate (rpm)
 
     // Extension and release
-    extensionFeet?: number;           // Release point extension
-    releaseHeight?: number;           // Release point height
+    extensionFeet?: number; // Release point extension
+    releaseHeight?: number; // Release point height
   };
 
   // Sample size
@@ -170,13 +170,13 @@ export interface StatcastLeaderboardEntry {
   position?: string;
 
   // The metric being ranked
-  metric: string;               // e.g., "xBA", "barrelRate", "avgExitVelocity"
-  value: number;                // The metric value
+  metric: string; // e.g., "xBA", "barrelRate", "avgExitVelocity"
+  value: number; // The metric value
 
   // Context
   season: number;
-  qualifiedPA?: number;         // If batting leaderboard
-  qualifiedIP?: number;         // If pitching leaderboard
+  qualifiedPA?: number; // If batting leaderboard
+  qualifiedIP?: number; // If pitching leaderboard
 }
 
 /**
@@ -184,10 +184,10 @@ export interface StatcastLeaderboardEntry {
  * A barrel is defined as a batted ball with optimal exit velocity and launch angle
  */
 export interface BarrelDefinition {
-  minExitVelocity: number;      // Minimum exit velocity (98 mph)
+  minExitVelocity: number; // Minimum exit velocity (98 mph)
   optimalLaunchAngle: {
-    min: number;                // 26 degrees
-    max: number;                // 30 degrees
+    min: number; // 26 degrees
+    max: number; // 30 degrees
   };
 
   // Barrel rate is the percentage of batted ball events that are barrels
@@ -200,8 +200,8 @@ export interface BarrelDefinition {
  */
 export interface SweetSpotDefinition {
   launchAngle: {
-    min: number;                // 8 degrees
-    max: number;                // 32 degrees
+    min: number; // 8 degrees
+    max: number; // 32 degrees
   };
 
   // Balls hit in the sweet spot have significantly higher batting averages
@@ -212,7 +212,7 @@ export interface SweetSpotDefinition {
  * Hard hit is exit velocity of 95+ mph
  */
 export interface HardHitDefinition {
-  minExitVelocity: number;      // 95 mph
+  minExitVelocity: number; // 95 mph
 
   // Hard hit balls have much higher success rates
 }
@@ -230,11 +230,11 @@ export interface StatcastQueryParams {
 
   // Time range
   season?: number;
-  startDate?: string;           // YYYY-MM-DD
-  endDate?: string;             // YYYY-MM-DD
+  startDate?: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
 
   // Game filters
-  gameType?: 'R' | 'P' | 'S' | 'E' | 'A' | 'W';  // Regular, Playoff, Spring, Exhibition, All-Star, World Series
+  gameType?: 'R' | 'P' | 'S' | 'E' | 'A' | 'W'; // Regular, Playoff, Spring, Exhibition, All-Star, World Series
 
   // Metric filters
   minExitVelocity?: number;
@@ -243,7 +243,7 @@ export interface StatcastQueryParams {
   maxLaunchAngle?: number;
 
   // Result filters
-  result?: string[];            // Filter by result type
+  result?: string[]; // Filter by result type
 
   // Sorting
   sortBy?: string;
@@ -275,32 +275,32 @@ export interface StatcastApiResponse<T> {
  */
 export const STATCAST_CONSTANTS = {
   BARREL: {
-    MIN_EXIT_VELOCITY: 98,      // mph
-    OPTIMAL_LAUNCH_ANGLE_MIN: 26,  // degrees
-    OPTIMAL_LAUNCH_ANGLE_MAX: 30,  // degrees
+    MIN_EXIT_VELOCITY: 98, // mph
+    OPTIMAL_LAUNCH_ANGLE_MIN: 26, // degrees
+    OPTIMAL_LAUNCH_ANGLE_MAX: 30, // degrees
   },
 
   SWEET_SPOT: {
-    MIN_LAUNCH_ANGLE: 8,        // degrees
-    MAX_LAUNCH_ANGLE: 32,       // degrees
+    MIN_LAUNCH_ANGLE: 8, // degrees
+    MAX_LAUNCH_ANGLE: 32, // degrees
   },
 
   HARD_HIT: {
-    MIN_EXIT_VELOCITY: 95,      // mph
+    MIN_EXIT_VELOCITY: 95, // mph
   },
 
   // Quality of contact thresholds
   QUALITY: {
-    ELITE_EXIT_VELOCITY: 110,   // mph
-    GOOD_EXIT_VELOCITY: 95,     // mph
-    AVERAGE_EXIT_VELOCITY: 85,  // mph
+    ELITE_EXIT_VELOCITY: 110, // mph
+    GOOD_EXIT_VELOCITY: 95, // mph
+    AVERAGE_EXIT_VELOCITY: 85, // mph
   },
 
   // Sprint speed classifications (ft/sec)
   SPRINT_SPEED: {
-    ELITE: 30,                  // ft/sec
-    PLUS: 28,                   // ft/sec
-    AVERAGE: 27,                // ft/sec
+    ELITE: 30, // ft/sec
+    PLUS: 28, // ft/sec
+    AVERAGE: 27, // ft/sec
   },
 } as const;
 

@@ -15,7 +15,7 @@ export async function onRequest(context) {
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders
+      headers: corsHeaders,
     });
   }
 
@@ -55,10 +55,9 @@ export async function onRequest(context) {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="scouting-report-${playerId}-${Date.now()}.pdf"`,
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      }
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
     });
-
   } catch (error) {
     console.error('PDF export error:', error);
     return err(error, 500);
@@ -141,7 +140,7 @@ function generatePDF(data) {
     '>>',
     'startxref',
     '532',
-    '%%EOF'
+    '%%EOF',
   ].join('\n');
 
   // Convert to Uint8Array
@@ -184,7 +183,9 @@ function generatePDFContent(data) {
   addHeader('PROFESSIONAL SCOUTING REPORT');
   addLine();
   addText(`Blaze Sports Intelligence - College Baseball Division`);
-  addText(`Generated: ${data.citations?.fetched_at || new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}`);
+  addText(
+    `Generated: ${data.citations?.fetched_at || new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}`
+  );
   addLine();
 
   // Basic Information
@@ -213,12 +214,16 @@ function generatePDFContent(data) {
 
   if (comp.velocity_model) {
     addText(`Velocity Consistency: ${comp.velocity_model.consistency}/100`);
-    addText(`  Avg: ${comp.velocity_model.avg_velocity?.toFixed(1)} mph | Trend: ${comp.velocity_model.trend}`);
+    addText(
+      `  Avg: ${comp.velocity_model.avg_velocity?.toFixed(1)} mph | Trend: ${comp.velocity_model.trend}`
+    );
   }
 
   if (comp.intangibles_model) {
     addText(`Intangibles: ${comp.intangibles_model.overall_intangibles}/100`);
-    addText(`  Leadership: ${comp.intangibles_model.leadership} | Work Ethic: ${comp.intangibles_model.work_ethic}`);
+    addText(
+      `  Leadership: ${comp.intangibles_model.leadership} | Work Ethic: ${comp.intangibles_model.work_ethic}`
+    );
   }
 
   if (comp.scout_notes_model) {
@@ -242,9 +247,11 @@ function generatePDFContent(data) {
   // MLB Comparisons
   if (data.mlb_comparisons && data.mlb_comparisons.length > 0) {
     addSubheader('MLB PLAYER COMPARISONS');
-    data.mlb_comparisons.forEach(comp => {
+    data.mlb_comparisons.forEach((comp) => {
       addText(`${comp.name} (${comp.similarity_score}% similar)`);
-      addText(`  ${comp.peak_velocity || 'N/A'} mph | WAR: ${comp.career_war || 'N/A'} | ${comp.draft_year || 'N/A'}`);
+      addText(
+        `  ${comp.peak_velocity || 'N/A'} mph | WAR: ${comp.career_war || 'N/A'} | ${comp.draft_year || 'N/A'}`
+      );
     });
     addLine();
   }
@@ -257,7 +264,7 @@ function generatePDFContent(data) {
 
     if (injury.risk_factors && injury.risk_factors.length > 0) {
       addText(`Risk Factors:`);
-      injury.risk_factors.forEach(factor => {
+      injury.risk_factors.forEach((factor) => {
         addText(`  - ${factor}`);
       });
     }
@@ -267,7 +274,7 @@ function generatePDFContent(data) {
   // Role Suggestions
   if (final.role_suggestions && final.role_suggestions.length > 0) {
     addSubheader('ROLE SUGGESTIONS');
-    final.role_suggestions.forEach(role => {
+    final.role_suggestions.forEach((role) => {
       addText(`- ${role}`);
     });
     addLine();
@@ -276,7 +283,7 @@ function generatePDFContent(data) {
   // Risk Factors
   if (final.risk_factors && final.risk_factors.length > 0) {
     addSubheader('RISK FACTORS');
-    final.risk_factors.forEach(risk => {
+    final.risk_factors.forEach((risk) => {
       addText(`- ${risk}`);
     });
     addLine();
@@ -287,7 +294,10 @@ function generatePDFContent(data) {
   addText('---', 9);
   addText('Powered by Blaze Sports Intelligence - Professional Scouting Engine', 9);
   addText('Champion Enigma Engine is a trademark of Blaze Intelligence', 9);
-  addText(`Data Sources: ${data.citations?.sources?.join(', ') || 'Multiple validated sources'}`, 9);
+  addText(
+    `Data Sources: ${data.citations?.sources?.join(', ') || 'Multiple validated sources'}`,
+    9
+  );
 
   return lines.join('\n');
 }

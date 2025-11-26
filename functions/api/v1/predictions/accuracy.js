@@ -20,7 +20,7 @@ import {
   analyzeCalibration,
   getAccuracyTrend,
   compareModelPerformance,
-  getPerformanceDashboard
+  getPerformanceDashboard,
 } from '../../../../lib/ml/prediction-accuracy-tracker.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
@@ -79,7 +79,7 @@ export async function onRequest(context) {
           sport: sport || null,
           startDate: url.searchParams.get('startDate') || null,
           endDate: url.searchParams.get('endDate') || null,
-          confidence: url.searchParams.get('confidence') || null
+          confidence: url.searchParams.get('confidence') || null,
         };
 
         result = await getAccuracyMetrics(env, filters);
@@ -107,7 +107,9 @@ export async function onRequest(context) {
         break;
 
       default:
-        throw new Error(`Unknown action: ${action}. Valid actions: record, outcome, metrics, calibration, trend, comparison, dashboard`);
+        throw new Error(
+          `Unknown action: ${action}. Valid actions: record, outcome, metrics, calibration, trend, comparison, dashboard`
+        );
     }
 
     return new Response(JSON.stringify(result), {
@@ -115,24 +117,27 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': action === 'record' || action === 'outcome'
-          ? 'no-cache, no-store, must-revalidate'
-          : 'public, max-age=300, s-maxage=600' // 5-10 min cache for analytics
-      }
+        'Cache-Control':
+          action === 'record' || action === 'outcome'
+            ? 'no-cache, no-store, must-revalidate'
+            : 'public, max-age=300, s-maxage=600', // 5-10 min cache for analytics
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to process accuracy request',
-      message: error.message,
-      action
-    }), {
-      status: error.message.includes('required') ? 400 : 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to process accuracy request',
+        message: error.message,
+        action,
+      }),
+      {
+        status: error.message.includes('required') ? 400 : 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 

@@ -7,7 +7,17 @@ import { z } from 'zod';
 
 // ==================== COMMON REUSABLE SCHEMAS ====================
 
-const sportEnum = z.enum(['all', 'mlb', 'nfl', 'nba', 'ncaa', 'ncaa-baseball', 'baseball', 'football', 'basketball']);
+const sportEnum = z.enum([
+  'all',
+  'mlb',
+  'nfl',
+  'nba',
+  'ncaa',
+  'ncaa-baseball',
+  'baseball',
+  'football',
+  'basketball',
+]);
 
 const dateStringSchema = z
   .string()
@@ -41,7 +51,10 @@ const teamKeySchema = z
   .string()
   .min(1, 'Team key cannot be empty')
   .max(50, 'Team key must be at most 50 characters')
-  .regex(/^[a-zA-Z0-9_-]+$/, 'Team key must contain only alphanumeric characters, hyphens, and underscores');
+  .regex(
+    /^[a-zA-Z0-9_-]+$/,
+    'Team key must contain only alphanumeric characters, hyphens, and underscores'
+  );
 
 // ==================== LIVE SCORES ENDPOINT ====================
 
@@ -50,7 +63,7 @@ const teamKeySchema = z
  */
 export const liveScoresQuerySchema = z.object({
   sport: sportEnum.default('all'),
-  date: dateStringSchema.optional()
+  date: dateStringSchema.optional(),
 });
 
 // ==================== FOOTBALL SCORES ENDPOINT ====================
@@ -62,7 +75,7 @@ export const footballScoresQuerySchema = z.object({
   week: z.union([weekNumberSchema, z.literal('current')]).optional(),
   season: seasonYearSchema.optional(),
   team: teamKeySchema.optional(),
-  conference: z.string().max(100).optional()
+  conference: z.string().max(100).optional(),
 });
 
 // ==================== BASKETBALL SCORES ENDPOINT ====================
@@ -73,7 +86,7 @@ export const footballScoresQuerySchema = z.object({
 export const basketballScoresQuerySchema = z.object({
   date: dateStringSchema.optional(),
   conference: z.string().max(100).optional(),
-  top25: z.enum(['true', 'false', '1', '0']).optional()
+  top25: z.enum(['true', 'false', '1', '0']).optional(),
 });
 
 // ==================== COLLEGE BASEBALL ENDPOINTS ====================
@@ -85,14 +98,14 @@ export const collegeBaseballGamesQuerySchema = z.object({
   date: dateStringSchema.optional(),
   team: teamKeySchema.optional(),
   conference: z.string().max(100).optional(),
-  limit: z.coerce.number().int().min(1).max(100).optional()
+  limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 
 /**
  * GET /api/college-baseball/teams/:teamId
  */
 export const collegeBaseballTeamParamsSchema = z.object({
-  teamId: z.string().min(1).max(50)
+  teamId: z.string().min(1).max(50),
 });
 
 // ==================== COPILOT ENDPOINTS ====================
@@ -101,14 +114,19 @@ export const collegeBaseballTeamParamsSchema = z.object({
  * POST /api/copilot/enhanced-search
  */
 export const copilotSearchBodySchema = z.object({
-  query: z.string().min(1, 'Search query is required').max(500, 'Query must be at most 500 characters'),
+  query: z
+    .string()
+    .min(1, 'Search query is required')
+    .max(500, 'Query must be at most 500 characters'),
   sport: sportEnum.optional(),
   limit: z.number().int().min(1).max(50).optional(),
-  filters: z.object({
-    date: dateStringSchema.optional(),
-    team: teamKeySchema.optional(),
-    conference: z.string().max(100).optional()
-  }).optional()
+  filters: z
+    .object({
+      date: dateStringSchema.optional(),
+      team: teamKeySchema.optional(),
+      conference: z.string().max(100).optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -118,7 +136,7 @@ export const copilotInsightsBodySchema = z.object({
   gameId: z.string().min(1, 'Game ID is required').max(100),
   sport: sportEnum,
   includeProjections: z.boolean().optional(),
-  includeHistorical: z.boolean().optional()
+  includeHistorical: z.boolean().optional(),
 });
 
 // ==================== MLB/NFL/NBA SCORES ENDPOINTS ====================
@@ -129,7 +147,7 @@ export const copilotInsightsBodySchema = z.object({
 export const mlbScoresQuerySchema = z.object({
   date: dateStringSchema.optional(),
   team: teamKeySchema.optional(),
-  includeLineScore: z.enum(['true', 'false', '1', '0']).optional()
+  includeLineScore: z.enum(['true', 'false', '1', '0']).optional(),
 });
 
 /**
@@ -138,7 +156,7 @@ export const mlbScoresQuerySchema = z.object({
 export const nflScoresQuerySchema = z.object({
   week: weekNumberSchema.optional(),
   season: seasonYearSchema.optional(),
-  team: teamKeySchema.optional()
+  team: teamKeySchema.optional(),
 });
 
 /**
@@ -146,7 +164,7 @@ export const nflScoresQuerySchema = z.object({
  */
 export const nbaScoresQuerySchema = z.object({
   date: dateStringSchema.optional(),
-  team: teamKeySchema.optional()
+  team: teamKeySchema.optional(),
 });
 
 // ==================== MONTE CARLO SIMULATION ====================
@@ -159,7 +177,7 @@ export const monteCarloBodySchema = z.object({
   homeTeam: z.string().min(1).max(100),
   awayTeam: z.string().min(1).max(100),
   simulations: z.number().int().min(1000).max(100000).default(10000),
-  includeProbabilityCurve: z.boolean().optional()
+  includeProbabilityCurve: z.boolean().optional(),
 });
 
 // ==================== HEALTH & METRICS ====================
@@ -174,7 +192,7 @@ export const healthQuerySchema = z.object({});
  */
 export const metricsQuerySchema = z.object({
   service: z.enum(['api', 'workers', 'database', 'cache']).optional(),
-  timeRange: z.enum(['5m', '15m', '1h', '6h', '24h', '7d']).default('1h')
+  timeRange: z.enum(['5m', '15m', '1h', '6h', '24h', '7d']).default('1h'),
 });
 
 // ==================== EXPORTS ====================
@@ -192,5 +210,5 @@ export default {
   nbaScoresQuerySchema,
   monteCarloBodySchema,
   healthQuerySchema,
-  metricsQuerySchema
+  metricsQuerySchema,
 };

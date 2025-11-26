@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Meet Austin Humphrey—founder of Blaze Sports Intel, delivering college baseball analytics and coverage for the sports big media ignores.">
+  <title>About | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: color 0.15s ease;
+    }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: color 0.15s ease;
+      position: relative;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--bsi-burnt-orange);
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+    
+    .hero {
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      padding: calc(80px + 4rem) 1.5rem 3rem;
+      background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+    }
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    @media (max-width: 800px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+      }
+    }
+    .hero-image {
+      position: relative;
+    }
+    .hero-image img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .hero-image::after {
+      content: '';
+      position: absolute;
+      inset: 12px -12px -12px 12px;
+      border: 2px solid var(--bsi-burnt-orange);
+      border-radius: 8px;
+      z-index: -1;
+    }
+    @media (max-width: 800px) {
+      .hero-image { max-width: 250px; margin: 0 auto; }
+    }
+    .hero-content h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+    .hero-content h1 .accent { color: var(--bsi-burnt-orange); }
+    .hero-content .lead {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.85);
+      margin-bottom: 2rem;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+      transition: gap 0.2s ease;
+    }
+    .hero-cta:hover { gap: 0.75rem; }
+    .hero-cta svg { width: 20px; height: 20px; }
+    
+    .bio-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-charcoal);
+    }
+    .bio-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .bio-container h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.3);
+    }
+    .bio-container h2 .accent { color: var(--bsi-burnt-orange); }
+    .bio-text {
+      font-size: 1.0625rem;
+      line-height: 1.8;
+      color: rgba(250, 250, 250, 0.85);
+    }
+    .bio-text p { margin-bottom: 1.5rem; }
+    .bio-text p:last-child { margin-bottom: 0; }
+    
+    .credentials {
+      margin-top: 3rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .credential {
+      background: rgba(13, 13, 13, 0.5);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid rgba(191, 87, 0, 0.15);
+    }
+    .credential-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 0.5rem;
+    }
+    .credential-value {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: rgba(250, 250, 250, 0.9);
+    }
+    
+    .why-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .why-container {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .why-container h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .why-container h2 .accent { color: var(--bsi-burnt-orange); }
+    .why-container p {
+      font-size: 1.0625rem;
+      line-height: 1.8;
+      color: rgba(250, 250, 250, 0.8);
+      margin-bottom: 1.25rem;
+    }
+    .story-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.875rem 2rem;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      border-radius: 6px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .story-link:hover {
+      background: var(--bsi-ember);
+      transform: translateY(-2px);
+    }
+    
+    .footer {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      text-align: center;
+    }
+    .footer-tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 0.75rem;
+    }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.4);
+    }
+
+    /* Featured Credential Modifier */
+    .credential--featured { background: rgba(191, 87, 0, 0.1); border-left: 3px solid var(--bsi-burnt-orange); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/bsi-logo.png" alt="Blaze Sports Intel">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/analytics" class="nav-link">Analytics</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/our-story" class="nav-link">Our Story</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-image">
+        <img src="/images/headshot.jpg" alt="Austin Humphrey">
+      </div>
+      <div class="hero-content">
+        <h1>I'm Austin Humphrey—<span class="accent">founder of Blaze Sports Intel.</span></h1>
+        <p class="lead">
+          UT Austin grad, former Spectrum Reach analyst, and lifelong sports obsessive. I started BSI 
+          because college baseball—one of only three revenue-generating college sports—deserves better 
+          than the coverage ESPN refuses to provide.
+        </p>
+        <a href="/our-story" class="hero-cta">
+          Read the origin story
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bio-section">
+    <div class="bio-container">
+      <h2>The <span class="accent">Background</span></h2>
+      <div class="bio-text">
+        <p>
+          I grew up in Memphis watching SEC baseball and driving to Austin every Thanksgiving for Longhorn football. 
+          My family has held the same four season tickets for over 40 years—longer than I've been alive. I was in 
+          the stands when Ricky Williams broke the rushing record against A&M.
+        </p>
+        <p>
+          After graduating from UT Austin (International Relations, with minors in Economics and European Studies), 
+          I earned my MS in Entertainment Business from Full Sail University. I built my analytical foundation in 
+          data-driven advertising at Spectrum Reach and finished top 10% nationally during my time at Northwestern Mutual.
+        </p>
+        <p>
+          The problem that kept nagging at me: ESPN broadcasts cornhole tournaments while providing virtually no 
+          coverage of college baseball—one of only three revenue-generating college sports alongside football and 
+          basketball. FCS programs get ignored entirely. Group of Five teams barely exist in the national conversation. 
+          That imbalance is what Blaze Sports Intel exists to correct.
+        </p>
+      </div>
+      
+      <div class="credentials">
+        <div class="credential credential--featured">
+          <p class="credential-label">Education</p>
+          <p class="credential-value">B.A. International Relations<br>University of Texas at Austin</p>
+        </div>
+        <div class="credential">
+          <p class="credential-label">Minors</p>
+          <p class="credential-value">Economics, European Studies,<br>Political Science</p>
+        </div>
+        <div class="credential credential--featured">
+          <p class="credential-label">Spectrum Reach</p>
+          <p class="credential-value">Data-Driven Advertising<br>Specialist</p>
+        </div>
+        <div class="credential credential--featured">
+          <p class="credential-label">Northwestern Mutual</p>
+          <p class="credential-value">Top 10% Nationally</p>
+        </div>
+        <div class="credential">
+          <p class="credential-label">Based In</p>
+          <p class="credential-value">Boerne, Texas</p>
+        </div>
+        <div class="credential">
+          <p class="credential-label">Primary Focus</p>
+          <p class="credential-value">College Baseball Analytics</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="why-section">
+    <div class="why-container">
+      <h2>Why <span class="accent">"Blaze"?</span></h2>
+      <p>
+        The company is named after my childhood dachshund, Blaze—who was named after my first baseball team 
+        out of Bartlett, Tennessee. He was stubborn, loyal, and had more heart than dogs twice his size. 
+        That's the spirit behind this project.
+      </p>
+      <p>
+        But there's a deeper story. One about Texas soil, a hospital in Memphis, and a 127-year family tradition 
+        that shaped how I think about heritage, commitment, and doing things the right way.
+      </p>
+      <a href="/our-story" class="story-link">
+        Read the Full Story
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">© 2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+</body>
+</html>

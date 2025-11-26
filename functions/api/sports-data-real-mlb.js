@@ -28,16 +28,19 @@ export async function onRequest({ request, env }) {
     const data = await fetchRealMLB(teamId);
     return new Response(JSON.stringify(data), {
       headers: corsHeaders,
-      status: 200
+      status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to fetch MLB data',
-      message: error.message
-    }), {
-      headers: corsHeaders,
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch MLB data',
+        message: error.message,
+      }),
+      {
+        headers: corsHeaders,
+        status: 500,
+      }
+    );
   }
 }
 
@@ -58,10 +61,14 @@ async function fetchRealMLB(teamId) {
     const rosterData = await rosterResponse.json();
 
     // Fetch hitting and pitching stats for Pythagorean calculation (dynamic season)
-    const hittingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=${season}`);
+    const hittingResponse = await fetch(
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=hitting&season=${season}`
+    );
     const hittingData = await hittingResponse.json();
 
-    const pitchingResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`);
+    const pitchingResponse = await fetch(
+      `${baseUrl}/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`
+    );
     const pitchingData = await pitchingResponse.json();
 
     // Extract runs scored and allowed from real data - NO FALLBACKS!
@@ -83,8 +90,9 @@ async function fetchRealMLB(teamId) {
     // REAL Pythagorean calculation using Bill James formula
     const exponent = 1.83; // Bill James exponent for MLB
     const pythagoreanWins = Math.round(
-      162 * (Math.pow(runsScored, exponent) /
-      (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
+      162 *
+        (Math.pow(runsScored, exponent) /
+          (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
     );
 
     // Truth labeling: distinguish current season from historical queries
@@ -105,17 +113,19 @@ async function fetchRealMLB(teamId) {
           winPercentage: (pythagoreanWins / 162).toFixed(3),
           runsScored,
           runsAllowed,
-          formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)'
+          formula: 'Bill James Pythagorean Expectation (Exponent: 1.83)',
         },
         dataSource: dataSourceLabel,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       },
       meta: {
         season: parseInt(season),
         seasonStatus: isCurrent ? 'active' : 'completed',
         isCurrent,
-        warning: isCurrent ? null : 'This is historical data. For current season, omit the season parameter.'
-      }
+        warning: isCurrent
+          ? null
+          : 'This is historical data. For current season, omit the season parameter.',
+      },
     };
   } catch (error) {
     throw new Error(`MLB API Error: ${error.message}`);

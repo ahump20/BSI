@@ -1,87 +1,87 @@
-import { useState, useEffect, useMemo } from 'react'
-import SportSwitcher from './components/SportSwitcher'
+import { useState, useEffect, useMemo } from 'react';
+import SportSwitcher from './components/SportSwitcher';
 
 function App() {
-  const [games, setGames] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch live college baseball games from ESPN API
     const fetchGames = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const response = await fetch(
           'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard'
-        )
+        );
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json()
-        setGames(data.events || [])
-        setError(null)
+        const data = await response.json();
+        setGames(data.events || []);
+        setError(null);
       } catch (err) {
-        console.error('Failed to fetch games:', err)
-        setError(err.message)
+        console.error('Failed to fetch games:', err);
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchGames()
+    fetchGames();
 
     // Refresh every 30 seconds for live updates
-    const interval = setInterval(fetchGames, 30000)
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(fetchGames, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const categorizedGames = useMemo(() => {
     const buckets = {
       live: [],
       final: [],
       upcoming: [],
-      other: []
-    }
+      other: [],
+    };
 
     games.forEach((event) => {
-      const competition = event.competitions?.[0]
-      const status = competition?.status
-      const state = status?.type?.state
+      const competition = event.competitions?.[0];
+      const status = competition?.status;
+      const state = status?.type?.state;
 
       if (status?.type?.completed) {
-        buckets.final.push(event)
+        buckets.final.push(event);
       } else if (state === 'in') {
-        buckets.live.push(event)
+        buckets.live.push(event);
       } else if (state === 'pre') {
-        buckets.upcoming.push(event)
+        buckets.upcoming.push(event);
       } else {
-        buckets.other.push(event)
+        buckets.other.push(event);
       }
-    })
+    });
 
-    return buckets
-  }, [games])
+    return buckets;
+  }, [games]);
 
   const lastUpdated = useMemo(() => {
     return new Date().toLocaleString('en-US', {
       timeZone: 'America/Chicago',
       dateStyle: 'medium',
-      timeStyle: 'short'
-    })
-  }, [games])
+      timeStyle: 'short',
+    });
+  }, [games]);
 
   const renderGameCard = (event) => {
-    const competition = event.competitions?.[0]
-    const homeTeam = competition?.competitors?.find((c) => c.homeAway === 'home')
-    const awayTeam = competition?.competitors?.find((c) => c.homeAway === 'away')
-    const status = competition?.status
-    const state = status?.type?.state
+    const competition = event.competitions?.[0];
+    const homeTeam = competition?.competitors?.find((c) => c.homeAway === 'home');
+    const awayTeam = competition?.competitors?.find((c) => c.homeAway === 'away');
+    const status = competition?.status;
+    const state = status?.type?.state;
 
     const statusLabel = status?.type?.completed
       ? 'Final'
-      : status?.type?.shortDetail || status?.type?.detail || 'Scheduled'
+      : status?.type?.shortDetail || status?.type?.detail || 'Scheduled';
 
     const tone = status?.type?.completed
       ? 'final'
@@ -89,16 +89,16 @@ function App() {
         ? 'live'
         : state === 'pre'
           ? 'upcoming'
-          : 'other'
+          : 'other';
 
-    const firstPitch = competition?.date || event.date
+    const firstPitch = competition?.date || event.date;
     const formattedStart = firstPitch
       ? new Date(firstPitch).toLocaleTimeString('en-US', {
           hour: 'numeric',
           minute: '2-digit',
-          timeZone: 'America/Chicago'
+          timeZone: 'America/Chicago',
         })
-      : 'TBD'
+      : 'TBD';
 
     return (
       <article key={event.id} className="game-card" role="listitem">
@@ -139,8 +139,8 @@ function App() {
           )}
         </div>
       </article>
-    )
-  }
+    );
+  };
 
   const renderLoading = (message) => (
     <div className="state-shell">
@@ -149,7 +149,7 @@ function App() {
         <p>{message}</p>
       </div>
     </div>
-  )
+  );
 
   const renderError = (details) => (
     <div className="state-shell">
@@ -163,7 +163,7 @@ function App() {
         </p>
       </div>
     </div>
-  )
+  );
 
   if (loading) {
     return (
@@ -174,12 +174,14 @@ function App() {
               <p className="kicker">College Baseball Control Room</p>
               <h1>Live Scoreboard</h1>
             </div>
-            <p className="tagline">Burnt orange grit. Powder blue calm. Every pitch tracked in real time.</p>
+            <p className="tagline">
+              Burnt orange grit. Powder blue calm. Every pitch tracked in real time.
+            </p>
           </div>
         </header>
         {renderLoading('Pulling the latest scores...')}
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -191,12 +193,14 @@ function App() {
               <p className="kicker">College Baseball Control Room</p>
               <h1>Live Scoreboard</h1>
             </div>
-            <p className="tagline">Burnt orange grit. Powder blue calm. Every pitch tracked in real time.</p>
+            <p className="tagline">
+              Burnt orange grit. Powder blue calm. Every pitch tracked in real time.
+            </p>
           </div>
         </header>
         {renderError(error)}
       </div>
-    )
+    );
   }
 
   return (
@@ -207,7 +211,9 @@ function App() {
             <p className="kicker">College Baseball Control Room</p>
             <h1>Live Scoreboard</h1>
           </div>
-          <p className="tagline">Burnt orange grit. Powder blue calm. Every pitch tracked in real time.</p>
+          <p className="tagline">
+            Burnt orange grit. Powder blue calm. Every pitch tracked in real time.
+          </p>
         </div>
         <div className="header-metrics" role="status" aria-live="polite">
           <div className="metric">
@@ -230,7 +236,9 @@ function App() {
           <div className="section-header">
             <div>
               <h2>Scoreboard Pulse</h2>
-              <p className="section-subtitle">Track live counts, recent finals, and what’s next on the slate.</p>
+              <p className="section-subtitle">
+                Track live counts, recent finals, and what’s next on the slate.
+              </p>
             </div>
             <div className="legend">
               <span className="legend-item">
@@ -265,7 +273,7 @@ function App() {
 
       <SportSwitcher currentSport="baseball" />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

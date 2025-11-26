@@ -103,13 +103,13 @@ export class NILCalculator {
     SP: 50, // Starting Pitcher
     RP: 30, // Relief Pitcher
     CL: 45, // Closer
-    C: 40,  // Catcher
+    C: 40, // Catcher
     '1B': 35, // First Base
     '2B': 32, // Second Base
     '3B': 38, // Third Base
     SS: 42, // Shortstop
     OF: 35, // Outfield
-    DH: 30  // Designated Hitter
+    DH: 30, // Designated Hitter
   };
 
   // Conference multipliers
@@ -124,15 +124,15 @@ export class NILCalculator {
     'Conference USA': 0.95,
     'Sun Belt': 0.9,
     MAC: 0.85,
-    WAC: 0.8
+    WAC: 0.8,
   };
 
   // Market size multipliers
   private static readonly MARKET_SIZE_MULTIPLIERS: Record<string, number> = {
-    major: 1.5,   // NYC, LA, Chicago metro
-    large: 1.3,   // Phoenix, Houston, Atlanta
-    medium: 1.1,  // Nashville, Austin, Raleigh
-    small: 0.9    // College Station, Starkville
+    major: 1.5, // NYC, LA, Chicago metro
+    large: 1.3, // Phoenix, Houston, Atlanta
+    medium: 1.1, // Nashville, Austin, Raleigh
+    small: 0.9, // College Station, Starkville
   };
 
   /**
@@ -144,7 +144,7 @@ export class NILCalculator {
       socialMedia: this.calculateSocialMediaValue(metrics),
       schoolBrand: this.calculateSchoolBrandValue(metrics),
       position: this.calculatePositionValue(metrics),
-      draft: this.calculateDraftValue(metrics)
+      draft: this.calculateDraftValue(metrics),
     };
 
     const baseValue = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
@@ -180,8 +180,8 @@ export class NILCalculator {
       metadata: {
         calculatedAt: new Date().toISOString(),
         dataSource: 'BlazeSportsIntel NIL Calculator',
-        methodology: 'Opendorse + On3 Hybrid Model'
-      }
+        methodology: 'Opendorse + On3 Hybrid Model',
+      },
     };
   }
 
@@ -194,17 +194,17 @@ export class NILCalculator {
     // Batting metrics
     if (metrics.battingAvg !== undefined) {
       // .300+ batting average is premium
-      value += Math.max(0, (metrics.battingAvg - 0.250) * 100000);
+      value += Math.max(0, (metrics.battingAvg - 0.25) * 100000);
     }
 
     if (metrics.onBasePercentage !== undefined) {
       // .400+ OBP is elite
-      value += Math.max(0, (metrics.onBasePercentage - 0.350) * 80000);
+      value += Math.max(0, (metrics.onBasePercentage - 0.35) * 80000);
     }
 
     if (metrics.sluggingPercentage !== undefined) {
       // .500+ SLG is power
-      value += Math.max(0, (metrics.sluggingPercentage - 0.400) * 70000);
+      value += Math.max(0, (metrics.sluggingPercentage - 0.4) * 70000);
     }
 
     if (metrics.homeRuns !== undefined) {
@@ -220,7 +220,7 @@ export class NILCalculator {
     // Pitching metrics
     if (metrics.era !== undefined) {
       // Sub-3.00 ERA is elite
-      value += Math.max(0, (3.00 - metrics.era) * 15000);
+      value += Math.max(0, (3.0 - metrics.era) * 15000);
     }
 
     if (metrics.strikeouts !== undefined) {
@@ -230,7 +230,7 @@ export class NILCalculator {
 
     if (metrics.whip !== undefined) {
       // Sub-1.20 WHIP is dominant
-      value += Math.max(0, (1.20 - metrics.whip) * 20000);
+      value += Math.max(0, (1.2 - metrics.whip) * 20000);
     }
 
     if (metrics.saves !== undefined) {
@@ -269,8 +269,8 @@ export class NILCalculator {
     const platformCount = [
       metrics.instagramFollowers,
       metrics.twitterFollowers,
-      metrics.tiktokFollowers
-    ].filter(x => x !== undefined && x > 1000).length;
+      metrics.tiktokFollowers,
+    ].filter((x) => x !== undefined && x > 1000).length;
 
     if (platformCount >= 2) {
       value *= 1.2; // 20% bonus for multi-platform presence
@@ -347,13 +347,13 @@ export class NILCalculator {
     // MLB Draft projection adds significant value
     if (metrics.draftRound <= 5) {
       // First 5 rounds = potential first-rounder
-      return 50000 - (metrics.draftRound * 8000);
+      return 50000 - metrics.draftRound * 8000;
     } else if (metrics.draftRound <= 10) {
       // Rounds 6-10 = solid prospect
-      return 20000 - ((metrics.draftRound - 5) * 3000);
+      return 20000 - (metrics.draftRound - 5) * 3000;
     } else if (metrics.draftRound <= 20) {
       // Rounds 11-20 = draft-eligible
-      return 10000 - ((metrics.draftRound - 10) * 500);
+      return 10000 - (metrics.draftRound - 10) * 500;
     }
 
     return 5000; // Late-round prospects
@@ -366,9 +366,9 @@ export class NILCalculator {
     if (!strength) return 1.0;
 
     // Map 1-10 scale to multiplier
-    if (strength >= 9) return 1.5;  // SEC, ACC
-    if (strength >= 7) return 1.3;  // Big 12, Pac-12
-    if (strength >= 5) return 1.1;  // American, MW
+    if (strength >= 9) return 1.5; // SEC, ACC
+    if (strength >= 7) return 1.3; // Big 12, Pac-12
+    if (strength >= 5) return 1.1; // American, MW
     if (strength >= 3) return 0.95; // C-USA, Sun Belt
     return 0.85; // Lower-tier conferences
   }
@@ -380,11 +380,16 @@ export class NILCalculator {
     if (!classYear) return 1.0;
 
     switch (classYear.toUpperCase()) {
-      case 'FR': return 0.8;  // Freshmen have lower immediate value
-      case 'SO': return 0.95; // Sophomores building brand
-      case 'JR': return 1.1;  // Juniors at peak performance + draft eligible
-      case 'SR': return 1.0;  // Seniors have established brand
-      default: return 1.0;
+      case 'FR':
+        return 0.8; // Freshmen have lower immediate value
+      case 'SO':
+        return 0.95; // Sophomores building brand
+      case 'JR':
+        return 1.1; // Juniors at peak performance + draft eligible
+      case 'SR':
+        return 1.0; // Seniors have established brand
+      default:
+        return 1.0;
     }
   }
 
@@ -421,9 +426,9 @@ export class NILCalculator {
         position,
         estimatedValue: this.calculateValuation({
           ...metrics,
-          instagramFollowers: (metrics.instagramFollowers || 5000) * 1.1
+          instagramFollowers: (metrics.instagramFollowers || 5000) * 1.1,
         }).estimatedValue,
-        similarity: 85
+        similarity: 85,
       },
       {
         playerName: 'Similar Player B',
@@ -431,9 +436,9 @@ export class NILCalculator {
         position,
         estimatedValue: this.calculateValuation({
           ...metrics,
-          draftRound: Math.max(1, draftRound - 2)
+          draftRound: Math.max(1, draftRound - 2),
         }).estimatedValue,
-        similarity: 78
+        similarity: 78,
       },
       {
         playerName: 'Similar Player C',
@@ -441,10 +446,10 @@ export class NILCalculator {
         position,
         estimatedValue: this.calculateValuation({
           ...metrics,
-          schoolPrestige: (metrics.schoolPrestige || 5) + 1
+          schoolPrestige: (metrics.schoolPrestige || 5) + 1,
         }).estimatedValue,
-        similarity: 72
-      }
+        similarity: 72,
+      },
     ];
   }
 
@@ -470,7 +475,7 @@ export class NILCalculator {
       '3B': 33000,
       SS: 38000,
       OF: 32000,
-      DH: 27000
+      DH: 27000,
     };
 
     const conferenceAverages = [
@@ -483,13 +488,13 @@ export class NILCalculator {
       42000, // Tier 7
       48000, // Tier 8
       55000, // Tier 9
-      65000  // Tier 10 (SEC)
+      65000, // Tier 10 (SEC)
     ];
 
     return {
       averageForPosition: positionAverages[position.toUpperCase()] || 30000,
       averageForConference: conferenceAverages[Math.round(conferenceStrength) - 1] || 30000,
-      marketGrowth: 1.15 // 15% YoY growth in NIL market (2024-2025)
+      marketGrowth: 1.15, // 15% YoY growth in NIL market (2024-2025)
     };
   }
 
@@ -500,9 +505,10 @@ export class NILCalculator {
     const opportunities: string[] = [];
 
     // Social media growth
-    const totalFollowers = (metrics.instagramFollowers || 0) +
-                          (metrics.twitterFollowers || 0) +
-                          (metrics.tiktokFollowers || 0);
+    const totalFollowers =
+      (metrics.instagramFollowers || 0) +
+      (metrics.twitterFollowers || 0) +
+      (metrics.tiktokFollowers || 0);
 
     if (totalFollowers < 10000) {
       opportunities.push('Build social media presence to unlock premium endorsements');
@@ -564,7 +570,10 @@ export class NILCalculator {
       errors.push('Batting average must be between 0 and 1');
     }
 
-    if (metrics.onBasePercentage !== undefined && (metrics.onBasePercentage < 0 || metrics.onBasePercentage > 1)) {
+    if (
+      metrics.onBasePercentage !== undefined &&
+      (metrics.onBasePercentage < 0 || metrics.onBasePercentage > 1)
+    ) {
       errors.push('On-base percentage must be between 0 and 1');
     }
 
@@ -579,13 +588,16 @@ export class NILCalculator {
     }
 
     // School prestige validation
-    if (metrics.schoolPrestige !== undefined && (metrics.schoolPrestige < 1 || metrics.schoolPrestige > 10)) {
+    if (
+      metrics.schoolPrestige !== undefined &&
+      (metrics.schoolPrestige < 1 || metrics.schoolPrestige > 10)
+    ) {
       errors.push('School prestige must be between 1 and 10');
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }

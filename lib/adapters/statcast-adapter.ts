@@ -451,13 +451,13 @@ interface CacheConfig {
 }
 
 const CACHE_TTLS: CacheConfig = {
-  battedBalls: 3600,         // 1 hour
-  pitchData: 3600,           // 1 hour
-  playerSeasonStats: 21600,  // 6 hours
+  battedBalls: 3600, // 1 hour
+  pitchData: 3600, // 1 hour
+  playerSeasonStats: 21600, // 6 hours
   pitcherSeasonStats: 21600, // 6 hours
-  leaderboards: 3600,        // 1 hour
-  sprintSpeed: 86400,        // 24 hours (updated less frequently)
-  oaa: 86400,                // 24 hours
+  leaderboards: 3600, // 1 hour
+  sprintSpeed: 86400, // 24 hours (updated less frequently)
+  oaa: 86400, // 24 hours
 };
 
 // ============================================================================
@@ -506,10 +506,7 @@ export class StatcastAdapter {
     }
   }
 
-  private async fetchWithRetry<T>(
-    url: string,
-    maxRetries: number = 3
-  ): Promise<T> {
+  private async fetchWithRetry<T>(url: string, maxRetries: number = 3): Promise<T> {
     const delays = [250, 500, 1000]; // Exponential backoff
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -532,18 +529,14 @@ export class StatcastAdapter {
         }
 
         // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+        await new Promise((resolve) => setTimeout(resolve, delays[attempt]));
       }
     }
 
     throw new Error('Max retries exceeded');
   }
 
-  private async fetchWithCache<T>(
-    url: string,
-    cacheKey: string,
-    ttl: number
-  ): Promise<T> {
+  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try cache first
     const cached = await this.getCached<T>(cacheKey);
     if (cached) {
@@ -621,11 +614,7 @@ export class StatcastAdapter {
     const url = `${STATCAST_API_BASE}?${params.toString()}`;
     const cacheKey = `statcast:batted:${playerId}:${year}:${minExitVelo || 'all'}`;
 
-    return this.fetchWithCache<StatcastBattedBall[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.battedBalls
-    );
+    return this.fetchWithCache<StatcastBattedBall[]>(url, cacheKey, CACHE_TTLS.battedBalls);
   }
 
   /**
@@ -727,11 +716,7 @@ export class StatcastAdapter {
     const url = `${STATCAST_API_BASE}?${params.toString()}`;
     const cacheKey = `statcast:pitches:${pitcherId}:${year}:${pitchType || 'all'}`;
 
-    return this.fetchWithCache<StatcastPitch[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.pitchData
-    );
+    return this.fetchWithCache<StatcastPitch[]>(url, cacheKey, CACHE_TTLS.pitchData);
   }
 
   /**
@@ -762,10 +747,7 @@ export class StatcastAdapter {
   /**
    * Fetch sprint speed data for a player
    */
-  async fetchSprintSpeed(
-    playerId: number,
-    season?: number
-  ): Promise<StatcastSprintSpeed | null> {
+  async fetchSprintSpeed(playerId: number, season?: number): Promise<StatcastSprintSpeed | null> {
     const year = season || new Date().getFullYear();
 
     const url = `${LEADERBOARDS_API_BASE}/sprint_speed?year=${year}&position=&team=&player_id=${playerId}`;
@@ -808,20 +790,13 @@ export class StatcastAdapter {
   /**
    * Fetch Outs Above Average (OAA) for a player
    */
-  async fetchOAA(
-    playerId: number,
-    season?: number
-  ): Promise<StatcastOAA | null> {
+  async fetchOAA(playerId: number, season?: number): Promise<StatcastOAA | null> {
     const year = season || new Date().getFullYear();
 
     const url = `${LEADERBOARDS_API_BASE}/outs_above_average?year=${year}&team=&position=&player_id=${playerId}`;
     const cacheKey = `statcast:oaa:${playerId}:${year}`;
 
-    const data = await this.fetchWithCache<StatcastOAA[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.oaa
-    );
+    const data = await this.fetchWithCache<StatcastOAA[]>(url, cacheKey, CACHE_TTLS.oaa);
 
     return data.length > 0 ? data[0] : null;
   }
@@ -840,11 +815,7 @@ export class StatcastAdapter {
     const url = `${LEADERBOARDS_API_BASE}/outs_above_average?year=${year}&team=${posParam}&min=q&csv=true`;
     const cacheKey = `statcast:oaa:leaderboard:${year}:${position || 'all'}`;
 
-    const data = await this.fetchWithCache<StatcastOAA[]>(
-      url,
-      cacheKey,
-      CACHE_TTLS.leaderboards
-    );
+    const data = await this.fetchWithCache<StatcastOAA[]>(url, cacheKey, CACHE_TTLS.leaderboards);
 
     return data.slice(0, limit);
   }
@@ -870,8 +841,8 @@ export function isBarrel(exitVelo: number, launchAngle: number): boolean {
   if (launchAngle >= 26 && launchAngle <= 30) return true;
 
   // Extended barrel zone (velocity-dependent)
-  const minAngle = 26 - ((exitVelo - 98) / 2);
-  const maxAngle = 30 + ((exitVelo - 98) / 2);
+  const minAngle = 26 - (exitVelo - 98) / 2;
+  const maxAngle = 30 + (exitVelo - 98) / 2;
 
   return launchAngle >= minAngle && launchAngle <= maxAngle;
 }
@@ -923,14 +894,14 @@ export function calculateXBA(exitVelo: number, launchAngle: number): number {
 
   // Line drives (sweet spot)
   if (launchAngle >= 10 && launchAngle <= 25) {
-    return Math.min(0.8, 0.3 + ((exitVelo - 70) / 50));
+    return Math.min(0.8, 0.3 + (exitVelo - 70) / 50);
   }
 
   // Fly balls
   if (launchAngle > 25 && launchAngle <= 50) {
     const optimalAngle = 30;
     const anglePenalty = Math.abs(launchAngle - optimalAngle) / 20;
-    return Math.max(0.0, Math.min(1.0, ((exitVelo - 70) / 40) - anglePenalty));
+    return Math.max(0.0, Math.min(1.0, (exitVelo - 70) / 40 - anglePenalty));
   }
 
   // Pop-ups

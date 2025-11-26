@@ -1,6 +1,9 @@
 # Blaze Sports Intel - Cloudflare Pages Redirects
 # Format: <source> <destination> <status_code>
 
+# Dashboard and Analytics served automatically by Cloudflare Pages
+# (extensionless URLs map to .html files automatically)
+
 # Legal URL Canonicalization (Priority: High)
 /privacy /legal/privacy 301
 /terms /legal/terms 301

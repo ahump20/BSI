@@ -49,7 +49,7 @@ export interface ConferenceStrength {
   rank: number;
   teams: number;
   averageRPI: number;
-  avgRPI: number;  // Alias for averageRPI (used in tests)
+  avgRPI: number; // Alias for averageRPI (used in tests)
   topTeamRPI: number;
   top25Count: number;
   top50Count: number;
@@ -122,29 +122,29 @@ export class ConferenceStrengthModel {
    * NCAA RPI weighting factors
    */
   private static readonly RPI_WEIGHTS = {
-    WP: 0.25,    // Team's winning percentage
-    OWP: 0.50,   // Opponents' winning percentage
-    OOWP: 0.25   // Opponents' opponents' winning percentage
+    WP: 0.25, // Team's winning percentage
+    OWP: 0.5, // Opponents' winning percentage
+    OOWP: 0.25, // Opponents' opponents' winning percentage
   };
 
   /**
    * Location adjustments for win/loss impact
    */
   private static readonly LOCATION_ADJUSTMENTS = {
-    HOME_WIN: 0.6,      // Home wins count as 0.6 wins
-    HOME_LOSS: 1.4,     // Home losses count as 1.4 losses
-    AWAY_WIN: 1.4,      // Away wins count as 1.4 wins
-    AWAY_LOSS: 0.6,     // Away losses count as 0.6 losses
-    NEUTRAL_WIN: 1.0,   // Neutral wins count as 1.0 wins
-    NEUTRAL_LOSS: 1.0   // Neutral losses count as 1.0 losses
+    HOME_WIN: 0.6, // Home wins count as 0.6 wins
+    HOME_LOSS: 1.4, // Home losses count as 1.4 losses
+    AWAY_WIN: 1.4, // Away wins count as 1.4 wins
+    AWAY_LOSS: 0.6, // Away losses count as 0.6 losses
+    NEUTRAL_WIN: 1.0, // Neutral wins count as 1.0 wins
+    NEUTRAL_LOSS: 1.0, // Neutral losses count as 1.0 losses
   };
 
   /**
    * Quality opponent thresholds
    */
   private static readonly QUALITY_THRESHOLDS = {
-    QUALITY_WIN_RPI: 0.600,  // Win against top 50 team
-    BAD_LOSS_RPI: 0.400      // Loss to bottom 100 team
+    QUALITY_WIN_RPI: 0.6, // Win against top 50 team
+    BAD_LOSS_RPI: 0.4, // Loss to bottom 100 team
   };
 
   /**
@@ -159,15 +159,15 @@ export class ConferenceStrengthModel {
 
     // Calculate RPI for all teams
     const rpiResults = this.calculateRPI(fullTeamList);
-    const rpiMap = new Map(rpiResults.map(r => [r.teamId, r]));
+    const rpiMap = new Map(rpiResults.map((r) => [r.teamId, r]));
 
     // Calculate SOS for all teams
     const sosResults = this.calculateSOS(fullTeamList, rpiMap);
-    const sosMap = new Map(sosResults.map(r => [r.teamId, r]));
+    const sosMap = new Map(sosResults.map((r) => [r.teamId, r]));
 
     // Calculate ISR for all teams
     const isrResults = this.calculateISR(fullTeamList);
-    const isrMap = new Map(isrResults.map(r => [r.teamId, r]));
+    const isrMap = new Map(isrResults.map((r) => [r.teamId, r]));
 
     // Group teams by conference
     const conferenceGroups = new Map<string, TeamRecord[]>();
@@ -183,31 +183,31 @@ export class ConferenceStrengthModel {
 
     for (const [conference, conferenceTeams] of conferenceGroups) {
       // Get metrics for conference teams (accept 0 as valid value)
-      const conferenceRPIs = conferenceTeams
-        .map(t => rpiMap.get(t.teamId)?.rpi ?? 0);
+      const conferenceRPIs = conferenceTeams.map((t) => rpiMap.get(t.teamId)?.rpi ?? 0);
 
-      const conferenceSOS = conferenceTeams
-        .map(t => sosMap.get(t.teamId)?.sos ?? 0);
+      const conferenceSOS = conferenceTeams.map((t) => sosMap.get(t.teamId)?.sos ?? 0);
 
-      const conferenceISRs = conferenceTeams
-        .map(t => isrMap.get(t.teamId)?.isr ?? 0);
+      const conferenceISRs = conferenceTeams.map((t) => isrMap.get(t.teamId)?.isr ?? 0);
 
       // Calculate averages (guard against division by zero)
-      const avgRPI = conferenceRPIs.length > 0
-        ? conferenceRPIs.reduce((sum, val) => sum + val, 0) / conferenceRPIs.length
-        : 0;
-      const avgSOS = conferenceSOS.length > 0
-        ? conferenceSOS.reduce((sum, val) => sum + val, 0) / conferenceSOS.length
-        : 0;
-      const avgISR = conferenceISRs.length > 0
-        ? conferenceISRs.reduce((sum, val) => sum + val, 0) / conferenceISRs.length
-        : 0;
+      const avgRPI =
+        conferenceRPIs.length > 0
+          ? conferenceRPIs.reduce((sum, val) => sum + val, 0) / conferenceRPIs.length
+          : 0;
+      const avgSOS =
+        conferenceSOS.length > 0
+          ? conferenceSOS.reduce((sum, val) => sum + val, 0) / conferenceSOS.length
+          : 0;
+      const avgISR =
+        conferenceISRs.length > 0
+          ? conferenceISRs.reduce((sum, val) => sum + val, 0) / conferenceISRs.length
+          : 0;
 
       // Calculate top team RPI (guard against empty array)
       const topTeamRPI = conferenceRPIs.length > 0 ? Math.max(...conferenceRPIs) : 0;
 
       // Calculate overall strength (weighted average)
-      const overallStrength = (avgRPI * 0.40) + (avgSOS * 0.30) + (avgISR * 0.30);
+      const overallStrength = avgRPI * 0.4 + avgSOS * 0.3 + avgISR * 0.3;
 
       // Estimate NCAA metrics (simplified - would use historical data in production)
       const ncaaSeeds = this.estimateNCAASeedsForConference(conferenceTeams, rpiMap);
@@ -221,12 +221,12 @@ export class ConferenceStrengthModel {
       }, conferenceTeams[0]);
 
       // Calculate top 25 and top 50 counts based on RPI rankings
-      const top25Count = conferenceTeams.filter(team => {
+      const top25Count = conferenceTeams.filter((team) => {
         const teamRPI = rpiMap.get(team.teamId);
         return teamRPI && teamRPI.rank && teamRPI.rank <= 25;
       }).length;
 
-      const top50Count = conferenceTeams.filter(team => {
+      const top50Count = conferenceTeams.filter((team) => {
         const teamRPI = rpiMap.get(team.teamId);
         return teamRPI && teamRPI.rank && teamRPI.rank <= 50;
       }).length;
@@ -246,7 +246,7 @@ export class ConferenceStrengthModel {
         rank: 0, // Will be assigned after sorting
         teams: conferenceTeams.length,
         averageRPI: avgRPI,
-        avgRPI,  // Alias for averageRPI
+        avgRPI, // Alias for averageRPI
         topTeamRPI,
         top25Count,
         top50Count,
@@ -257,8 +257,8 @@ export class ConferenceStrengthModel {
         metadata: {
           calculationDate: new Date().toISOString(),
           dataSource: 'BlazeSportsIntel Conference Strength Model',
-          confidence: 95
-        }
+          confidence: 95,
+        },
       });
     }
 
@@ -283,21 +283,21 @@ export class ConferenceStrengthModel {
    */
   static calculateRPI(teams: TeamRecord[]): RPICalculation[] {
     // Create a map for quick team lookup
-    const teamMap = new Map(teams.map(t => [t.teamId, t]));
+    const teamMap = new Map(teams.map((t) => [t.teamId, t]));
 
     // Calculate adjusted records
     const adjustedRecords = new Map<string, { wins: number; losses: number }>();
 
     for (const team of teams) {
       const adjustedWins =
-        (team.homeWins * this.LOCATION_ADJUSTMENTS.HOME_WIN) +
-        (team.awayWins * this.LOCATION_ADJUSTMENTS.AWAY_WIN) +
-        (team.neutralWins * this.LOCATION_ADJUSTMENTS.NEUTRAL_WIN);
+        team.homeWins * this.LOCATION_ADJUSTMENTS.HOME_WIN +
+        team.awayWins * this.LOCATION_ADJUSTMENTS.AWAY_WIN +
+        team.neutralWins * this.LOCATION_ADJUSTMENTS.NEUTRAL_WIN;
 
       const adjustedLosses =
-        (team.homeLosses * this.LOCATION_ADJUSTMENTS.HOME_LOSS) +
-        (team.awayLosses * this.LOCATION_ADJUSTMENTS.AWAY_LOSS) +
-        (team.neutralLosses * this.LOCATION_ADJUSTMENTS.NEUTRAL_LOSS);
+        team.homeLosses * this.LOCATION_ADJUSTMENTS.HOME_LOSS +
+        team.awayLosses * this.LOCATION_ADJUSTMENTS.AWAY_LOSS +
+        team.neutralLosses * this.LOCATION_ADJUSTMENTS.NEUTRAL_LOSS;
 
       adjustedRecords.set(team.teamId, { wins: adjustedWins, losses: adjustedLosses });
     }
@@ -357,15 +357,13 @@ export class ConferenceStrengthModel {
     }
 
     // Calculate final RPI for each team
-    const rpiResults: RPICalculation[] = teams.map(team => {
+    const rpiResults: RPICalculation[] = teams.map((team) => {
       const wp = wpMap.get(team.teamId) || 0;
       const owp = owpMap.get(team.teamId) || 0;
       const oowp = oowpMap.get(team.teamId) || 0;
 
       const rpi =
-        (wp * this.RPI_WEIGHTS.WP) +
-        (owp * this.RPI_WEIGHTS.OWP) +
-        (oowp * this.RPI_WEIGHTS.OOWP);
+        wp * this.RPI_WEIGHTS.WP + owp * this.RPI_WEIGHTS.OWP + oowp * this.RPI_WEIGHTS.OOWP;
 
       const record = adjustedRecords.get(team.teamId)!;
 
@@ -378,7 +376,7 @@ export class ConferenceStrengthModel {
         owp,
         oowp,
         adjustedWins: Math.round(record.wins * 10) / 10,
-        adjustedLosses: Math.round(record.losses * 10) / 10
+        adjustedLosses: Math.round(record.losses * 10) / 10,
       };
     });
 
@@ -399,11 +397,8 @@ export class ConferenceStrengthModel {
    * - Number of quality wins (vs top 50)
    * - Number of bad losses (vs bottom 100)
    */
-  static calculateSOS(
-    teams: TeamRecord[],
-    rpiMap: Map<string, RPICalculation>
-  ): SOSCalculation[] {
-    const sosResults: SOSCalculation[] = teams.map(team => {
+  static calculateSOS(teams: TeamRecord[], rpiMap: Map<string, RPICalculation>): SOSCalculation[] {
+    const sosResults: SOSCalculation[] = teams.map((team) => {
       if (team.opponents.length === 0) {
         return {
           teamId: team.teamId,
@@ -412,7 +407,7 @@ export class ConferenceStrengthModel {
           sos: 0,
           opponentAvgRPI: 0,
           qualityWins: 0,
-          badLosses: 0
+          badLosses: 0,
         };
       }
 
@@ -454,10 +449,9 @@ export class ConferenceStrengthModel {
       // Higher opponent RPI = higher SOS
       // More quality wins = higher SOS
       // More bad losses = lower SOS
-      const sos = Math.min(1.0,
-        (opponentAvgRPI * 0.70) +
-        (qualityWins / 30 * 0.20) -
-        (badLosses / 10 * 0.10)
+      const sos = Math.min(
+        1.0,
+        opponentAvgRPI * 0.7 + (qualityWins / 30) * 0.2 - (badLosses / 10) * 0.1
       );
 
       return {
@@ -467,7 +461,7 @@ export class ConferenceStrengthModel {
         sos: Math.max(0, sos),
         opponentAvgRPI,
         qualityWins,
-        badLosses
+        badLosses,
       };
     });
 
@@ -489,7 +483,7 @@ export class ConferenceStrengthModel {
    * - Recent form (last 10 games)
    */
   static calculateISR(teams: TeamRecord[]): ISRCalculation[] {
-    const isrResults: ISRCalculation[] = teams.map(team => {
+    const isrResults: ISRCalculation[] = teams.map((team) => {
       const totalGames = team.wins + team.losses;
 
       if (totalGames === 0) {
@@ -500,19 +494,19 @@ export class ConferenceStrengthModel {
           isr: 0,
           offensiveRating: 0,
           defensiveRating: 0,
-          recentForm: 0
+          recentForm: 0,
         };
       }
 
       // Offensive rating (runs per game, normalized to 0-1 scale)
       // Average college baseball team scores ~6 runs per game
-      const offensiveRating = Math.min(1.0, (team.runsScored / totalGames) / 10);
+      const offensiveRating = Math.min(1.0, team.runsScored / totalGames / 10);
 
       // Defensive rating (inverse of runs allowed per game)
       // Lower runs allowed = higher rating
       // Average college baseball team allows ~6 runs per game
       const runsAllowedPerGame = team.runsAllowed / totalGames;
-      const defensiveRating = Math.max(0, 1.0 - (runsAllowedPerGame / 10));
+      const defensiveRating = Math.max(0, 1.0 - runsAllowedPerGame / 10);
 
       // Recent form (win percentage, simplified for demo)
       // In production, would use actual last 10 games
@@ -520,10 +514,7 @@ export class ConferenceStrengthModel {
       const recentForm = overallWinPct; // Simplified
 
       // Calculate ISR (weighted average)
-      const isr =
-        (offensiveRating * 0.40) +
-        (defensiveRating * 0.40) +
-        (recentForm * 0.20);
+      const isr = offensiveRating * 0.4 + defensiveRating * 0.4 + recentForm * 0.2;
 
       return {
         teamId: team.teamId,
@@ -532,7 +523,7 @@ export class ConferenceStrengthModel {
         isr,
         offensiveRating,
         defensiveRating,
-        recentForm
+        recentForm,
       };
     });
 
@@ -559,8 +550,8 @@ export class ConferenceStrengthModel {
     }>,
     conferenceStrengths: ConferenceStrength[]
   ): ConferenceComparison {
-    const conf1Ids = new Set(conference1Teams.map(t => t.teamId));
-    const conf2Ids = new Set(conference2Teams.map(t => t.teamId));
+    const conf1Ids = new Set(conference1Teams.map((t) => t.teamId));
+    const conf2Ids = new Set(conference2Teams.map((t) => t.teamId));
 
     // Calculate head-to-head record
     let conf1Wins = 0;
@@ -593,8 +584,8 @@ export class ConferenceStrengthModel {
     const conf1Name = conference1Teams[0]?.conference || '';
     const conf2Name = conference2Teams[0]?.conference || '';
 
-    const conf1Strength = conferenceStrengths.find(c => c.conference === conf1Name);
-    const conf2Strength = conferenceStrengths.find(c => c.conference === conf2Name);
+    const conf1Strength = conferenceStrengths.find((c) => c.conference === conf1Name);
+    const conf2Strength = conferenceStrengths.find((c) => c.conference === conf2Name);
 
     const rpiDifference = (conf1Strength?.rpi || 0) - (conf2Strength?.rpi || 0);
     const sosDifference = (conf1Strength?.sos || 0) - (conf2Strength?.sos || 0);
@@ -602,7 +593,8 @@ export class ConferenceStrengthModel {
 
     // Determine overall advantage
     let overallAdvantage = 'Even';
-    const strengthDiff = (conf1Strength?.overallStrength || 0) - (conf2Strength?.overallStrength || 0);
+    const strengthDiff =
+      (conf1Strength?.overallStrength || 0) - (conf2Strength?.overallStrength || 0);
 
     if (strengthDiff > 0.05) {
       overallAdvantage = conf1Name;
@@ -616,12 +608,12 @@ export class ConferenceStrengthModel {
       headToHeadRecord: {
         conf1Wins,
         conf2Wins,
-        winPercentage
+        winPercentage,
       },
       rpiDifference,
       sosDifference,
       isrDifference,
-      overallAdvantage
+      overallAdvantage,
     };
   }
 
@@ -629,12 +621,12 @@ export class ConferenceStrengthModel {
    * Get conference strength tier classification
    */
   static getConferenceStrengthTier(strength: number): string {
-    if (strength >= 0.700) return 'Elite';
-    if (strength >= 0.650) return 'Very Strong';
-    if (strength >= 0.600) return 'Strong';
-    if (strength >= 0.550) return 'Above Average';
-    if (strength >= 0.500) return 'Average';
-    if (strength >= 0.450) return 'Below Average';
+    if (strength >= 0.7) return 'Elite';
+    if (strength >= 0.65) return 'Very Strong';
+    if (strength >= 0.6) return 'Strong';
+    if (strength >= 0.55) return 'Above Average';
+    if (strength >= 0.5) return 'Average';
+    if (strength >= 0.45) return 'Below Average';
     return 'Weak';
   }
 
@@ -650,7 +642,7 @@ export class ConferenceStrengthModel {
 
     for (const team of teams) {
       const rpi = rpiMap.get(team.teamId);
-      if (rpi && rpi.rpi >= 0.600) {
+      if (rpi && rpi.rpi >= 0.6) {
         seeds++; // Top 16 teams typically get national seeds
       }
     }
@@ -670,7 +662,7 @@ export class ConferenceStrengthModel {
 
     for (const team of teams) {
       const rpi = rpiMap.get(team.teamId);
-      if (rpi && rpi.rpi >= 0.500) {
+      if (rpi && rpi.rpi >= 0.5) {
         appearances++; // Teams above .500 RPI typically make tournament
       }
     }

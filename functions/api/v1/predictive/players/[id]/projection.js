@@ -57,10 +57,13 @@ export async function onRequest(context) {
     // Validate sport parameter
     const validSports = ['college-baseball', 'college-football', 'mlb', 'nfl', 'nba'];
     if (!validSports.includes(sport)) {
-      return jsonResponse({
-        error: 'Invalid sport parameter',
-        valid_sports: validSports
-      }, 400);
+      return jsonResponse(
+        {
+          error: 'Invalid sport parameter',
+          valid_sports: validSports,
+        },
+        400
+      );
     }
 
     // Check cache first (5 minute TTL for projections)
@@ -70,28 +73,34 @@ export async function onRequest(context) {
       return jsonResponse({
         ...cached,
         cached: true,
-        cache_age_seconds: Math.floor((Date.now() - cached.generated_at) / 1000)
+        cache_age_seconds: Math.floor((Date.now() - cached.generated_at) / 1000),
       });
     }
 
     // Get player data from database
     const player = await getPlayerData(env.DB, playerId, sport);
     if (!player) {
-      return jsonResponse({
-        error: 'Player not found',
-        player_id: playerId,
-        sport
-      }, 404);
+      return jsonResponse(
+        {
+          error: 'Player not found',
+          player_id: playerId,
+          sport,
+        },
+        404
+      );
     }
 
     // Get active projection model for this sport
     const model = await getActiveModel(env.DB, sport, 'player_development');
     if (!model) {
-      return jsonResponse({
-        error: 'No active model available',
-        message: 'Prediction models are being trained. Check back soon.',
-        sport
-      }, 503);
+      return jsonResponse(
+        {
+          error: 'No active model available',
+          message: 'Prediction models are being trained. Check back soon.',
+          sport,
+        },
+        503
+      );
     }
 
     // Check if projection exists in database
@@ -122,7 +131,7 @@ export async function onRequest(context) {
         position: player.position,
         current_level: player.level,
         current_age: calculateAge(player.birth_date),
-        stats_summary: player.stats_summary ? JSON.parse(player.stats_summary) : null
+        stats_summary: player.stats_summary ? JSON.parse(player.stats_summary) : null,
       },
       projection: {
         draft_round_expected: projection.draft_round_expected,
@@ -130,12 +139,16 @@ export async function onRequest(context) {
         ceiling: projection.ceiling,
         floor: projection.floor,
         confidence: projection.confidence,
-        projection_date: new Date(projection.projected_at * 1000).toISOString()
+        projection_date: new Date(projection.projected_at * 1000).toISOString(),
       },
       development_path: {
         current_skills: projection.current_skills ? JSON.parse(projection.current_skills) : null,
-        projected_growth: projection.projected_growth ? JSON.parse(projection.projected_growth) : null,
-        timeline: projection.development_timeline ? JSON.parse(projection.development_timeline) : null
+        projected_growth: projection.projected_growth
+          ? JSON.parse(projection.projected_growth)
+          : null,
+        timeline: projection.development_timeline
+          ? JSON.parse(projection.development_timeline)
+          : null,
       },
       comparable_players: comparablePlayers,
       model: {
@@ -143,7 +156,7 @@ export async function onRequest(context) {
         name: model.model_name,
         version: model.version,
         trained_at: new Date(model.trained_at * 1000).toISOString(),
-        accuracy: model.metrics ? JSON.parse(model.metrics).accuracy : null
+        accuracy: model.metrics ? JSON.parse(model.metrics).accuracy : null,
       },
       meta: {
         data_source: 'Blaze Predictive Intelligence Engine',
@@ -151,21 +164,23 @@ export async function onRequest(context) {
         season,
         last_updated: new Date(projection.updated_at * 1000).toISOString(),
         timezone: 'America/Chicago',
-        generated_at: Date.now()
-      }
+        generated_at: Date.now(),
+      },
     };
 
     // Cache for 5 minutes
     await env.CACHE?.put(cacheKey, JSON.stringify(response), { expirationTtl: 300 });
 
     return jsonResponse(response);
-
   } catch (error) {
-    return jsonResponse({
-      error: 'Internal server error',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    }, 500);
+    return jsonResponse(
+      {
+        error: 'Internal server error',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+      },
+      500
+    );
   }
 }
 
@@ -173,7 +188,9 @@ export async function onRequest(context) {
  * Get player data from database
  */
 async function getPlayerData(db, playerId, sport) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT
       player_id,
       name,
@@ -184,7 +201,10 @@ async function getPlayerData(db, playerId, sport) {
     FROM players
     WHERE player_id = ? AND sport = ?
     LIMIT 1
-  `).bind(playerId, sport).first();
+  `
+    )
+    .bind(playerId, sport)
+    .first();
 
   return result;
 }
@@ -193,7 +213,9 @@ async function getPlayerData(db, playerId, sport) {
  * Get active model for sport and type
  */
 async function getActiveModel(db, sport, modelType) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT
       model_id,
       model_name,
@@ -208,7 +230,10 @@ async function getActiveModel(db, sport, modelType) {
       AND status = 'active'
     ORDER BY trained_at DESC
     LIMIT 1
-  `).bind(sport, modelType).first();
+  `
+    )
+    .bind(sport, modelType)
+    .first();
 
   return result;
 }
@@ -217,7 +242,9 @@ async function getActiveModel(db, sport, modelType) {
  * Get existing projection from database
  */
 async function getExistingProjection(db, playerId, sport, modelId) {
-  const result = await db.prepare(`
+  const result = await db
+    .prepare(
+      `
     SELECT *
     FROM player_projections
     WHERE player_id = ?
@@ -225,7 +252,10 @@ async function getExistingProjection(db, playerId, sport, modelId) {
       AND model_id = ?
     ORDER BY updated_at DESC
     LIMIT 1
-  `).bind(playerId, sport, modelId).first();
+  `
+    )
+    .bind(playerId, sport, modelId)
+    .first();
 
   return result;
 }
@@ -259,7 +289,7 @@ async function generateProjection(env, player, model, sport) {
     comparable_players: JSON.stringify([]),
     notes: 'Baseline projection - ML model training in progress',
     projected_at: Math.floor(Date.now() / 1000),
-    updated_at: Math.floor(Date.now() / 1000)
+    updated_at: Math.floor(Date.now() / 1000),
   };
 
   // Sport-specific projection adjustments
@@ -277,18 +307,18 @@ async function generateProjection(env, player, model, sport) {
  */
 function baseballProjection(projection, stats, age) {
   // Draft round estimation based on stats and age
-  if (stats.avg && stats.avg > 0.320 && age <= 21) {
+  if (stats.avg && stats.avg > 0.32 && age <= 21) {
     projection.draft_round_expected = Math.floor(Math.random() * 3) + 1; // Rounds 1-3
     projection.ceiling = 'All-Star';
     projection.confidence = 0.75;
-  } else if (stats.avg && stats.avg > 0.280 && age <= 22) {
+  } else if (stats.avg && stats.avg > 0.28 && age <= 22) {
     projection.draft_round_expected = Math.floor(Math.random() * 5) + 4; // Rounds 4-8
     projection.ceiling = 'Starter';
-    projection.confidence = 0.70;
-  } else if (stats.avg && stats.avg > 0.250) {
+    projection.confidence = 0.7;
+  } else if (stats.avg && stats.avg > 0.25) {
     projection.draft_round_expected = Math.floor(Math.random() * 10) + 10; // Rounds 10-19
     projection.ceiling = 'Bench';
-    projection.confidence = 0.60;
+    projection.confidence = 0.6;
   }
 
   // MLB ETA estimation
@@ -312,7 +342,7 @@ function footballProjection(projection, stats, age) {
   if (age <= 21 && stats.touchdowns && stats.touchdowns > 10) {
     projection.draft_round_expected = Math.floor(Math.random() * 2) + 1; // Rounds 1-2
     projection.ceiling = 'All-Pro';
-    projection.confidence = 0.70;
+    projection.confidence = 0.7;
   } else if (age <= 22 && stats.yards && stats.yards > 1000) {
     projection.draft_round_expected = Math.floor(Math.random() * 3) + 3; // Rounds 3-5
     projection.ceiling = 'Starter';
@@ -326,31 +356,36 @@ function footballProjection(projection, stats, age) {
  * Store projection in database
  */
 async function storeProjection(db, projection) {
-  await db.prepare(`
+  await db
+    .prepare(
+      `
     INSERT INTO player_projections (
       projection_id, player_id, sport, model_id,
       draft_round_expected, mlb_eta, ceiling, floor, confidence,
       current_skills, projected_growth, development_timeline,
       comparable_players, notes, projected_at, updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).bind(
-    projection.projection_id,
-    projection.player_id,
-    projection.sport,
-    projection.model_id,
-    projection.draft_round_expected,
-    projection.mlb_eta,
-    projection.ceiling,
-    projection.floor,
-    projection.confidence,
-    projection.current_skills,
-    projection.projected_growth,
-    projection.development_timeline,
-    projection.comparable_players,
-    projection.notes,
-    projection.projected_at,
-    projection.updated_at
-  ).run();
+  `
+    )
+    .bind(
+      projection.projection_id,
+      projection.player_id,
+      projection.sport,
+      projection.model_id,
+      projection.draft_round_expected,
+      projection.mlb_eta,
+      projection.ceiling,
+      projection.floor,
+      projection.confidence,
+      projection.current_skills,
+      projection.projected_growth,
+      projection.development_timeline,
+      projection.comparable_players,
+      projection.notes,
+      projection.projected_at,
+      projection.updated_at
+    )
+    .run();
 }
 
 /**
@@ -360,12 +395,17 @@ async function getComparablePlayers(db, playerIds) {
   if (!playerIds || playerIds.length === 0) return [];
 
   const placeholders = playerIds.map(() => '?').join(',');
-  const results = await db.prepare(`
+  const results = await db
+    .prepare(
+      `
     SELECT player_id, name, position, career_summary
     FROM players
     WHERE player_id IN (${placeholders})
     LIMIT 5
-  `).bind(...playerIds).all();
+  `
+    )
+    .bind(...playerIds)
+    .all();
 
   return results.results || [];
 }
@@ -380,7 +420,7 @@ function generateSkillsFromStats(stats, position) {
     power: stats.hr ? Math.min(100, stats.hr * 10) : 50,
     speed: stats.sb ? Math.min(100, stats.sb * 5) : 50,
     defense: 55,
-    arm: position === 'P' ? 70 : 55
+    arm: position === 'P' ? 70 : 55,
   };
 }
 
@@ -396,7 +436,7 @@ function projectGrowth(age, position) {
     power: Math.floor(Math.random() * growthFactor),
     speed: Math.max(-5, Math.floor(Math.random() * growthFactor) - 5),
     defense: Math.floor(Math.random() * (growthFactor / 2)),
-    arm: Math.floor(Math.random() * (growthFactor / 2))
+    arm: Math.floor(Math.random() * (growthFactor / 2)),
   };
 }
 
@@ -415,10 +455,10 @@ function generateTimeline(currentAge, currentLevel) {
       year: new Date().getFullYear() + year,
       level: progressLevel(level, year),
       projected_stats: {
-        avg: 0.275 + (Math.random() * 0.05),
+        avg: 0.275 + Math.random() * 0.05,
         hr: Math.floor(15 + Math.random() * 10),
-        rbi: Math.floor(50 + Math.random() * 30)
-      }
+        rbi: Math.floor(50 + Math.random() * 30),
+      },
     });
   }
 
@@ -459,7 +499,7 @@ function jsonResponse(data, status = 200) {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': status === 200 ? 'public, max-age=300' : 'no-cache'
-    }
+      'Cache-Control': status === 200 ? 'public, max-age=300' : 'no-cache',
+    },
   });
 }

@@ -29,7 +29,6 @@ export async function fetchGames(date, filters = {}) {
 
     // Fallback to sample data if no API data available
     return getFallbackGames(date, filters);
-
   } catch (error) {
     return getFallbackGames(date, filters);
   }
@@ -51,7 +50,6 @@ export async function fetchStandings(conference, division = 'D1') {
 
     // Fallback to sample data
     return getFallbackStandings(conference);
-
   } catch (error) {
     return getFallbackStandings(conference);
   }
@@ -65,7 +63,7 @@ export async function fetchStandings(conference, division = 'D1') {
 export async function fetchBoxScore(gameId) {
   try {
     const response = await fetch(`${ESPN_BASE}/summary?event=${gameId}`, {
-      headers: { 'User-Agent': USER_AGENT }
+      headers: { 'User-Agent': USER_AGENT },
     });
 
     if (!response.ok) {
@@ -74,7 +72,6 @@ export async function fetchBoxScore(gameId) {
 
     const data = await response.json();
     return normalizeBoxScore(data);
-
   } catch (error) {
     throw error;
   }
@@ -95,7 +92,6 @@ export async function fetchTeams(filters = {}) {
 
     // Fallback to sample data
     return getFallbackTeams(filters);
-
   } catch (error) {
     return getFallbackTeams(filters);
   }
@@ -116,7 +112,6 @@ export async function fetchPlayers(filters = {}) {
 
     // Fallback to sample data
     return getFallbackPlayers(filters);
-
   } catch (error) {
     return getFallbackPlayers(filters);
   }
@@ -133,7 +128,7 @@ async function fetchESPNGames(date, filters = {}) {
     const url = `${ESPN_BASE}/scoreboard?dates=${dateParam}&limit=300`;
 
     const response = await fetch(url, {
-      headers: { 'User-Agent': USER_AGENT }
+      headers: { 'User-Agent': USER_AGENT },
     });
 
     if (!response.ok) {
@@ -147,29 +142,26 @@ async function fetchESPNGames(date, filters = {}) {
     }
 
     // Normalize ESPN data to our format
-    let games = data.events.map(event => normalizeESPNGame(event));
+    let games = data.events.map((event) => normalizeESPNGame(event));
 
     // Apply filters
     if (filters.conference) {
-      games = games.filter(g =>
-        g.homeTeam.conference === filters.conference ||
-        g.awayTeam.conference === filters.conference
+      games = games.filter(
+        (g) =>
+          g.homeTeam.conference === filters.conference ||
+          g.awayTeam.conference === filters.conference
       );
     }
 
     if (filters.status) {
-      games = games.filter(g => g.status === filters.status);
+      games = games.filter((g) => g.status === filters.status);
     }
 
     if (filters.team) {
-      games = games.filter(g =>
-        g.homeTeam.id === filters.team ||
-        g.awayTeam.id === filters.team
-      );
+      games = games.filter((g) => g.homeTeam.id === filters.team || g.awayTeam.id === filters.team);
     }
 
     return games;
-
   } catch (error) {
     return null;
   }
@@ -182,7 +174,7 @@ async function fetchESPNStandings(conference) {
     const url = `${ESPN_BASE}/teams?limit=350&groups=${getESPNGroupId(conference)}`;
 
     const response = await fetch(url, {
-      headers: { 'User-Agent': USER_AGENT }
+      headers: { 'User-Agent': USER_AGENT },
     });
 
     if (!response.ok) {
@@ -198,18 +190,19 @@ async function fetchESPNStandings(conference) {
     // Extract and normalize team standings
     const teams = data.sports[0].leagues[0].teams;
     const standings = teams
-      .map(t => normalizeESPNTeamStanding(t.team))
-      .filter(t => t !== null)
+      .map((t) => normalizeESPNTeamStanding(t.team))
+      .filter((t) => t !== null)
       .sort((a, b) => {
         // Sort by conference record, then overall record
-        const aConfWin = a.conferenceRecord.wins / (a.conferenceRecord.wins + a.conferenceRecord.losses || 1);
-        const bConfWin = b.conferenceRecord.wins / (b.conferenceRecord.wins + b.conferenceRecord.losses || 1);
+        const aConfWin =
+          a.conferenceRecord.wins / (a.conferenceRecord.wins + a.conferenceRecord.losses || 1);
+        const bConfWin =
+          b.conferenceRecord.wins / (b.conferenceRecord.wins + b.conferenceRecord.losses || 1);
         return bConfWin - aConfWin;
       })
       .map((team, index) => ({ ...team, rank: index + 1 }));
 
     return standings;
-
   } catch (error) {
     return null;
   }
@@ -222,8 +215,8 @@ async function fetchESPNStandings(conference) {
 function normalizeESPNGame(event) {
   const competition = event.competitions?.[0];
   const status = competition?.status;
-  const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
-  const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+  const homeTeam = competition?.competitors?.find((c) => c.homeAway === 'home');
+  const awayTeam = competition?.competitors?.find((c) => c.homeAway === 'away');
 
   return {
     id: event.id,
@@ -231,7 +224,7 @@ function normalizeESPNGame(event) {
     time: new Date(event.date).toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
-      timeZone: 'America/Chicago'
+      timeZone: 'America/Chicago',
     }),
     status: normalizeGameStatus(status?.type?.name),
     inning: status?.period || null,
@@ -239,37 +232,49 @@ function normalizeESPNGame(event) {
       id: homeTeam?.team?.slug,
       name: homeTeam?.team?.displayName,
       shortName: homeTeam?.team?.abbreviation,
-      conference: homeTeam?.team?.conferenceId ? getConferenceName(homeTeam.team.conferenceId) : 'Independent',
+      conference: homeTeam?.team?.conferenceId
+        ? getConferenceName(homeTeam.team.conferenceId)
+        : 'Independent',
       score: homeTeam?.score ? parseInt(homeTeam.score) : null,
       record: {
-        wins: homeTeam?.records?.[0]?.summary?.split('-')[0] ? parseInt(homeTeam.records[0].summary.split('-')[0]) : 0,
-        losses: homeTeam?.records?.[0]?.summary?.split('-')[1] ? parseInt(homeTeam.records[0].summary.split('-')[1]) : 0
+        wins: homeTeam?.records?.[0]?.summary?.split('-')[0]
+          ? parseInt(homeTeam.records[0].summary.split('-')[0])
+          : 0,
+        losses: homeTeam?.records?.[0]?.summary?.split('-')[1]
+          ? parseInt(homeTeam.records[0].summary.split('-')[1])
+          : 0,
       },
-      logo: homeTeam?.team?.logo
+      logo: homeTeam?.team?.logo,
     },
     awayTeam: {
       id: awayTeam?.team?.slug,
       name: awayTeam?.team?.displayName,
       shortName: awayTeam?.team?.abbreviation,
-      conference: awayTeam?.team?.conferenceId ? getConferenceName(awayTeam.team.conferenceId) : 'Independent',
+      conference: awayTeam?.team?.conferenceId
+        ? getConferenceName(awayTeam.team.conferenceId)
+        : 'Independent',
       score: awayTeam?.score ? parseInt(awayTeam.score) : null,
       record: {
-        wins: awayTeam?.records?.[0]?.summary?.split('-')[0] ? parseInt(awayTeam.records[0].summary.split('-')[0]) : 0,
-        losses: awayTeam?.records?.[0]?.summary?.split('-')[1] ? parseInt(awayTeam.records[0].summary.split('-')[1]) : 0
+        wins: awayTeam?.records?.[0]?.summary?.split('-')[0]
+          ? parseInt(awayTeam.records[0].summary.split('-')[0])
+          : 0,
+        losses: awayTeam?.records?.[0]?.summary?.split('-')[1]
+          ? parseInt(awayTeam.records[0].summary.split('-')[1])
+          : 0,
       },
-      logo: awayTeam?.team?.logo
+      logo: awayTeam?.team?.logo,
     },
     venue: competition?.venue?.fullName || 'TBD',
     tv: competition?.broadcasts?.[0]?.names?.[0] || null,
-    situation: status?.type?.detail || null
+    situation: status?.type?.detail || null,
   };
 }
 
 function normalizeESPNTeamStanding(team) {
   if (!team) return null;
 
-  const overallRecord = team.record?.items?.find(r => r.type === 'total');
-  const confRecord = team.record?.items?.find(r => r.type === 'vsconf');
+  const overallRecord = team.record?.items?.find((r) => r.type === 'total');
+  const confRecord = team.record?.items?.find((r) => r.type === 'vsconf');
 
   return {
     team: {
@@ -277,21 +282,23 @@ function normalizeESPNTeamStanding(team) {
       name: team.displayName,
       shortName: team.abbreviation,
       conference: team.conferenceId ? getConferenceName(team.conferenceId) : 'Independent',
-      logo: team.logos?.[0]?.href
+      logo: team.logos?.[0]?.href,
     },
     overallRecord: {
-      wins: overallRecord?.stats?.find(s => s.name === 'wins')?.value || 0,
-      losses: overallRecord?.stats?.find(s => s.name === 'losses')?.value || 0
+      wins: overallRecord?.stats?.find((s) => s.name === 'wins')?.value || 0,
+      losses: overallRecord?.stats?.find((s) => s.name === 'losses')?.value || 0,
     },
     conferenceRecord: {
-      wins: confRecord?.stats?.find(s => s.name === 'wins')?.value || 0,
-      losses: confRecord?.stats?.find(s => s.name === 'losses')?.value || 0
+      wins: confRecord?.stats?.find((s) => s.name === 'wins')?.value || 0,
+      losses: confRecord?.stats?.find((s) => s.name === 'losses')?.value || 0,
     },
-    streakType: overallRecord?.stats?.find(s => s.name === 'streak')?.displayValue?.charAt(0) || 'N',
-    streakCount: parseInt(overallRecord?.stats?.find(s => s.name === 'streak')?.displayValue?.slice(1)) || 0,
-    last10: overallRecord?.stats?.find(s => s.name === 'last10')?.displayValue || '0-0',
+    streakType:
+      overallRecord?.stats?.find((s) => s.name === 'streak')?.displayValue?.charAt(0) || 'N',
+    streakCount:
+      parseInt(overallRecord?.stats?.find((s) => s.name === 'streak')?.displayValue?.slice(1)) || 0,
+    last10: overallRecord?.stats?.find((s) => s.name === 'last10')?.displayValue || '0-0',
     rpi: calculateEstimatedRPI(team),
-    sos: calculateEstimatedSOS(team)
+    sos: calculateEstimatedSOS(team),
   };
 }
 
@@ -314,69 +321,73 @@ function normalizeBoxScore(data) {
     lineScore: {
       away: {
         team: teams[0]?.team || {},
-        innings: teams[0]?.linescores?.map(ls => ls.displayValue) || [],
+        innings: teams[0]?.linescores?.map((ls) => ls.displayValue) || [],
         runs: teams[0]?.score || '0',
         hits: teams[0]?.hits || '0',
-        errors: teams[0]?.errors || '0'
+        errors: teams[0]?.errors || '0',
       },
       home: {
         team: teams[1]?.team || {},
-        innings: teams[1]?.linescores?.map(ls => ls.displayValue) || [],
+        innings: teams[1]?.linescores?.map((ls) => ls.displayValue) || [],
         runs: teams[1]?.score || '0',
         hits: teams[1]?.hits || '0',
-        errors: teams[1]?.errors || '0'
-      }
+        errors: teams[1]?.errors || '0',
+      },
     },
 
     // Team batting and pitching stats
-    teams: playersData.map(teamData => {
-      const battingStats = teamData.statistics?.find(s => s.type === 'batting');
-      const pitchingStats = teamData.statistics?.find(s => s.type === 'pitching');
+    teams: playersData.map((teamData) => {
+      const battingStats = teamData.statistics?.find((s) => s.type === 'batting');
+      const pitchingStats = teamData.statistics?.find((s) => s.type === 'pitching');
 
       return {
         team: teamData.team,
 
         // Batting stats with individual players
-        batting: battingStats ? {
-          totals: battingStats.totals || [],
-          players: (battingStats.athletes || []).map(athlete => ({
-            name: athlete.athlete?.displayName || '',
-            shortName: athlete.athlete?.shortName || '',
-            position: athlete.position?.abbreviation || '',
-            batOrder: athlete.batOrder,
-            starter: athlete.starter,
-            // Stats array: [H-AB, AB, R, H, RBI, HR, BB, K, P, AVG, OBP, SLG]
-            ab: athlete.stats?.[1] || '0',
-            r: athlete.stats?.[2] || '0',
-            h: athlete.stats?.[3] || '0',
-            rbi: athlete.stats?.[4] || '0',
-            bb: athlete.stats?.[6] || '0',
-            so: athlete.stats?.[7] || '0',
-            avg: athlete.stats?.[9] || '.000'
-          }))
-        } : null,
+        batting: battingStats
+          ? {
+              totals: battingStats.totals || [],
+              players: (battingStats.athletes || []).map((athlete) => ({
+                name: athlete.athlete?.displayName || '',
+                shortName: athlete.athlete?.shortName || '',
+                position: athlete.position?.abbreviation || '',
+                batOrder: athlete.batOrder,
+                starter: athlete.starter,
+                // Stats array: [H-AB, AB, R, H, RBI, HR, BB, K, P, AVG, OBP, SLG]
+                ab: athlete.stats?.[1] || '0',
+                r: athlete.stats?.[2] || '0',
+                h: athlete.stats?.[3] || '0',
+                rbi: athlete.stats?.[4] || '0',
+                bb: athlete.stats?.[6] || '0',
+                so: athlete.stats?.[7] || '0',
+                avg: athlete.stats?.[9] || '.000',
+              })),
+            }
+          : null,
 
         // Pitching stats with individual pitchers
-        pitching: pitchingStats ? {
-          totals: pitchingStats.totals || [],
-          players: (pitchingStats.athletes || []).map(athlete => ({
-            name: athlete.athlete?.displayName || '',
-            shortName: athlete.athlete?.shortName || '',
-            position: athlete.position?.abbreviation || '',
-            starter: athlete.starter,
-            decision: athlete.notes?.find(n => n.type === 'pitchingDecision')?.text || '',
-            // Stats array: [IP, H, R, ER, BB, K, HR, PC-ST, ERA, PC]
-            ip: athlete.stats?.[0] || '0.0',
-            h: athlete.stats?.[1] || '0',
-            r: athlete.stats?.[2] || '0',
-            er: athlete.stats?.[3] || '0',
-            bb: athlete.stats?.[4] || '0',
-            so: athlete.stats?.[5] || '0',
-            era: athlete.stats?.[8] || '0.00'
-          }))
-        } : null
+        pitching: pitchingStats
+          ? {
+              totals: pitchingStats.totals || [],
+              players: (pitchingStats.athletes || []).map((athlete) => ({
+                name: athlete.athlete?.displayName || '',
+                shortName: athlete.athlete?.shortName || '',
+                position: athlete.position?.abbreviation || '',
+                starter: athlete.starter,
+                decision: athlete.notes?.find((n) => n.type === 'pitchingDecision')?.text || '',
+                // Stats array: [IP, H, R, ER, BB, K, HR, PC-ST, ERA, PC]
+                ip: athlete.stats?.[0] || '0.0',
+                h: athlete.stats?.[1] || '0',
+                r: athlete.stats?.[2] || '0',
+                er: athlete.stats?.[3] || '0',
+                bb: athlete.stats?.[4] || '0',
+                so: athlete.stats?.[5] || '0',
+                era: athlete.stats?.[8] || '0.00',
+              })),
+            }
+          : null,
       };
-    })
+    }),
   };
 }
 
@@ -390,7 +401,7 @@ function normalizeGameStatus(espnStatus) {
     STATUS_IN_PROGRESS: 'live',
     STATUS_FINAL: 'final',
     STATUS_POSTPONED: 'postponed',
-    STATUS_CANCELED: 'canceled'
+    STATUS_CANCELED: 'canceled',
   };
   return statusMap[espnStatus] || 'scheduled';
 }
@@ -410,7 +421,7 @@ function getConferenceName(conferenceId) {
     18: 'WAC',
     20: 'Big West',
     49: 'Atlantic 10',
-    62: 'WCC'
+    62: 'WCC',
   };
   return conferences[conferenceId] || 'Other';
 }
@@ -422,7 +433,7 @@ function getESPNGroupId(conference) {
     Big12: '4',
     'Big Ten': '5',
     'Pac-12': '9',
-    American: '151'
+    American: '151',
   };
   return groupIds[conference] || '23'; // Default to SEC
 }
@@ -430,9 +441,9 @@ function getESPNGroupId(conference) {
 function calculateEstimatedRPI(team) {
   // Simplified RPI estimation based on record
   // Real RPI would require opponent strength calculations
-  const record = team.record?.items?.find(r => r.type === 'total');
-  const wins = record?.stats?.find(s => s.name === 'wins')?.value || 0;
-  const losses = record?.stats?.find(s => s.name === 'losses')?.value || 0;
+  const record = team.record?.items?.find((r) => r.type === 'total');
+  const wins = record?.stats?.find((s) => s.name === 'wins')?.value || 0;
+  const losses = record?.stats?.find((s) => s.name === 'losses')?.value || 0;
   const total = wins + losses || 1;
 
   // Base win percentage with conference adjustment
@@ -446,11 +457,11 @@ function calculateEstimatedSOS(team) {
   // Simplified SOS estimation
   // Would need opponent data for accurate calculation
   const confStrength = {
-    23: 0.58,  // SEC
-    1: 0.55,   // ACC
-    9: 0.54,   // Pac-12
-    4: 0.52,   // Big 12
-    5: 0.50    // Big Ten
+    23: 0.58, // SEC
+    1: 0.55, // ACC
+    9: 0.54, // Pac-12
+    4: 0.52, // Big 12
+    5: 0.5, // Big Ten
   };
   return (confStrength[team.conferenceId] || 0.45).toFixed(4);
 }
@@ -471,26 +482,26 @@ function getFallbackGames(date, filters) {
         name: 'Texas Longhorns',
         shortName: 'TEX',
         conference: 'SEC',
-        record: { wins: 16, losses: 4 }
+        record: { wins: 16, losses: 4 },
       },
       awayTeam: {
         id: 'arkansas',
         name: 'Arkansas Razorbacks',
         shortName: 'ARK',
         conference: 'SEC',
-        record: { wins: 14, losses: 5 }
+        record: { wins: 14, losses: 5 },
       },
       venue: 'Disch-Falk Field',
-      tv: 'ESPN+'
-    }
+      tv: 'ESPN+',
+    },
   ];
 
   // Apply filters
   let filtered = sampleGames;
   if (filters.conference) {
-    filtered = filtered.filter(g =>
-      g.homeTeam.conference === filters.conference ||
-      g.awayTeam.conference === filters.conference
+    filtered = filtered.filter(
+      (g) =>
+        g.homeTeam.conference === filters.conference || g.awayTeam.conference === filters.conference
     );
   }
   return filtered;
@@ -504,7 +515,7 @@ function getFallbackStandings(conference) {
         id: 'tennessee',
         name: 'Tennessee Volunteers',
         shortName: 'TENN',
-        conference: conference || 'SEC'
+        conference: conference || 'SEC',
       },
       overallRecord: { wins: 18, losses: 2 },
       conferenceRecord: { wins: 6, losses: 0 },
@@ -512,8 +523,8 @@ function getFallbackStandings(conference) {
       streakCount: 7,
       last10: '9-1',
       rpi: 0.6842,
-      sos: 0.5921
-    }
+      sos: 0.5921,
+    },
   ];
 }
 
@@ -527,7 +538,7 @@ async function fetchESPNTeams(filters = {}) {
     const url = `${ESPN_BASE}/teams?limit=350`;
 
     const response = await fetch(url, {
-      headers: { 'User-Agent': USER_AGENT }
+      headers: { 'User-Agent': USER_AGENT },
     });
 
     if (!response.ok) {
@@ -540,25 +551,25 @@ async function fetchESPNTeams(filters = {}) {
       return [];
     }
 
-    let teams = data.sports[0].leagues[0].teams.map(t => normalizeESPNTeam(t.team));
+    let teams = data.sports[0].leagues[0].teams.map((t) => normalizeESPNTeam(t.team));
 
     // Apply search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      teams = teams.filter(t =>
-        t.name.toLowerCase().includes(searchLower) ||
-        t.mascot?.toLowerCase().includes(searchLower) ||
-        t.location?.city?.toLowerCase().includes(searchLower)
+      teams = teams.filter(
+        (t) =>
+          t.name.toLowerCase().includes(searchLower) ||
+          t.mascot?.toLowerCase().includes(searchLower) ||
+          t.location?.city?.toLowerCase().includes(searchLower)
       );
     }
 
     // Apply conference filter
     if (filters.conference) {
-      teams = teams.filter(t => t.conference === filters.conference);
+      teams = teams.filter((t) => t.conference === filters.conference);
     }
 
     return teams;
-
   } catch (error) {
     return null;
   }
@@ -575,12 +586,15 @@ function normalizeESPNTeam(team) {
     logo: team.logos?.[0]?.href,
     location: {
       city: team.location?.city,
-      state: team.location?.state
+      state: team.location?.state,
     },
     contact: {
-      website: team.links?.find(l => l.rel?.[0] === 'clubhouse')?.href,
-      twitter: team.links?.find(l => l.rel?.[0] === 'twitter')?.href?.split('/').pop()
-    }
+      website: team.links?.find((l) => l.rel?.[0] === 'clubhouse')?.href,
+      twitter: team.links
+        ?.find((l) => l.rel?.[0] === 'twitter')
+        ?.href?.split('/')
+        .pop(),
+    },
   };
 }
 
@@ -594,7 +608,7 @@ function getFallbackTeams(filters) {
       mascot: 'Volunteers',
       conference: 'SEC',
       division: 'D1',
-      location: { city: 'Knoxville', state: 'TN' }
+      location: { city: 'Knoxville', state: 'TN' },
     },
     {
       id: 'lsu',
@@ -603,7 +617,7 @@ function getFallbackTeams(filters) {
       mascot: 'Tigers',
       conference: 'SEC',
       division: 'D1',
-      location: { city: 'Baton Rouge', state: 'LA' }
+      location: { city: 'Baton Rouge', state: 'LA' },
     },
     {
       id: 'texas',
@@ -612,16 +626,16 @@ function getFallbackTeams(filters) {
       mascot: 'Longhorns',
       conference: 'SEC',
       division: 'D1',
-      location: { city: 'Austin', state: 'TX' }
-    }
+      location: { city: 'Austin', state: 'TX' },
+    },
   ];
 
   // Apply search filter
   if (filters.search) {
     const searchLower = filters.search.toLowerCase();
-    return teams.filter(t =>
-      t.name.toLowerCase().includes(searchLower) ||
-      t.mascot?.toLowerCase().includes(searchLower)
+    return teams.filter(
+      (t) =>
+        t.name.toLowerCase().includes(searchLower) || t.mascot?.toLowerCase().includes(searchLower)
     );
   }
 
@@ -638,7 +652,6 @@ async function fetchESPNPlayers(filters = {}) {
     // We'll need to aggregate from team rosters
     // For now, return fallback data with note about off-season
     return null;
-
   } catch (error) {
     return null;
   }
@@ -660,7 +673,7 @@ function getFallbackPlayers(filters) {
         weight: 195,
         bats: 'R',
         throws: 'R',
-        hometown: 'Nashville, TN'
+        hometown: 'Nashville, TN',
       },
       battingStats: {
         games: 45,
@@ -677,7 +690,7 @@ function getFallbackPlayers(filters) {
         avg: 0.376,
         obp: 0.462,
         slg: 0.652,
-        ops: 1.114
+        ops: 1.114,
       },
       draftProspect: {
         isDraftEligible: true,
@@ -688,9 +701,9 @@ function getFallbackPlayers(filters) {
           power: 65,
           speed: 55,
           fielding: 60,
-          arm: 60
-        }
-      }
+          arm: 60,
+        },
+      },
     },
     {
       id: 'player-002',
@@ -705,7 +718,7 @@ function getFallbackPlayers(filters) {
         weight: 215,
         bats: 'R',
         throws: 'R',
-        hometown: 'Houston, TX'
+        hometown: 'Houston, TX',
       },
       pitchingStats: {
         games: 15,
@@ -722,7 +735,7 @@ function getFallbackPlayers(filters) {
         earnedRuns: 27,
         walks: 23,
         strikeouts: 124,
-        whip: 0.97
+        whip: 0.97,
       },
       draftProspect: {
         isDraftEligible: true,
@@ -733,10 +746,10 @@ function getFallbackPlayers(filters) {
           slider: 65,
           changeup: 60,
           control: 60,
-          stamina: 65
-        }
-      }
-    }
+          stamina: 65,
+        },
+      },
+    },
   ];
 
   // Apply filters
@@ -744,26 +757,26 @@ function getFallbackPlayers(filters) {
 
   if (filters.search) {
     const searchLower = filters.search.toLowerCase();
-    filtered = filtered.filter(p =>
-      p.name.toLowerCase().includes(searchLower) ||
-      p.team.toLowerCase().includes(searchLower)
+    filtered = filtered.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchLower) || p.team.toLowerCase().includes(searchLower)
     );
   }
 
   if (filters.team) {
-    filtered = filtered.filter(p => p.team === filters.team);
+    filtered = filtered.filter((p) => p.team === filters.team);
   }
 
   if (filters.position) {
-    filtered = filtered.filter(p => p.position === filters.position);
+    filtered = filtered.filter((p) => p.position === filters.position);
   }
 
   if (filters.class) {
-    filtered = filtered.filter(p => p.classYear === filters.class);
+    filtered = filtered.filter((p) => p.classYear === filters.class);
   }
 
   if (filters.draft === 'true') {
-    filtered = filtered.filter(p => p.draftProspect?.isDraftEligible);
+    filtered = filtered.filter((p) => p.draftProspect?.isDraftEligible);
   }
 
   return filtered;

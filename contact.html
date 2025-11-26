@@ -404,6 +404,39 @@
                 padding: 2rem;
             }
         }
+
+        /* Screen Reader Only - Accessibility Helper */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Form Validation States */
+        .form-input.error,
+        .form-textarea.error {
+            border-color: #EF4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .form-input.success,
+        .form-textarea.success {
+            border-color: #22C55E;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        /* Focus management for accessibility */
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: 2px solid var(--blaze-copper);
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
@@ -472,10 +505,29 @@
 
                 <!-- Contact Form -->
                 <div class="form-card" data-aos="fade-left">
-                    <h2 class="form-title">Send a Message</h2>
-                    <form id="contactForm" action="https://formspree.io/f/xanybjwb" method="POST">
+                    <h2 class="form-title" id="form-heading">Send a Message</h2>
+
+                    <!-- Screen Reader Status Announcements -->
+                    <div id="form-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+                    <!-- Success Message (hidden by default) -->
+                    <div id="success-message" style="display: none; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: var(--radius-md); margin-bottom: 1.5rem; color: #22C55E;" role="alert">
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                        Message sent successfully! We'll respond within 24 hours.
+                    </div>
+
+                    <!-- Error Message (hidden by default) -->
+                    <div id="error-message" style="display: none; padding: 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md); margin-bottom: 1.5rem; color: #EF4444;" role="alert">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                        <span id="error-text">There was an error sending your message. Please try again.</span>
+                    </div>
+
+                    <form id="contactForm" action="https://formspree.io/f/xanybjwb" method="POST" aria-labelledby="form-heading" novalidate>
                         <div class="form-group">
-                            <label class="form-label" for="name">Name</label>
+                            <label class="form-label" for="name">
+                                Name <span style="color: #EF4444;" aria-hidden="true">*</span>
+                                <span class="sr-only">(required)</span>
+                            </label>
                             <input
                                 type="text"
                                 id="name"
@@ -483,11 +535,18 @@
                                 class="form-input"
                                 required
                                 placeholder="Your name"
+                                autocomplete="name"
+                                aria-required="true"
+                                aria-describedby="name-error"
                             >
+                            <span id="name-error" class="form-error" style="display: none; color: #EF4444; font-size: 0.875rem; margin-top: 0.25rem;" role="alert"></span>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="email">Email</label>
+                            <label class="form-label" for="email">
+                                Email <span style="color: #EF4444;" aria-hidden="true">*</span>
+                                <span class="sr-only">(required)</span>
+                            </label>
                             <input
                                 type="email"
                                 id="email"
@@ -495,11 +554,18 @@
                                 class="form-input"
                                 required
                                 placeholder="your@email.com"
+                                autocomplete="email"
+                                aria-required="true"
+                                aria-describedby="email-error"
                             >
+                            <span id="email-error" class="form-error" style="display: none; color: #EF4444; font-size: 0.875rem; margin-top: 0.25rem;" role="alert"></span>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="subject">Subject</label>
+                            <label class="form-label" for="subject">
+                                Subject <span style="color: #EF4444;" aria-hidden="true">*</span>
+                                <span class="sr-only">(required)</span>
+                            </label>
                             <input
                                 type="text"
                                 id="subject"
@@ -507,24 +573,37 @@
                                 class="form-input"
                                 required
                                 placeholder="What's this about?"
+                                aria-required="true"
+                                aria-describedby="subject-error"
                             >
+                            <span id="subject-error" class="form-error" style="display: none; color: #EF4444; font-size: 0.875rem; margin-top: 0.25rem;" role="alert"></span>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="message">Message</label>
+                            <label class="form-label" for="message">
+                                Message <span style="color: #EF4444;" aria-hidden="true">*</span>
+                                <span class="sr-only">(required)</span>
+                            </label>
                             <textarea
                                 id="message"
                                 name="message"
                                 class="form-textarea"
                                 required
                                 placeholder="Your message..."
+                                aria-required="true"
+                                aria-describedby="message-error"
                             ></textarea>
+                            <span id="message-error" class="form-error" style="display: none; color: #EF4444; font-size: 0.875rem; margin-top: 0.25rem;" role="alert"></span>
                         </div>
 
-                        <button type="submit" class="form-submit">
-                            <i class="fas fa-paper-plane"></i>
+                        <button type="submit" class="form-submit" aria-describedby="form-status">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i>
                             Send Message
                         </button>
+
+                        <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-tertiary); text-align: center;">
+                            <span style="color: #EF4444;" aria-hidden="true">*</span> Required fields
+                        </p>
                     </form>
                 </div>
             </div>
@@ -549,12 +628,109 @@
             offset: 100
         });
 
-        // Form submission handling
+        // Enhanced Form Handling with Accessibility
         const form = document.getElementById('contactForm');
-        form.addEventListener('submit', function(e) {
+        const formStatus = document.getElementById('form-status');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+
+        // Validation functions
+        function validateField(field) {
+            const errorElement = document.getElementById(`${field.id}-error`);
+            let isValid = true;
+            let message = '';
+
+            // Reset state
+            field.classList.remove('error', 'success');
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+
+            if (field.required && !field.value.trim()) {
+                isValid = false;
+                message = `${field.previousElementSibling.textContent.replace('*', '').trim()} is required`;
+            } else if (field.type === 'email' && field.value) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(field.value)) {
+                    isValid = false;
+                    message = 'Please enter a valid email address';
+                }
+            }
+
+            if (!isValid) {
+                field.classList.add('error');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            } else if (field.value.trim()) {
+                field.classList.add('success');
+            }
+
+            return isValid;
+        }
+
+        // Add blur validation
+        form.querySelectorAll('.form-input, .form-textarea').forEach(field => {
+            field.addEventListener('blur', () => validateField(field));
+            field.addEventListener('input', () => {
+                if (field.classList.contains('error')) {
+                    validateField(field);
+                }
+            });
+        });
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validate all fields
+            const fields = form.querySelectorAll('.form-input, .form-textarea');
+            let allValid = true;
+            let firstInvalid = null;
+
+            fields.forEach(field => {
+                if (!validateField(field)) {
+                    allValid = false;
+                    if (!firstInvalid) firstInvalid = field;
+                }
+            });
+
+            if (!allValid) {
+                firstInvalid.focus();
+                formStatus.textContent = 'Please correct the errors in the form';
+                return;
+            }
+
             const button = form.querySelector('.form-submit');
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Sending...';
             button.disabled = true;
+            formStatus.textContent = 'Sending your message...';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    form.reset();
+                    fields.forEach(f => f.classList.remove('success'));
+                    formStatus.textContent = 'Message sent successfully! We will respond within 24 hours.';
+                    successMessage.focus();
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                formStatus.textContent = 'Error sending message. Please try again.';
+                errorMessage.focus();
+            } finally {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }
         });
     </script>
 

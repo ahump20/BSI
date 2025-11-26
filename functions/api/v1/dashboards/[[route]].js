@@ -19,7 +19,7 @@ import {
   refreshDashboard,
   deleteDashboard,
   listDashboards,
-  fetchWidgetData
+  fetchWidgetData,
 } from '../../../../lib/dashboards/comprehensive-dashboard-builder.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../../_utils.js';
 
@@ -132,7 +132,7 @@ export async function onRequest(context) {
         for (const key of dashboardList.keys) {
           const dash = await env.SPORTS_DATA_KV.get(key.name, 'json');
           if (dash) {
-            widget = dash.widgets.find(w => w.id === widgetId);
+            widget = dash.widgets.find((w) => w.id === widgetId);
             if (widget) break;
           }
         }
@@ -145,7 +145,9 @@ export async function onRequest(context) {
         break;
 
       default:
-        throw new Error(`Unknown action: ${action}. Valid actions: create, list, get, update, delete, refresh, widget/data`);
+        throw new Error(
+          `Unknown action: ${action}. Valid actions: create, list, get, update, delete, refresh, widget/data`
+        );
     }
 
     return new Response(JSON.stringify(result), {
@@ -153,24 +155,28 @@ export async function onRequest(context) {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
-        'Cache-Control': action === 'list' || action === 'get'
-          ? 'public, max-age=60, s-maxage=120'
-          : 'no-cache, no-store, must-revalidate'
-      }
+        'Cache-Control':
+          action === 'list' || action === 'get'
+            ? 'public, max-age=60, s-maxage=120'
+            : 'no-cache, no-store, must-revalidate',
+      },
     });
-
   } catch (error) {
-    return new Response(JSON.stringify({
-      error: 'Failed to process dashboard request',
-      message: error.message,
-      action
-    }), {
-      status: error.message.includes('required') || error.message.includes('not found') ? 400 : 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to process dashboard request',
+        message: error.message,
+        action,
+      }),
+      {
+        status:
+          error.message.includes('required') || error.message.includes('not found') ? 400 : 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
   }
 }
 
@@ -287,8 +293,8 @@ export const DashboardTemplates = {
       { type: 'win_probability', title: 'Win Probabilities', sport: 'NFL', size: 'medium' },
       { type: 'betting_lines', title: 'Betting Analysis', sport: 'NFL', size: 'medium' },
       { type: 'predictions', title: 'Recent Predictions', sport: 'NFL', size: 'large' },
-      { type: 'injury_report', title: 'Injury Report', sport: 'NFL', size: 'medium' }
-    ]
+      { type: 'injury_report', title: 'Injury Report', sport: 'NFL', size: 'medium' },
+    ],
   },
 
   MLB_ANALYTICS: {
@@ -300,11 +306,23 @@ export const DashboardTemplates = {
     widgets: [
       { type: 'standings', title: 'MLB Standings', sport: 'MLB', size: 'large' },
       { type: 'live_scores', title: 'Live Scores', sport: 'MLB', size: 'medium' },
-      { type: 'player_stats', title: 'Top Hitters', sport: 'MLB', size: 'medium', settings: { statType: 'season' } },
-      { type: 'player_stats', title: 'Top Pitchers', sport: 'MLB', size: 'medium', settings: { statType: 'season' } },
+      {
+        type: 'player_stats',
+        title: 'Top Hitters',
+        sport: 'MLB',
+        size: 'medium',
+        settings: { statType: 'season' },
+      },
+      {
+        type: 'player_stats',
+        title: 'Top Pitchers',
+        sport: 'MLB',
+        size: 'medium',
+        settings: { statType: 'season' },
+      },
       { type: 'predictions', title: 'Game Predictions', sport: 'MLB', size: 'large' },
-      { type: 'historical_trends', title: 'Team Trends', sport: 'MLB', size: 'medium' }
-    ]
+      { type: 'historical_trends', title: 'Team Trends', sport: 'MLB', size: 'medium' },
+    ],
   },
 
   BETTING_FOCUS: {
@@ -318,8 +336,8 @@ export const DashboardTemplates = {
       { type: 'win_probability', title: 'NFL Win Probabilities', sport: 'NFL', size: 'medium' },
       { type: 'win_probability', title: 'MLB Win Probabilities', sport: 'MLB', size: 'medium' },
       { type: 'predictions', title: 'NFL Predictions', sport: 'NFL', size: 'large' },
-      { type: 'predictions', title: 'MLB Predictions', sport: 'MLB', size: 'large' }
-    ]
+      { type: 'predictions', title: 'MLB Predictions', sport: 'MLB', size: 'large' },
+    ],
   },
 
   TEAM_FOCUS: {
@@ -332,7 +350,7 @@ export const DashboardTemplates = {
       { type: 'player_stats', title: 'Top Performers', size: 'large' },
       { type: 'injury_report', title: 'Injury Report', size: 'medium' },
       { type: 'historical_trends', title: 'Season Trends', size: 'large' },
-      { type: 'team_comparison', title: 'Next Opponent', size: 'large', settings: {} }
-    ]
-  }
+      { type: 'team_comparison', title: 'Next Opponent', size: 'large', settings: {} },
+    ],
+  },
 };

@@ -172,10 +172,7 @@ export class TokenBucketRateLimiter {
     const timeSinceLastRefill = now - bucketData.lastRefill;
     const tokensToAdd = timeSinceLastRefill * refillRate;
 
-    let tokens = Math.min(
-      this.config.requests,
-      bucketData.tokens + tokensToAdd
-    );
+    let tokens = Math.min(this.config.requests, bucketData.tokens + tokensToAdd);
 
     // Check if request is allowed
     const allowed = tokens >= 1;
@@ -280,9 +277,10 @@ export class RateLimiter {
     }
 
     // Use IP address
-    const ip = request.headers.get('CF-Connecting-IP') ||
-                request.headers.get('X-Forwarded-For') ||
-                'unknown';
+    const ip =
+      request.headers.get('CF-Connecting-IP') ||
+      request.headers.get('X-Forwarded-For') ||
+      'unknown';
 
     return `ip:${ip}`;
   }

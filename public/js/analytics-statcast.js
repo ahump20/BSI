@@ -73,9 +73,9 @@
                             <i class="fas fa-search"></i> Search
                         </button>
                         <select id="season-select" class="season-select">
+                            <option value="2025">2025 Season</option>
                             <option value="2024">2024 Season</option>
                             <option value="2023">2023 Season</option>
-                            <option value="2022">2022 Season</option>
                         </select>
                     </div>
 
@@ -266,7 +266,7 @@
          * Load Cardinals players list
          */
         async loadCardinalsPlayers() {
-            // Cardinals player IDs from 2024 roster
+            // Cardinals player IDs from 2025 roster
             const cardinalsPlayers = [
                 { id: 502671, name: 'Paul Goldschmidt' },
                 { id: 660271, name: 'Nolan Arenado' },

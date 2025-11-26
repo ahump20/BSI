@@ -47,7 +47,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   try {
     // Check for API key
-    const apiKey = env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
+    const apiKey =
+      env.CFBD_API_KEY || 'fGJioao24tAaWLyWOh5MmLHl8DwJsKLfv5Lg73mbZsNQogP9XeOXi3l/1o28soOi';
     if (!apiKey) {
       return new Response(
         JSON.stringify({
@@ -70,11 +71,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Parse query parameters
     const url = new URL(request.url);
-    const year = parseInt(
-      url.searchParams.get('year') || new Date().getFullYear().toString(),
-      10
-    );
-    const seasonType = (url.searchParams.get('seasonType') || 'regular') as 'regular' | 'postseason';
+    const year = parseInt(url.searchParams.get('year') || new Date().getFullYear().toString(), 10);
+    const seasonType = (url.searchParams.get('seasonType') || 'regular') as
+      | 'regular'
+      | 'postseason';
     const pollFilter = url.searchParams.get('poll') || undefined;
 
     // Initialize adapter
@@ -117,22 +117,22 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Filter by poll if specified
     if (pollFilter) {
-      rankings = rankings.filter(r => r.poll === pollFilter);
+      rankings = rankings.filter((r) => r.poll === pollFilter);
     }
 
     const response = {
       season: year,
       week: weekNum,
       seasonType,
-      polls: rankings.map(ranking => ({
+      polls: rankings.map((ranking) => ({
         poll: ranking.poll,
         totalRanked: ranking.ranks.length,
         ranks: ranking.ranks,
       })),
       summary: {
-        apTop25: rankings.find(r => r.poll === 'AP Top 25')?.ranks || null,
-        coachesPoll: rankings.find(r => r.poll === 'Coaches Poll')?.ranks || null,
-        cfpRankings: rankings.find(r => r.poll === 'Playoff Committee Rankings')?.ranks || null,
+        apTop25: rankings.find((r) => r.poll === 'AP Top 25')?.ranks || null,
+        coachesPoll: rankings.find((r) => r.poll === 'Coaches Poll')?.ranks || null,
+        cfpRankings: rankings.find((r) => r.poll === 'Playoff Committee Rankings')?.ranks || null,
       },
       meta: {
         dataSource: 'College Football Data API (api.collegefootballdata.com)',

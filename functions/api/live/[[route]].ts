@@ -219,16 +219,13 @@ async function getNCAAFootball(url: URL, env: Env) {
   // Try cache first
   const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
-    return new Response(
-      JSON.stringify({ ...(cached as any).data, cached: true }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300',
-        },
-      }
-    );
+    return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+      },
+    });
   }
 
   // Fetch from CollegeFootballData API
@@ -329,16 +326,13 @@ async function getNCAAGames(url: URL, env: Env) {
   // Try cache first (30-second TTL for live games)
   const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
-    return new Response(
-      JSON.stringify({ ...(cached as any).data, cached: true }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=30',
-        },
-      }
-    );
+    return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30',
+      },
+    });
   }
 
   try {
@@ -685,8 +679,8 @@ function mapPayloadToFrame(
   const timestamp = payload.timestamp
     ? new Date(payload.timestamp).toISOString()
     : message.timestamp
-    ? new Date(message.timestamp).toISOString()
-    : new Date().toISOString();
+      ? new Date(message.timestamp).toISOString()
+      : new Date().toISOString();
 
   return {
     sequence,
@@ -860,16 +854,13 @@ async function getMLBScores(url: URL, env: Env) {
   // Try cache first (30-second TTL for live data)
   const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
-    return new Response(
-      JSON.stringify({ ...(cached as any).data, cached: true }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=30',
-        },
-      }
-    );
+    return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30',
+      },
+    });
   }
 
   // Fetch from SportsDataIO
@@ -902,7 +893,12 @@ async function getMLBScores(url: URL, env: Env) {
       score: game.AwayTeamRuns || 0,
       logo: `https://cdn.sportsdata.io/mlb/logos/${game.AwayTeam}.png`,
     },
-    status: game.Status === 'Final' ? 'final' : game.Status === 'InProgress' ? 'in_progress' : 'scheduled',
+    status:
+      game.Status === 'Final'
+        ? 'final'
+        : game.Status === 'InProgress'
+          ? 'in_progress'
+          : 'scheduled',
     inning: game.Inning ? `Inning ${game.Inning}` : null,
     inningHalf: game.InningHalf,
     venue: game.Stadium,
@@ -954,16 +950,13 @@ async function getNFLScores(url: URL, env: Env) {
   // Try cache first (30-second TTL)
   const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
-    return new Response(
-      JSON.stringify({ ...(cached as any).data, cached: true }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=30',
-        },
-      }
-    );
+    return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30',
+      },
+    });
   }
 
   // Fetch from SportsDataIO
@@ -996,7 +989,12 @@ async function getNFLScores(url: URL, env: Env) {
       score: game.AwayScore || 0,
       logo: `https://cdn.sportsdata.io/nfl/logos/${game.AwayTeam}.png`,
     },
-    status: game.Status === 'Final' ? 'final' : game.Status === 'InProgress' ? 'in_progress' : 'scheduled',
+    status:
+      game.Status === 'Final'
+        ? 'final'
+        : game.Status === 'InProgress'
+          ? 'in_progress'
+          : 'scheduled',
     quarter: game.Quarter ? `Q${game.Quarter}` : null,
     timeRemaining: game.TimeRemaining,
     venue: game.Stadium,
@@ -1048,16 +1046,13 @@ async function getNBAScores(url: URL, env: Env) {
   // Try cache first (30-second TTL)
   const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
-    return new Response(
-      JSON.stringify({ ...(cached as any).data, cached: true }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=30',
-        },
-      }
-    );
+    return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30',
+      },
+    });
   }
 
   // Fetch from SportsDataIO
@@ -1090,7 +1085,12 @@ async function getNBAScores(url: URL, env: Env) {
       score: game.AwayTeamScore || 0,
       logo: `https://cdn.sportsdata.io/nba/logos/${game.AwayTeam}.png`,
     },
-    status: game.Status === 'Final' ? 'final' : game.Status === 'InProgress' ? 'in_progress' : 'scheduled',
+    status:
+      game.Status === 'Final'
+        ? 'final'
+        : game.Status === 'InProgress'
+          ? 'in_progress'
+          : 'scheduled',
     quarter: game.Quarter ? `Q${game.Quarter}` : null,
     timeRemaining: game.TimeRemaining,
     venue: game.Stadium,
@@ -1139,9 +1139,9 @@ async function getAllScores(url: URL, env: Env) {
 
   // Fetch all sports in parallel
   const [mlb, nfl, nba] = await Promise.allSettled([
-    getMLBScores(new URL(`?date=${date}`, url), env).then(r => r.json()),
-    getNFLScores(new URL('?week=current', url), env).then(r => r.json()),
-    getNBAScores(new URL(`?date=${date}`, url), env).then(r => r.json()),
+    getMLBScores(new URL(`?date=${date}`, url), env).then((r) => r.json()),
+    getNFLScores(new URL('?week=current', url), env).then((r) => r.json()),
+    getNBAScores(new URL(`?date=${date}`, url), env).then((r) => r.json()),
   ]);
 
   const allGames: any[] = [];
