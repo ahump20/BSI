@@ -44,6 +44,10 @@ import {
 import { exportToCSV, exportToJSON, debounce } from '../lib/sports-data/utils';
 import { SPORTS_CONFIG, CHART_COLORS, VIEW_MODES, THEMES } from '../lib/sports-data/config';
 
+// Type definitions for config values
+type ViewMode = (typeof VIEW_MODES)[keyof typeof VIEW_MODES];
+type Theme = (typeof THEMES)[keyof typeof THEMES];
+
 // New 2025 Features
 import CommandPalette from './CommandPalette';
 import { ToastProvider, useToastHelpers } from './ToastNotification';
@@ -80,8 +84,8 @@ function BlazeSportsCommandCenterInner() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState(VIEW_MODES.GRID);
-  const [theme, setTheme] = useState(THEMES.DARK);
+  const [viewMode, setViewMode] = useState<ViewMode>(VIEW_MODES.GRID);
+  const [theme, setTheme] = useState<Theme>(THEMES.DARK);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [comparisonPlayers, setComparisonPlayers] = useState<Player[]>([]);
   const [showComparison, setShowComparison] = useState(false);

@@ -80,7 +80,7 @@ export async function fetchMLBPlayers(
       throw new Error(`MLB API Error: ${response.status}`);
     }
 
-    const result = await response.json();
+    const result = (await response.json()) as { data?: { data?: any[] } };
 
     // Extract player data from leaderboard response
     const leaderboardData = result.data?.data || [];
@@ -158,7 +158,7 @@ export async function fetchNFLPlayers(): Promise<ApiResponse<Player[]>> {
       throw new Error(`NFL API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     // Transform API response to our Player interface
     const players: Player[] = data.map((player: any) => {
@@ -217,7 +217,7 @@ export async function fetchOdds(sport: string = 'baseball_mlb'): Promise<ApiResp
       throw new Error(`Odds API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     return {
       success: true,
@@ -250,7 +250,7 @@ export async function fetchNews(sport: string = 'mlb'): Promise<ApiResponse<any[
       throw new Error(`News API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     return {
       success: true,
@@ -297,7 +297,7 @@ export async function fetchCollegeBaseballPlayers(): Promise<ApiResponse<Player[
       throw new Error(`College Baseball API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     // Transform API response to our Player interface
     const players: Player[] = data.map((player: any) => {
@@ -357,7 +357,7 @@ export async function fetchCollegeFootballPlayers(): Promise<ApiResponse<Player[
       throw new Error(`College Football API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as any[];
 
     // Transform API response to our Player interface
     const players: Player[] = data.map((player: any) => {

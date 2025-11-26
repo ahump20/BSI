@@ -260,8 +260,8 @@ export class SecretsManager {
     }
 
     // Fallback for Node.js
-    const crypto = require('crypto');
-    return crypto.randomBytes(length).toString('base64');
+    const nodeCrypto = require('crypto');
+    return nodeCrypto.randomBytes(length).toString('base64');
   }
 }
 

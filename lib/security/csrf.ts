@@ -257,8 +257,8 @@ export class CSRFProtection {
     }
 
     // Fallback for Node.js
-    const crypto = require('crypto');
-    const hmac = crypto.createHmac('sha256', this.secret);
+    const nodeCrypto = require('crypto');
+    const hmac = nodeCrypto.createHmac('sha256', this.secret);
     hmac.update(data);
     return hmac.digest('base64');
   }

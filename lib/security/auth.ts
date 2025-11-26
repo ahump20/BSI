@@ -145,8 +145,8 @@ class JWTService {
     }
 
     // Fallback for Node.js
-    const crypto = require('crypto');
-    const hmac = crypto.createHmac('sha256', secret);
+    const nodeCrypto = require('crypto');
+    const hmac = nodeCrypto.createHmac('sha256', secret);
     hmac.update(data);
     return hmac.digest('base64');
   }

@@ -66,14 +66,14 @@ export interface NCAAGame {
   id: string;
   date: string;
   time?: string;
-  state: NCAAGameState;
+  gameState: NCAAGameState;
   home: NCAATeam;
   away: NCAATeam;
   homeScore: number | null;
   awayScore: number | null;
   venue?: string;
   city?: string;
-  state?: string;
+  venueState?: string;
   broadcast?: string;
   attendance?: number;
   // Period/timing info
@@ -629,14 +629,14 @@ export class NCAAEnhancedAdapter {
       id: game.gameID || game.id,
       date: game.startDate || game.date,
       time: game.startTime || game.time,
-      state: this.mapGameState(game.gameState || game.state),
+      gameState: this.mapGameState(game.gameState || game.state),
       home: this.transformTeam(game.home || game.homeTeam),
       away: this.transformTeam(game.away || game.awayTeam),
       homeScore: game.home?.score ?? game.homeScore ?? null,
       awayScore: game.away?.score ?? game.awayScore ?? null,
       venue: game.venue || game.location?.name,
       city: game.city || game.location?.city,
-      state: game.state || game.location?.state,
+      venueState: game.state || game.location?.state,
       broadcast: game.network || game.broadcast,
       attendance: game.attendance,
       period: game.currentPeriod || game.period,
@@ -746,7 +746,7 @@ export class NCAAEnhancedAdapter {
     return {
       id: game.id,
       scheduledAt: game.date,
-      status: this.mapStateToStatus(game.state),
+      status: this.mapStateToStatus(game.gameState),
       homeTeamId: game.home.id,
       awayTeamId: game.away.id,
       homeTeamName: game.home.name,

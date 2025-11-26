@@ -30,6 +30,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+// @ts-expect-error d3 types not installed - install @types/d3 for full type support
 import * as d3 from 'd3';
 
 // ============================================================================

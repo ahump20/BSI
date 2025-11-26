@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 type HighlightType = 'video' | 'image';
 
@@ -79,7 +79,7 @@ type ColumnConfig = {
   tooltip?: string;
   width?: string;
   isSortable?: boolean;
-  render?: (row: any) => JSX.Element | string;
+  render?: (row: any) => React.ReactNode;
 };
 
 const formatPercent = (value?: number | null) =>

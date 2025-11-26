@@ -218,9 +218,18 @@ function generateReadiness() {
   };
 }
 
+interface LeadData {
+  name: string;
+  email: string;
+  organization?: string;
+  sport?: string;
+  message?: string;
+  source?: string;
+}
+
 async function handleLead(request: Request, env: Env): Promise<Response> {
   try {
-    const lead = await request.json();
+    const lead = (await request.json()) as LeadData;
 
     // Validate required fields
     if (!lead.name || !lead.email) {

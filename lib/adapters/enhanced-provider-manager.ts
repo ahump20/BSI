@@ -532,7 +532,7 @@ export class EnhancedProviderManager {
       id: game.id,
       sport,
       scheduledAt: game.date,
-      status: this.mapNCAAStatus(game.state),
+      status: this.mapNCAAStatus(game.gameState),
       homeTeamId: game.home.id,
       awayTeamId: game.away.id,
       homeTeamName: game.home.name,

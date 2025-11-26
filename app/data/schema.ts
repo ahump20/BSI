@@ -77,7 +77,8 @@ const validators = {
   isInt: (x: any): x is number => Number.isInteger(x),
   isStr: (x: any): x is string => typeof x === 'string',
   isArr: (x: any): x is any[] => Array.isArray(x),
-  isObj: (x: any): x is object => x !== null && typeof x === 'object' && !Array.isArray(x),
+  isObj: (x: any): x is Record<string, unknown> =>
+    x !== null && typeof x === 'object' && !Array.isArray(x),
   isUrl: (x: any): x is string => {
     try {
       new URL(x);
@@ -103,11 +104,11 @@ export const schema = {
       throw new ValidationError('alertsProcessed', 'integer', raw.alertsProcessed);
 
     return {
-      predictionsToday: raw.predictionsToday,
-      activeClients: raw.activeClients,
-      avgResponseSec: raw.avgResponseSec,
-      alertsProcessed: raw.alertsProcessed,
-      timestamp: raw.timestamp || new Date().toISOString(),
+      predictionsToday: raw.predictionsToday as number,
+      activeClients: raw.activeClients as number,
+      avgResponseSec: raw.avgResponseSec as number,
+      alertsProcessed: raw.alertsProcessed as number,
+      timestamp: (raw.timestamp as string | undefined) || new Date().toISOString(),
     };
   },
 
@@ -147,9 +148,9 @@ export const schema = {
       throw new ValidationError('counts', 'integer[]', raw.counts);
 
     return {
-      labels: raw.labels,
-      counts: raw.counts,
-      severities: raw.severities,
+      labels: raw.labels as string[],
+      counts: raw.counts as number[],
+      severities: raw.severities as ('low' | 'medium' | 'high' | 'critical')[] | undefined,
     };
   },
 
@@ -182,12 +183,12 @@ export const schema = {
         throw new ValidationError(`player[${i}].score`, 'number', p.score);
 
       return {
-        id: p.id,
-        name: p.name,
-        score: p.score,
-        rank: p.rank,
-        trend: p.trend,
-        avatar: p.avatar,
+        id: p.id as string | undefined,
+        name: p.name as string,
+        score: p.score as number,
+        rank: p.rank as number | undefined,
+        trend: p.trend as 'up' | 'down' | 'stable' | undefined,
+        avatar: p.avatar as string | undefined,
       };
     });
   },
@@ -202,13 +203,13 @@ export const schema = {
         throw new ValidationError(`portfolio[${i}].url`, 'string', item.url);
 
       return {
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        url: item.url,
-        category: item.category,
-        tags: item.tags,
-        thumbnail: item.thumbnail,
+        id: item.id as string | undefined,
+        title: item.title as string,
+        description: item.description as string | undefined,
+        url: item.url as string,
+        category: item.category as string | undefined,
+        tags: item.tags as string[] | undefined,
+        thumbnail: item.thumbnail as string | undefined,
       };
     });
   },

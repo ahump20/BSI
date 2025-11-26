@@ -286,8 +286,6 @@ export interface NCAAFStanding {
   Conference: string;
   Division?: string;
   Rank?: number;
-  Wins: number;
-  Losses: number;
   GlobalTeamID: number;
 }
 
