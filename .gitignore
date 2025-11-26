@@ -54,3 +54,12 @@ tsconfig.tsbuildinfo
 .wrangler/
 .next/
 out/
+
+# Forbidden directories per CLAUDE.md
+archive/
+BSI-archive/
+old/
+backup/
+deprecated/
+*-v2/
+*-new/

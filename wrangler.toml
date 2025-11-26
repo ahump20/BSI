@@ -26,14 +26,14 @@ ENVIRONMENT = "production"
 # D1 database for storing historical sports data
 [[d1_databases]]
 binding = "DB"
-database_name = "blazesports-historical"
-database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
+database_name = "bsi-historical-db"
+database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 
 # D1 database for NIL valuations (uses same DB with nil_ prefixed tables)
 [[d1_databases]]
 binding = "NIL_DB"
-database_name = "blazesports-historical"
-database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
+database_name = "bsi-historical-db"
+database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 
 # Note: Durable Objects deployed separately as a Worker
 # See wrangler.worker.toml for GAME_MONITOR configuration
