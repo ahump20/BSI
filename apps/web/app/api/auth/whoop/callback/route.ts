@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { Client } from 'pg';
-import { createWHOOPAdapter } from '@/lib/adapters/whoop-v2-adapter';
+import { createWHOOPAdapter } from '@/lib/adapters/whoop-adapter';
 import crypto from 'crypto';
 
 export async function GET(request: NextRequest) {

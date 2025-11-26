@@ -11,7 +11,7 @@
  * @see https://developers.cloudflare.com/workers/
  */
 
-import { createWHOOPAdapter, NormalizedWearablesReading, NormalizedDailySummary } from '../../lib/adapters/whoop-v2-adapter';
+import { createWHOOPAdapter, NormalizedWearablesReading, NormalizedDailySummary } from '../../lib/adapters/whoop-adapter';
 
 // ============================================================================
 // TYPES
