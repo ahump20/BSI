@@ -80,6 +80,19 @@
       transition: color 0.2s;
     }
     .nav-link:hover, .nav-link.active { color: var(--burnt-orange); }
+
+    /* Dropdown Navigation */
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-trigger { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .dropdown-arrow { font-size: 0.65em; transition: transform 0.2s ease; }
+    .nav-dropdown:hover .dropdown-arrow { transform: rotate(180deg); }
+    .dropdown-menu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px); min-width: 220px; background: rgba(26, 26, 26, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 8px; padding: 0.75rem 0; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 1000; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+    .nav-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    .dropdown-menu a { display: block; padding: 0.5rem 1rem; color: var(--cream); opacity: 0.8; font-size: 0.875rem; transition: all 0.15s ease; text-decoration: none; }
+    .dropdown-menu a:hover { background: rgba(191, 87, 0, 0.2); opacity: 1; color: var(--burnt-orange); }
+    .dropdown-header { padding: 0.5rem 1rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--burnt-orange); font-weight: 600; }
+    .dropdown-divider { height: 1px; background: rgba(191, 87, 0, 0.2); margin: 0.5rem 0; }
+
     @media (max-width: 768px) {
       .nav-links { display: none; }
     }
@@ -481,11 +494,25 @@
         <span>Blaze Sports Intel</span>
       </a>
       <div class="nav-links">
-        <a href="/teams" class="nav-link">Teams</a>
         <a href="/analytics" class="nav-link active">Analytics</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link dropdown-trigger">Dashboards <span class="dropdown-arrow">▼</span></a>
+          <div class="dropdown-menu">
+            <div class="dropdown-header">League Analytics</div>
+            <a href="/dashboards/mlb-league-analytics.html">MLB</a>
+            <a href="/dashboards/nfl-league-analytics.html">NFL</a>
+            <a href="/dashboards/nba-league-analytics.html">NBA</a>
+            <a href="/dashboards/ncaa-football-league-analytics.html">NCAA Football</a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-header">Team Analytics</div>
+            <a href="/dashboards/cardinals-advanced-analytics.html">St. Louis Cardinals</a>
+            <a href="/dashboards/titans-advanced-analytics.html">Tennessee Titans</a>
+            <a href="/dashboards/grizzlies-advanced-analytics.html">Memphis Grizzlies</a>
+            <a href="/dashboards/longhorns-advanced-analytics.html">Texas Longhorns</a>
+          </div>
+        </div>
         <a href="/nil-valuation" class="nav-link">NIL</a>
         <a href="/coverage" class="nav-link">Coverage</a>
-        <a href="/pricing" class="nav-link">Pricing</a>
         <a href="/login" class="nav-link">Sign In</a>
       </div>
     </div>
