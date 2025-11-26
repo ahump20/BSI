@@ -1,0 +1,18 @@
+name = "blaze-backyard-baseball"
+compatibility_date = "2024-11-06"
+pages_build_output_dir = "dist"
+
+# D1 Database for high scores and player stats
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-game-db"
+database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
+
+# KV namespace for leaderboard caching
+[[kv_namespaces]]
+binding = "KV"
+id = "6c2af9a742e241149eb64f618e373aae"
+
+[vars]
+ENVIRONMENT = "production"
+GAME_VERSION = "1.0.0"
