@@ -309,6 +309,17 @@ Before deploying to production:
 - [ ] Team notified of deployment window
 - [ ] Monitoring dashboard open
 
+### Active GitHub Workflows (as of November 2025)
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `deploy-pages.yml` | push to main | **Canonical** deployment to Cloudflare Pages |
+| `api-tests.yml` | push | API endpoint validation |
+| `data-freshness.yml` | scheduled | Data quality monitoring |
+| `lighthouse-ci.yml` | push | Performance metrics |
+| `accessibility-tests.yml` | PR | WCAG compliance |
+| `workers-compat-lint.yml` | push | Worker compatibility checks |
+
 ### Method 1: Automated Deployment (Recommended)
 
 **Via GitHub:**
@@ -321,9 +332,10 @@ Before deploying to production:
    git push origin main
    ```
 
-2. **Cloudflare Pages auto-deploys**
+2. **deploy-pages.yml auto-deploys**
    - Triggered by push to main
-   - Build process runs automatically
+   - Builds with pnpm
+   - Deploys `public/` to Cloudflare Pages
    - Deployment completes in 2-5 minutes
 
 3. **Monitor deployment**

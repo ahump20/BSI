@@ -14,8 +14,8 @@ bucket = "./public"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "blazesports-models"
-database_id = "f27853d6-0dc8-4a1e-9327-6ee3ac6b3eb2"
+database_name = "bsi-models-db"
+database_id = "57601862-355e-4f41-8b81-bcb28de08425"
 
 # Apply schema with:
 # wrangler d1 execute blazesports-db --file=functions/api/db/schema.sql
@@ -163,4 +163,4 @@ head_sampling_rate = 0.01  # 1% of requests
 #    wrangler r2 object put bsi-models/baseball/ncaa/is_home_run_v1/artifact.json --file=models/is_home_run_ncaa_v1.json
 #
 # 8. Set alias in KV:
-#    wrangler kv:key put --namespace-id=YOUR_KV_ID "alias:is_home_run_ncaa_v1" "baseball/ncaa/is_home_run_v1/artifact.json"
+#    wrangler kv:key put --namespace-id=6e3a09ea1e134a4e86036b469bfc6f4f "alias:is_home_run_ncaa_v1" "baseball/ncaa/is_home_run_v1/artifact.json"
