@@ -135,7 +135,9 @@ async function ensureTables(db: D1Database): Promise<void> {
   ]);
 
   // Seed initial questions if empty
-  const count = await db.prepare('SELECT COUNT(*) as count FROM trivia_questions').first<{ count: number }>();
+  const count = await db
+    .prepare('SELECT COUNT(*) as count FROM trivia_questions')
+    .first<{ count: number }>();
   if (count?.count === 0) {
     await seedQuestions(db);
   }
@@ -244,14 +246,20 @@ async function seedQuestions(db: D1Database): Promise<void> {
       category: 'history',
       difficulty: 2,
       sport: 'baseball',
-      explanation: "A golden sombrero is the dubious 'achievement' of striking out 4 times in one game.",
+      explanation:
+        "A golden sombrero is the dubious 'achievement' of striking out 4 times in one game.",
       source: 'Baseball Terminology',
     },
     {
       id: 'q10',
       question: 'Which NBA team has won the most championships?',
       answer: 'Boston Celtics',
-      options: JSON.stringify(['Boston Celtics', 'Los Angeles Lakers', 'Chicago Bulls', 'Golden State Warriors']),
+      options: JSON.stringify([
+        'Boston Celtics',
+        'Los Angeles Lakers',
+        'Chicago Bulls',
+        'Golden State Warriors',
+      ]),
       category: 'basketball',
       difficulty: 1,
       sport: 'basketball',
@@ -267,7 +275,17 @@ async function seedQuestions(db: D1Database): Promise<void> {
 
   await db.batch(
     questions.map((q) =>
-      stmt.bind(q.id, q.question, q.answer, q.options, q.category, q.difficulty, q.sport, q.explanation, q.source)
+      stmt.bind(
+        q.id,
+        q.question,
+        q.answer,
+        q.options,
+        q.category,
+        q.difficulty,
+        q.sport,
+        q.explanation,
+        q.source
+      )
     )
   );
 }
@@ -337,7 +355,9 @@ async function submitAnswer(env: Env, request: Request): Promise<Response> {
   }
 
   // Get the correct answer
-  const question = await env.DB.prepare('SELECT answer, explanation, source FROM trivia_questions WHERE id = ?')
+  const question = await env.DB.prepare(
+    'SELECT answer, explanation, source FROM trivia_questions WHERE id = ?'
+  )
     .bind(body.questionId)
     .first<{ answer: string; explanation: string; source: string }>();
 
@@ -359,7 +379,14 @@ async function submitAnswer(env: Env, request: Request): Promise<Response> {
     VALUES (?, ?, ?, ?, ?, ?)
   `
   )
-    .bind(responseId, body.questionId, body.selectedAnswer, isCorrect ? 1 : 0, body.responseTimeMs || null, now)
+    .bind(
+      responseId,
+      body.questionId,
+      body.selectedAnswer,
+      isCorrect ? 1 : 0,
+      body.responseTimeMs || null,
+      now
+    )
     .run();
 
   return new Response(
@@ -424,7 +451,10 @@ async function getStreak(env: Env, url: URL): Promise<Response> {
     );
   }
 
-  const accuracy = streak.total_attempted > 0 ? Math.round((streak.total_correct / streak.total_attempted) * 100) : 0;
+  const accuracy =
+    streak.total_attempted > 0
+      ? Math.round((streak.total_correct / streak.total_attempted) * 100)
+      : 0;
 
   return new Response(
     JSON.stringify({
@@ -461,7 +491,9 @@ async function getLeaderboard(env: Env): Promise<Response> {
       bestStreak: entry.best_streak,
       totalCorrect: entry.total_correct,
       accuracy:
-        entry.total_attempted > 0 ? Math.round((entry.total_correct / entry.total_attempted) * 100) : 0,
+        entry.total_attempted > 0
+          ? Math.round((entry.total_correct / entry.total_attempted) * 100)
+          : 0,
     })) || [];
 
   return new Response(

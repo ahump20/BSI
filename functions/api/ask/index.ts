@@ -75,17 +75,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const body: AskRequest = await request.json();
 
     if (!body.query || body.query.trim().length < 3) {
-      return new Response(
-        JSON.stringify({ error: 'Query must be at least 3 characters' }),
-        { status: 400, headers: CORS_HEADERS }
-      );
+      return new Response(JSON.stringify({ error: 'Query must be at least 3 characters' }), {
+        status: 400,
+        headers: CORS_HEADERS,
+      });
     }
 
     // Sanitize input
-    const sanitizedQuery = body.query
-      .trim()
-      .slice(0, 500)
-      .replace(/[<>]/g, '');
+    const sanitizedQuery = body.query.trim().slice(0, 500).replace(/[<>]/g, '');
 
     const startTime = Date.now();
 
@@ -277,7 +274,8 @@ Respond with the answer only, no preamble.`;
   } catch (error) {
     console.error('Failed to generate response:', error);
     return {
-      answer: 'I found some data but couldn\'t generate a natural language response. Please check the structured data below.',
+      answer:
+        "I found some data but couldn't generate a natural language response. Please check the structured data below.",
       structuredData: data,
       sources: ['BlazeSportsIntel.com'],
     };

@@ -62,10 +62,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   } catch (error) {
     console.error('[Guess API] Error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: CORS_HEADERS,
+    });
   }
 };
 
@@ -101,7 +101,9 @@ async function ensureTables(db: D1Database): Promise<void> {
   ]);
 
   // Seed sample rounds if empty
-  const count = await db.prepare('SELECT COUNT(*) as count FROM guess_stat_rounds').first<{ count: number }>();
+  const count = await db
+    .prepare('SELECT COUNT(*) as count FROM guess_stat_rounds')
+    .first<{ count: number }>();
   if (count?.count === 0) {
     await seedRounds(db);
   }
@@ -156,7 +158,18 @@ async function seedRounds(db: D1Database): Promise<void> {
 
   await db.batch(
     rounds.map((r) =>
-      stmt.bind(r.id, r.player_id, r.player_name, r.stat_type, r.stat_label, r.actual_value, r.hint_level_1, r.hint_level_2, r.hint_level_3, r.active_date)
+      stmt.bind(
+        r.id,
+        r.player_id,
+        r.player_name,
+        r.stat_type,
+        r.stat_label,
+        r.actual_value,
+        r.hint_level_1,
+        r.hint_level_2,
+        r.hint_level_3,
+        r.active_date
+      )
     )
   );
 }
@@ -164,13 +177,15 @@ async function seedRounds(db: D1Database): Promise<void> {
 async function getDailyChallenge(env: Env): Promise<Response> {
   const today = getTodayCST();
 
-  const result = await env.DB.prepare(`
+  const result = await env.DB.prepare(
+    `
     SELECT id, stat_type, stat_label, hint_level_1, hint_level_2, hint_level_3
     FROM guess_stat_rounds
     WHERE active_date = ?
     ORDER BY RANDOM()
     LIMIT 1
-  `)
+  `
+  )
     .bind(today)
     .first<GuessRound & { stat_label: string }>();
 
@@ -204,7 +219,7 @@ async function getDailyChallenge(env: Env): Promise<Response> {
 }
 
 async function submitGuess(env: Env, request: Request): Promise<Response> {
-  const body = await request.json() as {
+  const body = (await request.json()) as {
     roundId: string;
     guess: number;
     hintsUsed: number;
@@ -234,7 +249,7 @@ async function submitGuess(env: Env, request: Request): Promise<Response> {
   const errorPct = Math.abs((body.guess - round.actual_value) / round.actual_value) * 100;
 
   // Score calculation: 1000 base, -10 per % error, -50 per hint used
-  let score = Math.max(0, Math.round(1000 - (errorPct * 10) - (body.hintsUsed * 50)));
+  let score = Math.max(0, Math.round(1000 - errorPct * 10 - body.hintsUsed * 50));
 
   // Bonus for exact match
   if (errorPct < 1) {
@@ -247,11 +262,22 @@ async function submitGuess(env: Env, request: Request): Promise<Response> {
 
   const attemptId = `attempt_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-  await env.DB.prepare(`
+  await env.DB.prepare(
+    `
     INSERT INTO guess_stat_attempts (id, round_id, user_id, guessed_value, error_pct, hints_used, score, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `)
-    .bind(attemptId, body.roundId, body.userId || null, body.guess, errorPct, body.hintsUsed, score, new Date().toISOString())
+  `
+  )
+    .bind(
+      attemptId,
+      body.roundId,
+      body.userId || null,
+      body.guess,
+      errorPct,
+      body.hintsUsed,
+      score,
+      new Date().toISOString()
+    )
     .run();
 
   return new Response(
@@ -291,30 +317,30 @@ function formatStatType(type: string): string {
 }
 
 async function getLeaderboard(env: Env): Promise<Response> {
-  const result = await env.DB.prepare(`
+  const result = await env.DB.prepare(
+    `
     SELECT user_id, SUM(score) as total_score, COUNT(*) as attempts, AVG(error_pct) as avg_error
     FROM guess_stat_attempts
     WHERE user_id IS NOT NULL
     GROUP BY user_id
     ORDER BY total_score DESC
     LIMIT 10
-  `).all<{
+  `
+  ).all<{
     user_id: string;
     total_score: number;
     attempts: number;
     avg_error: number;
   }>();
 
-  const leaderboard = result.results?.map((entry, index) => ({
-    rank: index + 1,
-    userId: entry.user_id,
-    totalScore: entry.total_score,
-    attempts: entry.attempts,
-    avgError: Math.round(entry.avg_error * 10) / 10,
-  })) || [];
+  const leaderboard =
+    result.results?.map((entry, index) => ({
+      rank: index + 1,
+      userId: entry.user_id,
+      totalScore: entry.total_score,
+      attempts: entry.attempts,
+      avgError: Math.round(entry.avg_error * 10) / 10,
+    })) || [];
 
-  return new Response(
-    JSON.stringify({ leaderboard }),
-    { headers: CORS_HEADERS }
-  );
+  return new Response(JSON.stringify({ leaderboard }), { headers: CORS_HEADERS });
 }

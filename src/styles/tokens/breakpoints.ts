@@ -6,12 +6,12 @@
  */
 
 export const breakpoints = {
-  xs: '320px',      // Small phones
-  sm: '640px',      // Large phones
-  md: '768px',      // Tablets
-  lg: '1024px',     // Laptops
-  xl: '1280px',     // Desktops
-  '2xl': '1536px',  // Large desktops
+  xs: '320px', // Small phones
+  sm: '640px', // Large phones
+  md: '768px', // Tablets
+  lg: '1024px', // Laptops
+  xl: '1280px', // Desktops
+  '2xl': '1536px', // Large desktops
 } as const;
 
 // Media query helpers

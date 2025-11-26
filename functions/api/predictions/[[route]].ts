@@ -67,10 +67,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   } catch (error) {
     console.error('[Predictions API] Error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: CORS_HEADERS,
+    });
   }
 };
 
@@ -107,7 +107,9 @@ async function ensureTables(db: D1Database): Promise<void> {
   ]);
 
   // Seed sample props if empty
-  const count = await db.prepare('SELECT COUNT(*) as count FROM prediction_props WHERE expires_at > datetime("now")').first<{ count: number }>();
+  const count = await db
+    .prepare('SELECT COUNT(*) as count FROM prediction_props WHERE expires_at > datetime("now")')
+    .first<{ count: number }>();
   if (count?.count === 0) {
     await seedProps(db);
   }
@@ -123,7 +125,7 @@ async function seedProps(db: D1Database): Promise<void> {
       id: 'prop_1',
       sport: 'baseball',
       prop_type: 'over_under',
-      description: 'Total runs in today\'s Texas vs. Texas A&M game',
+      description: "Total runs in today's Texas vs. Texas A&M game",
       line_value: 8.5,
       expires_at: expiresAt,
       source: 'BlazeSportsIntel',
@@ -172,7 +174,9 @@ async function seedProps(db: D1Database): Promise<void> {
   `);
 
   await db.batch(
-    props.map((p) => stmt.bind(p.id, p.sport, p.prop_type, p.description, p.line_value, p.expires_at, p.source))
+    props.map((p) =>
+      stmt.bind(p.id, p.sport, p.prop_type, p.description, p.line_value, p.expires_at, p.source)
+    )
   );
 }
 
@@ -193,14 +197,15 @@ async function getProps(env: Env, url: URL): Promise<Response> {
 
   const result = await env.DB.prepare(query).all<Prop>();
 
-  const props = result.results?.map((p) => ({
-    id: p.id,
-    sport: p.sport,
-    type: p.prop_type,
-    description: p.description,
-    line: p.line_value,
-    expiresAt: p.expires_at,
-  })) || [];
+  const props =
+    result.results?.map((p) => ({
+      id: p.id,
+      sport: p.sport,
+      type: p.prop_type,
+      description: p.description,
+      line: p.line_value,
+      expiresAt: p.expires_at,
+    })) || [];
 
   return new Response(
     JSON.stringify({
@@ -217,7 +222,7 @@ async function getProps(env: Env, url: URL): Promise<Response> {
 }
 
 async function submitPrediction(env: Env, request: Request): Promise<Response> {
-  const body = await request.json() as {
+  const body = (await request.json()) as {
     propId: string;
     prediction: 'over' | 'under' | 'home' | 'away';
     confidence?: number;
@@ -264,11 +269,20 @@ async function submitPrediction(env: Env, request: Request): Promise<Response> {
   const predictionId = `pred_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   const userId = body.userId || `anon_${Math.random().toString(36).substring(2, 11)}`;
 
-  await env.DB.prepare(`
+  await env.DB.prepare(
+    `
     INSERT INTO user_predictions (id, user_id, prop_id, prediction, confidence, result, created_at)
     VALUES (?, ?, ?, ?, ?, 'pending', ?)
-  `)
-    .bind(predictionId, userId, body.propId, body.prediction, body.confidence || 3, new Date().toISOString())
+  `
+  )
+    .bind(
+      predictionId,
+      userId,
+      body.propId,
+      body.prediction,
+      body.confidence || 3,
+      new Date().toISOString()
+    )
     .run();
 
   return new Response(
@@ -292,7 +306,8 @@ async function getHistory(env: Env, url: URL): Promise<Response> {
     });
   }
 
-  const result = await env.DB.prepare(`
+  const result = await env.DB.prepare(
+    `
     SELECT
       up.id, up.prediction, up.confidence, up.result, up.points_earned, up.created_at,
       pp.description, pp.line_value, pp.sport, pp.actual_value
@@ -301,7 +316,8 @@ async function getHistory(env: Env, url: URL): Promise<Response> {
     WHERE up.user_id = ?
     ORDER BY up.created_at DESC
     LIMIT 50
-  `)
+  `
+  )
     .bind(userId)
     .all<{
       id: string;
@@ -316,18 +332,19 @@ async function getHistory(env: Env, url: URL): Promise<Response> {
       actual_value: number | null;
     }>();
 
-  const history = result.results?.map((h) => ({
-    id: h.id,
-    sport: h.sport,
-    description: h.description,
-    line: h.line_value,
-    prediction: h.prediction,
-    confidence: h.confidence,
-    result: h.result,
-    actualValue: h.actual_value,
-    pointsEarned: h.points_earned,
-    createdAt: h.created_at,
-  })) || [];
+  const history =
+    result.results?.map((h) => ({
+      id: h.id,
+      sport: h.sport,
+      description: h.description,
+      line: h.line_value,
+      prediction: h.prediction,
+      confidence: h.confidence,
+      result: h.result,
+      actualValue: h.actual_value,
+      pointsEarned: h.points_earned,
+      createdAt: h.created_at,
+    })) || [];
 
   // Calculate stats
   const total = history.length;
@@ -350,7 +367,8 @@ async function getHistory(env: Env, url: URL): Promise<Response> {
 }
 
 async function getLeaderboard(env: Env): Promise<Response> {
-  const result = await env.DB.prepare(`
+  const result = await env.DB.prepare(
+    `
     SELECT
       user_id,
       COUNT(*) as total_predictions,
@@ -362,24 +380,23 @@ async function getLeaderboard(env: Env): Promise<Response> {
     HAVING total_predictions >= 5
     ORDER BY total_points DESC
     LIMIT 20
-  `).all<{
+  `
+  ).all<{
     user_id: string;
     total_predictions: number;
     correct: number;
     total_points: number;
   }>();
 
-  const leaderboard = result.results?.map((entry, index) => ({
-    rank: index + 1,
-    userId: entry.user_id,
-    predictions: entry.total_predictions,
-    correct: entry.correct,
-    accuracy: Math.round((entry.correct / entry.total_predictions) * 100),
-    points: entry.total_points,
-  })) || [];
+  const leaderboard =
+    result.results?.map((entry, index) => ({
+      rank: index + 1,
+      userId: entry.user_id,
+      predictions: entry.total_predictions,
+      correct: entry.correct,
+      accuracy: Math.round((entry.correct / entry.total_predictions) * 100),
+      points: entry.total_points,
+    })) || [];
 
-  return new Response(
-    JSON.stringify({ leaderboard }),
-    { headers: CORS_HEADERS }
-  );
+  return new Response(JSON.stringify({ leaderboard }), { headers: CORS_HEADERS });
 }

@@ -7,15 +7,15 @@
 
 export const colors = {
   brand: {
-    primary: '#FF6B35',      // Blaze orange
-    secondary: '#1A1A2E',    // Deep navy
-    accent: '#F7931E',       // Gold
+    primary: '#FF6B35', // Blaze orange
+    secondary: '#1A1A2E', // Deep navy
+    accent: '#F7931E', // Gold
   },
   semantic: {
-    success: '#10B981',      // Green - positive stats, wins
-    warning: '#F59E0B',      // Amber - caution, mid-tier
-    error: '#EF4444',        // Red - losses, negative
-    info: '#3B82F6',         // Blue - informational
+    success: '#10B981', // Green - positive stats, wins
+    warning: '#F59E0B', // Amber - caution, mid-tier
+    error: '#EF4444', // Red - losses, negative
+    info: '#3B82F6', // Blue - informational
   },
   neutral: {
     white: '#FFFFFF',
@@ -35,9 +35,9 @@ export const colors = {
   },
   // Sport-specific accent colors
   sports: {
-    baseball: '#C41E3A',     // Cardinal red
-    football: '#4B2E83',     // Longhorn burnt orange base
-    basketball: '#5D76A9',   // Grizzlies blue
+    baseball: '#C41E3A', // Cardinal red
+    football: '#4B2E83', // Longhorn burnt orange base
+    basketball: '#5D76A9', // Grizzlies blue
   },
 } as const;
 
