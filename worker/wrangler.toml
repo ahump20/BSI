@@ -1,0 +1,11 @@
+name = "diamond-insights-worker"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "FLAG_STORE"
+id = "a53c3726fc3044be82e79d2d1e371d26"
+
+[vars]
+UE_UPSTREAM = "https://ue-proxy.blazesportsintel.com"
