@@ -927,10 +927,15 @@
         if (nflResponse.ok) {
           const nflData = await nflResponse.json();
           nflConnected = true;
-          const nflGames = nflData.rawData || [];
+          // API returns { games: { live: [], final: [], scheduled: [] } }
+          const nflGames = [
+            ...(nflData.games?.live || []),
+            ...(nflData.games?.final || []),
+            ...(nflData.games?.scheduled || [])
+          ];
           nflGames.slice(0, 3).forEach(game => {
-            const isLive = game.Status === 'InProgress' || game.Status === 'Halftime';
-            const isFinal = game.Status === 'Final' || game.Status === 'F/OT';
+            const isLive = game.Quarter && game.Quarter !== 'F' && game.Quarter !== 'P';
+            const isFinal = game.Quarter === 'F' || game.Quarter === 'F/OT';
             allGames.push({
               league: 'NFL',
               status: isLive ? 'In Progress' : (isFinal ? 'Final' : 'Scheduled'),
@@ -943,8 +948,8 @@
                 score: game.HomeScore || 0
               },
               detail: isLive
-                ? `${game.Quarter || 'Q'}${game.Quarter ? 'Q' : ''} - ${game.TimeRemaining || ''}`
-                : (isFinal ? 'Final' : formatGameTime(game.DateTime))
+                ? `Q${game.Quarter || ''} - ${game.TimeRemaining || ''}`
+                : (isFinal ? 'Final' : formatGameTime(game.Date))
             });
           });
         }
@@ -983,23 +988,25 @@
         const nbaResponse = await fetch('/api/nba/scores');
         if (nbaResponse.ok) {
           const nbaData = await nbaResponse.json();
-          const nbaGames = nbaData.games || nbaData.rawData || [];
-          nbaGames.slice(0, 2).forEach(game => {
-            const isLive = game.Status === 'InProgress' || game.status === 'InProgress';
+          // API returns { games: [ { teams: { away: {...}, home: {...} }, status: {...} } ] }
+          const nbaGames = nbaData.games || [];
+          nbaGames.slice(0, 3).forEach(game => {
+            const isLive = game.status?.isLive || game.status?.state === 'in';
+            const isFinal = game.status?.isFinal || game.status?.state === 'post';
             allGames.push({
               league: 'NBA',
-              status: isLive ? 'In Progress' : (game.Status || 'Final'),
+              status: isLive ? 'In Progress' : (isFinal ? 'Final' : 'Scheduled'),
               away: {
-                name: game.AwayTeam || game.awayTeam || 'Away',
-                score: game.AwayTeamScore || game.awayScore || 0
+                name: game.teams?.away?.abbreviation || game.teams?.away?.team || 'Away',
+                score: parseInt(game.teams?.away?.score) || 0
               },
               home: {
-                name: game.HomeTeam || game.homeTeam || 'Home',
-                score: game.HomeTeamScore || game.homeScore || 0
+                name: game.teams?.home?.abbreviation || game.teams?.home?.team || 'Home',
+                score: parseInt(game.teams?.home?.score) || 0
               },
               detail: isLive
-                ? `Q${game.Quarter || ''} - ${game.TimeRemaining || ''}`
-                : (game.Status || 'Final')
+                ? `Q${game.status?.period || ''} - ${game.status?.clock || ''}`
+                : (isFinal ? 'Final' : game.status?.detail || 'TBD')
             });
           });
         }
@@ -1074,67 +1081,53 @@
       }) + ' CT';
     }
 
-    // Load sports news headlines
+    // Load sports news headlines via BSI API
     async function loadNews() {
       const newsGrid = document.getElementById('news-grid');
-      const headlines = [];
 
-      // Fetch headlines from ESPN's hidden API
-      const sportEndpoints = [
-        { sport: 'MLB', url: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news?limit=3' },
-        { sport: 'NFL', url: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/news?limit=3' },
-        { sport: 'NCAA FB', url: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news?limit=3' },
-        { sport: 'NBA', url: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news?limit=2' }
-      ];
+      try {
+        const response = await fetch('/api/news?limit=3');
+        if (!response.ok) throw new Error('Failed to fetch news');
 
-      for (const endpoint of sportEndpoints) {
-        try {
-          const response = await fetch(endpoint.url);
-          if (response.ok) {
-            const data = await response.json();
-            const articles = data.articles || [];
-            articles.slice(0, 2).forEach(article => {
-              headlines.push({
-                sport: endpoint.sport,
-                title: article.headline || article.title || '',
-                published: article.published || new Date().toISOString(),
-                link: article.links?.web?.href || '#',
-                source: 'ESPN'
-              });
-            });
-          }
-        } catch (e) {
-          console.warn(`${endpoint.sport} news unavailable:`, e.message);
+        const data = await response.json();
+        const headlines = data.headlines || [];
+
+        if (headlines.length === 0) {
+          newsGrid.innerHTML = `
+            <div class="news-card" style="grid-column: 1 / -1; text-align: center;">
+              <p style="color: rgba(245, 245, 240, 0.6);">News headlines temporarily unavailable.</p>
+            </div>
+          `;
+          return;
         }
-      }
 
-      // Sort by published date, most recent first
-      headlines.sort((a, b) => new Date(b.published) - new Date(a.published));
+        // Map sport codes to display names
+        const sportNames = { MLB: 'MLB', NFL: 'NFL', NBA: 'NBA', NCAAF: 'NCAA FB', NCAAB: 'NCAA BB' };
 
-      if (headlines.length === 0) {
+        newsGrid.innerHTML = headlines.slice(0, 6).map(news => {
+          const publishedDate = new Date(news.published);
+          const timeAgo = getTimeAgo(publishedDate);
+          const sportDisplay = sportNames[news.sport] || news.sport;
+
+          return `
+            <a href="${news.link}" class="news-card" target="_blank" rel="noopener">
+              <div class="news-meta">
+                <span class="news-sport">${sportDisplay}</span>
+                <span class="news-time">${timeAgo}</span>
+              </div>
+              <h3 class="news-title">${news.title}</h3>
+              <span class="news-source">${news.source}</span>
+            </a>
+          `;
+        }).join('');
+      } catch (e) {
+        console.warn('News API unavailable:', e.message);
         newsGrid.innerHTML = `
           <div class="news-card" style="grid-column: 1 / -1; text-align: center;">
             <p style="color: rgba(245, 245, 240, 0.6);">News headlines temporarily unavailable.</p>
           </div>
         `;
-        return;
       }
-
-      newsGrid.innerHTML = headlines.slice(0, 6).map(news => {
-        const publishedDate = new Date(news.published);
-        const timeAgo = getTimeAgo(publishedDate);
-
-        return `
-          <a href="${news.link}" class="news-card" target="_blank" rel="noopener">
-            <div class="news-meta">
-              <span class="news-sport">${news.sport}</span>
-              <span class="news-time">${timeAgo}</span>
-            </div>
-            <h3 class="news-title">${news.title}</h3>
-            <span class="news-source">${news.source}</span>
-          </a>
-        `;
-      }).join('');
     }
 
     // Calculate time ago string
