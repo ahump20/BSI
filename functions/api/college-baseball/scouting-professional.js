@@ -634,7 +634,7 @@ function calculateMarketValue(finalRec, draftProjection, historicalStats) {
   const draftGrade = finalRec.draft_grade;
   const projectedRound = draftProjection.projected_round;
 
-  let collegeBscholarshipValue, proContractProjection, comparableDeals;
+  let scholarshipValue, proContractProjection, comparableDeals;
 
   // College scholarship valuation
   if (draftGrade >= 80) {

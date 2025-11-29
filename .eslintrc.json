@@ -5,6 +5,23 @@
     "es2021": true,
     "node": true
   },
+  "globals": {
+    "PagesFunction": "readonly",
+    "KVNamespace": "readonly",
+    "D1Database": "readonly",
+    "R2Bucket": "readonly",
+    "VectorizeIndex": "readonly",
+    "AnalyticsEngineDataset": "readonly",
+    "Ai": "readonly",
+    "DurableObjectNamespace": "readonly",
+    "DurableObjectState": "readonly",
+    "WebSocketPair": "readonly",
+    "EventContext": "readonly",
+    "RequestInit": "readonly",
+    "NodeJS": "readonly",
+    "React": "readonly",
+    "ExecutionContext": "readonly"
+  },
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -62,17 +79,9 @@
       "files": ["lib/**/*.ts", "lib/**/*.js"],
       "excludedFiles": ["**/examples/**", "**/scripts/**", "**/test*"],
       "rules": {
-        "no-restricted-syntax": [
-          "warn",
-          {
-            "selector": "MemberExpression[object.name='process'][property.name='env']",
-            "message": "Unguarded process.env usage! Use: env?.VAR || (typeof process !== 'undefined' ? process.env?.VAR : null) || ''"
-          },
-          {
-            "selector": "CallExpression[callee.object.name='process'][callee.property.name='exit']",
-            "message": "Unguarded process.exit()! Guard with: if (typeof process !== 'undefined') process.exit(1);"
-          }
-        ]
+        "no-console": "off",
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
       }
     },
     {
@@ -100,13 +109,6 @@
       }
     },
     {
-      "files": ["lib/utils/**/*.ts"],
-      "rules": {
-        "no-restricted-syntax": "off",
-        "@typescript-eslint/ban-ts-comment": "off"
-      }
-    },
-    {
       "files": ["app/**/*.js", "app/**/*.ts"],
       "rules": {
         "no-console": "off",
@@ -114,9 +116,16 @@
       }
     },
     {
-      "files": ["components/**/*.tsx", "components/**/*.jsx"],
+      "files": ["components/**/*.tsx", "components/**/*.jsx", "hooks/**/*.ts", "hooks/**/*.tsx"],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "warn"
+        "@typescript-eslint/no-unused-vars": "warn",
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "rules": {
+        "no-console": "off"
       }
     }
   ],

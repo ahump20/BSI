@@ -456,7 +456,7 @@ async function streamNCAABaseball(url: URL, env: Env) {
   let previousWinExpectancyHint: number | null = null;
 
   for (const message of queueMessages) {
-    const payload = normaliseQueuePayload(message.body);
+    const payload = normalizeQueuePayload(message.body);
     if (!payload || payload.gameId !== gameId) {
       continue;
     }
@@ -465,7 +465,7 @@ async function streamNCAABaseball(url: URL, env: Env) {
     if (resolvedSequence <= sinceSequence) {
       // Preserve the last seen win expectancy to provide delta when we return cached data
       if (payload.winExpectancy?.home != null) {
-        previousWinExpectancyHint = normaliseProbability(payload.winExpectancy.home);
+        previousWinExpectancyHint = normalizeProbability(payload.winExpectancy.home);
       }
       continue;
     }
@@ -667,9 +667,9 @@ function mapPayloadToFrame(
     result: payload.event?.result,
   };
 
-  const homeProbability = normaliseProbability(payload.winExpectancy?.home);
-  const awayProbability = normaliseProbability(payload.winExpectancy?.away);
-  const previousHomeProbability = normaliseProbability(payload.previousWinExpectancy?.home);
+  const homeProbability = normalizeProbability(payload.winExpectancy?.home);
+  const awayProbability = normalizeProbability(payload.winExpectancy?.away);
+  const previousHomeProbability = normalizeProbability(payload.previousWinExpectancy?.home);
 
   const delta =
     homeProbability != null && previousHomeProbability != null

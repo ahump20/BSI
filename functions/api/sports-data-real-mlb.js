@@ -25,7 +25,7 @@ export async function onRequest({ request, env }) {
   }
 
   try {
-    const data = await fetchRealMLB(teamId);
+    const data = await fetchRealMLB(teamId, season, currentYear);
     return new Response(JSON.stringify(data), {
       headers: corsHeaders,
       status: 200,
@@ -44,7 +44,7 @@ export async function onRequest({ request, env }) {
   }
 }
 
-async function fetchRealMLB(teamId) {
+async function fetchRealMLB(teamId, season, currentYear) {
   const baseUrl = 'https://statsapi.mlb.com/api/v1';
 
   try {
