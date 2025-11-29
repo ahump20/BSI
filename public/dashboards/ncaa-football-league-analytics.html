@@ -415,6 +415,35 @@
       </div>
     </div>
 
+    <!-- Live Scoreboard Section -->
+    <div class="analytics-card" style="margin-bottom: 2rem;">
+      <div class="card-header">
+        <i class="fas fa-satellite-dish card-icon"></i>
+        <h2 class="card-title">Live Games & Scores</h2>
+        <span id="games-update-time" style="margin-left: auto; font-size: 0.75rem; color: var(--blaze-text-dim);"></span>
+      </div>
+      <div id="live-games-container">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading today's games...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top 25 Rankings Section -->
+    <div class="analytics-card" style="margin-bottom: 2rem;">
+      <div class="card-header">
+        <i class="fas fa-ranking-star card-icon"></i>
+        <h2 class="card-title">AP Top 25 Rankings</h2>
+      </div>
+      <div id="rankings-container">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading rankings...</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Analytics Cards -->
     <div class="cards-grid">
       <!-- Card 1: Conference Standings -->
@@ -483,7 +512,7 @@
   <script type="module">
     // Configuration
     const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
-    const CURRENT_SEASON = '2024';
+    const CURRENT_SEASON = '2025';
 
     // Filter state
     let currentFilter = 'all';
@@ -492,8 +521,196 @@
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       setupFilterButtons();
+      loadLiveGames();
+      loadRankings();
       loadStandingsData();
+
+      // Auto-refresh live games every 30 seconds
+      setInterval(loadLiveGames, 30000);
     });
+
+    // Load live games and scores from ESPN
+    async function loadLiveGames() {
+      const container = document.getElementById('live-games-container');
+      const updateTime = document.getElementById('games-update-time');
+
+      try {
+        const response = await fetch(`${ESPN_BASE}/scoreboard`);
+        if (!response.ok) throw new Error('Failed to fetch games');
+
+        const data = await response.json();
+        const events = data.events || [];
+
+        // Update timestamp
+        const now = new Date();
+        updateTime.textContent = `Updated: ${now.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit' })} CT`;
+
+        if (events.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--blaze-text-dim);">
+              <i class="fas fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+              <p>No games scheduled for today</p>
+              <p style="font-size: 0.85rem; margin-top: 0.5rem;">Check back on game days for live scores</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Separate live, final, and upcoming games
+        const liveGames = events.filter(e => e.status?.type?.state === 'in');
+        const finalGames = events.filter(e => e.status?.type?.state === 'post');
+        const upcomingGames = events.filter(e => e.status?.type?.state === 'pre');
+
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">';
+
+        // Render live games first
+        liveGames.forEach(event => {
+          html += renderGameCard(event, 'live');
+        });
+
+        // Then final games
+        finalGames.forEach(event => {
+          html += renderGameCard(event, 'final');
+        });
+
+        // Then upcoming games
+        upcomingGames.forEach(event => {
+          html += renderGameCard(event, 'upcoming');
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+      } catch (error) {
+        console.error('Error loading live games:', error);
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--blaze-text-dim);">
+            <i class="fas fa-wifi" style="font-size: 2rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+            <p>Unable to load live games</p>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">ESPN data temporarily unavailable</p>
+          </div>
+        `;
+      }
+    }
+
+    // Render individual game card
+    function renderGameCard(event, status) {
+      const competition = event.competitions?.[0];
+      if (!competition) return '';
+
+      const homeTeam = competition.competitors?.find(c => c.homeAway === 'home');
+      const awayTeam = competition.competitors?.find(c => c.homeAway === 'away');
+
+      if (!homeTeam || !awayTeam) return '';
+
+      const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || 'Home';
+      const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || 'Away';
+      const homeScore = homeTeam.score || '0';
+      const awayScore = awayTeam.score || '0';
+      const homeRank = homeTeam.curatedRank?.current && homeTeam.curatedRank.current <= 25 ? `#${homeTeam.curatedRank.current} ` : '';
+      const awayRank = awayTeam.curatedRank?.current && awayTeam.curatedRank.current <= 25 ? `#${awayTeam.curatedRank.current} ` : '';
+
+      let statusText = '';
+      let statusColor = 'var(--blaze-text-dim)';
+      let borderColor = 'rgba(191, 87, 0, 0.2)';
+
+      if (status === 'live') {
+        const detail = event.status?.type?.detail || 'In Progress';
+        statusText = `🔴 ${detail}`;
+        statusColor = 'var(--blaze-danger)';
+        borderColor = 'var(--blaze-danger)';
+      } else if (status === 'final') {
+        statusText = 'Final';
+        statusColor = 'var(--blaze-success)';
+      } else {
+        const gameDate = new Date(event.date);
+        statusText = gameDate.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }) + ' CT';
+      }
+
+      const homeWinner = status !== 'upcoming' && parseInt(homeScore) > parseInt(awayScore);
+      const awayWinner = status !== 'upcoming' && parseInt(awayScore) > parseInt(homeScore);
+
+      return `
+        <div style="background: var(--glass-light); border-radius: 12px; padding: 1rem; border: 1px solid ${borderColor};">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.7rem; color: ${statusColor}; font-weight: 600; text-transform: uppercase;">${statusText}</span>
+            ${event.broadcasts?.[0]?.names?.[0] ? `<span style="font-size: 0.65rem; color: var(--blaze-text-dim);">${event.broadcasts[0].names[0]}</span>` : ''}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; ${awayWinner ? 'font-weight: 700;' : ''}">
+              <span style="font-size: 0.9rem;">${awayRank}${awayName}</span>
+              <span style="font-size: 1.1rem; font-weight: 600; ${awayWinner ? 'color: var(--blaze-success);' : ''}">${status === 'upcoming' ? '-' : awayScore}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; ${homeWinner ? 'font-weight: 700;' : ''}">
+              <span style="font-size: 0.9rem;">${homeRank}${homeName}</span>
+              <span style="font-size: 1.1rem; font-weight: 600; ${homeWinner ? 'color: var(--blaze-success);' : ''}">${status === 'upcoming' ? '-' : homeScore}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Load AP Top 25 Rankings
+    async function loadRankings() {
+      const container = document.getElementById('rankings-container');
+
+      try {
+        const response = await fetch(`${ESPN_BASE}/rankings`);
+        if (!response.ok) throw new Error('Failed to fetch rankings');
+
+        const data = await response.json();
+        const apPoll = data.rankings?.find(r => r.name === 'AP Top 25' || r.type === 'ap');
+
+        if (!apPoll || !apPoll.ranks || apPoll.ranks.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--blaze-text-dim);">
+              <p>Rankings not available at this time</p>
+            </div>
+          `;
+          return;
+        }
+
+        const ranks = apPoll.ranks.slice(0, 25);
+
+        let html = `
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;">
+        `;
+
+        ranks.forEach(team => {
+          const change = team.previous ? team.previous - team.current : 0;
+          let changeIndicator = '';
+          if (change > 0) {
+            changeIndicator = `<span style="color: var(--blaze-success); font-size: 0.7rem;">▲${change}</span>`;
+          } else if (change < 0) {
+            changeIndicator = `<span style="color: var(--blaze-danger); font-size: 0.7rem;">▼${Math.abs(change)}</span>`;
+          }
+
+          const rankBg = team.current <= 4 ? 'var(--blaze-success)' :
+                        team.current <= 12 ? 'var(--blaze-warning)' : 'var(--blaze-burnt-orange)';
+
+          html += `
+            <div style="background: var(--glass-light); border-radius: 8px; padding: 0.75rem; display: flex; align-items: center; gap: 0.75rem; border: 1px solid rgba(191, 87, 0, 0.15);">
+              <span style="background: ${rankBg}; color: white; font-weight: 700; font-size: 0.85rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px;">${team.current}</span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-weight: 600; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${team.team?.nickname || team.team?.displayName || 'Unknown'}</div>
+                <div style="font-size: 0.7rem; color: var(--blaze-text-dim);">${team.recordSummary || ''} ${changeIndicator}</div>
+              </div>
+            </div>
+          `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+      } catch (error) {
+        console.error('Error loading rankings:', error);
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--blaze-text-dim);">
+            <p>Unable to load rankings</p>
+          </div>
+        `;
+      }
+    }
 
     // Filter button handlers
     function setupFilterButtons() {

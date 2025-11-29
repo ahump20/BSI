@@ -339,26 +339,41 @@
   <div class="container">
     <header>
       <h1>🏀 NBA League Analytics</h1>
-      <p class="subtitle">Complete National Basketball Association Intelligence • All 30 Teams • 2025-26 Season</p>
+      <p class="subtitle">Complete National Basketball Association Intelligence • All 30 Teams • 2024-25 Season</p>
       <p class="tagline">Objective Analytics • Zero Bias • Pure Data</p>
       <div class="league-badges">
         <span class="league-badge">📊 30 Teams • 82 Games</span>
         <span class="league-badge">🔢 Pythagorean Exponent: 13.91</span>
-        <span class="league-badge">📡 SportsDataIO API</span>
+        <span class="league-badge">📡 ESPN API</span>
       </div>
     </header>
+
+    <!-- Live Scoreboard Section -->
+    <div class="analytics-card" style="margin-bottom: 2rem;">
+      <div class="card-header">
+        <i class="fas fa-satellite-dish card-icon"></i>
+        <h2 class="card-title">Today's Games</h2>
+        <span id="games-update-time" style="margin-left: auto; font-size: 0.75rem; color: var(--blaze-text-dim);"></span>
+      </div>
+      <div id="live-games-container">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading today's games...</p>
+        </div>
+      </div>
+    </div>
 
     <!-- Filter Bar -->
     <div class="filter-bar">
       <button class="filter-btn active" data-filter="all">All Teams</button>
       <button class="filter-btn" data-filter="Eastern">Eastern Conference</button>
       <button class="filter-btn" data-filter="Western">Western Conference</button>
-      <button class="filter-btn" data-filter="Eastern Atlantic">Atlantic</button>
-      <button class="filter-btn" data-filter="Eastern Central">Central</button>
-      <button class="filter-btn" data-filter="Eastern Southeast">Southeast</button>
-      <button class="filter-btn" data-filter="Western Northwest">Northwest</button>
-      <button class="filter-btn" data-filter="Western Pacific">Pacific</button>
-      <button class="filter-btn" data-filter="Western Southwest">Southwest</button>
+      <button class="filter-btn" data-filter="Atlantic">Atlantic</button>
+      <button class="filter-btn" data-filter="Central">Central</button>
+      <button class="filter-btn" data-filter="Southeast">Southeast</button>
+      <button class="filter-btn" data-filter="Northwest">Northwest</button>
+      <button class="filter-btn" data-filter="Pacific">Pacific</button>
+      <button class="filter-btn" data-filter="Southwest">Southwest</button>
     </div>
 
     <!-- Analytics Cards -->
@@ -422,15 +437,13 @@
 
     <footer>
       <p>&copy; 2025 Blaze Intelligence • NBA Analytics Platform</p>
-      <p style="margin-top: 0.5rem;">Data powered by SportsDataIO • Updated in real-time</p>
+      <p style="margin-top: 0.5rem;">Data powered by ESPN API • Updated in real-time</p>
     </footer>
   </div>
 
   <script type="module">
-    // Configuration
-    const API_KEY = '6ca2adb39404482da5406f0a6cd7aa37';
-    const API_BASE = 'https://api.sportsdata.io/v3/nba';
-    const CURRENT_SEASON = '2025';
+    // Configuration - Using ESPN's free API
+    const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
 
     // Filter state
     let currentFilter = 'all';
@@ -439,8 +452,131 @@
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       setupFilterButtons();
+      loadLiveGames();
       loadStandingsData();
+
+      // Auto-refresh live games every 30 seconds
+      setInterval(loadLiveGames, 30000);
     });
+
+    // Load live games and scores from ESPN
+    async function loadLiveGames() {
+      const container = document.getElementById('live-games-container');
+      const updateTime = document.getElementById('games-update-time');
+
+      try {
+        const response = await fetch(`${ESPN_BASE}/scoreboard`);
+        if (!response.ok) throw new Error('Failed to fetch games');
+
+        const data = await response.json();
+        const events = data.events || [];
+
+        // Update timestamp
+        const now = new Date();
+        updateTime.textContent = `Updated: ${now.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit' })} CT`;
+
+        if (events.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--blaze-text-dim);">
+              <i class="fas fa-basketball" style="font-size: 2rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+              <p>No games scheduled for today</p>
+              <p style="font-size: 0.85rem; margin-top: 0.5rem;">Check back on game days for live scores</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Separate live, final, and upcoming games
+        const liveGames = events.filter(e => e.status?.type?.state === 'in');
+        const finalGames = events.filter(e => e.status?.type?.state === 'post');
+        const upcomingGames = events.filter(e => e.status?.type?.state === 'pre');
+
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">';
+
+        // Render live games first
+        liveGames.forEach(event => {
+          html += renderGameCard(event, 'live');
+        });
+
+        // Then final games
+        finalGames.forEach(event => {
+          html += renderGameCard(event, 'final');
+        });
+
+        // Then upcoming games
+        upcomingGames.forEach(event => {
+          html += renderGameCard(event, 'upcoming');
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+      } catch (error) {
+        console.error('Error loading live games:', error);
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--blaze-text-dim);">
+            <i class="fas fa-wifi" style="font-size: 2rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+            <p>Unable to load live games</p>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">ESPN data temporarily unavailable</p>
+          </div>
+        `;
+      }
+    }
+
+    // Render individual game card
+    function renderGameCard(event, status) {
+      const competition = event.competitions?.[0];
+      if (!competition) return '';
+
+      const homeTeam = competition.competitors?.find(c => c.homeAway === 'home');
+      const awayTeam = competition.competitors?.find(c => c.homeAway === 'away');
+
+      if (!homeTeam || !awayTeam) return '';
+
+      const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || 'Home';
+      const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || 'Away';
+      const homeScore = homeTeam.score || '0';
+      const awayScore = awayTeam.score || '0';
+
+      let statusText = '';
+      let statusColor = 'var(--blaze-text-dim)';
+      let borderColor = 'rgba(191, 87, 0, 0.2)';
+
+      if (status === 'live') {
+        const detail = event.status?.type?.detail || 'In Progress';
+        statusText = `🔴 ${detail}`;
+        statusColor = 'var(--blaze-danger)';
+        borderColor = 'var(--blaze-danger)';
+      } else if (status === 'final') {
+        statusText = 'Final';
+        statusColor = 'var(--blaze-success)';
+      } else {
+        const gameDate = new Date(event.date);
+        statusText = gameDate.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }) + ' CT';
+      }
+
+      const homeWinner = status !== 'upcoming' && parseInt(homeScore) > parseInt(awayScore);
+      const awayWinner = status !== 'upcoming' && parseInt(awayScore) > parseInt(homeScore);
+
+      return `
+        <div style="background: var(--glass-light); border-radius: 12px; padding: 1rem; border: 1px solid ${borderColor};">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.7rem; color: ${statusColor}; font-weight: 600; text-transform: uppercase;">${statusText}</span>
+            ${event.broadcasts?.[0]?.names?.[0] ? `<span style="font-size: 0.65rem; color: var(--blaze-text-dim);">${event.broadcasts[0].names[0]}</span>` : ''}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; ${awayWinner ? 'font-weight: 700;' : ''}">
+              <span style="font-size: 0.9rem;">${awayName}</span>
+              <span style="font-size: 1.1rem; font-weight: 600; ${awayWinner ? 'color: var(--blaze-success);' : ''}">${status === 'upcoming' ? '-' : awayScore}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; ${homeWinner ? 'font-weight: 700;' : ''}">
+              <span style="font-size: 0.9rem;">${homeName}</span>
+              <span style="font-size: 1.1rem; font-weight: 600; ${homeWinner ? 'color: var(--blaze-success);' : ''}">${status === 'upcoming' ? '-' : homeScore}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     // Filter button handlers
     function setupFilterButtons() {
@@ -457,14 +593,10 @@
       });
     }
 
-    // Load standings data from API
+    // Load standings data from ESPN API (v2 endpoint has full data)
     async function loadStandingsData() {
       try {
-        const response = await fetch(`${API_BASE}/scores/json/Standings/${CURRENT_SEASON}`, {
-          headers: {
-            'Ocp-Apim-Subscription-Key': API_KEY
-          }
-        });
+        const response = await fetch('https://site.api.espn.com/apis/v2/sports/basketball/nba/standings');
 
         if (!response.ok) {
           throw new Error(`API error: ${response.statusText}`);
@@ -482,78 +614,109 @@
       }
     }
 
-    // Process API response into our format
+    // Process ESPN v2 API response into our format
     function processStandingsData(apiData) {
-      const standings = {
-        Eastern: {
-          Atlantic: [],
-          Central: [],
-          Southeast: []
-        },
-        Western: {
-          Northwest: [],
-          Pacific: [],
-          Southwest: []
+      const allTeams = [];
+
+      // ESPN v2 returns standings by conference directly in children array
+      apiData.children?.forEach(conference => {
+        const confName = conference.name; // "Eastern Conference" or "Western Conference"
+        const confShort = confName.includes('Eastern') ? 'Eastern' : 'Western';
+
+        // Standings entries are directly under conference.standings.entries
+        conference.standings?.entries?.forEach(entry => {
+          const team = entry.team;
+          const stats = entry.stats || [];
+
+          // Helper to get stat value
+          const getStat = (name) => stats.find(s => s.name === name);
+
+          const wins = getStat('wins')?.value || 0;
+          const losses = getStat('losses')?.value || 0;
+          const gamesPlayed = wins + losses;
+          const winPct = getStat('winPercent')?.value || (gamesPlayed > 0 ? wins / gamesPlayed : 0);
+          const gamesBack = getStat('gamesBehind')?.value || 0;
+
+          const avgPointsFor = getStat('avgPointsFor')?.value || 0;
+          const avgPointsAgainst = getStat('avgPointsAgainst')?.value || 0;
+          const pointsFor = avgPointsFor * gamesPlayed;
+          const pointsAgainst = avgPointsAgainst * gamesPlayed;
+
+          const streak = getStat('streak')?.displayValue || '-';
+          const playoffSeed = getStat('playoffSeed')?.value || 999;
+
+          // Get division from divisionRecord stat name pattern or team location
+          const divRecord = getStat('divisionRecord')?.displayValue || '-';
+
+          const pythag = calculatePythagorean(pointsFor, pointsAgainst, gamesPlayed, wins);
+
+          allTeams.push({
+            rank: playoffSeed,
+            team: {
+              id: team.id,
+              name: team.displayName,
+              shortName: team.shortDisplayName,
+              abbreviation: team.abbreviation,
+              logo: team.logos?.[0]?.href
+            },
+            conference: confShort,
+            division: getDivisionFromTeam(team.displayName),
+            record: {
+              wins,
+              losses,
+              winPercentage: winPct,
+              gamesBack
+            },
+            homeRecord: getStat('Home')?.displayValue || getStat('homeRecord')?.displayValue || '-',
+            awayRecord: getStat('Road')?.displayValue || getStat('awayRecord')?.displayValue || '-',
+            conferenceRecord: getStat('vsConf')?.displayValue || getStat('conferenceRecord')?.displayValue || '-',
+            divisionRecord: divRecord,
+            lastTenRecord: getStat('L10')?.displayValue || getStat('streak')?.displayValue || '-',
+            streak,
+            pointsFor,
+            pointsAgainst,
+            avgPointsFor,
+            avgPointsAgainst,
+            netRating: (avgPointsFor - avgPointsAgainst).toFixed(1),
+            pythag
+          });
+        });
+      });
+
+      // Sort by conference then by playoff seed
+      allTeams.sort((a, b) => {
+        if (a.conference !== b.conference) {
+          return a.conference === 'Eastern' ? -1 : 1;
         }
+        return a.rank - b.rank;
+      });
+
+      return allTeams;
+    }
+
+    // Map team names to divisions
+    function getDivisionFromTeam(teamName) {
+      const divisionMap = {
+        // Atlantic
+        'Boston Celtics': 'Atlantic', 'Brooklyn Nets': 'Atlantic', 'New York Knicks': 'Atlantic',
+        'Philadelphia 76ers': 'Atlantic', 'Toronto Raptors': 'Atlantic',
+        // Central
+        'Chicago Bulls': 'Central', 'Cleveland Cavaliers': 'Central', 'Detroit Pistons': 'Central',
+        'Indiana Pacers': 'Central', 'Milwaukee Bucks': 'Central',
+        // Southeast
+        'Atlanta Hawks': 'Southeast', 'Charlotte Hornets': 'Southeast', 'Miami Heat': 'Southeast',
+        'Orlando Magic': 'Southeast', 'Washington Wizards': 'Southeast',
+        // Northwest
+        'Denver Nuggets': 'Northwest', 'Minnesota Timberwolves': 'Northwest', 'Oklahoma City Thunder': 'Northwest',
+        'Portland Trail Blazers': 'Northwest', 'Utah Jazz': 'Northwest',
+        // Pacific
+        'Golden State Warriors': 'Pacific', 'LA Clippers': 'Pacific', 'Los Angeles Lakers': 'Pacific',
+        'Phoenix Suns': 'Pacific', 'Sacramento Kings': 'Pacific',
+        // Southwest
+        'Dallas Mavericks': 'Southwest', 'Houston Rockets': 'Southwest', 'Memphis Grizzlies': 'Southwest',
+        'New Orleans Pelicans': 'Southwest', 'San Antonio Spurs': 'Southwest'
       };
-
-      apiData.forEach(team => {
-        const conference = team.Conference;
-        const division = team.Division;
-
-        if (!standings[conference] || !standings[conference][division]) {
-          console.warn(`Unknown conference/division: ${conference} ${division}`);
-          return;
-        }
-
-        const gamesPlayed = team.Wins + team.Losses;
-        const pythag = calculatePythagorean(
-          team.PointsPerGameFor * gamesPlayed,
-          team.PointsPerGameAgainst * gamesPlayed,
-          gamesPlayed,
-          team.Wins
-        );
-
-        standings[conference][division].push({
-          rank: team.ConferenceRank,
-          divisionRank: team.DivisionRank,
-          team: {
-            key: team.Key,
-            name: team.Name,
-            city: team.City
-          },
-          conference,
-          division,
-          record: {
-            wins: team.Wins,
-            losses: team.Losses,
-            winPercentage: team.Percentage,
-            gamesBack: team.GamesBack
-          },
-          homeRecord: `${team.HomeWins}-${team.HomeLosses}`,
-          awayRecord: `${team.AwayWins}-${team.AwayLosses}`,
-          conferenceRecord: `${team.ConferenceWins}-${team.ConferenceLosses}`,
-          divisionRecord: `${team.DivisionWins}-${team.DivisionLosses}`,
-          lastTenRecord: `${team.LastTenWins}-${team.LastTenLosses}`,
-          streak: {
-            type: team.Streak > 0 ? 'W' : 'L',
-            count: Math.abs(team.Streak)
-          },
-          pointsFor: team.PointsPerGameFor * gamesPlayed,
-          pointsAgainst: team.PointsPerGameAgainst * gamesPlayed,
-          netRating: (team.PointsPerGameFor - team.PointsPerGameAgainst).toFixed(1),
-          pythag
-        });
-      });
-
-      // Sort each division by conference rank
-      Object.keys(standings).forEach(conf => {
-        Object.keys(standings[conf]).forEach(div => {
-          standings[conf][div].sort((a, b) => a.rank - b.rank);
-        });
-      });
-
-      return standings;
+      return divisionMap[teamName] || 'Unknown';
     }
 
     // Calculate Pythagorean expectation (NBA uses exponent 13.91)
@@ -576,22 +739,17 @@
     }
 
     // Filter teams based on current filter
-    function filterTeams(standings) {
+    function filterTeams(teams) {
       if (currentFilter === 'all') {
-        // Return all teams from both conferences
-        return Object.values(standings).flatMap(conf =>
-          Object.values(conf).flat()
-        );
+        return teams;
       }
 
       if (currentFilter === 'Eastern' || currentFilter === 'Western') {
-        // Return all teams from selected conference
-        return Object.values(standings[currentFilter]).flat();
+        return teams.filter(t => t.conference === currentFilter);
       }
 
-      // Return teams from specific division
-      const [conf, div] = currentFilter.split(' ');
-      return standings[conf][div] || [];
+      // Filter by division name
+      return teams.filter(t => t.division === currentFilter);
     }
 
     // Render all visualizations
@@ -617,7 +775,7 @@
           <table class="standings-table">
             <thead>
               <tr>
-                <th class="text-center">Rank</th>
+                <th class="text-center">Seed</th>
                 <th>Team</th>
                 <th class="text-center">Conf</th>
                 <th class="text-center">Div</th>
@@ -625,8 +783,8 @@
                 <th class="text-center">L</th>
                 <th class="text-center">Win%</th>
                 <th class="text-center">GB</th>
-                <th class="text-center">PF</th>
-                <th class="text-center">PA</th>
+                <th class="text-center">PPG</th>
+                <th class="text-center">OPP PPG</th>
                 <th class="text-center">Net Rtg</th>
                 <th class="text-center">Streak</th>
                 <th class="text-center">L10</th>
@@ -634,12 +792,16 @@
             </thead>
             <tbody>
               ${teams.map((team, index) => {
-                const streakClass = team.streak.type === 'W' ? 'text-success' : 'text-danger';
+                // Handle streak as string (e.g., "W3" or "L2")
+                const streakStr = typeof team.streak === 'string' ? team.streak : `${team.streak?.type || '-'}${team.streak?.count || ''}`;
+                const streakClass = streakStr.startsWith('W') ? 'text-success' : streakStr.startsWith('L') ? 'text-danger' : '';
                 const netRatingClass = parseFloat(team.netRating) > 0 ? 'text-success' : 'text-danger';
+                const avgPF = team.avgPointsFor ? team.avgPointsFor.toFixed(1) : (team.pointsFor / (team.record.wins + team.record.losses)).toFixed(1);
+                const avgPA = team.avgPointsAgainst ? team.avgPointsAgainst.toFixed(1) : (team.pointsAgainst / (team.record.wins + team.record.losses)).toFixed(1);
 
                 return `
                   <tr>
-                    <td class="text-center"><strong>${team.rank}</strong></td>
+                    <td class="text-center"><strong>${team.rank < 999 ? team.rank : '-'}</strong></td>
                     <td><strong>${team.team.name}</strong></td>
                     <td class="text-center">${team.conference}</td>
                     <td class="text-center">${team.division}</td>
@@ -647,10 +809,10 @@
                     <td class="text-center">${team.record.losses}</td>
                     <td class="text-center">${(team.record.winPercentage * 100).toFixed(1)}%</td>
                     <td class="text-center">${team.record.gamesBack || '-'}</td>
-                    <td class="text-center">${Math.round(team.pointsFor)}</td>
-                    <td class="text-center">${Math.round(team.pointsAgainst)}</td>
-                    <td class="text-center ${netRatingClass}"><strong>${team.netRating > 0 ? '+' : ''}${team.netRating}</strong></td>
-                    <td class="text-center ${streakClass}"><strong>${team.streak.type}${team.streak.count}</strong></td>
+                    <td class="text-center">${avgPF}</td>
+                    <td class="text-center">${avgPA}</td>
+                    <td class="text-center ${netRatingClass}"><strong>${parseFloat(team.netRating) > 0 ? '+' : ''}${team.netRating}</strong></td>
+                    <td class="text-center ${streakClass}"><strong>${streakStr}</strong></td>
                     <td class="text-center">${team.lastTenRecord}</td>
                   </tr>
                 `;
@@ -995,69 +1157,83 @@
       `;
     }
 
-    // Generate demo data for testing
+    // Generate demo data for testing (flat array structure)
     function generateDemoData() {
-      const conferences = ['Eastern', 'Western'];
-      const divisions = {
-        Eastern: ['Atlantic', 'Central', 'Southeast'],
-        Western: ['Northwest', 'Pacific', 'Southwest']
-      };
-      const teamNames = {
-        Eastern: {
-          Atlantic: ['Celtics', '76ers', 'Nets', 'Knicks', 'Raptors'],
-          Central: ['Bucks', 'Bulls', 'Cavaliers', 'Pacers', 'Pistons'],
-          Southeast: ['Heat', 'Hawks', 'Hornets', 'Magic', 'Wizards']
-        },
-        Western: {
-          Northwest: ['Nuggets', 'Timberwolves', 'Thunder', 'Trail Blazers', 'Jazz'],
-          Pacific: ['Warriors', 'Clippers', 'Lakers', 'Kings', 'Suns'],
-          Southwest: ['Mavericks', 'Grizzlies', 'Pelicans', 'Rockets', 'Spurs']
-        }
-      };
+      const teamData = [
+        { name: 'Boston Celtics', conf: 'Eastern', div: 'Atlantic' },
+        { name: 'Philadelphia 76ers', conf: 'Eastern', div: 'Atlantic' },
+        { name: 'Brooklyn Nets', conf: 'Eastern', div: 'Atlantic' },
+        { name: 'New York Knicks', conf: 'Eastern', div: 'Atlantic' },
+        { name: 'Toronto Raptors', conf: 'Eastern', div: 'Atlantic' },
+        { name: 'Milwaukee Bucks', conf: 'Eastern', div: 'Central' },
+        { name: 'Cleveland Cavaliers', conf: 'Eastern', div: 'Central' },
+        { name: 'Chicago Bulls', conf: 'Eastern', div: 'Central' },
+        { name: 'Indiana Pacers', conf: 'Eastern', div: 'Central' },
+        { name: 'Detroit Pistons', conf: 'Eastern', div: 'Central' },
+        { name: 'Miami Heat', conf: 'Eastern', div: 'Southeast' },
+        { name: 'Orlando Magic', conf: 'Eastern', div: 'Southeast' },
+        { name: 'Atlanta Hawks', conf: 'Eastern', div: 'Southeast' },
+        { name: 'Charlotte Hornets', conf: 'Eastern', div: 'Southeast' },
+        { name: 'Washington Wizards', conf: 'Eastern', div: 'Southeast' },
+        { name: 'Oklahoma City Thunder', conf: 'Western', div: 'Northwest' },
+        { name: 'Denver Nuggets', conf: 'Western', div: 'Northwest' },
+        { name: 'Minnesota Timberwolves', conf: 'Western', div: 'Northwest' },
+        { name: 'Portland Trail Blazers', conf: 'Western', div: 'Northwest' },
+        { name: 'Utah Jazz', conf: 'Western', div: 'Northwest' },
+        { name: 'Golden State Warriors', conf: 'Western', div: 'Pacific' },
+        { name: 'LA Clippers', conf: 'Western', div: 'Pacific' },
+        { name: 'Los Angeles Lakers', conf: 'Western', div: 'Pacific' },
+        { name: 'Sacramento Kings', conf: 'Western', div: 'Pacific' },
+        { name: 'Phoenix Suns', conf: 'Western', div: 'Pacific' },
+        { name: 'Dallas Mavericks', conf: 'Western', div: 'Southwest' },
+        { name: 'Memphis Grizzlies', conf: 'Western', div: 'Southwest' },
+        { name: 'Houston Rockets', conf: 'Western', div: 'Southwest' },
+        { name: 'New Orleans Pelicans', conf: 'Western', div: 'Southwest' },
+        { name: 'San Antonio Spurs', conf: 'Western', div: 'Southwest' }
+      ];
 
-      const standings = {};
+      const allTeams = teamData.map((team, idx) => {
+        const wins = Math.floor(Math.random() * 30) + 10;
+        const losses = Math.floor(Math.random() * 25) + 5;
+        const gamesPlayed = wins + losses;
+        const avgPointsFor = 105 + Math.random() * 15;
+        const avgPointsAgainst = 105 + Math.random() * 15;
+        const pointsFor = avgPointsFor * gamesPlayed;
+        const pointsAgainst = avgPointsAgainst * gamesPlayed;
 
-      conferences.forEach(conf => {
-        standings[conf] = {};
-        divisions[conf].forEach(div => {
-          standings[conf][div] = teamNames[conf][div].map((name, idx) => {
-            const wins = Math.floor(Math.random() * 30) + 20;
-            const losses = 82 - wins;
-            const gamesPlayed = wins + losses;
-            const pointsFor = (wins * 110 + losses * 105) * (0.95 + Math.random() * 0.1);
-            const pointsAgainst = pointsFor - (Math.random() * 20 - 10) * gamesPlayed;
-
-            return {
-              rank: idx + 1,
-              divisionRank: idx + 1,
-              team: { key: name.toUpperCase(), name, city: name },
-              conference: conf,
-              division: div,
-              record: {
-                wins,
-                losses,
-                winPercentage: wins / gamesPlayed,
-                gamesBack: idx * 2
-              },
-              homeRecord: `${Math.floor(wins * 0.6)}-${Math.floor(losses * 0.4)}`,
-              awayRecord: `${Math.floor(wins * 0.4)}-${Math.floor(losses * 0.6)}`,
-              conferenceRecord: `${Math.floor(wins * 0.5)}-${Math.floor(losses * 0.5)}`,
-              divisionRecord: `${Math.floor(wins * 0.3)}-${Math.floor(losses * 0.3)}`,
-              lastTenRecord: `${Math.floor(Math.random() * 6) + 4}-${10 - (Math.floor(Math.random() * 6) + 4)}`,
-              streak: {
-                type: Math.random() > 0.5 ? 'W' : 'L',
-                count: Math.floor(Math.random() * 5) + 1
-              },
-              pointsFor,
-              pointsAgainst,
-              netRating: ((pointsFor - pointsAgainst) / gamesPlayed).toFixed(1),
-              pythag: calculatePythagorean(pointsFor, pointsAgainst, gamesPlayed, wins)
-            };
-          });
-        });
+        return {
+          rank: idx % 15 + 1,
+          team: {
+            id: team.name.toLowerCase().replace(/\s+/g, '-'),
+            name: team.name,
+            shortName: team.name.split(' ').pop(),
+            abbreviation: team.name.substring(0, 3).toUpperCase()
+          },
+          conference: team.conf,
+          division: team.div,
+          record: {
+            wins,
+            losses,
+            winPercentage: wins / gamesPlayed,
+            gamesBack: idx % 15 * 1.5
+          },
+          homeRecord: `${Math.floor(wins * 0.6)}-${Math.floor(losses * 0.4)}`,
+          awayRecord: `${Math.floor(wins * 0.4)}-${Math.floor(losses * 0.6)}`,
+          conferenceRecord: `${Math.floor(wins * 0.6)}-${Math.floor(losses * 0.6)}`,
+          divisionRecord: `${Math.floor(wins * 0.25)}-${Math.floor(losses * 0.25)}`,
+          lastTenRecord: `${Math.floor(Math.random() * 6) + 4}-${10 - (Math.floor(Math.random() * 6) + 4)}`,
+          streak: `${Math.random() > 0.5 ? 'W' : 'L'}${Math.floor(Math.random() * 5) + 1}`,
+          pointsFor,
+          pointsAgainst,
+          avgPointsFor,
+          avgPointsAgainst,
+          netRating: (avgPointsFor - avgPointsAgainst).toFixed(1),
+          pythag: calculatePythagorean(pointsFor, pointsAgainst, gamesPlayed, wins)
+        };
       });
 
-      return standings;
+      // Sort by wins
+      return allTeams.sort((a, b) => b.record.wins - a.record.wins);
     }
   </script>
 </body>
