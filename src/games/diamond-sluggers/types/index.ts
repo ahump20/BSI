@@ -2,6 +2,8 @@
  * Diamond Sluggers - Type Definitions
  */
 
+import type Phaser from 'phaser';
+
 // Player/Character types
 export interface PlayerStats {
   power: number; // 1-10, affects exit velocity

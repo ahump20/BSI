@@ -4,7 +4,7 @@
 
 import Phaser from 'phaser';
 import { API_ENDPOINTS } from '../config/game.config';
-import type { MatchStats, MatchResult } from '../types';
+import type { MatchStats } from '../types';
 
 interface ResultsSceneData {
   result: 'win' | 'loss' | 'tie';
@@ -244,7 +244,7 @@ export class ResultsScene extends Phaser.Scene {
     }
   }
 
-  private showUnlockNotification(characters: any[], stadiums: any[]): void {
+  private showUnlockNotification(_characters: any[], _stadiums: any[]): void {
     const { width, height } = this.cameras.main;
 
     const notification = this.add.container(width / 2, height / 2 + 150);

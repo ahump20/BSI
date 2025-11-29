@@ -16,17 +16,17 @@
  * Data: ESPN + Perfect Game + MLB Pipeline + Proprietary Models
  */
 
+import { ok, err, rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 import {
-  ok,
-  err,
-  cache,
-  fetchWithTimeout,
-  rateLimit,
-  rateLimitError,
-  corsHeaders,
-} from '../_utils.js';
-
-const CACHE_TTL = 300; // 5 minutes
+  fetchLatestGameData,
+  fetchHistoricalStats,
+  fetchScoutNotes,
+  runVelocityModel,
+  runIntangiblesModel,
+  runScoutNotesNLP,
+  runChampionEnigmaEngine,
+  runMetaLearner,
+} from './scouting.js';
 
 /**
  * Main handler - Professional Edition

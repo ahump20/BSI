@@ -532,3 +532,15 @@ function average(arr) {
   if (!arr || arr.length === 0) return 0;
   return arr.reduce((a, b) => a + b, 0) / arr.length;
 }
+
+// Export functions for use by scouting-professional.js
+export {
+  fetchLatestGameData,
+  fetchHistoricalStats,
+  fetchScoutNotes,
+  runVelocityModel,
+  runIntangiblesModel,
+  runScoutNotesNLP,
+  runChampionEnigmaEngine,
+  runMetaLearner,
+};

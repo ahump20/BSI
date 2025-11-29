@@ -4,17 +4,7 @@
 
 import Phaser from 'phaser';
 import { GAME_CONSTANTS } from '../config/game.config';
-import type {
-  GameState,
-  Count,
-  Inning,
-  Score,
-  Runner,
-  Pitch,
-  PitchType,
-  HitResult,
-  BatSwing,
-} from '../types';
+import type { GameState, Pitch, PitchType, HitResult, BatSwing } from '../types';
 
 interface GameSceneData {
   stadium: string;
@@ -56,7 +46,7 @@ export class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
   }
 
-  init(data: GameSceneData): void {
+  init(_data: GameSceneData): void {
     // Initialize game state
     this.gameState = {
       phase: 'pregame',
@@ -74,8 +64,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    const { width, height } = this.cameras.main;
-
     // Fade in
     this.cameras.main.fadeIn(300);
 
@@ -161,7 +149,7 @@ export class GameScene extends Phaser.Scene {
     );
 
     // Pitcher's mound
-    const mound = this.add.circle(
+    this.add.circle(
       GAME_CONSTANTS.FIELD.PITCHERS_MOUND.x,
       GAME_CONSTANTS.FIELD.PITCHERS_MOUND.y,
       40,
@@ -174,7 +162,7 @@ export class GameScene extends Phaser.Scene {
     this.createBase(GAME_CONSTANTS.FIELD.THIRD_BASE.x, GAME_CONSTANTS.FIELD.THIRD_BASE.y);
 
     // Home plate
-    const homePlate = this.add.polygon(
+    this.add.polygon(
       GAME_CONSTANTS.FIELD.HOME_PLATE.x,
       GAME_CONSTANTS.FIELD.HOME_PLATE.y,
       [0, -20, 15, -10, 15, 10, -15, 10, -15, -10],
@@ -210,7 +198,7 @@ export class GameScene extends Phaser.Scene {
   // ============================================
 
   private createHUD(): void {
-    const { width, height } = this.cameras.main;
+    const { width } = this.cameras.main;
 
     // Scoreboard background
     const scoreBg = this.add.graphics();
@@ -496,7 +484,7 @@ export class GameScene extends Phaser.Scene {
     return { type, speed, movement, location, isStrike };
   }
 
-  private updatePitchPhysics(delta: number): void {
+  private updatePitchPhysics(_delta: number): void {
     if (!this.currentPitch || !this.ball) return;
 
     const elapsed = this.time.now - this.pitchStartTime;
@@ -522,7 +510,7 @@ export class GameScene extends Phaser.Scene {
     this.ball.setScale(scale);
   }
 
-  private performSwing(pointer?: Phaser.Input.Pointer): void {
+  private performSwing(_pointer?: Phaser.Input.Pointer): void {
     this.canSwing = false;
 
     // Calculate swing timing
@@ -616,7 +604,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private processSwing(swing: BatSwing, timing: string): void {
+  private processSwing(swing: BatSwing, _timing: string): void {
     // Determine if contact was made
     const hitChance = swing.contact;
     const madeContact = Phaser.Math.RND.frac() < hitChance;
