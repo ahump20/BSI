@@ -106,48 +106,44 @@ export async function onRequest(context) {
  * Fetch game state
  */
 async function fetchGameState(env, gameId, sport) {
-  try {
-    const game = await env.DB.prepare(
-      `
-      SELECT
-        game_id, sport, home_team_id, away_team_id,
-        period, time_remaining, home_score, away_score,
-        possession_team, down, distance, yard_line,
-        inning, is_top_half, outs, runners_on,
-        quarter, status
-      FROM historical_games
-      WHERE game_id = ? AND sport = ?
+  const game = await env.DB.prepare(
     `
-    )
-      .bind(gameId, sport)
-      .first();
+    SELECT
+      game_id, sport, home_team_id, away_team_id,
+      period, time_remaining, home_score, away_score,
+      possession_team, down, distance, yard_line,
+      inning, is_top_half, outs, runners_on,
+      quarter, status
+    FROM historical_games
+    WHERE game_id = ? AND sport = ?
+  `
+  )
+    .bind(gameId, sport)
+    .first();
 
-    if (!game) {
-      throw new Error(`Game ${gameId} not found`);
-    }
-
-    return {
-      sport: game.sport,
-      homeTeam: game.home_team_id,
-      awayTeam: game.away_team_id,
-      period: game.period || game.quarter || game.inning || 1,
-      timeRemaining: game.time_remaining,
-      homeScore: game.home_score || 0,
-      awayScore: game.away_score || 0,
-      possession: game.possession_team,
-      down: game.down,
-      distance: game.distance,
-      yardLine: game.yard_line,
-      inning: game.inning,
-      isTopHalf: game.is_top_half,
-      outs: game.outs,
-      runnersOn: game.runners_on ? JSON.parse(game.runners_on) : [],
-      quarter: game.quarter,
-      status: game.status,
-    };
-  } catch (error) {
-    throw error;
+  if (!game) {
+    throw new Error(`Game ${gameId} not found`);
   }
+
+  return {
+    sport: game.sport,
+    homeTeam: game.home_team_id,
+    awayTeam: game.away_team_id,
+    period: game.period || game.quarter || game.inning || 1,
+    timeRemaining: game.time_remaining,
+    homeScore: game.home_score || 0,
+    awayScore: game.away_score || 0,
+    possession: game.possession_team,
+    down: game.down,
+    distance: game.distance,
+    yardLine: game.yard_line,
+    inning: game.inning,
+    isTopHalf: game.is_top_half,
+    outs: game.outs,
+    runnersOn: game.runners_on ? JSON.parse(game.runners_on) : [],
+    quarter: game.quarter,
+    status: game.status,
+  };
 }
 
 /**

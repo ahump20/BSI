@@ -114,45 +114,41 @@ export async function onRequest(context) {
  * Fetch injury details from database
  */
 async function fetchInjuryDetails(env, playerId, sport) {
-  try {
-    const injury = await env.DB.prepare(
-      `
-      SELECT
-        ci.player_id,
-        ci.player_name,
-        ci.team_id,
-        ci.position,
-        ci.sport,
-        ci.injury_type,
-        ci.severity,
-        ci.injury_date,
-        ci.expected_return,
-        ci.status
-      FROM current_injuries ci
-      WHERE ci.player_id = ? AND ci.sport = ?
-      ORDER BY ci.injury_date DESC
-      LIMIT 1
+  const injury = await env.DB.prepare(
     `
-    )
-      .bind(playerId, sport)
-      .first();
+    SELECT
+      ci.player_id,
+      ci.player_name,
+      ci.team_id,
+      ci.position,
+      ci.sport,
+      ci.injury_type,
+      ci.severity,
+      ci.injury_date,
+      ci.expected_return,
+      ci.status
+    FROM current_injuries ci
+    WHERE ci.player_id = ? AND ci.sport = ?
+    ORDER BY ci.injury_date DESC
+    LIMIT 1
+  `
+  )
+    .bind(playerId, sport)
+    .first();
 
-    if (!injury) {
-      throw new Error(`No injury found for player ${playerId}`);
-    }
-
-    return {
-      playerId: injury.player_id,
-      playerName: injury.player_name,
-      teamId: injury.team_id,
-      sport: injury.sport,
-      position: injury.position,
-      severity: injury.severity,
-      expectedReturn: injury.expected_return,
-    };
-  } catch (error) {
-    throw error;
+  if (!injury) {
+    throw new Error(`No injury found for player ${playerId}`);
   }
+
+  return {
+    playerId: injury.player_id,
+    playerName: injury.player_name,
+    teamId: injury.team_id,
+    sport: injury.sport,
+    position: injury.position,
+    severity: injury.severity,
+    expectedReturn: injury.expected_return,
+  };
 }
 
 /**

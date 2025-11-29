@@ -40,7 +40,7 @@ export async function fetchGames(date, filters = {}) {
  * @param {string} division - Division level (D1, D2, D3)
  * @returns {Promise<Array>} Array of team standings
  */
-export async function fetchStandings(conference, division = 'D1') {
+export async function fetchStandings(conference, _division = 'D1') {
   try {
     // Try ESPN API
     const espnStandings = await fetchESPNStandings(conference);
@@ -61,20 +61,16 @@ export async function fetchStandings(conference, division = 'D1') {
  * @returns {Promise<object>} Box score object with full stats
  */
 export async function fetchBoxScore(gameId) {
-  try {
-    const response = await fetch(`${ESPN_BASE}/summary?event=${gameId}`, {
-      headers: { 'User-Agent': USER_AGENT },
-    });
+  const response = await fetch(`${ESPN_BASE}/summary?event=${gameId}`, {
+    headers: { 'User-Agent': USER_AGENT },
+  });
 
-    if (!response.ok) {
-      throw new Error(`ESPN API returned ${response.status}`);
-    }
-
-    const data = await response.json();
-    return normalizeBoxScore(data);
-  } catch (error) {
-    throw error;
+  if (!response.ok) {
+    throw new Error(`ESPN API returned ${response.status}`);
   }
+
+  const data = await response.json();
+  return normalizeBoxScore(data);
 }
 
 /**
@@ -646,15 +642,11 @@ function getFallbackTeams(filters) {
 // PLAYERS API FUNCTIONS
 // ============================================================================
 
-async function fetchESPNPlayers(filters = {}) {
-  try {
-    // ESPN doesn't have a comprehensive players endpoint for college baseball
-    // We'll need to aggregate from team rosters
-    // For now, return fallback data with note about off-season
-    return null;
-  } catch (error) {
-    return null;
-  }
+async function fetchESPNPlayers(_filters = {}) {
+  // ESPN doesn't have a comprehensive players endpoint for college baseball
+  // We'll need to aggregate from team rosters
+  // For now, return null - caller should use getFallbackPlayers() instead
+  return null;
 }
 
 function getFallbackPlayers(filters) {

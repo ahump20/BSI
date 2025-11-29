@@ -1,7 +1,10 @@
 /**
  * Seasonal Routing Middleware
  *
- * Automatically redirects root path (/) to the appropriate sport based on current season:
+ * Currently DISABLED - letting homepage show by default.
+ * User can manually navigate to sport pages via navigation.
+ *
+ * When enabled, automatically redirects root path (/) to the appropriate sport based on current season:
  * - Basketball: January 1 - March 31 (NCAA basketball / March Madness)
  * - Baseball: April 1 - July 31 (college baseball season)
  * - Football: August 1 - December 31 (college football season)
@@ -14,12 +17,20 @@
  */
 
 export async function onRequest(context) {
-  const { request, next, env } = context;
-  const url = new URL(request.url);
+  const { next } = context;
 
   // DISABLED: Seasonal routing - let homepage show by default
-  // User can manually navigate to sport pages via navigation
+  // To re-enable, uncomment the seasonal routing logic below
   return next();
+}
+
+/*
+ * SEASONAL ROUTING LOGIC (currently disabled)
+ * Uncomment and replace the function above to re-enable
+ *
+export async function onRequest(context) {
+  const { request, next } = context;
+  const url = new URL(request.url);
 
   // Only apply routing logic to root path
   if (url.pathname !== '/') {
@@ -114,10 +125,6 @@ export async function onRequest(context) {
   return next();
 }
 
-/**
- * Get current date in America/Chicago timezone
- * Uses Intl.DateTimeFormat to convert UTC to Central Time
- */
 function getCurrentDateInCentralTime() {
   const now = new Date();
 
@@ -140,3 +147,4 @@ function getCurrentDateInCentralTime() {
 
   return new Date(year, month - 1, day);
 }
+*/

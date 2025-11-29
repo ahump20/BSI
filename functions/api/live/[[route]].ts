@@ -645,7 +645,7 @@ function mapPayloadToFrame(
   const inning = toPositiveInteger(payload.state?.inning, 1);
   const half = normaliseHalf(payload.state?.half);
   const outs = toPositiveInteger(payload.state?.outs, 0);
-  const bases = normaliseBaseState(payload.state?.bases);
+  const bases = normalizeBaseState(payload.state?.bases);
 
   const pitchCount = payload.event?.pitchCount || {};
   const count = {

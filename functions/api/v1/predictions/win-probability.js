@@ -78,82 +78,78 @@ export async function onRequest(context) {
  * Fetch current game state from database
  */
 async function fetchGameState(env, gameId, sport) {
-  try {
-    // Query current game state from D1 database
-    const game = await env.DB.prepare(
-      `
-      SELECT
-        game_id,
-        sport,
-        home_team_id,
-        away_team_id,
-        period,
-        time_remaining,
-        home_score,
-        away_score,
-        possession_team,
-        down,
-        distance,
-        yard_line,
-        inning,
-        is_top_half,
-        outs,
-        runners_on,
-        quarter,
-        status
-      FROM historical_games
-      WHERE game_id = ? AND sport = ?
+  // Query current game state from D1 database
+  const game = await env.DB.prepare(
     `
-    )
-      .bind(gameId, sport)
-      .first();
+    SELECT
+      game_id,
+      sport,
+      home_team_id,
+      away_team_id,
+      period,
+      time_remaining,
+      home_score,
+      away_score,
+      possession_team,
+      down,
+      distance,
+      yard_line,
+      inning,
+      is_top_half,
+      outs,
+      runners_on,
+      quarter,
+      status
+    FROM historical_games
+    WHERE game_id = ? AND sport = ?
+  `
+  )
+    .bind(gameId, sport)
+    .first();
 
-    if (!game) {
-      throw new Error(`Game ${gameId} not found`);
-    }
-
-    // Map database fields to game state format
-    const gameState = {
-      sport: game.sport,
-      homeTeam: game.home_team_id,
-      awayTeam: game.away_team_id,
-      homeScore: game.home_score || 0,
-      awayScore: game.away_score || 0,
-      status: game.status,
-    };
-
-    // Sport-specific fields
-    switch (sport.toUpperCase()) {
-      case 'NFL':
-      case 'NCAA_FOOTBALL':
-        gameState.quarter = game.quarter || game.period || 1;
-        gameState.timeRemaining = game.time_remaining || 900;
-        gameState.possession = game.possession_team;
-        gameState.down = game.down;
-        gameState.distance = game.distance;
-        gameState.yardLine = game.yard_line;
-        break;
-
-      case 'MLB':
-      case 'NCAA_BASEBALL':
-        gameState.inning = game.inning || game.period || 1;
-        gameState.isTopHalf = game.is_top_half !== undefined ? game.is_top_half : true;
-        gameState.outs = game.outs || 0;
-        gameState.runnersOn = game.runners_on ? JSON.parse(game.runners_on) : [];
-        break;
-
-      case 'NBA':
-      case 'NCAA_BASKETBALL':
-        gameState.quarter = game.quarter || game.period || 1;
-        gameState.timeRemaining = game.time_remaining || 600;
-        gameState.possession = game.possession_team;
-        break;
-    }
-
-    return gameState;
-  } catch (error) {
-    throw error;
+  if (!game) {
+    throw new Error(`Game ${gameId} not found`);
   }
+
+  // Map database fields to game state format
+  const gameState = {
+    sport: game.sport,
+    homeTeam: game.home_team_id,
+    awayTeam: game.away_team_id,
+    homeScore: game.home_score || 0,
+    awayScore: game.away_score || 0,
+    status: game.status,
+  };
+
+  // Sport-specific fields
+  switch (sport.toUpperCase()) {
+    case 'NFL':
+    case 'NCAA_FOOTBALL':
+      gameState.quarter = game.quarter || game.period || 1;
+      gameState.timeRemaining = game.time_remaining || 900;
+      gameState.possession = game.possession_team;
+      gameState.down = game.down;
+      gameState.distance = game.distance;
+      gameState.yardLine = game.yard_line;
+      break;
+
+    case 'MLB':
+    case 'NCAA_BASEBALL':
+      gameState.inning = game.inning || game.period || 1;
+      gameState.isTopHalf = game.is_top_half !== undefined ? game.is_top_half : true;
+      gameState.outs = game.outs || 0;
+      gameState.runnersOn = game.runners_on ? JSON.parse(game.runners_on) : [];
+      break;
+
+    case 'NBA':
+    case 'NCAA_BASKETBALL':
+      gameState.quarter = game.quarter || game.period || 1;
+      gameState.timeRemaining = game.time_remaining || 600;
+      gameState.possession = game.possession_team;
+      break;
+  }
+
+  return gameState;
 }
 
 /**
