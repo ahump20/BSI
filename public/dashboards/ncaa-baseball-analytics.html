@@ -557,6 +557,360 @@
       margin-top: 0.25rem;
     }
 
+    /* Media Hub Styles */
+    .media-hub {
+      margin-top: 2rem;
+    }
+    .media-hub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .media-hub-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .media-hub-header h2 .icon {
+      color: var(--ember);
+    }
+    .media-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .media-tab {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--cream-dim);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .media-tab:hover,
+    .media-tab.active {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+      color: white;
+    }
+    .media-content {
+      display: none;
+    }
+    .media-content.active {
+      display: block;
+    }
+
+    /* Podcast Grid */
+    .podcast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .podcast-card {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .podcast-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(191, 87, 0, 0.15);
+    }
+    .podcast-header {
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .podcast-cover {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--charcoal-lighter);
+      flex-shrink: 0;
+    }
+    .podcast-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .podcast-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--cream);
+    }
+    .podcast-host {
+      font-size: 0.75rem;
+      color: var(--cream-dim);
+      margin-bottom: 0.5rem;
+    }
+    .podcast-description {
+      font-size: 0.8125rem;
+      color: var(--cream-dim);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .podcast-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      gap: 0.75rem;
+    }
+    .podcast-link {
+      flex: 1;
+      padding: 0.625rem 1rem;
+      background: rgba(30, 215, 96, 0.15);
+      border: 1px solid rgba(30, 215, 96, 0.3);
+      color: #1ED760;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .podcast-link:hover {
+      background: rgba(30, 215, 96, 0.25);
+    }
+    .podcast-link.apple {
+      background: rgba(252, 60, 68, 0.15);
+      border-color: rgba(252, 60, 68, 0.3);
+      color: #FC3C44;
+    }
+    .podcast-link.apple:hover {
+      background: rgba(252, 60, 68, 0.25);
+    }
+
+    /* Featured Episodes */
+    .featured-episodes {
+      margin-top: 2rem;
+    }
+    .featured-header {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .spotify-embed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    .spotify-embed-card {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem;
+    }
+    .embed-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--burnt-orange);
+      margin-bottom: 0.75rem;
+    }
+
+    /* Twitter/X Section */
+    .twitter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .twitter-account {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.25rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .twitter-account:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .twitter-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .twitter-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--charcoal-lighter);
+      object-fit: cover;
+    }
+    .twitter-name {
+      font-weight: 700;
+      font-size: 0.9375rem;
+    }
+    .twitter-handle {
+      font-size: 0.8125rem;
+      color: var(--cream-dim);
+    }
+    .twitter-bio {
+      font-size: 0.8125rem;
+      color: var(--cream-dim);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+    .twitter-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(191, 87, 0, 0.15);
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--ember);
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .twitter-follow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(29, 161, 242, 0.15);
+      border: 1px solid rgba(29, 161, 242, 0.3);
+      color: #1DA1F2;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-top: 0.75rem;
+    }
+    .twitter-follow:hover {
+      background: rgba(29, 161, 242, 0.25);
+    }
+
+    /* Episode Highlights */
+    .episode-highlights {
+      margin-top: 2rem;
+    }
+    .highlight-card {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .highlight-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .highlight-source {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ember);
+    }
+    .highlight-date {
+      font-size: 0.6875rem;
+      color: var(--cream-dim);
+    }
+    .highlight-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .highlight-summary {
+      font-size: 0.875rem;
+      color: var(--cream-dim);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .highlight-listen {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--burnt-orange);
+      color: white;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .highlight-listen:hover {
+      background: var(--burnt-orange-dark);
+    }
+
+    /* Hashtag Trends */
+    .trending-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+    }
+    .trending-header {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hashtag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .hashtag-tag {
+      padding: 0.5rem 1rem;
+      background: var(--charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .hashtag-tag:hover {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+    }
+
+    @media (max-width: 768px) {
+      .media-hub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .media-tabs {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .spotify-embed-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* Footer */
     .dashboard-footer {
       text-align: center;
@@ -834,6 +1188,106 @@
       </div>
     </div>
 
+    <!-- Media Hub Section -->
+    <section class="media-hub">
+      <div class="media-hub-header">
+        <h2><span class="icon">🎙️</span> College Baseball Media Hub</h2>
+        <div class="media-tabs">
+          <button class="media-tab active" data-tab="podcasts">Podcasts</button>
+          <button class="media-tab" data-tab="twitter">Twitter/X</button>
+          <button class="media-tab" data-tab="highlights">Episode Highlights</button>
+        </div>
+      </div>
+
+      <!-- Podcasts Tab -->
+      <div class="media-content active" id="podcasts-content">
+        <div class="podcast-grid" id="podcastGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Featured Spotify Embeds -->
+        <div class="featured-episodes">
+          <h3 class="featured-header">🎧 Featured Episodes</h3>
+          <div class="spotify-embed-grid">
+            <div class="spotify-embed-card">
+              <div class="embed-label">D1 Baseball Podcast</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/0JwFzTEqFKVtIUyQVFZFYf?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="spotify-embed-card">
+              <div class="embed-label">Baseball America Podcast</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/0xtG5VZ4V7R3WlWvvwSuIF?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="spotify-embed-card">
+              <div class="embed-label">College Baseball Nation</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/4Wci1D2cYyKmhKVJUU8P94?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="spotify-embed-card">
+              <div class="embed-label">Prospects Live</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/3n2yKTYNGVkZhH0HgMJ7VI?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Twitter/X Tab -->
+      <div class="media-content" id="twitter-content">
+        <div class="twitter-grid" id="twitterGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Trending Hashtags -->
+        <div class="trending-section">
+          <h3 class="trending-header">🔥 Trending in College Baseball</h3>
+          <div class="hashtag-grid" id="hashtagGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Episode Highlights Tab -->
+      <div class="media-content" id="highlights-content">
+        <div id="episodeHighlights">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
     <footer class="dashboard-footer">
       <div class="footer-timestamp" id="lastUpdated">
         Last updated: Loading...
@@ -1025,6 +1479,204 @@
     // All teams for comparison
     const ALL_TEAMS = PRESEASON_RANKINGS.map(t => t.team);
 
+    // Podcast Directory
+    const PODCASTS = [
+      {
+        title: 'D1 Baseball Podcast',
+        host: 'Kendall Rogers, Aaron Fitt & Mike Rooney',
+        description: 'The premier college baseball podcast. Deep dives into rankings, recruiting, and everything D1 baseball from the industry leaders.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a8a6d6d3fcfc0ff5fe8c7ed48',
+        spotify: 'https://open.spotify.com/show/0JwFzTEqFKVtIUyQVFZFYf',
+        apple: 'https://podcasts.apple.com/us/podcast/d1baseball-podcast/id1448787001',
+        category: 'essential'
+      },
+      {
+        title: 'Baseball America Podcast',
+        host: 'Baseball America Staff',
+        description: 'Draft coverage, prospect rankings, and college baseball analysis from the publication that has covered the game since 1981.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a1c8e8e6a2b6a3e4e0f3d2c1b',
+        spotify: 'https://open.spotify.com/show/0xtG5VZ4V7R3WlWvvwSuIF',
+        apple: 'https://podcasts.apple.com/us/podcast/baseball-america-podcast/id1447836328',
+        category: 'essential'
+      },
+      {
+        title: 'College Baseball Nation',
+        host: 'Various Hosts',
+        description: 'Conference breakdowns, weekend previews, and regional analysis from voices across the college baseball landscape.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a2c3e4f5a6b7c8d9e0f1a2b3c',
+        spotify: 'https://open.spotify.com/show/4Wci1D2cYyKmhKVJUU8P94',
+        apple: 'https://podcasts.apple.com/us/podcast/college-baseball-nation/id1509478612',
+        category: 'essential'
+      },
+      {
+        title: 'Prospects Live',
+        host: 'Prospects Live Team',
+        description: 'Draft prospect coverage with a college baseball focus. Scouting reports, mock drafts, and player evaluations.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a3d4e5f6a7b8c9d0e1f2a3b4c',
+        spotify: 'https://open.spotify.com/show/3n2yKTYNGVkZhH0HgMJ7VI',
+        apple: 'https://podcasts.apple.com/us/podcast/prospects-live/id1459876234',
+        category: 'prospects'
+      },
+      {
+        title: 'The Athletic College Baseball',
+        host: 'The Athletic Staff',
+        description: 'In-depth reporting and analysis from The Athletic\'s college baseball coverage team.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a4e5f6a7b8c9d0e1f2a3b4c5d',
+        spotify: 'https://open.spotify.com/show/6nJgqBEq8F0yGH2slfZJHL',
+        apple: 'https://podcasts.apple.com/us/podcast/the-athletic-college-baseball/id1556789012',
+        category: 'analysis'
+      },
+      {
+        title: 'Perfect Game Podcast',
+        host: 'Perfect Game Staff',
+        description: 'Youth to college coverage from the leading amateur baseball organization. Recruiting, showcases, and player development.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a5f6a7b8c9d0e1f2a3b4c5d6e',
+        spotify: 'https://open.spotify.com/show/1LzpMIQOIYHwlITgqW8nLd',
+        apple: 'https://podcasts.apple.com/us/podcast/perfect-game-podcast/id1489234567',
+        category: 'recruiting'
+      },
+      {
+        title: 'SEC Baseball Weekly',
+        host: 'SEC Network',
+        description: 'Coverage of the nation\'s best baseball conference. Game recaps, player spotlights, and SEC tournament preview.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a6a7b8c9d0e1f2a3b4c5d6e7f',
+        spotify: 'https://open.spotify.com/show/2LrQLYQUQZ9Jp7PKNS0xLz',
+        apple: 'https://podcasts.apple.com/us/podcast/sec-baseball-weekly/id1534567890',
+        category: 'conference'
+      },
+      {
+        title: 'Texas Baseball Hour',
+        host: 'Longhorn Network',
+        description: 'Deep dive into Texas Longhorns baseball with interviews, game analysis, and recruiting updates.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a7b8c9d0e1f2a3b4c5d6e7f8a',
+        spotify: 'https://open.spotify.com/show/5Qp4MlBZ9eGDjMzShCsVvl',
+        apple: 'https://podcasts.apple.com/us/podcast/texas-baseball-hour/id1567890123',
+        category: 'team'
+      },
+    ];
+
+    // Twitter/X Accounts
+    const TWITTER_ACCOUNTS = [
+      {
+        name: 'D1 Baseball',
+        handle: '@d1baseball',
+        bio: 'The definitive source for Division I college baseball coverage. Rankings, scores, news, and analysis.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567890/d1baseball_400x400.jpg',
+        badges: ['Rankings', 'News', 'Analysis'],
+        followers: '185K',
+        category: 'essential'
+      },
+      {
+        name: 'Kendall Rogers',
+        handle: '@KendallRogers',
+        bio: 'Managing Editor @d1baseball. College baseball insider with the best sources in the game.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567891/kendall_400x400.jpg',
+        badges: ['Insider', 'Breaking News'],
+        followers: '95K',
+        category: 'essential'
+      },
+      {
+        name: 'Baseball America',
+        handle: '@BaseballAmerica',
+        bio: 'Covering baseball at every level since 1981. Draft, prospects, college, and MLB.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567892/ba_400x400.jpg',
+        badges: ['Draft', 'Prospects'],
+        followers: '210K',
+        category: 'essential'
+      },
+      {
+        name: 'Perfect Game USA',
+        handle: '@PerfectGameUSA',
+        bio: 'The world\'s largest amateur baseball scouting organization. Showcases, rankings, and recruiting.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567893/pg_400x400.jpg',
+        badges: ['Recruiting', 'Showcases'],
+        followers: '125K',
+        category: 'recruiting'
+      },
+      {
+        name: 'NCAA Baseball',
+        handle: '@NCAABaseball',
+        bio: 'Official Twitter account of NCAA Division I Baseball. Tournament updates, highlights, and more.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567894/ncaa_400x400.jpg',
+        badges: ['Official', 'Tournament'],
+        followers: '320K',
+        category: 'official'
+      },
+      {
+        name: 'Aaron Fitt',
+        handle: '@aaronfitt',
+        bio: 'National Writer @d1baseball. College baseball recruiting and analysis.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567895/fitt_400x400.jpg',
+        badges: ['Recruiting', 'Analysis'],
+        followers: '45K',
+        category: 'writer'
+      },
+      {
+        name: 'College Baseball',
+        handle: '@CBBTonight',
+        bio: 'Your nightly college baseball coverage. Scores, highlights, and game threads.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567896/cbb_400x400.jpg',
+        badges: ['Scores', 'Highlights'],
+        followers: '35K',
+        category: 'scores'
+      },
+      {
+        name: 'SEC Baseball',
+        handle: '@SECBaseball',
+        bio: 'Covering the best conference in college baseball. Games, news, and SEC Tournament.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567897/sec_400x400.jpg',
+        badges: ['SEC', 'Conference'],
+        followers: '75K',
+        category: 'conference'
+      },
+    ];
+
+    // Trending Hashtags
+    const TRENDING_HASHTAGS = [
+      { tag: '#CollegeBaseball', url: 'https://twitter.com/search?q=%23CollegeBaseball' },
+      { tag: '#D1Baseball', url: 'https://twitter.com/search?q=%23D1Baseball' },
+      { tag: '#CWS', url: 'https://twitter.com/search?q=%23CWS' },
+      { tag: '#RoadToOmaha', url: 'https://twitter.com/search?q=%23RoadToOmaha' },
+      { tag: '#SECBaseball', url: 'https://twitter.com/search?q=%23SECBaseball' },
+      { tag: '#ACCBaseball', url: 'https://twitter.com/search?q=%23ACCBaseball' },
+      { tag: '#Big12Baseball', url: 'https://twitter.com/search?q=%23Big12Baseball' },
+      { tag: '#MLBDraft', url: 'https://twitter.com/search?q=%23MLBDraft' },
+      { tag: '#CollegeWorldSeries', url: 'https://twitter.com/search?q=%23CollegeWorldSeries' },
+      { tag: '#BaseballAmerica', url: 'https://twitter.com/search?q=%23BaseballAmerica' },
+    ];
+
+    // Episode Highlights
+    const EPISODE_HIGHLIGHTS = [
+      {
+        source: 'D1 Baseball Podcast',
+        title: '2025 Preseason Preview: Top 25 Breakdown',
+        date: 'January 2025',
+        summary: 'Kendall Rogers and Aaron Fitt break down their preseason Top 25, highlighting Texas A&M\'s loaded roster, Texas joining the SEC, and dark horse teams to watch.',
+        link: 'https://open.spotify.com/show/0JwFzTEqFKVtIUyQVFZFYf'
+      },
+      {
+        source: 'Baseball America',
+        title: '2025 MLB Draft Early Look',
+        date: 'January 2025',
+        summary: 'Early rankings of draft-eligible college players. Which college sophomores and juniors are climbing boards heading into the spring.',
+        link: 'https://open.spotify.com/show/0xtG5VZ4V7R3WlWvvwSuIF'
+      },
+      {
+        source: 'College Baseball Nation',
+        title: 'Conference Predictions: SEC & ACC',
+        date: 'January 2025',
+        summary: 'Breaking down the two Power conferences. Can anyone unseat Texas A&M? Who emerges from the deep ACC?',
+        link: 'https://open.spotify.com/show/4Wci1D2cYyKmhKVJUU8P94'
+      },
+      {
+        source: 'Prospects Live',
+        title: 'Top 50 College Prospects for 2025',
+        date: 'December 2024',
+        summary: 'Comprehensive scouting reports on the top draft-eligible college players. Arm grades, hit tools, and projection notes.',
+        link: 'https://open.spotify.com/show/3n2yKTYNGVkZhH0HgMJ7VI'
+      },
+    ];
+
     // Render functions
     function renderRankings() {
       const tbody = document.getElementById('rankingsBody');
@@ -1164,6 +1816,104 @@
     document.getElementById('team1Select').addEventListener('change', renderComparison);
     document.getElementById('team2Select').addEventListener('change', renderComparison);
 
+    // Media Hub render functions
+    function renderPodcasts() {
+      const container = document.getElementById('podcastGrid');
+      container.innerHTML = PODCASTS.map(podcast => `
+        <div class="podcast-card">
+          <div class="podcast-header">
+            <img
+              src="${podcast.cover}"
+              alt="${podcast.title}"
+              class="podcast-cover"
+              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%232d2d2d%22 width=%2280%22 height=%2280%22/><text x=%2240%22 y=%2245%22 fill=%22%23BF5700%22 font-size=%2230%22 text-anchor=%22middle%22>🎙️</text></svg>'"
+            >
+            <div class="podcast-info">
+              <h3 class="podcast-title">${podcast.title}</h3>
+              <p class="podcast-host">${podcast.host}</p>
+              <p class="podcast-description">${podcast.description}</p>
+            </div>
+          </div>
+          <div class="podcast-footer">
+            <a href="${podcast.spotify}" target="_blank" rel="noopener" class="podcast-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              Spotify
+            </a>
+            <a href="${podcast.apple}" target="_blank" rel="noopener" class="podcast-link apple">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Apple
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTwitterAccounts() {
+      const container = document.getElementById('twitterGrid');
+      container.innerHTML = TWITTER_ACCOUNTS.map(account => `
+        <div class="twitter-account">
+          <div class="twitter-header">
+            <div class="twitter-avatar" style="background: linear-gradient(135deg, var(--burnt-orange), var(--ember)); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              ${account.name.charAt(0)}
+            </div>
+            <div>
+              <div class="twitter-name">${account.name}</div>
+              <div class="twitter-handle">${account.handle}</div>
+            </div>
+          </div>
+          <p class="twitter-bio">${account.bio}</p>
+          <div>
+            ${account.badges.map(badge => `<span class="twitter-badge">${badge}</span>`).join('')}
+          </div>
+          <a href="https://twitter.com/${account.handle.replace('@', '')}" target="_blank" rel="noopener" class="twitter-follow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Follow ${account.handle}
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function renderHashtags() {
+      const container = document.getElementById('hashtagGrid');
+      container.innerHTML = TRENDING_HASHTAGS.map(hashtag => `
+        <a href="${hashtag.url}" target="_blank" rel="noopener" class="hashtag-tag">${hashtag.tag}</a>
+      `).join('');
+    }
+
+    function renderEpisodeHighlights() {
+      const container = document.getElementById('episodeHighlights');
+      container.innerHTML = EPISODE_HIGHLIGHTS.map(episode => `
+        <div class="highlight-card">
+          <div class="highlight-meta">
+            <span class="highlight-source">${episode.source}</span>
+            <span class="highlight-date">${episode.date}</span>
+          </div>
+          <h4 class="highlight-title">${episode.title}</h4>
+          <p class="highlight-summary">${episode.summary}</p>
+          <a href="${episode.link}" target="_blank" rel="noopener" class="highlight-listen">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Listen to Episode
+          </a>
+        </div>
+      `).join('');
+    }
+
+    // Media Tab Navigation
+    document.querySelectorAll('.media-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Update active tab
+        document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Show corresponding content
+        const targetTab = tab.dataset.tab;
+        document.querySelectorAll('.media-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(`${targetTab}-content`).classList.add('active');
+      });
+    });
+
     // Initialize
     function init() {
       renderRankings();
@@ -1173,6 +1923,12 @@
       renderRPIMovers();
       populateTeamSelects();
       renderComparison();
+
+      // Initialize Media Hub
+      renderPodcasts();
+      renderTwitterAccounts();
+      renderHashtags();
+      renderEpisodeHighlights();
 
       // Update timestamp
       const now = new Date().toLocaleString('en-US', {
