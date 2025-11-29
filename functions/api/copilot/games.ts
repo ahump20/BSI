@@ -21,7 +21,7 @@
 
 interface Env {
   DB: D1Database;
-  CACHE: KVNamespace;
+  KV: KVNamespace;
 }
 
 interface GameRecord {
@@ -115,7 +115,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Check cache first
     try {
-      const cached = await env.CACHE.get(cacheKey, 'json');
+      const cached = await env.KV.get(cacheKey, 'json');
       if (cached) {
         const cachedData = cached as GamesResponse;
         return new Response(
@@ -290,7 +290,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Cache the response
     try {
-      await env.CACHE.put(cacheKey, JSON.stringify(response), {
+      await env.KV.put(cacheKey, JSON.stringify(response), {
         expirationTtl: cacheTTL,
       });
       console.log(`Cached response with TTL ${cacheTTL}s`);

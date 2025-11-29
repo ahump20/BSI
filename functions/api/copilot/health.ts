@@ -3,18 +3,18 @@
  * GET /api/copilot/health
  *
  * Tests all Cloudflare bindings required for semantic search and RAG:
- * - D1 Database (blazesports-db)
- * - KV Namespace (CACHE)
- * - R2 Bucket (EMBEDDINGS → bsi-embeddings)
- * - Vectorize Index (VECTOR_INDEX → sports-scouting-index)
+ * - D1 Database (DB → bsi-historical-db)
+ * - KV Namespace (KV)
+ * - R2 Bucket (SPORTS_DATA → blaze-sports-data-lake)
+ * - Vectorize Index (VECTORIZE → sports-scouting-index)
  * - Workers AI (AI → bge-base-en-v1.5 + llama-3.1-8b-instruct)
  */
 
 interface Env {
   DB: D1Database;
-  CACHE: KVNamespace;
-  EMBEDDINGS: R2Bucket;
-  VECTOR_INDEX: VectorizeIndex;
+  KV: KVNamespace;
+  SPORTS_DATA: R2Bucket;
+  VECTORIZE: VectorizeIndex;
   AI: any;
 }
 
@@ -74,22 +74,22 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const testValue = Date.now().toString();
 
     // Write test
-    await env.CACHE.put(testKey, testValue, { expirationTtl: 60 });
+    await env.KV.put(testKey, testValue, { expirationTtl: 60 });
 
     // Read test
-    const readValue = await env.CACHE.get(testKey);
+    const readValue = await env.KV.get(testKey);
 
     // Clean up
-    await env.CACHE.delete(testKey);
+    await env.KV.delete(testKey);
 
     checks.push({
-      service: 'KV Namespace (CACHE)',
+      service: 'KV Namespace',
       status: readValue === testValue ? 'healthy' : 'degraded',
       responseTime: `${Date.now() - kvStart}ms`,
     });
   } catch (error) {
     checks.push({
-      service: 'KV Namespace (CACHE)',
+      service: 'KV Namespace',
       status: 'unhealthy',
       error: error instanceof Error ? error.message : String(error),
     });
@@ -102,17 +102,17 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const r2Start = Date.now();
 
     // List objects (just check if bucket is accessible)
-    const objects = await env.EMBEDDINGS.list({ limit: 1 });
+    const objects = await env.SPORTS_DATA.list({ limit: 1 });
 
     checks.push({
-      service: 'R2 Bucket (EMBEDDINGS)',
+      service: 'R2 Bucket (SPORTS_DATA)',
       status: 'healthy',
       responseTime: `${Date.now() - r2Start}ms`,
       details: `${objects.objects.length} objects accessible`,
     });
   } catch (error) {
     checks.push({
-      service: 'R2 Bucket (EMBEDDINGS)',
+      service: 'R2 Bucket (SPORTS_DATA)',
       status: 'unhealthy',
       error: error instanceof Error ? error.message : String(error),
     });
@@ -128,7 +128,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const testVector = Array(768).fill(0.1);
 
     // Query (don't insert, just test query capability)
-    const results = await env.VECTOR_INDEX.query(testVector, {
+    const results = await env.VECTORIZE.query(testVector, {
       topK: 1,
       returnMetadata: true,
     });

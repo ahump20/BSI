@@ -58,16 +58,32 @@ export interface CacheKeyPattern {
 // Cloudflare binding interfaces
 interface KVNamespace {
   get(key: string, options?: { type?: 'text' | 'json' | 'arrayBuffer' | 'stream' }): Promise<any>;
-  put(key: string, value: string | ArrayBuffer | ReadableStream, options?: { expirationTtl?: number; metadata?: object }): Promise<void>;
+  put(
+    key: string,
+    value: string | ArrayBuffer | ReadableStream,
+    options?: { expirationTtl?: number; metadata?: object }
+  ): Promise<void>;
   delete(key: string): Promise<void>;
-  list(options?: { prefix?: string; limit?: number; cursor?: string }): Promise<{ keys: { name: string; expiration?: number; metadata?: object }[]; list_complete: boolean; cursor?: string }>;
+  list(options?: { prefix?: string; limit?: number; cursor?: string }): Promise<{
+    keys: { name: string; expiration?: number; metadata?: object }[];
+    list_complete: boolean;
+    cursor?: string;
+  }>;
 }
 
 interface R2Bucket {
   get(key: string): Promise<R2Object | null>;
-  put(key: string, value: string | ArrayBuffer | ReadableStream, options?: { httpMetadata?: object; customMetadata?: object }): Promise<R2Object>;
+  put(
+    key: string,
+    value: string | ArrayBuffer | ReadableStream,
+    options?: { httpMetadata?: object; customMetadata?: object }
+  ): Promise<R2Object>;
   delete(key: string): Promise<void>;
-  list(options?: { prefix?: string; limit?: number; cursor?: string }): Promise<{ objects: R2Object[]; truncated: boolean; cursor?: string }>;
+  list(options?: {
+    prefix?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<{ objects: R2Object[]; truncated: boolean; cursor?: string }>;
 }
 
 interface R2Object {
@@ -149,7 +165,7 @@ export class MultiTierCache {
       if (this.env.R2) {
         const r2Object = await this.env.R2.get(key);
         if (r2Object) {
-          const data = await r2Object.json() as T;
+          const data = (await r2Object.json()) as T;
           this.metrics.r2Hits++;
           // Promote to KV for faster future access
           await this.promoteToKV(key, data);
@@ -161,8 +177,9 @@ export class MultiTierCache {
 
       // Tier 3: D1 (queryable)
       if (this.env.D1) {
-        const d1Result = await this.env.D1
-          .prepare('SELECT payload FROM cache_store WHERE cache_key = ? LIMIT 1')
+        const d1Result = await this.env.D1.prepare(
+          'SELECT payload FROM cache_store WHERE cache_key = ? LIMIT 1'
+        )
           .bind(key)
           .first<{ payload: string }>();
 
@@ -239,12 +256,11 @@ export class MultiTierCache {
     // D1 (queryable archive)
     if (this.env.D1) {
       operations.push(
-        this.env.D1
-          .prepare(
-            `INSERT OR REPLACE INTO cache_store
+        this.env.D1.prepare(
+          `INSERT OR REPLACE INTO cache_store
              (cache_key, payload, category, tags, expires_at, updated_at)
              VALUES (?, ?, ?, ?, ?, ?)`
-          )
+        )
           .bind(
             key,
             payload,
@@ -277,8 +293,7 @@ export class MultiTierCache {
 
     if (this.env.D1) {
       operations.push(
-        this.env.D1
-          .prepare('DELETE FROM cache_store WHERE cache_key = ?')
+        this.env.D1.prepare('DELETE FROM cache_store WHERE cache_key = ?')
           .bind(key)
           .run()
           .then(() => undefined)
@@ -364,9 +379,7 @@ export class MultiTierCache {
     if (!this.env.ANALYTICS) return;
 
     const totalHits = this.metrics.kvHits + this.metrics.r2Hits + this.metrics.d1Hits;
-    const hitRate = this.metrics.totalRequests > 0
-      ? totalHits / this.metrics.totalRequests
-      : 0;
+    const hitRate = this.metrics.totalRequests > 0 ? totalHits / this.metrics.totalRequests : 0;
 
     this.env.ANALYTICS.writeDataPoint({
       indexes: ['cache_metrics'],

@@ -16,15 +16,15 @@
  * Unified sport keys used across all adapters
  */
 export type UnifiedSportKey =
-  | 'ncaaf'      // College Football
-  | 'ncaab'      // College Basketball (Men's)
-  | 'wcbb'       // Women's College Basketball
-  | 'nfl'        // NFL
-  | 'nba'        // NBA
-  | 'wnba'       // WNBA
-  | 'mlb'        // MLB
-  | 'cbb'        // College Baseball
-  | 'nhl';       // NHL
+  | 'ncaaf' // College Football
+  | 'ncaab' // College Basketball (Men's)
+  | 'wcbb' // Women's College Basketball
+  | 'nfl' // NFL
+  | 'nba' // NBA
+  | 'wnba' // WNBA
+  | 'mlb' // MLB
+  | 'cbb' // College Baseball
+  | 'nhl'; // NHL
 
 /**
  * College-specific sports
@@ -63,7 +63,12 @@ export function normalizeGameStatus(status: string): UnifiedGameStatus {
   const normalized = status.toLowerCase();
 
   if (normalized.includes('final') || normalized === 'f') return 'FINAL';
-  if (normalized.includes('live') || normalized.includes('progress') || normalized.includes('in_progress')) return 'LIVE';
+  if (
+    normalized.includes('live') ||
+    normalized.includes('progress') ||
+    normalized.includes('in_progress')
+  )
+    return 'LIVE';
   if (normalized.includes('postponed')) return 'POSTPONED';
   if (normalized.includes('cancel')) return 'CANCELLED';
   if (normalized.includes('delay')) return 'DELAYED';
@@ -93,8 +98,8 @@ export interface UnifiedTeam {
 }
 
 export interface TeamRecord {
-  overall: string;       // "45-12"
-  conference?: string;   // "18-6"
+  overall: string; // "45-12"
+  conference?: string; // "18-6"
   wins: number;
   losses: number;
   ties?: number;
@@ -111,7 +116,7 @@ export interface UnifiedGame {
   sport: UnifiedSportKey;
 
   // Timing
-  scheduledAt: string;    // ISO 8601
+  scheduledAt: string; // ISO 8601
   status: UnifiedGameStatus;
 
   // Teams
@@ -401,7 +406,7 @@ export interface PaginatedResponse<T> {
 // ============================================================================
 
 export interface FetchOptions {
-  date?: string;        // YYYYMMDD format
+  date?: string; // YYYYMMDD format
   week?: number;
   season?: number;
   conference?: string;
@@ -423,19 +428,27 @@ export function isProSport(sport: UnifiedSportKey): sport is ProSportKey {
   return ['nfl', 'nba', 'wnba', 'mlb', 'nhl'].includes(sport);
 }
 
-export function isBaseballGame(game: UnifiedGame): game is UnifiedGame & { sportData: BaseballGameData } {
+export function isBaseballGame(
+  game: UnifiedGame
+): game is UnifiedGame & { sportData: BaseballGameData } {
   return game.sport === 'cbb' || game.sport === 'mlb';
 }
 
-export function isFootballGame(game: UnifiedGame): game is UnifiedGame & { sportData: FootballGameData } {
+export function isFootballGame(
+  game: UnifiedGame
+): game is UnifiedGame & { sportData: FootballGameData } {
   return game.sport === 'ncaaf' || game.sport === 'nfl';
 }
 
-export function isBasketballGame(game: UnifiedGame): game is UnifiedGame & { sportData: BasketballGameData } {
+export function isBasketballGame(
+  game: UnifiedGame
+): game is UnifiedGame & { sportData: BasketballGameData } {
   return ['ncaab', 'wcbb', 'nba', 'wnba'].includes(game.sport);
 }
 
-export function isHockeyGame(game: UnifiedGame): game is UnifiedGame & { sportData: HockeyGameData } {
+export function isHockeyGame(
+  game: UnifiedGame
+): game is UnifiedGame & { sportData: HockeyGameData } {
   return game.sport === 'nhl';
 }
 
@@ -443,14 +456,17 @@ export function isHockeyGame(game: UnifiedGame): game is UnifiedGame & { sportDa
 // SPORT METADATA
 // ============================================================================
 
-export const SPORT_METADATA: Record<UnifiedSportKey, {
-  name: string;
-  shortName: string;
-  category: 'college' | 'pro';
-  hasRankings: boolean;
-  hasWeeks: boolean;
-  defaultDivision?: NCAADivision;
-}> = {
+export const SPORT_METADATA: Record<
+  UnifiedSportKey,
+  {
+    name: string;
+    shortName: string;
+    category: 'college' | 'pro';
+    hasRankings: boolean;
+    hasWeeks: boolean;
+    defaultDivision?: NCAADivision;
+  }
+> = {
   ncaaf: {
     name: 'College Football',
     shortName: 'CFB',

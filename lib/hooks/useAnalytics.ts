@@ -58,32 +58,29 @@ let isInitialized = false;
  * Main analytics hook for tracking events
  */
 export function useAnalytics() {
-  const trackEvent = useCallback(
-    (eventName: string, properties?: Record<string, unknown>) => {
-      const event: AnalyticsEvent = {
-        name: eventName,
-        properties: {
-          ...properties,
-          timestamp: Date.now(),
-          userTier: userProps.tier,
-          path: typeof window !== 'undefined' ? window.location.pathname : undefined,
-        },
+  const trackEvent = useCallback((eventName: string, properties?: Record<string, unknown>) => {
+    const event: AnalyticsEvent = {
+      name: eventName,
+      properties: {
+        ...properties,
         timestamp: Date.now(),
-      };
+        userTier: userProps.tier,
+        path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+      },
+      timestamp: Date.now(),
+    };
 
-      // Add to queue
-      analyticsQueue.push(event);
+    // Add to queue
+    analyticsQueue.push(event);
 
-      // Send to analytics providers
-      sendToProviders(event);
+    // Send to analytics providers
+    sendToProviders(event);
 
-      // Development logging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Analytics]', eventName, properties);
-      }
-    },
-    []
-  );
+    // Development logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Analytics]', eventName, properties);
+    }
+  }, []);
 
   const setUserProperties = useCallback((props: UserProperties) => {
     userProps = { ...userProps, ...props };
@@ -94,12 +91,15 @@ export function useAnalytics() {
     }
   }, []);
 
-  const trackPageView = useCallback((pageName: string, properties?: Record<string, unknown>) => {
-    trackEvent('page_view', {
-      page: pageName,
-      ...properties,
-    });
-  }, [trackEvent]);
+  const trackPageView = useCallback(
+    (pageName: string, properties?: Record<string, unknown>) => {
+      trackEvent('page_view', {
+        page: pageName,
+        ...properties,
+      });
+    },
+    [trackEvent]
+  );
 
   return {
     trackEvent,
@@ -176,10 +176,7 @@ export function useFeatureTracking() {
   const { trackEvent } = useAnalytics();
 
   const trackFeatureUse = useCallback(
-    (
-      feature: string,
-      properties?: Record<string, unknown>
-    ) => {
+    (feature: string, properties?: Record<string, unknown>) => {
       trackEvent('feature_used', {
         feature,
         ...properties,
@@ -276,9 +273,7 @@ export function usePerformanceTracking() {
   const reportWebVitals = useCallback(() => {
     if (typeof window === 'undefined' || !('performance' in window)) return;
 
-    const navigation = performance.getEntriesByType(
-      'navigation'
-    )[0] as PerformanceNavigationTiming;
+    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
 
     if (navigation) {
       trackEvent('web_vitals', {
@@ -360,12 +355,9 @@ export function useErrorTracking() {
     };
 
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      trackError(
-        event.reason instanceof Error
-          ? event.reason
-          : new Error(String(event.reason)),
-        { type: 'unhandled_promise_rejection' }
-      );
+      trackError(event.reason instanceof Error ? event.reason : new Error(String(event.reason)), {
+        type: 'unhandled_promise_rejection',
+      });
     };
 
     window.addEventListener('error', handleError);
@@ -446,10 +438,7 @@ function sendToProviders(event: AnalyticsEvent): void {
   // Cloudflare Analytics (via beacon)
   if (navigator.sendBeacon) {
     try {
-      navigator.sendBeacon(
-        '/api/analytics/event',
-        JSON.stringify(event)
-      );
+      navigator.sendBeacon('/api/analytics/event', JSON.stringify(event));
     } catch {
       // Silently fail
     }

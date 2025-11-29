@@ -90,9 +90,7 @@ export function createUnifiedGame(input: {
     id: String(input.id),
     sport: input.sport,
     scheduledAt:
-      input.scheduledAt instanceof Date
-        ? input.scheduledAt.toISOString()
-        : input.scheduledAt,
+      input.scheduledAt instanceof Date ? input.scheduledAt.toISOString() : input.scheduledAt,
     status: normalizeStatus(input.status),
     homeTeam: ensureUnifiedTeam(input.homeTeam),
     awayTeam: ensureUnifiedTeam(input.awayTeam),
@@ -160,8 +158,8 @@ export function normalizeStatus(status: string | UnifiedGameStatus): UnifiedGame
     normalized.includes('in progress') ||
     normalized.includes('in_progress') ||
     normalized === 'in' ||
-    /^\d+(st|nd|rd|th)/.test(normalized) ||  // "1st", "2nd", etc.
-    /^(top|bot|bottom)\s*\d+/.test(normalized)  // "Top 5", "Bot 7"
+    /^\d+(st|nd|rd|th)/.test(normalized) || // "1st", "2nd", etc.
+    /^(top|bot|bottom)\s*\d+/.test(normalized) // "Top 5", "Bot 7"
   ) {
     return 'LIVE';
   }
@@ -314,14 +312,14 @@ export function generateCacheKey(
  * Cache TTL configurations (in seconds)
  */
 export const CACHE_TTLS = {
-  live: 30,           // Live scores
-  scheduled: 300,     // Scheduled games (5 min)
-  final: 3600,        // Final scores (1 hour)
-  standings: 300,     // Standings (5 min)
-  rankings: 1800,     // Rankings (30 min)
-  team: 86400,        // Team info (24 hours)
-  roster: 3600,       // Roster (1 hour)
-  player: 3600,       // Player info (1 hour)
+  live: 30, // Live scores
+  scheduled: 300, // Scheduled games (5 min)
+  final: 3600, // Final scores (1 hour)
+  standings: 300, // Standings (5 min)
+  rankings: 1800, // Rankings (30 min)
+  team: 86400, // Team info (24 hours)
+  roster: 3600, // Roster (1 hour)
+  player: 3600, // Player info (1 hour)
 } as const;
 
 /**
@@ -413,12 +411,7 @@ export async function fetchWithTimeout(
     const message = error instanceof Error ? error.message : 'Unknown error';
     const isTimeout = message.includes('abort');
 
-    throw new AdapterError(
-      isTimeout ? 'Request timeout' : message,
-      provider,
-      undefined,
-      isTimeout
-    );
+    throw new AdapterError(isTimeout ? 'Request timeout' : message, provider, undefined, isTimeout);
   } finally {
     clearTimeout(timeoutId);
   }
@@ -438,10 +431,7 @@ export interface RateLimiter {
 /**
  * Create a simple rate limiter
  */
-export function createRateLimiter(
-  maxRequests: number,
-  windowMs: number
-): RateLimiter {
+export function createRateLimiter(maxRequests: number, windowMs: number): RateLimiter {
   let requestCount = 0;
   let windowStart = Date.now();
 
@@ -488,10 +478,7 @@ export interface RetryOptions {
 /**
  * Execute a function with exponential backoff retry
  */
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
   const {
     maxRetries = 3,
     baseDelayMs = 1000,
@@ -512,10 +499,7 @@ export async function withRetry<T>(
       }
 
       // Exponential backoff with jitter
-      const delay = Math.min(
-        baseDelayMs * Math.pow(2, attempt) + Math.random() * 1000,
-        maxDelayMs
-      );
+      const delay = Math.min(baseDelayMs * Math.pow(2, attempt) + Math.random() * 1000, maxDelayMs);
 
       console.warn(
         `[Retry] Attempt ${attempt + 1}/${maxRetries} failed, retrying in ${Math.round(delay)}ms`
@@ -537,7 +521,15 @@ export async function withRetry<T>(
  */
 export function isValidSportKey(sport: unknown): sport is UnifiedSportKey {
   const validSports: UnifiedSportKey[] = [
-    'ncaaf', 'ncaab', 'wcbb', 'nfl', 'nba', 'wnba', 'mlb', 'cbb', 'nhl',
+    'ncaaf',
+    'ncaab',
+    'wcbb',
+    'nfl',
+    'nba',
+    'wnba',
+    'mlb',
+    'cbb',
+    'nhl',
   ];
   return typeof sport === 'string' && validSports.includes(sport as UnifiedSportKey);
 }

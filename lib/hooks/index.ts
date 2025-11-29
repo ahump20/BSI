@@ -10,11 +10,7 @@
  */
 
 // Keyboard shortcuts
-export {
-  useKeyboardShortcuts,
-  DASHBOARD_SHORTCUTS,
-  type Shortcut,
-} from './useKeyboardShortcuts';
+export { useKeyboardShortcuts, DASHBOARD_SHORTCUTS, type Shortcut } from './useKeyboardShortcuts';
 
 // Sports data hooks
 export {

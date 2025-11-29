@@ -90,9 +90,9 @@ export interface NCAAApiGame {
 }
 
 export type NCAAApiGameStatus =
-  | 'pre'         // Scheduled
-  | 'live'        // In progress
-  | 'final'       // Completed
+  | 'pre' // Scheduled
+  | 'live' // In progress
+  | 'final' // Completed
   | 'postponed'
   | 'canceled'
   | 'delayed';
@@ -226,11 +226,11 @@ const NCAA_SITE_BASE = 'https://ncaa.com';
 
 // Sport path mapping for NCAA.com URLs
 const SPORT_PATHS: Record<NCAAApiSport, string> = {
-  'baseball': 'baseball',
-  'softball': 'softball',
+  baseball: 'baseball',
+  softball: 'softball',
   'basketball-men': 'basketball-men',
   'basketball-women': 'basketball-women',
-  'football': 'football',
+  football: 'football',
   'soccer-men': 'soccer-men',
   'soccer-women': 'soccer-women',
   'volleyball-women': 'volleyball-women',
@@ -241,21 +241,21 @@ const SPORT_PATHS: Record<NCAAApiSport, string> = {
 };
 
 const DIVISION_PATHS: Record<NCAADivision, string> = {
-  'd1': 'd1',
-  'd2': 'd2',
-  'd3': 'd3',
-  'fbs': 'fbs',
-  'fcs': 'fcs',
+  d1: 'd1',
+  d2: 'd2',
+  d3: 'd3',
+  fbs: 'fbs',
+  fcs: 'fcs',
 };
 
 // Cache TTLs (in seconds)
 const CACHE_TTLS: Record<string, number> = {
-  scoreboard: 30,      // Live scores update frequently
-  boxscore: 60,        // Box scores during game
-  standings: 300,      // 5 minutes
-  rankings: 1800,      // 30 minutes
-  schedule: 3600,      // 1 hour
-  team: 86400,         // 24 hours
+  scoreboard: 30, // Live scores update frequently
+  boxscore: 60, // Box scores during game
+  standings: 300, // 5 minutes
+  rankings: 1800, // 30 minutes
+  schedule: 3600, // 1 hour
+  team: 86400, // 24 hours
 };
 
 // ============================================================================
@@ -318,10 +318,7 @@ export class NCAAApiAdapter {
   /**
    * Get today's games for a sport/division
    */
-  async getTodaysGames(
-    sport: NCAAApiSport,
-    division: NCAADivision = 'd1'
-  ): Promise<NCAAApiGame[]> {
+  async getTodaysGames(sport: NCAAApiSport, division: NCAADivision = 'd1'): Promise<NCAAApiGame[]> {
     const scoreboard = await this.getScoreboard(sport, division);
     return scoreboard.games;
   }
@@ -332,9 +329,7 @@ export class NCAAApiAdapter {
   async getLiveGames(
     sports: NCAAApiSport[] = ['baseball', 'basketball-men', 'football']
   ): Promise<NCAAApiGame[]> {
-    const results = await Promise.allSettled(
-      sports.map((sport) => this.getTodaysGames(sport))
-    );
+    const results = await Promise.allSettled(sports.map((sport) => this.getTodaysGames(sport)));
 
     const liveGames: NCAAApiGame[] = [];
     results.forEach((result) => {
@@ -380,11 +375,7 @@ export class NCAAApiAdapter {
   /**
    * Get play-by-play for a game
    */
-  async getPlayByPlay(
-    sport: NCAAApiSport,
-    division: NCAADivision,
-    gameId: string
-  ): Promise<any[]> {
+  async getPlayByPlay(sport: NCAAApiSport, division: NCAADivision, gameId: string): Promise<any[]> {
     const sportPath = SPORT_PATHS[sport];
     const divisionPath = DIVISION_PATHS[division];
     const url = `${NCAA_API_BASE}/${sportPath}/${divisionPath}/game/${gameId}/pbp.json`;
@@ -423,8 +414,8 @@ export class NCAAApiAdapter {
 
     // Filter by conference if specified
     if (conference) {
-      standings = standings.filter(
-        (s) => s.conference.toLowerCase().includes(conference.toLowerCase())
+      standings = standings.filter((s) =>
+        s.conference.toLowerCase().includes(conference.toLowerCase())
       );
     }
 
@@ -460,9 +451,7 @@ export class NCAAApiAdapter {
     let rankings = this.transformRankingsResponse(data, sport);
 
     if (poll) {
-      rankings = rankings.filter(
-        (r) => r.poll.toLowerCase().includes(poll.toLowerCase())
-      );
+      rankings = rankings.filter((r) => r.poll.toLowerCase().includes(poll.toLowerCase()));
     }
 
     await this.setCache(cacheKey, rankings, CACHE_TTLS.rankings);
@@ -504,10 +493,7 @@ export class NCAAApiAdapter {
   /**
    * Get team roster
    */
-  async getTeamRoster(
-    sport: NCAAApiSport,
-    teamId: string
-  ): Promise<NCAAApiPlayerStats[]> {
+  async getTeamRoster(sport: NCAAApiSport, teamId: string): Promise<NCAAApiPlayerStats[]> {
     const cacheKey = `ncaa:roster:${sport}:${teamId}`;
 
     const cached = await this.getFromCache<NCAAApiPlayerStats[]>(cacheKey);
@@ -553,9 +539,7 @@ export class NCAAApiAdapter {
   /**
    * Get college baseball rankings (D1Baseball, USA Today, etc.)
    */
-  async getCollegeBaseballRankings(
-    poll?: string
-  ): Promise<NCAAApiRankingPoll[]> {
+  async getCollegeBaseballRankings(poll?: string): Promise<NCAAApiRankingPoll[]> {
     return this.getRankings('baseball', 'd1', poll);
   }
 
@@ -606,11 +590,13 @@ export class NCAAApiAdapter {
     return {
       id: String(game.gameID || game.id || game.contest_id),
       slug: game.slug || '',
-      title: game.title || `${game.away?.names?.full || 'Away'} at ${game.home?.names?.full || 'Home'}`,
+      title:
+        game.title || `${game.away?.names?.full || 'Away'} at ${game.home?.names?.full || 'Home'}`,
       status: this.mapGameStatus(game.gameState || game.status || game.currentPeriod),
-      startDate: game.startDate || game.startTimeEpoch
-        ? new Date(game.startTimeEpoch * 1000).toISOString()
-        : new Date().toISOString(),
+      startDate:
+        game.startDate || game.startTimeEpoch
+          ? new Date(game.startTimeEpoch * 1000).toISOString()
+          : new Date().toISOString(),
       startTime: game.startTime,
       startTimeEpoch: game.startTimeEpoch,
       finalMessage: game.finalMessage || game.statusMessage,
@@ -620,11 +606,13 @@ export class NCAAApiAdapter {
       awayScore: game.away?.score ?? game.awayScore ?? null,
       currentPeriod: game.currentPeriod || game.period,
       currentClock: game.clock || game.currentClock,
-      venue: game.location ? {
-        name: game.location.name || game.location.venue,
-        city: game.location.city || '',
-        state: game.location.state || '',
-      } : undefined,
+      venue: game.location
+        ? {
+            name: game.location.name || game.location.venue,
+            city: game.location.city || '',
+            state: game.location.state || '',
+          }
+        : undefined,
       broadcast: game.network || game.broadcast,
       attendance: game.attendance ? parseInt(game.attendance, 10) : undefined,
       sport,
@@ -679,14 +667,17 @@ export class NCAAApiAdapter {
       team: this.transformTeam(rawTeam?.team || rawTeam),
       score: rawTeam?.score ?? 0,
       stats: rawTeam?.stats || rawTeam?.statistics || {},
-      players: (rawTeam?.players || rawTeam?.roster || []).map(this.transformPlayerStats.bind(this)),
+      players: (rawTeam?.players || rawTeam?.roster || []).map(
+        this.transformPlayerStats.bind(this)
+      ),
     };
   }
 
   private transformPlayerStats(rawPlayer: any): NCAAApiPlayerStats {
     return {
       id: String(rawPlayer.id || rawPlayer.playerId || 'unknown'),
-      name: rawPlayer.name || rawPlayer.playerName || `${rawPlayer.firstName} ${rawPlayer.lastName}`,
+      name:
+        rawPlayer.name || rawPlayer.playerName || `${rawPlayer.firstName} ${rawPlayer.lastName}`,
       position: rawPlayer.position || rawPlayer.pos || '',
       stats: rawPlayer.stats || rawPlayer.statistics || {},
     };
@@ -817,7 +808,12 @@ export class NCAAApiAdapter {
     const normalized = (status || '').toLowerCase();
 
     if (normalized.includes('final') || normalized.includes('f/')) return 'final';
-    if (normalized.includes('live') || normalized.includes('progress') || /^\d+(st|nd|rd|th)/.test(normalized)) return 'live';
+    if (
+      normalized.includes('live') ||
+      normalized.includes('progress') ||
+      /^\d+(st|nd|rd|th)/.test(normalized)
+    )
+      return 'live';
     if (normalized.includes('postponed')) return 'postponed';
     if (normalized.includes('cancel')) return 'canceled';
     if (normalized.includes('delay')) return 'delayed';
@@ -828,7 +824,11 @@ export class NCAAApiAdapter {
   private mapGameType(type: string): 'regular' | 'conference' | 'postseason' {
     const normalized = (type || '').toLowerCase();
 
-    if (normalized.includes('post') || normalized.includes('tournament') || normalized.includes('playoff')) {
+    if (
+      normalized.includes('post') ||
+      normalized.includes('tournament') ||
+      normalized.includes('playoff')
+    ) {
       return 'postseason';
     }
     if (normalized.includes('conf')) {
@@ -874,7 +874,7 @@ export class NCAAApiAdapter {
       const response = await fetch(url, {
         headers: {
           'User-Agent': this.userAgent,
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         signal: controller.signal,
       });
@@ -937,10 +937,6 @@ export function isNCAAApiGame(obj: unknown): obj is NCAAApiGame {
 
 export function isNCAAApiBoxScore(obj: unknown): obj is NCAAApiBoxScore {
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    'gameId' in obj &&
-    'home' in obj &&
-    'away' in obj
+    typeof obj === 'object' && obj !== null && 'gameId' in obj && 'home' in obj && 'away' in obj
   );
 }

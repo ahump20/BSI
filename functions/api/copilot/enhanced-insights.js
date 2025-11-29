@@ -262,7 +262,7 @@ export async function onRequest(context) {
 
     // Query Vectorize with optional sport filter
     const vectorFilter = sport ? { sport } : undefined;
-    const vectorResults = await env.VECTOR_INDEX.query(queryEmbedding, {
+    const vectorResults = await env.VECTORIZE.query(queryEmbedding, {
       topK: 5,
       returnMetadata: 'all',
       filter: vectorFilter,

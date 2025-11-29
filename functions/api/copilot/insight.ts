@@ -29,8 +29,8 @@
 
 interface Env {
   DB: D1Database;
-  CACHE: KVNamespace;
-  VECTOR_INDEX: VectorizeIndex;
+  KV: KVNamespace;
+  VECTORIZE: VectorizeIndex;
   AI: any;
   ANALYTICS?: AnalyticsEngineDataset;
 }
@@ -147,7 +147,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Check cache for this query (5-minute TTL)
     const cacheKey = `insight:${question.toLowerCase().replace(/[^a-z0-9]/g, '-')}:${sport || 'all'}:${tone}`;
-    const cached = await env.CACHE.get(cacheKey, 'json');
+    const cached = await env.KV.get(cacheKey, 'json');
 
     if (cached) {
       console.log(`Cache hit for query: "${question}"`);
@@ -231,7 +231,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         vectorizeOptions.filter = { sport };
       }
 
-      const searchResults = await env.VECTOR_INDEX.query(questionEmbedding, vectorizeOptions);
+      const searchResults = await env.VECTORIZE.query(questionEmbedding, vectorizeOptions);
       vectorMatches = searchResults.matches || [];
     } catch (error) {
       console.error('Vectorize search failed:', error);
@@ -443,7 +443,7 @@ Answer:`;
     console.log(`RAG insight generated in ${totalTime}ms (confidence: ${confidence.toFixed(3)})`);
 
     // Store in cache (5-minute TTL)
-    await env.CACHE.put(cacheKey, JSON.stringify(response), { expirationTtl: 300 });
+    await env.KV.put(cacheKey, JSON.stringify(response), { expirationTtl: 300 });
 
     // Track analytics
     if (env.ANALYTICS) {

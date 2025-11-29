@@ -24,8 +24,8 @@
 
 interface Env {
   DB: D1Database;
-  CACHE: KVNamespace;
-  VECTOR_INDEX: VectorizeIndex;
+  KV: KVNamespace;
+  VECTORIZE: VectorizeIndex;
   AI: any;
   ANALYTICS?: AnalyticsEngineDataset;
 }
@@ -147,7 +147,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Check cache (3-minute TTL for search results)
     const cacheKey = `search:${query.toLowerCase().replace(/[^a-z0-9]/g, '-')}:${sport || 'all'}:${topK}`;
-    const cached = await env.CACHE.get(cacheKey, 'json');
+    const cached = await env.KV.get(cacheKey, 'json');
 
     if (cached) {
       console.log(`Cache hit for search: "${query}"`);
@@ -240,7 +240,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         vectorizeOptions.filter = { sport };
       }
 
-      const searchResults = await env.VECTOR_INDEX.query(queryEmbedding, vectorizeOptions);
+      const searchResults = await env.VECTORIZE.query(queryEmbedding, vectorizeOptions);
 
       vectorMatches = searchResults.matches || [];
       vectorSearchCompleted = true;
@@ -352,7 +352,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     };
 
     // Store in cache (3-minute TTL)
-    await env.CACHE.put(cacheKey, JSON.stringify(response), { expirationTtl: 180 });
+    await env.KV.put(cacheKey, JSON.stringify(response), { expirationTtl: 180 });
 
     // Track analytics
     if (env.ANALYTICS) {

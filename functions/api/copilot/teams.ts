@@ -9,7 +9,7 @@
 
 interface Env {
   DB: D1Database;
-  CACHE: KVNamespace;
+  KV: KVNamespace;
 }
 
 interface TeamRecord {
@@ -48,7 +48,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Check cache first (1 hour TTL)
   try {
-    const cached = await env.CACHE.get(cacheKey, 'json');
+    const cached = await env.KV.get(cacheKey, 'json');
     if (cached) {
       return new Response(
         JSON.stringify(
@@ -132,7 +132,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Cache for 1 hour
     try {
-      await env.CACHE.put(cacheKey, JSON.stringify(response), {
+      await env.KV.put(cacheKey, JSON.stringify(response), {
         expirationTtl: 3600,
       });
     } catch (error) {

@@ -14,7 +14,12 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { UnifiedSportKey, UnifiedGame, UnifiedStandings, UnifiedRankingPoll } from '../types/adapters';
+import type {
+  UnifiedSportKey,
+  UnifiedGame,
+  UnifiedStandings,
+  UnifiedRankingPoll,
+} from '../types/adapters';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -124,9 +129,9 @@ export function useLiveScores(
       const response = await fetch(`/api/scores/${sport}/live`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = await response.json();
+      const data = (await response.json()) as { games?: UnifiedGame[] };
       setState({
-        data: data.games || [],
+        data: data.games ?? [],
         loading: false,
         error: null,
         lastUpdated: new Date(),
@@ -204,9 +209,9 @@ export function useStandings(
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = await response.json();
+      const data = (await response.json()) as { standings?: UnifiedStandings[] };
       setState({
-        data: data.standings || [],
+        data: data.standings ?? [],
         loading: false,
         error: null,
         lastUpdated: new Date(),
@@ -263,9 +268,9 @@ export function useRankings(
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = await response.json();
+      const data = (await response.json()) as { rankings?: UnifiedRankingPoll[] };
       setState({
-        data: data.rankings || [],
+        data: data.rankings ?? [],
         loading: false,
         error: null,
         lastUpdated: new Date(),
@@ -319,16 +324,14 @@ export function useSchedule(
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const url = dateStr
-        ? `/api/scoreboard/${sport}?date=${dateStr}`
-        : `/api/scoreboard/${sport}`;
+      const url = dateStr ? `/api/scoreboard/${sport}?date=${dateStr}` : `/api/scoreboard/${sport}`;
 
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = await response.json();
+      const data = (await response.json()) as { games?: UnifiedGame[] };
       setState({
-        data: data.games || [],
+        data: data.games ?? [],
         loading: false,
         error: null,
         lastUpdated: new Date(),
@@ -383,7 +386,7 @@ export function useBoxScore(
       const response = await fetch(`/api/game/${gameId}/boxscore?sport=${sport}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = await response.json();
+      const data = (await response.json()) as { status?: string; [key: string]: unknown };
       setState({
         data,
         loading: false,
@@ -496,7 +499,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  * Hook for previous value
  */
 export function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>();
+  const ref = useRef<T | undefined>(undefined);
 
   useEffect(() => {
     ref.current = value;

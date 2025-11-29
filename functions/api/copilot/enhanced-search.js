@@ -82,7 +82,7 @@ async function performSemanticSearch(queries, sport, env) {
 
       // Search Vectorize
       const filter = sport ? { sport } : undefined;
-      const results = await env.VECTOR_INDEX.query(embedding, {
+      const results = await env.VECTORIZE.query(embedding, {
         topK: 5,
         returnMetadata: 'all',
         filter,
