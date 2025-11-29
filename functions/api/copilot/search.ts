@@ -295,7 +295,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const query = `
         SELECT *
         FROM games
-        WHERE id IN (${placeholders})
+        WHERE game_id IN (${placeholders})
         ORDER BY game_date DESC
       `;
 
@@ -306,12 +306,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       // Map games with relevance scores
       for (const game of games) {
         const gameRecord = game as any;
-        const matchId = `game-${gameRecord.id}`;
+        const matchId = `game-${gameRecord.game_id}`;
         const match = relevantMatches.find((m) => m.id === matchId);
 
         if (match) {
           results.push({
-            id: gameRecord.id,
+            id: gameRecord.game_id,
             sport: gameRecord.sport,
             game_date: gameRecord.game_date,
             home_team_name: gameRecord.home_team_name,
