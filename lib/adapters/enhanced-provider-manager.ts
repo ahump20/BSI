@@ -34,6 +34,12 @@ import {
 } from './ncaa-enhanced-adapter';
 import { CFBDAdapter, type CFBDGame } from './cfbd-adapter';
 import { SportsDataIOAdapter } from './sports-data-io';
+import {
+  NCAAApiAdapter,
+  type NCAAApiGame,
+  type NCAAApiSport,
+  type NCAADivision as NCAAApiDivision,
+} from './ncaa-api-adapter';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -163,6 +169,13 @@ const PROVIDER_CONFIGS: ProviderConfig[] = [
     sports: ['ncaaf', 'ncaab', 'wcbb', 'cbb'],
     rateLimit: { requests: 60, windowMs: 60000 },
   },
+  // NCAA.com API adapter (college baseball focus)
+  {
+    name: 'ncaaApi',
+    priority: 2,
+    sports: ['cbb', 'ncaaf', 'ncaab', 'wcbb'],
+    rateLimit: { requests: 60, windowMs: 60000 },
+  },
   // Tertiary (fallback)
   {
     name: 'espn',
@@ -193,6 +206,7 @@ export class EnhancedProviderManager {
   private espn: ESPNUnifiedAdapter;
   private balldontlie?: BalldontlieAdapter;
   private ncaa: NCAAEnhancedAdapter;
+  private ncaaApi: NCAAApiAdapter;
   private cfbd?: CFBDAdapter;
   private sportsDataIO?: SportsDataIOAdapter;
 
@@ -213,6 +227,9 @@ export class EnhancedProviderManager {
       kv: env.KV,
       apiKey: env.NCAA_API_KEY,
     });
+
+    // NCAA.com API adapter (henrygd/ncaa-api patterns)
+    this.ncaaApi = new NCAAApiAdapter({ kv: env.KV });
 
     if (env.CFBD_API_KEY) {
       this.cfbd = new CFBDAdapter(env.CFBD_API_KEY, env.KV);
@@ -376,6 +393,9 @@ export class EnhancedProviderManager {
       case 'ncaa':
         return this.fetchFromNCAA(sport, options);
 
+      case 'ncaaApi':
+        return this.fetchFromNCAAApi(sport, options);
+
       case 'cfbd':
         return this.fetchFromCFBD(sport, options);
 
@@ -472,6 +492,26 @@ export class EnhancedProviderManager {
     // SportsDataIO requires sport-specific implementation
     // This is a placeholder - actual implementation depends on SportsDataIO adapter methods
     throw new Error('SportsDataIO fetch not yet implemented for unified manager');
+  }
+
+  private async fetchFromNCAAApi(
+    sport: UnifiedSportKey,
+    options: { date?: string; week?: number; conference?: string }
+  ): Promise<UnifiedGame[]> {
+    const ncaaSport = this.mapToNCAAApiSport(sport);
+    const division = this.getNCAAApiDivision(sport);
+
+    // Parse date if provided
+    const date = options.date
+      ? new Date(
+          parseInt(options.date.slice(0, 4), 10),
+          parseInt(options.date.slice(4, 6), 10) - 1,
+          parseInt(options.date.slice(6, 8), 10)
+        )
+      : undefined;
+
+    const scoreboard = await this.ncaaApi.getScoreboard(ncaaSport, division, date);
+    return scoreboard.games.map((game) => this.transformNCAAApiGame(game, sport));
   }
 
   // ==========================================================================
@@ -575,6 +615,33 @@ export class EnhancedProviderManager {
     };
   }
 
+  private transformNCAAApiGame(game: NCAAApiGame, sport: UnifiedSportKey): UnifiedGame {
+    return {
+      id: game.id,
+      sport,
+      scheduledAt: game.startDate,
+      status: this.mapNCAAApiStatus(game.status),
+      homeTeamId: game.home.id,
+      awayTeamId: game.away.id,
+      homeTeamName: game.home.fullName,
+      awayTeamName: game.away.fullName,
+      homeTeamAbbrev: game.home.shortName,
+      awayTeamAbbrev: game.away.shortName,
+      homeTeamLogo: game.home.logo,
+      awayTeamLogo: game.away.logo,
+      homeScore: game.homeScore,
+      awayScore: game.awayScore,
+      homeRanking: game.home.ranking,
+      awayRanking: game.away.ranking,
+      venue: game.venue?.name,
+      broadcast: game.broadcast,
+      isConferenceGame: game.conferenceGame,
+      postseason: game.gameType === 'postseason',
+      provider: 'NCAA_API',
+      fetchedAt: new Date().toISOString(),
+    };
+  }
+
   // ==========================================================================
   // MAPPING HELPERS
   // ==========================================================================
@@ -646,6 +713,35 @@ export class EnhancedProviderManager {
       canceled: 'CANCELLED',
     };
     return map[state] || 'SCHEDULED';
+  }
+
+  private mapNCAAApiStatus(status: string): UnifiedGameStatus {
+    const map: Record<string, UnifiedGameStatus> = {
+      pre: 'SCHEDULED',
+      live: 'LIVE',
+      final: 'FINAL',
+      postponed: 'POSTPONED',
+      canceled: 'CANCELLED',
+      delayed: 'DELAYED',
+    };
+    return map[status] || 'SCHEDULED';
+  }
+
+  private mapToNCAAApiSport(sport: UnifiedSportKey): NCAAApiSport {
+    const map: Partial<Record<UnifiedSportKey, NCAAApiSport>> = {
+      cbb: 'baseball',
+      ncaaf: 'football',
+      ncaab: 'basketball-men',
+      wcbb: 'basketball-women',
+    };
+    const result = map[sport];
+    if (!result) throw new Error(`Sport ${sport} not supported by NCAA API adapter`);
+    return result;
+  }
+
+  private getNCAAApiDivision(sport: UnifiedSportKey): NCAAApiDivision {
+    if (sport === 'ncaaf') return 'fbs';
+    return 'd1';
   }
 
   private formatDateForBDL(date: string): string {

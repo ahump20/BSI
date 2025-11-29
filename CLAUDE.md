@@ -37,29 +37,101 @@ Every new file = audit for obsolete files:
 
 ---
 
+## TECHNOLOGY STACK
+
+| Category | Technologies |
+|----------|--------------|
+| **Frontend** | React 19, Next.js 16, TypeScript 5.9, Tailwind CSS 3.4 |
+| **Backend** | Cloudflare Workers, Node.js |
+| **Databases** | Cloudflare D1 (SQLite), PostgreSQL, Prisma ORM |
+| **Caching** | Cloudflare KV, R2, In-memory cascading cache |
+| **Storage** | Cloudflare R2 buckets |
+| **Analytics** | Cloudflare Analytics Engine, Amplitude, Sentry |
+| **AI/ML** | Cloudflare Workers AI, Vectorize, Claude API (MCP) |
+| **Testing** | Vitest, Playwright, Axe-core |
+| **Code Quality** | ESLint, Prettier, TypeScript |
+| **CI/CD** | GitHub Actions, Cloudflare Pages/Workers |
+| **Icons** | Lucide React |
+| **Charting** | Recharts |
+| **Animations** | Framer Motion |
+| **Validation** | Zod |
+| **Data Sources** | ESPN API, NCAA API, SportsDataIO API |
+
+---
+
 ## PROJECT STRUCTURE
 
 ```
 BSI/
+├── app/                      # Next.js pages and layouts
+│   ├── (routes)/             # Route groups
+│   ├── api/                  # API routes
+│   └── layout.tsx            # Root layout
+├── apps/                     # Monorepo sub-applications
+│   ├── api-worker/           # Worker API implementation
+│   ├── web/                  # Next.js web app (app/, components/, lib/)
+│   └── games/                # Game implementations (Phaser, Godot)
+├── components/               # Reusable React UI components
+│   ├── sports/               # ScoreCard, SportTabs, StandingsTable
+│   ├── box-score/            # ProAnalyticsTab
+│   ├── recruiting/           # PortalHeatmap, PortalTracker
+│   ├── college-baseball/     # BullpenInsights, GameCenter
+│   ├── layout/               # Header, navigation
+│   ├── live-game/            # WinProbabilityChart
+│   └── [utilities]/          # Card, Modal, Table, etc.
+├── lib/                      # Shared utilities (33+ modules)
+│   ├── adapters/             # ESPN, NCAA, SportsDataIO adapters
+│   ├── api/                  # API endpoint utilities
+│   ├── analytics/            # Analytics functions
+│   ├── cache/                # Caching logic
+│   ├── cf/                   # Cloudflare-specific utilities
+│   ├── data/                 # Data transformation
+│   ├── db/                   # Database query helpers
+│   ├── hooks/                # React custom hooks
+│   ├── nlg/                  # Natural Language Generation
+│   ├── validation/           # Zod schemas
+│   └── [more modules]/       # skills, icons, reconstruction, etc.
+├── mcp/                      # MCP (Model Context Protocol) servers
+│   └── texas-longhorns/      # Texas Longhorns data tools
+├── public/                   # Static assets
+│   ├── images/               # Logos, photos
+│   ├── college-baseball/     # Static pages (standings, games)
+│   ├── dashboards/           # Analytics dashboards
+│   ├── css/, js/             # Stylesheets and scripts
+│   └── data/                 # Static data files
+├── scripts/                  # 75+ utility scripts
+│   ├── ingest-*.js           # Data ingestion scripts
+│   ├── setup-database.js     # DB setup
+│   ├── deploy-*.sh           # Deployment scripts
+│   └── health_check.py       # Monitoring
 ├── src/
-│   ├── workers/              # Cloudflare Worker source code
-│   │   ├── api/              # API endpoints (bsi-api-*)
-│   │   ├── ingest/           # Data ingestion (bsi-ingest-*)
-│   │   ├── public/           # Public site (blazesportsintel.com)
-│   │   └── mcp/              # MCP servers
-│   ├── components/           # Reusable UI components
-│   ├── lib/                  # Shared utilities
-│   ├── types/                # TypeScript definitions
-│   └── styles/               # Global styles, tokens
-├── public/                   # Static assets ONLY (images, fonts)
-├── workers/                  # wrangler.toml files (one per worker)
-├── scripts/                  # Build/deploy automation
+│   ├── components/           # SportSwitcher components
+│   └── styles/tokens/        # Design system tokens
+│       ├── colors.ts
+│       ├── typography.ts
+│       ├── spacing.ts
+│       ├── breakpoints.ts
+│       └── index.ts
+├── tests/                    # Test suites
+│   ├── api/                  # API tests (mlb, nfl, college-baseball)
+│   ├── integration/          # Cache tests
+│   ├── validation/           # Schema tests
+│   ├── a11y/                 # Accessibility tests (Playwright)
+│   └── visual/               # Visual regression tests
+├── workers/                  # Cloudflare Workers configs
+│   ├── ingest/               # blazesports-ingest worker
+│   ├── cfp/                  # College Football Playoff worker
+│   ├── content/              # Content delivery worker
+│   └── baseball-rankings/    # Baseball rankings worker
 ├── docs/                     # Documentation
 ├── .github/                  # GitHub workflows
 ├── CLAUDE.md                 # This file
 ├── package.json
 ├── tsconfig.json
-└── wrangler.toml             # Root config (if single worker)
+├── tailwind.config.ts        # Tailwind theming (173 lines)
+├── wrangler.toml             # Root Cloudflare config
+├── vitest.config.ts          # Vitest testing config
+└── playwright.config.ts      # E2E/a11y testing config
 ```
 
 **DO NOT CREATE:**
@@ -208,6 +280,41 @@ public/
 
 ## MCP SERVERS
 
+### BSI Texas Longhorns MCP Server
+Location: `mcp/texas-longhorns/`
+
+**Available Tools:**
+| Tool | Purpose |
+|------|---------|
+| `get_team_seasons` | Season summaries (baseball-first) |
+| `get_season_schedule` | Schedule/meet slate for sports |
+| `get_game_box_score` | Box scores with cache metadata |
+| `get_player_career` | Player career dossier search |
+| `get_rankings_context` | Poll movement and ranking trends |
+| `search_archive` | BSI archive search |
+
+**Cascading Cache Implementation:**
+1. KV Namespace (5-minute TTL edge cache)
+2. R2 Bucket (durable JSON archive)
+3. D1 Database (normalized cache table)
+4. Durable Objects (concurrent update coordination)
+5. In-memory Map (offline fallback)
+
+**Response Format:**
+```json
+{
+  "result": { /* tool-specific payload */ },
+  "citations": [ /* source attribution */ ],
+  "generatedAt": "timestamp (CDT)",
+  "meta": {
+    "cache": {
+      "key": "longhorns:tool:hash",
+      "status": "HIT|MISS"
+    }
+  }
+}
+```
+
 ### Figma MCP Integration
 
 **Required flow (do not skip):**
@@ -258,7 +365,7 @@ wrangler deploy --config workers/{worker-name}/wrangler.toml
 ```toml
 name = "bsi-{domain}-{function}"
 main = "src/workers/{path}/index.ts"
-compatibility_date = "2025-01-01"
+compatibility_date = "2025-03-07"
 
 [vars]
 ENVIRONMENT = "production"
@@ -273,15 +380,112 @@ database_name = "bsi-{domain}-db"
 database_id = "xxx"
 ```
 
+### Root Worker Configuration
+The main `wrangler.toml` configures `college-baseball-tracker` with:
+- **KV Namespaces:** Unified cache, NIL cache
+- **D1 Databases:** Historical DB (shared between main and NIL)
+- **Workers AI:** Enabled
+- **Vectorize:** `sports-scouting-index`
+- **R2 Buckets:** Sports data lake, NIL archive
+- **Analytics Engine:** `bsi_sports_metrics`
+- **Stripe Integration:** Payment processing secrets
+- **Node.js Compatibility:** Enabled
+
 ### Canonical Workers (DO NOT DUPLICATE)
-| Worker | Purpose | Status |
-|--------|---------|--------|
-| `bsi-mcp-server` | MCP interface | Active |
-| `blaze-sports-api` | Primary REST API | Active |
-| `espn-data-cache` | ESPN data layer | Active |
-| `bsi-baseball-ingest` | College baseball data | Active |
+| Worker | Purpose | Config Location |
+|--------|---------|-----------------|
+| `blazesports-ingest` | Scheduled data ingestion (5min, hourly, daily crons) | `workers/ingest/` |
+| `cfp-worker` | College Football Playoff data service | `workers/cfp/` |
+| `content-worker` | Content delivery/caching | `workers/content/` |
+| `baseball-rankings-worker` | Baseball rankings processing | `workers/baseball-rankings/` |
 
 Before creating a new worker, verify it doesn't duplicate existing functionality.
+
+---
+
+## NPM SCRIPTS
+
+### Build Commands
+```bash
+npm run build          # Next.js + Functions build
+npm run build:lib      # TypeScript compilation
+npm run build:functions # Cloudflare Functions build
+```
+
+### Development
+```bash
+npm run dev            # Next.js dev server
+npm run dev:vite       # Vite dev server
+```
+
+### Testing
+```bash
+npm run test           # Vitest unit tests
+npm run test:ui        # Vitest UI
+npm run test:a11y      # Playwright accessibility tests
+npm run test:api       # API-specific tests
+npm run test:integration # Integration tests
+npm run test:coverage  # Coverage report
+```
+
+### Deployment
+```bash
+npm run deploy         # Cloudflare Pages deployment
+npm run deploy:production # Production deployment
+```
+
+---
+
+## TESTING
+
+### Test Structure
+```
+tests/
+├── api/              # API tests
+│   ├── mlb.test.ts
+│   ├── nfl.test.ts
+│   └── college-baseball.test.js
+├── integration/      # Cache and integration tests
+│   └── cache.test.ts
+├── validation/       # Schema validation tests
+│   └── schemas.test.ts
+├── a11y/             # Accessibility tests (Playwright + axe-core)
+├── intelligence/     # Data intelligence tests
+├── visual/           # Visual regression tests
+└── mcp/              # MCP server tests
+```
+
+### Testing Tools
+- **Vitest:** Unit and integration tests
+- **Playwright:** E2E and accessibility testing
+- **Axe-core:** WCAG accessibility scanning
+
+### Running Tests
+```bash
+# All tests
+npm run test
+
+# Specific test file
+npx vitest tests/api/mlb.test.ts
+
+# Accessibility tests
+npm run test:a11y
+```
+
+---
+
+## CI/CD WORKFLOWS
+
+### Active GitHub Workflows
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `api-tests.yml` | PR/push to main | Type checking, linting, API tests, security scan |
+| `accessibility-tests.yml` | Changes to HTML/TS/JS | Playwright + axe-core WCAG compliance |
+| `workers-compat-lint.yml` | Worker file changes | Cloudflare Workers compatibility checks |
+| `deploy-pages.yml` | Push to main | Deploy to Cloudflare Pages |
+| `lighthouse-ci.yml` | Scheduled/manual | Performance monitoring |
+| `data-freshness.yml` | Scheduled | Data quality checks, Slack alerts |
 
 ---
 
@@ -338,6 +542,85 @@ Never say:
 
 ---
 
+## DATA ADAPTERS & LIB MODULES
+
+### Data Source Adapters
+Location: `lib/adapters/`
+
+| Adapter | Purpose |
+|---------|---------|
+| ESPN Adapter | ESPN API integration |
+| NCAA Adapter | NCAA data feeds |
+| SportsDataIO Adapter | SportsDataIO API |
+
+**Adapter Pattern:**
+- Multiple data source adapters with provider failover
+- Cascading cache layers for performance
+- Consistent response formatting across providers
+
+### Key Lib Modules
+| Module | Path | Purpose |
+|--------|------|---------|
+| `adapters/` | `lib/adapters/` | Data source adapters |
+| `api/` | `lib/api/` | API endpoint utilities |
+| `analytics/` | `lib/analytics/` | Analytics functions |
+| `cache/` | `lib/cache/` | Caching logic |
+| `cf/` | `lib/cf/` | Cloudflare-specific utilities |
+| `data/` | `lib/data/` | Data transformation |
+| `db/` | `lib/db/` | Database query helpers |
+| `hooks/` | `lib/hooks/` | React custom hooks |
+| `nlg/` | `lib/nlg/` | Natural Language Generation |
+| `validation/` | `lib/validation/` | Zod schemas |
+| `reconstruction/` | `lib/reconstruction/` | Data reconstruction |
+| `sports-data-qc/` | `lib/sports-data-qc/` | Quality control |
+| `skills/` | `lib/skills/` | AI skill modules |
+| `icons/` | `lib/icons/` | Icon components |
+
+---
+
+## SCRIPTS
+
+Location: `scripts/` (75+ utility scripts)
+
+### Data Ingestion
+```bash
+node scripts/ingest-live-data.js      # Live data ingestion
+node scripts/ingest-historical-data.js # Historical data
+node scripts/batch-ingest-games.js    # Batch game ingestion
+node scripts/batch-ingest-teams.js    # Batch team ingestion
+```
+
+### Database Management
+```bash
+node scripts/setup-database.js        # Database setup
+node scripts/migrate-database.js      # Run migrations
+./scripts/deploy-d1-schema.sh         # Deploy D1 schema
+./scripts/backup-database.sh          # Database backup
+```
+
+### Monitoring & Validation
+```bash
+python scripts/health_check.py        # Health check
+node scripts/check-data-freshness.js  # Data freshness check
+./scripts/production-readiness-check.sh # Pre-deploy validation
+./scripts/validate-deployment.sh      # Post-deploy validation
+```
+
+### Deployment
+```bash
+./scripts/deploy-after-bindings.sh    # Deploy with bindings
+./scripts/rollback.sh                 # Rollback deployment
+```
+
+### Analytics & ML
+```bash
+node scripts/generate-embeddings.js   # Generate embeddings
+node scripts/monte-carlo-engine.js    # Monte Carlo simulations
+python scripts/train-hr-model.py      # Train ML models
+```
+
+---
+
 ## OWNER CONTEXT
 
 **Austin Humphrey** — Founder, Blaze Sports Intel
@@ -350,6 +633,67 @@ Never say:
 - Colors: Blaze orange (#FF6B35), Deep navy (#1A1A2E)
 - Voice: Direct, warm, no corporate slop
 - Tagline: "Born to Blaze the Path Less Beaten"
+
+---
+
+## ARCHITECTURE PATTERNS
+
+### 1. Monorepo with Micro-apps
+Main repo contains `/apps` sub-applications (api-worker, web, games)
+
+### 2. Cloudflare-first Infrastructure
+Workers, Pages, KV, D1, R2, AI, Vectorize, Analytics Engine
+
+### 3. Cascading Cache Strategy
+KV (5min TTL) → R2 (durable) → D1 (normalized) → In-memory (fallback)
+
+### 4. API Adapter Pattern
+Multiple data source adapters with automatic provider failover
+
+### 5. Design System Driven
+Centralized tokens in `src/styles/tokens/`, extended via Tailwind config
+
+### 6. Type-safe Throughout
+TypeScript with Zod validation at boundaries
+
+### 7. Mobile-first Responsive
+All components use min-width breakpoints
+
+### 8. MCP Integration
+AI-ready with structured tool definitions and citation support
+
+---
+
+## QUICK REFERENCE
+
+### Common File Locations
+| Need | Location |
+|------|----------|
+| React components | `components/` |
+| Design tokens | `src/styles/tokens/` |
+| API utilities | `lib/api/` |
+| Custom hooks | `lib/hooks/` |
+| Validation schemas | `lib/validation/` |
+| Worker configs | `workers/{worker-name}/wrangler.toml` |
+| Test files | `tests/` |
+| Scripts | `scripts/` |
+| Static assets | `public/` |
+
+### Common Commands
+```bash
+npm run dev              # Start dev server
+npm run build            # Build project
+npm run test             # Run tests
+npm run deploy           # Deploy to Cloudflare
+wrangler deploy          # Deploy specific worker
+```
+
+### Import Aliases
+```typescript
+import { Component } from '@/components/Component'
+import { useHook } from '@/lib/hooks/useHook'
+import { colors } from '@/src/styles/tokens'
+```
 
 ---
 

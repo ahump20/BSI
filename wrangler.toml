@@ -14,10 +14,27 @@ compatibility_flags = ["nodejs_compat"]
 #   - query:* for query results
 #   - rate_limit:* for rate limiting
 #   - vitals:* for Web Vitals storage
+#   - scores:* for live scores
+#   - odds:* for betting odds
+#   - session:* for user sessions
 kv_namespaces = [
   { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" },
   { binding = "NIL_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26", preview_id = "a53c3726fc3044be82e79d2d1e371d26" }
 ]
+
+# New dedicated KV namespaces (IDs populated by setup script)
+# Run scripts/setup-cloudflare-infrastructure.sh to create these
+# [[kv_namespaces]]
+# binding = "CACHE_SCORES"
+# id = "BSI_CACHE_SCORES_ID"  # Live scores cache (60s TTL)
+#
+# [[kv_namespaces]]
+# binding = "CACHE_ODDS"
+# id = "BSI_CACHE_ODDS_ID"    # Betting odds cache (5min TTL)
+#
+# [[kv_namespaces]]
+# binding = "SESSION_DATA"
+# id = "BSI_SESSION_DATA_ID"  # User session storage
 
 # Environment variables
 [vars]
@@ -34,6 +51,13 @@ database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 binding = "NIL_DB"
 database_name = "bsi-historical-db"
 database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
+
+# Core database with predictions (created by setup script)
+# Run scripts/setup-cloudflare-infrastructure.sh to create
+# [[d1_databases]]
+# binding = "CORE_DB"
+# database_name = "bsi-core-db"
+# database_id = "BSI_CORE_DB_ID"  # Multi-sport with predictions
 
 # Note: Durable Objects deployed separately as a Worker
 # See wrangler.worker.toml for GAME_MONITOR configuration
@@ -82,6 +106,12 @@ bucket_name = "blaze-sports-data-lake"
 [[r2_buckets]]
 binding = "NIL_ARCHIVE"
 bucket_name = "blaze-nil-archive"
+
+# Primary assets bucket (created by setup script)
+# Run scripts/setup-cloudflare-infrastructure.sh to create
+# [[r2_buckets]]
+# binding = "ASSETS"
+# bucket_name = "bsi-assets"  # Images, PDFs, static files
 
 # Analytics Engine for time-series sports metrics
 [[analytics_engine_datasets]]
