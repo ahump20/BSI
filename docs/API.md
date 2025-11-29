@@ -1,8 +1,9 @@
 # Blaze Sports Intel API Documentation
 
-Version: 1.0.0
+Version: 2.2.0
 Base URL: `https://blazesportsintel.com/api`
-Last Updated: November 6, 2025
+Timezone: America/Chicago (CST/CDT)
+Last Updated: November 29, 2025
 
 ## Table of Contents
 
@@ -17,6 +18,7 @@ Last Updated: November 6, 2025
 - [AI Copilot Endpoints](#ai-copilot-endpoints)
 - [Predictions & Analytics](#predictions--analytics)
 - [Health & Metrics](#health--metrics)
+- [Admin Endpoints](#admin-endpoints)
 - [OpenAPI Specification](#openapi-specification)
 
 ## Overview
@@ -867,6 +869,107 @@ Get system performance metrics.
 }
 ```
 
+## Admin Endpoints
+
+Administrative endpoints for system monitoring and debugging.
+
+### Secrets Status
+
+Check which secrets and bindings are configured (presence only, never exposes values).
+
+**Endpoint:** `GET /admin/secrets-status`
+
+**Response:**
+
+```json
+{
+  "timestamp": "2025-11-29T12:00:00Z",
+  "environment": "production",
+  "summary": {
+    "total": 20,
+    "configured": 15,
+    "missing": 5,
+    "requiredMissing": 2,
+    "status": "incomplete"
+  },
+  "byCategory": {
+    "sports-data": {
+      "configured": ["SPORTSDATAIO_API_KEY", "CFBDATA_API_KEY"],
+      "missing": ["THEODDS_API_KEY"]
+    },
+    "authentication": {
+      "configured": ["JWT_SECRET", "GOOGLE_CLIENT_ID"],
+      "missing": []
+    },
+    "cloudflare": {
+      "configured": ["KV", "DB", "AI"],
+      "missing": ["VECTORIZE"]
+    }
+  },
+  "missingRequired": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+}
+```
+
+### API Provider Tests
+
+Test individual external API providers to verify connectivity.
+
+**Endpoint:** `GET /admin/api-tests/:provider`
+
+**Available Providers:**
+- `mlb` - Test MLB Stats API
+- `espn` - Test ESPN APIs (NFL, NBA, NCAA)
+- `sportsdataio` - Test SportsDataIO (requires API key)
+- `cfbd` - Test College Football Data (requires API key)
+- `all` - Run all tests
+
+**Example:** `GET /admin/api-tests/all`
+
+**Response:**
+
+```json
+{
+  "timestamp": "2025-11-29T12:00:00Z",
+  "provider": "all",
+  "summary": {
+    "totalTests": 4,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 1,
+    "totalTime": 2345,
+    "overallStatus": "healthy"
+  },
+  "results": [
+    {
+      "provider": "MLB Stats API",
+      "status": "pass",
+      "responseTime": 245,
+      "statusCode": 200,
+      "dataValidation": true,
+      "details": {
+        "teamFound": "St. Louis Cardinals"
+      }
+    },
+    {
+      "provider": "ESPN APIs",
+      "status": "pass",
+      "responseTime": 890,
+      "dataValidation": true,
+      "details": {
+        "endpoints": 4,
+        "passed": 4
+      }
+    },
+    {
+      "provider": "SportsDataIO",
+      "status": "skip",
+      "responseTime": 0,
+      "error": "SPORTSDATAIO_API_KEY not configured"
+    }
+  ]
+}
+```
+
 ## OpenAPI Specification
 
 Full OpenAPI 3.1 specification available at:
@@ -1095,6 +1198,6 @@ paths:
 
 ---
 
-**Last Updated:** November 6, 2025
-**API Version:** 1.0.0
-**Documentation Version:** 1.0.0
+**Last Updated:** November 29, 2025
+**API Version:** 2.2.0
+**Documentation Version:** 2.0.0
