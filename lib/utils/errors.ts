@@ -188,7 +188,46 @@ export class ErrorHandler {
 
     // In production, send to monitoring service
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-      // TODO: Send to monitoring service (e.g., Sentry, LogRocket)
+      this.sendToSentry(error, context);
+    }
+  }
+
+  /**
+   * Send error to Sentry monitoring service
+   */
+  private static sendToSentry(
+    error: Error,
+    context: { operation: string; sport?: string; teamId?: string; [key: string]: unknown }
+  ): void {
+    try {
+      // Dynamic import to avoid bundling issues when Sentry is not available
+      import('@sentry/nextjs')
+        .then((Sentry) => {
+          Sentry.withScope((scope) => {
+            scope.setTag('operation', context.operation);
+            if (context.sport) {
+              scope.setTag('sport', context.sport);
+            }
+            if (context.teamId) {
+              scope.setTag('teamId', context.teamId);
+            }
+            scope.setContext('error_context', context);
+
+            if (error instanceof ApiError) {
+              scope.setTag('error_code', error.code);
+              if (error.statusCode) {
+                scope.setTag('status_code', String(error.statusCode));
+              }
+            }
+
+            Sentry.captureException(error);
+          });
+        })
+        .catch(() => {
+          // Sentry not available in this context, skip silently
+        });
+    } catch {
+      // Failed to send to Sentry, skip silently
     }
   }
 }
