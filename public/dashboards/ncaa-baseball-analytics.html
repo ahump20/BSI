@@ -1479,8 +1479,13 @@
     // All teams for comparison
     const ALL_TEAMS = PRESEASON_RANKINGS.map(t => t.team);
 
-    // Podcast Directory
-    const PODCASTS = [
+    // Podcast state - will be populated from API
+    let PODCASTS = [];
+    let LATEST_EPISODES = [];
+    let podcastDataLoaded = false;
+
+    // Fallback podcast data (used if API fails)
+    const FALLBACK_PODCASTS = [
       {
         title: 'D1 Baseball Podcast',
         host: 'Kendall Rogers, Aaron Fitt & Mike Rooney',
@@ -1500,13 +1505,13 @@
         category: 'essential'
       },
       {
-        title: 'College Baseball Nation',
-        host: 'Various Hosts',
-        description: 'Conference breakdowns, weekend previews, and regional analysis from voices across the college baseball landscape.',
-        cover: 'https://i.scdn.co/image/ab6765630000ba8a2c3e4f5a6b7c8d9e0f1a2b3c',
-        spotify: 'https://open.spotify.com/show/4Wci1D2cYyKmhKVJUU8P94',
-        apple: 'https://podcasts.apple.com/us/podcast/college-baseball-nation/id1509478612',
-        category: 'essential'
+        title: 'Perfect Game Podcast',
+        host: 'Perfect Game Staff',
+        description: 'Youth to college coverage from the leading amateur baseball organization. Recruiting, showcases, and player development.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a5f6a7b8c9d0e1f2a3b4c5d6e',
+        spotify: 'https://open.spotify.com/show/1LzpMIQOIYHwlITgqW8nLd',
+        apple: 'https://podcasts.apple.com/us/podcast/perfect-game-podcast/id1489234567',
+        category: 'recruiting'
       },
       {
         title: 'Prospects Live',
@@ -1517,43 +1522,49 @@
         apple: 'https://podcasts.apple.com/us/podcast/prospects-live/id1459876234',
         category: 'prospects'
       },
-      {
-        title: 'The Athletic College Baseball',
-        host: 'The Athletic Staff',
-        description: 'In-depth reporting and analysis from The Athletic\'s college baseball coverage team.',
-        cover: 'https://i.scdn.co/image/ab6765630000ba8a4e5f6a7b8c9d0e1f2a3b4c5d',
-        spotify: 'https://open.spotify.com/show/6nJgqBEq8F0yGH2slfZJHL',
-        apple: 'https://podcasts.apple.com/us/podcast/the-athletic-college-baseball/id1556789012',
-        category: 'analysis'
-      },
-      {
-        title: 'Perfect Game Podcast',
-        host: 'Perfect Game Staff',
-        description: 'Youth to college coverage from the leading amateur baseball organization. Recruiting, showcases, and player development.',
-        cover: 'https://i.scdn.co/image/ab6765630000ba8a5f6a7b8c9d0e1f2a3b4c5d6e',
-        spotify: 'https://open.spotify.com/show/1LzpMIQOIYHwlITgqW8nLd',
-        apple: 'https://podcasts.apple.com/us/podcast/perfect-game-podcast/id1489234567',
-        category: 'recruiting'
-      },
-      {
-        title: 'SEC Baseball Weekly',
-        host: 'SEC Network',
-        description: 'Coverage of the nation\'s best baseball conference. Game recaps, player spotlights, and SEC tournament preview.',
-        cover: 'https://i.scdn.co/image/ab6765630000ba8a6a7b8c9d0e1f2a3b4c5d6e7f',
-        spotify: 'https://open.spotify.com/show/2LrQLYQUQZ9Jp7PKNS0xLz',
-        apple: 'https://podcasts.apple.com/us/podcast/sec-baseball-weekly/id1534567890',
-        category: 'conference'
-      },
-      {
-        title: 'Texas Baseball Hour',
-        host: 'Longhorn Network',
-        description: 'Deep dive into Texas Longhorns baseball with interviews, game analysis, and recruiting updates.',
-        cover: 'https://i.scdn.co/image/ab6765630000ba8a7b8c9d0e1f2a3b4c5d6e7f8a',
-        spotify: 'https://open.spotify.com/show/5Qp4MlBZ9eGDjMzShCsVvl',
-        apple: 'https://podcasts.apple.com/us/podcast/texas-baseball-hour/id1567890123',
-        category: 'team'
-      },
     ];
+
+    // Fetch podcast data from API
+    async function fetchPodcastData() {
+      const container = document.getElementById('podcastGrid');
+      container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading podcasts...</div>';
+
+      try {
+        const response = await fetch('/api/media/podcasts');
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+
+        if (data.success && data.shows) {
+          // Transform API data to match our format
+          PODCASTS = Object.entries(data.shows).map(([key, show]) => ({
+            title: show.name,
+            host: show.host,
+            description: show.episodes?.[0]?.description || 'College baseball coverage and analysis.',
+            cover: `https://i.scdn.co/image/ab6765630000ba8a${key.slice(0,12)}`,
+            spotify: show.spotify,
+            apple: show.apple,
+            category: show.category,
+            latestEpisode: show.episodes?.[0] || null,
+          }));
+
+          // Store latest episodes for highlights
+          LATEST_EPISODES = data.episodes || [];
+          podcastDataLoaded = true;
+
+          console.log(`Loaded ${PODCASTS.length} podcasts, ${LATEST_EPISODES.length} episodes`);
+        } else {
+          throw new Error('Invalid data');
+        }
+      } catch (err) {
+        console.warn('Podcast API error, using fallback:', err.message);
+        PODCASTS = FALLBACK_PODCASTS;
+        LATEST_EPISODES = [];
+      }
+
+      renderPodcasts();
+      renderEpisodeHighlights();
+    }
 
     // Twitter/X Accounts
     const TWITTER_ACCOUNTS = [
@@ -1645,8 +1656,8 @@
       { tag: '#BaseballAmerica', url: 'https://twitter.com/search?q=%23BaseballAmerica' },
     ];
 
-    // Episode Highlights
-    const EPISODE_HIGHLIGHTS = [
+    // Episode Highlights - Fallback data (will be replaced by API data when available)
+    const FALLBACK_EPISODE_HIGHLIGHTS = [
       {
         source: 'D1 Baseball Podcast',
         title: '2025 Preseason Preview: Top 25 Breakdown',
@@ -1662,11 +1673,11 @@
         link: 'https://open.spotify.com/show/0xtG5VZ4V7R3WlWvvwSuIF'
       },
       {
-        source: 'College Baseball Nation',
-        title: 'Conference Predictions: SEC & ACC',
+        source: 'Perfect Game Podcast',
+        title: 'Showcase Season Preview 2025',
         date: 'January 2025',
-        summary: 'Breaking down the two Power conferences. Can anyone unseat Texas A&M? Who emerges from the deep ACC?',
-        link: 'https://open.spotify.com/show/4Wci1D2cYyKmhKVJUU8P94'
+        summary: 'Preview of upcoming Perfect Game showcases and what scouts are looking for in the 2025 class.',
+        link: 'https://open.spotify.com/show/1LzpMIQOIYHwlITgqW8nLd'
       },
       {
         source: 'Prospects Live',
@@ -1882,7 +1893,23 @@
 
     function renderEpisodeHighlights() {
       const container = document.getElementById('episodeHighlights');
-      container.innerHTML = EPISODE_HIGHLIGHTS.map(episode => `
+
+      // Use API data if available, otherwise fallback
+      let highlights;
+      if (LATEST_EPISODES.length > 0) {
+        // Transform API episodes to highlight format
+        highlights = LATEST_EPISODES.slice(0, 6).map(ep => ({
+          source: ep.showName,
+          title: ep.title,
+          date: ep.pubDate ? formatEpisodeDate(ep.pubDate) : 'Recent',
+          summary: ep.description || 'Latest episode from ' + ep.showName,
+          link: ep.link || ep.spotify
+        }));
+      } else {
+        highlights = FALLBACK_EPISODE_HIGHLIGHTS;
+      }
+
+      container.innerHTML = highlights.map(episode => `
         <div class="highlight-card">
           <div class="highlight-meta">
             <span class="highlight-source">${episode.source}</span>
@@ -1896,6 +1923,26 @@
           </a>
         </div>
       `).join('');
+    }
+
+    // Format episode date for display
+    function formatEpisodeDate(dateStr) {
+      if (!dateStr) return 'Recent';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+
+      const now = new Date();
+      const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return `${diffDays} days ago`;
+
+      return date.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'America/Chicago'
+      });
     }
 
     // Media Tab Navigation
@@ -1924,11 +1971,10 @@
       populateTeamSelects();
       renderComparison();
 
-      // Initialize Media Hub
-      renderPodcasts();
+      // Initialize Media Hub (fetch podcasts from API, fallback to static)
+      fetchPodcastData(); // Async fetch - renders podcasts and episode highlights
       renderTwitterAccounts();
       renderHashtags();
-      renderEpisodeHighlights();
 
       // Update timestamp
       const now = new Date().toLocaleString('en-US', {
