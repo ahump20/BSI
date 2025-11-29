@@ -3,251 +3,228 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MLB League Analytics | Blaze Intelligence</title>
-  <meta name="description" content="Complete MLB league analytics for all 30 teams - Pythagorean win expectancy, power rankings, statistical leaders, and playoff probability analysis">
+  <title>MLB League Analytics | Blaze Sports Intel</title>
+  <meta name="description" content="Complete MLB league analytics - standings, Pythagorean win expectancy, run differentials, and playoff probability for all 30 teams.">
 
-  <!-- Chart.js for Data Visualization -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
-    /* === GLOBAL RESET & BASE === */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     :root {
-      /* Blaze Intelligence System Colors (Neutral - No Team Bias) */
-      --blaze-burnt-orange: #BF5700;
-      --blaze-ember: #CC6600;
-      --blaze-background: #0a0a0a;
-      --blaze-surface: rgba(26, 26, 26, 0.6);
-      --blaze-text: #e0e0e0;
-      --blaze-text-secondary: #a0a0a0;
-      --blaze-border: rgba(191, 87, 0, 0.3);
-
-      /* Glassmorphism */
-      --glass-bg: rgba(26, 26, 26, 0.4);
-      --glass-border: rgba(191, 87, 0, 0.2);
-      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-
-      /* Typography */
-      --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      --burnt-orange: #BF5700;
+      --burnt-orange-dark: #A34700;
+      --ember: #FF6B35;
+      --charcoal: #1a1a1a;
+      --charcoal-light: #2d2d2d;
+      --cream: #f5f5f0;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: var(--font-primary);
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-      color: var(--blaze-text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, var(--charcoal) 50%, #1a1510 100%);
+      color: var(--cream);
       min-height: 100vh;
-      padding: 2rem;
       line-height: 1.6;
     }
 
-    /* === HEADER === */
-    .header {
-      text-align: center;
-      margin-bottom: 3rem;
-      padding: 2rem;
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      box-shadow: var(--glass-shadow);
-    }
-
-    .header h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
-    }
-
-    .header .subtitle {
-      font-size: 1.1rem;
-      color: var(--blaze-text-secondary);
-      font-weight: 500;
-      margin-bottom: 1rem;
-    }
-
-    .header .tagline {
-      font-size: 0.9rem;
-      color: var(--blaze-burnt-orange);
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .league-badges {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .league-badge {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background: rgba(191, 87, 0, 0.2);
-      border: 1px solid var(--blaze-burnt-orange);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      color: var(--blaze-burnt-orange);
-      font-family: var(--font-mono);
-    }
-
-    /* === FILTER BAR === */
-    .filter-bar {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      padding: 0.75rem 1.5rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      color: var(--blaze-text);
-      font-family: var(--font-primary);
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      backdrop-filter: blur(10px);
-    }
-
-    .filter-btn:hover {
-      border-color: var(--blaze-burnt-orange);
-      background: rgba(191, 87, 0, 0.1);
-    }
-
-    .filter-btn.active {
-      background: var(--blaze-burnt-orange);
-      border-color: var(--blaze-burnt-orange);
-      color: #ffffff;
-    }
-
-    /* === DASHBOARD GRID === */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 2rem;
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-
-    .analytics-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: var(--glass-shadow);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .analytics-card::before {
-      content: '';
-      position: absolute;
+    /* Navigation */
+    .nav {
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--blaze-burnt-orange), var(--blaze-ember));
-      opacity: 0;
-      transition: opacity 0.3s;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.3);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--cream);
+      text-decoration: none;
+    }
+    .nav-logo:hover { color: var(--burnt-orange); }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    .nav-link {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(245, 245, 240, 0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--burnt-orange); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
     }
 
-    .analytics-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--blaze-burnt-orange);
-      box-shadow: 0 12px 48px rgba(191, 87, 0, 0.3);
+    /* Hero Header */
+    .hero {
+      padding: calc(80px + 3rem) 2rem 2rem;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(191, 87, 0, 0.08) 0%, transparent 100%);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(191, 87, 0, 0.15);
+      border: 1px solid rgba(191, 87, 0, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: var(--burnt-orange);
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .hero h1 .accent { color: var(--burnt-orange); }
+    .hero p {
+      font-size: 1rem;
+      color: rgba(245, 245, 240, 0.7);
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
     }
 
-    .analytics-card:hover::before {
-      opacity: 1;
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding: 0 2rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background: var(--charcoal-light);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 8px;
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      border-color: var(--burnt-orange);
+      background: rgba(191, 87, 0, 0.1);
+    }
+    .filter-btn.active {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+      color: white;
     }
 
-    .analytics-card.wide {
-      grid-column: 1 / -1;
+    /* Main Container */
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem 3rem;
     }
 
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--charcoal-light);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(191, 87, 0, 0.4);
+    }
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--glass-border);
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+      background: rgba(191, 87, 0, 0.05);
     }
-
     .card-title {
-      font-size: 1.3rem;
+      font-size: 1.125rem;
       font-weight: 700;
-      color: var(--blaze-burnt-orange);
+      color: var(--burnt-orange);
+    }
+    .card-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(191, 87, 0, 0.2);
+      border-radius: 4px;
+      color: var(--burnt-orange);
+    }
+    .card-body {
+      padding: 1.5rem;
     }
 
-    .card-icon {
-      font-size: 1.5rem;
-      opacity: 0.6;
-    }
-
-    /* === STANDINGS TABLE === */
+    /* Standings Table */
     .standings-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
     }
-
     .standings-table thead {
-      background: rgba(191, 87, 0, 0.2);
+      background: rgba(191, 87, 0, 0.1);
     }
-
     .standings-table th {
       padding: 0.75rem 0.5rem;
       text-align: left;
       font-weight: 600;
-      color: var(--blaze-burnt-orange);
-      border-bottom: 2px solid var(--blaze-burnt-orange);
+      color: var(--burnt-orange);
+      border-bottom: 2px solid rgba(191, 87, 0, 0.3);
+      white-space: nowrap;
     }
-
-    .standings-table th.text-center {
-      text-align: center;
-    }
-
+    .standings-table th.center { text-align: center; }
     .standings-table td {
-      padding: 0.75rem 0.5rem;
+      padding: 0.625rem 0.5rem;
       border-bottom: 1px solid rgba(191, 87, 0, 0.1);
     }
-
-    .standings-table td.text-center {
-      text-align: center;
-    }
-
+    .standings-table td.center { text-align: center; }
     .standings-table tr:hover {
-      background: rgba(191, 87, 0, 0.1);
-      cursor: pointer;
+      background: rgba(191, 87, 0, 0.05);
     }
-
     .team-name {
       font-weight: 600;
-      color: var(--blaze-text);
+      color: var(--cream);
     }
-
     .rank-badge {
       display: inline-block;
       width: 24px;
@@ -258,688 +235,657 @@
       font-weight: 700;
       font-size: 0.75rem;
       background: rgba(191, 87, 0, 0.2);
-      color: var(--blaze-burnt-orange);
+      color: var(--burnt-orange);
     }
+    .stat-positive { color: var(--success); }
+    .stat-negative { color: var(--error); }
+    .stat-neutral { color: var(--cream); }
+    .streak-win { color: var(--success); font-weight: 600; }
+    .streak-loss { color: var(--error); font-weight: 600; }
 
-    .stat-positive {
-      color: #4ade80;
-    }
-
-    .stat-negative {
-      color: #f87171;
-    }
-
-    .stat-neutral {
-      color: var(--blaze-text);
-    }
-
-    /* === CHART CONTAINERS === */
+    /* Charts */
     .chart-container {
       position: relative;
-      height: 350px;
-      margin: 1.5rem 0;
+      height: 400px;
+    }
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
     }
 
-    .chart-container canvas {
-      max-height: 350px;
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--burnt-orange);
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: rgba(245, 245, 240, 0.6);
+      margin-top: 0.25rem;
     }
 
-    /* === LOADING STATE === */
+    /* Loading */
     .loading {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 200px;
-      color: var(--blaze-text-secondary);
+      color: rgba(245, 245, 240, 0.6);
     }
-
     .spinner {
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       border: 3px solid rgba(191, 87, 0, 0.2);
-      border-top-color: var(--blaze-burnt-orange);
+      border-top-color: var(--burnt-orange);
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin-bottom: 1rem;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      margin-top: 2rem;
+    }
+    .footer-tagline {
+      font-style: italic;
+      font-size: 0.9rem;
+      color: rgba(245, 245, 240, 0.6);
+      margin-bottom: 0.25rem;
+    }
+    .footer-tagline .accent { color: var(--burnt-orange); }
+    .footer-timestamp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(245, 245, 240, 0.4);
     }
 
-    /* === RESPONSIVE === */
+    /* Responsive */
     @media (max-width: 768px) {
-      body {
-        padding: 1rem;
-      }
+      .standings-table { font-size: 0.75rem; }
+      .standings-table th, .standings-table td { padding: 0.5rem 0.25rem; }
+      .chart-container { height: 300px; }
+      .chart-grid { grid-template-columns: 1fr; }
+      .filter-btn { padding: 0.4rem 0.75rem; font-size: 0.7rem; }
+    }
 
-      .header h1 {
-        font-size: 2rem;
-      }
-
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-
-      .standings-table {
-        font-size: 0.75rem;
-      }
-
-      .standings-table th,
-      .standings-table td {
-        padding: 0.5rem 0.25rem;
-      }
-
-      .chart-container {
-        height: 250px;
-      }
+    /* Scrollable Table */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
   </style>
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="header">
-    <h1>⚾ MLB League Analytics</h1>
-    <p class="subtitle">Complete Major League Baseball Intelligence • All 30 Teams • 2025 Season</p>
-    <p class="tagline">Objective Analytics • Zero Bias • Pure Data</p>
-    <div class="league-badges">
-      <span class="league-badge">📊 30 Teams • 162 Games</span>
-      <span class="league-badge">🔢 Pythagorean Exponent: 1.83</span>
-      <span class="league-badge">📡 SportsDataIO API</span>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Blaze Sports Intel</a>
+      <div class="nav-links">
+        <a href="/analytics" class="nav-link">Analytics</a>
+        <a href="/nil-valuation" class="nav-link">NIL</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+      </div>
     </div>
-  </header>
+  </nav>
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
+  <section class="hero">
+    <div class="hero-badge">MLB • 30 TEAMS • 162-GAME SEASON</div>
+    <h1><span class="accent">MLB</span> League Analytics</h1>
+    <p>Complete standings, Pythagorean win expectancy, run differentials, and playoff probability analysis.</p>
+  </section>
+
+  <div class="filter-bar" id="filter-bar">
     <button class="filter-btn active" data-filter="all">All Teams</button>
     <button class="filter-btn" data-filter="AL">American League</button>
     <button class="filter-btn" data-filter="NL">National League</button>
-    <button class="filter-btn" data-filter="AL East">AL East</button>
-    <button class="filter-btn" data-filter="AL Central">AL Central</button>
-    <button class="filter-btn" data-filter="AL West">AL West</button>
-    <button class="filter-btn" data-filter="NL East">NL East</button>
-    <button class="filter-btn" data-filter="NL Central">NL Central</button>
-    <button class="filter-btn" data-filter="NL West">NL West</button>
   </div>
 
-  <!-- DASHBOARD GRID -->
-  <div class="dashboard-grid">
-    <!-- CARD 1: League Standings -->
-    <div class="analytics-card wide" id="standings-card">
+  <main class="main">
+    <!-- League Summary Stats -->
+    <div class="card" id="summary-card">
       <div class="card-header">
-        <h2 class="card-title">📊 2025 MLB Standings</h2>
-        <span class="card-icon">⚾</span>
+        <span class="card-title">League Summary</span>
+        <span class="card-badge" id="season-badge">2025 Season</span>
       </div>
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Loading MLB standings for all 30 teams...</p>
+      <div class="card-body">
+        <div class="loading" id="summary-loading">
+          <div class="spinner"></div>
+          <p>Loading league statistics...</p>
+        </div>
+        <div id="summary-content" style="display: none;"></div>
       </div>
     </div>
 
-    <!-- CARD 2: Pythagorean Win Expectancy -->
-    <div class="analytics-card wide" id="pythagorean-card">
+    <!-- Standings -->
+    <div class="card" id="standings-card">
       <div class="card-header">
-        <h2 class="card-title">🎯 Pythagorean Win Expectancy (All Teams)</h2>
-        <span class="card-icon">📈</span>
+        <span class="card-title">MLB Standings</span>
+        <span class="card-badge" id="teams-count">30 Teams</span>
       </div>
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Calculating expected wins vs actual wins for all teams...</p>
+      <div class="card-body">
+        <div class="loading" id="standings-loading">
+          <div class="spinner"></div>
+          <p>Loading MLB standings...</p>
+        </div>
+        <div class="table-wrapper" id="standings-content" style="display: none;"></div>
       </div>
     </div>
 
-    <!-- CARD 3: Run Differential Analysis -->
-    <div class="analytics-card wide" id="rundiff-card">
-      <div class="card-header">
-        <h2 class="card-title">⚖️ Run Differential Rankings</h2>
-        <span class="card-icon">📊</span>
-      </div>
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Analyzing offensive vs defensive performance...</p>
-      </div>
-    </div>
-
-    <!-- CARD 4: Playoff Probability Heat Map -->
-    <div class="analytics-card wide" id="playoff-card">
-      <div class="card-header">
-        <h2 class="card-title">🏆 Playoff Probability Rankings</h2>
-        <span class="card-icon">🎟️</span>
-      </div>
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Calculating playoff probability for all 30 teams...</p>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    // ========================================
-    // MLB LEAGUE-WIDE ANALYTICS DASHBOARD
-    // ========================================
-
-    // Import analytics libraries
-    import {
-      calculatePythagorean,
-      projectSeason,
-      compareTeams,
-      MLB_CONFIG
-    } from '../lib/analytics/baseball/pythagorean-mlb.js';
-
-    import {
-      getMLBStandings,
-      SPORTSDATAIO_CONFIG
-    } from '../lib/api/mlb-data.js';
-
-    // ========================================
-    // STATE MANAGEMENT
-    // ========================================
-
-    let currentFilter = 'all';
-    let standingsData = null;
-
-    // ========================================
-    // MAIN INITIALIZATION
-    // ========================================
-
-    async function initializeDashboard() {
-      try {
-        console.log('⚾ Initializing MLB League Analytics Dashboard...');
-
-        // Fetch standings for all 30 teams
-        standingsData = await getMLBStandings('2025');
-
-        console.log('✅ Data fetched successfully:', standingsData);
-
-        // Render all cards
-        renderStandingsCard(standingsData);
-        renderPythagoreanCard(standingsData);
-        renderRunDifferentialCard(standingsData);
-        renderPlayoffCard(standingsData);
-
-        // Setup filter buttons
-        setupFilters();
-
-      } catch (error) {
-        console.error('❌ Dashboard initialization error:', error);
-        showError('Failed to load MLB data. Please check API configuration.');
-      }
-    }
-
-    // ========================================
-    // FILTER SYSTEM
-    // ========================================
-
-    function setupFilters() {
-      const filterBtns = document.querySelectorAll('.filter-btn');
-
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          // Update active state
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-
-          // Update filter
-          currentFilter = btn.dataset.filter;
-
-          // Re-render cards with filter
-          renderStandingsCard(standingsData);
-        });
-      });
-    }
-
-    function filterTeams(standings) {
-      if (currentFilter === 'all') return standings;
-
-      if (currentFilter === 'AL' || currentFilter === 'NL') {
-        return standings.filter(team => team.league === currentFilter);
-      }
-
-      return standings.filter(team => `${team.league} ${team.division}` === currentFilter);
-    }
-
-    // ========================================
-    // CARD RENDERERS
-    // ========================================
-
-    function renderStandingsCard(data) {
-      const card = document.getElementById('standings-card');
-
-      try {
-        const filteredTeams = filterTeams(data.standings);
-
-        // Sort by wins
-        filteredTeams.sort((a, b) => b.record.wins - a.record.wins);
-
-        let tableHTML = `
-          <div class="card-header">
-            <h2 class="card-title">📊 2025 MLB Standings (${filteredTeams.length} Teams)</h2>
-            <span class="card-icon">⚾</span>
-          </div>
-
-          <table class="standings-table">
-            <thead>
-              <tr>
-                <th class="text-center">Rank</th>
-                <th>Team</th>
-                <th class="text-center">League</th>
-                <th class="text-center">Division</th>
-                <th class="text-center">W</th>
-                <th class="text-center">L</th>
-                <th class="text-center">Win%</th>
-                <th class="text-center">GB</th>
-                <th class="text-center">RS</th>
-                <th class="text-center">RA</th>
-                <th class="text-center">Diff</th>
-                <th class="text-center">Streak</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${filteredTeams.map((team, index) => {
-                const diff = (team.runsScored || 0) - (team.runsAllowed || 0);
-                const diffClass = diff > 0 ? 'stat-positive' : diff < 0 ? 'stat-negative' : 'stat-neutral';
-
-                return `
-                  <tr>
-                    <td class="text-center"><span class="rank-badge">${index + 1}</span></td>
-                    <td><span class="team-name">${team.team.name}</span></td>
-                    <td class="text-center">${team.league}</td>
-                    <td class="text-center">${team.division}</td>
-                    <td class="text-center stat-positive"><strong>${team.record.wins}</strong></td>
-                    <td class="text-center stat-negative">${team.record.losses}</td>
-                    <td class="text-center">${(team.record.winPercentage * 100).toFixed(1)}%</td>
-                    <td class="text-center">${team.gamesBack || '-'}</td>
-                    <td class="text-center">${team.runsScored || 0}</td>
-                    <td class="text-center">${team.runsAllowed || 0}</td>
-                    <td class="text-center ${diffClass}"><strong>${diff > 0 ? '+' : ''}${diff}</strong></td>
-                    <td class="text-center">${team.streak?.type || ''}${team.streak?.count || 0}</td>
-                  </tr>
-                `;
-              }).join('')}
-            </tbody>
-          </table>
-        `;
-
-        card.innerHTML = tableHTML;
-
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">📊 2025 MLB Standings</h2>
-            <span class="card-icon">⚾</span>
-          </div>
-          <div class="error-message">Error loading standings: ${error.message}</div>
-        `;
-      }
-    }
-
-    function renderPythagoreanCard(data) {
-      const card = document.getElementById('pythagorean-card');
-
-      try {
-        const teams = data.standings.map(team => {
-          const gamesPlayed = team.record.wins + team.record.losses;
-          const pythag = calculatePythagorean(
-            team.runsScored || 0,
-            team.runsAllowed || 0,
-            gamesPlayed,
-            team.record.wins
-          );
-
-          return {
-            name: team.team.name,
-            actualWins: team.record.wins,
-            expectedWins: pythag.expectedWins,
-            luckFactor: pythag.luckFactor
-          };
-        });
-
-        // Sort by expected wins
-        teams.sort((a, b) => b.expectedWins - a.expectedWins);
-
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🎯 Pythagorean Win Expectancy (All Teams)</h2>
-            <span class="card-icon">📈</span>
-          </div>
-
-          <div class="chart-container">
-            <canvas id="pythagorean-chart"></canvas>
-          </div>
-        `;
-
-        // Create Chart.js visualization
-        setTimeout(() => {
-          const ctx = document.getElementById('pythagorean-chart');
-          if (ctx) {
-            new Chart(ctx, {
-              type: 'scatter',
-              data: {
-                datasets: [{
-                  label: 'Actual vs Expected Wins',
-                  data: teams.map(t => ({
-                    x: t.expectedWins,
-                    y: t.actualWins,
-                    team: t.name
-                  })),
-                  backgroundColor: 'rgba(191, 87, 0, 0.6)',
-                  borderColor: 'rgba(191, 87, 0, 1)',
-                  borderWidth: 2,
-                  pointRadius: 6,
-                  pointHoverRadius: 8
-                }, {
-                  label: 'Expected = Actual Line',
-                  data: [{x: 0, y: 0}, {x: 162, y: 162}],
-                  type: 'line',
-                  borderColor: 'rgba(74, 222, 128, 0.5)',
-                  borderDash: [10, 5],
-                  borderWidth: 2,
-                  fill: false,
-                  pointRadius: 0
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    labels: {
-                      color: 'rgba(224, 224, 224, 0.8)',
-                      font: { size: 12, family: 'Inter, sans-serif' }
-                    }
-                  },
-                  tooltip: {
-                    backgroundColor: 'rgba(26, 26, 26, 0.9)',
-                    titleColor: '#BF5700',
-                    bodyColor: '#e0e0e0',
-                    borderColor: 'rgba(191, 87, 0, 0.5)',
-                    borderWidth: 1,
-                    callbacks: {
-                      label: (context) => {
-                        if (context.dataset.label === 'Actual vs Expected Wins') {
-                          const point = context.raw;
-                          const luck = point.y - point.x;
-                          return [
-                            `${point.team}`,
-                            `Expected: ${point.x} wins`,
-                            `Actual: ${point.y} wins`,
-                            `Luck: ${luck > 0 ? '+' : ''}${luck.toFixed(1)}`
-                          ];
-                        }
-                        return '';
-                      }
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    title: {
-                      display: true,
-                      text: 'Expected Wins (Pythagorean)',
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 12 }
-                    },
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' },
-                    min: 0,
-                    max: 162
-                  },
-                  y: {
-                    title: {
-                      display: true,
-                      text: 'Actual Wins',
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 12 }
-                    },
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' },
-                    min: 0,
-                    max: 162
-                  }
-                }
-              }
-            });
-          }
-        }, 100);
-
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🎯 Pythagorean Win Expectancy</h2>
-            <span class="card-icon">📈</span>
-          </div>
-          <div class="error-message">Error calculating Pythagorean analysis: ${error.message}</div>
-        `;
-      }
-    }
-
-    function renderRunDifferentialCard(data) {
-      const card = document.getElementById('rundiff-card');
-
-      try {
-        const teams = data.standings.map(team => ({
-          name: team.team.name.replace(/^.*\s/, ''), // Short name
-          diff: (team.runsScored || 0) - (team.runsAllowed || 0)
-        }));
-
-        // Sort by run differential
-        teams.sort((a, b) => b.diff - a.diff);
-
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">⚖️ Run Differential Rankings</h2>
-            <span class="card-icon">📊</span>
-          </div>
-
+    <!-- Charts Grid -->
+    <div class="chart-grid">
+      <!-- Run Differential Chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Run Differential</span>
+          <span class="card-badge">RS - RA</span>
+        </div>
+        <div class="card-body">
           <div class="chart-container">
             <canvas id="rundiff-chart"></canvas>
           </div>
-        `;
+        </div>
+      </div>
 
-        // Create Chart.js bar chart
-        setTimeout(() => {
-          const ctx = document.getElementById('rundiff-chart');
-          if (ctx) {
-            new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: teams.map(t => t.name),
-                datasets: [{
-                  label: 'Run Differential',
-                  data: teams.map(t => t.diff),
-                  backgroundColor: teams.map(t =>
-                    t.diff > 0 ? 'rgba(74, 222, 128, 0.6)' : 'rgba(248, 113, 113, 0.6)'
-                  ),
-                  borderColor: teams.map(t =>
-                    t.diff > 0 ? 'rgba(74, 222, 128, 1)' : 'rgba(248, 113, 113, 1)'
-                  ),
-                  borderWidth: 2
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    backgroundColor: 'rgba(26, 26, 26, 0.9)',
-                    titleColor: '#BF5700',
-                    bodyColor: '#e0e0e0',
-                    callbacks: {
-                      label: (context) => `${context.parsed.x > 0 ? '+' : ''}${context.parsed.x} runs`
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' }
-                  },
-                  y: {
-                    grid: { display: false },
-                    ticks: {
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 9 }
-                    }
-                  }
-                }
-              }
-            });
-          }
-        }, 100);
-
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">⚖️ Run Differential Rankings</h2>
-            <span class="card-icon">📊</span>
-          </div>
-          <div class="error-message">Error calculating run differential: ${error.message}</div>
-        `;
-      }
-    }
-
-    function renderPlayoffCard(data) {
-      const card = document.getElementById('playoff-card');
-
-      try {
-        const teams = data.standings.map(team => {
-          const gamesPlayed = team.record.wins + team.record.losses;
-          const projection = projectSeason(
-            {
-              runsScored: team.runsScored || 0,
-              runsAllowed: team.runsAllowed || 0,
-              wins: team.record.wins,
-              losses: team.record.losses,
-              gamesPlayed
-            },
-            162
-          );
-
-          return {
-            name: team.team.name.replace(/^.*\s/, ''),
-            league: team.league,
-            playoffProb: parseFloat(projection.playoffLikelihood),
-            projWins: projection.projectedFinalRecord.wins
-          };
-        });
-
-        // Sort by playoff probability
-        teams.sort((a, b) => b.playoffProb - a.playoffProb);
-
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🏆 Playoff Probability Rankings</h2>
-            <span class="card-icon">🎟️</span>
-          </div>
-
+      <!-- Pythagorean Expectancy Chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pythagorean Win Expectancy</span>
+          <span class="card-badge">Expected vs Actual</span>
+        </div>
+        <div class="card-body">
           <div class="chart-container">
-            <canvas id="playoff-chart"></canvas>
+            <canvas id="pythag-chart"></canvas>
           </div>
-        `;
+        </div>
+      </div>
+    </div>
 
-        // Create Chart.js horizontal bar chart
-        setTimeout(() => {
-          const ctx = document.getElementById('playoff-chart');
-          if (ctx) {
-            new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: teams.map(t => t.name),
-                datasets: [{
-                  label: 'Playoff Probability (%)',
-                  data: teams.map(t => t.playoffProb),
-                  backgroundColor: teams.map(t =>
-                    t.playoffProb > 75 ? 'rgba(74, 222, 128, 0.6)' :
-                    t.playoffProb > 50 ? 'rgba(191, 87, 0, 0.6)' :
-                    t.playoffProb > 25 ? 'rgba(204, 102, 0, 0.6)' :
-                    'rgba(248, 113, 113, 0.6)'
-                  ),
-                  borderColor: teams.map(t =>
-                    t.playoffProb > 75 ? 'rgba(74, 222, 128, 1)' :
-                    t.playoffProb > 50 ? 'rgba(191, 87, 0, 1)' :
-                    t.playoffProb > 25 ? 'rgba(204, 102, 0, 1)' :
-                    'rgba(248, 113, 113, 1)'
-                  ),
-                  borderWidth: 2
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    backgroundColor: 'rgba(26, 26, 26, 0.9)',
-                    titleColor: '#BF5700',
-                    bodyColor: '#e0e0e0',
-                    callbacks: {
-                      label: (context) => {
-                        const team = teams[context.dataIndex];
-                        return [
-                          `Playoff Prob: ${context.parsed.x.toFixed(1)}%`,
-                          `Projected Wins: ${team.projWins}`,
-                          `League: ${team.league}`
-                        ];
-                      }
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' },
-                    max: 100
-                  },
-                  y: {
-                    grid: { display: false },
-                    ticks: {
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 9 }
-                    }
-                  }
-                }
-              }
-            });
-          }
-        }, 100);
+    <!-- Playoff Probability -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Playoff Probability</span>
+        <span class="card-badge">Based on Current Pace</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-container" style="height: 500px;">
+          <canvas id="playoff-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
 
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🏆 Playoff Probability Rankings</h2>
-            <span class="card-icon">🎟️</span>
-          </div>
-          <div class="error-message">Error calculating playoff probabilities: ${error.message}</div>
-        `;
-      }
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil.</p>
+    <p class="footer-timestamp" id="timestamp"></p>
+  </footer>
+
+  <script>
+    // =============================================
+    // MLB LEAGUE ANALYTICS - LIVE DATA DASHBOARD
+    // =============================================
+
+    let allTeams = [];
+    let currentFilter = 'all';
+    let rundiffChart = null;
+    let pythagChart = null;
+    let playoffChart = null;
+
+    // MLB Division Mapping
+    const DIVISION_MAP = {
+      'New York Yankees': { league: 'AL', division: 'East' },
+      'Boston Red Sox': { league: 'AL', division: 'East' },
+      'Toronto Blue Jays': { league: 'AL', division: 'East' },
+      'Tampa Bay Rays': { league: 'AL', division: 'East' },
+      'Baltimore Orioles': { league: 'AL', division: 'East' },
+      'Chicago White Sox': { league: 'AL', division: 'Central' },
+      'Cleveland Guardians': { league: 'AL', division: 'Central' },
+      'Detroit Tigers': { league: 'AL', division: 'Central' },
+      'Kansas City Royals': { league: 'AL', division: 'Central' },
+      'Minnesota Twins': { league: 'AL', division: 'Central' },
+      'Houston Astros': { league: 'AL', division: 'West' },
+      'Los Angeles Angels': { league: 'AL', division: 'West' },
+      'Oakland Athletics': { league: 'AL', division: 'West' },
+      'Seattle Mariners': { league: 'AL', division: 'West' },
+      'Texas Rangers': { league: 'AL', division: 'West' },
+      'Atlanta Braves': { league: 'NL', division: 'East' },
+      'Miami Marlins': { league: 'NL', division: 'East' },
+      'New York Mets': { league: 'NL', division: 'East' },
+      'Philadelphia Phillies': { league: 'NL', division: 'East' },
+      'Washington Nationals': { league: 'NL', division: 'East' },
+      'Chicago Cubs': { league: 'NL', division: 'Central' },
+      'Cincinnati Reds': { league: 'NL', division: 'Central' },
+      'Milwaukee Brewers': { league: 'NL', division: 'Central' },
+      'Pittsburgh Pirates': { league: 'NL', division: 'Central' },
+      'St. Louis Cardinals': { league: 'NL', division: 'Central' },
+      'Arizona Diamondbacks': { league: 'NL', division: 'West' },
+      'Colorado Rockies': { league: 'NL', division: 'West' },
+      'Los Angeles Dodgers': { league: 'NL', division: 'West' },
+      'San Diego Padres': { league: 'NL', division: 'West' },
+      'San Francisco Giants': { league: 'NL', division: 'West' }
+    };
+
+    // Pythagorean Win Expectancy (exponent 1.83 for MLB)
+    function calculatePythagorean(runsScored, runsAllowed, gamesPlayed) {
+      if (runsScored === 0 && runsAllowed === 0) return { expectedWins: 0, expectedWinPct: 0.5 };
+      const exponent = 1.83;
+      const expectedWinPct = Math.pow(runsScored, exponent) /
+        (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent));
+      const expectedWins = Math.round(expectedWinPct * gamesPlayed);
+      return { expectedWins, expectedWinPct };
     }
 
-    // ========================================
-    // ERROR HANDLING
-    // ========================================
+    // Playoff probability based on projected wins
+    function calculatePlayoffProb(wins, losses, runsScored, runsAllowed) {
+      const gamesPlayed = wins + losses;
+      if (gamesPlayed === 0) return 0;
 
-    function showError(message) {
-      document.querySelectorAll('.analytics-card').forEach(card => {
-        card.innerHTML = `
-          <div class="error-message">
-            <strong>⚠️ Error:</strong> ${message}
-            <br><br>
-            Please verify your SportsDataIO API key is configured correctly.
+      const { expectedWinPct } = calculatePythagorean(runsScored, runsAllowed, gamesPlayed);
+      const projectedWins = Math.round(expectedWinPct * 162);
+
+      // Simple playoff threshold model (90 wins ~ 50%, 95 ~ 80%, 100+ ~ 95%)
+      if (projectedWins >= 100) return 95;
+      if (projectedWins >= 95) return 75 + (projectedWins - 95) * 4;
+      if (projectedWins >= 90) return 45 + (projectedWins - 90) * 6;
+      if (projectedWins >= 85) return 20 + (projectedWins - 85) * 5;
+      if (projectedWins >= 80) return 5 + (projectedWins - 80) * 3;
+      return Math.max(1, projectedWins - 75);
+    }
+
+    // Format timestamp
+    function getTimestamp() {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      }).format(new Date()) + ' CT';
+    }
+
+    // Filter teams
+    function filterTeams(teams) {
+      if (currentFilter === 'all') return teams;
+      return teams.filter(t => t.league === currentFilter);
+    }
+
+    // Render summary stats
+    function renderSummary(teams) {
+      const totalRuns = teams.reduce((sum, t) => sum + t.runsScored, 0);
+      const totalGames = teams.reduce((sum, t) => sum + t.wins + t.losses, 0) / 2;
+      const avgRunsPerGame = (totalRuns / totalGames).toFixed(2);
+      const bestRecord = teams.reduce((best, t) =>
+        (t.wins / (t.wins + t.losses)) > (best.wins / (best.wins + best.losses)) ? t : best
+      );
+      const highestDiff = teams.reduce((max, t) =>
+        (t.runsScored - t.runsAllowed) > (max.runsScored - max.runsAllowed) ? t : max
+      );
+
+      document.getElementById('summary-loading').style.display = 'none';
+      document.getElementById('summary-content').style.display = 'block';
+      document.getElementById('summary-content').innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">${teams.length}</div>
+            <div class="stat-label">Teams</div>
           </div>
+          <div class="stat-card">
+            <div class="stat-value">${avgRunsPerGame}</div>
+            <div class="stat-label">Runs/Game (League Avg)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${bestRecord.wins}-${bestRecord.losses}</div>
+            <div class="stat-label">Best Record (${bestRecord.shortName})</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">+${highestDiff.runsScored - highestDiff.runsAllowed}</div>
+            <div class="stat-label">Best Run Diff (${highestDiff.shortName})</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render standings table
+    function renderStandings(teams) {
+      const filtered = filterTeams(teams).sort((a, b) => b.wins - a.wins);
+
+      document.getElementById('teams-count').textContent = `${filtered.length} Teams`;
+      document.getElementById('standings-loading').style.display = 'none';
+      document.getElementById('standings-content').style.display = 'block';
+
+      let html = `
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th class="center">#</th>
+              <th>Team</th>
+              <th class="center">League</th>
+              <th class="center">Div</th>
+              <th class="center">W</th>
+              <th class="center">L</th>
+              <th class="center">Pct</th>
+              <th class="center">RS</th>
+              <th class="center">RA</th>
+              <th class="center">Diff</th>
+              <th class="center">xW</th>
+              <th class="center">Luck</th>
+              <th class="center">Strk</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      filtered.forEach((team, index) => {
+        const diff = team.runsScored - team.runsAllowed;
+        const diffClass = diff > 0 ? 'stat-positive' : diff < 0 ? 'stat-negative' : 'stat-neutral';
+        const gamesPlayed = team.wins + team.losses;
+        const { expectedWins } = calculatePythagorean(team.runsScored, team.runsAllowed, gamesPlayed);
+        const luck = team.wins - expectedWins;
+        const luckClass = luck > 0 ? 'stat-positive' : luck < 0 ? 'stat-negative' : 'stat-neutral';
+        const streakClass = team.streakCode?.startsWith('W') ? 'streak-win' : 'streak-loss';
+
+        html += `
+          <tr>
+            <td class="center"><span class="rank-badge">${index + 1}</span></td>
+            <td><span class="team-name">${team.teamName}</span></td>
+            <td class="center">${team.league}</td>
+            <td class="center">${team.division}</td>
+            <td class="center stat-positive"><strong>${team.wins}</strong></td>
+            <td class="center stat-negative">${team.losses}</td>
+            <td class="center">.${Math.round(team.winPercentage * 1000).toString().padStart(3, '0')}</td>
+            <td class="center">${team.runsScored}</td>
+            <td class="center">${team.runsAllowed}</td>
+            <td class="center ${diffClass}"><strong>${diff > 0 ? '+' : ''}${diff}</strong></td>
+            <td class="center">${expectedWins}</td>
+            <td class="center ${luckClass}">${luck > 0 ? '+' : ''}${luck}</td>
+            <td class="center ${streakClass}">${team.streakCode || '-'}</td>
+          </tr>
         `;
+      });
+
+      html += '</tbody></table>';
+      document.getElementById('standings-content').innerHTML = html;
+    }
+
+    // Render run differential chart
+    function renderRunDiffChart(teams) {
+      const filtered = filterTeams(teams).sort((a, b) =>
+        (b.runsScored - b.runsAllowed) - (a.runsScored - a.runsAllowed)
+      );
+
+      const ctx = document.getElementById('rundiff-chart');
+      if (rundiffChart) rundiffChart.destroy();
+
+      rundiffChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: filtered.map(t => t.shortName),
+          datasets: [{
+            label: 'Run Differential',
+            data: filtered.map(t => t.runsScored - t.runsAllowed),
+            backgroundColor: filtered.map(t =>
+              (t.runsScored - t.runsAllowed) > 0 ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)'
+            ),
+            borderColor: filtered.map(t =>
+              (t.runsScored - t.runsAllowed) > 0 ? 'rgba(16, 185, 129, 1)' : 'rgba(239, 68, 68, 1)'
+            ),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 26, 0.95)',
+              titleColor: '#BF5700',
+              bodyColor: '#f5f5f0',
+              callbacks: {
+                label: ctx => `${ctx.parsed.x > 0 ? '+' : ''}${ctx.parsed.x} runs`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(191, 87, 0, 0.1)' },
+              ticks: { color: 'rgba(245, 245, 240, 0.6)' }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: 'rgba(245, 245, 240, 0.8)', font: { size: 10 } }
+            }
+          }
+        }
       });
     }
 
-    // ========================================
-    // EXECUTE
-    // ========================================
+    // Render Pythagorean chart
+    function renderPythagChart(teams) {
+      const filtered = filterTeams(teams);
+      const data = filtered.map(t => {
+        const gamesPlayed = t.wins + t.losses;
+        const { expectedWins } = calculatePythagorean(t.runsScored, t.runsAllowed, gamesPlayed);
+        return { name: t.shortName, actual: t.wins, expected: expectedWins };
+      });
 
-    initializeDashboard();
+      const ctx = document.getElementById('pythag-chart');
+      if (pythagChart) pythagChart.destroy();
+
+      pythagChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Teams',
+            data: data.map(d => ({ x: d.expected, y: d.actual, name: d.name })),
+            backgroundColor: 'rgba(191, 87, 0, 0.7)',
+            borderColor: 'rgba(191, 87, 0, 1)',
+            borderWidth: 2,
+            pointRadius: 6,
+            pointHoverRadius: 8
+          }, {
+            label: 'Perfect Correlation',
+            data: [{ x: 40, y: 40 }, { x: 110, y: 110 }],
+            type: 'line',
+            borderColor: 'rgba(74, 222, 128, 0.4)',
+            borderDash: [10, 5],
+            borderWidth: 2,
+            fill: false,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 26, 0.95)',
+              titleColor: '#BF5700',
+              bodyColor: '#f5f5f0',
+              callbacks: {
+                label: ctx => {
+                  if (ctx.dataset.label === 'Teams') {
+                    const d = ctx.raw;
+                    const luck = d.y - d.x;
+                    return [
+                      d.name,
+                      `Expected: ${d.x} W`,
+                      `Actual: ${d.y} W`,
+                      `Luck: ${luck > 0 ? '+' : ''}${luck}`
+                    ];
+                  }
+                  return '';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Expected Wins (Pythagorean)', color: 'rgba(245, 245, 240, 0.6)' },
+              grid: { color: 'rgba(191, 87, 0, 0.1)' },
+              ticks: { color: 'rgba(245, 245, 240, 0.6)' },
+              min: 40,
+              max: 110
+            },
+            y: {
+              title: { display: true, text: 'Actual Wins', color: 'rgba(245, 245, 240, 0.6)' },
+              grid: { color: 'rgba(191, 87, 0, 0.1)' },
+              ticks: { color: 'rgba(245, 245, 240, 0.6)' },
+              min: 40,
+              max: 110
+            }
+          }
+        }
+      });
+    }
+
+    // Render playoff probability chart
+    function renderPlayoffChart(teams) {
+      const filtered = filterTeams(teams).map(t => ({
+        ...t,
+        playoffProb: calculatePlayoffProb(t.wins, t.losses, t.runsScored, t.runsAllowed)
+      })).sort((a, b) => b.playoffProb - a.playoffProb);
+
+      const ctx = document.getElementById('playoff-chart');
+      if (playoffChart) playoffChart.destroy();
+
+      playoffChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: filtered.map(t => t.shortName),
+          datasets: [{
+            label: 'Playoff Probability (%)',
+            data: filtered.map(t => t.playoffProb),
+            backgroundColor: filtered.map(t =>
+              t.playoffProb >= 75 ? 'rgba(16, 185, 129, 0.7)' :
+              t.playoffProb >= 50 ? 'rgba(191, 87, 0, 0.7)' :
+              t.playoffProb >= 25 ? 'rgba(245, 158, 11, 0.7)' :
+              'rgba(239, 68, 68, 0.7)'
+            ),
+            borderColor: filtered.map(t =>
+              t.playoffProb >= 75 ? 'rgba(16, 185, 129, 1)' :
+              t.playoffProb >= 50 ? 'rgba(191, 87, 0, 1)' :
+              t.playoffProb >= 25 ? 'rgba(245, 158, 11, 1)' :
+              'rgba(239, 68, 68, 1)'
+            ),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 26, 0.95)',
+              titleColor: '#BF5700',
+              bodyColor: '#f5f5f0',
+              callbacks: {
+                label: ctx => {
+                  const team = filtered[ctx.dataIndex];
+                  return [
+                    `Playoff Prob: ${ctx.parsed.x}%`,
+                    `Record: ${team.wins}-${team.losses}`,
+                    `Run Diff: ${team.runsScored - team.runsAllowed > 0 ? '+' : ''}${team.runsScored - team.runsAllowed}`
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(191, 87, 0, 0.1)' },
+              ticks: { color: 'rgba(245, 245, 240, 0.6)' },
+              max: 100
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: 'rgba(245, 245, 240, 0.8)', font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // Setup filter buttons
+    function setupFilters() {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+
+          renderStandings(allTeams);
+          renderRunDiffChart(allTeams);
+          renderPythagChart(allTeams);
+          renderPlayoffChart(allTeams);
+        });
+      });
+    }
+
+    // Initialize dashboard
+    async function init() {
+      document.getElementById('timestamp').textContent = 'Data as of ' + getTimestamp();
+      setupFilters();
+
+      try {
+        const response = await fetch('/api/mlb/standings');
+        if (!response.ok) throw new Error('Failed to fetch standings');
+
+        const data = await response.json();
+
+        // Process teams with division mapping
+        allTeams = data.standings.map(team => {
+          const divInfo = DIVISION_MAP[team.teamName] || { league: team.league || 'AL', division: 'Unknown' };
+          const nameParts = team.teamName.split(' ');
+          return {
+            ...team,
+            league: divInfo.league,
+            division: divInfo.division,
+            shortName: nameParts[nameParts.length - 1]
+          };
+        });
+
+        renderSummary(allTeams);
+        renderStandings(allTeams);
+        renderRunDiffChart(allTeams);
+        renderPythagChart(allTeams);
+        renderPlayoffChart(allTeams);
+
+      } catch (error) {
+        console.error('Dashboard error:', error);
+        document.getElementById('standings-loading').innerHTML = `
+          <p style="color: var(--error);">Failed to load MLB data. Please try again later.</p>
+        `;
+      }
+    }
+
+    // Run on DOM ready
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
