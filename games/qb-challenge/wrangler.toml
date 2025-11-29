@@ -11,7 +11,7 @@ database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
 # KV namespace for QB challenge leaderboard caching
 [[kv_namespaces]]
 binding = "KV"
-id = "placeholder-will-create"
+id = "509f8a6f9d0b4bf083fa9463717b48eb"
 
 # Analytics Engine for game telemetry
 [[analytics_engine_datasets]]
