@@ -61,7 +61,6 @@
     "dist",
     "**/*.spec.ts",
     "**/*.test.ts",
-    "apps/web/**/*",
     "lib/api/v1/**/*",
     "lib/adapters/espn-api.ts",
     "lib/adapters/ncaa-api.ts",

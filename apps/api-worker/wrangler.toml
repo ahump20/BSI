@@ -1,7 +1,0 @@
-name = "bsi-edge"
-main = "src/index.ts"
-compatibility_date = "2025-06-01"
-
-[observability.logs]
-enabled = true
-head_sampling_rate = 0.2

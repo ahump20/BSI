@@ -15,13 +15,11 @@ const projectRoot = path.join(__dirname, '..');
 
 // Protected UI files
 const PROTECTED_UI_FILES = [
-  'index.html',
-  'css/blaze-revolutionary-command-center.css',
-  'css/blaze-ultimate-aesthetics.css',
-  'js/blaze-revolutionary-command-center.js',
-  'js/blaze-ultimate-visual-engine.js',
-  'apps/web/app/page.tsx',
-  'apps/web/app/globals.css'
+  'public/index.html',
+  'public/css/blaze-revolutionary-command-center.css',
+  'public/css/blaze-ultimate-aesthetics.css',
+  'public/js/blaze-revolutionary-command-center.js',
+  'public/js/blaze-ultimate-visual-engine.js'
 ];
 
 // Protected brand colors

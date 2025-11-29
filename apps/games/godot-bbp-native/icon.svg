@@ -1,9 +1,0 @@
-<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
-  <!-- Original Baseball Icon - Simple geometric design -->
-  <circle cx="64" cy="64" r="60" fill="#ffffff" stroke="#cc0000" stroke-width="4"/>
-  <!-- Baseball stitching pattern (original design) -->
-  <path d="M 30 40 Q 45 50, 30 60" stroke="#cc0000" stroke-width="3" fill="none"/>
-  <path d="M 98 40 Q 83 50, 98 60" stroke="#cc0000" stroke-width="3" fill="none"/>
-  <path d="M 30 70 Q 45 80, 30 90" stroke="#cc0000" stroke-width="3" fill="none"/>
-  <path d="M 98 70 Q 83 80, 98 90" stroke="#cc0000" stroke-width="3" fill="none"/>
-</svg>

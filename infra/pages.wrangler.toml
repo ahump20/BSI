@@ -1,7 +1,0 @@
-name = "bsi-pages-fx"
-pages_build_output_dir = "../apps/web/.open-next"
-compatibility_date = "2025-06-01"
-
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "bsi-media"
