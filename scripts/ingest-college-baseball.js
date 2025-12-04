@@ -21,12 +21,20 @@ const CONFERENCES = {
   SEC: { id: '23', teams: ['alabama-crimson-tide', 'arkansas-razorbacks', 'auburn-tigers', 'florida-gators', 'georgia-bulldogs', 'kentucky-wildcats', 'lsu-tigers', 'mississippi-state-bulldogs', 'missouri-tigers', 'ole-miss-rebels', 'oklahoma-sooners', 'south-carolina-gamecocks', 'tennessee-volunteers', 'texas-longhorns', 'texas-am-aggies', 'vanderbilt-commodores'] },
   ACC: { id: '1', teams: ['boston-college-eagles', 'california-golden-bears', 'clemson-tigers', 'duke-blue-devils', 'florida-state-seminoles', 'georgia-tech-yellow-jackets', 'louisville-cardinals', 'miami-hurricanes', 'nc-state-wolfpack', 'north-carolina-tar-heels', 'notre-dame-fighting-irish', 'pittsburgh-panthers', 'smu-mustangs', 'stanford-cardinal', 'syracuse-orange', 'virginia-cavaliers', 'virginia-tech-hokies', 'wake-forest-demon-deacons'] },
   'Big Ten': { id: '5', teams: ['illinois-fighting-illini', 'indiana-hoosiers', 'iowa-hawkeyes', 'maryland-terrapins', 'michigan-wolverines', 'michigan-state-spartans', 'minnesota-golden-gophers', 'nebraska-cornhuskers', 'northwestern-wildcats', 'ohio-state-buckeyes', 'oregon-ducks', 'penn-state-nittany-lions', 'purdue-boilermakers', 'rutgers-scarlet-knights', 'ucla-bruins', 'usc-trojans', 'washington-huskies', 'wisconsin-badgers'] },
-  'Big 12': { id: '4', teams: ['arizona-wildcats', 'arizona-state-sun-devils', 'baylor-bears', 'byu-cougars', 'cincinnati-bearcats', 'houston-cougars', 'kansas-jayhawks', 'kansas-state-wildcats', 'oklahoma-state-cowboys', 'tcu-horned-frogs', 'texas-tech-red-raiders', 'ucf-knights', 'utah-utes', 'west-virginia-mountaineers'] }
+  'Big 12': { id: '4', teams: ['arizona-wildcats', 'arizona-state-sun-devils', 'baylor-bears', 'byu-cougars', 'cincinnati-bearcats', 'houston-cougars', 'kansas-jayhawks', 'kansas-state-wildcats', 'oklahoma-state-cowboys', 'tcu-horned-frogs', 'texas-tech-red-raiders', 'ucf-knights', 'utah-utes', 'west-virginia-mountaineers'] },
+  // Additional conferences
+  AAC: { id: '151', teams: ['east-carolina-pirates', 'memphis-tigers', 'tulane-green-wave', 'wichita-state-shockers', 'south-florida-bulls', 'charlotte-49ers', 'rice-owls', 'uab-blazers', 'utsa-roadrunners', 'fau-owls', 'north-texas-mean-green', 'temple-owls'] },
+  'Sun Belt': { id: '37', teams: ['coastal-carolina-chanticleers', 'louisiana-ragin-cajuns', 'south-alabama-jaguars', 'texas-state-bobcats', 'appalachian-state-mountaineers', 'arkansas-state-red-wolves', 'georgia-southern-eagles', 'georgia-state-panthers', 'louisiana-monroe-warhawks', 'southern-miss-golden-eagles', 'troy-trojans', 'james-madison-dukes', 'marshall-thundering-herd', 'old-dominion-monarchs'] },
+  'Mountain West': { id: '17', teams: ['san-diego-state-aztecs', 'fresno-state-bulldogs', 'nevada-wolf-pack', 'unlv-rebels', 'new-mexico-lobos', 'air-force-falcons', 'san-jose-state-spartans'] },
+  'Conference USA': { id: '12', teams: ['middle-tennessee-blue-raiders', 'western-kentucky-hilltoppers', 'florida-international-panthers', 'louisiana-tech-bulldogs', 'sam-houston-bearkats', 'utep-miners', 'liberty-flames', 'jacksonville-state-gamecocks', 'kennesaw-state-owls', 'new-mexico-state-aggies'] },
+  'Missouri Valley': { id: '18', teams: ['dallas-baptist-patriots', 'missouri-state-bears', 'indiana-state-sycamores', 'southern-illinois-salukis', 'illinois-state-redbirds', 'evansville-purple-aces'] },
+  'West Coast': { id: '26', teams: ['gonzaga-bulldogs', 'san-diego-toreros', 'pepperdine-waves', 'loyola-marymount-lions', 'santa-clara-broncos', 'san-francisco-dons', 'portland-pilots', 'pacific-tigers'] }
 };
 
 // Slug normalization - maps ESPN slugs to short team IDs
 function normalizeSlug(slug) {
   const mappings = {
+    // Power 5
     'texas-longhorns': 'texas', 'texas-am-aggies': 'texas-am', 'florida-state-seminoles': 'florida-state',
     'stanford-cardinal': 'stanford', 'nc-state-wolfpack': 'nc-state', 'clemson-tigers': 'clemson',
     'virginia-cavaliers': 'virginia', 'north-carolina-tar-heels': 'north-carolina', 'louisville-cardinals': 'louisville',
@@ -48,7 +56,38 @@ function normalizeSlug(slug) {
     'arizona-wildcats': 'arizona', 'arizona-state-sun-devils': 'arizona-state', 'byu-cougars': 'byu',
     'cincinnati-bearcats': 'cincinnati', 'houston-cougars': 'houston', 'kansas-jayhawks': 'kansas',
     'kansas-state-wildcats': 'kansas-state', 'tcu-horned-frogs': 'tcu', 'texas-tech-red-raiders': 'texas-tech',
-    'ucf-knights': 'ucf', 'utah-utes': 'utah', 'west-virginia-mountaineers': 'west-virginia'
+    'ucf-knights': 'ucf', 'utah-utes': 'utah', 'west-virginia-mountaineers': 'west-virginia',
+    // AAC
+    'east-carolina-pirates': 'east-carolina', 'memphis-tigers': 'memphis', 'tulane-green-wave': 'tulane',
+    'wichita-state-shockers': 'wichita-state', 'south-florida-bulls': 'south-florida', 'charlotte-49ers': 'charlotte',
+    'rice-owls': 'rice', 'uab-blazers': 'uab', 'utsa-roadrunners': 'utsa', 'fau-owls': 'fau',
+    'north-texas-mean-green': 'north-texas', 'temple-owls': 'temple',
+    // Sun Belt
+    'coastal-carolina-chanticleers': 'coastal-carolina', 'louisiana-ragin-cajuns': 'louisiana',
+    'south-alabama-jaguars': 'south-alabama', 'texas-state-bobcats': 'texas-state',
+    'appalachian-state-mountaineers': 'appalachian-state', 'arkansas-state-red-wolves': 'arkansas-state',
+    'georgia-southern-eagles': 'georgia-southern', 'georgia-state-panthers': 'georgia-state',
+    'louisiana-monroe-warhawks': 'louisiana-monroe', 'southern-miss-golden-eagles': 'southern-miss',
+    'troy-trojans': 'troy', 'james-madison-dukes': 'james-madison', 'marshall-thundering-herd': 'marshall',
+    'old-dominion-monarchs': 'old-dominion',
+    // Mountain West
+    'san-diego-state-aztecs': 'san-diego-state', 'fresno-state-bulldogs': 'fresno-state',
+    'nevada-wolf-pack': 'nevada', 'unlv-rebels': 'unlv', 'new-mexico-lobos': 'new-mexico',
+    'air-force-falcons': 'air-force', 'san-jose-state-spartans': 'san-jose-state',
+    // Conference USA
+    'middle-tennessee-blue-raiders': 'middle-tennessee', 'western-kentucky-hilltoppers': 'western-kentucky',
+    'florida-international-panthers': 'fiu', 'louisiana-tech-bulldogs': 'louisiana-tech',
+    'sam-houston-bearkats': 'sam-houston', 'utep-miners': 'utep', 'liberty-flames': 'liberty',
+    'jacksonville-state-gamecocks': 'jacksonville-state', 'kennesaw-state-owls': 'kennesaw-state',
+    'new-mexico-state-aggies': 'new-mexico-state',
+    // Missouri Valley
+    'dallas-baptist-patriots': 'dallas-baptist', 'missouri-state-bears': 'missouri-state',
+    'indiana-state-sycamores': 'indiana-state', 'southern-illinois-salukis': 'southern-illinois',
+    'illinois-state-redbirds': 'illinois-state', 'evansville-purple-aces': 'evansville',
+    // West Coast
+    'gonzaga-bulldogs': 'gonzaga', 'san-diego-toreros': 'san-diego', 'pepperdine-waves': 'pepperdine',
+    'loyola-marymount-lions': 'loyola-marymount', 'santa-clara-broncos': 'santa-clara',
+    'san-francisco-dons': 'san-francisco', 'portland-pilots': 'portland', 'pacific-tigers': 'pacific'
   };
   return mappings[slug] || slug;
 }
@@ -94,12 +133,27 @@ const TEAM_METADATA = {
   'california': { colors: ['#003262', '#FDB515'], stadium: { name: 'Evans Diamond', capacity: 2500, surface: 'Grass' }, coach: { name: 'Mike Neu', years: 4, record: '118-88' } }
 };
 
-// Program history data
+// Program history data - expanded with more teams
 const PROGRAM_HISTORY = {
+  // SEC
   'texas': { cwsAppearances: 38, lastCWS: 2024, nationalTitles: 6, regionals: 65 },
   'texas-am': { cwsAppearances: 9, lastCWS: 2024, nationalTitles: 0, regionals: 22 },
+  'lsu': { cwsAppearances: 18, lastCWS: 2023, nationalTitles: 6, regionals: 35 },
+  'florida': { cwsAppearances: 13, lastCWS: 2023, nationalTitles: 1, regionals: 33 },
+  'vanderbilt': { cwsAppearances: 7, lastCWS: 2021, nationalTitles: 2, regionals: 17 },
+  'arkansas': { cwsAppearances: 11, lastCWS: 2022, nationalTitles: 0, regionals: 32 },
+  'ole-miss': { cwsAppearances: 6, lastCWS: 2022, nationalTitles: 1, regionals: 18 },
+  'tennessee': { cwsAppearances: 6, lastCWS: 2024, nationalTitles: 0, regionals: 17 },
+  'south-carolina': { cwsAppearances: 11, lastCWS: 2024, nationalTitles: 2, regionals: 22 },
+  'mississippi-state': { cwsAppearances: 12, lastCWS: 2021, nationalTitles: 1, regionals: 19 },
+  'georgia': { cwsAppearances: 5, lastCWS: 2008, nationalTitles: 0, regionals: 17 },
+  'auburn': { cwsAppearances: 6, lastCWS: 2019, nationalTitles: 0, regionals: 16 },
+  'kentucky': { cwsAppearances: 3, lastCWS: 2023, nationalTitles: 0, regionals: 7 },
+  'alabama': { cwsAppearances: 5, lastCWS: 1997, nationalTitles: 0, regionals: 13 },
+  'missouri': { cwsAppearances: 0, lastCWS: null, nationalTitles: 0, regionals: 4 },
+  'oklahoma': { cwsAppearances: 10, lastCWS: 2022, nationalTitles: 0, regionals: 27 },
+  // ACC
   'florida-state': { cwsAppearances: 24, lastCWS: 2023, nationalTitles: 0, regionals: 44 },
-  'stanford': { cwsAppearances: 17, lastCWS: 2023, nationalTitles: 2, regionals: 34 },
   'nc-state': { cwsAppearances: 4, lastCWS: 2024, nationalTitles: 0, regionals: 14 },
   'clemson': { cwsAppearances: 13, lastCWS: 2010, nationalTitles: 0, regionals: 31 },
   'virginia': { cwsAppearances: 7, lastCWS: 2021, nationalTitles: 1, regionals: 18 },
@@ -107,14 +161,44 @@ const PROGRAM_HISTORY = {
   'louisville': { cwsAppearances: 7, lastCWS: 2019, nationalTitles: 0, regionals: 15 },
   'wake-forest': { cwsAppearances: 3, lastCWS: 2022, nationalTitles: 0, regionals: 12 },
   'miami': { cwsAppearances: 25, lastCWS: 2016, nationalTitles: 4, regionals: 47 },
-  'oklahoma-state': { cwsAppearances: 20, lastCWS: 2016, nationalTitles: 0, regionals: 30 },
-  'tennessee': { cwsAppearances: 6, lastCWS: 2024, nationalTitles: 0, regionals: 17 },
   'virginia-tech': { cwsAppearances: 2, lastCWS: 2024, nationalTitles: 0, regionals: 8 },
   'georgia-tech': { cwsAppearances: 5, lastCWS: 2006, nationalTitles: 0, regionals: 26 },
-  'lsu': { cwsAppearances: 18, lastCWS: 2023, nationalTitles: 6, regionals: 35 },
   'notre-dame': { cwsAppearances: 2, lastCWS: 2022, nationalTitles: 0, regionals: 10 },
+  'stanford': { cwsAppearances: 17, lastCWS: 2023, nationalTitles: 2, regionals: 34 },
+  'california': { cwsAppearances: 3, lastCWS: 1992, nationalTitles: 0, regionals: 10 },
+  'duke': { cwsAppearances: 1, lastCWS: 1961, nationalTitles: 0, regionals: 7 },
+  'boston-college': { cwsAppearances: 1, lastCWS: 2016, nationalTitles: 0, regionals: 6 },
+  // Big 12
+  'oklahoma-state': { cwsAppearances: 20, lastCWS: 2016, nationalTitles: 0, regionals: 30 },
   'baylor': { cwsAppearances: 5, lastCWS: 2005, nationalTitles: 0, regionals: 12 },
-  'california': { cwsAppearances: 3, lastCWS: 1992, nationalTitles: 0, regionals: 10 }
+  'tcu': { cwsAppearances: 5, lastCWS: 2017, nationalTitles: 0, regionals: 13 },
+  'texas-tech': { cwsAppearances: 6, lastCWS: 2019, nationalTitles: 0, regionals: 14 },
+  'arizona': { cwsAppearances: 17, lastCWS: 2016, nationalTitles: 4, regionals: 32 },
+  'arizona-state': { cwsAppearances: 22, lastCWS: 2010, nationalTitles: 5, regionals: 39 },
+  'houston': { cwsAppearances: 5, lastCWS: 1967, nationalTitles: 0, regionals: 12 },
+  'ucf': { cwsAppearances: 0, lastCWS: null, nationalTitles: 0, regionals: 4 },
+  'west-virginia': { cwsAppearances: 0, lastCWS: null, nationalTitles: 0, regionals: 2 },
+  // Big Ten
+  'michigan': { cwsAppearances: 8, lastCWS: 2019, nationalTitles: 2, regionals: 18 },
+  'indiana': { cwsAppearances: 4, lastCWS: 2024, nationalTitles: 0, regionals: 9 },
+  'ohio-state': { cwsAppearances: 3, lastCWS: 1966, nationalTitles: 0, regionals: 13 },
+  'minnesota': { cwsAppearances: 3, lastCWS: 1977, nationalTitles: 1, regionals: 10 },
+  'illinois': { cwsAppearances: 1, lastCWS: 2015, nationalTitles: 0, regionals: 4 },
+  'maryland': { cwsAppearances: 1, lastCWS: 2015, nationalTitles: 0, regionals: 3 },
+  'oregon': { cwsAppearances: 3, lastCWS: 1954, nationalTitles: 0, regionals: 7 },
+  'usc': { cwsAppearances: 21, lastCWS: 2000, nationalTitles: 12, regionals: 38 },
+  'ucla': { cwsAppearances: 6, lastCWS: 2013, nationalTitles: 1, regionals: 20 },
+  // Mid-Majors with history
+  'coastal-carolina': { cwsAppearances: 2, lastCWS: 2016, nationalTitles: 1, regionals: 4 },
+  'rice': { cwsAppearances: 4, lastCWS: 2007, nationalTitles: 1, regionals: 9 },
+  'east-carolina': { cwsAppearances: 1, lastCWS: 2024, nationalTitles: 0, regionals: 8 },
+  'tulane': { cwsAppearances: 2, lastCWS: 2023, nationalTitles: 0, regionals: 9 },
+  'dallas-baptist': { cwsAppearances: 1, lastCWS: 2021, nationalTitles: 0, regionals: 4 },
+  'southern-miss': { cwsAppearances: 2, lastCWS: 2022, nationalTitles: 0, regionals: 10 },
+  'louisiana': { cwsAppearances: 0, lastCWS: null, nationalTitles: 0, regionals: 5 },
+  'fresno-state': { cwsAppearances: 5, lastCWS: 2008, nationalTitles: 1, regionals: 13 },
+  'san-diego-state': { cwsAppearances: 2, lastCWS: 1991, nationalTitles: 0, regionals: 8 },
+  'pepperdine': { cwsAppearances: 4, lastCWS: 2003, nationalTitles: 1, regionals: 10 }
 };
 
 async function fetchJSON(url) {
@@ -125,6 +209,37 @@ async function fetchJSON(url) {
     throw new Error(`HTTP ${response.status}: ${url}`);
   }
   return response.json();
+}
+
+// Fetch coach info from ESPN team page
+async function fetchCoachInfo(espnId) {
+  try {
+    const data = await fetchJSON(`${ESPN_BASE}/teams/${espnId}`);
+    const team = data.team;
+
+    // Try to get coach from coaches array
+    const headCoach = team?.coaches?.find(c => c.type === 'head') || team?.coaches?.[0];
+    if (headCoach) {
+      return {
+        name: headCoach.displayName || headCoach.name,
+        years: headCoach.experience?.years || 0,
+        record: `${headCoach.record?.wins || 0}-${headCoach.record?.losses || 0}`
+      };
+    }
+
+    // Alternative: Try nested team info
+    if (team?.coach) {
+      return {
+        name: team.coach.displayName || team.coach.name,
+        years: team.coach.experience?.years || 0,
+        record: ''
+      };
+    }
+
+    return null;
+  } catch (e) {
+    return null;
+  }
 }
 
 async function fetchAllTeams() {
@@ -212,19 +327,22 @@ function getClassYear(years) {
   return 'Gr';
 }
 
-function generateSQL(teams, rosters, records) {
+function generateSQL(teams, rosters, records, coachData = {}) {
   const statements = [];
   const timestamp = new Date().toISOString();
 
   // Insert teams
   for (const team of teams) {
     const conf = getConference(team.espnSlug);
-    if (conf === 'Other') continue; // Only Power 5
+    if (conf === 'Other') continue; // Skip unconfigured teams
 
     const meta = TEAM_METADATA[team.id] || {};
     const history = PROGRAM_HISTORY[team.id] || {};
     const d1Rank = PRESEASON_RANKINGS.d1baseball[team.id];
     const baRank = PRESEASON_RANKINGS.baseball_america[team.id];
+
+    // Use TEAM_METADATA coach if available, otherwise use dynamically fetched
+    const coach = meta.coach || coachData[team.id] || {};
 
     statements.push(`
 INSERT OR REPLACE INTO college_baseball_teams
@@ -234,7 +352,7 @@ VALUES
    '${team.location?.city || ''}', '${team.location?.state || ''}',
    '${meta.colors?.[0] || '#333333'}', '${meta.colors?.[1] || '#FFFFFF'}', '${team.logo || ''}',
    '${escapeSql(meta.stadium?.name || '')}', ${meta.stadium?.capacity || 0}, '${meta.stadium?.surface || 'Grass'}',
-   '${escapeSql(meta.coach?.name || '')}', ${meta.coach?.years || 0}, '${meta.coach?.record || ''}',
+   '${escapeSql(coach.name || '')}', ${coach.years || 0}, '${coach.record || ''}',
    '${timestamp}');`);
 
     // Insert rankings
@@ -302,32 +420,42 @@ async function main() {
     // Fetch all teams
     const teams = await fetchAllTeams();
 
-    // Filter to Power 5 conferences (use espnSlug for conference matching)
-    const power5Teams = teams.filter(t => getConference(t.espnSlug) !== 'Other');
-    console.log(`Power 5 teams: ${power5Teams.length}`);
+    // Filter to all configured conferences (Power 5 + Group of 5 + Mid-Majors)
+    const configuredTeams = teams.filter(t => getConference(t.espnSlug) !== 'Other');
+    console.log(`Configured conference teams: ${configuredTeams.length}`);
 
-    // Debug: show first few teams matched
-    if (power5Teams.length > 0) {
-      console.log('Sample teams:', power5Teams.slice(0, 5).map(t => `${t.name} (${t.id}, conf: ${getConference(t.espnSlug)})`));
-    } else {
-      // Debug: show some sample slugs
-      const sampleSlugs = teams.slice(0, 10).map(t => t.espnSlug);
-      console.log('Sample ESPN slugs:', sampleSlugs);
-      console.log('Expected SEC teams:', CONFERENCES.SEC.teams.slice(0, 5));
+    // Break down by conference
+    const confCounts = {};
+    for (const team of configuredTeams) {
+      const conf = getConference(team.espnSlug);
+      confCounts[conf] = (confCounts[conf] || 0) + 1;
     }
+    console.log('Teams by conference:', confCounts);
 
-    // Fetch rosters for each team
+    // Fetch rosters, records, and coach data for each team
     const allRosters = [];
     const allRecords = [];
+    const coachData = {}; // teamId -> coach info
 
-    for (const team of power5Teams) { // Fetch all Power 5 teams
+    for (const team of configuredTeams) {
       console.log(`Fetching data for ${team.name}...`);
 
+      // Fetch roster
       const roster = await fetchTeamRoster(team.id, team.espnId);
       allRosters.push(...roster);
 
+      // Fetch record
       const record = await fetchTeamRecord(team.id, team.espnId);
       if (record) allRecords.push(record);
+
+      // Fetch coach data if not in TEAM_METADATA
+      if (!TEAM_METADATA[team.id]?.coach) {
+        const coach = await fetchCoachInfo(team.espnId);
+        if (coach) {
+          coachData[team.id] = coach;
+          console.log(`  Coach: ${coach.name}`);
+        }
+      }
 
       // Rate limit
       await new Promise(r => setTimeout(r, 200));
@@ -335,16 +463,20 @@ async function main() {
 
     console.log(`Total players: ${allRosters.length}`);
     console.log(`Total records: ${allRecords.length}`);
+    console.log(`Dynamically fetched coaches: ${Object.keys(coachData).length}`);
 
     // Generate SQL
-    const sql = generateSQL(power5Teams, allRosters, allRecords);
+    const sql = generateSQL(configuredTeams, allRosters, allRecords, coachData);
 
-    // Write to file for review
+    // Write to file for GitHub Actions
+    writeFileSync('d1-college-baseball.sql', sql);
+    console.log('SQL written to d1-college-baseball.sql');
+
+    // Also write to /tmp for manual testing
     writeFileSync('/tmp/college-baseball-data.sql', sql);
-    console.log('SQL written to /tmp/college-baseball-data.sql');
 
     console.log('\n=== Ingestion Complete ===');
-    console.log('Run: wrangler d1 execute bsi-historical-db --remote --file=/tmp/college-baseball-data.sql');
+    console.log('Run: wrangler d1 execute bsi-historical-db --remote --file=d1-college-baseball.sql');
 
   } catch (error) {
     console.error('Ingestion failed:', error);
