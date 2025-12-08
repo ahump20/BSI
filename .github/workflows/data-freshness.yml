@@ -156,7 +156,7 @@ jobs:
           steps.mlb_check.outcome == 'failure' ||
           steps.nfl_check.outcome == 'failure' ||
           steps.cache_check.outcome == 'failure'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.create({
