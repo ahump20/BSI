@@ -18,9 +18,11 @@
     "WebSocketPair": "readonly",
     "EventContext": "readonly",
     "RequestInit": "readonly",
+    "RequestInfo": "readonly",
     "NodeJS": "readonly",
     "React": "readonly",
-    "ExecutionContext": "readonly"
+    "ExecutionContext": "readonly",
+    "totalSeconds": "readonly"
   },
   "extends": [
     "eslint:recommended",
@@ -81,7 +83,15 @@
       "rules": {
         "no-console": "off",
         "no-restricted-syntax": "off",
-        "@typescript-eslint/ban-ts-comment": "off"
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
       }
     },
     {
@@ -98,7 +108,15 @@
       "files": ["functions/**/*.ts", "functions/**/*.js"],
       "rules": {
         "no-console": "off",
-        "no-restricted-syntax": "off"
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
       }
     },
     {
@@ -109,23 +127,46 @@
       }
     },
     {
-      "files": ["app/**/*.js", "app/**/*.ts"],
+      "files": ["app/**/*.js", "app/**/*.ts", "app/**/*.tsx"],
       "rules": {
         "no-console": "off",
-        "no-restricted-syntax": "off"
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
       }
     },
     {
       "files": ["components/**/*.tsx", "components/**/*.jsx", "hooks/**/*.ts", "hooks/**/*.tsx"],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ],
         "no-console": "off"
       }
     },
     {
       "files": ["src/**/*.ts", "src/**/*.tsx"],
       "rules": {
-        "no-console": "off"
+        "no-console": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
       }
     }
   ],
