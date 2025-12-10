@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NFL League Analytics | Blaze Intelligence</title>
-  <meta name="description" content="Complete NFL league analytics for all 32 teams - Pythagorean win expectancy, power rankings, playoff probability, and Super Bowl odds analysis">
+  <title>NFL League Analytics | Blaze Sports Intel</title>
+  <meta name="description" content="Complete NFL league analytics for all 32 teams - live scores, Pythagorean win expectancy, power rankings, playoff probability, and point differential analysis">
 
   <!-- Chart.js for Data Visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -206,6 +206,123 @@
       opacity: 0.6;
     }
 
+    /* === LIVE SCOREBOARD === */
+    .scoreboard-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .scoreboard-section h3 {
+      font-size: 1rem;
+      color: var(--blaze-burnt-orange);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scoreboard-section h3 .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .game-card {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      transition: all 0.2s;
+    }
+
+    .game-card:hover {
+      border-color: var(--blaze-burnt-orange);
+      transform: translateY(-2px);
+    }
+
+    .game-card.live {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .game-status {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--blaze-text-secondary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .game-status.live {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .game-teams {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .game-team {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+
+    .game-team.winner {
+      background: rgba(74, 222, 128, 0.1);
+    }
+
+    .team-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .team-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+    }
+
+    .team-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .team-record {
+      font-size: 0.75rem;
+      color: var(--blaze-text-secondary);
+    }
+
+    .team-score {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .no-games {
+      text-align: center;
+      padding: 2rem;
+      color: var(--blaze-text-secondary);
+      font-style: italic;
+    }
+
     /* === STANDINGS TABLE === */
     .standings-table {
       width: 100%;
@@ -243,7 +360,7 @@
       cursor: pointer;
     }
 
-    .team-name {
+    .table-team-name {
       font-weight: 600;
       color: var(--blaze-text);
     }
@@ -284,6 +401,14 @@
       max-height: 350px;
     }
 
+    .chart-container.tall {
+      height: 600px;
+    }
+
+    .chart-container.tall canvas {
+      max-height: 600px;
+    }
+
     /* === LOADING STATE === */
     .loading {
       display: flex;
@@ -306,6 +431,16 @@
 
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    /* === ERROR MESSAGE === */
+    .error-message {
+      padding: 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      color: #f87171;
+      text-align: center;
     }
 
     /* === RESPONSIVE === */
@@ -335,19 +470,27 @@
       .chart-container {
         height: 250px;
       }
+
+      .chart-container.tall {
+        height: 400px;
+      }
+
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
   <!-- HEADER -->
   <header class="header">
-    <h1>🏈 NFL League Analytics</h1>
-    <p class="subtitle">Complete National Football League Intelligence • All 32 Teams • 2025 Season</p>
-    <p class="tagline">Objective Analytics • Zero Bias • Pure Data</p>
+    <h1>NFL League Analytics</h1>
+    <p class="subtitle">Complete National Football League Intelligence - All 32 Teams - 2025 Season</p>
+    <p class="tagline">Objective Analytics - Zero Bias - Pure Data</p>
     <div class="league-badges">
-      <span class="league-badge">📊 32 Teams • 17 Games</span>
-      <span class="league-badge">🔢 Pythagorean Exponent: 2.37</span>
-      <span class="league-badge">📡 SportsDataIO API</span>
+      <span class="league-badge">32 Teams - 18 Weeks</span>
+      <span class="league-badge">Pythagorean Exponent: 2.37</span>
+      <span class="league-badge" id="last-updated">Loading...</span>
     </div>
   </header>
 
@@ -368,10 +511,22 @@
 
   <!-- DASHBOARD GRID -->
   <div class="dashboard-grid">
-    <!-- CARD 1: League Standings -->
+    <!-- CARD 1: Live Scoreboard -->
+    <div class="analytics-card wide" id="scoreboard-card">
+      <div class="card-header">
+        <h2 class="card-title">NFL Scoreboard - This Week's Games</h2>
+        <span class="card-icon">📺</span>
+      </div>
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading NFL games...</p>
+      </div>
+    </div>
+
+    <!-- CARD 2: League Standings -->
     <div class="analytics-card wide" id="standings-card">
       <div class="card-header">
-        <h2 class="card-title">📊 2025 NFL Standings</h2>
+        <h2 class="card-title">2025 NFL Standings</h2>
         <span class="card-icon">🏈</span>
       </div>
       <div class="loading">
@@ -380,22 +535,22 @@
       </div>
     </div>
 
-    <!-- CARD 2: Pythagorean Win Expectancy -->
+    <!-- CARD 3: Pythagorean Win Expectancy -->
     <div class="analytics-card wide" id="pythagorean-card">
       <div class="card-header">
-        <h2 class="card-title">🎯 Pythagorean Win Expectancy (All Teams)</h2>
+        <h2 class="card-title">Pythagorean Win Expectancy (All Teams)</h2>
         <span class="card-icon">📈</span>
       </div>
       <div class="loading">
         <div class="spinner"></div>
-        <p>Calculating expected wins vs actual wins for all teams...</p>
+        <p>Calculating expected wins vs actual wins...</p>
       </div>
     </div>
 
-    <!-- CARD 3: Point Differential Analysis -->
+    <!-- CARD 4: Point Differential Analysis -->
     <div class="analytics-card wide" id="pointdiff-card">
       <div class="card-header">
-        <h2 class="card-title">⚖️ Point Differential Rankings</h2>
+        <h2 class="card-title">Point Differential Rankings</h2>
         <span class="card-icon">📊</span>
       </div>
       <div class="loading">
@@ -404,11 +559,11 @@
       </div>
     </div>
 
-    <!-- CARD 4: Playoff Probability Heat Map -->
+    <!-- CARD 5: Playoff Probability -->
     <div class="analytics-card wide" id="playoff-card">
       <div class="card-header">
-        <h2 class="card-title">🏆 Playoff Probability Rankings</h2>
-        <span class="card-icon">🎟️</span>
+        <h2 class="card-title">Playoff Probability Rankings</h2>
+        <span class="card-icon">🏆</span>
       </div>
       <div class="loading">
         <div class="spinner"></div>
@@ -417,29 +572,23 @@
     </div>
   </div>
 
-  <script type="module">
+  <script>
     // ========================================
     // NFL LEAGUE-WIDE ANALYTICS DASHBOARD
+    // ESPN API Integration (No Auth Required)
     // ========================================
 
-    // Import analytics libraries
-    import {
-      calculatePythagorean,
-      projectSeason,
-      compareTeams,
-      NFL_CONFIG
-    } from '../lib/analytics/football/pythagorean-nfl.js';
+    // ESPN API endpoints
+    const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl';
+    const ESPN_V2_BASE = 'https://site.api.espn.com/apis/v2/sports/football/nfl';
 
-    import {
-      getNFLStandings
-    } from '../lib/api/nfl-data.js';
+    // Pythagorean exponent for NFL
+    const NFL_PYTHAGOREAN_EXPONENT = 2.37;
 
-    // ========================================
-    // STATE MANAGEMENT
-    // ========================================
-
+    // State
     let currentFilter = 'all';
-    let standingsData = null;
+    let allStandingsData = [];
+    let refreshInterval = null;
 
     // ========================================
     // MAIN INITIALIZATION
@@ -449,24 +598,206 @@
       try {
         console.log('🏈 Initializing NFL League Analytics Dashboard...');
 
-        // Fetch standings for all 32 teams
-        standingsData = await getNFLStandings('2025');
-
-        console.log('✅ Data fetched successfully:', standingsData);
-
-        // Render all cards
-        renderStandingsCard(standingsData);
-        renderPythagoreanCard(standingsData);
-        renderPointDifferentialCard(standingsData);
-        renderPlayoffCard(standingsData);
+        // Load all data in parallel
+        await Promise.all([
+          loadLiveGames(),
+          loadStandingsData()
+        ]);
 
         // Setup filter buttons
         setupFilters();
 
+        // Update timestamp
+        updateLastUpdated();
+
+        // Auto-refresh every 30 seconds for live games
+        refreshInterval = setInterval(() => {
+          loadLiveGames();
+          updateLastUpdated();
+        }, 30000);
+
+        console.log('✅ Dashboard initialized successfully');
       } catch (error) {
         console.error('❌ Dashboard initialization error:', error);
-        showError('Failed to load NFL data. Please check API configuration.');
+        showError('Failed to load NFL data. Please try again later.');
       }
+    }
+
+    // ========================================
+    // ESPN API CALLS
+    // ========================================
+
+    async function loadLiveGames() {
+      try {
+        const response = await fetch(`${ESPN_BASE}/scoreboard`);
+        const data = await response.json();
+        renderScoreboardCard(data);
+      } catch (error) {
+        console.error('Error loading live games:', error);
+        document.getElementById('scoreboard-card').innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">NFL Scoreboard - This Week's Games</h2>
+            <span class="card-icon">📺</span>
+          </div>
+          <div class="error-message">Unable to load live games. Please try again later.</div>
+        `;
+      }
+    }
+
+    async function loadStandingsData() {
+      try {
+        const response = await fetch(`${ESPN_V2_BASE}/standings`);
+        const data = await response.json();
+        allStandingsData = processStandingsData(data);
+
+        // Render all cards that depend on standings data
+        renderStandingsCard(allStandingsData);
+        renderPythagoreanCard(allStandingsData);
+        renderPointDifferentialCard(allStandingsData);
+        renderPlayoffCard(allStandingsData);
+      } catch (error) {
+        console.error('Error loading standings:', error);
+        showError('Unable to load standings data.');
+      }
+    }
+
+    // ========================================
+    // DATA PROCESSING
+    // ========================================
+
+    function processStandingsData(apiData) {
+      const allTeams = [];
+
+      // ESPN v2 standings structure: children (conferences) -> standings -> entries
+      apiData.children?.forEach(conference => {
+        const confName = conference.name?.includes('American') || conference.abbreviation === 'AFC' ? 'AFC' : 'NFC';
+
+        conference.standings?.entries?.forEach(entry => {
+          const team = entry.team;
+          const stats = entry.stats || [];
+
+          // Helper to get stat by name
+          const getStat = (name) => stats.find(s => s.name === name);
+
+          const wins = getStat('wins')?.value || 0;
+          const losses = getStat('losses')?.value || 0;
+          const ties = getStat('ties')?.value || 0;
+          const pf = getStat('pointsFor')?.value || 0;
+          const pa = getStat('pointsAgainst')?.value || 0;
+          const diff = getStat('pointDifferential')?.value || (pf - pa);
+          const winPct = getStat('winPercent')?.value || (wins / Math.max(1, wins + losses + ties));
+          const streak = getStat('streak')?.displayValue || '-';
+
+          allTeams.push({
+            name: team.displayName || team.name,
+            shortName: team.shortDisplayName || team.abbreviation,
+            abbreviation: team.abbreviation,
+            logo: team.logos?.[0]?.href || '',
+            conference: confName,
+            division: getDivisionFromTeam(team.displayName || team.name),
+            wins,
+            losses,
+            ties,
+            winPct,
+            pointsFor: pf,
+            pointsAgainst: pa,
+            pointDiff: diff,
+            streak,
+            gamesPlayed: wins + losses + ties
+          });
+        });
+      });
+
+      return allTeams;
+    }
+
+    // Map team names to divisions (ESPN v2 doesn't include division in standings)
+    function getDivisionFromTeam(teamName) {
+      const divisionMap = {
+        // AFC East
+        'Buffalo Bills': 'AFC East',
+        'Miami Dolphins': 'AFC East',
+        'New England Patriots': 'AFC East',
+        'New York Jets': 'AFC East',
+        // AFC North
+        'Baltimore Ravens': 'AFC North',
+        'Cincinnati Bengals': 'AFC North',
+        'Cleveland Browns': 'AFC North',
+        'Pittsburgh Steelers': 'AFC North',
+        // AFC South
+        'Houston Texans': 'AFC South',
+        'Indianapolis Colts': 'AFC South',
+        'Jacksonville Jaguars': 'AFC South',
+        'Tennessee Titans': 'AFC South',
+        // AFC West
+        'Denver Broncos': 'AFC West',
+        'Kansas City Chiefs': 'AFC West',
+        'Las Vegas Raiders': 'AFC West',
+        'Los Angeles Chargers': 'AFC West',
+        // NFC East
+        'Dallas Cowboys': 'NFC East',
+        'New York Giants': 'NFC East',
+        'Philadelphia Eagles': 'NFC East',
+        'Washington Commanders': 'NFC East',
+        // NFC North
+        'Chicago Bears': 'NFC North',
+        'Detroit Lions': 'NFC North',
+        'Green Bay Packers': 'NFC North',
+        'Minnesota Vikings': 'NFC North',
+        // NFC South
+        'Atlanta Falcons': 'NFC South',
+        'Carolina Panthers': 'NFC South',
+        'New Orleans Saints': 'NFC South',
+        'Tampa Bay Buccaneers': 'NFC South',
+        // NFC West
+        'Arizona Cardinals': 'NFC West',
+        'Los Angeles Rams': 'NFC West',
+        'San Francisco 49ers': 'NFC West',
+        'Seattle Seahawks': 'NFC West'
+      };
+      return divisionMap[teamName] || 'Unknown';
+    }
+
+    // ========================================
+    // PYTHAGOREAN CALCULATIONS
+    // ========================================
+
+    function calculatePythagorean(pointsFor, pointsAgainst, gamesPlayed, actualWins) {
+      if (pointsFor === 0 && pointsAgainst === 0) {
+        return { expectedWins: 0, expectedWinPct: 0, luckFactor: 0 };
+      }
+
+      const pfPow = Math.pow(pointsFor, NFL_PYTHAGOREAN_EXPONENT);
+      const paPow = Math.pow(pointsAgainst, NFL_PYTHAGOREAN_EXPONENT);
+      const expectedWinPct = pfPow / (pfPow + paPow);
+      const expectedWins = expectedWinPct * gamesPlayed;
+      const luckFactor = actualWins - expectedWins;
+
+      return {
+        expectedWins: Math.round(expectedWins * 10) / 10,
+        expectedWinPct: Math.round(expectedWinPct * 1000) / 1000,
+        luckFactor: Math.round(luckFactor * 10) / 10
+      };
+    }
+
+    function calculatePlayoffProbability(team) {
+      // Simple playoff probability model based on win projection
+      // In a 17-game season, typically need ~10 wins for wildcard, ~12 for division
+      const pythag = calculatePythagorean(team.pointsFor, team.pointsAgainst, team.gamesPlayed, team.wins);
+      const projectedWins = team.gamesPlayed > 0
+        ? pythag.expectedWinPct * 17
+        : 0;
+
+      // Sigmoid-based probability curve
+      // ~50% at 9 wins, ~90% at 12 wins, ~10% at 6 wins
+      const midpoint = 9;
+      const steepness = 0.5;
+      const probability = 100 / (1 + Math.exp(-steepness * (projectedWins - midpoint)));
+
+      return {
+        playoffProb: Math.round(probability * 10) / 10,
+        projectedWins: Math.round(projectedWins * 10) / 10
+      };
     }
 
     // ========================================
@@ -478,474 +809,514 @@
 
       filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-          // Update active state
           filterBtns.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-
-          // Update filter
           currentFilter = btn.dataset.filter;
 
           // Re-render cards with filter
-          renderStandingsCard(standingsData);
+          const filteredTeams = filterTeams(allStandingsData);
+          renderStandingsCard(filteredTeams);
         });
       });
     }
 
-    function filterTeams(standings) {
-      if (currentFilter === 'all') {
-        return Object.values(standings.standings).flatMap(conf =>
-          Object.values(conf).flat()
-        );
-      }
+    function filterTeams(teams) {
+      if (currentFilter === 'all') return teams;
 
       if (currentFilter === 'AFC' || currentFilter === 'NFC') {
-        return Object.values(standings.standings[currentFilter]).flat();
+        return teams.filter(t => t.conference === currentFilter);
       }
 
-      const [conf, div] = currentFilter.split(' ');
-      return standings.standings[conf][div] || [];
+      // Division filter (e.g., "AFC East")
+      return teams.filter(t => t.division === currentFilter);
     }
 
     // ========================================
     // CARD RENDERERS
     // ========================================
 
-    function renderStandingsCard(data) {
-      const card = document.getElementById('standings-card');
+    function renderScoreboardCard(data) {
+      const card = document.getElementById('scoreboard-card');
+      const events = data.events || [];
+      const week = data.week?.number || '';
+      const seasonType = data.season?.type?.name || '';
 
-      try {
-        const filteredTeams = filterTeams(data);
+      // Separate games by status
+      const liveGames = events.filter(e => e.status?.type?.state === 'in');
+      const finalGames = events.filter(e => e.status?.type?.state === 'post');
+      const upcomingGames = events.filter(e => e.status?.type?.state === 'pre');
 
-        // Sort by wins
-        filteredTeams.sort((a, b) => b.record.wins - a.record.wins);
+      let html = `
+        <div class="card-header">
+          <h2 class="card-title">NFL Scoreboard - Week ${week} ${seasonType}</h2>
+          <span class="card-icon">📺</span>
+        </div>
+      `;
 
-        let tableHTML = `
-          <div class="card-header">
-            <h2 class="card-title">📊 2025 NFL Standings (${filteredTeams.length} Teams)</h2>
-            <span class="card-icon">🏈</span>
+      // Live games section
+      if (liveGames.length > 0) {
+        html += `
+          <div class="scoreboard-section">
+            <h3><span class="live-dot"></span> Live Games (${liveGames.length})</h3>
+            <div class="games-grid">
+              ${liveGames.map(game => renderGameCard(game, 'live')).join('')}
+            </div>
           </div>
-
-          <table class="standings-table">
-            <thead>
-              <tr>
-                <th class="text-center">Rank</th>
-                <th>Team</th>
-                <th class="text-center">Division</th>
-                <th class="text-center">W</th>
-                <th class="text-center">L</th>
-                <th class="text-center">T</th>
-                <th class="text-center">Win%</th>
-                <th class="text-center">PF</th>
-                <th class="text-center">PA</th>
-                <th class="text-center">Diff</th>
-                <th class="text-center">Streak</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${filteredTeams.map((team, index) => {
-                const diff = team.pointDifferential || 0;
-                const diffClass = diff > 0 ? 'stat-positive' : diff < 0 ? 'stat-negative' : 'stat-neutral';
-
-                return `
-                  <tr>
-                    <td class="text-center"><span class="rank-badge">${index + 1}</span></td>
-                    <td><span class="team-name">${team.team.name}</span></td>
-                    <td class="text-center">${team.team.key}</td>
-                    <td class="text-center stat-positive"><strong>${team.record.wins}</strong></td>
-                    <td class="text-center stat-negative">${team.record.losses}</td>
-                    <td class="text-center">${team.record.ties || 0}</td>
-                    <td class="text-center">${(team.record.winPercentage * 100).toFixed(1)}%</td>
-                    <td class="text-center">${team.pointsFor || 0}</td>
-                    <td class="text-center">${team.pointsAgainst || 0}</td>
-                    <td class="text-center ${diffClass}"><strong>${diff > 0 ? '+' : ''}${diff}</strong></td>
-                    <td class="text-center">${team.streak?.type || ''}${team.streak?.count || 0}</td>
-                  </tr>
-                `;
-              }).join('')}
-            </tbody>
-          </table>
-        `;
-
-        card.innerHTML = tableHTML;
-
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">📊 2025 NFL Standings</h2>
-            <span class="card-icon">🏈</span>
-          </div>
-          <div class="error-message">Error loading standings: ${error.message}</div>
         `;
       }
+
+      // Final games section
+      if (finalGames.length > 0) {
+        html += `
+          <div class="scoreboard-section">
+            <h3>Final (${finalGames.length})</h3>
+            <div class="games-grid">
+              ${finalGames.map(game => renderGameCard(game, 'final')).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Upcoming games section
+      if (upcomingGames.length > 0) {
+        html += `
+          <div class="scoreboard-section">
+            <h3>Upcoming (${upcomingGames.length})</h3>
+            <div class="games-grid">
+              ${upcomingGames.map(game => renderGameCard(game, 'upcoming')).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      if (events.length === 0) {
+        html += '<div class="no-games">No games scheduled for this week</div>';
+      }
+
+      card.innerHTML = html;
     }
 
-    function renderPythagoreanCard(data) {
+    function renderGameCard(game, type) {
+      const competition = game.competitions?.[0];
+      const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+      const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+      const status = game.status?.type;
+
+      let statusText = '';
+      if (type === 'live') {
+        statusText = status?.shortDetail || 'LIVE';
+      } else if (type === 'final') {
+        statusText = status?.shortDetail || 'Final';
+      } else {
+        const gameDate = new Date(game.date);
+        statusText = gameDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      }
+
+      const homeScore = parseInt(homeTeam?.score || 0);
+      const awayScore = parseInt(awayTeam?.score || 0);
+      const homeWinner = type === 'final' && homeScore > awayScore;
+      const awayWinner = type === 'final' && awayScore > homeScore;
+
+      return `
+        <div class="game-card ${type === 'live' ? 'live' : ''}">
+          <div class="game-status ${type === 'live' ? 'live' : ''}">${statusText}</div>
+          <div class="game-teams">
+            <div class="game-team ${awayWinner ? 'winner' : ''}">
+              <div class="team-info">
+                <img src="${awayTeam?.team?.logo || ''}" alt="${awayTeam?.team?.displayName}" class="team-logo" onerror="this.style.display='none'">
+                <div>
+                  <div class="team-name">${awayTeam?.team?.abbreviation || 'TBD'}</div>
+                  <div class="team-record">${awayTeam?.records?.[0]?.summary || ''}</div>
+                </div>
+              </div>
+              <div class="team-score">${type !== 'upcoming' ? awayTeam?.score || '0' : ''}</div>
+            </div>
+            <div class="game-team ${homeWinner ? 'winner' : ''}">
+              <div class="team-info">
+                <img src="${homeTeam?.team?.logo || ''}" alt="${homeTeam?.team?.displayName}" class="team-logo" onerror="this.style.display='none'">
+                <div>
+                  <div class="team-name">${homeTeam?.team?.abbreviation || 'TBD'}</div>
+                  <div class="team-record">${homeTeam?.records?.[0]?.summary || ''}</div>
+                </div>
+              </div>
+              <div class="team-score">${type !== 'upcoming' ? homeTeam?.score || '0' : ''}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStandingsCard(teams) {
+      const card = document.getElementById('standings-card');
+      const filteredTeams = filterTeams(teams);
+
+      // Sort by win percentage, then wins
+      filteredTeams.sort((a, b) => {
+        if (b.winPct !== a.winPct) return b.winPct - a.winPct;
+        return b.wins - a.wins;
+      });
+
+      let html = `
+        <div class="card-header">
+          <h2 class="card-title">2025 NFL Standings (${filteredTeams.length} Teams)</h2>
+          <span class="card-icon">🏈</span>
+        </div>
+
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th class="text-center">Rank</th>
+              <th>Team</th>
+              <th class="text-center">Div</th>
+              <th class="text-center">W</th>
+              <th class="text-center">L</th>
+              <th class="text-center">T</th>
+              <th class="text-center">PCT</th>
+              <th class="text-center">PF</th>
+              <th class="text-center">PA</th>
+              <th class="text-center">Diff</th>
+              <th class="text-center">Strk</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredTeams.map((team, index) => {
+              const diffClass = team.pointDiff > 0 ? 'stat-positive' : team.pointDiff < 0 ? 'stat-negative' : 'stat-neutral';
+              const divShort = team.division.replace('AFC ', '').replace('NFC ', '');
+
+              return `
+                <tr>
+                  <td class="text-center"><span class="rank-badge">${index + 1}</span></td>
+                  <td><span class="table-team-name">${team.name}</span></td>
+                  <td class="text-center">${divShort}</td>
+                  <td class="text-center stat-positive"><strong>${team.wins}</strong></td>
+                  <td class="text-center stat-negative">${team.losses}</td>
+                  <td class="text-center">${team.ties}</td>
+                  <td class="text-center">${(team.winPct * 100).toFixed(1)}%</td>
+                  <td class="text-center">${team.pointsFor}</td>
+                  <td class="text-center">${team.pointsAgainst}</td>
+                  <td class="text-center ${diffClass}"><strong>${team.pointDiff > 0 ? '+' : ''}${team.pointDiff}</strong></td>
+                  <td class="text-center">${team.streak}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+
+      card.innerHTML = html;
+    }
+
+    function renderPythagoreanCard(teams) {
       const card = document.getElementById('pythagorean-card');
 
-      try {
-        const allTeams = Object.values(data.standings).flatMap(conf =>
-          Object.values(conf).flat()
-        );
+      const teamsWithPythag = teams.map(team => {
+        const pythag = calculatePythagorean(team.pointsFor, team.pointsAgainst, team.gamesPlayed, team.wins);
+        return {
+          ...team,
+          expectedWins: pythag.expectedWins,
+          luckFactor: pythag.luckFactor
+        };
+      });
 
-        const teams = allTeams.map(team => {
-          const gamesPlayed = team.record.wins + team.record.losses + (team.record.ties || 0);
-          const pythag = calculatePythagorean(
-            team.pointsFor || 0,
-            team.pointsAgainst || 0,
-            gamesPlayed,
-            team.record.wins
-          );
+      // Sort by expected wins
+      teamsWithPythag.sort((a, b) => b.expectedWins - a.expectedWins);
 
-          return {
-            name: team.team.name,
-            actualWins: team.record.wins,
-            expectedWins: pythag.expectedWins,
-            luckFactor: pythag.luckFactor
-          };
-        });
+      card.innerHTML = `
+        <div class="card-header">
+          <h2 class="card-title">Pythagorean Win Expectancy (All 32 Teams)</h2>
+          <span class="card-icon">📈</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="pythagorean-chart"></canvas>
+        </div>
+      `;
 
-        // Sort by expected wins
-        teams.sort((a, b) => b.expectedWins - a.expectedWins);
-
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🎯 Pythagorean Win Expectancy (All Teams)</h2>
-            <span class="card-icon">📈</span>
-          </div>
-
-          <div class="chart-container">
-            <canvas id="pythagorean-chart"></canvas>
-          </div>
-        `;
-
-        // Create Chart.js visualization
-        setTimeout(() => {
-          const ctx = document.getElementById('pythagorean-chart');
-          if (ctx) {
-            new Chart(ctx, {
-              type: 'scatter',
-              data: {
-                datasets: [{
-                  label: 'Actual vs Expected Wins',
-                  data: teams.map(t => ({
-                    x: t.expectedWins,
-                    y: t.actualWins,
-                    team: t.name
-                  })),
-                  backgroundColor: 'rgba(191, 87, 0, 0.6)',
-                  borderColor: 'rgba(191, 87, 0, 1)',
-                  borderWidth: 2,
-                  pointRadius: 6,
-                  pointHoverRadius: 8
-                }, {
-                  label: 'Expected = Actual Line',
-                  data: [{x: 0, y: 0}, {x: 17, y: 17}],
-                  type: 'line',
-                  borderColor: 'rgba(74, 222, 128, 0.5)',
-                  borderDash: [10, 5],
-                  borderWidth: 2,
-                  fill: false,
-                  pointRadius: 0
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    labels: {
-                      color: 'rgba(224, 224, 224, 0.8)',
-                      font: { size: 12, family: 'Inter, sans-serif' }
-                    }
-                  },
-                  tooltip: {
-                    backgroundColor: 'rgba(26, 26, 26, 0.9)',
-                    titleColor: '#BF5700',
-                    bodyColor: '#e0e0e0',
-                    borderColor: 'rgba(191, 87, 0, 0.5)',
-                    borderWidth: 1,
-                    callbacks: {
-                      label: (context) => {
-                        if (context.dataset.label === 'Actual vs Expected Wins') {
-                          const point = context.raw;
-                          const luck = point.y - point.x;
-                          return [
-                            `${point.team}`,
-                            `Expected: ${point.x} wins`,
-                            `Actual: ${point.y} wins`,
-                            `Luck: ${luck > 0 ? '+' : ''}${luck.toFixed(1)}`
-                          ];
-                        }
-                        return '';
-                      }
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    title: {
-                      display: true,
-                      text: 'Expected Wins (Pythagorean)',
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 12 }
-                    },
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' },
-                    min: 0,
-                    max: 17
-                  },
-                  y: {
-                    title: {
-                      display: true,
-                      text: 'Actual Wins',
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 12 }
-                    },
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' },
-                    min: 0,
-                    max: 17
-                  }
-                }
-              }
-            });
-          }
-        }, 100);
-
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🎯 Pythagorean Win Expectancy</h2>
-            <span class="card-icon">📈</span>
-          </div>
-          <div class="error-message">Error calculating Pythagorean analysis: ${error.message}</div>
-        `;
-      }
-    }
-
-    function renderPointDifferentialCard(data) {
-      const card = document.getElementById('pointdiff-card');
-
-      try {
-        const allTeams = Object.values(data.standings).flatMap(conf =>
-          Object.values(conf).flat()
-        );
-
-        const teams = allTeams.map(team => ({
-          name: team.team.name.replace(/^.*\s/, ''),
-          diff: team.pointDifferential || 0
-        }));
-
-        // Sort by point differential
-        teams.sort((a, b) => b.diff - a.diff);
-
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">⚖️ Point Differential Rankings</h2>
-            <span class="card-icon">📊</span>
-          </div>
-
-          <div class="chart-container">
-            <canvas id="pointdiff-chart"></canvas>
-          </div>
-        `;
-
-        // Create Chart.js bar chart
-        setTimeout(() => {
-          const ctx = document.getElementById('pointdiff-chart');
-          if (ctx) {
-            new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: teams.map(t => t.name),
-                datasets: [{
-                  label: 'Point Differential',
-                  data: teams.map(t => t.diff),
-                  backgroundColor: teams.map(t =>
-                    t.diff > 0 ? 'rgba(74, 222, 128, 0.6)' : 'rgba(248, 113, 113, 0.6)'
-                  ),
-                  borderColor: teams.map(t =>
-                    t.diff > 0 ? 'rgba(74, 222, 128, 1)' : 'rgba(248, 113, 113, 1)'
-                  ),
-                  borderWidth: 2
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    backgroundColor: 'rgba(26, 26, 26, 0.9)',
-                    titleColor: '#BF5700',
-                    bodyColor: '#e0e0e0',
-                    callbacks: {
-                      label: (context) => `${context.parsed.x > 0 ? '+' : ''}${context.parsed.x} points`
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' }
-                  },
-                  y: {
-                    grid: { display: false },
-                    ticks: {
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 9 }
-                    }
-                  }
-                }
-              }
-            });
-          }
-        }, 100);
-
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">⚖️ Point Differential Rankings</h2>
-            <span class="card-icon">📊</span>
-          </div>
-          <div class="error-message">Error calculating point differential: ${error.message}</div>
-        `;
-      }
-    }
-
-    function renderPlayoffCard(data) {
-      const card = document.getElementById('playoff-card');
-
-      try {
-        const allTeams = Object.values(data.standings).flatMap(conf =>
-          Object.values(conf).flat()
-        );
-
-        const teams = allTeams.map(team => {
-          const gamesPlayed = team.record.wins + team.record.losses + (team.record.ties || 0);
-          const projection = projectSeason(
-            {
-              pointsFor: team.pointsFor || 0,
-              pointsAgainst: team.pointsAgainst || 0,
-              wins: team.record.wins,
-              losses: team.record.losses,
-              gamesPlayed
+      // Create scatter plot
+      setTimeout(() => {
+        const ctx = document.getElementById('pythagorean-chart');
+        if (ctx) {
+          new Chart(ctx, {
+            type: 'scatter',
+            data: {
+              datasets: [{
+                label: 'Actual vs Expected Wins',
+                data: teamsWithPythag.map(t => ({
+                  x: t.expectedWins,
+                  y: t.wins,
+                  team: t.shortName
+                })),
+                backgroundColor: 'rgba(191, 87, 0, 0.6)',
+                borderColor: 'rgba(191, 87, 0, 1)',
+                borderWidth: 2,
+                pointRadius: 8,
+                pointHoverRadius: 10
+              }, {
+                label: 'Expected = Actual Line',
+                data: [{x: 0, y: 0}, {x: 17, y: 17}],
+                type: 'line',
+                borderColor: 'rgba(74, 222, 128, 0.5)',
+                borderDash: [10, 5],
+                borderWidth: 2,
+                fill: false,
+                pointRadius: 0
+              }]
             },
-            17
-          );
-
-          return {
-            name: team.team.name.replace(/^.*\s/, ''),
-            playoffProb: parseFloat(projection.playoffLikelihood),
-            projWins: projection.projectedFinalRecord.wins
-          };
-        });
-
-        // Sort by playoff probability
-        teams.sort((a, b) => b.playoffProb - a.playoffProb);
-
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🏆 Playoff Probability Rankings</h2>
-            <span class="card-icon">🎟️</span>
-          </div>
-
-          <div class="chart-container">
-            <canvas id="playoff-chart"></canvas>
-          </div>
-        `;
-
-        // Create Chart.js horizontal bar chart
-        setTimeout(() => {
-          const ctx = document.getElementById('playoff-chart');
-          if (ctx) {
-            new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: teams.map(t => t.name),
-                datasets: [{
-                  label: 'Playoff Probability (%)',
-                  data: teams.map(t => t.playoffProb),
-                  backgroundColor: teams.map(t =>
-                    t.playoffProb > 75 ? 'rgba(74, 222, 128, 0.6)' :
-                    t.playoffProb > 50 ? 'rgba(191, 87, 0, 0.6)' :
-                    t.playoffProb > 25 ? 'rgba(204, 102, 0, 0.6)' :
-                    'rgba(248, 113, 113, 0.6)'
-                  ),
-                  borderColor: teams.map(t =>
-                    t.playoffProb > 75 ? 'rgba(74, 222, 128, 1)' :
-                    t.playoffProb > 50 ? 'rgba(191, 87, 0, 1)' :
-                    t.playoffProb > 25 ? 'rgba(204, 102, 0, 1)' :
-                    'rgba(248, 113, 113, 1)'
-                  ),
-                  borderWidth: 2
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    backgroundColor: 'rgba(26, 26, 26, 0.9)',
-                    titleColor: '#BF5700',
-                    bodyColor: '#e0e0e0',
-                    callbacks: {
-                      label: (context) => {
-                        const team = teams[context.dataIndex];
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: 'rgba(224, 224, 224, 0.8)',
+                    font: { size: 12, family: 'Inter, sans-serif' }
+                  }
+                },
+                tooltip: {
+                  backgroundColor: 'rgba(26, 26, 26, 0.9)',
+                  titleColor: '#BF5700',
+                  bodyColor: '#e0e0e0',
+                  borderColor: 'rgba(191, 87, 0, 0.5)',
+                  borderWidth: 1,
+                  callbacks: {
+                    label: (context) => {
+                      if (context.dataset.label === 'Actual vs Expected Wins') {
+                        const point = context.raw;
+                        const luck = point.y - point.x;
                         return [
-                          `Playoff Prob: ${context.parsed.x.toFixed(1)}%`,
-                          `Projected Wins: ${team.projWins}/17`
+                          `${point.team}`,
+                          `Expected: ${point.x.toFixed(1)} wins`,
+                          `Actual: ${point.y} wins`,
+                          `Luck: ${luck > 0 ? '+' : ''}${luck.toFixed(1)}`
                         ];
                       }
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    grid: { color: 'rgba(191, 87, 0, 0.1)' },
-                    ticks: { color: 'rgba(160, 160, 160, 1)' },
-                    max: 100
-                  },
-                  y: {
-                    grid: { display: false },
-                    ticks: {
-                      color: 'rgba(160, 160, 160, 1)',
-                      font: { size: 9 }
+                      return '';
                     }
                   }
                 }
+              },
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Expected Wins (Pythagorean)',
+                    color: 'rgba(160, 160, 160, 1)',
+                    font: { size: 12 }
+                  },
+                  grid: { color: 'rgba(191, 87, 0, 0.1)' },
+                  ticks: { color: 'rgba(160, 160, 160, 1)' },
+                  min: 0,
+                  max: 17
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: 'Actual Wins',
+                    color: 'rgba(160, 160, 160, 1)',
+                    font: { size: 12 }
+                  },
+                  grid: { color: 'rgba(191, 87, 0, 0.1)' },
+                  ticks: { color: 'rgba(160, 160, 160, 1)' },
+                  min: 0,
+                  max: 17
+                }
               }
-            });
-          }
-        }, 100);
+            }
+          });
+        }
+      }, 100);
+    }
 
-      } catch (error) {
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">🏆 Playoff Probability Rankings</h2>
-            <span class="card-icon">🎟️</span>
-          </div>
-          <div class="error-message">Error calculating playoff probabilities: ${error.message}</div>
-        `;
-      }
+    function renderPointDifferentialCard(teams) {
+      const card = document.getElementById('pointdiff-card');
+
+      // Sort by point differential
+      const sortedTeams = [...teams].sort((a, b) => b.pointDiff - a.pointDiff);
+
+      card.innerHTML = `
+        <div class="card-header">
+          <h2 class="card-title">Point Differential Rankings</h2>
+          <span class="card-icon">📊</span>
+        </div>
+        <div class="chart-container tall">
+          <canvas id="pointdiff-chart"></canvas>
+        </div>
+      `;
+
+      // Create horizontal bar chart
+      setTimeout(() => {
+        const ctx = document.getElementById('pointdiff-chart');
+        if (ctx) {
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: sortedTeams.map(t => t.shortName),
+              datasets: [{
+                label: 'Point Differential',
+                data: sortedTeams.map(t => t.pointDiff),
+                backgroundColor: sortedTeams.map(t =>
+                  t.pointDiff > 0 ? 'rgba(74, 222, 128, 0.6)' : 'rgba(248, 113, 113, 0.6)'
+                ),
+                borderColor: sortedTeams.map(t =>
+                  t.pointDiff > 0 ? 'rgba(74, 222, 128, 1)' : 'rgba(248, 113, 113, 1)'
+                ),
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              indexAxis: 'y',
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: 'rgba(26, 26, 26, 0.9)',
+                  titleColor: '#BF5700',
+                  bodyColor: '#e0e0e0',
+                  callbacks: {
+                    label: (context) => {
+                      const team = sortedTeams[context.dataIndex];
+                      return [
+                        `${context.parsed.x > 0 ? '+' : ''}${context.parsed.x} points`,
+                        `PF: ${team.pointsFor} | PA: ${team.pointsAgainst}`
+                      ];
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { color: 'rgba(191, 87, 0, 0.1)' },
+                  ticks: { color: 'rgba(160, 160, 160, 1)' }
+                },
+                y: {
+                  grid: { display: false },
+                  ticks: {
+                    color: 'rgba(160, 160, 160, 1)',
+                    font: { size: 10 }
+                  }
+                }
+              }
+            }
+          });
+        }
+      }, 100);
+    }
+
+    function renderPlayoffCard(teams) {
+      const card = document.getElementById('playoff-card');
+
+      const teamsWithProb = teams.map(team => {
+        const prob = calculatePlayoffProbability(team);
+        return {
+          ...team,
+          playoffProb: prob.playoffProb,
+          projectedWins: prob.projectedWins
+        };
+      });
+
+      // Sort by playoff probability
+      teamsWithProb.sort((a, b) => b.playoffProb - a.playoffProb);
+
+      card.innerHTML = `
+        <div class="card-header">
+          <h2 class="card-title">Playoff Probability Rankings</h2>
+          <span class="card-icon">🏆</span>
+        </div>
+        <div class="chart-container tall">
+          <canvas id="playoff-chart"></canvas>
+        </div>
+      `;
+
+      // Create horizontal bar chart
+      setTimeout(() => {
+        const ctx = document.getElementById('playoff-chart');
+        if (ctx) {
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: teamsWithProb.map(t => t.shortName),
+              datasets: [{
+                label: 'Playoff Probability (%)',
+                data: teamsWithProb.map(t => t.playoffProb),
+                backgroundColor: teamsWithProb.map(t =>
+                  t.playoffProb > 75 ? 'rgba(74, 222, 128, 0.6)' :
+                  t.playoffProb > 50 ? 'rgba(191, 87, 0, 0.6)' :
+                  t.playoffProb > 25 ? 'rgba(204, 102, 0, 0.6)' :
+                  'rgba(248, 113, 113, 0.6)'
+                ),
+                borderColor: teamsWithProb.map(t =>
+                  t.playoffProb > 75 ? 'rgba(74, 222, 128, 1)' :
+                  t.playoffProb > 50 ? 'rgba(191, 87, 0, 1)' :
+                  t.playoffProb > 25 ? 'rgba(204, 102, 0, 1)' :
+                  'rgba(248, 113, 113, 1)'
+                ),
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              indexAxis: 'y',
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: 'rgba(26, 26, 26, 0.9)',
+                  titleColor: '#BF5700',
+                  bodyColor: '#e0e0e0',
+                  callbacks: {
+                    label: (context) => {
+                      const team = teamsWithProb[context.dataIndex];
+                      return [
+                        `Playoff Prob: ${context.parsed.x.toFixed(1)}%`,
+                        `Projected Wins: ${team.projectedWins}/17`,
+                        `Current: ${team.wins}-${team.losses}${team.ties > 0 ? `-${team.ties}` : ''}`
+                      ];
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { color: 'rgba(191, 87, 0, 0.1)' },
+                  ticks: { color: 'rgba(160, 160, 160, 1)' },
+                  max: 100
+                },
+                y: {
+                  grid: { display: false },
+                  ticks: {
+                    color: 'rgba(160, 160, 160, 1)',
+                    font: { size: 10 }
+                  }
+                }
+              }
+            }
+          });
+        }
+      }, 100);
     }
 
     // ========================================
-    // ERROR HANDLING
+    // UTILITIES
     // ========================================
+
+    function updateLastUpdated() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZoneName: 'short'
+      });
+      document.getElementById('last-updated').textContent = `Updated: ${timeStr}`;
+    }
 
     function showError(message) {
       document.querySelectorAll('.analytics-card').forEach(card => {
-        card.innerHTML = `
-          <div class="error-message">
-            <strong>⚠️ Error:</strong> ${message}
-            <br><br>
-            Please verify your SportsDataIO API key is configured correctly.
-          </div>
-        `;
+        const header = card.querySelector('.card-header');
+        if (header) {
+          card.innerHTML = header.outerHTML + `
+            <div class="error-message">${message}</div>
+          `;
+        }
       });
     }
 

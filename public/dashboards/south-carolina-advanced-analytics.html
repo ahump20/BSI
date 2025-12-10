@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>South Carolina Gamecocks - Advanced Analytics | Blaze Sports Intel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --team-primary: #73000A;
+            --team-secondary: #000000;
+            --bg-dark: #0d0d0d;
+            --bg-card: #1a1a1a;
+            --bg-card-hover: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #FF6B35;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--team-primary) 0%, #4a0006 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .team-info { display: flex; align-items: center; gap: 1rem; }
+        .team-logo { width: 64px; height: 64px; border-radius: 8px; background: rgba(255,255,255,0.1); }
+        .team-name { font-size: 1.75rem; font-weight: 700; }
+        .team-record { font-size: 1rem; color: rgba(255,255,255,0.8); margin-top: 0.25rem; }
+        .header-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .header-stat { text-align: center; }
+        .header-stat-value { font-size: 1.5rem; font-weight: 700; }
+        .header-stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+        .card-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: var(--team-primary);
+            color: white;
+        }
+        .standings-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .standings-table th {
+            text-align: left;
+            padding: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .standings-table td { padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .standings-table tr.current-team { background: rgba(115,0,10,0.2); }
+        .standings-table .team-name-cell { font-weight: 500; }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-label { color: var(--text-secondary); font-size: 0.85rem; }
+        .stat-value { font-weight: 600; font-size: 0.95rem; }
+        .stat-value.positive { color: var(--success); }
+        .stat-value.negative { color: var(--danger); }
+        .stat-value.neutral { color: var(--warning); }
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+        .schedule-item:last-child { border-bottom: none; }
+        .schedule-opponent { display: flex; align-items: center; gap: 0.5rem; }
+        .schedule-result { font-weight: 600; }
+        .schedule-result.win { color: var(--success); }
+        .schedule-result.loss { color: var(--danger); }
+        .schedule-result.upcoming { color: var(--text-secondary); }
+        .home-indicator { font-size: 0.7rem; color: var(--text-secondary); }
+        .rank-badge {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            background: var(--team-primary);
+            color: white;
+            margin-left: 0.25rem;
+        }
+        .pythagorean-display {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .pyth-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--team-primary);
+            text-shadow: 0 0 30px rgba(115,0,10,0.3);
+        }
+        .pyth-label { color: var(--text-secondary); margin-top: 0.5rem; }
+        .pyth-expected { font-size: 1.25rem; margin-top: 1rem; color: var(--text-primary); }
+        .efficiency-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .efficiency-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--team-primary), #9a000d);
+            transition: width 0.5s ease;
+        }
+        .efficiency-item { margin-bottom: 1rem; }
+        .efficiency-header { display: flex; justify-content: space-between; font-size: 0.85rem; }
+        .efficiency-label { color: var(--text-secondary); }
+        .efficiency-value { font-weight: 600; }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+        .last-updated {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; }
+            .header-stats { justify-content: center; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="team-info">
+            <img id="teamLogo" class="team-logo" src="" alt="South Carolina">
+            <div>
+                <div class="team-name">South Carolina Gamecocks</div>
+                <div class="team-record" id="teamRecord">Loading...</div>
+            </div>
+        </div>
+        <div class="header-stats">
+            <div class="header-stat">
+                <div class="header-stat-value" id="confRecord">-</div>
+                <div class="header-stat-label">SEC Record</div>
+            </div>
+            <div class="header-stat">
+                <div class="header-stat-value" id="winPct">-</div>
+                <div class="header-stat-label">Win %</div>
+            </div>
+            <div class="header-stat">
+                <div class="header-stat-value" id="apRank">-</div>
+                <div class="header-stat-label">AP Rank</div>
+            </div>
+            <div class="header-stat">
+                <div class="header-stat-value" id="homeRecord">-</div>
+                <div class="header-stat-label">Home</div>
+            </div>
+            <div class="header-stat">
+                <div class="header-stat-value" id="awayRecord">-</div>
+                <div class="header-stat-label">Away</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">SEC Standings</span>
+                <span class="card-badge">CONFERENCE</span>
+            </div>
+            <div id="standingsContent" class="loading">Loading standings...</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Pythagorean Win Expectancy</span>
+                <span class="card-badge">ANALYTICS</span>
+            </div>
+            <div id="pythagoreanContent" class="pythagorean-display">
+                <div class="pyth-value" id="pythWinPct">-</div>
+                <div class="pyth-label">Expected Win %</div>
+                <div class="pyth-expected" id="pythRecord">Calculating...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Offensive Performance</span>
+                <span class="card-badge">OFFENSE</span>
+            </div>
+            <div id="offenseContent" class="loading">Loading stats...</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Defensive Performance</span>
+                <span class="card-badge">DEFENSE</span>
+            </div>
+            <div id="defenseContent" class="loading">Loading stats...</div>
+        </div>
+
+        <div class="card" style="grid-column: span 2;">
+            <div class="card-header">
+                <span class="card-title">2025 Schedule & Results</span>
+                <span class="card-badge">SCHEDULE</span>
+            </div>
+            <div id="scheduleContent" class="loading">Loading schedule...</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Scoring Analysis</span>
+                <span class="card-badge">POINTS</span>
+            </div>
+            <div id="scoringContent" class="loading">Loading...</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Efficiency Metrics</span>
+                <span class="card-badge">ADVANCED</span>
+            </div>
+            <div id="efficiencyContent" class="loading">Loading...</div>
+        </div>
+    </div>
+
+    <div class="last-updated">
+        Data provided by ESPN API | Last updated: <span id="lastUpdated">-</span>
+    </div>
+
+    <script>
+        const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
+        const ESPN_V2 = 'https://site.api.espn.com/apis/v2/sports/football/college-football';
+        const TEAM_ID = '2579';
+        const CONF_GROUP = '8';
+        const CFB_PYTHAGOREAN_EXP = 2.37;
+
+        let teamStats = { pointsFor: 0, pointsAgainst: 0, wins: 0, losses: 0, gamesPlayed: 0 };
+
+        async function fetchTeamData() {
+            try {
+                const response = await fetch(`${ESPN_BASE}/teams/${TEAM_ID}`);
+                const data = await response.json();
+                const team = data.team;
+                document.getElementById('teamLogo').src = team.logos?.[0]?.href || '';
+                const record = team.record?.items?.[0];
+                if (record) {
+                    document.getElementById('teamRecord').textContent = `${record.summary || '0-0'} Overall`;
+                    const stats = record.stats || [];
+                    teamStats.wins = stats.find(s => s.name === 'wins')?.value || 0;
+                    teamStats.losses = stats.find(s => s.name === 'losses')?.value || 0;
+                    teamStats.gamesPlayed = teamStats.wins + teamStats.losses;
+                    const winPct = stats.find(s => s.name === 'winPercent')?.value || 0;
+                    document.getElementById('winPct').textContent = (winPct * 100).toFixed(1) + '%';
+                }
+                const confRecord = team.record?.items?.find(r => r.type === 'vsconf');
+                document.getElementById('confRecord').textContent = confRecord?.summary || '-';
+                document.getElementById('homeRecord').textContent = team.record?.items?.find(r => r.type === 'home')?.summary || '-';
+                document.getElementById('awayRecord').textContent = team.record?.items?.find(r => r.type === 'road')?.summary || '-';
+                document.getElementById('apRank').textContent = team.rank ? `#${team.rank}` : 'NR';
+            } catch (error) { console.error('Error fetching team data:', error); }
+        }
+
+        async function fetchStandings() {
+            try {
+                const response = await fetch(`${ESPN_V2}/standings?group=${CONF_GROUP}`);
+                const data = await response.json();
+                let html = '<table class="standings-table"><thead><tr><th>Team</th><th>Conf</th><th>Overall</th><th>PF</th><th>PA</th></tr></thead><tbody>';
+                data.standings?.entries?.forEach(entry => {
+                    const name = entry.team?.shortDisplayName || 'Unknown';
+                    const id = entry.team?.id;
+                    let confRecord = '-', overall = '-', pf = 0, pa = 0;
+                    entry.stats?.forEach(stat => {
+                        if (stat.name === 'vsconf_wins') {
+                            const cw = entry.stats.find(s => s.name === 'vsconf_wins')?.value || 0;
+                            const cl = entry.stats.find(s => s.name === 'vsconf_losses')?.value || 0;
+                            confRecord = `${cw}-${cl}`;
+                        }
+                        if (stat.name === 'overall') overall = stat.displayValue || '-';
+                        if (stat.name === 'pointsFor') pf = stat.value || 0;
+                        if (stat.name === 'pointsAgainst') pa = stat.value || 0;
+                    });
+                    const isCurrentTeam = id === TEAM_ID;
+                    if (isCurrentTeam) { teamStats.pointsFor = pf; teamStats.pointsAgainst = pa; }
+                    html += `<tr class="${isCurrentTeam ? 'current-team' : ''}"><td class="team-name-cell">${name}</td><td>${confRecord}</td><td>${overall}</td><td>${pf}</td><td>${pa}</td></tr>`;
+                });
+                html += '</tbody></table>';
+                document.getElementById('standingsContent').innerHTML = html;
+                calculatePythagorean();
+            } catch (error) {
+                document.getElementById('standingsContent').innerHTML = '<p>Unable to load standings</p>';
+            }
+        }
+
+        function calculatePythagorean() {
+            if (teamStats.pointsFor > 0 && teamStats.pointsAgainst > 0) {
+                const pfPow = Math.pow(teamStats.pointsFor, CFB_PYTHAGOREAN_EXP);
+                const paPow = Math.pow(teamStats.pointsAgainst, CFB_PYTHAGOREAN_EXP);
+                const pythPct = pfPow / (pfPow + paPow);
+                document.getElementById('pythWinPct').textContent = (pythPct * 100).toFixed(1) + '%';
+                document.getElementById('pythRecord').textContent = `Expected: ${(pythPct * teamStats.gamesPlayed).toFixed(1)}-${((1 - pythPct) * teamStats.gamesPlayed).toFixed(1)} (Actual: ${teamStats.wins}-${teamStats.losses})`;
+            } else {
+                document.getElementById('pythWinPct').textContent = '-';
+                document.getElementById('pythRecord').textContent = 'Insufficient data';
+            }
+        }
+
+        async function fetchSchedule() {
+            try {
+                const response = await fetch(`${ESPN_BASE}/teams/${TEAM_ID}/schedule`);
+                const data = await response.json();
+                let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0.5rem;">';
+                (data.events || []).forEach(event => {
+                    const comp = event.competitions?.[0];
+                    const isHome = comp?.competitors?.find(c => c.id === TEAM_ID)?.homeAway === 'home';
+                    const opp = comp?.competitors?.find(c => c.id !== TEAM_ID);
+                    const teamComp = comp?.competitors?.find(c => c.id === TEAM_ID);
+                    const oppName = opp?.team?.shortDisplayName || 'TBD';
+                    const oppRank = opp?.curatedRank?.current <= 25 ? `<span class="rank-badge">#${opp.curatedRank.current}</span>` : '';
+                    let result = '', resultClass = 'upcoming';
+                    if (comp?.status?.type?.completed) {
+                        const ts = teamComp?.score?.value || teamComp?.score || 0;
+                        const os = opp?.score?.value || opp?.score || 0;
+                        const won = parseFloat(ts) > parseFloat(os);
+                        result = `${won ? 'W' : 'L'} ${ts}-${os}`;
+                        resultClass = won ? 'win' : 'loss';
+                    } else if (comp?.status?.type?.state === 'in') {
+                        result = `LIVE ${teamComp?.score || 0}-${opp?.score || 0}`;
+                    } else {
+                        result = new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                    html += `<div class="schedule-item"><div class="schedule-opponent"><span class="home-indicator">${isHome ? 'vs' : '@'}</span><span>${oppName}</span>${oppRank}</div><div class="schedule-result ${resultClass}">${result}</div></div>`;
+                });
+                html += '</div>';
+                document.getElementById('scheduleContent').innerHTML = html || '<p>No schedule available</p>';
+            } catch (error) { document.getElementById('scheduleContent').innerHTML = '<p>Unable to load schedule</p>'; }
+        }
+
+        async function fetchTeamStats() {
+            try {
+                const response = await fetch(`${ESPN_BASE}/teams/${TEAM_ID}/statistics`);
+                const data = await response.json();
+                const stats = data.statistics || [];
+                const findStat = (name) => { for (const cat of stats) { const f = cat.stats?.find(s => s.name === name); if (f) return f; } return null; };
+                const offenseStats = [{ key: 'totalYards', label: 'Total Yards' }, { key: 'yardsPerGame', label: 'Yards/Game' }, { key: 'passingYards', label: 'Passing Yards' }, { key: 'rushingYards', label: 'Rushing Yards' }, { key: 'yardsPerPlay', label: 'Yards/Play' }];
+                const defenseStats = [{ key: 'opponentTotalYards', label: 'Yards Allowed' }, { key: 'opponentYardsPerGame', label: 'Opp Yards/Game' }, { key: 'sacks', label: 'Sacks' }, { key: 'interceptions', label: 'Interceptions' }, { key: 'fumblesRecovered', label: 'Fumbles Rec' }];
+                let offHtml = '', defHtml = '';
+                offenseStats.forEach(s => { const f = findStat(s.key); offHtml += `<div class="stat-row"><span class="stat-label">${s.label}</span><span class="stat-value">${f?.displayValue || f?.value || '-'}</span></div>`; });
+                defenseStats.forEach(s => { const f = findStat(s.key); defHtml += `<div class="stat-row"><span class="stat-label">${s.label}</span><span class="stat-value">${f?.displayValue || f?.value || '-'}</span></div>`; });
+                document.getElementById('offenseContent').innerHTML = offHtml || '<p>No stats</p>';
+                document.getElementById('defenseContent').innerHTML = defHtml || '<p>No stats</p>';
+                const ppg = findStat('pointsPerGame'), oppPpg = findStat('opponentPointsPerGame');
+                const diff = teamStats.pointsFor - teamStats.pointsAgainst;
+                document.getElementById('scoringContent').innerHTML = `<div class="stat-row"><span class="stat-label">Points/Game</span><span class="stat-value">${ppg?.displayValue || '-'}</span></div><div class="stat-row"><span class="stat-label">Opp Points/Game</span><span class="stat-value">${oppPpg?.displayValue || '-'}</span></div><div class="stat-row"><span class="stat-label">Point Differential</span><span class="stat-value ${diff > 0 ? 'positive' : 'negative'}">${diff > 0 ? '+' : ''}${diff}</span></div><div class="stat-row"><span class="stat-label">Total Points</span><span class="stat-value">${teamStats.pointsFor || '-'}</span></div>`;
+                const td = findStat('thirdDownConvPct'), rz = findStat('redZonePct'), to = findStat('turnoverMargin'), top = findStat('avgTimeOfPossession');
+                let effHtml = '';
+                if (td) { const p = parseFloat(td.value) || 0; effHtml += `<div class="efficiency-item"><div class="efficiency-header"><span class="efficiency-label">3rd Down %</span><span class="efficiency-value">${(p*100).toFixed(1)}%</span></div><div class="efficiency-bar"><div class="efficiency-fill" style="width:${p*100}%"></div></div></div>`; }
+                if (rz) { const p = parseFloat(rz.value) || 0; effHtml += `<div class="efficiency-item"><div class="efficiency-header"><span class="efficiency-label">Red Zone %</span><span class="efficiency-value">${(p*100).toFixed(1)}%</span></div><div class="efficiency-bar"><div class="efficiency-fill" style="width:${p*100}%"></div></div></div>`; }
+                if (to) { const m = parseFloat(to.value) || 0; effHtml += `<div class="efficiency-item"><div class="efficiency-header"><span class="efficiency-label">TO Margin</span><span class="efficiency-value ${m>0?'positive':m<0?'negative':''}">${m>0?'+':''}${m}</span></div><div class="efficiency-bar"><div class="efficiency-fill" style="width:${Math.min(100,Math.max(0,(m+20)/40*100))}%"></div></div></div>`; }
+                if (top) effHtml += `<div class="efficiency-item"><div class="efficiency-header"><span class="efficiency-label">Avg TOP</span><span class="efficiency-value">${top.displayValue || '-'}</span></div></div>`;
+                document.getElementById('efficiencyContent').innerHTML = effHtml || '<p>No data</p>';
+            } catch (error) { document.getElementById('offenseContent').innerHTML = '<p>Unable to load</p>'; document.getElementById('defenseContent').innerHTML = '<p>Unable to load</p>'; }
+        }
+
+        async function init() {
+            await Promise.all([fetchTeamData(), fetchStandings(), fetchSchedule(), fetchTeamStats()]);
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', dateStyle: 'medium', timeStyle: 'short' }) + ' CT';
+        }
+        init();
+        setInterval(init, 300000);
+    </script>
+</body>
+</html>

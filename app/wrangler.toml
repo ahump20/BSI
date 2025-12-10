@@ -11,11 +11,8 @@ binding = "KV"
 id = "b666864ae6fe4576a7cb94277d6ef4f2"
 preview_id = "314e25f60fbd436e8ba3af4d34b8351c"
 
-# D1 Database for lead storage
-[[d1_databases]]
-binding = "DB"
-database_name = "blaze-leads"
-database_id = "335816a4-7a0d-4ec8-8587-efc70b82afeb"
+# D1 Database binding removed - blaze-leads database was never created
+# Lead capture functionality moved to KV storage via functions/api/newsletter.ts
 
 # Durable Objects for real-time state
 [[durable_objects.bindings]]

@@ -1300,8 +1300,16 @@
   </main>
 
   <script>
-    // 2025 Preseason Rankings (D1Baseball Preseason Poll)
-    const PRESEASON_RANKINGS = [
+    // Dashboard state - populated from API
+    let RANKINGS = [];
+    let BUBBLE_TEAMS = [];
+    let PROJECTED_HOSTS = [];
+    let RPI_MOVERS = { risers: [], fallers: [] };
+    let SEASON_INFO = { year: 2026, phase: 'preseason', label: '2026 Preseason' };
+    let dashboardDataLoaded = false;
+
+    // Fallback rankings (used if API fails)
+    const FALLBACK_RANKINGS = [
       { rank: 1, team: 'Texas A&M', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png', trend: 'same' },
       { rank: 2, team: 'Texas', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png', trend: 'same' },
       { rank: 3, team: 'LSU', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/99.png', trend: 'same' },
@@ -1323,11 +1331,87 @@
       { rank: 19, team: 'Vanderbilt', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/238.png', trend: 'same' },
       { rank: 20, team: 'Kentucky', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/96.png', trend: 'same' },
       { rank: 21, team: 'Alabama', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/333.png', trend: 'same' },
-      { rank: 22, team: 'East Carolina', conference: 'AAC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/151.png', trend: 'same' },
+      { rank: 22, team: 'East Carolina', conference: 'American', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/151.png', trend: 'same' },
       { rank: 23, team: 'UCLA', conference: 'Big Ten', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/26.png', trend: 'same' },
       { rank: 24, team: 'NC State', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/152.png', trend: 'same' },
       { rank: 25, team: 'Louisiana', conference: 'Sun Belt', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/309.png', trend: 'same' },
     ];
+
+    // Fetch dashboard data from API
+    async function fetchDashboardData() {
+      const rankingsBody = document.getElementById('rankingsBody');
+      if (rankingsBody) {
+        rankingsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;"><div class="loading-spinner"></div> Loading live data...</td></tr>';
+      }
+
+      try {
+        const response = await fetch('/api/college-baseball/dashboard');
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Update rankings
+          if (data.rankings && data.rankings.length > 0) {
+            RANKINGS = data.rankings;
+          } else {
+            RANKINGS = FALLBACK_RANKINGS;
+          }
+
+          // Update bubble watch
+          if (data.bubbleWatch && data.bubbleWatch.length > 0) {
+            BUBBLE_TEAMS = data.bubbleWatch;
+          }
+
+          // Update projected hosts
+          if (data.projectedHosts && data.projectedHosts.length > 0) {
+            PROJECTED_HOSTS = data.projectedHosts;
+          }
+
+          // Update RPI movers
+          if (data.rpiMovers) {
+            RPI_MOVERS = data.rpiMovers;
+          }
+
+          // Update season info
+          if (data.season) {
+            SEASON_INFO = data.season;
+          }
+
+          dashboardDataLoaded = true;
+          console.log(`Dashboard loaded: ${RANKINGS.length} teams, ${data.fromCache ? 'from cache' : 'fresh'}`);
+
+          // Update last updated timestamp
+          if (data.timestamp) {
+            document.getElementById('lastUpdated').textContent = `Last updated: ${data.timestamp} CT`;
+          }
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (err) {
+        console.warn('Dashboard API error, using fallback:', err.message);
+        RANKINGS = FALLBACK_RANKINGS;
+        BUBBLE_TEAMS = FALLBACK_RANKINGS.slice(0, 10).map((t, i) => ({
+          team: t.team,
+          rpi: '-',
+          status: i < 5 ? 'lock' : i < 8 ? 'bubble' : 'out'
+        }));
+        PROJECTED_HOSTS = FALLBACK_RANKINGS.slice(0, 16).map((t, i) => ({
+          seed: i + 1,
+          team: t.team,
+          conference: t.conference,
+          record: t.record,
+          logo: t.logo
+        }));
+      }
+
+      // Render all sections
+      renderRankings();
+      renderBubbleTeams();
+      renderProjectedHosts();
+      renderRPIMovers();
+      populateTeamSelects();
+    }
 
     // Conference data structure
     const CONFERENCE_TEAMS = {
@@ -1455,30 +1539,10 @@
       ],
     };
 
-    // Bubble teams (will update during season)
-    const BUBBLE_TEAMS = [
-      { team: 'Texas A&M', rpi: '-', status: 'lock' },
-      { team: 'Texas', rpi: '-', status: 'lock' },
-      { team: 'LSU', rpi: '-', status: 'lock' },
-      { team: 'Florida', rpi: '-', status: 'lock' },
-      { team: 'Virginia', rpi: '-', status: 'lock' },
-      { team: 'Wake Forest', rpi: '-', status: 'bubble' },
-      { team: 'Clemson', rpi: '-', status: 'bubble' },
-      { team: 'TCU', rpi: '-', status: 'bubble' },
-      { team: 'East Carolina', rpi: '-', status: 'bubble' },
-      { team: 'Louisiana', rpi: '-', status: 'out' },
-    ];
-
-    // Projected hosts
-    const PROJECTED_HOSTS = [
-      'Texas A&M', 'Texas', 'LSU', 'Florida', 'Arkansas', 'Georgia',
-      'Virginia', 'Wake Forest', 'Clemson', 'Florida State',
-      'Tennessee', 'Oregon State', 'North Carolina', 'Stanford',
-      'Ole Miss', 'South Carolina'
-    ];
-
-    // All teams for comparison
-    const ALL_TEAMS = PRESEASON_RANKINGS.map(t => t.team);
+    // All teams for comparison (computed from rankings)
+    function getAllTeams() {
+      return (RANKINGS.length > 0 ? RANKINGS : FALLBACK_RANKINGS).map(t => t.team);
+    }
 
     // Podcast state - will be populated from API
     let PODCASTS = [];
@@ -1692,7 +1756,8 @@
     // Render functions
     function renderRankings() {
       const tbody = document.getElementById('rankingsBody');
-      tbody.innerHTML = PRESEASON_RANKINGS.map(team => `
+      const rankings = RANKINGS.length > 0 ? RANKINGS : FALLBACK_RANKINGS;
+      tbody.innerHTML = rankings.map(team => `
         <tr>
           <td class="rank-cell">${team.rank}</td>
           <td>
@@ -1761,7 +1826,7 @@
       `;
       document.getElementById('rpiFalling').innerHTML = `
         <div style="color: var(--cream-dim); font-size: 0.8125rem; padding: 0.5rem;">
-          Check back after Feb 14, 2025
+          Check back after Feb 14, 2026
         </div>
       `;
     }
@@ -1770,7 +1835,7 @@
       const team1Select = document.getElementById('team1Select');
       const team2Select = document.getElementById('team2Select');
 
-      const options = ALL_TEAMS.map(t => `<option value="${t}">${t}</option>`).join('');
+      const options = getAllTeams().map(t => `<option value="${t}">${t}</option>`).join('');
       team1Select.innerHTML = '<option value="">Select Team 1</option>' + options;
       team2Select.innerHTML = '<option value="">Select Team 2</option>' + options;
     }
@@ -1789,8 +1854,9 @@
         return;
       }
 
-      const t1 = PRESEASON_RANKINGS.find(t => t.team === team1) || { rank: '-', record: '0-0' };
-      const t2 = PRESEASON_RANKINGS.find(t => t.team === team2) || { rank: '-', record: '0-0' };
+      const rankings = RANKINGS.length > 0 ? RANKINGS : FALLBACK_RANKINGS;
+      const t1 = rankings.find(t => t.team === team1) || { rank: '-', record: '0-0' };
+      const t2 = rankings.find(t => t.team === team2) || { rank: '-', record: '0-0' };
 
       const stats = [
         { label: 'Ranking', val1: t1.rank || 'NR', val2: t2.rank || 'NR', lower: true },
@@ -1963,7 +2029,11 @@
     });
 
     // Initialize
-    function init() {
+    async function init() {
+      // Fetch live dashboard data first (rankings, bubble watch, hosts, movers)
+      await fetchDashboardData();
+
+      // Render all sections with live or fallback data
       renderRankings();
       renderConferenceStandings('SEC');
       renderBubbleTeams();

@@ -7,15 +7,25 @@
 
 export const colors = {
   brand: {
-    primary: '#FF6B35', // Blaze orange
-    secondary: '#1A1A2E', // Deep navy
-    accent: '#F7931E', // Gold
+    burntOrange: '#BF5700', // UT Official - Heritage, passion
+    texasSoil: '#8B4513', // West Columbia earth - Roots
+    ember: '#FF6B35', // Interactive accent
+    gold: '#C9A227', // Value highlights
+    primary: '#BF5700', // Alias for burntOrange
+    secondary: '#1A1A1A', // Alias for charcoal
+    accent: '#FF6B35', // Alias for ember
+  },
+  background: {
+    charcoal: '#1A1A1A', // Premium editorial dark
+    midnight: '#0D0D0D', // True dark backgrounds
+    cream: '#FAF8F5', // Warm newspaper aesthetic
+    warmWhite: '#FAFAFA', // Clean text backgrounds
   },
   semantic: {
-    success: '#10B981', // Green - positive stats, wins
-    warning: '#F59E0B', // Amber - caution, mid-tier
-    error: '#EF4444', // Red - losses, negative
-    info: '#3B82F6', // Blue - informational
+    success: '#2E7D32', // Winning, positive stats
+    warning: '#F9A825', // Caution, watch stats
+    error: '#C62828', // Losing, negative stats
+    info: '#1976D2', // Informational, neutral
   },
   neutral: {
     white: '#FFFFFF',
@@ -33,15 +43,18 @@ export const colors = {
       900: '#111827',
     },
   },
-  // Sport-specific accent colors
+  // Sport-specific accent colors (favorite teams)
   sports: {
-    baseball: '#C41E3A', // Cardinal red
-    football: '#4B2E83', // Longhorn burnt orange base
-    basketball: '#5D76A9', // Grizzlies blue
+    cardinals: '#C41E3A', // St. Louis Cardinals
+    titans: '#4B92DB', // Tennessee Titans
+    grizzlies: '#5D76A9', // Memphis Grizzlies
+    longhorns: '#BF5700', // Texas Longhorns
   },
 } as const;
 
 export type Colors = typeof colors;
 export type BrandColor = keyof typeof colors.brand;
+export type BackgroundColor = keyof typeof colors.background;
 export type SemanticColor = keyof typeof colors.semantic;
 export type NeutralColor = keyof typeof colors.neutral;
+export type SportsColor = keyof typeof colors.sports;
