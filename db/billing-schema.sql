@@ -112,6 +112,38 @@ CREATE INDEX IF NOT EXISTS idx_newsletter_email_hash ON newsletter_subscribers(e
 CREATE INDEX IF NOT EXISTS idx_newsletter_status ON newsletter_subscribers(status);
 
 -- ============================================================================
+-- EMAIL LOG TABLE
+-- Transactional email tracking
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS email_log (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  email_to TEXT NOT NULL,
+  email_type TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  status TEXT NOT NULL CHECK(status IN ('sent', 'failed', 'pending')),
+  provider_id TEXT,
+  error_message TEXT,
+  sent_at INTEGER,
+  created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_email_log_user ON email_log(user_id);
+CREATE INDEX IF NOT EXISTS idx_email_log_type ON email_log(email_type);
+CREATE INDEX IF NOT EXISTS idx_email_log_status ON email_log(status);
+
+-- ============================================================================
+-- SCHEMA VERSION TABLE
+-- Track database migrations
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS schema_version (
+  version TEXT PRIMARY KEY,
+  description TEXT,
+  applied_at INTEGER NOT NULL DEFAULT (unixepoch())
+);
+
+-- ============================================================================
 -- VIEWS FOR COMMON QUERIES
 -- ============================================================================
 
