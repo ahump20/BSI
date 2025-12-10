@@ -170,17 +170,17 @@
   },
   "monetization": {
     "subscriptions": {
-      "basic": {
-        "price": "$9.99/month",
-        "features": ["Scores", "Basic stats", "News"]
+      "free": {
+        "price": "$0",
+        "features": ["Scores", "Standings", "Basic stats", "Schedules", "News"]
       },
       "pro": {
-        "price": "$29.99/month",
-        "features": ["Advanced analytics", "Film access", "Recruiting database", "Custom reports"]
+        "price": "$29/month",
+        "features": ["Advanced analytics", "Predictions", "API access", "Historical data", "Player comparisons", "Box scores"]
       },
       "enterprise": {
-        "price": "$1,188/year",
-        "features": ["API access", "White-label", "Custom integrations", "Dedicated support"]
+        "price": "$199/month",
+        "features": ["Bulk export", "Custom alerts", "Priority support", "White-label", "Dedicated API", "Raw data access"]
       }
     },
     "services": {
