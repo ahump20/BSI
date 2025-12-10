@@ -11,11 +11,24 @@
  * - checkout.session.completed
  *
  * Security: Webhook signature verification required
+ *
+ * Database Schema (bsi-historical-db):
+ * - subscriptions: stripe_customer_id, stripe_subscription_id, user_id, plan_tier, status
+ * - payments: invoice_id, customer_id, subscription_id, user_id, amount, status
+ * - users: id, email, tier
  */
+
+import {
+  sendEmail,
+  paymentSuccessEmail,
+  paymentFailedEmail,
+  subscriptionCanceledEmail,
+} from '../_email';
 
 interface Env {
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
+  RESEND_API_KEY: string;
   DB: D1Database;
   KV: KVNamespace;
 }
@@ -28,6 +41,12 @@ interface StripeEvent {
   };
   created: number;
 }
+
+// Map Stripe price IDs to BSI tier names
+const PRICE_TO_TIER: Record<string, string> = {
+  price_1SX9voLvpRBk20R2pW0AjUIv: 'pro', // $29/month
+  price_1SX9w7LvpRBk20R2DJkKAH3y: 'enterprise', // $199/month
+};
 
 const corsHeaders = {
   'Content-Type': 'application/json',
@@ -145,83 +164,186 @@ async function verifyStripeSignature(
 }
 
 async function handleCheckoutCompleted(session: Record<string, unknown>, env: Env): Promise<void> {
-  const customerId = session.customer as string;
-  const subscriptionId = session.subscription as string;
-  const customerEmail = session.customer_email as string;
+  const stripeCustomerId = session.customer as string;
+  const stripeSubscriptionId = session.subscription as string;
+  const customerEmail = (session.customer_email as string)?.toLowerCase();
 
-  console.log(`Checkout completed: ${customerId}, subscription: ${subscriptionId}`);
+  console.log(`Checkout completed: ${stripeCustomerId}, subscription: ${stripeSubscriptionId}`);
 
-  // Store in D1
+  // Look up user by email to get user_id
+  let userId: string | null = null;
   try {
+    const userResult = await env.DB.prepare('SELECT id FROM users WHERE email = ?')
+      .bind(customerEmail)
+      .first<{ id: string }>();
+    userId = userResult?.id || null;
+  } catch (error) {
+    console.error('Failed to look up user by email:', error);
+  }
+
+  if (!userId) {
+    console.error(`No user found for email: ${customerEmail}`);
+    return;
+  }
+
+  // Determine tier from session metadata or default to pro
+  const tier = 'pro'; // Default for checkout - will be updated by subscription.created event
+
+  // Store subscription in D1
+  try {
+    const subscriptionId = crypto.randomUUID();
     await env.DB.prepare(
-      `INSERT OR REPLACE INTO subscriptions (customer_id, subscription_id, email, status, created_at, updated_at)
-       VALUES (?, ?, ?, 'active', datetime('now'), datetime('now'))`
+      `INSERT OR REPLACE INTO subscriptions
+       (id, user_id, stripe_customer_id, stripe_subscription_id, plan_tier, status, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, 'active', unixepoch(), unixepoch())`
     )
-      .bind(customerId, subscriptionId, customerEmail)
+      .bind(subscriptionId, userId, stripeCustomerId, stripeSubscriptionId, tier)
+      .run();
+
+    // Update user tier
+    await env.DB.prepare('UPDATE users SET tier = ?, updated_at = unixepoch() WHERE id = ?')
+      .bind(tier, userId)
       .run();
   } catch (error) {
     console.error('DB error on checkout:', error);
   }
 
   // Cache subscription status in KV for fast lookups
-  await env.KV.put(`sub:${customerId}`, JSON.stringify({ status: 'active', subscriptionId }), {
-    expirationTtl: 86400,
-  });
+  await env.KV.put(
+    `sub:${stripeCustomerId}`,
+    JSON.stringify({ status: 'active', subscriptionId: stripeSubscriptionId, tier, userId }),
+    { expirationTtl: 86400 }
+  );
 }
 
 async function handleSubscriptionCreated(
   subscription: Record<string, unknown>,
   env: Env
 ): Promise<void> {
-  const customerId = subscription.customer as string;
-  const subscriptionId = subscription.id as string;
+  const stripeCustomerId = subscription.customer as string;
+  const stripeSubscriptionId = subscription.id as string;
   const status = subscription.status as string;
-  const planId =
-    (subscription.items as Record<string, unknown[]>)?.data?.[0]?.price?.id || 'unknown';
+  const items = subscription.items as { data?: Array<{ price?: { id?: string } }> };
+  const priceId = items?.data?.[0]?.price?.id || '';
+  const tier = PRICE_TO_TIER[priceId] || 'pro';
+  const currentPeriodStart = subscription.current_period_start as number;
+  const currentPeriodEnd = subscription.current_period_end as number;
 
-  console.log(`Subscription created: ${subscriptionId} for customer ${customerId}`);
+  console.log(
+    `Subscription created: ${stripeSubscriptionId} for customer ${stripeCustomerId}, tier: ${tier}`
+  );
+
+  // Look up existing subscription to get user_id
+  let userId: string | null = null;
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT user_id FROM subscriptions WHERE stripe_customer_id = ?'
+    )
+      .bind(stripeCustomerId)
+      .first<{ user_id: string }>();
+    userId = existing?.user_id || null;
+  } catch (error) {
+    console.error('Failed to look up existing subscription:', error);
+  }
+
+  if (!userId) {
+    console.error(`No user_id found for customer: ${stripeCustomerId}`);
+    return;
+  }
 
   try {
+    // Update subscription with full details
     await env.DB.prepare(
-      `INSERT OR REPLACE INTO subscriptions (customer_id, subscription_id, status, plan_id, created_at, updated_at)
-       VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))`
+      `UPDATE subscriptions
+       SET stripe_subscription_id = ?, plan_tier = ?, status = ?,
+           current_period_start = ?, current_period_end = ?, updated_at = unixepoch()
+       WHERE stripe_customer_id = ?`
     )
-      .bind(customerId, subscriptionId, status, planId)
+      .bind(
+        stripeSubscriptionId,
+        tier,
+        status,
+        currentPeriodStart,
+        currentPeriodEnd,
+        stripeCustomerId
+      )
+      .run();
+
+    // Sync user tier
+    await env.DB.prepare('UPDATE users SET tier = ?, updated_at = unixepoch() WHERE id = ?')
+      .bind(tier, userId)
       .run();
   } catch (error) {
     console.error('DB error on subscription create:', error);
   }
 
-  await env.KV.put(`sub:${customerId}`, JSON.stringify({ status, subscriptionId, planId }), {
-    expirationTtl: 86400,
-  });
+  await env.KV.put(
+    `sub:${stripeCustomerId}`,
+    JSON.stringify({ status, subscriptionId: stripeSubscriptionId, tier, userId }),
+    { expirationTtl: 86400 }
+  );
+
+  // Also cache by user_id for faster lookups
+  await env.KV.put(`tier:${userId}`, tier, { expirationTtl: 300 });
 }
 
 async function handleSubscriptionUpdated(
   subscription: Record<string, unknown>,
   env: Env
 ): Promise<void> {
-  const customerId = subscription.customer as string;
-  const subscriptionId = subscription.id as string;
+  const stripeCustomerId = subscription.customer as string;
+  const stripeSubscriptionId = subscription.id as string;
   const status = subscription.status as string;
   const cancelAtPeriodEnd = subscription.cancel_at_period_end as boolean;
+  const items = subscription.items as { data?: Array<{ price?: { id?: string } }> };
+  const priceId = items?.data?.[0]?.price?.id || '';
+  const tier = PRICE_TO_TIER[priceId] || 'pro';
+  const currentPeriodEnd = subscription.current_period_end as number;
 
-  console.log(`Subscription updated: ${subscriptionId}, status: ${status}`);
+  console.log(`Subscription updated: ${stripeSubscriptionId}, status: ${status}, tier: ${tier}`);
+
+  // Look up user_id from subscription
+  let userId: string | null = null;
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?'
+    )
+      .bind(stripeSubscriptionId)
+      .first<{ user_id: string }>();
+    userId = existing?.user_id || null;
+  } catch (error) {
+    console.error('Failed to look up subscription:', error);
+  }
 
   try {
     await env.DB.prepare(
-      `UPDATE subscriptions SET status = ?, cancel_at_period_end = ?, updated_at = datetime('now')
-       WHERE subscription_id = ?`
+      `UPDATE subscriptions
+       SET status = ?, plan_tier = ?, cancel_at_period_end = ?, current_period_end = ?, updated_at = unixepoch()
+       WHERE stripe_subscription_id = ?`
     )
-      .bind(status, cancelAtPeriodEnd ? 1 : 0, subscriptionId)
+      .bind(status, tier, cancelAtPeriodEnd ? 1 : 0, currentPeriodEnd, stripeSubscriptionId)
       .run();
+
+    // Sync user tier (only if subscription is active)
+    if (userId && status === 'active') {
+      await env.DB.prepare('UPDATE users SET tier = ?, updated_at = unixepoch() WHERE id = ?')
+        .bind(tier, userId)
+        .run();
+      await env.KV.put(`tier:${userId}`, tier, { expirationTtl: 300 });
+    }
   } catch (error) {
     console.error('DB error on subscription update:', error);
   }
 
   await env.KV.put(
-    `sub:${customerId}`,
-    JSON.stringify({ status, subscriptionId, cancelAtPeriodEnd }),
+    `sub:${stripeCustomerId}`,
+    JSON.stringify({
+      status,
+      subscriptionId: stripeSubscriptionId,
+      cancelAtPeriodEnd,
+      tier,
+      userId,
+    }),
     { expirationTtl: 86400 }
   );
 }
@@ -230,23 +352,74 @@ async function handleSubscriptionDeleted(
   subscription: Record<string, unknown>,
   env: Env
 ): Promise<void> {
-  const customerId = subscription.customer as string;
-  const subscriptionId = subscription.id as string;
+  const stripeCustomerId = subscription.customer as string;
+  const stripeSubscriptionId = subscription.id as string;
+  const currentPeriodEnd = subscription.current_period_end as number;
 
-  console.log(`Subscription deleted: ${subscriptionId}`);
+  console.log(`Subscription deleted: ${stripeSubscriptionId}`);
+
+  // Look up user_id to reset their tier
+  let userId: string | null = null;
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?'
+    )
+      .bind(stripeSubscriptionId)
+      .first<{ user_id: string }>();
+    userId = existing?.user_id || null;
+  } catch (error) {
+    console.error('Failed to look up subscription:', error);
+  }
 
   try {
     await env.DB.prepare(
-      `UPDATE subscriptions SET status = 'canceled', updated_at = datetime('now')
-       WHERE subscription_id = ?`
+      `UPDATE subscriptions SET status = 'canceled', updated_at = unixepoch()
+       WHERE stripe_subscription_id = ?`
     )
-      .bind(subscriptionId)
+      .bind(stripeSubscriptionId)
       .run();
+
+    // Reset user tier to free
+    if (userId) {
+      await env.DB.prepare('UPDATE users SET tier = ?, updated_at = unixepoch() WHERE id = ?')
+        .bind('free', userId)
+        .run();
+      await env.KV.put(`tier:${userId}`, 'free', { expirationTtl: 300 });
+
+      // Send cancellation email
+      const user = await env.DB.prepare('SELECT email, name FROM users WHERE id = ?')
+        .bind(userId)
+        .first<{ email: string; name: string }>();
+
+      if (user?.email) {
+        const endDate = currentPeriodEnd
+          ? new Date(currentPeriodEnd * 1000).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+              timeZone: 'America/Chicago',
+            })
+          : 'the end of your current billing period';
+
+        const emailTemplate = subscriptionCanceledEmail(user.name || '', endDate);
+        sendEmail(
+          {
+            to: user.email,
+            subject: emailTemplate.subject,
+            html: emailTemplate.html,
+            text: emailTemplate.text,
+            userId,
+            emailType: 'subscription_canceled',
+          },
+          env
+        ).catch((err) => console.log('Cancellation email error:', err));
+      }
+    }
   } catch (error) {
     console.error('DB error on subscription delete:', error);
   }
 
-  await env.KV.delete(`sub:${customerId}`);
+  await env.KV.delete(`sub:${stripeCustomerId}`);
 }
 
 async function handlePaymentSucceeded(invoice: Record<string, unknown>, env: Env): Promise<void> {
@@ -257,21 +430,75 @@ async function handlePaymentSucceeded(invoice: Record<string, unknown>, env: Env
 
   console.log(`Payment succeeded: ${invoiceId}, amount: ${amountPaid}`);
 
+  // Look up user_id from subscription
+  let userId: string | null = null;
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?'
+    )
+      .bind(subscriptionId)
+      .first<{ user_id: string }>();
+    userId = existing?.user_id || null;
+  } catch (error) {
+    console.error('Failed to look up subscription for payment:', error);
+  }
+
   try {
     await env.DB.prepare(
-      `INSERT INTO payments (invoice_id, customer_id, subscription_id, amount, status, created_at)
-       VALUES (?, ?, ?, ?, 'succeeded', datetime('now'))`
+      `INSERT INTO payments (invoice_id, customer_id, subscription_id, user_id, amount, status)
+       VALUES (?, ?, ?, ?, ?, 'succeeded')`
     )
-      .bind(invoiceId, customerId, subscriptionId, amountPaid)
+      .bind(invoiceId, customerId, subscriptionId, userId, amountPaid)
       .run();
 
     // Update subscription status to active
     await env.DB.prepare(
-      `UPDATE subscriptions SET status = 'active', updated_at = datetime('now')
-       WHERE subscription_id = ?`
+      `UPDATE subscriptions SET status = 'active', updated_at = unixepoch()
+       WHERE stripe_subscription_id = ?`
     )
       .bind(subscriptionId)
       .run();
+
+    // Ensure user tier is synced if subscription is active
+    if (userId) {
+      const sub = await env.DB.prepare(
+        'SELECT plan_tier FROM subscriptions WHERE stripe_subscription_id = ?'
+      )
+        .bind(subscriptionId)
+        .first<{ plan_tier: string }>();
+
+      if (sub?.plan_tier) {
+        await env.DB.prepare('UPDATE users SET tier = ?, updated_at = unixepoch() WHERE id = ?')
+          .bind(sub.plan_tier, userId)
+          .run();
+        await env.KV.put(`tier:${userId}`, sub.plan_tier, { expirationTtl: 300 });
+
+        // Send payment success email
+        const user = await env.DB.prepare('SELECT email, name FROM users WHERE id = ?')
+          .bind(userId)
+          .first<{ email: string; name: string }>();
+
+        if (user?.email) {
+          const emailTemplate = paymentSuccessEmail(
+            user.name || '',
+            amountPaid,
+            sub.plan_tier,
+            invoiceId
+          );
+          sendEmail(
+            {
+              to: user.email,
+              subject: emailTemplate.subject,
+              html: emailTemplate.html,
+              text: emailTemplate.text,
+              userId,
+              emailType: 'payment_success',
+            },
+            env
+          ).catch((err) => console.log('Payment email failed:', err));
+        }
+      }
+    }
   } catch (error) {
     console.error('DB error on payment success:', error);
   }
@@ -285,30 +512,68 @@ async function handlePaymentFailed(invoice: Record<string, unknown>, env: Env): 
 
   console.log(`Payment failed: ${invoiceId}, attempt: ${attemptCount}`);
 
+  // Look up user_id from subscription
+  let userId: string | null = null;
+  try {
+    const existing = await env.DB.prepare(
+      'SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?'
+    )
+      .bind(subscriptionId)
+      .first<{ user_id: string }>();
+    userId = existing?.user_id || null;
+  } catch (error) {
+    console.error('Failed to look up subscription for payment:', error);
+  }
+
   try {
     await env.DB.prepare(
-      `INSERT INTO payments (invoice_id, customer_id, subscription_id, amount, status, attempt_count, created_at)
-       VALUES (?, ?, ?, 0, 'failed', ?, datetime('now'))`
+      `INSERT INTO payments (invoice_id, customer_id, subscription_id, user_id, amount, status, attempt_count)
+       VALUES (?, ?, ?, ?, 0, 'failed', ?)`
     )
-      .bind(invoiceId, customerId, subscriptionId, attemptCount)
+      .bind(invoiceId, customerId, subscriptionId, userId, attemptCount)
       .run();
 
     // Update subscription status if multiple failures
     if (attemptCount >= 3) {
       await env.DB.prepare(
-        `UPDATE subscriptions SET status = 'past_due', updated_at = datetime('now')
-         WHERE subscription_id = ?`
+        `UPDATE subscriptions SET status = 'past_due', updated_at = unixepoch()
+         WHERE stripe_subscription_id = ?`
       )
         .bind(subscriptionId)
         .run();
 
       await env.KV.put(
         `sub:${customerId}`,
-        JSON.stringify({ status: 'past_due', subscriptionId }),
-        {
-          expirationTtl: 86400,
-        }
+        JSON.stringify({ status: 'past_due', subscriptionId, userId }),
+        { expirationTtl: 86400 }
       );
+
+      // Update user tier cache to reflect past_due state
+      if (userId) {
+        await env.KV.delete(`tier:${userId}`);
+      }
+    }
+
+    // Send payment failed email
+    if (userId) {
+      const user = await env.DB.prepare('SELECT email, name FROM users WHERE id = ?')
+        .bind(userId)
+        .first<{ email: string; name: string }>();
+
+      if (user?.email) {
+        const emailTemplate = paymentFailedEmail(user.name || '', attemptCount);
+        sendEmail(
+          {
+            to: user.email,
+            subject: emailTemplate.subject,
+            html: emailTemplate.html,
+            text: emailTemplate.text,
+            userId,
+            emailType: 'payment_failed',
+          },
+          env
+        ).catch((err) => console.log('Payment failed email error:', err));
+      }
     }
   } catch (error) {
     console.error('DB error on payment failure:', error);

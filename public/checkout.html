@@ -218,10 +218,16 @@
         // Configuration - Replace with your publishable key
         const STRIPE_PUBLISHABLE_KEY = 'pk_live_51RlBWILvpRBk20R2K8sqQVkChQNmI2uIplQkXlwzre0a89T0BitfA56d4igyBYLCdbHJ32FNpYuaGBXixWo9nY6t00AROOs9vh';
 
-        // Get tier from URL params
+        // Get plan from URL params (support both 'plan' and 'tier' for backwards compat)
         const urlParams = new URLSearchParams(window.location.search);
-        const tier = urlParams.get('tier') || 'pro';
+        const tier = urlParams.get('plan') || urlParams.get('tier') || 'pro';
         const email = urlParams.get('email') || '';
+
+        // Check authentication
+        const token = document.cookie.match(/bsi_token=([^;]+)/)?.[1] || localStorage.getItem('bsi_token');
+        if (!token) {
+            window.location.href = `/signup?plan=${tier}`;
+        }
 
         // Plan details
         const planDetails = {
@@ -272,6 +278,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
                         tier: tier,

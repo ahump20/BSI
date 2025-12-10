@@ -322,18 +322,23 @@
           <span>Blaze Sports Intel</span>
         </a>
         <h1 class="auth-title">Create Your <span class="accent">Account</span></h1>
-        <p class="auth-subtitle">Start free—upgrade when you need more</p>
+        <p class="auth-subtitle" id="auth-subtitle">Start free—upgrade when you need more</p>
+        <div id="plan-badge" style="display: none; margin-top: 1rem; padding: 0.5rem 1rem; background: rgba(191, 87, 0, 0.15); border: 1px solid var(--bsi-burnt-orange); border-radius: 6px; font-family: var(--font-ui); font-size: 0.875rem;">
+          <span id="plan-name"></span> Plan Selected — <span id="plan-price"></span>/month
+        </div>
       </div>
       
-      <form class="auth-form" action="/api/auth/signup" method="POST">
+      <div id="error-message" style="display: none; background: rgba(220, 38, 38, 0.1); border: 1px solid #DC2626; color: #DC2626; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-family: var(--font-ui); font-size: 0.875rem;"></div>
+
+      <form class="auth-form" id="signup-form">
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="firstName">First Name</label>
-            <input 
-              type="text" 
-              id="firstName" 
-              name="firstName" 
-              class="form-input" 
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              class="form-input"
               placeholder="Austin"
               required
               autocomplete="given-name"
@@ -341,51 +346,51 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="lastName">Last Name</label>
-            <input 
-              type="text" 
-              id="lastName" 
-              name="lastName" 
-              class="form-input" 
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              class="form-input"
               placeholder="Humphrey"
               required
               autocomplete="family-name"
             >
           </div>
         </div>
-        
+
         <div class="form-group">
           <label class="form-label" for="email">Email Address</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            class="form-input" 
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
             placeholder="you@example.com"
             required
             autocomplete="email"
           >
         </div>
-        
+
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            class="form-input" 
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-input"
             placeholder="Minimum 8 characters"
             required
             minlength="8"
             autocomplete="new-password"
           >
         </div>
-        
+
         <label class="form-checkbox">
-          <input type="checkbox" name="terms" value="1" required>
+          <input type="checkbox" name="terms" value="1" required id="terms">
           <span>I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></span>
         </label>
-        
-        <button type="submit" class="form-submit">Create Free Account</button>
+
+        <button type="submit" class="form-submit" id="submit-btn">Create Free Account</button>
       </form>
       
       <div class="auth-divider">
@@ -437,5 +442,92 @@
   <footer class="page-footer">
     <p><a href="/">Home</a> · <a href="/pricing">Pricing</a> · <a href="/coverage">Coverage</a></p>
   </footer>
+
+  <script>
+    // Plan configuration
+    const PLANS = {
+      pro: { name: 'Pro', price: '$29', priceId: 'price_1SX9voLvpRBk20R2pW0AjUIv' },
+      enterprise: { name: 'Enterprise', price: '$199', priceId: 'price_1SX9w7LvpRBk20R2DJkKAH3y' }
+    };
+
+    // Get selected plan from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedPlan = urlParams.get('plan');
+    const planConfig = PLANS[selectedPlan];
+
+    // Update UI based on plan selection
+    if (planConfig) {
+      document.getElementById('plan-badge').style.display = 'block';
+      document.getElementById('plan-name').textContent = planConfig.name;
+      document.getElementById('plan-price').textContent = planConfig.price;
+      document.getElementById('auth-subtitle').textContent = 'Create your account to start your subscription';
+      document.getElementById('submit-btn').textContent = `Create Account & Subscribe`;
+    }
+
+    // Redirect if already logged in
+    (function() {
+      const token = document.cookie.match(/bsi_token=([^;]+)/)?.[1] || localStorage.getItem('bsi_token');
+      if (token) {
+        // If plan selected, redirect to checkout; otherwise portal
+        if (planConfig) {
+          window.location.href = `/checkout?plan=${selectedPlan}`;
+        } else {
+          window.location.href = '/portal';
+        }
+      }
+    })();
+
+    // Handle signup form
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errorEl = document.getElementById('error-message');
+
+      btn.disabled = true;
+      btn.textContent = planConfig ? 'Creating account...' : 'Creating account...';
+      errorEl.style.display = 'none';
+
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const name = `${firstName} ${lastName}`.trim();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, name, tier: 'free' })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          errorEl.textContent = data.error || 'Signup failed. Please try again.';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        // Store token in localStorage
+        if (data.token) {
+          localStorage.setItem('bsi_token', data.token);
+        }
+
+        // If plan was selected, redirect to checkout
+        if (planConfig) {
+          window.location.href = `/checkout?plan=${selectedPlan}`;
+        } else {
+          // Otherwise go to portal
+          window.location.href = data.redirectTo || '/portal';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = planConfig ? 'Create Account & Subscribe' : 'Create Free Account';
+      }
+    });
+  </script>
 </body>
 </html>
