@@ -1,0 +1,14 @@
+{
+  "name": "bsi-home",
+  "version": "1.0.0",
+  "description": "Blaze Sports Intel Home Page Worker",
+  "main": "worker.js",
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^3.114.0"
+  }
+}

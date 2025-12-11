@@ -96,3 +96,13 @@ deprecated/
 # Netlify/Vercel
 .netlify/
 .vercel/
+
+# Business documents (sensitive, binary)
+BSI Business Plan Docs/
+*.docx
+*.xlsx
+*.pptx
+
+# Analysis outputs (generated)
+BSI_*_ACTIONABLE_STEPS.md
+BSI_*_ANALYSIS.md

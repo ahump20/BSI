@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSI Graphics Engine Demo — Blaze Sports Intel</title>
+    <meta name="description" content="Interactive demonstration of the BSI 3D Graphics Engine: custom shaders, particle systems, and sports visualizations.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-ember: #FF6B35;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(13, 13, 13, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--bsi-cream);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(250, 248, 245, 0.7);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--bsi-ember);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(191, 87, 0, 0.15);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--bsi-ember);
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: rgba(250, 248, 245, 0.7);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(191, 87, 0, 0.4);
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--bsi-burnt-orange);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            color: rgba(250, 248, 245, 0.6);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Demo Grid */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .demo-card:hover {
+            border-color: rgba(191, 87, 0, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .demo-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bsi-charcoal);
+            position: relative;
+        }
+
+        .demo-canvas canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .demo-info {
+            padding: 1.5rem;
+        }
+
+        .demo-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-description {
+            font-size: 0.875rem;
+            color: rgba(250, 248, 245, 0.6);
+            margin-bottom: 1rem;
+        }
+
+        .demo-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .demo-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(191, 87, 0, 0.15);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 6px;
+            color: var(--bsi-cream);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-btn:hover {
+            background: rgba(191, 87, 0, 0.25);
+            border-color: var(--bsi-burnt-orange);
+        }
+
+        .demo-btn.active {
+            background: var(--bsi-burnt-orange);
+            border-color: var(--bsi-burnt-orange);
+        }
+
+        /* Visualizations Section */
+        .viz-section {
+            background: var(--bsi-charcoal);
+        }
+
+        .full-viz {
+            width: 100%;
+            height: 500px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .viz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Performance Section */
+        .perf-section {
+            background: linear-gradient(180deg, var(--bsi-charcoal), var(--bsi-midnight));
+        }
+
+        .perf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .perf-stat {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+        }
+
+        .perf-value {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--bsi-ember);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .perf-label {
+            font-size: 0.875rem;
+            color: rgba(250, 248, 245, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem;
+            border-top: 1px solid rgba(191, 87, 0, 0.15);
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-tagline {
+            font-style: italic;
+            color: var(--bsi-burnt-orange);
+            margin-bottom: 2rem;
+        }
+
+        .footer-copy {
+            font-size: 0.875rem;
+            color: rgba(250, 248, 245, 0.4);
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bsi-midnight);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #loading-container {
+            width: 100px;
+            height: 100px;
+        }
+
+        /* FPS Counter */
+        .fps-counter {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(13, 13, 13, 0.9);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            z-index: 100;
+        }
+
+        .fps-value {
+            color: var(--bsi-ember);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 1rem; }
+            .nav-links { display: none; }
+            section { padding: 4rem 1rem; }
+            .demo-grid { grid-template-columns: 1fr; }
+            .full-viz { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading">
+        <div id="loading-container"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="/" class="nav-logo">BSI Graphics Engine</a>
+        <ul class="nav-links">
+            <li><a href="#effects">Effects</a></li>
+            <li><a href="#visualizations">Visualizations</a></li>
+            <li><a href="#performance">Performance</a></li>
+            <li><a href="/">Back to Site</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero with 3D Background -->
+    <section class="hero" id="hero">
+        <div id="hero-canvas"></div>
+        <div class="hero-content">
+            <div class="hero-badge">WebGL/WebGPU Powered</div>
+            <h1 class="hero-title">
+                <span class="text-gradient">3D Graphics Engine</span><br>
+                for Sports Analytics
+            </h1>
+            <p class="hero-subtitle">
+                Custom shaders, GPU-accelerated particles, and immersive sports visualizations.
+                Built from scratch for Blaze Sports Intel.
+            </p>
+            <a href="#effects" class="hero-cta">
+                Explore Demos
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M19 12l-7 7-7-7"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Effects Demos -->
+    <section id="effects">
+        <div class="container">
+            <header class="section-header">
+                <p class="section-label">Shader Effects</p>
+                <h2 class="section-title">Custom <span class="text-gradient">GLSL Shaders</span></h2>
+                <p class="section-subtitle">Heat distortion, ember particles, volumetric lighting, and more.</p>
+            </header>
+
+            <div class="demo-grid">
+                <!-- Ember Particles -->
+                <div class="demo-card">
+                    <div class="demo-canvas" id="embers-demo"></div>
+                    <div class="demo-info">
+                        <h3 class="demo-title">Ember Particle System</h3>
+                        <p class="demo-description">GPU-accelerated particles with custom glow shaders. 200+ particles at 60fps.</p>
+                        <div class="demo-controls">
+                            <button class="demo-btn active" data-embers="100">100</button>
+                            <button class="demo-btn" data-embers="300">300</button>
+                            <button class="demo-btn" data-embers="500">500</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Trail -->
+                <div class="demo-card">
+                    <div class="demo-canvas" id="trail-demo"></div>
+                    <div class="demo-info">
+                        <h3 class="demo-title">Data Trails</h3>
+                        <p class="demo-description">Animated trajectory lines for pitch tracking and hit visualization.</p>
+                        <div class="demo-controls">
+                            <button class="demo-btn active" data-trail="curve">Curved</button>
+                            <button class="demo-btn" data-trail="spiral">Spiral</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Animation -->
+                <div class="demo-card">
+                    <div class="demo-canvas" id="loading-demo"></div>
+                    <div class="demo-info">
+                        <h3 class="demo-title">Loading Animations</h3>
+                        <p class="demo-description">WebGL loading states with brand-aligned animations.</p>
+                        <div class="demo-controls">
+                            <button class="demo-btn active" data-loading="ring">Ring</button>
+                            <button class="demo-btn" data-loading="dots">Dots</button>
+                            <button class="demo-btn" data-loading="bars">Bars</button>
+                            <button class="demo-btn" data-loading="ember">Ember</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Flip -->
+                <div class="demo-card">
+                    <div class="demo-canvas" id="card-demo"></div>
+                    <div class="demo-info">
+                        <h3 class="demo-title">3D Card Effects</h3>
+                        <p class="demo-description">Interactive cards with tilt and flip animations. Click to flip!</p>
+                        <div class="demo-controls">
+                            <button class="demo-btn active" data-card="standard">Standard</button>
+                            <button class="demo-btn" data-card="holographic">Holographic</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sports Visualizations -->
+    <section class="viz-section" id="visualizations">
+        <div class="container">
+            <header class="section-header">
+                <p class="section-label">Sports Analytics</p>
+                <h2 class="section-title">3D <span class="text-gradient">Visualizations</span></h2>
+                <p class="section-subtitle">Interactive baseball diamond, pitch tunnel, and stat comparisons.</p>
+            </header>
+
+            <div class="full-viz" id="sports-viz"></div>
+
+            <div class="viz-controls">
+                <button class="demo-btn active" data-viz="diamond">Baseball Diamond</button>
+                <button class="demo-btn" data-viz="pitch">Pitch Tunnel</button>
+                <button class="demo-btn" data-viz="stats-bar">Stat Bars</button>
+                <button class="demo-btn" data-viz="stats-radial">Radar Chart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Stats -->
+    <section class="perf-section" id="performance">
+        <div class="container">
+            <header class="section-header">
+                <p class="section-label">Engine Performance</p>
+                <h2 class="section-title">Optimized for <span class="text-gradient">Every Device</span></h2>
+                <p class="section-subtitle">Automatic performance scaling from mobile to desktop.</p>
+            </header>
+
+            <div class="perf-grid">
+                <div class="perf-stat">
+                    <div class="perf-value" id="fps-stat">60</div>
+                    <div class="perf-label">Target FPS</div>
+                </div>
+                <div class="perf-stat">
+                    <div class="perf-value" id="draw-calls">--</div>
+                    <div class="perf-label">Draw Calls</div>
+                </div>
+                <div class="perf-stat">
+                    <div class="perf-value" id="triangles">--</div>
+                    <div class="perf-label">Triangles</div>
+                </div>
+                <div class="perf-stat">
+                    <div class="perf-value" id="perf-tier">--</div>
+                    <div class="perf-label">Perf Tier</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand">Blaze Sports Intel</div>
+            <p class="footer-tagline">Born to Blaze the Path Less Beaten</p>
+            <p class="footer-copy">BSI Graphics Engine v3.0.0 | Built with Three.js</p>
+        </div>
+    </footer>
+
+    <!-- FPS Counter -->
+    <div class="fps-counter">
+        FPS: <span class="fps-value" id="fps-display">--</span>
+    </div>
+
+    <!-- Three.js via CDN for demo (production would use bundled version) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+        // BSI Brand Colors
+        const colors = {
+            burntOrange: 0xBF5700,
+            texasSoil: 0x8B4513,
+            ember: 0xFF6B35,
+            gold: 0xC9A227,
+            charcoal: 0x1A1A1A,
+            midnight: 0x0D0D0D,
+            cream: 0xFAF8F5,
+        };
+
+        // FPS tracking
+        let fps = 0;
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        function updateFPS() {
+            frameCount++;
+            const now = performance.now();
+            if (now - lastTime >= 1000) {
+                fps = frameCount;
+                frameCount = 0;
+                lastTime = now;
+                document.getElementById('fps-display').textContent = fps;
+                document.getElementById('fps-stat').textContent = fps;
+            }
+        }
+
+        // =========================================
+        // HERO PARALLAX BACKGROUND
+        // =========================================
+        function initHeroBackground() {
+            const container = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(colors.midnight);
+            scene.fog = new THREE.FogExp2(colors.midnight, 0.003);
+
+            const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);
+            camera.position.set(0, 50, 150);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Post-processing
+            const composer = new EffectComposer(renderer);
+            composer.addPass(new RenderPass(scene, camera));
+            const bloomPass = new UnrealBloomPass(
+                new THREE.Vector2(container.clientWidth, container.clientHeight),
+                0.5, 0.4, 0.85
+            );
+            composer.addPass(bloomPass);
+
+            // Create geometric shapes
+            const layers = [];
+            for (let l = 0; l < 5; l++) {
+                const layer = new THREE.Group();
+                const z = -l * 40;
+
+                for (let i = 0; i < 4; i++) {
+                    const geometries = [
+                        new THREE.IcosahedronGeometry(10, 0),
+                        new THREE.OctahedronGeometry(12, 0),
+                        new THREE.TorusGeometry(8, 3, 8, 16),
+                    ];
+                    const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+
+                    const hue = 0.05 + l * 0.02;
+                    const color = new THREE.Color().setHSL(hue, 0.7 - l * 0.1, 0.4 - l * 0.05);
+
+                    const material = new THREE.MeshBasicMaterial({
+                        color: color,
+                        wireframe: Math.random() > 0.5,
+                        transparent: true,
+                        opacity: 0.3 + (5 - l) * 0.1,
+                    });
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(
+                        (Math.random() - 0.5) * 300,
+                        (Math.random() - 0.5) * 150,
+                        z + (Math.random() - 0.5) * 20
+                    );
+                    mesh.rotation.set(
+                        Math.random() * Math.PI * 2,
+                        Math.random() * Math.PI * 2,
+                        Math.random() * Math.PI * 2
+                    );
+                    mesh.userData.rotSpeed = (Math.random() - 0.5) * 0.5;
+                    mesh.userData.floatSpeed = 0.5 + Math.random() * 0.5;
+                    mesh.userData.floatAmp = 2 + Math.random() * 3;
+                    mesh.userData.baseY = mesh.position.y;
+
+                    layer.add(mesh);
+                }
+
+                layers.push(layer);
+                scene.add(layer);
+            }
+
+            // Ember particles
+            const particleCount = 150;
+            const positions = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+            const lifetimes = new Float32Array(particleCount);
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 300;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+                sizes[i] = 2 + Math.random() * 4;
+                lifetimes[i] = Math.random();
+            }
+
+            const particleGeometry = new THREE.BufferGeometry();
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            particleGeometry.setAttribute('lifetime', new THREE.BufferAttribute(lifetimes, 1));
+
+            const particleMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    color: { value: new THREE.Color(colors.ember) },
+                },
+                vertexShader: `
+                    attribute float size;
+                    attribute float lifetime;
+                    uniform float time;
+                    varying float vAlpha;
+
+                    void main() {
+                        float life = fract(lifetime + time * 0.1);
+                        vAlpha = sin(life * 3.14159);
+
+                        vec3 pos = position;
+                        pos.y += life * 50.0;
+
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_PointSize = size * vAlpha * (200.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 color;
+                    varying float vAlpha;
+
+                    void main() {
+                        vec2 center = gl_PointCoord - 0.5;
+                        float dist = length(center);
+                        if (dist > 0.5) discard;
+
+                        float falloff = 1.0 - smoothstep(0.0, 0.5, dist);
+                        gl_FragColor = vec4(color, falloff * vAlpha * 0.8);
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+            });
+
+            const particles = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particles);
+
+            // Mouse tracking
+            let mouseX = 0, mouseY = 0;
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                mouseY = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+            });
+
+            // Animation
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.016;
+
+                // Update particles
+                particleMaterial.uniforms.time.value = time;
+
+                // Parallax
+                const targetRotX = mouseY * 0.05;
+                const targetRotY = mouseX * 0.05 + time * 0.1;
+
+                layers.forEach((layer, i) => {
+                    layer.rotation.x += (targetRotX - layer.rotation.x) * 0.02;
+                    layer.rotation.y += (targetRotY * (i + 1) * 0.2 - layer.rotation.y) * 0.02;
+
+                    layer.position.x = mouseX * 10 * (i + 1) / 5;
+                    layer.position.y = -mouseY * 10 * (i + 1) / 5;
+
+                    layer.children.forEach(mesh => {
+                        mesh.rotation.x += 0.01 * mesh.userData.rotSpeed;
+                        mesh.rotation.y += 0.01 * mesh.userData.rotSpeed * 0.7;
+                        mesh.position.y = mesh.userData.baseY + Math.sin(time * mesh.userData.floatSpeed) * mesh.userData.floatAmp;
+                    });
+                });
+
+                composer.render();
+                updateFPS();
+            }
+
+            animate();
+
+            // Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                composer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+
+        // =========================================
+        // EMBER PARTICLES DEMO
+        // =========================================
+        let embersDemo = null;
+
+        function initEmbersDemo() {
+            const container = document.getElementById('embers-demo');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(colors.charcoal);
+
+            const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 100;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            let particleCount = 100;
+            let particles;
+
+            function createParticles(count) {
+                if (particles) {
+                    scene.remove(particles);
+                    particles.geometry.dispose();
+                    particles.material.dispose();
+                }
+
+                const positions = new Float32Array(count * 3);
+                const sizes = new Float32Array(count);
+                const lifetimes = new Float32Array(count);
+                const seeds = new Float32Array(count);
+
+                for (let i = 0; i < count; i++) {
+                    positions[i * 3] = (Math.random() - 0.5) * 100;
+                    positions[i * 3 + 1] = Math.random() * -50;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+                    sizes[i] = 4 + Math.random() * 6;
+                    lifetimes[i] = Math.random();
+                    seeds[i] = Math.random();
+                }
+
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+                geometry.setAttribute('lifetime', new THREE.BufferAttribute(lifetimes, 1));
+                geometry.setAttribute('seed', new THREE.BufferAttribute(seeds, 1));
+
+                const material = new THREE.ShaderMaterial({
+                    uniforms: {
+                        time: { value: 0 },
+                        colorCore: { value: new THREE.Color(colors.ember) },
+                        colorGlow: { value: new THREE.Color(colors.burntOrange) },
+                    },
+                    vertexShader: `
+                        attribute float size;
+                        attribute float lifetime;
+                        attribute float seed;
+                        uniform float time;
+                        varying float vAlpha;
+                        varying float vTemp;
+
+                        void main() {
+                            float life = fract(lifetime + time * 0.15);
+                            vAlpha = sin(life * 3.14159);
+                            vTemp = 1.0 - life;
+
+                            float flicker = 0.8 + 0.2 * sin(time * 3.0 + seed * 6.28);
+
+                            vec3 pos = position;
+                            pos.y += life * 100.0;
+                            pos.x += sin(time * 2.0 + seed * 10.0) * 5.0;
+
+                            vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                            gl_PointSize = size * vAlpha * flicker * (200.0 / -mvPosition.z);
+                            gl_Position = projectionMatrix * mvPosition;
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 colorCore;
+                        uniform vec3 colorGlow;
+                        varying float vAlpha;
+                        varying float vTemp;
+
+                        void main() {
+                            vec2 center = gl_PointCoord - 0.5;
+                            float dist = length(center);
+                            if (dist > 0.5) discard;
+
+                            float falloff = 1.0 - smoothstep(0.0, 0.5, dist);
+
+                            vec3 color = mix(colorGlow, colorCore, dist * 2.0);
+                            color *= 1.5;
+                            color.r += vTemp * 0.2;
+
+                            gl_FragColor = vec4(color, falloff * vAlpha);
+                        }
+                    `,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,
+                });
+
+                particles = new THREE.Points(geometry, material);
+                scene.add(particles);
+            }
+
+            createParticles(particleCount);
+
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.016;
+
+                if (particles) {
+                    particles.material.uniforms.time.value = time;
+                }
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Controls
+            document.querySelectorAll('[data-embers]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-embers]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    particleCount = parseInt(btn.dataset.embers);
+                    createParticles(particleCount);
+                });
+            });
+
+            embersDemo = { scene, camera, renderer };
+        }
+
+        // =========================================
+        // DATA TRAIL DEMO
+        // =========================================
+        function initTrailDemo() {
+            const container = document.getElementById('trail-demo');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(colors.charcoal);
+
+            const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 30, 80);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+
+            // Grid
+            const grid = new THREE.GridHelper(80, 20, 0x333333, 0x222222);
+            scene.add(grid);
+
+            let trail;
+
+            function createCurveTrail() {
+                if (trail) {
+                    scene.remove(trail);
+                }
+
+                const curve = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(-30, 0, 0),
+                    new THREE.Vector3(-10, 20, 10),
+                    new THREE.Vector3(10, 30, -10),
+                    new THREE.Vector3(30, 10, 0),
+                ]);
+
+                const points = curve.getPoints(100);
+                const positions = new Float32Array(points.length * 3);
+                const progress = new Float32Array(points.length);
+
+                points.forEach((p, i) => {
+                    positions[i * 3] = p.x;
+                    positions[i * 3 + 1] = p.y;
+                    positions[i * 3 + 2] = p.z;
+                    progress[i] = i / (points.length - 1);
+                });
+
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('progress', new THREE.BufferAttribute(progress, 1));
+
+                const material = new THREE.ShaderMaterial({
+                    uniforms: {
+                        time: { value: 0 },
+                        color: { value: new THREE.Color(colors.ember) },
+                    },
+                    vertexShader: `
+                        attribute float progress;
+                        uniform float time;
+                        varying float vProgress;
+
+                        void main() {
+                            vProgress = progress;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 color;
+                        uniform float time;
+                        varying float vProgress;
+
+                        void main() {
+                            float pulse = sin((vProgress + time) * 10.0) * 0.3 + 0.7;
+                            float alpha = pow(vProgress, 1.5) * pulse;
+                            gl_FragColor = vec4(color * (0.5 + vProgress), alpha);
+                        }
+                    `,
+                    transparent: true,
+                    depthWrite: false,
+                });
+
+                trail = new THREE.Line(geometry, material);
+                scene.add(trail);
+            }
+
+            function createSpiralTrail() {
+                if (trail) {
+                    scene.remove(trail);
+                }
+
+                const points = [];
+                const rotations = 3;
+                const segments = 200;
+
+                for (let i = 0; i <= segments; i++) {
+                    const t = i / segments;
+                    const angle = t * Math.PI * 2 * rotations;
+                    const radius = 10 + t * 20;
+                    const y = t * 40;
+
+                    points.push(new THREE.Vector3(
+                        Math.cos(angle) * radius,
+                        y,
+                        Math.sin(angle) * radius
+                    ));
+                }
+
+                const positions = new Float32Array(points.length * 3);
+                const progress = new Float32Array(points.length);
+
+                points.forEach((p, i) => {
+                    positions[i * 3] = p.x;
+                    positions[i * 3 + 1] = p.y;
+                    positions[i * 3 + 2] = p.z;
+                    progress[i] = i / (points.length - 1);
+                });
+
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('progress', new THREE.BufferAttribute(progress, 1));
+
+                const material = new THREE.ShaderMaterial({
+                    uniforms: {
+                        time: { value: 0 },
+                        color: { value: new THREE.Color(colors.gold) },
+                    },
+                    vertexShader: `
+                        attribute float progress;
+                        uniform float time;
+                        varying float vProgress;
+
+                        void main() {
+                            vProgress = progress;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 color;
+                        uniform float time;
+                        varying float vProgress;
+
+                        void main() {
+                            float pulse = sin((vProgress + time * 2.0) * 20.0) * 0.2 + 0.8;
+                            float alpha = pow(vProgress, 2.0) * pulse;
+                            gl_FragColor = vec4(color * (0.5 + vProgress * 0.5), alpha);
+                        }
+                    `,
+                    transparent: true,
+                    depthWrite: false,
+                });
+
+                trail = new THREE.Line(geometry, material);
+                trail.position.y = -20;
+                scene.add(trail);
+            }
+
+            createCurveTrail();
+
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.016;
+                controls.update();
+
+                if (trail) {
+                    trail.material.uniforms.time.value = time;
+                }
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Controls
+            document.querySelectorAll('[data-trail]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-trail]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (btn.dataset.trail === 'curve') {
+                        createCurveTrail();
+                    } else {
+                        createSpiralTrail();
+                    }
+                });
+            });
+        }
+
+        // =========================================
+        // LOADING ANIMATION DEMO
+        // =========================================
+        let loadingDemo = null;
+
+        function initLoadingDemo() {
+            const container = document.getElementById('loading-demo');
+            let currentType = 'ring';
+
+            function createLoadingAnimation(type) {
+                container.innerHTML = '';
+
+                const scene = new THREE.Scene();
+
+                const aspect = container.clientWidth / container.clientHeight;
+                const camera = new THREE.OrthographicCamera(-50 * aspect, 50 * aspect, 50, -50, 0.1, 1000);
+                camera.position.z = 100;
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                renderer.setClearColor(colors.charcoal);
+                container.appendChild(renderer.domElement);
+
+                const elements = [];
+
+                if (type === 'ring') {
+                    // Ring segments
+                    for (let i = 0; i < 12; i++) {
+                        const angle = (i / 12) * Math.PI * 2;
+                        const segmentAngle = Math.PI * 2 / 12 * 0.7;
+
+                        const curve = new THREE.EllipseCurve(0, 0, 30, 30, angle, angle + segmentAngle, false, 0);
+                        const points = curve.getPoints(16);
+                        const geometry = new THREE.BufferGeometry().setFromPoints(
+                            points.map(p => new THREE.Vector3(p.x, p.y, 0))
+                        );
+
+                        const material = new THREE.LineBasicMaterial({
+                            color: colors.burntOrange,
+                            transparent: true,
+                            opacity: 1 - i / 12 * 0.7,
+                        });
+
+                        const line = new THREE.Line(geometry, material);
+                        line.userData.index = i;
+                        scene.add(line);
+                        elements.push(line);
+                    }
+                } else if (type === 'dots') {
+                    for (let i = 0; i < 8; i++) {
+                        const geometry = new THREE.CircleGeometry(4, 16);
+                        const material = new THREE.MeshBasicMaterial({
+                            color: colors.burntOrange,
+                            transparent: true,
+                        });
+
+                        const dot = new THREE.Mesh(geometry, material);
+                        const angle = (i / 8) * Math.PI * 2;
+                        dot.position.x = Math.cos(angle) * 25;
+                        dot.position.y = Math.sin(angle) * 25;
+                        dot.userData.index = i;
+
+                        scene.add(dot);
+                        elements.push(dot);
+                    }
+                } else if (type === 'bars') {
+                    for (let i = 0; i < 5; i++) {
+                        const geometry = new THREE.PlaneGeometry(8, 30);
+                        const material = new THREE.ShaderMaterial({
+                            uniforms: {
+                                time: { value: 0 },
+                                index: { value: i },
+                                color: { value: new THREE.Color(colors.ember) },
+                            },
+                            vertexShader: `
+                                varying vec2 vUv;
+                                void main() {
+                                    vUv = uv;
+                                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                                }
+                            `,
+                            fragmentShader: `
+                                uniform float time;
+                                uniform float index;
+                                uniform vec3 color;
+                                varying vec2 vUv;
+
+                                void main() {
+                                    float phase = time * 5.0 + index * 0.5;
+                                    float height = 0.3 + 0.7 * abs(sin(phase));
+                                    if (vUv.y > height) discard;
+                                    gl_FragColor = vec4(color * (0.5 + vUv.y), 0.9);
+                                }
+                            `,
+                            transparent: true,
+                        });
+
+                        const bar = new THREE.Mesh(geometry, material);
+                        bar.position.x = (i - 2) * 12;
+                        scene.add(bar);
+                        elements.push(bar);
+                    }
+                } else if (type === 'ember') {
+                    const particleCount = 40;
+                    const positions = new Float32Array(particleCount * 3);
+                    const sizes = new Float32Array(particleCount);
+                    const lifetimes = new Float32Array(particleCount);
+
+                    for (let i = 0; i < particleCount; i++) {
+                        positions[i * 3] = (Math.random() - 0.5) * 60;
+                        positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+                        positions[i * 3 + 2] = 0;
+                        sizes[i] = 2 + Math.random() * 4;
+                        lifetimes[i] = Math.random();
+                    }
+
+                    const geometry = new THREE.BufferGeometry();
+                    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+                    geometry.setAttribute('lifetime', new THREE.BufferAttribute(lifetimes, 1));
+
+                    const material = new THREE.ShaderMaterial({
+                        uniforms: {
+                            time: { value: 0 },
+                            color: { value: new THREE.Color(colors.ember) },
+                        },
+                        vertexShader: `
+                            attribute float size;
+                            attribute float lifetime;
+                            uniform float time;
+                            varying float vAlpha;
+
+                            void main() {
+                                float life = fract(lifetime + time * 0.3);
+                                vAlpha = sin(life * 3.14159);
+
+                                vec3 pos = position;
+                                pos.y += life * 40.0;
+
+                                vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                                gl_PointSize = size * vAlpha * 50.0;
+                                gl_Position = projectionMatrix * mvPosition;
+                            }
+                        `,
+                        fragmentShader: `
+                            uniform vec3 color;
+                            varying float vAlpha;
+
+                            void main() {
+                                vec2 center = gl_PointCoord - 0.5;
+                                float dist = length(center);
+                                if (dist > 0.5) discard;
+
+                                float falloff = 1.0 - smoothstep(0.0, 0.5, dist);
+                                gl_FragColor = vec4(color, falloff * vAlpha * 0.8);
+                            }
+                        `,
+                        transparent: true,
+                        blending: THREE.AdditiveBlending,
+                        depthWrite: false,
+                    });
+
+                    const particles = new THREE.Points(geometry, material);
+                    scene.add(particles);
+                    elements.push(particles);
+                }
+
+                let time = 0;
+                function animate() {
+                    loadingDemo.animationId = requestAnimationFrame(animate);
+                    time += 0.016;
+
+                    if (type === 'ring') {
+                        elements.forEach(line => {
+                            line.rotation.z = time * 2;
+                        });
+                    } else if (type === 'dots') {
+                        elements.forEach(dot => {
+                            const delay = dot.userData.index * 0.1;
+                            const scale = 0.5 + 0.5 * Math.abs(Math.sin(time * 3 - delay));
+                            dot.scale.setScalar(scale);
+                            dot.material.opacity = 0.3 + 0.7 * scale;
+                        });
+                    } else if (type === 'bars' || type === 'ember') {
+                        elements.forEach(el => {
+                            if (el.material.uniforms && el.material.uniforms.time) {
+                                el.material.uniforms.time.value = time;
+                            }
+                        });
+                    }
+
+                    renderer.render(scene, camera);
+                }
+
+                loadingDemo = { scene, camera, renderer, elements, animationId: null };
+                animate();
+            }
+
+            createLoadingAnimation('ring');
+
+            // Controls
+            document.querySelectorAll('[data-loading]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-loading]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (loadingDemo && loadingDemo.animationId) {
+                        cancelAnimationFrame(loadingDemo.animationId);
+                    }
+                    createLoadingAnimation(btn.dataset.loading);
+                });
+            });
+        }
+
+        // =========================================
+        // CARD FLIP DEMO
+        // =========================================
+        function initCardDemo() {
+            const container = document.getElementById('card-demo');
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 400;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(colors.charcoal);
+            container.appendChild(renderer.domElement);
+
+            // Card geometry
+            const cardWidth = 150;
+            const cardHeight = 200;
+            const cardGeometry = new THREE.BoxGeometry(cardWidth, cardHeight, 5, 32, 32, 1);
+
+            let frontMaterial, backMaterial;
+            let isHolographic = false;
+
+            function createMaterials(holo) {
+                if (holo) {
+                    const holoShader = {
+                        uniforms: {
+                            time: { value: 0 },
+                        },
+                        vertexShader: `
+                            varying vec3 vNormal;
+                            varying vec2 vUv;
+                            varying vec3 vViewPosition;
+
+                            void main() {
+                                vUv = uv;
+                                vNormal = normalize(normalMatrix * normal);
+                                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                                vViewPosition = -mvPosition.xyz;
+                                gl_Position = projectionMatrix * mvPosition;
+                            }
+                        `,
+                        fragmentShader: `
+                            uniform float time;
+                            varying vec3 vNormal;
+                            varying vec2 vUv;
+                            varying vec3 vViewPosition;
+
+                            void main() {
+                                vec3 viewDir = normalize(vViewPosition);
+                                float fresnel = pow(1.0 - abs(dot(viewDir, vNormal)), 3.0);
+
+                                float pattern = sin(vUv.x * 30.0 + time * 2.0) * sin(vUv.y * 30.0 + time * 1.5);
+                                float hue = fract(vUv.x + vUv.y + time * 0.1);
+
+                                vec3 color1 = vec3(0.749, 0.341, 0.0);  // Burnt orange
+                                vec3 color2 = vec3(1.0, 0.420, 0.208); // Ember
+                                vec3 color3 = vec3(0.788, 0.635, 0.153); // Gold
+
+                                vec3 holoColor;
+                                if (hue < 0.33) {
+                                    holoColor = mix(color1, color2, hue * 3.0);
+                                } else if (hue < 0.66) {
+                                    holoColor = mix(color2, color3, (hue - 0.33) * 3.0);
+                                } else {
+                                    holoColor = mix(color3, color1, (hue - 0.66) * 3.0);
+                                }
+
+                                vec3 base = vec3(0.1, 0.1, 0.1);
+                                vec3 finalColor = mix(base, holoColor, fresnel * 0.8 + pattern * 0.2);
+
+                                gl_FragColor = vec4(finalColor, 1.0);
+                            }
+                        `,
+                    };
+
+                    frontMaterial = new THREE.ShaderMaterial({ ...holoShader });
+                    backMaterial = new THREE.ShaderMaterial({ ...holoShader });
+                } else {
+                    frontMaterial = new THREE.MeshStandardMaterial({
+                        color: colors.charcoal,
+                        metalness: 0.3,
+                        roughness: 0.4,
+                    });
+                    backMaterial = new THREE.MeshStandardMaterial({
+                        color: colors.midnight,
+                        metalness: 0.3,
+                        roughness: 0.4,
+                    });
+                }
+            }
+
+            createMaterials(false);
+
+            const materials = [
+                new THREE.MeshStandardMaterial({ color: colors.burntOrange }),
+                new THREE.MeshStandardMaterial({ color: colors.burntOrange }),
+                new THREE.MeshStandardMaterial({ color: colors.burntOrange }),
+                new THREE.MeshStandardMaterial({ color: colors.burntOrange }),
+                frontMaterial,
+                backMaterial,
+            ];
+
+            const card = new THREE.Mesh(cardGeometry, materials);
+            scene.add(card);
+
+            // Lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambient);
+
+            const keyLight = new THREE.DirectionalLight(0xffffff, 1);
+            keyLight.position.set(200, 200, 300);
+            scene.add(keyLight);
+
+            const fillLight = new THREE.DirectionalLight(colors.burntOrange, 0.3);
+            fillLight.position.set(-200, -100, 200);
+            scene.add(fillLight);
+
+            // Mouse interaction
+            let mouseX = 0, mouseY = 0;
+            let isFlipped = false;
+            let targetRotation = 0;
+            let currentRotation = 0;
+
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                mouseY = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+            });
+
+            container.addEventListener('click', () => {
+                isFlipped = !isFlipped;
+                targetRotation = isFlipped ? Math.PI : 0;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                mouseX = 0;
+                mouseY = 0;
+            });
+
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.016;
+
+                // Flip animation
+                currentRotation += (targetRotation - currentRotation) * 0.1;
+                card.rotation.y = currentRotation;
+
+                // Tilt
+                card.rotation.x += (-mouseY * 0.2 - card.rotation.x) * 0.1;
+                card.rotation.y += (mouseX * 0.2 + currentRotation - card.rotation.y) * 0.1;
+
+                // Update holographic shader
+                if (isHolographic) {
+                    materials[4].uniforms.time.value = time;
+                    materials[5].uniforms.time.value = time;
+                }
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Controls
+            document.querySelectorAll('[data-card]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('[data-card]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    isHolographic = btn.dataset.card === 'holographic';
+                    createMaterials(isHolographic);
+
+                    materials[4] = frontMaterial;
+                    materials[5] = backMaterial;
+                    card.material = materials;
+                });
+            });
+        }
+
+        // =========================================
+        // SPORTS VISUALIZATION DEMO
+        // =========================================
+        let sportsViz = null;
+
+        function initSportsViz() {
+            const container = document.getElementById('sports-viz');
+
+            function createVisualization(type) {
+                container.innerHTML = '';
+
+                const scene = new THREE.Scene();
+                scene.background = new THREE.Color(colors.midnight);
+
+                const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
+
+                const controls = new OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;
+
+                // Grid
+                const grid = new THREE.GridHelper(200, 40, 0x333333, 0x222222);
+                scene.add(grid);
+
+                // Lighting
+                const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+                scene.add(ambient);
+
+                const keyLight = new THREE.DirectionalLight(0xffffff, 1);
+                keyLight.position.set(100, 150, 100);
+                scene.add(keyLight);
+
+                if (type === 'diamond') {
+                    createBaseballDiamond(scene);
+                    camera.position.set(0, 150, 200);
+                } else if (type === 'pitch') {
+                    createPitchTunnel(scene);
+                    camera.position.set(0, 30, 150);
+                } else if (type === 'stats-bar') {
+                    createStatBars(scene);
+                    camera.position.set(0, 50, 100);
+                } else if (type === 'stats-radial') {
+                    createRadarChart(scene);
+                    camera.position.set(0, 80, 80);
+                }
+
+                controls.target.set(0, 0, 0);
+                controls.update();
+
+                function animate() {
+                    sportsViz.animationId = requestAnimationFrame(animate);
+                    controls.update();
+
+                    // Update any animated elements
+                    scene.traverse((child) => {
+                        if (child.userData && child.userData.animate) {
+                            child.userData.animate(performance.now() * 0.001);
+                        }
+                    });
+
+                    renderer.render(scene, camera);
+
+                    // Update performance stats
+                    const info = renderer.info;
+                    document.getElementById('draw-calls').textContent = info.render.calls;
+                    document.getElementById('triangles').textContent = (info.render.triangles / 1000).toFixed(1) + 'K';
+                }
+
+                sportsViz = { scene, camera, renderer, controls, animationId: null };
+                animate();
+
+                // Detect performance tier
+                const gl = renderer.getContext();
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                const gpuRenderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown';
+
+                let tier = 'MEDIUM';
+                if (/NVIDIA|GeForce RTX|Radeon RX 6|Apple M/i.test(gpuRenderer)) tier = 'HIGH';
+                if (/Intel HD|Intel UHD|Mali/i.test(gpuRenderer)) tier = 'LOW';
+
+                document.getElementById('perf-tier').textContent = tier;
+            }
+
+            function createBaseballDiamond(scene) {
+                // Outfield (green)
+                const outfieldShape = new THREE.Shape();
+                outfieldShape.moveTo(0, 0);
+                outfieldShape.lineTo(-80, 80);
+                outfieldShape.quadraticCurveTo(-100, 150, 0, 180);
+                outfieldShape.quadraticCurveTo(100, 150, 80, 80);
+                outfieldShape.lineTo(0, 0);
+
+                const outfieldGeometry = new THREE.ShapeGeometry(outfieldShape);
+                outfieldGeometry.rotateX(-Math.PI / 2);
+                const outfieldMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22, roughness: 0.8 });
+                const outfield = new THREE.Mesh(outfieldGeometry, outfieldMaterial);
+                scene.add(outfield);
+
+                // Infield (dirt)
+                const infieldGeometry = new THREE.CircleGeometry(45, 4);
+                infieldGeometry.rotateX(-Math.PI / 2);
+                infieldGeometry.rotateY(Math.PI / 4);
+                const infieldMaterial = new THREE.MeshStandardMaterial({ color: 0xC4A35A, roughness: 0.9 });
+                const infield = new THREE.Mesh(infieldGeometry, infieldMaterial);
+                infield.position.set(0, 0.1, 45);
+                scene.add(infield);
+
+                // Bases
+                const baseGeometry = new THREE.BoxGeometry(5, 1, 5);
+                const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
+
+                const basePositions = [
+                    [0, 0.5, 0],      // Home
+                    [32, 0.5, 32],    // First
+                    [0, 0.5, 64],     // Second
+                    [-32, 0.5, 32],   // Third
+                ];
+
+                basePositions.forEach(pos => {
+                    const base = new THREE.Mesh(baseGeometry, baseMaterial);
+                    base.position.set(...pos);
+                    base.rotation.y = Math.PI / 4;
+                    scene.add(base);
+                });
+
+                // Mound
+                const moundGeometry = new THREE.CylinderGeometry(5, 8, 4, 16);
+                const moundMaterial = new THREE.MeshStandardMaterial({ color: 0xC4A35A });
+                const mound = new THREE.Mesh(moundGeometry, moundMaterial);
+                mound.position.set(0, 2, 40);
+                scene.add(mound);
+
+                // Hit markers
+                const markerGeometry = new THREE.SphereGeometry(2, 16, 16);
+
+                const hitResults = [
+                    { pos: [30, 2, 80], color: colors.ember },      // HR
+                    { pos: [-25, 2, 70], color: colors.gold },      // Double
+                    { pos: [40, 2, 50], color: 0x22C55E },          // Single
+                    { pos: [-15, 2, 90], color: colors.burntOrange }, // Triple
+                    { pos: [10, 2, 40], color: 0x6B7280 },           // Out
+                ];
+
+                hitResults.forEach(hit => {
+                    const material = new THREE.MeshBasicMaterial({
+                        color: hit.color,
+                        transparent: true,
+                        opacity: 0.8,
+                    });
+                    const marker = new THREE.Mesh(markerGeometry, material);
+                    marker.position.set(...hit.pos);
+                    scene.add(marker);
+
+                    // Glow ring
+                    const ringGeometry = new THREE.RingGeometry(3, 5, 16);
+                    const ringMaterial = new THREE.MeshBasicMaterial({
+                        color: hit.color,
+                        transparent: true,
+                        opacity: 0.3,
+                        side: THREE.DoubleSide,
+                    });
+                    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                    ring.position.set(hit.pos[0], 0.2, hit.pos[2]);
+                    ring.rotation.x = -Math.PI / 2;
+                    scene.add(ring);
+                });
+            }
+
+            function createPitchTunnel(scene) {
+                // Strike zone
+                const zoneWidth = 17 / 12;
+                const zoneHeight = 2;
+                const zoneBottom = 1.5;
+
+                const zoneGeometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(zoneWidth * 20, zoneHeight * 20, 0.1));
+                const zoneMaterial = new THREE.LineBasicMaterial({ color: colors.ember });
+                const zone = new THREE.LineSegments(zoneGeometry, zoneMaterial);
+                zone.position.set(0, (zoneBottom + zoneHeight / 2) * 20, 0);
+                scene.add(zone);
+
+                // Grid lines
+                for (let i = 1; i < 3; i++) {
+                    const hLine = new THREE.Line(
+                        new THREE.BufferGeometry().setFromPoints([
+                            new THREE.Vector3(-zoneWidth * 10, zoneBottom * 20 + zoneHeight * 20 * i / 3, 0),
+                            new THREE.Vector3(zoneWidth * 10, zoneBottom * 20 + zoneHeight * 20 * i / 3, 0),
+                        ]),
+                        new THREE.LineBasicMaterial({ color: colors.ember, transparent: true, opacity: 0.3 })
+                    );
+                    scene.add(hLine);
+
+                    const vLine = new THREE.Line(
+                        new THREE.BufferGeometry().setFromPoints([
+                            new THREE.Vector3(-zoneWidth * 10 + zoneWidth * 20 * i / 3, zoneBottom * 20, 0),
+                            new THREE.Vector3(-zoneWidth * 10 + zoneWidth * 20 * i / 3, (zoneBottom + zoneHeight) * 20, 0),
+                        ]),
+                        new THREE.LineBasicMaterial({ color: colors.ember, transparent: true, opacity: 0.3 })
+                    );
+                    scene.add(vLine);
+                }
+
+                // Pitch trajectories
+                const pitchTypes = [
+                    { name: 'Fastball', color: colors.ember, break: [0, 15], end: [0, 55] },
+                    { name: 'Curveball', color: 0x8B5CF6, break: [5, -20], end: [3, 35] },
+                    { name: 'Slider', color: 0x06B6D4, break: [-10, 5], end: [-5, 45] },
+                    { name: 'Changeup', color: 0x22C55E, break: [3, 8], end: [2, 40] },
+                ];
+
+                pitchTypes.forEach(pitch => {
+                    const curve = new THREE.QuadraticBezierCurve3(
+                        new THREE.Vector3(0, 50, 120),
+                        new THREE.Vector3(pitch.break[0], 45 + pitch.break[1] / 2, 60),
+                        new THREE.Vector3(pitch.end[0], pitch.end[1], 0)
+                    );
+
+                    const points = curve.getPoints(50);
+                    const positions = new Float32Array(points.length * 3);
+                    const progress = new Float32Array(points.length);
+
+                    points.forEach((p, i) => {
+                        positions[i * 3] = p.x;
+                        positions[i * 3 + 1] = p.y;
+                        positions[i * 3 + 2] = p.z;
+                        progress[i] = i / (points.length - 1);
+                    });
+
+                    const geometry = new THREE.BufferGeometry();
+                    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    geometry.setAttribute('progress', new THREE.BufferAttribute(progress, 1));
+
+                    const material = new THREE.ShaderMaterial({
+                        uniforms: {
+                            time: { value: 0 },
+                            color: { value: new THREE.Color(pitch.color) },
+                        },
+                        vertexShader: `
+                            attribute float progress;
+                            uniform float time;
+                            varying float vProgress;
+                            void main() {
+                                vProgress = progress;
+                                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                            }
+                        `,
+                        fragmentShader: `
+                            uniform vec3 color;
+                            uniform float time;
+                            varying float vProgress;
+                            void main() {
+                                float pulse = sin((vProgress + time) * 5.0) * 0.3 + 0.7;
+                                float alpha = pow(vProgress, 1.5) * pulse;
+                                gl_FragColor = vec4(color, alpha);
+                            }
+                        `,
+                        transparent: true,
+                    });
+
+                    const line = new THREE.Line(geometry, material);
+                    line.userData.animate = (t) => {
+                        material.uniforms.time.value = t;
+                    };
+                    scene.add(line);
+
+                    // Location marker
+                    const markerGeometry = new THREE.CircleGeometry(2, 16);
+                    const markerMaterial = new THREE.MeshBasicMaterial({
+                        color: pitch.color,
+                        transparent: true,
+                        opacity: 0.8,
+                        side: THREE.DoubleSide,
+                    });
+                    const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+                    marker.position.set(pitch.end[0], pitch.end[1], -0.1);
+                    scene.add(marker);
+                });
+
+                // Mound
+                const moundGeometry = new THREE.CylinderGeometry(3, 5, 3, 16);
+                const moundMaterial = new THREE.MeshStandardMaterial({ color: 0xC4A35A });
+                const mound = new THREE.Mesh(moundGeometry, moundMaterial);
+                mound.position.set(0, 1.5, 120);
+                scene.add(mound);
+            }
+
+            function createStatBars(scene) {
+                const stats = [
+                    { name: 'AVG', player1: 0.310, player2: 0.285 },
+                    { name: 'HR', player1: 35 / 60, player2: 28 / 60 },
+                    { name: 'RBI', player1: 95 / 150, player2: 82 / 150 },
+                    { name: 'OBP', player1: 0.400 / 0.5, player2: 0.365 / 0.5 },
+                    { name: 'SLG', player1: 0.550 / 0.8, player2: 0.485 / 0.8 },
+                ];
+
+                const barWidth = 8;
+                const barSpacing = 6;
+                const maxHeight = 50;
+
+                stats.forEach((stat, i) => {
+                    const x = (i - (stats.length - 1) / 2) * (barWidth * 2 + barSpacing);
+
+                    // Player 1 bar
+                    const height1 = stat.player1 * maxHeight;
+                    const geometry1 = new THREE.BoxGeometry(barWidth, height1, barWidth);
+                    const material1 = new THREE.ShaderMaterial({
+                        uniforms: {
+                            time: { value: 0 },
+                            color: { value: new THREE.Color(colors.burntOrange) },
+                            height: { value: stat.player1 },
+                        },
+                        vertexShader: `
+                            varying vec2 vUv;
+                            varying vec3 vNormal;
+                            void main() {
+                                vUv = uv;
+                                vNormal = normalize(normalMatrix * normal);
+                                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                            }
+                        `,
+                        fragmentShader: `
+                            uniform vec3 color;
+                            uniform float time;
+                            uniform float height;
+                            varying vec2 vUv;
+                            varying vec3 vNormal;
+                            void main() {
+                                float fresnel = pow(1.0 - abs(dot(normalize(cameraPosition), vNormal)), 2.0);
+                                float scan = sin(vUv.y * 30.0 - time * 2.0) * 0.1 + 0.9;
+                                vec3 finalColor = color * (0.7 + fresnel * 0.5) * scan;
+                                gl_FragColor = vec4(finalColor, 1.0);
+                            }
+                        `,
+                    });
+
+                    const bar1 = new THREE.Mesh(geometry1, material1);
+                    bar1.position.set(x - barWidth / 2 - 1, height1 / 2, 0);
+                    bar1.userData.animate = (t) => {
+                        material1.uniforms.time.value = t;
+                    };
+                    scene.add(bar1);
+
+                    // Player 2 bar
+                    const height2 = stat.player2 * maxHeight;
+                    const geometry2 = new THREE.BoxGeometry(barWidth, height2, barWidth);
+                    const material2 = new THREE.ShaderMaterial({
+                        uniforms: {
+                            time: { value: 0 },
+                            color: { value: new THREE.Color(0x3B82F6) },
+                            height: { value: stat.player2 },
+                        },
+                        vertexShader: material1.vertexShader,
+                        fragmentShader: material1.fragmentShader,
+                    });
+
+                    const bar2 = new THREE.Mesh(geometry2, material2);
+                    bar2.position.set(x + barWidth / 2 + 1, height2 / 2, 0);
+                    bar2.userData.animate = (t) => {
+                        material2.uniforms.time.value = t;
+                    };
+                    scene.add(bar2);
+                });
+            }
+
+            function createRadarChart(scene) {
+                const stats = ['AVG', 'Power', 'Speed', 'Defense', 'Contact', 'Discipline'];
+                const numStats = stats.length;
+                const radius = 40;
+                const angleStep = (Math.PI * 2) / numStats;
+
+                // Axis lines
+                stats.forEach((_, i) => {
+                    const angle = i * angleStep - Math.PI / 2;
+                    const x = Math.cos(angle) * radius;
+                    const z = Math.sin(angle) * radius;
+
+                    const geometry = new THREE.BufferGeometry().setFromPoints([
+                        new THREE.Vector3(0, 0, 0),
+                        new THREE.Vector3(x, 0, z),
+                    ]);
+                    const material = new THREE.LineBasicMaterial({
+                        color: 0x444444,
+                        transparent: true,
+                        opacity: 0.5,
+                    });
+                    const line = new THREE.Line(geometry, material);
+                    scene.add(line);
+                });
+
+                // Concentric circles
+                for (let r = 0.25; r <= 1; r += 0.25) {
+                    const points = [];
+                    for (let i = 0; i <= numStats; i++) {
+                        const angle = i * angleStep - Math.PI / 2;
+                        points.push(new THREE.Vector3(
+                            Math.cos(angle) * radius * r,
+                            0,
+                            Math.sin(angle) * radius * r
+                        ));
+                    }
+                    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                    const material = new THREE.LineBasicMaterial({
+                        color: 0x333333,
+                        transparent: true,
+                        opacity: 0.3,
+                    });
+                    const circle = new THREE.Line(geometry, material);
+                    scene.add(circle);
+                }
+
+                // Player data polygons
+                const players = [
+                    { values: [0.85, 0.75, 0.60, 0.70, 0.90, 0.80], color: colors.burntOrange },
+                    { values: [0.70, 0.90, 0.80, 0.60, 0.65, 0.70], color: 0x3B82F6 },
+                ];
+
+                players.forEach((player, pIndex) => {
+                    const points = [];
+                    player.values.forEach((val, i) => {
+                        const angle = i * angleStep - Math.PI / 2;
+                        const r = val * radius;
+                        points.push(new THREE.Vector3(
+                            Math.cos(angle) * r,
+                            pIndex * 1,
+                            Math.sin(angle) * r
+                        ));
+                    });
+                    points.push(points[0].clone());
+
+                    // Line
+                    const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+                    const lineMaterial = new THREE.LineBasicMaterial({ color: player.color, linewidth: 2 });
+                    const line = new THREE.Line(lineGeometry, lineMaterial);
+                    scene.add(line);
+
+                    // Fill
+                    const shape = new THREE.Shape();
+                    shape.moveTo(points[0].x, points[0].z);
+                    for (let i = 1; i < points.length; i++) {
+                        shape.lineTo(points[i].x, points[i].z);
+                    }
+
+                    const fillGeometry = new THREE.ShapeGeometry(shape);
+                    fillGeometry.rotateX(-Math.PI / 2);
+                    const fillMaterial = new THREE.MeshBasicMaterial({
+                        color: player.color,
+                        transparent: true,
+                        opacity: 0.15,
+                        side: THREE.DoubleSide,
+                    });
+                    const fill = new THREE.Mesh(fillGeometry, fillMaterial);
+                    fill.position.y = pIndex * 1;
+                    scene.add(fill);
+                });
+            }
+
+            createVisualization('diamond');
+
+            // Controls
+            document.querySelectorAll('[data-viz]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-viz]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (sportsViz && sportsViz.animationId) {
+                        cancelAnimationFrame(sportsViz.animationId);
+                    }
+                    createVisualization(btn.dataset.viz);
+                });
+            });
+        }
+
+        // =========================================
+        // INITIAL LOADING
+        // =========================================
+        function initLoading() {
+            const container = document.getElementById('loading-container');
+            const scene = new THREE.Scene();
+
+            const aspect = 1;
+            const camera = new THREE.OrthographicCamera(-50, 50, 50, -50, 0.1, 1000);
+            camera.position.z = 100;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(100, 100);
+            container.appendChild(renderer.domElement);
+
+            // Loading ring
+            for (let i = 0; i < 12; i++) {
+                const angle = (i / 12) * Math.PI * 2;
+                const segmentAngle = Math.PI * 2 / 12 * 0.7;
+
+                const curve = new THREE.EllipseCurve(0, 0, 35, 35, angle, angle + segmentAngle, false, 0);
+                const points = curve.getPoints(16);
+                const geometry = new THREE.BufferGeometry().setFromPoints(
+                    points.map(p => new THREE.Vector3(p.x, p.y, 0))
+                );
+
+                const material = new THREE.LineBasicMaterial({
+                    color: colors.burntOrange,
+                    transparent: true,
+                    opacity: 1 - i / 12 * 0.7,
+                });
+
+                const line = new THREE.Line(geometry, material);
+                line.userData.index = i;
+                scene.add(line);
+            }
+
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.016;
+
+                scene.children.forEach(line => {
+                    line.rotation.z = time * 2;
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Hide loading after demos initialize
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1500);
+        }
+
+        // =========================================
+        // INITIALIZE ALL DEMOS
+        // =========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initLoading();
+
+            setTimeout(() => {
+                initHeroBackground();
+                initEmbersDemo();
+                initTrailDemo();
+                initLoadingDemo();
+                initCardDemo();
+                initSportsViz();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
