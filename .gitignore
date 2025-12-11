@@ -1,29 +1,65 @@
+# Dependencies
 node_modules/
-.env
-.DS_Store
-*.log
+.pnpm-store/
+
+# Build outputs
 dist/
 build/
+.wrangler/
+.next/
+out/
 coverage/
 .cache/
-.netlify/
-.vercel/
-*.local
-.vscode/
-.idea/
-__pycache__/
-*.pyc
+.turbo/
+
+# Environment and secrets
+.env
+.env.*
+*.env
+env
+.dev.vars
+.env.local
+.env.real
+validated-keys.env
+test-api-keys.cjs
 config/*.env
 wrangler-*.local.toml
-.env.local
-.env
 
-# API Keys and Secrets
-test-api-keys.cjs
-validated-keys.env
-*.env
-.env*
-.env.real
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+.Trash/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Archives and temporary files
+*.zip
+*.tar.gz
+
+# Cache
+.cache/
+.turbo/
+
+# History and snapshots
+.history/
+.snapshots/
+
+# Claude local files
+.claude/local/
+.claude/statsig/
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 # Large media files
 *.mp4
@@ -48,13 +84,6 @@ blaze_intel_report_*.txt
 deployment-log-*.txt
 deployment-manifest-*.txt
 
-# Build artifacts
-tsconfig.tsbuildinfo
-*.tsbuildinfo
-.wrangler/
-.next/
-out/
-
 # Forbidden directories per CLAUDE.md
 archive/
 BSI-archive/
@@ -63,3 +92,7 @@ backup/
 deprecated/
 *-v2/
 *-new/
+
+# Netlify/Vercel
+.netlify/
+.vercel/

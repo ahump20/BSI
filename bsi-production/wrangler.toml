@@ -1,0 +1,40 @@
+name = "bsi-home"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+account_id = "a12cb329d84130460eed99b816e4d0d3"
+
+# R2 bucket binding for assets
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "blazesports-assets"
+
+# D1 database for users, subscriptions, sessions
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-game-db"
+database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
+
+# KV for session cache (faster than D1 for auth checks)
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "b03e0651b4a34078a3e031bc5bc14ad7"
+
+# Custom domain (optional - configure in Cloudflare dashboard)
+# routes = [
+#   { pattern = "blazesportsintel.com", zone_name = "blazesportsintel.com" },
+#   { pattern = "www.blazesportsintel.com", zone_name = "blazesportsintel.com" }
+# ]
+
+[vars]
+ENVIRONMENT = "production"
+TIMEZONE = "America/Chicago"
+
+# Secrets (set via wrangler secret put)
+# - SPORTSDATAIO_API_KEY
+# - COLLEGEFOOTBALLDATA_API_KEY
+# - SPORTSRADAR_MASTER_API_KEY
+# - THEODDSAPI_KEY
+# - CF_API_TOKEN (for Cloudflare Stream)
+# - STRIPE_SECRET_KEY
+# - STRIPE_WEBHOOK_SECRET
+# - SESSION_SECRET (for signing session cookies)
