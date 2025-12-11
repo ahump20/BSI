@@ -29,6 +29,20 @@ database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
 binding = "SESSIONS"
 id = "b03e0651b4a34078a3e031bc5bc14ad7"
 
+# KV for analytics event storage (batch processing)
+# To create: wrangler kv:namespace create "ANALYTICS_KV" --preview false
+# Copy the id from the output and replace PLACEHOLDER_ANALYTICS_KV_ID below
+# Then uncomment this section:
+# [[kv_namespaces]]
+# binding = "ANALYTICS_KV"
+# id = "PLACEHOLDER_ANALYTICS_KV_ID"
+
+# Analytics Engine for time-series analytics metrics
+# Note: Dataset "bsi_home_analytics" will be auto-created on first write
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+dataset = "bsi_home_analytics"
+
 # Secrets (set via wrangler secret put)
 # - SPORTSDATAIO_API_KEY
 # - COLLEGEFOOTBALLDATA_API_KEY
