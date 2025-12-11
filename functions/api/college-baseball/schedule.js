@@ -1,6 +1,12 @@
 /**
- * College Baseball Games API
+ * College Baseball Schedule API
  * Returns live and scheduled games with real-time updates
+ *
+ * GET /api/college-baseball/schedule
+ *   - date: YYYY-MM-DD (defaults to today in America/Chicago)
+ *   - conference: SEC, ACC, Big12, etc.
+ *   - status: live, scheduled, final
+ *   - team: team slug (e.g., "texas")
  *
  * Caching: 30s for live games, 5m for scheduled games
  * Data sources: ESPN API → D1Baseball → NCAA Stats (with fallback)
@@ -9,7 +15,7 @@
 import { fetchGames as fetchNCAAGames } from './_ncaa-adapter.js';
 import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 
-const CACHE_KEY_PREFIX = 'college-baseball:games';
+const CACHE_KEY_PREFIX = 'college-baseball:schedule';
 
 export async function onRequest(context) {
   const { request, env } = context;
@@ -44,9 +50,11 @@ export async function onRequest(context) {
           JSON.stringify({
             success: true,
             data: data.games,
+            count: data.games.length,
             cached: true,
             cacheTime: data.timestamp,
             source: 'cache',
+            filters: data.filters,
           }),
           {
             status: 200,
@@ -88,6 +96,15 @@ export async function onRequest(context) {
         cached: false,
         timestamp: new Date().toISOString(),
         source: 'live',
+        filters: { date, conference, status, team },
+        meta: {
+          dataSource: 'ESPN College Baseball API',
+          timezone: 'America/Chicago',
+          note:
+            games.length === 0
+              ? 'No games scheduled for this date. College baseball season runs February through June.'
+              : undefined,
+        },
       }),
       {
         status: 200,
@@ -102,7 +119,7 @@ export async function onRequest(context) {
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'Failed to fetch college baseball games',
+        error: 'Failed to fetch college baseball schedule',
         message: error.message,
         timestamp: new Date().toISOString(),
       }),
