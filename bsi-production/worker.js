@@ -70,9 +70,12 @@ export default {
       return handleAnalyticsEvent(request, env, corsHeaders);
     }
 
-    // === AUTH-PROTECTED PAGES ===
+    // === AUTH PAGES ===
     if (path === '/login' || path === '/login.html') {
       return serveAsset(env, 'origin/login.html', 'text/html', corsHeaders);
+    }
+    if (path === '/signup' || path === '/signup.html') {
+      return serveAsset(env, 'origin/signup.html', 'text/html', corsHeaders);
     }
     if (path === '/dashboard' || path === '/dashboard.html') {
       return serveAsset(env, 'origin/dashboard.html', 'text/html', corsHeaders);
@@ -218,6 +221,14 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     if (path === '/tools/composition-optimizer' || path === '/tools/composition-optimizer/') {
       return serveToolAsset(env, 'origin/tools/composition-optimizer/index.html', 'text/html', corsHeaders, request);
     }
+    // Win Probability Calculator
+    if (path === '/tools/win-probability' || path === '/tools/win-probability/') {
+      return serveAsset(env, 'origin/tools/win-probability.html', 'text/html', corsHeaders);
+    }
+    // Player Comparison
+    if (path === '/tools/player-comparison' || path === '/tools/player-comparison/') {
+      return serveAsset(env, 'origin/tools/player-comparison.html', 'text/html', corsHeaders);
+    }
     // Serve tool assets (JS, CSS)
     if (path.startsWith('/tools/')) {
       return serveToolStaticAsset(env, path, corsHeaders);
@@ -266,6 +277,8 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       const toolsHealth = {
         tab: !!(await env.ASSETS.get('origin/tools/team-archetype-builder/index.html')),
         optimizer: !!(await env.ASSETS.get('origin/tools/composition-optimizer/index.html')),
+        winProbability: !!(await env.ASSETS.get('origin/tools/win-probability.html')),
+        playerComparison: !!(await env.ASSETS.get('origin/tools/player-comparison.html')),
         sitemap: !!(await env.ASSETS.get('origin/sitemap.xml')),
       };
 
