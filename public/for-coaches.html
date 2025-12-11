@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Blaze Sports Intel for College Baseball Coaches—the analytics platform built for your program. Opponent scouting, recruiting intel, and performance tracking that fits your workflow.">
+  <title>For Coaches | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-success: #22C55E;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: color 0.15s ease;
+    }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.8);
+      transition: color 0.15s ease;
+    }
+    .nav-link:hover { color: var(--bsi-burnt-orange); }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    .hero {
+      padding: calc(80px + 5rem) 1.5rem 4rem;
+      background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+    }
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.8);
+      margin-bottom: 2rem;
+    }
+    .hero-cta {
+      display: inline-block;
+      padding: 1rem 2rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1rem;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .hero-cta:hover {
+      background: var(--bsi-ember);
+      transform: translateY(-2px);
+    }
+    .hero-image {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(250, 250, 250, 0.3);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+    }
+
+    .pain-points {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-charcoal);
+    }
+    .pain-points-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .section-title .accent { color: var(--bsi-burnt-orange); }
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    @media (max-width: 768px) {
+      .pain-grid { grid-template-columns: 1fr; }
+    }
+    .pain-card {
+      padding: 1.5rem;
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 8px;
+      background: rgba(13, 13, 13, 0.5);
+    }
+    .pain-card h3 {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 0.75rem;
+    }
+    .pain-card p {
+      font-size: 0.9375rem;
+      color: rgba(250, 250, 250, 0.7);
+      line-height: 1.6;
+    }
+
+    .features {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .features-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .feature-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-bottom: 5rem;
+    }
+    .feature-row:last-child { margin-bottom: 0; }
+    .feature-row:nth-child(even) .feature-content { order: 2; }
+    @media (max-width: 768px) {
+      .feature-row { grid-template-columns: 1fr; gap: 2rem; }
+      .feature-row:nth-child(even) .feature-content { order: 0; }
+    }
+    .feature-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .feature-content h3 .accent { color: var(--bsi-burnt-orange); }
+    .feature-content p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.8);
+      margin-bottom: 1.5rem;
+    }
+    .feature-list {
+      list-style: none;
+    }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      color: rgba(250, 250, 250, 0.85);
+    }
+    .feature-list svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--bsi-success);
+      margin-top: 2px;
+    }
+    .feature-visual {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 12px;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(250, 250, 250, 0.3);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .testimonial {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+    }
+    .testimonial-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .testimonial-quote {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .testimonial-quote .accent { color: var(--bsi-burnt-orange); }
+    .testimonial-author {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      color: rgba(250, 250, 250, 0.7);
+    }
+    .testimonial-coming {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(250, 250, 250, 0.4);
+      margin-top: 2rem;
+    }
+
+    .pricing-section {
+      padding: 5rem 1.5rem;
+      background: var(--bsi-midnight);
+    }
+    .pricing-inner {
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .pricing-card {
+      background: var(--bsi-charcoal);
+      border: 2px solid var(--bsi-burnt-orange);
+      border-radius: 12px;
+      padding: 3rem 2rem;
+    }
+    .pricing-badge {
+      display: inline-block;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.375rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .pricing-name {
+      font-family: var(--font-ui);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .pricing-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .pricing-currency {
+      font-family: var(--font-ui);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: rgba(250, 250, 250, 0.7);
+    }
+    .pricing-amount {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .pricing-period {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 2rem;
+    }
+    .pricing-features {
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+    .pricing-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      color: rgba(250, 250, 250, 0.85);
+    }
+    .pricing-feature svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--bsi-success);
+      margin-top: 2px;
+    }
+    .pricing-cta {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: center;
+      border-radius: 8px;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      transition: all 0.2s ease;
+    }
+    .pricing-cta:hover {
+      background: var(--bsi-ember);
+      transform: translateY(-2px);
+    }
+    .pricing-note {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.5);
+      margin-top: 1.5rem;
+    }
+
+    .cta-section {
+      padding: 5rem 1.5rem;
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.15) 0%, var(--bsi-charcoal) 100%);
+      text-align: center;
+    }
+    .cta-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .cta-title .accent { color: var(--bsi-burnt-orange); }
+    .cta-text {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(250, 250, 250, 0.8);
+      margin-bottom: 2rem;
+    }
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1rem;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .cta-button:hover {
+      background: var(--bsi-ember);
+      transform: translateY(-2px);
+    }
+    .cta-secondary {
+      display: block;
+      margin-top: 1rem;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 250, 250, 0.6);
+    }
+    .cta-secondary a {
+      color: var(--bsi-burnt-orange);
+      text-decoration: underline;
+    }
+
+    .footer {
+      padding: 3rem 1.5rem;
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      text-align: center;
+    }
+    .footer-tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 0.75rem;
+    }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 250, 250, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/bsi-logo.png" alt="Blaze Sports Intel">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/analytics" class="nav-link">Analytics</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/our-story" class="nav-link">Our Story</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <p class="hero-eyebrow">For College Baseball Coaches</p>
+        <h1 class="hero-title">Your Program Deserves <span class="accent">MLB-Level Intel</span></h1>
+        <p class="hero-subtitle">
+          ESPN doesn't cover your conference. Statcast doesn't track your pitchers.
+          But your opponents still show up every weekend. BSI gives you the scouting edge
+          that used to be reserved for the pros.
+        </p>
+        <a href="/signup?plan=enterprise" class="hero-cta">Start Your Free Trial</a>
+      </div>
+      <div class="hero-image">
+        [Opponent Scouting Dashboard Preview]
+      </div>
+    </div>
+  </section>
+
+  <section class="pain-points">
+    <div class="pain-points-inner">
+      <h2 class="section-title">We Know <span class="accent">Your Challenges</span></h2>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <h3>Scattered Data</h3>
+          <p>You're pulling box scores from three different sites, manually entering stats into spreadsheets, and still missing half the picture.</p>
+        </div>
+        <div class="pain-card">
+          <h3>No Time for Film</h3>
+          <p>Between practice, recruiting, and compliance, you've got maybe two hours to scout this weekend's opponent. It's not enough.</p>
+        </div>
+        <div class="pain-card">
+          <h3>Recruiting Blind Spots</h3>
+          <p>You hear about a kid in Texas, but you can't find his stats anywhere. By the time you track him down, he's committed elsewhere.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="features-inner">
+
+      <div class="feature-row">
+        <div class="feature-content">
+          <h3>Opponent <span class="accent">Scouting Reports</span></h3>
+          <p>
+            Every D1 program, every game, every stat—organized and ready before your first meeting.
+            No more hunting. No more guessing.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Complete batting and pitching splits</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Recent form and trend analysis</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Exportable reports for staff meetings</span>
+            </li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          [Opponent Scouting<br>Report Interface]
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-content">
+          <h3>Team <span class="accent">Performance Tracking</span></h3>
+          <p>
+            Your own program's analytics, surfaced in real-time. See who's trending up,
+            who needs work, and how you stack against conference competition.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Player development tracking over time</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Conference and national percentile rankings</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Printable reports for player meetings</span>
+            </li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          [Team Analytics<br>Dashboard]
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-content">
+          <h3>Recruiting <span class="accent">Intelligence</span></h3>
+          <p>
+            Track prospects across Perfect Game, MaxPreps, and regional tournaments.
+            Get alerts when players hit your parameters. Never miss a prospect again.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Prospect watchlists with custom criteria</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Email alerts for standout performances</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Texas and Deep South youth coverage</span>
+            </li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          [Recruiting Intel<br>Interface]
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="testimonial">
+    <div class="testimonial-inner">
+      <blockquote class="testimonial-quote">
+        "BSI fills the gap ESPN refuses to acknowledge. <span class="accent">Finally, someone's building for us.</span>"
+      </blockquote>
+      <p class="testimonial-author">— Early Access Coach, SEC Program</p>
+      <p class="testimonial-coming">Beta testimonials • Full case studies coming Spring 2025</p>
+    </div>
+  </section>
+
+  <section class="pricing-section">
+    <div class="pricing-inner">
+      <h2 class="section-title">Enterprise for <span class="accent">Programs</span></h2>
+      <div class="pricing-card">
+        <span class="pricing-badge">For Teams</span>
+        <h3 class="pricing-name">Enterprise</h3>
+        <div class="pricing-price">
+          <span class="pricing-currency">$</span>
+          <span class="pricing-amount">199</span>
+        </div>
+        <p class="pricing-period">per month • 5 staff seats included</p>
+        <div class="pricing-features">
+          <div class="pricing-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>All 300+ D1 programs covered</span>
+          </div>
+          <div class="pricing-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Opponent scouting reports</span>
+          </div>
+          <div class="pricing-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Team analytics dashboard</span>
+          </div>
+          <div class="pricing-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Recruiting prospect tracking</span>
+          </div>
+          <div class="pricing-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>API access for custom integrations</span>
+          </div>
+          <div class="pricing-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Dedicated support line</span>
+          </div>
+        </div>
+        <a href="/signup?plan=enterprise" class="pricing-cta">Start 14-Day Free Trial</a>
+        <p class="pricing-note">No credit card required to start. Cancel anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-title">Your Conference Isn't <span class="accent">Waiting</span></h2>
+      <p class="cta-text">
+        Spring ball is coming. Your rivals are preparing. Give your program the analytics
+        advantage that ESPN doesn't provide and your conference doesn't prioritize.
+      </p>
+      <a href="/signup?plan=enterprise" class="cta-button">Start Your Free Trial</a>
+      <p class="cta-secondary">Questions? Email <a href="mailto:austin@blazesportsintel.com">austin@blazesportsintel.com</a></p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">© 2025 Blaze Sports Intel. Built on Cloudflare. Payments by Stripe.</p>
+  </footer>
+</body>
+</html>

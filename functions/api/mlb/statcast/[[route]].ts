@@ -264,19 +264,32 @@ async function getStatcastLeaderboard(metric: string, url: URL, env: Env): Promi
     });
   }
 
-  // Valid Statcast metrics
-  const validMetrics = [
-    'xBA',
-    'xSLG',
-    'xWOBA',
-    'barrelRate',
-    'avgExitVelocity',
-    'maxExitVelocity',
-    'hardHitPercent',
-    'sweetSpotPercent',
-  ];
+  // Metric to Baseball Savant leaderboard mapping
+  const metricConfig: Record<string, { leaderboard: string; column: string; sortDesc: boolean }> = {
+    xBA: { leaderboard: 'expected_statistics', column: 'est_ba', sortDesc: true },
+    xSLG: { leaderboard: 'expected_statistics', column: 'est_slg', sortDesc: true },
+    xWOBA: { leaderboard: 'expected_statistics', column: 'est_woba', sortDesc: true },
+    barrelRate: { leaderboard: 'exit_velocity_barrels', column: 'brl_percent', sortDesc: true },
+    avgExitVelocity: {
+      leaderboard: 'exit_velocity_barrels',
+      column: 'avg_hit_speed',
+      sortDesc: true,
+    },
+    maxExitVelocity: {
+      leaderboard: 'exit_velocity_barrels',
+      column: 'max_hit_speed',
+      sortDesc: true,
+    },
+    hardHitPercent: { leaderboard: 'exit_velocity_barrels', column: 'ev95percent', sortDesc: true },
+    sweetSpotPercent: {
+      leaderboard: 'exit_velocity_barrels',
+      column: 'anglesweetspotpercent',
+      sortDesc: true,
+    },
+  };
 
-  if (!validMetrics.includes(metric)) {
+  const config = metricConfig[metric];
+  if (!config) {
     return jsonResponse(
       {
         success: false,
@@ -286,30 +299,68 @@ async function getStatcastLeaderboard(metric: string, url: URL, env: Env): Promi
           lastUpdated: new Date().toISOString(),
           cached: false,
         },
-        error: `Invalid metric. Must be one of: ${validMetrics.join(', ')}`,
+        error: `Invalid metric. Must be one of: ${Object.keys(metricConfig).join(', ')}`,
       },
       { status: 400 }
     );
   }
 
-  // For now, return empty leaderboard structure
-  // TODO: Implement Baseball Savant leaderboard scraping
-  const leaderboard: StatcastLeaderboardEntry[] = [];
+  try {
+    // Fetch from Baseball Savant CSV endpoint
+    const savantUrl = `https://baseballsavant.mlb.com/leaderboard/${config.leaderboard}?type=batter&year=${season}&position=&team=&min=25&csv=true`;
 
-  await env.SPORTS_CACHE?.put(cacheKey, JSON.stringify(leaderboard), {
-    expirationTtl: 600, // 10 minutes
-  });
+    const response = await fetch(savantUrl, {
+      headers: {
+        'User-Agent': 'BSI-Analytics/1.0 (blazesportsintel.com)',
+        Accept: 'text/csv',
+      },
+    });
 
-  return jsonResponse({
-    success: true,
-    data: leaderboard,
-    meta: {
-      dataSource: 'Baseball Savant (integration pending)',
-      lastUpdated: new Date().toISOString(),
-      season: parseInt(season),
-      cached: false,
-    },
-  });
+    if (!response.ok) {
+      throw new Error(`Baseball Savant returned ${response.status}`);
+    }
+
+    const csvText = await response.text();
+    const leaderboard = parseBaseballSavantCSV(
+      csvText,
+      metric,
+      config.column,
+      limit,
+      parseInt(season)
+    );
+
+    await env.SPORTS_CACHE?.put(cacheKey, JSON.stringify(leaderboard), {
+      expirationTtl: 600, // 10 minutes
+    });
+
+    return jsonResponse({
+      success: true,
+      data: leaderboard,
+      meta: {
+        dataSource: 'Baseball Savant',
+        lastUpdated: new Date().toISOString(),
+        season: parseInt(season),
+        cached: false,
+      },
+    });
+  } catch (error: any) {
+    console.error(`[getStatcastLeaderboard] Error fetching ${metric}:`, error);
+
+    return jsonResponse(
+      {
+        success: false,
+        data: [],
+        meta: {
+          dataSource: 'Baseball Savant',
+          lastUpdated: new Date().toISOString(),
+          season: parseInt(season),
+          cached: false,
+        },
+        error: error.message || 'Failed to fetch leaderboard data',
+      },
+      { status: 500 }
+    );
+  }
 }
 
 /**
@@ -424,6 +475,82 @@ async function getBarrelAnalysis(url: URL, env: Env): Promise<Response> {
 }
 
 /**
+ * Parse Baseball Savant CSV response into leaderboard entries
+ */
+function parseBaseballSavantCSV(
+  csvText: string,
+  metric: string,
+  valueColumn: string,
+  limit: number,
+  season: number
+): StatcastLeaderboardEntry[] {
+  const lines = csvText.trim().split('\n');
+  if (lines.length < 2) return [];
+
+  // Parse header row to find column indices
+  const headers = lines[0].split(',').map((h) => h.trim().toLowerCase().replace(/"/g, ''));
+  const playerIdIdx = headers.findIndex((h) => h === 'player_id' || h === 'batter');
+  const playerNameIdx = headers.findIndex(
+    (h) => h === 'player_name' || h === 'name' || h === 'last_name, first_name'
+  );
+  const teamIdx = headers.findIndex((h) => h === 'team' || h === 'team_name');
+  const valueIdx = headers.findIndex((h) => h === valueColumn.toLowerCase());
+
+  if (valueIdx === -1) {
+    console.error(`Column ${valueColumn} not found in CSV headers:`, headers);
+    return [];
+  }
+
+  // Parse data rows
+  const entries: StatcastLeaderboardEntry[] = [];
+
+  for (let i = 1; i < lines.length && entries.length < limit; i++) {
+    const row = parseCSVRow(lines[i]);
+    if (row.length <= valueIdx) continue;
+
+    const value = parseFloat(row[valueIdx]);
+    if (isNaN(value)) continue;
+
+    entries.push({
+      rank: entries.length + 1,
+      playerId: playerIdIdx >= 0 ? parseInt(row[playerIdIdx]) || 0 : 0,
+      playerName:
+        playerNameIdx >= 0 ? row[playerNameIdx]?.replace(/"/g, '') || 'Unknown' : 'Unknown',
+      team: teamIdx >= 0 ? row[teamIdx]?.replace(/"/g, '') || '' : '',
+      metric,
+      value,
+      season,
+    });
+  }
+
+  return entries;
+}
+
+/**
+ * Parse a CSV row handling quoted values
+ */
+function parseCSVRow(row: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < row.length; i++) {
+    const char = row[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+
+  return result;
+}
+
+/**
  * Health check endpoint
  */
 async function healthCheck(): Promise<Response> {
@@ -444,7 +571,7 @@ async function healthCheck(): Promise<Response> {
       dataSources: ['MLB Stats API (statsapi.mlb.com)', 'Baseball Savant (baseballsavant.mlb.com)'],
       notes: [
         'Phase 19-A: TypeScript interfaces complete',
-        'Phase 19-B: API endpoints created (Baseball Savant integration pending)',
+        'Phase 19-B: API endpoints with Baseball Savant CSV integration',
         'Phase 19-C: Dashboard visualization pending',
       ],
     },
