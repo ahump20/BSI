@@ -1,4 +1,22 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+
+// Analytics tracking
+const trackEvent = (eventName: string, properties?: Record<string, any>) => {
+  try {
+    navigator.sendBeacon('/api/analytics/event', JSON.stringify({
+      event: eventName,
+      properties: { ...properties, tool: 'monte-carlo-optimizer' },
+      timestamp: new Date().toISOString(),
+      url: window.location.href
+    }));
+
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', eventName, properties);
+    }
+  } catch (e) {
+    // Fail silently for analytics
+  }
+};
 
 /**
  * BSI Monte Carlo Team Composition Optimizer
@@ -350,6 +368,7 @@ const getUserTier = (): 'free' | 'pro' | 'enterprise' => {
 
 // Handle upgrade to Pro subscription
 const handleUpgrade = async () => {
+  trackEvent('upgrade_click', { source: 'monte-carlo-optimizer' });
   try {
     const res = await fetch('/api/stripe/create-checkout-session', {
       method: 'POST',
@@ -384,6 +403,11 @@ export default function MonteCarloOptimizer() {
   const userTier = getUserTier();
   const isPro = userTier === 'pro' || userTier === 'enterprise';
 
+  // Track page view on mount
+  useEffect(() => {
+    trackEvent('tool_view', { tier: userTier });
+  }, []);
+
   // Free tier limits: 1,000 iterations max, NFL only
   const maxIterations = isPro ? 100000 : 1000;
   const availableIterations = isPro
@@ -391,15 +415,16 @@ export default function MonteCarloOptimizer() {
     : [1000];
 
   const runSim = useCallback(() => {
+    const effectiveIterations = Math.min(iterations, maxIterations);
+    trackEvent('simulation_run', { league, iterations: effectiveIterations, tier: userTier });
     setIsRunning(true);
     // Use setTimeout to allow UI to update
-    const effectiveIterations = Math.min(iterations, maxIterations);
     setTimeout(() => {
       const simResults = runSimulation(league, effectiveIterations);
       setResults(simResults);
       setIsRunning(false);
     }, 50);
-  }, [league, iterations, maxIterations]);
+  }, [league, iterations, maxIterations, userTier]);
 
   const params = leagueParams[league];
 

@@ -1,4 +1,24 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+
+// Analytics tracking
+const trackEvent = (eventName: string, properties?: Record<string, any>) => {
+  try {
+    // Send to BSI analytics endpoint
+    navigator.sendBeacon('/api/analytics/event', JSON.stringify({
+      event: eventName,
+      properties: { ...properties, tool: 'team-archetype-builder' },
+      timestamp: new Date().toISOString(),
+      url: window.location.href
+    }));
+
+    // Also send to Google Analytics if available
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', eventName, properties);
+    }
+  } catch (e) {
+    // Fail silently for analytics
+  }
+};
 
 /**
  * BSI Team Archetype Builder (TAB) v3.0
@@ -550,6 +570,7 @@ const getUserTier = (): 'free' | 'pro' | 'enterprise' => {
 
 // Handle upgrade to Pro subscription
 const handleUpgrade = async () => {
+  trackEvent('upgrade_click', { source: 'team-archetype-builder' });
   try {
     const res = await fetch('/api/stripe/create-checkout-session', {
       method: 'POST',
@@ -600,6 +621,11 @@ export default function BSITeamArchetypeBuilder() {
   const userTier = getUserTier();
   const isPro = userTier === 'pro' || userTier === 'enterprise';
 
+  // Track page view on mount
+  useEffect(() => {
+    trackEvent('tool_view', { tier: userTier });
+  }, []);
+
   // Free tier: NFL only. Pro: All leagues
   const availableLeagues = isPro ? leagues : { nfl: leagues.nfl };
   const currentLeague = availableLeagues[league] || leagues.nfl;
@@ -642,6 +668,7 @@ export default function BSITeamArchetypeBuilder() {
                 <button key={key}
                   onClick={() => {
                     if (isLocked) return;
+                    trackEvent('league_change', { league: key, tier: userTier });
                     setLeague(key);
                     setExpandedPos(null);
                     setSelectedArchetype(null);
@@ -695,7 +722,13 @@ export default function BSITeamArchetypeBuilder() {
           <h3 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: tokens.colors.muted }}>Psychological Archetypes</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {Object.keys(archetypes).map(key => (
-              <ArchetypeCard key={key} archetype={key} isSelected={selectedArchetype === key} onSelect={setSelectedArchetype} onDetail={setDetailArchetype} />
+              <ArchetypeCard key={key} archetype={key} isSelected={selectedArchetype === key} onSelect={(a) => {
+                if (a) trackEvent('archetype_select', { archetype: a, tier: userTier });
+                setSelectedArchetype(a);
+              }} onDetail={(a) => {
+                trackEvent('archetype_detail_view', { archetype: a, tier: userTier });
+                setDetailArchetype(a);
+              }} />
             ))}
           </div>
         </div>
