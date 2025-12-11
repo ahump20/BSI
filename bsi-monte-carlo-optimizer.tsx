@@ -241,6 +241,9 @@ const scoreComposition = (composition, params) => {
 // Monte Carlo simulation
 const runSimulation = (league, iterations) => {
   const params = leagueParams[league];
+  if (!params) {
+    throw new Error(`Invalid league: "${league}". Valid options: ${Object.keys(leagueParams).join(', ')}`);
+  }
   const archetypes = Object.keys(archetypeConfig);
   const results = [];
   
@@ -350,13 +353,24 @@ export default function MonteCarloOptimizer() {
     setIsRunning(true);
     // Use setTimeout to allow UI to update
     setTimeout(() => {
-      const simResults = runSimulation(league, iterations);
-      setResults(simResults);
-      setIsRunning(false);
+      try {
+        const simResults = runSimulation(league, iterations);
+        setResults(simResults);
+      } catch (error) {
+        console.error('Simulation error:', error);
+        alert(`Error: ${error.message}`);
+      } finally {
+        setIsRunning(false);
+      }
     }, 50);
   }, [league, iterations]);
 
   const params = leagueParams[league];
+  // Validate league and use fallback if invalid (defensive programming)
+  const validParams = params || leagueParams.nfl;
+  if (!params) {
+    console.warn(`Invalid league "${league}", using NFL as fallback`);
+  }
 
   return (
     <div className="min-h-screen p-4" style={{ backgroundColor: tokens.colors.midnight, fontFamily: tokens.fonts.body }}>
@@ -428,7 +442,7 @@ export default function MonteCarloOptimizer() {
             (4) critical archetype minimums, (5) diversity entropy bonus, and (6) variance risk adjustment.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-3">
-            {Object.entries(params.optimalRanges).map(([arch, range]) => (
+            {Object.entries(validParams.optimalRanges).map(([arch, range]) => (
               <div key={arch} className="flex items-center gap-2 text-xs">
                 <div className="w-3 h-3 rounded" style={{ backgroundColor: archetypeConfig[arch].color }} />
                 <span style={{ color: tokens.colors.muted }}>

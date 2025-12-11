@@ -21,8 +21,13 @@ case "$1" in
     npx wrangler kv namespace list
     ;;
   test-apis)
+    if [ -z "$SPORTSDATAIO_API_KEY" ]; then
+      echo "Error: SPORTSDATAIO_API_KEY environment variable is not set."
+      echo "Set it with: export SPORTSDATAIO_API_KEY=your_key"
+      exit 1
+    fi
     echo "Testing SportsDataIO..."
-    curl -s "https://api.sportsdata.io/v3/mlb/scores/json/AreAnyGamesInProgress" -H "Ocp-Apim-Subscription-Key: 6ca2adb39404482da5406f0a6cd7aa37" | head -20
+    curl -s "https://api.sportsdata.io/v3/mlb/scores/json/AreAnyGamesInProgress" -H "Ocp-Apim-Subscription-Key: $SPORTSDATAIO_API_KEY" | head -20
     ;;
   *)
     echo "BSI Helper Commands:"
