@@ -5,7 +5,7 @@
  */
 
 interface Env {
-  CACHE: KVNamespace;
+  KV: KVNamespace;
   DB: D1Database;
 }
 
@@ -66,7 +66,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     // Check rate limit using KV
     const rateLimitKey = `newsletter-ratelimit:${ipHash}`;
-    const rateLimitCount = await env.CACHE.get(rateLimitKey);
+    const rateLimitCount = await env.KV.get(rateLimitKey);
     const currentCount = rateLimitCount ? parseInt(rateLimitCount, 10) : 0;
 
     if (currentCount >= RATE_LIMIT_MAX) {
@@ -82,7 +82,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     // Check if already subscribed
     const emailHash = await hashEmail(email);
     const subscriberKey = `newsletter-subscriber:${emailHash}`;
-    const existingSubscriber = await env.CACHE.get(subscriberKey);
+    const existingSubscriber = await env.KV.get(subscriberKey);
 
     if (existingSubscriber) {
       return new Response(
@@ -100,7 +100,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const timestamp = new Date().toISOString();
 
     // Store in KV (primary storage for fast lookup)
-    await env.CACHE.put(
+    await env.KV.put(
       subscriberKey,
       JSON.stringify({
         id: subscriberId,
@@ -114,14 +114,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     // Add to subscribers list (for bulk operations)
     const subscriberListKey = 'newsletter-subscribers-list';
-    const existingList = await env.CACHE.get(subscriberListKey);
+    const existingList = await env.KV.get(subscriberListKey);
     const subscribersList = existingList ? JSON.parse(existingList) : [];
     subscribersList.push({
       id: subscriberId,
       emailHash,
       subscribedAt: timestamp,
     });
-    await env.CACHE.put(subscriberListKey, JSON.stringify(subscribersList));
+    await env.KV.put(subscriberListKey, JSON.stringify(subscribersList));
 
     // Also store in D1 for backup/querying (optional, table may not exist)
     try {
@@ -137,7 +137,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     // Update rate limit counter
-    await env.CACHE.put(rateLimitKey, String(currentCount + 1), {
+    await env.KV.put(rateLimitKey, String(currentCount + 1), {
       expirationTtl: RATE_LIMIT_WINDOW,
     });
 
