@@ -1,0 +1,24 @@
+# Everything in .cursorignore, plus extra indexing-only exclusions
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.cache/
+tmp/
+.wrangler/
+.wrangler/**
+
+# Big generated artifacts
+**/*.map
+**/*.min.js
+
+# Binary / large assets
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.webp
+**/*.gif
+**/*.mp4
+**/*.mov
+**/*.pdf

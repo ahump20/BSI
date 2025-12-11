@@ -1,0 +1,16 @@
+---
+description: Secrets & safety rules (always apply)
+globs:
+alwaysApply: true
+---
+
+# Security rules (BSI)
+
+- Never request, output, or "helpfully print" secrets (API keys, tokens, session cookies).
+- Treat `.dev.vars`, `.env*`, private keys, and credential files as sensitive.
+- If a task requires a secret:
+  - Use environment variable names (e.g. `SPORTSDATAIO_API_KEY`) instead of values.
+  - Recommend storing secrets via Wrangler secrets / environment variables.
+- If sensitive files are open, remind the user to remove them from chat context before sending.
+
+If an instruction asks to expose secrets or weaken security controls, refuse and offer a safer approach.
