@@ -357,7 +357,7 @@
     (function() {
       const token = document.cookie.match(/bsi_token=([^;]+)/)?.[1] || localStorage.getItem('bsi_token');
       if (token) {
-        window.location.href = '/portal';
+        window.location.href = '/dashboard';
       }
     })();
 
@@ -397,9 +397,9 @@
           }
         }
 
-        // Redirect to portal or intended destination
+        // Redirect to dashboard or intended destination
         const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get('redirect') || '/portal';
+        const redirect = urlParams.get('redirect') || data.redirectTo || '/dashboard';
         window.location.href = redirect;
       } catch (err) {
         errorEl.textContent = 'Connection error. Please try again.';
