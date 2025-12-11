@@ -868,10 +868,18 @@
                     const requests = sports.map(sport =>
                         fetch(`/api/${sport}/scoreboard`)
                             .then(r => r.json())
-                            .then(data => ({
-                                sport: sport.toUpperCase(),
-                                games: data.games || data.events || []
-                            }))
+                            .then(data => {
+                                // Handle NFL's nested games structure
+                                let games = data.games || data.events || [];
+                                if (games && typeof games === 'object' && !Array.isArray(games)) {
+                                    // Flatten NFL-style { live, final, scheduled } into array
+                                    games = [...(games.live || []), ...(games.final || []), ...(games.scheduled || [])];
+                                }
+                                return {
+                                    sport: sport.toUpperCase(),
+                                    games
+                                };
+                            })
                             .catch(err => {
                                 return { sport: sport.toUpperCase(), games: [] };
                             })
