@@ -262,16 +262,26 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
 
     // API health check
     if (path === '/api/health') {
+      // Check tool assets exist
+      const toolsHealth = {
+        tab: !!(await env.ASSETS.get('origin/tools/team-archetype-builder/index.html')),
+        optimizer: !!(await env.ASSETS.get('origin/tools/composition-optimizer/index.html')),
+        sitemap: !!(await env.ASSETS.get('origin/sitemap.xml')),
+      };
+
       return new Response(JSON.stringify({
         status: 'ok',
         timestamp: new Date().toISOString(),
         timezone: 'America/Chicago',
-        apis: ['mlb', 'nfl', 'nba', 'cfb', 'odds'],
+        version: '2.0.0',
+        apis: ['mlb', 'nfl', 'nba', 'cfb', 'odds', 'analytics'],
+        tools: toolsHealth,
         keysConfigured: {
           sportsdataio: !!env.SPORTSDATAIO_API_KEY,
           cfb: !!env.COLLEGEFOOTBALLDATA_API_KEY,
           odds: !!env.THEODDSAPI_KEY,
-          sportsradar: !!env.SPORTSRADAR_MASTER_API_KEY
+          sportsradar: !!env.SPORTSRADAR_MASTER_API_KEY,
+          stripe: !!env.STRIPE_SECRET_KEY,
         }
       }), {
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
