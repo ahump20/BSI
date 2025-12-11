@@ -926,91 +926,61 @@
                 </div>
             </section>
 
-            <!-- Live Scores Preview -->
-            <section class="live-scores-section" aria-label="Live Scores" data-aos="fade-up">
+            <!-- 2026 Preseason Rankings -->
+            <section class="live-scores-section" aria-label="Preseason Rankings" data-aos="fade-up">
                 <div class="section-header">
-                    <h2 class="section-title">Live Games</h2>
-                    <a href="/college-baseball/games/" class="view-all-link">
-                        View All Games →
+                    <h2 class="section-title">2026 Preseason Top 25</h2>
+                    <a href="/college-baseball/standings/" class="view-all-link">
+                        Full Rankings →
                     </a>
                 </div>
 
-                <!-- Live Game Card -->
-                <article class="game-card">
-                    <div class="game-header">
-                        <div class="game-status">
-                            <span class="status-live">Live</span>
-                            <span>Top 7th</span>
-                        </div>
-                        <span>Disch-Falk Field</span>
+                <!-- Off-Season Banner -->
+                <div class="game-card" style="background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(0, 178, 169, 0.1)); border-color: var(--blaze-orange);">
+                    <div style="text-align: center; padding: 1rem 0;">
+                        <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">⚾</span>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem;">2026 Season Opens February 14th</h3>
+                        <p style="color: var(--blaze-platinum); font-size: 0.9rem; margin-bottom: 0.75rem;">Preseason rankings based on D1Baseball projections</p>
+                        <div id="season-countdown" style="display: flex; justify-content: center; gap: 1.5rem; font-family: monospace;"></div>
                     </div>
-                    <div class="game-matchup">
-                        <div class="team-row">
-                            <div class="team-info">
-                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas Longhorns" class="team-logo" loading="lazy">
-                                <div>
-                                    <span class="team-rank">#3</span>
-                                    <span class="team-name">Texas</span>
-                                </div>
-                            </div>
-                            <span class="team-record">45-12 (22-5 SEC)</span>
-                            <span class="team-score winner">8</span>
-                        </div>
-                        <div class="team-row">
-                            <div class="team-info">
-                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/228.png" alt="Oklahoma Sooners" class="team-logo" loading="lazy">
-                                <div>
-                                    <span class="team-rank">#18</span>
-                                    <span class="team-name">Oklahoma</span>
-                                </div>
-                            </div>
-                            <span class="team-record">38-18 (18-9 SEC)</span>
-                            <span class="team-score">5</span>
-                        </div>
-                    </div>
-                    <div class="game-footer">
-                        <span>📺 ESPN+</span>
-                        <a href="/college-baseball/games/2025-texas-oklahoma" style="color: var(--blaze-orange); text-decoration: none; font-weight: 700;">View Box Score →</a>
-                    </div>
-                </article>
+                </div>
 
-                <!-- Final Game Card -->
-                <article class="game-card">
-                    <div class="game-header">
-                        <div class="game-status">
-                            <span class="status-final">Final</span>
-                        </div>
-                        <span>Vanderbilt Stadium</span>
+                <!-- Rankings Container (populated by JS) -->
+                <div id="rankings-container" style="margin-top: 1rem;">
+                    <div class="game-card" style="text-align: center; padding: 2rem;">
+                        <div class="loading-spinner" style="width: 40px; height: 40px; border: 3px solid var(--glass-border); border-top-color: var(--blaze-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                        <p style="margin-top: 1rem; color: var(--blaze-platinum);">Loading rankings...</p>
                     </div>
-                    <div class="game-matchup">
-                        <div class="team-row">
-                            <div class="team-info">
-                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt Commodores" class="team-logo" loading="lazy">
-                                <div>
-                                    <span class="team-rank">#1</span>
-                                    <span class="team-name">Vanderbilt</span>
-                                </div>
-                            </div>
-                            <span class="team-record">50-7 (24-3 SEC)</span>
-                            <span class="team-score winner">12</span>
-                        </div>
-                        <div class="team-row">
-                            <div class="team-info">
-                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png" alt="Tennessee Volunteers" class="team-logo" loading="lazy">
-                                <div>
-                                    <span class="team-rank">#5</span>
-                                    <span class="team-name">Tennessee</span>
-                                </div>
-                            </div>
-                            <span class="team-record">43-14 (20-7 SEC)</span>
-                            <span class="team-score">7</span>
-                        </div>
-                    </div>
-                    <div class="game-footer">
-                        <span>📺 SEC Network</span>
-                        <a href="/college-baseball/games/2025-vanderbilt-tennessee" style="color: var(--blaze-orange); text-decoration: none; font-weight: 700;">View Box Score →</a>
-                    </div>
-                </article>
+                </div>
+
+                <style>
+                    @keyframes spin { to { transform: rotate(360deg); } }
+                    .ranking-row {
+                        display: grid;
+                        grid-template-columns: 50px 1fr auto;
+                        align-items: center;
+                        gap: 1rem;
+                        padding: 1rem;
+                        border-bottom: 1px solid var(--glass-border);
+                        transition: background 0.2s ease;
+                    }
+                    .ranking-row:hover { background: rgba(191, 87, 0, 0.08); }
+                    .ranking-row:last-child { border-bottom: none; }
+                    .rank-number {
+                        font-size: 1.5rem;
+                        font-weight: 900;
+                        color: var(--blaze-orange);
+                        text-align: center;
+                    }
+                    .rank-change {
+                        font-size: 0.75rem;
+                        display: block;
+                        margin-top: 2px;
+                    }
+                    .rank-up { color: #10b981; }
+                    .rank-down { color: #ef4444; }
+                    .rank-same { color: var(--blaze-platinum); }
+                </style>
             </section>
 
             <!-- Conference Standings Preview -->
@@ -1044,75 +1014,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Dynamically populated by JavaScript -->
                             <tr>
-                                <td>1</td>
-                                <td>
-                                    <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt" class="team-logo-small" loading="lazy">
-                                        <span class="team-name-standings">Vanderbilt</span>
-                                    </div>
+                                <td colspan="7" style="text-align: center; padding: 2rem;">
+                                    <div class="loading-spinner" style="width: 30px; height: 30px; border: 3px solid var(--glass-border); border-top-color: var(--blaze-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
                                 </td>
-                                <td>50</td>
-                                <td>7</td>
-                                <td class="win-pct">.877</td>
-                                <td>24-3</td>
-                                <td class="streak-positive">W8</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas" class="team-logo-small" loading="lazy">
-                                        <span class="team-name-standings">Texas</span>
-                                    </div>
-                                </td>
-                                <td>45</td>
-                                <td>12</td>
-                                <td class="win-pct">.789</td>
-                                <td>22-5</td>
-                                <td class="streak-positive">W5</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>
-                                    <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png" alt="Tennessee" class="team-logo-small" loading="lazy">
-                                        <span class="team-name-standings">Tennessee</span>
-                                    </div>
-                                </td>
-                                <td>43</td>
-                                <td>14</td>
-                                <td class="win-pct">.754</td>
-                                <td>20-7</td>
-                                <td class="streak-negative">L1</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>
-                                    <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2116.png" alt="Arkansas" class="team-logo-small" loading="lazy">
-                                        <span class="team-name-standings">Arkansas</span>
-                                    </div>
-                                </td>
-                                <td>41</td>
-                                <td>16</td>
-                                <td class="win-pct">.719</td>
-                                <td>19-8</td>
-                                <td class="streak-positive">W3</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>
-                                    <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/228.png" alt="Oklahoma" class="team-logo-small" loading="lazy">
-                                        <span class="team-name-standings">Oklahoma</span>
-                                    </div>
-                                </td>
-                                <td>38</td>
-                                <td>18</td>
-                                <td class="win-pct">.679</td>
-                                <td>18-9</td>
-                                <td class="streak-negative">L2</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1251,8 +1157,139 @@
             });
         }
 
-        // Conference tabs functionality
+        // =================================================================
+        // FETCH REAL RANKINGS FROM D1 DATABASE
+        // =================================================================
+        async function loadRankings() {
+            const container = document.getElementById('rankings-container');
+            try {
+                const res = await fetch('/api/college-baseball/rankings?source=d1baseball&season=2026&limit=10');
+                const data = await res.json();
+
+                if (!data.success || !data.rankings?.length) {
+                    container.innerHTML = `<div class="game-card" style="text-align: center; padding: 2rem;">
+                        <p style="color: var(--blaze-platinum);">Rankings will be available soon.</p>
+                    </div>`;
+                    return;
+                }
+
+                const html = `<div class="game-card" style="padding: 0; overflow: hidden;">
+                    ${data.rankings.map(r => `
+                        <div class="ranking-row">
+                            <div class="rank-number">
+                                ${r.rank}
+                                ${r.change !== null ? `<span class="rank-change ${r.change > 0 ? 'rank-up' : r.change < 0 ? 'rank-down' : 'rank-same'}">
+                                    ${r.change > 0 ? '▲' + r.change : r.change < 0 ? '▼' + Math.abs(r.change) : '—'}
+                                </span>` : ''}
+                            </div>
+                            <div class="team-info">
+                                ${r.team.logo ? `<img src="${r.team.logo}" alt="${r.team.name}" class="team-logo" loading="lazy">` : ''}
+                                <div>
+                                    <span class="team-name">${r.team.name}</span>
+                                    <span style="display: block; font-size: 0.8rem; color: var(--blaze-platinum);">${r.team.conference || ''}</span>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.75rem; color: var(--blaze-sky); text-transform: uppercase;">Preseason</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                    <div style="padding: 1rem; text-align: center; border-top: 1px solid var(--glass-border); background: rgba(191, 87, 0, 0.05);">
+                        <a href="/college-baseball/standings/" style="color: var(--blaze-orange); text-decoration: none; font-weight: 700; font-size: 0.9rem;">View Full Top 25 →</a>
+                        <p style="font-size: 0.7rem; color: var(--blaze-platinum); margin-top: 0.5rem;">
+                            Source: ${data.source} | Updated: ${data.dataStamp?.fetchedAt || new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}
+                        </p>
+                    </div>
+                </div>`;
+
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Failed to load rankings:', err);
+                container.innerHTML = `<div class="game-card" style="text-align: center; padding: 2rem;">
+                    <p style="color: var(--blaze-platinum);">Unable to load rankings. Please try again later.</p>
+                </div>`;
+            }
+        }
+
+        // Season countdown
+        function updateCountdown() {
+            const seasonStart = new Date('2026-02-14T12:00:00-06:00');
+            const now = new Date();
+            const diff = seasonStart - now;
+
+            if (diff <= 0) {
+                document.getElementById('season-countdown').innerHTML = '<span style="color: var(--blaze-orange); font-weight: 700;">Season in Progress!</span>';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            document.getElementById('season-countdown').innerHTML = `
+                <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 900; color: var(--blaze-orange);">${days}</span><br><span style="font-size: 0.7rem; color: var(--blaze-platinum);">DAYS</span></div>
+                <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 900; color: var(--blaze-orange);">${hours}</span><br><span style="font-size: 0.7rem; color: var(--blaze-platinum);">HOURS</span></div>
+                <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 900; color: var(--blaze-orange);">${mins}</span><br><span style="font-size: 0.7rem; color: var(--blaze-platinum);">MINS</span></div>
+            `;
+        }
+
+        // Load rankings and start countdown
+        loadRankings();
+        updateCountdown();
+        setInterval(updateCountdown, 60000);
+
+        // =================================================================
+        // CONFERENCE STANDINGS - FETCH FROM API
+        // =================================================================
         const conferenceTabs = document.querySelectorAll('.conference-tab');
+        const standingsTableBody = document.querySelector('#sec-standings tbody');
+        let currentConference = 'SEC';
+
+        async function loadConferenceTeams(conference) {
+            if (!standingsTableBody) return;
+            standingsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem;">
+                <div class="loading-spinner" style="width: 30px; height: 30px; border: 3px solid var(--glass-border); border-top-color: var(--blaze-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            </td></tr>`;
+
+            try {
+                const res = await fetch(`/api/college-baseball/teams?conference=${encodeURIComponent(conference)}&limit=10`);
+                const data = await res.json();
+
+                if (!data.success || !data.teams?.length) {
+                    standingsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">No teams found for ${conference}</td></tr>`;
+                    return;
+                }
+
+                standingsTableBody.innerHTML = data.teams.slice(0, 5).map((team, i) => `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>
+                            <div class="team-cell">
+                                ${team.logo ? `<img src="${team.logo}" alt="${team.name}" class="team-logo-small" loading="lazy">` : ''}
+                                <span class="team-name-standings">${team.name}</span>
+                            </div>
+                        </td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td class="win-pct">—</td>
+                        <td>—</td>
+                        <td class="rank-same">—</td>
+                    </tr>
+                `).join('');
+
+                // Add note about preseason
+                const note = document.createElement('tr');
+                note.innerHTML = `<td colspan="7" style="text-align: center; padding: 1rem; font-size: 0.8rem; color: var(--blaze-platinum); background: rgba(191, 87, 0, 0.05);">
+                    Season records will update when 2026 season begins · ${data.dataStamp?.fetchedAt || ''}
+                </td>`;
+                standingsTableBody.appendChild(note);
+
+            } catch (err) {
+                console.error('Failed to load conference teams:', err);
+                standingsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">Unable to load standings</td></tr>`;
+            }
+        }
+
         conferenceTabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 conferenceTabs.forEach(t => {
@@ -1261,10 +1298,13 @@
                 });
                 this.classList.add('active');
                 this.setAttribute('aria-selected', 'true');
-                // In production, this would fetch and display the selected conference's standings
-                console.log('Conference tab clicked:', this.textContent);
+                currentConference = this.textContent.trim();
+                loadConferenceTeams(currentConference);
             });
         });
+
+        // Load initial conference
+        loadConferenceTeams('SEC');
 
         // Keyboard navigation for cards
         const navCards = document.querySelectorAll('.nav-card');
