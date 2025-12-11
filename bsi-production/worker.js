@@ -65,6 +65,11 @@ export default {
       return handleCustomerPortal(request, env, corsHeaders);
     }
 
+    // === ANALYTICS ROUTES ===
+    if (path === '/api/analytics/event' && request.method === 'POST') {
+      return handleAnalyticsEvent(request, env, corsHeaders);
+    }
+
     // === AUTH-PROTECTED PAGES ===
     if (path === '/login' || path === '/login.html') {
       return serveAsset(env, 'origin/login.html', 'text/html', corsHeaders);
@@ -88,6 +93,35 @@ export default {
       });
 
       return new Response(manifest.body, { headers });
+    }
+
+    // Serve sitemap
+    if (path === '/sitemap.xml') {
+      const sitemap = await env.ASSETS.get('origin/sitemap.xml');
+      if (!sitemap) {
+        return new Response('Sitemap not found', { status: 404 });
+      }
+      return new Response(sitemap.body, {
+        headers: {
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'public, max-age=86400',
+          ...corsHeaders,
+        },
+      });
+    }
+
+    // Serve robots.txt
+    if (path === '/robots.txt') {
+      const robots = `User-agent: *
+Allow: /
+Sitemap: https://blazesportsintel.com/sitemap.xml`;
+      return new Response(robots, {
+        headers: {
+          'Content-Type': 'text/plain',
+          'Cache-Control': 'public, max-age=86400',
+          ...corsHeaders,
+        },
+      });
     }
 
     // Serve service worker
@@ -1202,6 +1236,53 @@ async function serveToolStaticAsset(env, path, corsHeaders) {
       ...corsHeaders
     }
   });
+}
+
+// === ANALYTICS HANDLER ===
+async function handleAnalyticsEvent(request, env, corsHeaders) {
+  try {
+    const body = await request.text();
+    const event = JSON.parse(body);
+
+    // Validate required fields
+    if (!event.event) {
+      return jsonResponse({ error: 'Missing event name' }, 400, corsHeaders);
+    }
+
+    // Add server-side metadata
+    const enrichedEvent = {
+      ...event,
+      serverTimestamp: new Date().toISOString(),
+      userAgent: request.headers.get('User-Agent'),
+      ip: request.headers.get('CF-Connecting-IP'),
+      country: request.headers.get('CF-IPCountry'),
+      ray: request.headers.get('CF-Ray'),
+    };
+
+    // Store in KV for batch processing (if KV is bound)
+    if (env.ANALYTICS_KV) {
+      const key = `event:${Date.now()}:${crypto.randomUUID()}`;
+      await env.ANALYTICS_KV.put(key, JSON.stringify(enrichedEvent), {
+        expirationTtl: 86400 * 7 // 7 days
+      });
+    }
+
+    // Log to Cloudflare Analytics Engine (if bound)
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: [event.event, event.properties?.tool || 'unknown', enrichedEvent.country || 'unknown'],
+        doubles: [1], // event count
+        indexes: [event.event]
+      });
+    }
+
+    // Always return success (analytics should never block)
+    return jsonResponse({ success: true }, 200, corsHeaders);
+  } catch (e) {
+    // Fail silently for analytics - return success anyway
+    console.error('Analytics error:', e);
+    return jsonResponse({ success: true }, 200, corsHeaders);
+  }
 }
 
 function jsonResponse(data, status, corsHeaders, sessionToken = null) {
