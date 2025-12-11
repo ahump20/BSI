@@ -101,14 +101,31 @@ export async function onRequest(context) {
       }
     );
   } catch (error) {
+    // Determine the error type and provide helpful guidance
+    const isESPNError = error.message.includes('ESPN API returned');
+    const isNotFoundError = error.message.includes('400') || error.message.includes('404');
+
     return new Response(
       JSON.stringify({
         success: false,
         error: 'Failed to fetch box score',
         message: error.message,
+        guidance: isNotFoundError
+          ? {
+              reason:
+                'The requested game may not have box score data available. This can happen for games that are too old, too recent, or during the off-season.',
+              suggestions: [
+                'Verify the gameId is a valid ESPN game ID (e.g., 401778104)',
+                'Check /api/college-baseball/schedule to find games with available data',
+                'College baseball season runs February through June',
+              ],
+              season: '2025 season starts February 14, 2026',
+            }
+          : undefined,
+        timestamp: new Date().toISOString(),
       }),
       {
-        status: 500,
+        status: isNotFoundError ? 404 : 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
