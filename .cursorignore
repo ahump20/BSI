@@ -1,0 +1,36 @@
+# ---- Secrets: do not index / do not send as context (best-effort) ----
+.dev.vars
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Common secret-ish filenames
+**/*secret*
+**/*secrets*
+**/*credential*
+**/*token*
+
+# ---- Local state / caches ----
+.wrangler/
+.wrangler/**
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.cache/
+tmp/
+.DS_Store
+
+# ---- Binary / large assets (keep AI fast) ----
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.webp
+**/*.gif
+**/*.mp4
+**/*.mov
+**/*.pdf

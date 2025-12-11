@@ -1,0 +1,33 @@
+---
+description: Sports data adapter conventions
+globs:
+  - lib/adapters/**/*.ts
+  - lib/adapters/**/*.js
+---
+
+# Sports Data Adapters (BSI)
+
+When working on adapter files (`lib/adapters/`):
+
+## Data integrity
+- All external API responses MUST be validated (Zod preferred)
+- Never trust raw JSON — parse and validate before use
+- Log API failures with context (endpoint, status, timing)
+- Include `dataStamp` with America/Chicago timestamps in responses
+
+## Provider failover
+- Adapters should support the provider-manager pattern
+- Implement graceful degradation when a provider fails
+- Cache successful responses to reduce API calls
+
+## Response format
+- Return consistent shapes across all adapters
+- Include `source` attribution for citations
+- Include `fetchedAt` timestamp (ISO 8601, CDT)
+
+## Testing
+- Mock external APIs in tests — never hit live endpoints in CI
+- Test error paths (rate limits, timeouts, malformed responses)
+
+## Priority order for sports
+Baseball → Football → Basketball → Track & Field (no soccer)

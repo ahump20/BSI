@@ -1,0 +1,17 @@
+---
+description: Cloudflare Workers/Pages/D1/KV/R2 conventions (always apply)
+globs:
+alwaysApply: true
+---
+
+# Cloudflare conventions (BSI)
+
+- Workers code must avoid Node-only APIs unless explicitly supported in the Workers runtime.
+- Prefer `fetch` + standard Web APIs.
+- D1: keep schema changes in migrations; don't rely on inspecting local sqlite artifacts.
+- Config:
+  - Prefer Wrangler patterns aligned with Cloudflare docs.
+  - Keep production + local dev env vars clearly separated.
+- Performance:
+  - Use caching intentionally (headers + KV/R2 where appropriate).
+  - Avoid unnecessary dependencies.

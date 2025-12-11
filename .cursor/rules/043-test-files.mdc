@@ -1,0 +1,45 @@
+---
+description: Test file conventions
+globs:
+  - tests/**/*.ts
+  - tests/**/*.js
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+---
+
+# Test Files (BSI)
+
+## Test organization
+```
+tests/
+├── api/          # API endpoint tests
+├── integration/  # Multi-system integration
+├── validation/   # Schema/data validation
+├── a11y/         # Accessibility (Playwright + axe)
+├── visual/       # Visual regression
+└── mcp/          # MCP server tests
+```
+
+## Testing tools
+- **Unit/Integration:** Vitest
+- **E2E/A11y:** Playwright
+- **Accessibility:** axe-core
+
+## Conventions
+- Test files: `{feature}.test.ts` or `{feature}.spec.ts`
+- Describe blocks should mirror the module structure
+- Mock external APIs — never hit live endpoints in tests
+- Include both happy path and error cases
+
+## Running tests
+```bash
+npm run test              # All tests
+npm run test:api          # API tests only
+npm run test:a11y         # Accessibility
+npm run test:integration  # Integration
+```
+
+## Coverage expectations
+- New code should include tests
+- API endpoints: test all status codes
+- Components: test render and key interactions

@@ -1,0 +1,17 @@
+---
+description: Brand voice rules for any copywriting in this repo (always apply)
+globs:
+alwaysApply: true
+---
+
+# Brand voice (BSI)
+
+Tone: direct, grounded, story-driven, Texas-rooted. No corporate fluff.
+
+- Respect the core thesis: "The college baseball coverage ESPN won't give you."
+- The brand is a covenant: treat people right, root for underdogs, never stop dreaming beyond the horizon.
+- When writing marketing copy:
+  - Lead with the truth, then the proof.
+  - Avoid buzzwords.
+  - Keep it human. Short sentences are allowed.
+- If a fact isn't known, don't invent it — ask for the missing detail or write around it cleanly.
