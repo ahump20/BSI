@@ -229,6 +229,14 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     if (path === '/tools/player-comparison' || path === '/tools/player-comparison/') {
       return serveAsset(env, 'origin/tools/player-comparison.html', 'text/html', corsHeaders);
     }
+    // Draft Pick Value Calculator
+    if (path === '/tools/draft-value' || path === '/tools/draft-value/') {
+      return serveAsset(env, 'origin/tools/draft-value.html', 'text/html', corsHeaders);
+    }
+    // Schedule Strength Analyzer
+    if (path === '/tools/schedule-strength' || path === '/tools/schedule-strength/') {
+      return serveAsset(env, 'origin/tools/schedule-strength.html', 'text/html', corsHeaders);
+    }
     // Serve tool assets (JS, CSS)
     if (path.startsWith('/tools/')) {
       return serveToolStaticAsset(env, path, corsHeaders);
@@ -279,6 +287,8 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
         optimizer: !!(await env.ASSETS.get('origin/tools/composition-optimizer/index.html')),
         winProbability: !!(await env.ASSETS.get('origin/tools/win-probability.html')),
         playerComparison: !!(await env.ASSETS.get('origin/tools/player-comparison.html')),
+        draftValue: !!(await env.ASSETS.get('origin/tools/draft-value.html')),
+        scheduleStrength: !!(await env.ASSETS.get('origin/tools/schedule-strength.html')),
         sitemap: !!(await env.ASSETS.get('origin/sitemap.xml')),
       };
 
