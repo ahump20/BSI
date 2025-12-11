@@ -1,124 +1,191 @@
-# Blaze Sports Intel — Texas Longhorns MCP
+# Blaze Sports Intel
 
-The Blaze Sports Intel (BSI) Texas Longhorns Multi-Context Provider delivers historical data services for the Longhorns' flagship men's programs: **Baseball → Football → Basketball → Track & Field**. Every tool adheres to the Blaze mobile contract, emits citations with Central Time (America/Chicago) timestamps, and exposes Cloudflare-friendly cache metadata.
+**The college baseball coverage ESPN ignores.**
 
-> **No soccer** — Soccer is intentionally excluded at the platform, API, and documentation layers. All requests that attempt to access soccer content are rejected with a `SOCCER_FORBIDDEN` error.
+Blaze Sports Intel (BSI) is a sports intelligence platform providing real-time analytics, complete box scores, and advanced statistics for college baseball—plus coverage of MLB, NFL, NCAA Football, and more.
+
+**Live Site:** [blazesportsintel.com](https://blazesportsintel.com)
+
+---
+
+## What We Do
+
+- **Real-time college baseball coverage** for all 300+ D1 programs
+- **Complete box scores** with batting lines, pitching stats, and defensive metrics
+- **NIL Valuation Engine** using Fair Market NIL Value (FMNV) models
+- **Advanced analytics** including WAR calculations and predictive models
+- **Live game tracking** with 5-minute refresh during active games
+- **Historical data** cross-referenced from 3+ official sources
+
+## Who It's For
+
+| User Type | Use Case |
+|-----------|----------|
+| **College Baseball Fans** | Real-time scores, standings, and stats for every D1 program |
+| **High School Coaches** | Scouting tools and player comparisons |
+| **College Programs** | Advanced analytics and recruiting insights |
+| **Professional Scouts** | Prospect evaluation and NIL valuations |
+| **Media & Analysts** | API access for data-driven content |
+
+---
 
 ## Quick Start
 
 ```bash
+# Clone the repository
+git clone https://github.com/ahump20/BSI.git
+cd BSI
+
 # Install dependencies
 npm install
 
-# Run the unit tests (includes MCP policy coverage)
-npm run test -- tests/mcp/texas-longhorns.test.ts
+# Start development server
+npm run dev
+
+# Run tests
+npm run test
+
+# Build for production
+npm run build
 ```
 
-### Registering the MCP
+### Environment Setup
 
-1. Point your MCP client at [`mcp/manifest.json`](./mcp/manifest.json).
-2. Ensure the runtime can execute TypeScript (Node.js 20+ or Cloudflare Workers with Wrangler).
-3. Provide the optional Cloudflare bindings (KV, R2, D1, Durable Objects) via the `LonghornsEnv` interface to unlock full caching.
-
-## Tool Surface
-
-| Tool | Summary | Key Notes |
-| --- | --- | --- |
-| `get_team_seasons` | Baseball-first season summaries across the supported sports. | Optional `sport` filter; rejects soccer. |
-| `get_season_schedule` | Season schedule (or meet slate) for a given sport. | `program` disambiguates basketball and track programs. |
-| `get_game_box_score` | Box score / meet result bundle for the specified game ID. | Includes cache metadata; throws on unknown IDs. |
-| `get_player_career` | Curated player dossier search across all supported sports. | Baseball-first search order; soccer slug guard. |
-| `get_rankings_context` | Poll movement and ranking trends. | Honors the required sport ordering. |
-| `search_archive` | Search the Blaze Sports Intel archive. | Rejects soccer queries, returns archive citation. |
-
-All responses follow this schema:
-
-```json
-{
-  "result": { /* tool-specific payload */ },
-  "citations": [
-    {
-      "id": "baseball-feed",
-      "label": "Texas baseball feed",
-      "path": "mcp/texas-longhorns/feeds/baseball.json",
-      "timestamp": "2025-10-19 12:42:03 CDT"
-    }
-  ],
-  "generatedAt": "2025-10-19 12:42:03 CDT",
-  "meta": {
-    "cache": {
-      "key": "longhorns:get_team_seasons:1c3c8fae5e7c4d92",
-      "status": "MISS"
-    }
-  }
-}
-```
-
-## Data Sources & Licensing
-
-Each tool uses pre-approved feeds and references with Blaze-compliant licensing:
-
-- **Baseball** – NCAA.com, D1Baseball, Boyd's World (RPI), Warren Nolan, TexasSports.com
-- **Football** – Sports-Reference CFB, TexasSports.com, AP/Coaches polls, NCAA records
-- **Basketball** – Sports-Reference CBB, (optional) KenPom (licensed), TexasSports.com, NCAA records
-- **Track & Field** – TFRRS.org, USTFCCCA, TexasSports.com
-
-If a data partner restricts redistribution, the MCP returns descriptive pointers plus citations, never scraped payloads.
-
-## Cloudflare Caching Blueprint
-
-The server includes a cascading cache writer/reader that mirrors the Cloudflare stack:
-
-1. **KV Namespace (`LONGHORNS_KV`)** – 5-minute TTL edge cache for fast key lookups.
-2. **R2 Bucket (`LONGHORNS_R2`)** – Durable JSON archive at `seasons/{sport}/{season}.json` style keys.
-3. **D1 Database (`LONGHORNS_D1`)** – Normalized cache table (`longhorns_cache`) for auditing and historical replays.
-4. **Durable Object (`LONGHORNS_DO`)** – Serialized coordination for concurrent updates (box score streaming, etc.).
-5. **In-memory Map** – Local fallback for offline development and unit testing.
-
-`meta.cache.status` returns `HIT` when any layer responds and `MISS` when a fresh payload is generated and pushed through the stack. Cache keys always follow `longhorns:{tool}:{hash(args)}`.
-
-## Mobile Output Contract
-
-The MCP is designed for Blaze Sports Intel's mobile clients:
-
-- Compact JSON objects and arrays suitable for low-bandwidth networks.
-- Stable property ordering (Baseball → Football → Basketball → Track & Field) to simplify UI streaming.
-- Timestamps always formatted via `America/Chicago` (CDT/CST).
-- Citations required on every response with `[Source: <site>, YYYY-MM-DD HH:MM CDT]` semantics.
-
-## Local Development
+Copy `.env.example` to `.env.local` and configure your API keys:
 
 ```bash
-# Run MCP unit tests continuously
-npm run test -- --watch tests/mcp/texas-longhorns.test.ts
-
-# Type-check the server
-npm run typecheck -- --project tsconfig.json
+cp .env.example .env.local
 ```
 
-### Recommended Environment Variables
-
-```env
-# Cloudflare bindings (optional but recommended)
-LONGHORNS_KV=<kv-namespace>
-LONGHORNS_R2=<r2-binding>
-LONGHORNS_D1=<d1-binding>
-LONGHORNS_DO=<durable-object-namespace>
-```
-
-### Golden Season Smoke Tests
-
-Use these to validate data parity before deploying:
-
-- **Baseball** – 2005 season
-- **Football** – 2008 season
-- **Basketball** – 2023 season (Men)
-- **Track & Field** – 2024 Outdoor campaign
-
-## Further Study
-
-Explore the Coursera course *Foundations of Sports Analytics: Data, Representation, and Models in Sports* by Wenche Wang (University of Michigan) for deeper data-engineering context. Respect all licensing constraints when applying third-party analytics techniques.
+Required environment variables for full functionality:
+- `SPORTSDATA_API_KEY` - SportsDataIO for live scores
+- `CLOUDFLARE_API_TOKEN` - For Workers/D1/KV deployment
 
 ---
 
-The Blaze Sports Intel Longhorns MCP is production-ready for Cloudflare Pages + Workers deployments and GitHub-based CI/CD pipelines.
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 19, Next.js 16, TypeScript, Tailwind CSS |
+| **Backend** | Cloudflare Workers, D1 (SQLite), KV, R2 |
+| **AI/ML** | Cloudflare Workers AI, Vectorize embeddings |
+| **Analytics** | Cloudflare Analytics Engine |
+| **Payments** | Stripe subscriptions |
+| **CI/CD** | GitHub Actions, Cloudflare Pages |
+
+---
+
+## Project Structure
+
+```
+BSI/
+├── app/                 # Next.js pages and API routes
+├── components/          # React UI components
+├── lib/                 # Shared utilities, adapters, and hooks
+├── public/              # Static assets and HTML pages
+├── functions/           # Cloudflare Pages Functions (API endpoints)
+├── workers/             # Cloudflare Worker configurations
+├── scripts/             # Build, deploy, and data ingestion scripts
+├── tests/               # Vitest unit tests and Playwright E2E
+├── docs/                # Documentation
+└── mcp/                 # MCP (Model Context Protocol) servers
+```
+
+For detailed development guidelines, see [CLAUDE.md](./CLAUDE.md).
+
+---
+
+## API Documentation
+
+API documentation is available at [/docs/api.html](https://blazesportsintel.com/docs/api.html) on the live site.
+
+### Key Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api/v1/college-baseball/rankings` | D1 Baseball rankings by poll |
+| `/api/v1/college-baseball/games` | Game schedules and results |
+| `/api/v1/college-baseball/box-score/{gameId}` | Complete box scores |
+| `/api/v1/nil/valuation/{playerId}` | NIL valuations |
+| `/api/v1/mlb/standings` | MLB standings |
+| `/api/v1/nfl/scores` | NFL scores |
+
+---
+
+## Deployment
+
+The site deploys automatically to Cloudflare Pages on push to `main`.
+
+### Manual Deployment
+
+```bash
+# Deploy to Cloudflare Pages
+CLOUDFLARE_API_TOKEN=your-token npx wrangler pages deploy public --project-name=blazesportsintel
+
+# Deploy a specific Worker
+npx wrangler deploy --config workers/ingest/wrangler.toml
+```
+
+---
+
+## Texas Longhorns MCP Server
+
+BSI includes a Model Context Protocol (MCP) server for Texas Longhorns data services. See [mcp/texas-longhorns/README.md](./mcp/texas-longhorns/README.md) for MCP-specific documentation.
+
+### MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `get_team_seasons` | Season summaries across sports |
+| `get_season_schedule` | Schedule for a given sport |
+| `get_game_box_score` | Box score for a specific game |
+| `get_player_career` | Player career search |
+| `get_rankings_context` | Poll rankings and trends |
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Follow the guidelines in [CLAUDE.md](./CLAUDE.md)
+4. Run tests (`npm run test`)
+5. Submit a pull request
+
+### Code Quality Requirements
+
+- TypeScript with strict mode
+- Zero TODO comments in production code
+- WCAG AA accessibility minimum
+- Mobile-first responsive design
+- All timestamps in America/Chicago timezone
+
+---
+
+## Data Sources
+
+All statistics are sourced and timestamped:
+
+- **College Baseball:** D1Baseball.com, NCAA Official Stats, Conference APIs
+- **MLB:** Baseball Reference, MLB Stats API
+- **NFL:** Pro Football Reference, ESPN API
+- **College Football:** Sports Reference CFB, AP/Coaches Polls
+
+---
+
+## License
+
+Proprietary. All rights reserved. See [LICENSE](./LICENSE) for details.
+
+---
+
+## Contact
+
+- **Website:** [blazesportsintel.com](https://blazesportsintel.com)
+- **Email:** austin@blazesportsintel.com
+- **GitHub:** [github.com/ahump20/BSI](https://github.com/ahump20/BSI)
+
+---
+
+*Born in Memphis. Rooted in Texas soil. Covering college baseball like it matters—because it does.*

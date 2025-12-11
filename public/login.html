@@ -286,42 +286,44 @@
         <p class="auth-subtitle">Sign in to access your analytics dashboard</p>
       </div>
       
-      <form class="auth-form" action="/api/auth/login" method="POST">
+      <div id="error-message" style="display: none; background: rgba(220, 38, 38, 0.1); border: 1px solid var(--bsi-error); color: var(--bsi-error); padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-family: var(--font-ui); font-size: 0.875rem;"></div>
+
+      <form class="auth-form" id="login-form">
         <div class="form-group">
           <label class="form-label" for="email">Email Address</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            class="form-input" 
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
             placeholder="you@example.com"
             required
             autocomplete="email"
           >
         </div>
-        
+
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            class="form-input" 
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-input"
             placeholder="Enter your password"
             required
             autocomplete="current-password"
           >
         </div>
-        
+
         <div class="form-row">
           <label class="form-checkbox">
-            <input type="checkbox" name="remember" value="1">
+            <input type="checkbox" name="remember" value="1" id="remember">
             <span>Remember me</span>
           </label>
           <a href="/forgot-password" class="form-link">Forgot password?</a>
         </div>
-        
-        <button type="submit" class="form-submit">Sign In</button>
+
+        <button type="submit" class="form-submit" id="submit-btn">Sign In</button>
       </form>
       
       <div class="auth-divider">
@@ -349,5 +351,64 @@
   <footer class="page-footer">
     <p><a href="/">Home</a> · <a href="/pricing">Pricing</a> · <a href="/coverage">Coverage</a></p>
   </footer>
+
+  <script>
+    // Redirect if already logged in
+    (function() {
+      const token = document.cookie.match(/bsi_token=([^;]+)/)?.[1] || localStorage.getItem('bsi_token');
+      if (token) {
+        window.location.href = '/portal';
+      }
+    })();
+
+    // Handle login form
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errorEl = document.getElementById('error-message');
+
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      errorEl.style.display = 'none';
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          errorEl.textContent = data.error || 'Invalid email or password';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        // Store token
+        if (data.token) {
+          if (remember) {
+            localStorage.setItem('bsi_token', data.token);
+          }
+        }
+
+        // Redirect to portal or intended destination
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect') || '/portal';
+        window.location.href = redirect;
+      } catch (err) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    });
+  </script>
 </body>
 </html>

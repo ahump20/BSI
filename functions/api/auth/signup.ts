@@ -5,10 +5,13 @@
  * Endpoint: POST /api/auth/signup
  */
 
+import { sendEmail, welcomeEmail } from '../_email';
+
 interface Env {
   DB: D1Database;
   KV: KVNamespace;
   JWT_SECRET: string;
+  RESEND_API_KEY: string;
   NOTIFICATION_EMAIL?: string;
 }
 
@@ -234,6 +237,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     } catch (kvError) {
       console.log('KV notification storage skipped:', kvError);
     }
+
+    // Send welcome email (non-blocking)
+    const emailTemplate = welcomeEmail(name || '', email.toLowerCase());
+    sendEmail(
+      {
+        to: email.toLowerCase(),
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+        userId,
+        emailType: 'welcome',
+      },
+      env
+    ).catch((err) => console.log('Welcome email failed:', err));
 
     // Return success with token
     return new Response(
