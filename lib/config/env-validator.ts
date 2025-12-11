@@ -3,16 +3,22 @@
  *
  * Validates all required environment variables on application startup
  * Prevents deployment with missing or invalid configuration
+ *
+ * Works in both Node.js and Cloudflare Workers environments
  */
 
 import { z } from 'zod';
 
-// Environment schema
-const EnvSchema = z.object({
+// Base environment schema (common to both Node.js and Workers)
+const BaseEnvSchema = z.object({
   // Environment
-  NODE_ENV: z.enum(['development', 'staging', 'production']),
+  NODE_ENV: z.enum(['development', 'staging', 'production']).optional(),
+  ENVIRONMENT: z.enum(['development', 'staging', 'production']).optional(),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+});
 
+// Node.js-specific environment schema (full local development)
+const NodeEnvSchema = BaseEnvSchema.extend({
   // Database (REQUIRED in production)
   DATABASE_URL: z.string().url().or(z.string().startsWith('postgresql://')),
   POSTGRES_PASSWORD: z.string().min(16, 'Password must be at least 16 characters'),
@@ -35,7 +41,39 @@ const EnvSchema = z.object({
   DD_API_KEY: z.string().optional(),
 });
 
+// Cloudflare Workers environment schema (secrets set via wrangler)
+const WorkersEnvSchema = BaseEnvSchema.extend({
+  // Sports Data APIs
+  SPORTSDATAIO_API_KEY: z.string().min(1, 'SportsDataIO API key is required').optional(),
+  CFBDATA_API_KEY: z.string().min(1, 'CFBD API key is required').optional(),
+  COLLEGEFOOTBALLDATA_API_KEY: z.string().optional(), // Alias for CFBDATA_API_KEY
+  THEODDS_API_KEY: z.string().optional(),
+
+  // AI Services
+  GOOGLE_GEMINI_API_KEY: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
+  ANTHROPIC_API_KEY: z.string().optional(),
+
+  // Authentication
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  JWT_SECRET: z.string().min(32, 'JWT secret must be at least 32 characters').optional(),
+
+  // Payments
+  STRIPE_SECRET_KEY: z.string().startsWith('sk_').optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_').optional(),
+  STRIPE_PRO_PRICE_ID: z.string().startsWith('price_').optional(),
+  STRIPE_ENTERPRISE_PRICE_ID: z.string().startsWith('price_').optional(),
+});
+
+// Combined schema for full validation
+const EnvSchema = NodeEnvSchema;
+
 type Env = z.infer<typeof EnvSchema>;
+type WorkersEnv = z.infer<typeof WorkersEnvSchema>;
+
+// Export schemas for external use
+export { WorkersEnvSchema, NodeEnvSchema, BaseEnvSchema };
 
 /**
  * Validate environment variables
@@ -161,4 +199,78 @@ export function validateEnvironmentOnStartup(): void {
       process.exit(1);
     }
   }
+}
+
+/**
+ * Validate Cloudflare Workers environment bindings
+ * Use this in Workers request handlers to validate env
+ *
+ * @param env - Cloudflare env bindings
+ * @returns Validation result with missing/invalid fields
+ */
+export function validateWorkersEnv(env: Record<string, unknown>): {
+  valid: boolean;
+  errors?: string[];
+  warnings?: string[];
+} {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Check required sports data APIs
+  const hasCfbdKey = env.CFBDATA_API_KEY || env.COLLEGEFOOTBALLDATA_API_KEY;
+  if (!hasCfbdKey) {
+    warnings.push('CFBDATA_API_KEY: College Football Data API key not configured');
+  }
+
+  const hasSportsDataKey = env.SPORTSDATAIO_API_KEY || env.SPORTSDATAIO_KEY;
+  if (!hasSportsDataKey) {
+    warnings.push('SPORTSDATAIO_API_KEY: SportsDataIO API key not configured');
+  }
+
+  // Check authentication secrets
+  if (!env.JWT_SECRET) {
+    errors.push('JWT_SECRET: Required for authentication');
+  } else if (typeof env.JWT_SECRET === 'string' && env.JWT_SECRET.length < 32) {
+    errors.push('JWT_SECRET: Must be at least 32 characters');
+  }
+
+  // Check payment integration
+  if (!env.STRIPE_SECRET_KEY) {
+    warnings.push('STRIPE_SECRET_KEY: Required for payment processing');
+  }
+  if (!env.STRIPE_WEBHOOK_SECRET) {
+    warnings.push('STRIPE_WEBHOOK_SECRET: Required for webhook verification');
+  }
+
+  // Check OAuth
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    warnings.push('GOOGLE_CLIENT_ID/SECRET: Required for Google OAuth');
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+    warnings: warnings.length > 0 ? warnings : undefined,
+  };
+}
+
+/**
+ * Get environment variable with fallback support
+ * Handles alias names used in different parts of the codebase
+ *
+ * @param env - Environment object
+ * @param key - Primary key name
+ * @param aliases - Alternative key names
+ * @returns Value or undefined
+ */
+export function getEnvVar(
+  env: Record<string, unknown>,
+  key: string,
+  ...aliases: string[]
+): string | undefined {
+  if (env[key]) return env[key] as string;
+  for (const alias of aliases) {
+    if (env[alias]) return env[alias] as string;
+  }
+  return undefined;
 }
