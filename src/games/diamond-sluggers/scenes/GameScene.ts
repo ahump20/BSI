@@ -905,6 +905,12 @@ export class GameScene extends Phaser.Scene {
 
   private togglePause(): void {
     this.isPaused = !this.isPaused;
-    // TODO: Show pause menu
+    if (this.isPaused) {
+      this.scene.pause();
+      this.scene.launch('PauseScene');
+    } else {
+      this.scene.resume();
+      this.scene.stop('PauseScene');
+    }
   }
 }

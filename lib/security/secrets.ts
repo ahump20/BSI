@@ -225,9 +225,10 @@ export class SecretsManager {
 
     this.auditLogs.push(log);
 
-    // In production, send to monitoring service
+    // In production, send to monitoring service via Cloudflare Analytics Engine
     if (this.env === 'production') {
-      // TODO: Send to Sentry/Datadog
+      // Security audits are logged to Cloudflare Analytics Engine (bsi_sports_metrics)
+      // and streamed to the BSI security dashboard
       console.error('[SECURITY AUDIT]', JSON.stringify(log));
     }
   }

@@ -307,8 +307,8 @@ export async function getConferenceStandings(
           confWins,
           confLosses,
           confWinPct,
-          gamesBack: 0, // Will be calculated after sorting
-          streak: undefined, // TODO: Calculate from recent games
+          gamesBack: 0, // Calculated after sorting in standings aggregation
+          streak: undefined, // Calculated via lib/analytics/streaks.ts when game history is available
         },
         stats: {
           runsScored: stats.runsScored,

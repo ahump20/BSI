@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Detail | Blaze Sports Intel - ESPN KILLER</title>
-    <meta name="description" content="Complete college baseball game coverage with auto-generated recaps, full box scores, and play-by-play - the features ESPN refuses to provide.">
+    <title>Game Detail | Blaze Sports Intel</title>
+    <meta name="description" content="Complete college baseball game coverage with auto-generated recaps, full box scores, and play-by-play—the complete coverage college baseball deserves.">
 
     <!-- Design Tokens -->
     <link rel="stylesheet" href="/css/bsi-tokens.css" />
@@ -127,9 +127,9 @@
             color: var(--white);
         }
 
-        /* ESPN Killer Badge */
-        .espn-killer-badge {
-            background: linear-gradient(135deg, #dc3545 0%, #ff6b00 100%);
+        /* Complete Coverage Badge */
+        .complete-coverage-badge {
+            background: linear-gradient(135deg, var(--burnt-orange) 0%, #ff8c00 100%);
             color: white;
             padding: 1rem 2rem;
             border-radius: 2rem;
@@ -138,17 +138,7 @@
             text-transform: uppercase;
             display: inline-block;
             margin-bottom: var(--spacing-lg);
-            animation: glow 2s ease-in-out infinite;
-            box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
-        }
-
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(255, 107, 0, 0.8);
-            }
+            box-shadow: 0 4px 16px rgba(191, 87, 0, 0.3);
         }
 
         /* Loading */
@@ -739,9 +729,9 @@
 
         <!-- Game Content -->
         <div id="game-content" style="display: none;">
-            <!-- ESPN Killer Badge -->
-            <div class="espn-killer-badge">
-                🔥 ESPN KILLER FEATURE - Full Recap + Box Score (ESPN Shows Only Score!)
+            <!-- Complete Coverage Badge -->
+            <div class="complete-coverage-badge">
+                Complete Coverage — Full Recap + Box Score + Play-by-Play
             </div>
 
             <!-- Game Header -->

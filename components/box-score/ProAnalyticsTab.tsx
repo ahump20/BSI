@@ -170,7 +170,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
     <div className="upgrade-prompt">
       <div className="upgrade-icon">💎</div>
       <h3>Diamond Pro Analytics</h3>
-      <p>Unlock advanced metrics ESPN doesn't show for college baseball:</p>
+      <p>Unlock professional-grade analytics built specifically for college baseball:</p>
       <ul>
         <li>✅ Expected Batting Average (xBA) with BBCOR adjustments</li>
         <li>✅ Expected Slugging (xSLG) and Expected wOBA (xWOBA)</li>
@@ -183,8 +183,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
       </button>
       <div className="upgrade-note">
         <small>
-          These metrics are not available on ESPN for college baseball. BlazeSportsIntel provides
-          professional-grade analytics for the college game.
+          BlazeSportsIntel brings MLB-caliber analytics to college baseball—the coverage the sport deserves.
         </small>
       </div>
     </div>

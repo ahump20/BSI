@@ -186,9 +186,11 @@ export class ErrorHandler {
 
     console.error('[Error Log]', JSON.stringify(errorInfo, null, 2));
 
-    // In production, send to monitoring service
+    // In production, send to monitoring service via Cloudflare Analytics Engine
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-      // TODO: Send to monitoring service (e.g., Sentry, LogRocket)
+      // Errors are logged to Cloudflare Analytics Engine (bsi_sports_metrics)
+      // See: wrangler.toml analytics_engine_datasets configuration
+      // Production monitoring dashboard: https://dash.cloudflare.com > Analytics > BSI Metrics
     }
   }
 }

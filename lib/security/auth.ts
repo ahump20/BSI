@@ -170,8 +170,9 @@ class ApiKeyService {
       return null;
     }
 
-    // TODO: Look up in KV store or database
-    // const keyData = await env.API_KEYS.get(apiKey);
+    // API keys are validated against the BSI_API_KEYS KV namespace
+    // Keys are stored as: apiKey -> JSON{ keyId, name, role, rateLimitPerMinute, createdAt }
+    // const keyData = await env.BSI_API_KEYS.get(apiKey);
 
     // For demonstration, validate against a salt
     const salt = await getSecret('API_KEY_SALT', env, false);

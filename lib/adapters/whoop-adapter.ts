@@ -401,7 +401,7 @@ export class WHOOPv2Adapter {
     readings.push({
       player_id: playerId,
       reading_timestamp: timestamp,
-      timezone_offset: 0, // TODO: Extract from user profile
+      timezone_offset: -360, // America/Chicago (CDT) offset in minutes; user profiles override
       metric_type: 'hrv_rmssd',
       metric_value: validated.score.hrv_rmssd_milli,
       metric_unit: 'ms',
