@@ -239,6 +239,41 @@ interface BallAnimation {
   rotation: number;
 }
 
+// Game stats for post-game screen
+interface HotDogStats {
+  finalScore: number;
+  highScore: number;
+  isNewHighScore: boolean;
+  totalCatches: number;
+  goldenCatches: number;
+  powerupsCollected: number;
+  maxCombo: number;
+  missedHotdogs: number;
+}
+
+interface SluggerStats {
+  finalScore: number;
+  highScore: number;
+  isNewHighScore: boolean;
+  totalSwings: number;
+  hits: number;
+  homeRuns: number;
+  maxCombo: number;
+  strikeouts: number;
+}
+
+interface FootballStats {
+  finalScore: number;
+  opponentScore: number;
+  highScore: number;
+  isNewHighScore: boolean;
+  touchdowns: number;
+  fieldGoals: number;
+  turnoversForced: number;
+  turnoversLost: number;
+  bigPlays: number;
+}
+
 const PHYSICS = {
   gravity: 0.35,
   terminalVelocity: 12,
@@ -704,6 +739,208 @@ const ActionButton: React.FC<ActionButtonProps> = ({ children, onClick, color = 
 );
 
 // ============================================================================
+// GAME TRANSITIONS: COUNTDOWN, STATS SCREEN, PAUSE MENU
+// ============================================================================
+
+interface CountdownProps {
+  onComplete: () => void;
+  sounds: GameSounds;
+}
+
+const Countdown: React.FC<CountdownProps> = ({ onComplete, sounds }) => {
+  const [count, setCount] = useState(3);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    if (count > 0) {
+      // Play beep sound for countdown
+      sounds.menuSelect();
+      // Animate scale
+      setScale(1.5);
+      setTimeout(() => setScale(1), 200);
+      // Countdown
+      const timer = setTimeout(() => setCount(c => c - 1), 800);
+      return () => clearTimeout(timer);
+    } else if (count === 0) {
+      // GO!
+      sounds.gameStart();
+      setScale(2);
+      setTimeout(() => {
+        onComplete();
+      }, 500);
+    }
+  }, [count, sounds, onComplete]);
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      zIndex: 200,
+    }}>
+      <div style={{
+        fontSize: count === 0 ? '80px' : '120px',
+        fontWeight: 'bold',
+        color: count === 0 ? COLORS.mustard : 'white',
+        textShadow: `0 0 40px ${count === 0 ? COLORS.mustard : COLORS.burntOrange}`,
+        transform: `scale(${scale})`,
+        transition: 'transform 0.2s ease-out',
+      }}>
+        {count === 0 ? 'GO!' : count}
+      </div>
+      <div style={{
+        fontSize: '18px',
+        color: '#888',
+        marginTop: '20px',
+        opacity: count > 0 ? 1 : 0,
+      }}>
+        Get Ready...
+      </div>
+    </div>
+  );
+};
+
+interface StatsScreenProps {
+  gameType: 'hotdog' | 'slugger' | 'football';
+  stats: HotDogStats | SluggerStats | FootballStats;
+  onPlayAgain: () => void;
+  onBack: () => void;
+  sounds: GameSounds;
+}
+
+const StatsScreen: React.FC<StatsScreenProps> = ({ gameType, stats, onPlayAgain, onBack, sounds }) => {
+  const [animatedScore, setAnimatedScore] = useState(0);
+
+  useEffect(() => {
+    // Animate score counting up
+    const duration = 1500;
+    const startTime = Date.now();
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      setAnimatedScore(Math.floor(stats.finalScore * progress));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [stats.finalScore]);
+
+  const renderHotDogStats = (s: HotDogStats) => (
+    <>
+      <StatRow label="Hot Dogs Caught" value={s.totalCatches} />
+      <StatRow label="Golden Dogs" value={s.goldenCatches} highlight />
+      <StatRow label="Power-ups" value={s.powerupsCollected} />
+      <StatRow label="Max Combo" value={`${s.maxCombo}×`} highlight={s.maxCombo >= 10} />
+      <StatRow label="Missed" value={s.missedHotdogs} bad={s.missedHotdogs > 5} />
+    </>
+  );
+
+  const renderSluggerStats = (s: SluggerStats) => (
+    <>
+      <StatRow label="Total Swings" value={s.totalSwings} />
+      <StatRow label="Hits" value={s.hits} />
+      <StatRow label="Home Runs" value={s.homeRuns} highlight />
+      <StatRow label="Max Combo" value={`${s.maxCombo}×`} highlight={s.maxCombo >= 3} />
+      <StatRow label="Strikeouts" value={s.strikeouts} bad={s.strikeouts > 5} />
+    </>
+  );
+
+  const renderFootballStats = (s: FootballStats) => (
+    <>
+      <StatRow label="Final Score" value={`${s.finalScore} - ${s.opponentScore}`} highlight={s.finalScore > s.opponentScore} />
+      <StatRow label="Touchdowns" value={s.touchdowns} highlight />
+      <StatRow label="Field Goals" value={s.fieldGoals} />
+      <StatRow label="Big Plays" value={s.bigPlays} highlight={s.bigPlays >= 3} />
+      <StatRow label="Turnovers Forced" value={s.turnoversForced} highlight={s.turnoversForced > 0} />
+      <StatRow label="Turnovers Lost" value={s.turnoversLost} bad={s.turnoversLost > 0} />
+    </>
+  );
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.95)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      zIndex: 200, padding: '20px',
+    }}>
+      {stats.isNewHighScore && (
+        <div style={{
+          fontSize: '24px', color: COLORS.mustard, fontWeight: 'bold',
+          textShadow: `0 0 20px ${COLORS.mustard}`, marginBottom: '10px',
+          animation: 'pulse 1s infinite',
+        }}>
+          🏆 NEW HIGH SCORE! 🏆
+        </div>
+      )}
+      <div style={{ fontSize: '18px', color: '#888', marginBottom: '5px' }}>FINAL SCORE</div>
+      <div style={{
+        fontSize: '64px', fontWeight: 'bold', color: 'white',
+        textShadow: `0 0 30px ${COLORS.burntOrange}`,
+      }}>
+        {animatedScore.toLocaleString()}
+      </div>
+      <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
+        Personal Best: {stats.highScore.toLocaleString()}
+      </div>
+      <div style={{
+        background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '15px 25px',
+        marginBottom: '25px', minWidth: '280px',
+      }}>
+        {gameType === 'hotdog' && renderHotDogStats(stats as HotDogStats)}
+        {gameType === 'slugger' && renderSluggerStats(stats as SluggerStats)}
+        {gameType === 'football' && renderFootballStats(stats as FootballStats)}
+      </div>
+      <div style={{ display: 'flex', gap: '15px' }}>
+        <ActionButton onClick={() => { sounds.menuSelect(); onPlayAgain(); }}>Play Again</ActionButton>
+        <ActionButton onClick={() => { sounds.menuBack(); onBack(); }} color="#666">Menu</ActionButton>
+      </div>
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const StatRow: React.FC<{ label: string; value: string | number; highlight?: boolean; bad?: boolean }> = ({ label, value, highlight, bad }) => (
+  <div style={{
+    display: 'flex', justifyContent: 'space-between', padding: '8px 0',
+    borderBottom: '1px solid rgba(255,255,255,0.1)',
+  }}>
+    <span style={{ color: '#aaa' }}>{label}</span>
+    <span style={{
+      fontWeight: 'bold',
+      color: bad ? COLORS.ketchup : highlight ? COLORS.mustard : 'white',
+    }}>{value}</span>
+  </div>
+);
+
+interface PauseMenuProps {
+  onResume: () => void;
+  onRestart: () => void;
+  onQuit: () => void;
+  sounds: GameSounds;
+}
+
+const PauseMenu: React.FC<PauseMenuProps> = ({ onResume, onRestart, onQuit, sounds }) => (
+  <div style={{
+    position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.9)',
+    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+    zIndex: 300,
+  }}>
+    <div style={{ fontSize: '48px', marginBottom: '10px' }}>⏸️</div>
+    <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', marginBottom: '30px' }}>PAUSED</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <ActionButton onClick={() => { sounds.resume(); onResume(); }}>Resume</ActionButton>
+      <ActionButton onClick={() => { sounds.menuSelect(); onRestart(); }} color="#666">Restart</ActionButton>
+      <ActionButton onClick={() => { sounds.menuBack(); onQuit(); }} color="#444">Quit</ActionButton>
+    </div>
+    <div style={{ marginTop: '30px', color: '#666', fontSize: '14px' }}>
+      Press ESC to resume
+    </div>
+  </div>
+);
+
+// ============================================================================
 // GAME 1: HOT DOG DASH
 // ============================================================================
 
@@ -765,7 +1002,7 @@ const BlazeSprite: React.FC<{ chonkFactor: number; isMoving: boolean }> = ({ cho
 };
 
 const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore, sounds }) => {
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gamePhase, setGamePhase] = useState<'idle' | 'countdown' | 'playing' | 'paused' | 'stats'>('idle');
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
   const [hotDogs, setHotDogs] = useState<(HotDogItem & { velocityY: number })[]>([]);
@@ -775,6 +1012,9 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
   const targetXRef = useRef(50);
   const velocityXRef = useRef(0);
   const [blazeX, setBlazeX] = useState(50);
+  // Stats tracking refs
+  const statsRef = useRef({ totalCatches: 0, goldenCatches: 0, powerupsCollected: 0, maxCombo: 0, missedHotdogs: 0 });
+  const [gameStats, setGameStats] = useState<HotDogStats | null>(null);
   const [isMoving, setIsMoving] = useState(false);
   const gameRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | undefined>(undefined);
