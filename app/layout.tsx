@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Providers } from './providers';
+import { KonamiCodeWrapper } from '@/components/easter-eggs';
 
 export const viewport: Viewport = {
   themeColor: '#bf5700',
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main-content" className="skip-link">
             Skip to main content
           </a>
+          <KonamiCodeWrapper />
           {children}
         </Providers>
       </body>
