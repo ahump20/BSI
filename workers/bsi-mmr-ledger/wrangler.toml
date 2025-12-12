@@ -1,0 +1,58 @@
+# BSI MMR Ledger - Wrangler Configuration
+# Append-only Merkle Mountain Range for tamper-evident audit logs
+
+name = "bsi-mmr-ledger"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Account configuration (set via environment or wrangler login)
+# account_id = "your_account_id"
+
+[observability]
+enabled = true
+
+[vars]
+# Non-secret configuration
+# ADMIN_TOKEN should be set via `wrangler secret put ADMIN_TOKEN`
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-mmr-db"
+database_id = "4405c459-830a-4b20-8b0c-1b8cb5a83587"
+migrations_dir = "migrations"
+
+# Optional: KV for rate limiting
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "YOUR_KV_NAMESPACE_ID"
+
+# Development overrides
+[env.dev]
+name = "bsi-mmr-ledger-dev"
+
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "bsi-mmr-db-dev"
+database_id = "YOUR_DEV_D1_DATABASE_ID"
+
+# Staging environment
+[env.staging]
+name = "bsi-mmr-ledger-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "bsi-mmr-db-staging"
+database_id = "YOUR_STAGING_D1_DATABASE_ID"
+
+# Production environment
+[env.production]
+name = "bsi-mmr-ledger"
+routes = [
+  { pattern = "mmr.blazesportsintel.com", custom_domain = true }
+]
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "bsi-mmr-db"
+database_id = "4405c459-830a-4b20-8b0c-1b8cb5a83587"

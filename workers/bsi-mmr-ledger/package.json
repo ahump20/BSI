@@ -1,0 +1,47 @@
+{
+  "name": "bsi-mmr-ledger",
+  "version": "1.0.0",
+  "description": "Append-only Merkle Mountain Range for tamper-evident audit logs",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "db:create": "wrangler d1 create bsi-mmr-db",
+    "db:migrate": "wrangler d1 migrations apply bsi-mmr-db",
+    "db:migrate:dev": "wrangler d1 migrations apply bsi-mmr-db --local",
+    "db:migrate:staging": "wrangler d1 migrations apply bsi-mmr-db-staging --env staging",
+    "db:migrate:production": "wrangler d1 migrations apply bsi-mmr-db --env production",
+    "db:console": "wrangler d1 execute bsi-mmr-db --local --command \"SELECT 1\"",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.0.0",
+    "wrangler": "^3.100.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "merkle",
+    "mmr",
+    "audit-log",
+    "cloudflare-workers",
+    "d1",
+    "tamper-evident"
+  ],
+  "author": "Blaze Sports Intel",
+  "license": "UNLICENSED",
+  "private": true
+}
