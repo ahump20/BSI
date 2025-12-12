@@ -26,10 +26,43 @@ const COLORS = {
 // TYPESCRIPT INTERFACES
 // ============================================================================
 
+// Sound function types from useGameAudio hook
+interface GameSounds {
+  // Hot Dog Dash
+  catch: () => void;
+  goldenCatch: () => void;
+  powerup: () => void;
+  comboMilestone: () => void;
+  hotdogMiss: () => void;
+  // Sandlot Slugger
+  pitchWhoosh: () => void;
+  batCrack: () => void;
+  batWhiff: () => void;
+  homeRun: () => void;
+  strikeout: () => void;
+  baseHit: () => void;
+  // Gridiron Blitz
+  snap: () => void;
+  touchdown: () => void;
+  fieldGoal: () => void;
+  fieldGoalMiss: () => void;
+  turnover: () => void;
+  clockWarning: () => void;
+  bigPlay: () => void;
+  // Shared
+  gameStart: () => void;
+  gameOver: () => void;
+  menuSelect: () => void;
+  menuBack: () => void;
+  pause: () => void;
+  resume: () => void;
+}
+
 interface GameProps {
   onBack: () => void;
   highScore: number;
   onUpdateHighScore: (score: number) => void;
+  sounds: GameSounds;
 }
 
 interface Game {
@@ -336,6 +369,193 @@ const springInterp = (current: number, target: number, velocity: number): { valu
 };
 
 // ============================================================================
+// AUDIO SYSTEM - Web Audio API for Miniclip-style game feel
+// ============================================================================
+
+interface AudioContextType extends AudioContext {
+  webkitAudioContext?: typeof AudioContext;
+}
+
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
+
+const useGameAudio = () => {
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const isMutedRef = useRef(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  const getContext = useCallback(() => {
+    if (!audioContextRef.current) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) {
+        audioContextRef.current = new AudioContextClass();
+      }
+    }
+    // Resume if suspended (browser autoplay policy)
+    if (audioContextRef.current?.state === 'suspended') {
+      audioContextRef.current.resume();
+    }
+    return audioContextRef.current;
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    isMutedRef.current = !isMutedRef.current;
+    setIsMuted(isMutedRef.current);
+  }, []);
+
+  // Basic tone generator
+  const playTone = useCallback((
+    freq: number,
+    duration: number,
+    type: OscillatorType = 'sine',
+    volume = 0.3
+  ) => {
+    if (isMutedRef.current) return;
+    const ctx = getContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  }, [getContext]);
+
+  // Frequency sweep (for powerups, celebrations)
+  const playSweep = useCallback((
+    startFreq: number,
+    endFreq: number,
+    duration: number,
+    type: OscillatorType = 'sine',
+    volume = 0.3
+  ) => {
+    if (isMutedRef.current) return;
+    const ctx = getContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(startFreq, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, ctx.currentTime + duration);
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  }, [getContext]);
+
+  // Chord (multiple tones for celebrations)
+  const playChord = useCallback((
+    frequencies: number[],
+    duration: number,
+    type: OscillatorType = 'sine',
+    volume = 0.2
+  ) => {
+    if (isMutedRef.current) return;
+    frequencies.forEach(freq => playTone(freq, duration, type, volume / frequencies.length));
+  }, [playTone]);
+
+  // White noise burst (for hits, whooshes)
+  const playNoise = useCallback((duration: number, volume = 0.2) => {
+    if (isMutedRef.current) return;
+    const ctx = getContext();
+    if (!ctx) return;
+
+    const bufferSize = ctx.sampleRate * duration;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize); // Fade out
+    }
+
+    const source = ctx.createBufferSource();
+    const gain = ctx.createGain();
+    source.buffer = buffer;
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    source.start();
+  }, [getContext]);
+
+  // Beep sequence (for countdowns)
+  const playBeepSequence = useCallback((
+    count: number,
+    interval: number,
+    freq: number,
+    finalFreq?: number
+  ) => {
+    if (isMutedRef.current) return;
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const isLast = i === count - 1;
+        playTone(isLast && finalFreq ? finalFreq : freq, 0.1, 'square', 0.25);
+      }, i * interval);
+    }
+  }, [playTone]);
+
+  // ===== GAME-SPECIFIC SOUND EFFECTS =====
+
+  // Hot Dog Dash sounds
+  const sounds = {
+    // Hot Dog Dash
+    catch: () => playTone(800, 0.1, 'sine', 0.25),
+    goldenCatch: () => playChord([1200, 1600], 0.15, 'sine', 0.3),
+    powerup: () => playSweep(400, 800, 0.2, 'sine', 0.25),
+    comboMilestone: () => playChord([523, 659, 784], 0.25, 'sine', 0.3), // C-E-G
+    hotdogMiss: () => playTone(200, 0.15, 'sine', 0.15),
+
+    // Sandlot Slugger
+    pitchWhoosh: () => playNoise(0.15, 0.15),
+    batCrack: () => {
+      playTone(1000, 0.08, 'square', 0.35);
+      playNoise(0.05, 0.2);
+    },
+    batWhiff: () => playNoise(0.2, 0.1),
+    homeRun: () => {
+      playChord([523, 659, 784, 1047], 0.4, 'sine', 0.3);
+      setTimeout(() => playSweep(400, 1200, 0.3, 'sine', 0.25), 200);
+    },
+    strikeout: () => playSweep(400, 150, 0.4, 'sine', 0.2),
+    baseHit: () => playTone(600, 0.15, 'sine', 0.25),
+
+    // Gridiron Blitz
+    snap: () => playTone(1200, 0.05, 'square', 0.2),
+    touchdown: () => {
+      playChord([392, 494, 587, 784], 0.5, 'sine', 0.35); // G-B-D-G
+      setTimeout(() => playSweep(500, 1500, 0.4, 'sawtooth', 0.2), 300);
+    },
+    fieldGoal: () => {
+      playTone(800, 0.1, 'sine', 0.25);
+      setTimeout(() => playChord([600, 800, 1000], 0.3, 'sine', 0.25), 150);
+    },
+    fieldGoalMiss: () => playSweep(600, 200, 0.3, 'sine', 0.2),
+    turnover: () => playSweep(800, 300, 0.3, 'sawtooth', 0.25),
+    clockWarning: () => playTone(880, 0.1, 'square', 0.2),
+    bigPlay: () => playChord([600, 900], 0.2, 'sine', 0.25),
+
+    // Shared
+    gameStart: () => playBeepSequence(4, 800, 440, 880),
+    gameOver: () => playSweep(400, 150, 0.5, 'sine', 0.25),
+    menuSelect: () => playTone(600, 0.08, 'sine', 0.2),
+    menuBack: () => playTone(400, 0.08, 'sine', 0.15),
+    pause: () => playTone(300, 0.15, 'sine', 0.2),
+    resume: () => playTone(500, 0.1, 'sine', 0.2),
+  };
+
+  return { sounds, toggleMute, isMuted, getContext };
+};
+
+// ============================================================================
 // PARTICLE & TEXT RENDERERS
 // ============================================================================
 
@@ -544,7 +764,7 @@ const BlazeSprite: React.FC<{ chonkFactor: number; isMoving: boolean }> = ({ cho
   );
 };
 
-const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore }) => {
+const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore, sounds }) => {
   const [gameStarted, setGameStarted] = useState(false);
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
@@ -637,6 +857,7 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
               // Power-up particles
               setParticles(p => [...p, ...createParticleBurst(dog.x, 85, 'powerup', 5)]);
               setFloatingTexts(t => [...t, createFloatingText(dog.x, 80, HOTDOG_POWERUPS[type].emoji, HOTDOG_POWERUPS[type].color)]);
+              sounds.powerup();
             } else {
               let points = dog.isGolden ? 5 : 1;
               points += Math.floor(combo / 5);
@@ -650,6 +871,7 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
                   setScreenShake({ intensity: 3 + Math.min(newCombo / 5, 4), duration: 200, startTime: Date.now() });
                   setParticles(p => [...p, ...createParticleBurst(dog.x, 85, 'combo', 6, 1.2)]);
                   setFloatingTexts(t => [...t, createFloatingText(dog.x, 75, `${newCombo}× COMBO!`, COLORS.mustard)]);
+                  sounds.comboMilestone();
                 }
                 return newCombo;
               });
@@ -658,6 +880,8 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
               const particleCount = dog.isGolden ? 8 : 3;
               setParticles(p => [...p, ...createParticleBurst(dog.x, 85, particleType, particleCount)]);
               setFloatingTexts(t => [...t, createFloatingText(dog.x, 82, `+${points}`, dog.isGolden ? COLORS.mustard : COLORS.ember)]);
+              // Play catch sound
+              dog.isGolden ? sounds.goldenCatch() : sounds.catch();
             }
             return false;
           }
@@ -666,6 +890,7 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
             if (!dog.isPowerUp) {
               setCombo(0);
               lastComboMilestoneRef.current = 0;
+              sounds.hotdogMiss();
             }
             return false;
           }
@@ -712,14 +937,15 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
     if (!gameStarted || timeLeft <= 0) return;
     const timer = setInterval(() => {
       setTimeLeft(prev => {
-        if (prev <= 1) { setGameStarted(false); if (score > highScore) onUpdateHighScore(score); return 0; }
+        if (prev <= 1) { setGameStarted(false); if (score > highScore) onUpdateHighScore(score); sounds.gameOver(); return 0; }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [gameStarted, timeLeft, score, highScore, onUpdateHighScore]);
+  }, [gameStarted, timeLeft, score, highScore, onUpdateHighScore, sounds]);
 
   const startGame = () => {
+    sounds.gameStart();
     setGameStarted(true); setScore(0); setCombo(0); setTimeLeft(45); setHotDogs([]); setActivePowerUps({});
     blazeXRef.current = 50; targetXRef.current = 50; velocityXRef.current = 0; setBlazeX(50);
     setParticles([]); setFloatingTexts([]); setScreenShake(null); lastComboMilestoneRef.current = 0;
@@ -810,7 +1036,7 @@ const BATTERS: Batter[] = [
   { name: 'Big Bertha', power: 100, contact: 60, emoji: '🎯' },
 ];
 
-const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore }) => {
+const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore, sounds }) => {
   const [gameState, setGameState] = useState<'select' | 'playing' | 'gameover'>('select');
   const [selectedBatter, setSelectedBatter] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -849,7 +1075,8 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
     setBallRotation(0);
     setSwingPhase('ready');
     setTimingIndicator(0);
-  }, []);
+    sounds.pitchWhoosh();
+  }, [sounds]);
 
   useEffect(() => {
     if (gameState !== 'playing' || !pitch) return;
@@ -915,10 +1142,11 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
 
       if (Math.abs(timing) > 0.5 || contactRoll > batter.contact) {
         setHitResult({ type: 'STRIKE!', points: 0, color: '#FF4444' });
-        setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); }, 1500); return newOuts; });
+        setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); sounds.gameOver(); }, 1500); return newOuts; });
         setCombo(0);
         // Swing miss particles
         setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 2, 0.5)]);
+        sounds.batWhiff();
       } else {
         const powerFactor = (batter.power / 100) * (1 - Math.abs(timing));
         const distance = 150 + powerFactor * 350 + powerRoll * 2;
@@ -934,15 +1162,17 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
           // Home run explosion! 15 particles
           setParticles(p => [...p, ...createParticleBurst(50, 75, 'homerun', 15, 1.5)]);
           setFloatingTexts(t => [...t, createFloatingText(50, 65, '💥 GONE!', COLORS.mustard)]);
+          sounds.homeRun();
         } else if (distance > 350) {
           setHitResult({ type: 'DEEP FLY OUT', points: 10, color: '#88FF88', distance: Math.floor(distance) });
           setScore(s => s + 10);
-          setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); }, 1500); return newOuts; });
+          setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); sounds.gameOver(); }, 1500); return newOuts; });
           setCombo(0);
           setBallFlight({ startX: 50, startY: 75, endX: 50 + timing * 30, endY: 20, duration: 1500 });
           setBallFlightProgress(0);
           // Deep fly particles
           setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 6, 1.0)]);
+          sounds.batCrack();
         } else if (distance > 200) {
           const points = 25 + combo * 5;
           setHitResult({ type: 'BASE HIT!', points, color: '#44FF44' });
@@ -952,13 +1182,15 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
           // Base hit particles
           setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 4, 0.8)]);
           setFloatingTexts(t => [...t, createFloatingText(50, 70, `+${points}`, '#44FF44')]);
+          sounds.baseHit();
         } else {
           setHitResult({ type: 'GROUNDER', points: 5, color: '#AAAAAA' });
           setScore(s => s + 5);
-          setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); }, 1500); return newOuts; });
+          setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); sounds.gameOver(); }, 1500); return newOuts; });
           setCombo(0);
           // Weak contact particles
           setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 3, 0.5)]);
+          sounds.batCrack();
         }
       }
       setTimeout(() => {
@@ -967,7 +1199,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
         setSwingPhase('ready');
       }, 2000);
     }, 150);
-  }, [gameState, pitch, swingTiming, pitchY, selectedBatter, isSwinging, combo, outs, score, highScore, onUpdateHighScore, throwPitch]);
+  }, [gameState, pitch, swingTiming, pitchY, selectedBatter, isSwinging, combo, outs, score, highScore, onUpdateHighScore, throwPitch, sounds]);
 
   useEffect(() => {
     if (gameState !== 'playing') return;
@@ -977,6 +1209,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
   }, [gameState, handleSwing]);
 
   const startGame = (batterIndex: number) => {
+    sounds.gameStart();
     setSelectedBatter(batterIndex); setScore(0); setOuts(0); setCombo(0); setTotalHRs(0); setGameState('playing');
     setParticles([]); setFloatingTexts([]); setBallRotation(0); setSwingPhase('ready'); setTimingIndicator(0);
     setTimeout(() => throwPitch(), 500);
@@ -1193,7 +1426,7 @@ const TEAMS: Team[] = [
   { name: 'Air Raiders', emoji: '✈️', color: '#4169E1', offense: 95, defense: 65 },
 ];
 
-const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore }) => {
+const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore, sounds }) => {
   const [gamePhase, setGamePhase] = useState<'teamSelect' | 'play' | 'halftime' | 'gameover'>('teamSelect');
   const [playerTeam, setPlayerTeam] = useState<Team | null>(null);
   const [cpuTeam, setCpuTeam] = useState<Team | null>(null);
@@ -1267,6 +1500,10 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     if (gamePhase !== 'play' || isAnimating) return;
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
+        // Clock warning under 10 seconds
+        if (prev <= 10 && prev > 1) {
+          sounds.clockWarning();
+        }
         if (prev <= 1) {
           if (quarter < 4) {
             setQuarter(q => q + 1);
@@ -1279,6 +1516,7 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           } else {
             setGamePhase('gameover');
             if (playerScore > highScore) onUpdateHighScore(playerScore);
+            sounds.gameOver();
             return 0;
           }
         }
@@ -1286,9 +1524,10 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
       });
     }, 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [gamePhase, quarter, isAnimating, playerScore, highScore, onUpdateHighScore, possession, resetDrive]);
+  }, [gamePhase, quarter, isAnimating, playerScore, highScore, onUpdateHighScore, possession, resetDrive, sounds]);
 
   const startGame = (teamIndex: number) => {
+    sounds.gameStart();
     setPlayerTeam(TEAMS[teamIndex]);
     const cpuIndex = (teamIndex + 1 + Math.floor(Math.random() * 3)) % 4;
     setCpuTeam(TEAMS[cpuIndex]);
@@ -1340,8 +1579,10 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
             // Success particles
             setParticles(p => [...p, ...createParticleBurst(95, 30, 'fieldgoal', 8, 1.2)]);
             setFloatingTexts(t => [...t, createFloatingText(95, 25, '+3!', COLORS.mustard)]);
+            sounds.fieldGoal();
           } else {
             setPlayResult({ text: '❌ NO GOOD! Wide ' + (Math.random() > 0.5 ? 'left' : 'right'), color: COLORS.ketchup });
+            sounds.fieldGoalMiss();
           }
 
           setTimeout(() => {
@@ -1419,19 +1660,23 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           if (yards > 20) {
             resultText += `💥 BIG PLAY! +${yards} yards!`;
             resultColor = COLORS.mustard;
+            sounds.bigPlay();
           } else {
             resultText += `Gain of ${yards} yards`;
             resultColor = '#88FF88';
+            sounds.snap();
           }
         } else {
           if (countered && defPlay.type === 'blitz' && offPlay.type === 'pass') {
             yards = -8;
             resultText = '💀 SACKED! -8 yards!';
             resultColor = COLORS.ketchup;
+            sounds.turnover();
           } else if (Math.random() < 0.12) {
             isTurnover = true;
             resultText = offPlay.type === 'pass' ? '🏈 INTERCEPTED!' : '🏈 FUMBLE!';
             resultColor = COLORS.ketchup;
+            sounds.turnover();
           } else {
             yards = offPlay.type === 'run' ? Math.floor(Math.random() * 3) : 0;
             resultText = yards > 0 ? `Short gain, ${yards} yards` : 'No gain';
@@ -1458,14 +1703,17 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
               yards = -7;
               resultText = '⚡ SACK! Great call!';
               resultColor = COLORS.mustard;
+              sounds.bigPlay();
             } else if (Math.random() < 0.18) {
               isTurnover = true;
               resultText = '🎉 TURNOVER! Ball is yours!';
               resultColor = COLORS.mustard;
+              sounds.bigPlay();
             } else {
               yards = 0;
               resultText = 'STUFFED! No gain!';
               resultColor = '#88FF88';
+              sounds.snap();
             }
           } else {
             yards = Math.floor(Math.random() * 3);
@@ -1496,9 +1744,11 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
             // TD celebration particles - 20 particle burst!
             setParticles(p => [...p, ...createParticleBurst(95, 50, 'touchdown', 20, 1.5)]);
             setFloatingTexts(t => [...t, createFloatingText(95, 40, 'TOUCHDOWN!', COLORS.mustard)]);
+            sounds.touchdown();
           } else {
             setCpuScore(s => s + 7);
             setPlayResult({ text: `😱 ${cpuTeam.emoji} Touchdown! +7`, color: COLORS.ketchup });
+            sounds.turnover(); // CPU touchdown feels like a turnover to the player
           }
 
           setTimeout(() => {
@@ -1935,9 +2185,11 @@ interface ArcadeHubProps {
   onSelectGame: (id: string) => void;
   onClose: () => void;
   highScores: Record<string, number>;
+  isMuted: boolean;
+  onToggleMute: () => void;
 }
 
-const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onClose, highScores }) => {
+const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onClose, highScores, isMuted, onToggleMute }) => {
   return (
     <div style={{ minHeight: '100vh', background: `linear-gradient(135deg, ${COLORS.midnight} 0%, ${COLORS.charcoal} 50%, #1a1a2e 100%)`, fontFamily: 'system-ui' }}>
       <ArcadeHeader title="Blaze Arcade" onClose={onClose} />
@@ -1947,6 +2199,30 @@ const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onClose, highScores
           <h1 style={{ color: COLORS.burntOrange, fontSize: '28px', marginBottom: '8px' }}>Blaze Arcade</h1>
           <p style={{ color: '#888', fontSize: '14px' }}>A Blaze Sports Intel Easter Egg Collection</p>
         </div>
+        {/* Sound toggle button */}
+        <button
+          onClick={onToggleMute}
+          style={{
+            position: 'fixed',
+            top: '20px',
+            right: '70px',
+            background: 'rgba(255,255,255,0.1)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '44px',
+            height: '44px',
+            cursor: 'pointer',
+            fontSize: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            transition: 'background 0.2s',
+          }}
+          aria-label={isMuted ? 'Unmute' : 'Mute'}
+        >
+          {isMuted ? '🔇' : '🔊'}
+        </button>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', maxWidth: '640px', margin: '0 auto' }}>
           {GAMES.map(game => (
             <GameCard key={game.id} game={game} highScore={highScores[game.id] || 0} onSelect={onSelectGame} />
@@ -1973,6 +2249,9 @@ const STORAGE_KEY = 'blaze-arcade-highscores';
 export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
   const [currentGame, setCurrentGame] = useState<string | null>(null);
   const [highScores, setHighScores] = useState<Record<string, number>>({});
+
+  // Initialize audio system
+  const { sounds, toggleMute, isMuted } = useGameAudio();
 
   // Load high scores from localStorage on mount
   useEffect(() => {
@@ -2005,19 +2284,38 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
     });
   };
 
+  const handleSelectGame = (id: string) => {
+    sounds.menuSelect();
+    setCurrentGame(id);
+  };
+
+  const handleBack = () => {
+    sounds.menuBack();
+    setCurrentGame(null);
+  };
+
   if (currentGame) {
     const game = GAMES.find(g => g.id === currentGame);
     if (game?.component) {
       const GameComponent = game.component;
       return (
         <GameComponent
-          onBack={() => setCurrentGame(null)}
+          onBack={handleBack}
           highScore={highScores[currentGame] || 0}
           onUpdateHighScore={(score) => updateHighScore(currentGame, score)}
+          sounds={sounds}
         />
       );
     }
   }
 
-  return <ArcadeHub onSelectGame={setCurrentGame} onClose={onClose} highScores={highScores} />;
+  return (
+    <ArcadeHub
+      onSelectGame={handleSelectGame}
+      onClose={onClose}
+      highScores={highScores}
+      isMuted={isMuted}
+      onToggleMute={toggleMute}
+    />
+  );
 }
