@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import BlazeHotDogDash from './BlazeHotDogDash';
+import { BlazeArcade } from '@/components/arcade';
 
 const KONAMI_CODE = [
   'ArrowUp',
@@ -84,5 +84,5 @@ export default function KonamiCodeWrapper() {
   if (!mounted || !isGameActive) return null;
 
   // Use portal to render at document body level
-  return createPortal(<BlazeHotDogDash onClose={handleClose} />, document.body);
+  return createPortal(<BlazeArcade onClose={handleClose} />, document.body);
 }
