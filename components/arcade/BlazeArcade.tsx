@@ -161,6 +161,241 @@ interface ActionButtonProps {
 }
 
 // ============================================================================
+// PHYSICS & PARTICLE SYSTEM
+// ============================================================================
+
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  type: 'catch' | 'golden' | 'combo' | 'powerup' | 'hit' | 'homerun' | 'touchdown' | 'fieldgoal';
+  rotation: number;
+  rotationSpeed: number;
+  scale: number;
+  emoji: string;
+}
+
+interface FloatingText {
+  id: number;
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+  life: number;
+  maxLife: number;
+}
+
+interface ScreenShake {
+  intensity: number;
+  duration: number;
+  startTime: number;
+}
+
+interface BallAnimation {
+  active: boolean;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  progress: number;
+  type: 'pass' | 'run' | 'fg' | 'pitch' | 'hit';
+  rotation: number;
+}
+
+const PHYSICS = {
+  gravity: 0.35,
+  terminalVelocity: 12,
+  springStiffness: 0.15,
+  springDamping: 0.7,
+  easing: {
+    player: 0.35, // Snappier than 0.2
+    ball: 0.25,
+  },
+  particleGravity: 0.15,
+  particleDrag: 0.98,
+};
+
+const PARTICLE_EMOJIS: Record<string, string[]> = {
+  catch: ['✨', '⭐', '💫'],
+  golden: ['⭐', '✨', '💛', '🌟'],
+  combo: ['🔥', '💥', '⚡'],
+  powerup: ['💫', '✨', '🎯'],
+  hit: ['💨', '✨'],
+  homerun: ['🔥', '💥', '⭐', '✨', '🎆', '💫'],
+  touchdown: ['🎉', '🔥', '⭐', '💥', '✨'],
+  fieldgoal: ['✨', '⭐', '💛'],
+};
+
+let particleIdCounter = 0;
+let floatingTextIdCounter = 0;
+
+const createParticle = (
+  x: number,
+  y: number,
+  type: Particle['type'],
+  velocityScale = 1
+): Particle => {
+  const emojis = PARTICLE_EMOJIS[type] || ['✨'];
+  const angle = Math.random() * Math.PI * 2;
+  const speed = (2 + Math.random() * 4) * velocityScale;
+
+  return {
+    id: ++particleIdCounter,
+    x,
+    y,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed - 2, // Slight upward bias
+    life: 1,
+    maxLife: 1,
+    type,
+    rotation: Math.random() * 360,
+    rotationSpeed: (Math.random() - 0.5) * 20,
+    scale: 0.8 + Math.random() * 0.4,
+    emoji: emojis[Math.floor(Math.random() * emojis.length)],
+  };
+};
+
+const createParticleBurst = (
+  x: number,
+  y: number,
+  type: Particle['type'],
+  count: number,
+  velocityScale = 1
+): Particle[] => {
+  return Array.from({ length: count }, () => createParticle(x, y, type, velocityScale));
+};
+
+const createFloatingText = (
+  x: number,
+  y: number,
+  text: string,
+  color: string
+): FloatingText => ({
+  id: ++floatingTextIdCounter,
+  x,
+  y,
+  text,
+  color,
+  life: 1,
+  maxLife: 1,
+});
+
+const updateParticles = (particles: Particle[], deltaTime = 1): Particle[] => {
+  return particles
+    .map(p => ({
+      ...p,
+      x: p.x + p.vx * deltaTime,
+      y: p.y + p.vy * deltaTime,
+      vx: p.vx * PHYSICS.particleDrag,
+      vy: p.vy * PHYSICS.particleDrag + PHYSICS.particleGravity,
+      rotation: p.rotation + p.rotationSpeed,
+      life: p.life - 0.02 * deltaTime,
+    }))
+    .filter(p => p.life > 0)
+    .slice(-30); // Performance cap
+};
+
+const updateFloatingTexts = (texts: FloatingText[], deltaTime = 1): FloatingText[] => {
+  return texts
+    .map(t => ({
+      ...t,
+      y: t.y - 1.5 * deltaTime, // Float upward
+      life: t.life - 0.025 * deltaTime,
+    }))
+    .filter(t => t.life > 0)
+    .slice(-10); // Performance cap
+};
+
+const calculateScreenShake = (shake: ScreenShake | null): { x: number; y: number } => {
+  if (!shake) return { x: 0, y: 0 };
+
+  const elapsed = Date.now() - shake.startTime;
+  if (elapsed >= shake.duration) return { x: 0, y: 0 };
+
+  const progress = elapsed / shake.duration;
+  const decay = 1 - progress * progress; // Quadratic decay
+  const intensity = shake.intensity * decay;
+
+  return {
+    x: (Math.random() - 0.5) * intensity * 2,
+    y: (Math.random() - 0.5) * intensity * 2,
+  };
+};
+
+const springInterp = (current: number, target: number, velocity: number): { value: number; velocity: number } => {
+  const force = (target - current) * PHYSICS.springStiffness;
+  const newVelocity = (velocity + force) * PHYSICS.springDamping;
+  return {
+    value: current + newVelocity,
+    velocity: newVelocity,
+  };
+};
+
+// ============================================================================
+// PARTICLE & TEXT RENDERERS
+// ============================================================================
+
+const ParticleRenderer: React.FC<{ particles: Particle[]; offsetX?: number; offsetY?: number }> = ({
+  particles,
+  offsetX = 0,
+  offsetY = 0
+}) => (
+  <>
+    {particles.map(p => (
+      <div
+        key={p.id}
+        style={{
+          position: 'absolute',
+          left: `${p.x + offsetX}%`,
+          top: `${p.y + offsetY}%`,
+          transform: `translate(-50%, -50%) rotate(${p.rotation}deg) scale(${p.scale * p.life})`,
+          fontSize: `${16 + p.scale * 8}px`,
+          opacity: p.life,
+          pointerEvents: 'none',
+          willChange: 'transform, opacity',
+        }}
+      >
+        {p.emoji}
+      </div>
+    ))}
+  </>
+);
+
+const FloatingTextRenderer: React.FC<{ texts: FloatingText[]; offsetX?: number; offsetY?: number }> = ({
+  texts,
+  offsetX = 0,
+  offsetY = 0
+}) => (
+  <>
+    {texts.map(t => (
+      <div
+        key={t.id}
+        style={{
+          position: 'absolute',
+          left: `${t.x + offsetX}%`,
+          top: `${t.y + offsetY}%`,
+          transform: 'translate(-50%, -50%)',
+          color: t.color,
+          fontWeight: 'bold',
+          fontSize: `${14 + (1 - t.life) * 4}px`,
+          opacity: t.life,
+          textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          willChange: 'transform, opacity',
+        }}
+      >
+        {t.text}
+      </div>
+    ))}
+  </>
+);
+
+// ============================================================================
 // SHARED COMPONENTS
 // ============================================================================
 
@@ -313,16 +548,22 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
   const [gameStarted, setGameStarted] = useState(false);
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
-  const [hotDogs, setHotDogs] = useState<HotDogItem[]>([]);
+  const [hotDogs, setHotDogs] = useState<(HotDogItem & { velocityY: number })[]>([]);
   const [timeLeft, setTimeLeft] = useState(45);
   const [activePowerUps, setActivePowerUps] = useState<Record<string, boolean>>({});
   const blazeXRef = useRef(50);
   const targetXRef = useRef(50);
+  const velocityXRef = useRef(0);
   const [blazeX, setBlazeX] = useState(50);
   const [isMoving, setIsMoving] = useState(false);
   const gameRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | undefined>(undefined);
   const keysPressed = useRef({ left: false, right: false });
+  // Particle and effects state
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
+  const [screenShake, setScreenShake] = useState<ScreenShake | null>(null);
+  const lastComboMilestoneRef = useRef(0);
 
   const chonkFactor = Math.min(1.8, 1.0 + (score * 0.012));
   const currentChonkLevel = getChonkLevel(score);
@@ -352,60 +593,114 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
   useEffect(() => {
     if (!gameStarted) return;
     const gameLoop = () => {
-      if (keysPressed.current.left) targetXRef.current = Math.max(8, targetXRef.current - 2);
-      if (keysPressed.current.right) targetXRef.current = Math.min(92, targetXRef.current + 2);
+      // Keyboard input
+      if (keysPressed.current.left) targetXRef.current = Math.max(8, targetXRef.current - 2.5);
+      if (keysPressed.current.right) targetXRef.current = Math.min(92, targetXRef.current + 2.5);
+
+      // Spring-based player movement (snappier than before)
       const prevX = blazeXRef.current;
-      blazeXRef.current += (targetXRef.current - blazeXRef.current) * 0.2;
+      const spring = springInterp(blazeXRef.current, targetXRef.current, velocityXRef.current);
+      blazeXRef.current = Math.max(8, Math.min(92, spring.value));
+      velocityXRef.current = spring.velocity;
       setBlazeX(blazeXRef.current);
       setIsMoving(Math.abs(blazeXRef.current - prevX) > 0.3);
 
+      // Spring-based magnet physics
       if (activePowerUps.MAGNET) {
         setHotDogs(prev => prev.map(dog => {
           if (dog.isPowerUp) return dog;
           const dist = Math.abs(dog.x - blazeXRef.current);
-          if (dist < 25 && dog.y > 30) return { ...dog, x: dog.x + (blazeXRef.current - dog.x) * 0.08 };
+          if (dist < 30 && dog.y > 25) {
+            // Spring-based attraction with distance falloff
+            const force = (blazeXRef.current - dog.x) * PHYSICS.springStiffness * (1 - dist / 30);
+            return { ...dog, x: dog.x + force * 1.5 };
+          }
           return dog;
         }));
       }
 
+      // Update hot dogs with gravity acceleration
       const speedMult = activePowerUps.SLOW ? 0.5 : 1;
       setHotDogs(prev => {
         const hitboxWidth = 15 + (chonkFactor - 1) * 8;
         return prev.filter(dog => {
-          const newY = dog.y + dog.speed * speedMult;
+          // Apply gravity to velocity
+          const newVelocity = Math.min(dog.velocityY + PHYSICS.gravity * speedMult, PHYSICS.terminalVelocity);
+          const newY = dog.y + newVelocity * speedMult;
+
+          // Check collision with Blaze
           if (newY >= 65 && newY <= 92 && Math.abs(dog.x - blazeXRef.current) < hitboxWidth) {
             if (dog.isPowerUp && dog.powerUpType) {
               const type = dog.powerUpType;
               setActivePowerUps(p => ({ ...p, [type]: true }));
               setTimeout(() => setActivePowerUps(p => { const n = { ...p }; delete n[type]; return n; }), HOTDOG_POWERUPS[type].duration);
+              // Power-up particles
+              setParticles(p => [...p, ...createParticleBurst(dog.x, 85, 'powerup', 5)]);
+              setFloatingTexts(t => [...t, createFloatingText(dog.x, 80, HOTDOG_POWERUPS[type].emoji, HOTDOG_POWERUPS[type].color)]);
             } else {
               let points = dog.isGolden ? 5 : 1;
               points += Math.floor(combo / 5);
               if (activePowerUps.DOUBLE) points *= 2;
               setScore(s => s + points);
-              setCombo(c => c + 1);
+              setCombo(c => {
+                const newCombo = c + 1;
+                // Screen shake on combo milestones (5, 10, 15, 20...)
+                if (newCombo >= 5 && newCombo % 5 === 0 && newCombo > lastComboMilestoneRef.current) {
+                  lastComboMilestoneRef.current = newCombo;
+                  setScreenShake({ intensity: 3 + Math.min(newCombo / 5, 4), duration: 200, startTime: Date.now() });
+                  setParticles(p => [...p, ...createParticleBurst(dog.x, 85, 'combo', 6, 1.2)]);
+                  setFloatingTexts(t => [...t, createFloatingText(dog.x, 75, `${newCombo}× COMBO!`, COLORS.mustard)]);
+                }
+                return newCombo;
+              });
+              // Particle burst on catch
+              const particleType = dog.isGolden ? 'golden' : 'catch';
+              const particleCount = dog.isGolden ? 8 : 3;
+              setParticles(p => [...p, ...createParticleBurst(dog.x, 85, particleType, particleCount)]);
+              setFloatingTexts(t => [...t, createFloatingText(dog.x, 82, `+${points}`, dog.isGolden ? COLORS.mustard : COLORS.ember)]);
             }
             return false;
           }
-          if (newY > 105) { if (!dog.isPowerUp) setCombo(0); return false; }
+          // Missed - fell off screen
+          if (newY > 105) {
+            if (!dog.isPowerUp) {
+              setCombo(0);
+              lastComboMilestoneRef.current = 0;
+            }
+            return false;
+          }
           dog.y = newY;
+          dog.velocityY = newVelocity;
           return true;
         });
       });
+
+      // Update particle effects
+      setParticles(p => updateParticles(p));
+      setFloatingTexts(t => updateFloatingTexts(t));
+
+      // Clear expired screen shake
+      if (screenShake && Date.now() - screenShake.startTime > screenShake.duration) {
+        setScreenShake(null);
+      }
+
       frameRef.current = requestAnimationFrame(gameLoop);
     };
     frameRef.current = requestAnimationFrame(gameLoop);
     return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
-  }, [gameStarted, chonkFactor, activePowerUps, combo]);
+  }, [gameStarted, chonkFactor, activePowerUps, combo, screenShake]);
 
   useEffect(() => {
     if (!gameStarted) return;
     const interval = Math.max(900, 1600 - score * 4);
     const spawn = setInterval(() => {
       const isPowerUp = Math.random() < 0.06;
+      // Initial velocity starts slow, gravity accelerates
+      const baseSpeed = 0.4 + Math.random() * 0.3 + Math.min(score * 0.003, 0.3);
       setHotDogs(prev => [...prev, {
         id: Date.now() + Math.random(), x: Math.random() * 75 + 12, y: -5,
-        speed: 0.8 + Math.random() * 0.4 + Math.min(score * 0.004, 0.4),
+        speed: baseSpeed, // Keep for backwards compat
+        velocityY: baseSpeed, // Actual physics velocity
         isGolden: !isPowerUp && Math.random() < 0.18, isPowerUp,
         powerUpType: isPowerUp ? Object.keys(HOTDOG_POWERUPS)[Math.floor(Math.random() * 3)] : null,
       }]);
@@ -426,7 +721,8 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
 
   const startGame = () => {
     setGameStarted(true); setScore(0); setCombo(0); setTimeLeft(45); setHotDogs([]); setActivePowerUps({});
-    blazeXRef.current = 50; targetXRef.current = 50; setBlazeX(50);
+    blazeXRef.current = 50; targetXRef.current = 50; velocityXRef.current = 0; setBlazeX(50);
+    setParticles([]); setFloatingTexts([]); setScreenShake(null); lastComboMilestoneRef.current = 0;
   };
 
   return (
@@ -444,9 +740,32 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
           <span style={{ color: COLORS.ember, fontSize: '12px', fontWeight: 'bold' }}>{currentChonkLevel.label}</span>
         </div>
       )}
-      <div ref={gameRef} onTouchMove={handleTouch} onTouchStart={handleTouch} style={{ position: 'relative', height: 'calc(100vh - 150px)', overflow: 'hidden' }}>
-        {combo >= 5 && <div style={{ position: 'absolute', top: '10%', right: '15px', fontSize: '28px', fontWeight: 'bold', color: COLORS.mustard }}>{combo}× 🔥</div>}
+      <div
+        ref={gameRef}
+        onTouchMove={handleTouch}
+        onTouchStart={handleTouch}
+        style={{
+          position: 'relative',
+          height: 'calc(100vh - 150px)',
+          overflow: 'hidden',
+          // Screen shake effect
+          transform: screenShake ? `translate(${calculateScreenShake(screenShake).x}px, ${calculateScreenShake(screenShake).y}px)` : undefined,
+        }}
+      >
+        {combo >= 5 && (
+          <div style={{
+            position: 'absolute', top: '10%', right: '15px',
+            fontSize: '28px', fontWeight: 'bold', color: COLORS.mustard,
+            textShadow: '0 0 10px rgba(255,215,0,0.5)',
+            animation: combo >= 10 ? 'pulse-glow 0.5s infinite' : undefined,
+          }}>
+            {combo}× 🔥
+          </div>
+        )}
         {hotDogs.map(dog => <HotDog key={dog.id} x={dog.x} y={dog.y} isGolden={dog.isGolden} isPowerUp={dog.isPowerUp} powerUpType={dog.powerUpType} />)}
+        {/* Particle effects */}
+        <ParticleRenderer particles={particles} />
+        <FloatingTextRenderer texts={floatingTexts} />
         <div style={{ position: 'absolute', left: `${blazeX}%`, bottom: '6%', transform: 'translateX(-50%)' }}>
           <BlazeSprite chonkFactor={chonkFactor} isMoving={isMoving} />
         </div>
@@ -506,16 +825,30 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
   const [combo, setCombo] = useState(0);
   const [totalHRs, setTotalHRs] = useState(0);
   const frameRef = useRef<number | undefined>(undefined);
+  // Enhanced physics state
+  const [ballRotation, setBallRotation] = useState(0);
+  const [swingPhase, setSwingPhase] = useState<'ready' | 'windup' | 'swing' | 'follow'>('ready');
+  const [timingIndicator, setTimingIndicator] = useState(0); // 0-100, green zone is 70-85
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
+  const [ballFlightProgress, setBallFlightProgress] = useState(0);
+  const startPitchXRef = useRef(50);
 
   const throwPitch = useCallback(() => {
     const pitchType = PITCH_TYPES[Math.floor(Math.random() * PITCH_TYPES.length)];
     setPitch(pitchType);
     setPitchY(-10);
-    setPitchX(50 + (Math.random() - 0.5) * 20);
+    const startX = 50 + (Math.random() - 0.5) * 20;
+    setPitchX(startX);
+    startPitchXRef.current = startX;
     setSwingTiming(null);
     setHitResult(null);
     setBallFlight(null);
+    setBallFlightProgress(0);
     setIsSwinging(false);
+    setBallRotation(0);
+    setSwingPhase('ready');
+    setTimingIndicator(0);
   }, []);
 
   useEffect(() => {
@@ -523,30 +856,59 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
     const animate = () => {
       setPitchY(prev => {
         const newY = prev + pitch.speed * 1.5;
-        const progress = newY / 85;
-        setPitchX(() => 50 + Math.sin(progress * Math.PI) * pitch.movement * 30);
+        const progress = Math.min(1, newY / 85);
+
+        // Parabolic drop instead of sine wave - more realistic pitch trajectory
+        const dropFactor = progress * progress; // Accelerating drop
+        const lateralMovement = pitch.movement * 30 * progress; // Linear lateral movement
+
+        setPitchX(startPitchXRef.current + lateralMovement);
+
+        // Update timing indicator (0-100 scale, green zone is 70-85)
+        setTimingIndicator(Math.min(100, Math.max(0, newY)));
+
+        // Update ball rotation (spins during flight)
+        setBallRotation(r => (r + 15) % 360);
+
         if (newY > 95 && !swingTiming) {
           setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); } return newOuts; });
           setCombo(0);
+          setFloatingTexts(t => [...t, createFloatingText(50, 60, 'STRIKE!', '#FF4444')]);
           setTimeout(() => throwPitch(), 1000);
           return 100;
         }
-        return newY;
+        return newY + dropFactor * 0.5; // Add drop effect to Y position
       });
+
+      // Update particles
+      setParticles(p => updateParticles(p));
+      setFloatingTexts(t => updateFloatingTexts(t));
+
+      // Animate ball flight if active
+      if (ballFlight && ballFlightProgress < 1) {
+        setBallFlightProgress(p => Math.min(1, p + 0.02));
+      }
+
       if (pitchY < 95) frameRef.current = requestAnimationFrame(animate);
     };
     frameRef.current = requestAnimationFrame(animate);
     return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
-  }, [gameState, pitch, pitchY, swingTiming, throwPitch, score, highScore, onUpdateHighScore]);
+  }, [gameState, pitch, pitchY, swingTiming, throwPitch, score, highScore, onUpdateHighScore, ballFlight, ballFlightProgress]);
 
   const handleSwing = useCallback(() => {
     if (gameState !== 'playing' || !pitch || swingTiming !== null || isSwinging || selectedBatter === null) return;
+
+    // Swing phases: windup -> swing -> follow
+    setSwingPhase('windup');
+    setTimeout(() => setSwingPhase('swing'), 50);
+
     setIsSwinging(true);
     const perfectZone = 75;
     const timing = (pitchY - perfectZone) / 20;
     setSwingTiming(timing);
 
     setTimeout(() => {
+      setSwingPhase('follow');
       const batter = BATTERS[selectedBatter];
       const contactRoll = Math.random() * 100;
       const powerRoll = Math.random() * 100;
@@ -555,6 +917,8 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
         setHitResult({ type: 'STRIKE!', points: 0, color: '#FF4444' });
         setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); }, 1500); return newOuts; });
         setCombo(0);
+        // Swing miss particles
+        setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 2, 0.5)]);
       } else {
         const powerFactor = (batter.power / 100) * (1 - Math.abs(timing));
         const distance = 150 + powerFactor * 350 + powerRoll * 2;
@@ -566,25 +930,42 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
           setCombo(c => c + 1);
           setTotalHRs(t => t + 1);
           setBallFlight({ startX: 50, startY: 75, endX: 50 + timing * 40, endY: -20, duration: 2000 });
+          setBallFlightProgress(0);
+          // Home run explosion! 15 particles
+          setParticles(p => [...p, ...createParticleBurst(50, 75, 'homerun', 15, 1.5)]);
+          setFloatingTexts(t => [...t, createFloatingText(50, 65, '💥 GONE!', COLORS.mustard)]);
         } else if (distance > 350) {
           setHitResult({ type: 'DEEP FLY OUT', points: 10, color: '#88FF88', distance: Math.floor(distance) });
           setScore(s => s + 10);
           setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); }, 1500); return newOuts; });
           setCombo(0);
           setBallFlight({ startX: 50, startY: 75, endX: 50 + timing * 30, endY: 20, duration: 1500 });
+          setBallFlightProgress(0);
+          // Deep fly particles
+          setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 6, 1.0)]);
         } else if (distance > 200) {
           const points = 25 + combo * 5;
           setHitResult({ type: 'BASE HIT!', points, color: '#44FF44' });
           setScore(s => s + points);
           setBallFlight({ startX: 50, startY: 75, endX: 50 + timing * 25, endY: 45, duration: 1000 });
+          setBallFlightProgress(0);
+          // Base hit particles
+          setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 4, 0.8)]);
+          setFloatingTexts(t => [...t, createFloatingText(50, 70, `+${points}`, '#44FF44')]);
         } else {
           setHitResult({ type: 'GROUNDER', points: 5, color: '#AAAAAA' });
           setScore(s => s + 5);
           setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) setTimeout(() => { setGameState('gameover'); if (score > highScore) onUpdateHighScore(score); }, 1500); return newOuts; });
           setCombo(0);
+          // Weak contact particles
+          setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 3, 0.5)]);
         }
       }
-      setTimeout(() => { if (outs < 9) throwPitch(); setIsSwinging(false); }, 2000);
+      setTimeout(() => {
+        if (outs < 9) throwPitch();
+        setIsSwinging(false);
+        setSwingPhase('ready');
+      }, 2000);
     }, 150);
   }, [gameState, pitch, swingTiming, pitchY, selectedBatter, isSwinging, combo, outs, score, highScore, onUpdateHighScore, throwPitch]);
 
@@ -597,6 +978,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
 
   const startGame = (batterIndex: number) => {
     setSelectedBatter(batterIndex); setScore(0); setOuts(0); setCombo(0); setTotalHRs(0); setGameState('playing');
+    setParticles([]); setFloatingTexts([]); setBallRotation(0); setSwingPhase('ready'); setTimingIndicator(0);
     setTimeout(() => throwPitch(), 500);
   };
 
@@ -638,18 +1020,97 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
 
         {gameState === 'playing' && (
           <>
+            {/* Outfield fence */}
             <div style={{ position: 'absolute', top: '15%', left: '10%', right: '10%', height: '4px', background: '#8B4513', borderRadius: '2px' }} />
+
+            {/* Pitch type indicator */}
             {pitch && (
               <div style={{ position: 'absolute', top: '5%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.7)', padding: '4px 12px', borderRadius: '8px', color: pitch.color, fontWeight: 'bold', fontSize: '14px' }}>{pitch.name}</div>
             )}
+
+            {/* Timing zone indicator - glows green in sweet spot */}
+            <div style={{
+              position: 'absolute', left: '50%', top: '70%', transform: 'translate(-50%, -50%)',
+              width: '80px', height: '100px',
+              border: `3px solid ${timingIndicator >= 70 && timingIndicator <= 85 ? 'rgba(0,255,0,0.7)' : 'rgba(255,255,255,0.3)'}`,
+              borderRadius: '4px',
+              boxShadow: timingIndicator >= 70 && timingIndicator <= 85 ? '0 0 20px rgba(0,255,0,0.5), inset 0 0 15px rgba(0,255,0,0.2)' : 'none',
+              transition: 'border-color 0.1s, box-shadow 0.1s',
+            }} />
+
+            {/* Spinning baseball with seams during pitch */}
             {pitch && pitchY < 95 && !ballFlight && (
-              <div style={{ position: 'absolute', left: `${pitchX}%`, top: `${pitchY}%`, transform: 'translate(-50%, -50%)', width: '20px', height: '20px', background: 'radial-gradient(circle at 30% 30%, white, #ddd)', borderRadius: '50%', boxShadow: '2px 2px 4px rgba(0,0,0,0.3)' }} />
+              <div style={{
+                position: 'absolute',
+                left: `${pitchX}%`,
+                top: `${pitchY}%`,
+                transform: `translate(-50%, -50%) rotate(${ballRotation}deg)`,
+                width: '24px',
+                height: '24px',
+                background: 'radial-gradient(circle at 30% 30%, white, #ddd)',
+                borderRadius: '50%',
+                boxShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                overflow: 'hidden',
+              }}>
+                {/* Baseball seams */}
+                <div style={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  border: '2px solid transparent',
+                  borderTopColor: '#cc0000',
+                  borderBottomColor: '#cc0000',
+                  transform: 'rotate(45deg)',
+                }} />
+              </div>
             )}
-            <div style={{ position: 'absolute', left: '50%', top: '70%', transform: 'translate(-50%, -50%)', width: '80px', height: '100px', border: '3px solid rgba(255,255,255,0.3)', borderRadius: '4px' }} />
-            <div style={{ position: 'absolute', left: '50%', top: '82%', transform: 'translateX(-50%)', fontSize: '50px', transition: 'transform 0.1s', transformOrigin: 'bottom center', ...(isSwinging && { transform: 'translateX(-50%) rotate(-45deg)' }) }}>
+
+            {/* Ball flight animation after hit */}
+            {ballFlight && ballFlightProgress < 1 && (
+              <div style={{
+                position: 'absolute',
+                left: `${ballFlight.startX + (ballFlight.endX - ballFlight.startX) * ballFlightProgress}%`,
+                top: `${ballFlight.startY + (ballFlight.endY - ballFlight.startY) * ballFlightProgress - Math.sin(ballFlightProgress * Math.PI) * 30}%`,
+                transform: `translate(-50%, -50%) rotate(${ballFlightProgress * 720}deg) scale(${1 - ballFlightProgress * 0.5})`,
+                width: '20px',
+                height: '20px',
+                background: 'radial-gradient(circle at 30% 30%, white, #ddd)',
+                borderRadius: '50%',
+                boxShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              }} />
+            )}
+
+            {/* Batter with swing phases */}
+            <div style={{
+              position: 'absolute', left: '50%', top: '82%',
+              transform: `translateX(-50%) ${swingPhase === 'windup' ? 'rotate(5deg)' : swingPhase === 'follow' ? 'rotate(-10deg)' : ''}`,
+              fontSize: '50px',
+              transition: 'transform 0.05s',
+              transformOrigin: 'bottom center',
+            }}>
               {selectedBatter !== null ? BATTERS[selectedBatter].emoji : '🧑'}
             </div>
-            <div style={{ position: 'absolute', left: '58%', top: '78%', width: '60px', height: '8px', background: 'linear-gradient(90deg, #8B4513 0%, #D2691E 80%, #A0522D 100%)', borderRadius: '0 4px 4px 0', transformOrigin: 'left center', transform: isSwinging ? 'rotate(-90deg)' : 'rotate(45deg)', transition: 'transform 0.1s' }} />
+
+            {/* Bat with swing animation phases */}
+            <div style={{
+              position: 'absolute', left: '58%', top: '78%',
+              width: '60px', height: '8px',
+              background: 'linear-gradient(90deg, #8B4513 0%, #D2691E 80%, #A0522D 100%)',
+              borderRadius: '0 4px 4px 0',
+              transformOrigin: 'left center',
+              transform: swingPhase === 'ready' ? 'rotate(45deg)' :
+                         swingPhase === 'windup' ? 'rotate(60deg)' :
+                         swingPhase === 'swing' ? 'rotate(-90deg)' :
+                         'rotate(-60deg)', // follow
+              transition: swingPhase === 'swing' ? 'transform 0.08s ease-out' : 'transform 0.1s',
+            }} />
+
+            {/* Particles */}
+            <ParticleRenderer particles={particles} />
+            <FloatingTextRenderer texts={floatingTexts} />
+
+            {/* Hit result overlay */}
             {hitResult && (
               <div style={{ position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(0,0,0,0.85)', padding: '20px 40px', borderRadius: '16px', textAlign: 'center', animation: 'popIn 0.3s ease-out' }}>
                 <div style={{ fontSize: '28px', fontWeight: 'bold', color: hitResult.color, marginBottom: '8px' }}>{hitResult.type}</div>
@@ -657,8 +1118,11 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
                 {hitResult.points > 0 && <div style={{ color: COLORS.ember, fontSize: '20px', marginTop: '8px' }}>+{hitResult.points}</div>}
               </div>
             )}
+
+            {/* Instructions */}
             <div style={{ position: 'absolute', bottom: '5%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.6)', padding: '8px 16px', borderRadius: '8px', color: 'white', fontSize: '14px', textAlign: 'center' }}>
               <div>TAP or SPACE to swing!</div>
+              {timingIndicator >= 70 && timingIndicator <= 85 && <div style={{ color: '#44FF44', fontSize: '12px' }}>⚡ NOW!</div>}
             </div>
           </>
         )}
@@ -676,7 +1140,12 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
           </GameOverlay>
         )}
       </div>
-      <style>{`@keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0); } 100% { transform: translate(-50%, -50%) scale(1); } }`}</style>
+      <style>{`
+        @keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.1); } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+        @keyframes ballSpin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 10px rgba(255,215,0,0.5); } 50% { box-shadow: 0 0 25px rgba(255,215,0,0.9); } }
+        @keyframes swingArc { 0% { transform: rotate(45deg); } 30% { transform: rotate(60deg); } 100% { transform: rotate(-90deg); } }
+      `}</style>
     </div>
   );
 };
@@ -742,6 +1211,15 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
   const [turboMeter, setTurboMeter] = useState(100);
   const [showPlaybook, setShowPlaybook] = useState(true);
   const [playbookTab, setPlaybookTab] = useState<'plays' | 'special'>('plays');
+  // Enhanced animation state
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
+  const [ballAnimation, setBallAnimation] = useState<BallAnimation | null>(null);
+  const [turboFlash, setTurboFlash] = useState(false);
+  const [receiverPositions] = useState(() => [
+    { x: 70, y: 30 }, { x: 75, y: 60 }, { x: 65, y: 80 }
+  ]);
+  const animFrameRef = useRef<number | undefined>(undefined);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -753,7 +1231,37 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     setYardsToGo(10);
     setShowPlaybook(true);
     setPlaybookTab('plays');
+    setBallAnimation(null);
   }, []);
+
+  // Animation loop for particles and ball animation
+  useEffect(() => {
+    if (gamePhase !== 'play') return;
+
+    const animate = () => {
+      setParticles(p => updateParticles(p));
+      setFloatingTexts(t => updateFloatingTexts(t));
+
+      // Update ball animation progress
+      if (ballAnimation && ballAnimation.active) {
+        setBallAnimation(prev => {
+          if (!prev || prev.progress >= 1) return null;
+          return {
+            ...prev,
+            progress: Math.min(1, prev.progress + 0.03),
+            rotation: (prev.rotation + 20) % 360,
+          };
+        });
+      }
+
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [gamePhase, ballAnimation]);
 
   useEffect(() => {
     if (gamePhase !== 'play' || isAnimating) return;
@@ -789,6 +1297,10 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     setQuarter(1);
     setTimeLeft(60);
     setTurboMeter(100);
+    setParticles([]);
+    setFloatingTexts([]);
+    setBallAnimation(null);
+    setTurboFlash(false);
     resetDrive('player', 25);
     setGamePhase('play');
   };
@@ -808,11 +1320,26 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         const distance = 100 - ballPosition + 17;
         const makePct = Math.max(0.2, 1 - (distance - 20) * 0.02);
 
+        // Start FG animation - parabolic arc
+        setBallAnimation({
+          active: true,
+          startX: ballPosition,
+          startY: 50,
+          endX: 100,
+          endY: 20,
+          progress: 0,
+          type: 'fg',
+          rotation: 0,
+        });
+
         setTimeout(() => {
           if (Math.random() < makePct) {
             setPlayResult({ text: '🥅 FIELD GOAL IS GOOD! +3', color: COLORS.mustard });
             if (isPlayerOffense) setPlayerScore(s => s + 3);
             else setCpuScore(s => s + 3);
+            // Success particles
+            setParticles(p => [...p, ...createParticleBurst(95, 30, 'fieldgoal', 8, 1.2)]);
+            setFloatingTexts(t => [...t, createFloatingText(95, 25, '+3!', COLORS.mustard)]);
           } else {
             setPlayResult({ text: '❌ NO GOOD! Wide ' + (Math.random() > 0.5 ? 'left' : 'right'), color: COLORS.ketchup });
           }
@@ -822,7 +1349,7 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
             setPlayResult(null);
             setIsAnimating(false);
           }, 2000);
-        }, 1000);
+        }, 1200);
         return;
       }
 
@@ -872,7 +1399,22 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
             yards = Math.floor(yards * 1.5);
             resultText = '🔥 TURBO! ';
             setTurboMeter(t => Math.max(0, t - 30));
+            // Trigger turbo flash effect
+            setTurboFlash(true);
+            setTimeout(() => setTurboFlash(false), 600);
           }
+
+          // Start ball animation for the play
+          setBallAnimation({
+            active: true,
+            startX: ballPosition,
+            startY: 50,
+            endX: Math.min(99, ballPosition + yards),
+            endY: 50,
+            progress: 0,
+            type: offPlay.type === 'pass' ? 'pass' : 'run',
+            rotation: 0,
+          });
 
           if (yards > 20) {
             resultText += `💥 BIG PLAY! +${yards} yards!`;
@@ -951,6 +1493,9 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           if (scoringTeam === 'player') {
             setPlayerScore(s => s + 7);
             setPlayResult({ text: '🏈 TOUCHDOWN! +7', color: COLORS.mustard });
+            // TD celebration particles - 20 particle burst!
+            setParticles(p => [...p, ...createParticleBurst(95, 50, 'touchdown', 20, 1.5)]);
+            setFloatingTexts(t => [...t, createFloatingText(95, 40, 'TOUCHDOWN!', COLORS.mustard)]);
           } else {
             setCpuScore(s => s + 7);
             setPlayResult({ text: `😱 ${cpuTeam.emoji} Touchdown! +7`, color: COLORS.ketchup });
@@ -1020,52 +1565,143 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     }, 800);
   };
 
-  const renderField = () => (
-    <div style={{
-      position: 'relative', height: '180px', margin: '10px',
-      background: `linear-gradient(90deg,
-        ${possession === 'player' ? COLORS.ketchup : COLORS.mustard}44 0%,
-        ${possession === 'player' ? COLORS.ketchup : COLORS.mustard}44 10%,
-        ${COLORS.grass} 10%, ${COLORS.grass} 90%,
-        ${possession === 'player' ? COLORS.mustard : COLORS.ketchup}44 90%,
-        ${possession === 'player' ? COLORS.mustard : COLORS.ketchup}44 100%)`,
-      borderRadius: '8px', border: '4px solid white', overflow: 'hidden',
-    }}>
-      {[10, 20, 30, 40, 50, 60, 70, 80, 90].map(yard => (
-        <div key={yard} style={{
-          position: 'absolute', left: `${yard}%`, top: 0, bottom: 0,
-          width: '2px', background: 'rgba(255,255,255,0.3)',
-        }}>
-          <span style={{ position: 'absolute', top: '50%', transform: 'translate(-50%, -50%)', color: 'rgba(255,255,255,0.5)', fontSize: '10px', fontWeight: 'bold' }}>
-            {yard === 50 ? '50' : yard < 50 ? yard : 100 - yard}
-          </span>
+  const renderField = () => {
+    // Calculate animated ball position for FG and pass animations
+    const getBallDisplayPosition = () => {
+      if (ballAnimation && ballAnimation.active) {
+        const progress = ballAnimation.progress;
+        const x = ballAnimation.startX + (ballAnimation.endX - ballAnimation.startX) * progress;
+        // Arc height for passes and FG
+        const arcHeight = ballAnimation.type === 'fg'
+          ? Math.sin(progress * Math.PI) * 40
+          : ballAnimation.type === 'pass'
+            ? Math.sin(progress * Math.PI) * 25
+            : 0;
+        const y = ballAnimation.startY - arcHeight;
+        return { x, y, rotation: ballAnimation.rotation };
+      }
+      return { x: ballPosition, y: 50, rotation: 0 };
+    };
+
+    const ballDisplay = getBallDisplayPosition();
+
+    return (
+      <div style={{
+        position: 'relative', height: '180px', margin: '10px',
+        background: `linear-gradient(90deg,
+          ${possession === 'player' ? COLORS.ketchup : COLORS.mustard}44 0%,
+          ${possession === 'player' ? COLORS.ketchup : COLORS.mustard}44 10%,
+          ${COLORS.grass} 10%, ${COLORS.grass} 90%,
+          ${possession === 'player' ? COLORS.mustard : COLORS.ketchup}44 90%,
+          ${possession === 'player' ? COLORS.mustard : COLORS.ketchup}44 100%)`,
+        borderRadius: '8px', border: '4px solid white', overflow: 'hidden',
+        filter: turboFlash ? 'brightness(1.3) saturate(1.3)' : 'none',
+        transition: 'filter 0.15s ease-out',
+      }}>
+        {/* Yard lines */}
+        {[10, 20, 30, 40, 50, 60, 70, 80, 90].map(yard => (
+          <div key={yard} style={{
+            position: 'absolute', left: `${yard}%`, top: 0, bottom: 0,
+            width: '2px', background: 'rgba(255,255,255,0.3)',
+          }}>
+            <span style={{ position: 'absolute', top: '50%', transform: 'translate(-50%, -50%)', color: 'rgba(255,255,255,0.5)', fontSize: '10px', fontWeight: 'bold' }}>
+              {yard === 50 ? '50' : yard < 50 ? yard : 100 - yard}
+            </span>
+          </div>
+        ))}
+
+        {/* Line of scrimmage */}
+        <div style={{
+          position: 'absolute', left: `${lineOfScrimmage}%`, top: 0, bottom: 0,
+          width: '3px', background: '#4169E1', boxShadow: '0 0 8px #4169E1',
+        }} />
+
+        {/* First down marker */}
+        <div style={{
+          position: 'absolute', left: `${Math.min(100, lineOfScrimmage + yardsToGo)}%`, top: 0, bottom: 0,
+          width: '3px', background: COLORS.mustard, boxShadow: `0 0 10px ${COLORS.mustard}`,
+        }} />
+
+        {/* Receiver dots - floating animation during plays */}
+        {possession === 'player' && showPlaybook && receiverPositions.map((pos, i) => (
+          <div
+            key={`receiver-${i}`}
+            style={{
+              position: 'absolute',
+              left: `${pos.x}%`,
+              top: `${pos.y}%`,
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              background: COLORS.mustard,
+              boxShadow: `0 0 6px ${COLORS.mustard}`,
+              animation: 'receiverFloat 1.5s ease-in-out infinite',
+              animationDelay: `${i * 0.2}s`,
+              opacity: 0.8,
+            }}
+          />
+        ))}
+
+        {/* Animated football */}
+        <div style={{
+          position: 'absolute',
+          left: `${ballDisplay.x}%`,
+          top: `${ballDisplay.y}%`,
+          transform: `translate(-50%, -50%) rotate(${ballDisplay.rotation}deg)`,
+          fontSize: '24px',
+          transition: ballAnimation?.active ? 'none' : 'left 0.5s ease-out, top 0.3s ease-out',
+          filter: turboFlash ? 'drop-shadow(0 0 8px #FFD700)' : 'none',
+        }}>🏈</div>
+
+        {/* Endzone markers */}
+        <div style={{ position: 'absolute', left: '2%', top: '10px', fontSize: '20px' }}>
+          {possession === 'player' ? '🏰' : cpuTeam?.emoji}
         </div>
-      ))}
+        <div style={{ position: 'absolute', right: '2%', top: '10px', fontSize: '20px' }}>
+          {possession === 'player' ? playerTeam?.emoji : '🏰'}
+        </div>
 
-      <div style={{
-        position: 'absolute', left: `${lineOfScrimmage}%`, top: 0, bottom: 0,
-        width: '3px', background: '#4169E1', boxShadow: '0 0 8px #4169E1',
-      }} />
+        {/* Particle renderer for field */}
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            style={{
+              position: 'absolute',
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              transform: `translate(-50%, -50%) rotate(${particle.rotation}deg) scale(${particle.scale * (particle.life / particle.maxLife)})`,
+              fontSize: '16px',
+              opacity: particle.life / particle.maxLife,
+              pointerEvents: 'none',
+            }}
+          >
+            {particle.emoji}
+          </div>
+        ))}
 
-      <div style={{
-        position: 'absolute', left: `${Math.min(100, lineOfScrimmage + yardsToGo)}%`, top: 0, bottom: 0,
-        width: '3px', background: COLORS.mustard, boxShadow: `0 0 10px ${COLORS.mustard}`,
-      }} />
-
-      <div style={{
-        position: 'absolute', left: `${ballPosition}%`, top: '50%',
-        transform: 'translate(-50%, -50%)', fontSize: '24px',
-        transition: 'left 0.5s ease-out',
-      }}>🏈</div>
-
-      <div style={{ position: 'absolute', left: '2%', top: '10px', fontSize: '20px' }}>
-        {possession === 'player' ? '🏰' : cpuTeam?.emoji}
+        {/* Floating text renderer for field */}
+        {floatingTexts.map(ft => (
+          <div
+            key={ft.id}
+            style={{
+              position: 'absolute',
+              left: `${ft.x}%`,
+              top: `${ft.y - (1 - ft.life / ft.maxLife) * 15}%`,
+              transform: 'translate(-50%, -50%)',
+              color: ft.color,
+              fontSize: '14px',
+              fontWeight: 'bold',
+              opacity: ft.life / ft.maxLife,
+              textShadow: '0 0 4px rgba(0,0,0,0.8)',
+              pointerEvents: 'none',
+            }}
+          >
+            {ft.text}
+          </div>
+        ))}
       </div>
-      <div style={{ position: 'absolute', right: '2%', top: '10px', fontSize: '20px' }}>
-        {possession === 'player' ? playerTeam?.emoji : '🏰'}
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderPlaybook = () => {
     const isPlayerOffense = possession === 'player';
@@ -1182,11 +1818,30 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
               </span>
             </div>
 
-            <div style={{ margin: '5px 10px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', padding: '6px 10px' }}>
+            <div style={{
+              margin: '5px 10px',
+              background: turboFlash ? 'rgba(255,200,0,0.3)' : 'rgba(0,0,0,0.3)',
+              borderRadius: '8px',
+              padding: '6px 10px',
+              transition: 'background 0.15s ease-out',
+              boxShadow: turboFlash ? `0 0 15px ${COLORS.mustard}` : 'none',
+            }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: COLORS.ember, fontSize: '11px' }}>⚡ TURBO</span>
-                <div style={{ flex: 1, height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${turboMeter}%`, background: `linear-gradient(90deg, ${COLORS.ember} 0%, ${COLORS.mustard} 100%)`, transition: 'width 0.3s' }} />
+                <span style={{
+                  color: turboFlash ? COLORS.mustard : COLORS.ember,
+                  fontSize: '11px',
+                  animation: turboFlash ? 'turboFlash 0.3s ease-in-out infinite' : 'none',
+                }}>⚡ TURBO</span>
+                <div style={{ flex: 1, height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${turboMeter}%`,
+                    background: turboFlash
+                      ? `linear-gradient(90deg, ${COLORS.mustard} 0%, #FFD700 50%, ${COLORS.ember} 100%)`
+                      : `linear-gradient(90deg, ${COLORS.ember} 0%, ${COLORS.mustard} 100%)`,
+                    transition: 'width 0.3s, background 0.15s',
+                    boxShadow: turboFlash ? `0 0 10px ${COLORS.mustard}` : 'none',
+                  }} />
                 </div>
               </div>
             </div>
@@ -1251,7 +1906,13 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         )}
       </div>
 
-      <style>{`@keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }`}</style>
+      <style>{`
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes turboFlash { 0%, 100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.3) saturate(1.5); } }
+        @keyframes receiverFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes ballFly { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(var(--endX), var(--endY)) rotate(720deg); } }
+        @keyframes celebrateBounce { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.2) translateY(-10px); } }
+      `}</style>
     </div>
   );
 };
