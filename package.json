@@ -62,7 +62,7 @@
     "@playwright/test": "^1.56.1",
     "@prisma/client": "^6.18.0",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^24.9.1",
+    "@types/node": "^25.0.1",
     "@types/pg": "^8.10.9",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.2",
