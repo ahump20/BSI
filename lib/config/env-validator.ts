@@ -72,8 +72,9 @@ const EnvSchema = NodeEnvSchema;
 type Env = z.infer<typeof EnvSchema>;
 type WorkersEnv = z.infer<typeof WorkersEnvSchema>;
 
-// Export schemas for external use
+// Export schemas and types for external use
 export { WorkersEnvSchema, NodeEnvSchema, BaseEnvSchema };
+export type { Env, WorkersEnv };
 
 /**
  * Validate environment variables
