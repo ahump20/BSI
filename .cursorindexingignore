@@ -1,17 +1,49 @@
-# Everything in .cursorignore, plus extra indexing-only exclusions
+# ---- Everything from .cursorignore, plus extra indexing exclusions ----
+
+# Secrets
+.dev.vars
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.p12
+*.pfx
+validated-keys.env
+test-api-keys.cjs
+config/*.env
+wrangler-*.local.toml
+**/*secret*
+**/*secrets*
+**/*credential*
+**/*token*
+
+# Local state / caches
+.wrangler/
+.wrangler/**
 node_modules/
 dist/
 build/
 coverage/
 .next/
 .cache/
+.turbo/
 tmp/
-.wrangler/
-.wrangler/**
+out/
+.DS_Store
+.pnpm-store/
 
-# Big generated artifacts
-**/*.map
-**/*.min.js
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.history/
+.snapshots/
+
+# Claude
+.claude/local/
+.claude/statsig/
 
 # Binary / large assets
 **/*.png
@@ -21,4 +53,73 @@ tmp/
 **/*.gif
 **/*.mp4
 **/*.mov
+**/*.avi
 **/*.pdf
+**/*.zip
+**/*.tar.gz
+
+# Office docs
+**/*.docx
+**/*.xlsx
+**/*.pptx
+BSI Business Plan Docs/
+
+# Generated outputs
+blaze_intel_results_*.csv
+blaze_intel_statistics_*.csv
+blaze_intel_sensitivity_*.csv
+blaze_intel_analysis_*.png
+blaze_intel_report_*.txt
+BSI_*_ACTIONABLE_STEPS.md
+BSI_*_ANALYSIS.md
+deployment-log-*.txt
+deployment-manifest-*.txt
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# TypeScript artifacts
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Forbidden directories
+archive/
+BSI-archive/
+old/
+backup/
+deprecated/
+*-v2/
+*-new/
+*backup*
+*-backup*
+*-old.*
+*-previous.*
+
+# ---- Additional indexing exclusions ----
+
+# Large generated files
+**/*.map
+**/*.min.js
+**/*.min.css
+**/*.bundle.js
+**/*.chunk.js
+
+# Package lock files (large, not useful for context)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Font files
+**/*.woff
+**/*.woff2
+**/*.ttf
+**/*.eot
+**/*.otf
+
+# SVG sprites (often very large)
+**/*sprite*.svg
+
+# Cloudflare-generated
+.mf/

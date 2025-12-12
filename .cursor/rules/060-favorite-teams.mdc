@@ -1,0 +1,37 @@
+---
+description: Austin's favorite teams context (for personalization)
+globs:
+alwaysApply: true
+---
+
+# Favorite Teams Context (BSI)
+
+When examples, defaults, or personalization are needed:
+
+## Primary affiliations
+| League | Team | Notes |
+|--------|------|-------|
+| MLB | St. Louis Cardinals | Priority for baseball examples |
+| NFL | Tennessee Titans | Priority for football examples |
+| NBA | Memphis Grizzlies | Priority for basketball examples |
+| NCAA | Texas Longhorns | All sports, especially baseball |
+
+## Geographic context
+- Location: Boerne, Texas (near San Antonio)
+- Timezone: America/Chicago (Central)
+- Regional coverage: Texas, Deep South, SEC/Big 12
+
+## Sport priority order
+1. Baseball (MLB + college baseball is the product focus)
+2. Football (NFL + college)
+3. Basketball (NBA + college)
+4. Track & Field
+
+## Excluded
+- Soccer — absolute prohibition (do not include in any features, examples, or coverage)
+
+## When generating examples
+- Default to Cardinals for MLB scenarios
+- Default to Longhorns for college scenarios
+- Use Texas high school baseball for youth examples
+- Reference Perfect Game, MaxPreps for youth data

@@ -1,0 +1,67 @@
+---
+description: Tailwind CSS theming and design tokens
+globs:
+  - tailwind.config.ts
+  - tailwind.config.js
+  - src/styles/**/*
+---
+
+# Tailwind Theming (BSI)
+
+## Design tokens location
+Primary tokens defined in `src/styles/tokens/`:
+- `colors.ts` — Color palette
+- `typography.ts` — Fonts, sizes, weights
+- `spacing.ts` — Margin/padding scale
+- `breakpoints.ts` — Responsive breakpoints
+
+## Color system
+```typescript
+// Brand colors
+brand: {
+  primary: '#FF6B35',    // Blaze orange
+  secondary: '#1A1A2E',  // Deep navy
+  accent: '#F7931E',     // Gold
+}
+
+// Semantic colors
+semantic: {
+  success: '#10B981',    // Wins, positive stats
+  warning: '#F59E0B',    // Watch, caution
+  error: '#EF4444',      // Losses, negative
+  info: '#3B82F6',       // Informational
+}
+```
+
+## Usage rules
+```tsx
+// ✅ CORRECT — use semantic tokens
+<div className="bg-brand-primary text-white">
+<span className="text-semantic-success">
+
+// ❌ WRONG — hardcoded colors
+<div style={{ backgroundColor: '#FF6B35' }}>
+<span className="text-green-500">  // Use semantic-success instead
+```
+
+## Responsive breakpoints
+Mobile-first approach:
+```tsx
+// Base (mobile) → md (tablet) → lg (desktop) → xl (large)
+<div className="p-4 md:p-6 lg:p-8">
+```
+
+## Typography scale
+Use consistent text sizes:
+- `text-xs` — Labels, metadata
+- `text-sm` — Secondary text
+- `text-base` — Body text
+- `text-lg` — Subheadings
+- `text-xl+` — Headings
+
+## Extending the theme
+When adding new tokens:
+1. Add to appropriate `src/styles/tokens/*.ts`
+2. Import in `tailwind.config.ts`
+3. Document the new token's purpose
+4. Never add one-off colors/values

@@ -1,0 +1,70 @@
+---
+description: 3D graphics engine and Three.js conventions
+globs:
+  - bsi-production/src/lib/graphics/**/*
+  - bsi-production/src/components/3d/**/*
+  - "**/shaders/**/*"
+  - "**/*3D*.ts"
+  - "**/*3D*.tsx"
+---
+
+# 3D Graphics Engine (BSI)
+
+The project includes a custom Blaze Graphics Engine built on Three.js for data visualizations.
+
+## Architecture
+
+```
+bsi-production/src/lib/graphics/
+├── engine/          # Core engine (BlazeEngine, BlazeGraphicsEngine)
+├── shaders/         # Custom GLSL shaders
+├── particles/       # Particle systems (Ember, Data trails, etc.)
+├── visualizations/  # 3D data viz (BaseballDiamond, PitchTunnel, etc.)
+├── effects/         # Visual effects (Parallax, Card3D, Loading)
+├── postprocessing/  # Post-processing composer
+└── react/           # React integration (BlazeCanvas, useBlaze3D)
+```
+
+## Key components
+
+### Shaders
+- `EmberGlowShader` — Brand-aligned fire effects
+- `HeatDistortionShader` — Heat wave distortions
+- `VolumetricLightShader` — Dramatic lighting
+- `NeonGlowShader` — Data highlight effects
+- `HolographicOverlayShader` — Futuristic overlays
+
+### Particle systems
+- `EmberParticleSystem` — Floating ember particles
+- `DataTrailSystem` — Data visualization trails
+- `DataRiverSystem` — Flowing data streams
+
+### Visualizations
+- `BaseballDiamond` — 3D baseball field
+- `PitchTunnel` — Pitch trajectory visualization
+- `StrikeZone3D` — 3D strike zone
+- `StandingsChart3D` — 3D standings visualization
+- `HeatmapTerrain3D` — Terrain-based heatmaps
+
+## React integration
+```tsx
+import { BlazeCanvas, useBlaze3D } from '@/lib/graphics/react';
+
+function MyComponent() {
+  const { scene, camera, renderer } = useBlaze3D();
+  return <BlazeCanvas />;
+}
+```
+
+## Performance guidelines
+- Target 60fps on mobile
+- Use instanced geometry for repeated objects
+- Implement LOD (Level of Detail) for complex scenes
+- Dispose of geometries and materials properly
+- Use `requestAnimationFrame` for render loops
+
+## Shader conventions
+- Use uniforms for time-based animations
+- Include mobile fallbacks for complex shaders
+- Test on various GPU tiers
+- Document shader inputs/outputs

@@ -1,0 +1,80 @@
+---
+description: Cloudflare Workers runtime globals
+globs:
+  - workers/**/*.ts
+  - workers/**/*.js
+  - functions/**/*.ts
+  - "**/*worker*.ts"
+---
+
+# Cloudflare Workers Globals (BSI)
+
+These globals are available in the Cloudflare Workers runtime and are defined in `.eslintrc.json`.
+
+## Available globals
+
+### Core Workers
+```typescript
+// Execution context
+declare const ExecutionContext: ExecutionContext;
+
+// Request/Response (Web Standard)
+declare const RequestInit: RequestInit;
+declare const RequestInfo: RequestInfo;
+```
+
+### Bindings
+```typescript
+// KV Namespace - key-value storage
+declare const KVNamespace: KVNamespace;
+
+// D1 Database - SQLite at the edge
+declare const D1Database: D1Database;
+
+// R2 Bucket - object storage
+declare const R2Bucket: R2Bucket;
+
+// Vectorize - vector embeddings
+declare const VectorizeIndex: VectorizeIndex;
+
+// Analytics Engine - metrics
+declare const AnalyticsEngineDataset: AnalyticsEngineDataset;
+
+// Workers AI - inference
+declare const Ai: Ai;
+```
+
+### Durable Objects
+```typescript
+declare const DurableObjectNamespace: DurableObjectNamespace;
+declare const DurableObjectState: DurableObjectState;
+declare const WebSocketPair: WebSocketPair;
+```
+
+### Pages Functions
+```typescript
+declare const PagesFunction: PagesFunction;
+declare const EventContext: EventContext;
+```
+
+## Usage in handlers
+```typescript
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    // env contains your bindings
+    const cache = env.CACHE; // KVNamespace
+    const db = env.DB;       // D1Database
+
+    // ctx provides waitUntil for background tasks
+    ctx.waitUntil(logAnalytics(request));
+
+    return new Response('OK');
+  }
+};
+```
+
+## Type definitions
+Cloudflare types are available via `@cloudflare/workers-types`:
+```typescript
+/// <reference types="@cloudflare/workers-types" />
+```

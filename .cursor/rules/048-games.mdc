@@ -1,0 +1,49 @@
+---
+description: Games and interactive features
+globs:
+  - games/**/*
+  - apps/games/**/*
+---
+
+# Games (BSI)
+
+Interactive games in the `games/` directory (Phaser, Godot, etc.)
+
+## Available games
+| Game | Path | Engine |
+|------|------|--------|
+| Backyard Baseball | `games/backyard/` | TBD |
+| Blitz | `games/blitz/` | TBD |
+| Hoops | `games/hoops/` | TBD |
+| QB Challenge | `games/qb-challenge/` | TBD |
+
+## Conventions
+
+### Deployment
+- Each game has its own `wrangler.toml`
+- Deploy independently from main site
+- Use Cloudflare Pages for static game assets
+
+### Performance
+- Target 60fps on mobile
+- Lazy load game assets
+- Use WebGL where supported, canvas fallback
+
+### Data integration
+- Games can fetch live data from BSI APIs
+- Cache aggressively for offline play
+- Include loading states for data fetches
+
+### Accessibility
+- Include pause functionality
+- Support keyboard controls where possible
+- Provide audio alternatives for visual cues
+
+## File structure per game
+```
+games/{game-name}/
+├── src/           # Game source code
+├── assets/        # Sprites, audio, etc.
+├── wrangler.toml  # Cloudflare config
+└── README.md      # Game-specific docs
+```

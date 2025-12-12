@@ -1,0 +1,53 @@
+---
+description: MCP (Model Context Protocol) server conventions
+globs:
+  - mcp/**/*.ts
+  - mcp/**/*.js
+  - mcp/**/wrangler.toml
+---
+
+# MCP Servers (BSI)
+
+## Response format
+All MCP tool responses must include:
+```typescript
+{
+  result: T;                    // Tool-specific payload
+  citations: Citation[];        // Source attribution
+  generatedAt: string;          // ISO 8601, America/Chicago
+  meta: {
+    cache: {
+      key: string;
+      status: 'HIT' | 'MISS';
+    };
+  };
+}
+```
+
+## Cascading cache implementation
+Priority order:
+1. KV Namespace (5-minute TTL, edge cache)
+2. R2 Bucket (durable JSON archive)
+3. D1 Database (normalized cache table)
+4. Durable Objects (concurrent update coordination)
+5. In-memory Map (offline fallback)
+
+## Tool conventions
+- Tool names should be descriptive: `get_team_seasons`, `get_game_box_score`
+- Include input validation with clear error messages
+- Return structured data, not prose
+- Include `source` for every data point
+
+## Texas Longhorns MCP (mcp/texas-longhorns/)
+Available tools:
+- `get_team_seasons` — Season summaries
+- `get_season_schedule` — Schedule/meet slate
+- `get_game_box_score` — Box scores with cache metadata
+- `get_player_career` — Player career dossier
+- `get_rankings_context` — Poll movement and trends
+- `search_archive` — BSI archive search
+
+## Testing
+- Test all tools with valid and invalid inputs
+- Verify cache behavior (HIT/MISS)
+- Check citation accuracy
