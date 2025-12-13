@@ -275,11 +275,13 @@ export interface GamePrediction {
     teamId: string;
     name: string;
     state: PsychologicalState;
+    diamondScores?: TeamDiamondScores;
   };
   awayTeam: {
     teamId: string;
     name: string;
     state: PsychologicalState;
+    diamondScores?: TeamDiamondScores;
   };
 
   // Probabilities

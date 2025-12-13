@@ -32,6 +32,12 @@ import { SimulationCore } from './simulation-core';
 import { MLPredictor } from './ml-predictor';
 import { PsychologyModel } from './psychology-model';
 import { StateTracker } from './state-tracker';
+import {
+  DiamondIntegration,
+  enhanceTeamState,
+  extractPredictionFeatures,
+} from './diamond-integration';
+import type { DiamondCertaintyInput } from '../analytics/diamond-certainty-engine';
 
 // ============================================================================
 // Constants
@@ -61,6 +67,7 @@ export class BsiPredictionEngine {
   private readonly mlPredictor: MLPredictor;
   private readonly psychologyModel: PsychologyModel;
   private readonly stateTracker: StateTracker;
+  private readonly diamondIntegration: DiamondIntegration;
   private readonly config: PredictionEngineConfig;
 
   constructor(
@@ -72,6 +79,7 @@ export class BsiPredictionEngine {
     this.mlPredictor = new MLPredictor();
     this.psychologyModel = new PsychologyModel();
     this.stateTracker = new StateTracker(env);
+    this.diamondIntegration = new DiamondIntegration();
   }
 
   // ============================================================================
@@ -94,10 +102,14 @@ export class BsiPredictionEngine {
       tier?: SubscriptionTier;
       homeDiamond?: TeamDiamondScores;
       awayDiamond?: TeamDiamondScores;
+      homeDiamondInput?: DiamondCertaintyInput;
+      awayDiamondInput?: DiamondCertaintyInput;
+      useDiamondEnhancement?: boolean;
     }
   ): Promise<GamePrediction> {
     const startTime = Date.now();
     const tier = options?.tier ?? 'free';
+    const useDiamond = options?.useDiamondEnhancement ?? true;
 
     // Check cache first
     const cacheKey = `prediction:${context.gameId}:${this.config.modelVersion}`;
@@ -106,19 +118,54 @@ export class BsiPredictionEngine {
       return this.formatCachedPrediction(cached, tier);
     }
 
-    // Extract ML features
+    // Get or calculate Diamond Certainty scores
+    let homeDiamond = options?.homeDiamond;
+    let awayDiamond = options?.awayDiamond;
+    let enhancedHomeTeam = homeTeam;
+    let enhancedAwayTeam = awayTeam;
+
+    if (useDiamond) {
+      // Use DiamondIntegration for automatic fetching/calculation/caching
+      const diamondEnhanced = await this.diamondIntegration.enhanceForPrediction(
+        homeTeam,
+        awayTeam,
+        options?.homeDiamondInput,
+        options?.awayDiamondInput
+      );
+
+      enhancedHomeTeam = diamondEnhanced.enhancedHome;
+      enhancedAwayTeam = diamondEnhanced.enhancedAway;
+
+      // Update Diamond scores for feature extraction if not already provided
+      if (!homeDiamond) {
+        homeDiamond = await this.diamondIntegration.getTeamScores(
+          homeTeam.teamId,
+          homeTeam,
+          options?.homeDiamondInput
+        );
+      }
+      if (!awayDiamond) {
+        awayDiamond = await this.diamondIntegration.getTeamScores(
+          awayTeam.teamId,
+          awayTeam,
+          options?.awayDiamondInput
+        );
+      }
+    }
+
+    // Extract ML features using enhanced team data
     const features = this.mlPredictor.extractFeatures(
-      homeTeam,
-      awayTeam,
+      enhancedHomeTeam,
+      enhancedAwayTeam,
       context,
-      options?.homeDiamond,
-      options?.awayDiamond
+      homeDiamond,
+      awayDiamond
     );
 
-    // Run Monte Carlo simulation
+    // Run Monte Carlo simulation with enhanced team states
     const mcSimulation = await this.simulationCore.simulateGameN(
-      homeTeam,
-      awayTeam,
+      enhancedHomeTeam,
+      enhancedAwayTeam,
       context,
       this.config.simulationCount
     );
@@ -126,10 +173,20 @@ export class BsiPredictionEngine {
     // Get ML prediction
     const mlResult = this.mlPredictor.predictWithConfidence(features);
 
-    // Calculate psychology adjustment
+    // Calculate psychology adjustment using enhanced states
     const psychAdjustment = this.psychologyModel.calculatePsychAdjustment(
-      { confidence: homeTeam.confidence, focus: homeTeam.focus, cohesion: homeTeam.cohesion, leadershipInfluence: homeTeam.leadershipInfluence },
-      { confidence: awayTeam.confidence, focus: awayTeam.focus, cohesion: awayTeam.cohesion, leadershipInfluence: awayTeam.leadershipInfluence },
+      {
+        confidence: enhancedHomeTeam.confidence,
+        focus: enhancedHomeTeam.focus,
+        cohesion: enhancedHomeTeam.cohesion,
+        leadershipInfluence: enhancedHomeTeam.leadershipInfluence,
+      },
+      {
+        confidence: enhancedAwayTeam.confidence,
+        focus: enhancedAwayTeam.focus,
+        cohesion: enhancedAwayTeam.cohesion,
+        leadershipInfluence: enhancedAwayTeam.leadershipInfluence,
+      },
       context
     );
 
@@ -142,9 +199,9 @@ export class BsiPredictionEngine {
 
     const awayWinProb = 1 - homeWinProb;
 
-    // Calculate spread and total
+    // Calculate spread and total using enhanced team data
     const predictedSpread = this.mlPredictor.predictSpread(homeWinProb, context.sport);
-    const predictedTotal = this.mlPredictor.predictTotal(homeTeam, awayTeam, context);
+    const predictedTotal = this.mlPredictor.predictTotal(enhancedHomeTeam, enhancedAwayTeam, context);
 
     // Generate explanation
     const explanation = this.generateExplanation(features, tier);
@@ -162,24 +219,26 @@ export class BsiPredictionEngine {
       sport: context.sport,
       timestamp: new Date().toISOString(),
       homeTeam: {
-        teamId: homeTeam.teamId,
-        name: homeTeam.teamName,
+        teamId: enhancedHomeTeam.teamId,
+        name: enhancedHomeTeam.teamName,
         state: {
-          confidence: homeTeam.confidence,
-          focus: homeTeam.focus,
-          cohesion: homeTeam.cohesion,
-          leadershipInfluence: homeTeam.leadershipInfluence,
+          confidence: enhancedHomeTeam.confidence,
+          focus: enhancedHomeTeam.focus,
+          cohesion: enhancedHomeTeam.cohesion,
+          leadershipInfluence: enhancedHomeTeam.leadershipInfluence,
         },
+        diamondScores: homeDiamond ?? undefined,
       },
       awayTeam: {
-        teamId: awayTeam.teamId,
-        name: awayTeam.teamName,
+        teamId: enhancedAwayTeam.teamId,
+        name: enhancedAwayTeam.teamName,
         state: {
-          confidence: awayTeam.confidence,
-          focus: awayTeam.focus,
-          cohesion: awayTeam.cohesion,
-          leadershipInfluence: awayTeam.leadershipInfluence,
+          confidence: enhancedAwayTeam.confidence,
+          focus: enhancedAwayTeam.focus,
+          cohesion: enhancedAwayTeam.cohesion,
+          leadershipInfluence: enhancedAwayTeam.leadershipInfluence,
         },
+        diamondScores: awayDiamond ?? undefined,
       },
       homeWinProbability: Math.round(homeWinProb * 1000) / 1000,
       awayWinProbability: Math.round(awayWinProb * 1000) / 1000,
@@ -684,5 +743,61 @@ export class BsiPredictionEngine {
    */
   getModelVersion(): string {
     return this.config.modelVersion;
+  }
+
+  // ============================================================================
+  // Diamond Certainty Integration
+  // ============================================================================
+
+  /**
+   * Get Diamond Certainty scores for a team.
+   * Uses caching for efficiency.
+   */
+  async getDiamondScores(
+    teamId: string,
+    teamState: TeamState,
+    input?: DiamondCertaintyInput
+  ): Promise<TeamDiamondScores> {
+    return this.diamondIntegration.getTeamScores(teamId, teamState, input);
+  }
+
+  /**
+   * Get enhanced team state with Diamond Certainty blending.
+   * Combines existing psychological state with Diamond-derived values.
+   */
+  async getEnhancedTeamState(
+    teamState: TeamState,
+    input?: DiamondCertaintyInput,
+    blendFactor: number = 0.4
+  ): Promise<TeamState> {
+    const diamondScores = await this.diamondIntegration.getTeamScores(
+      teamState.teamId,
+      teamState,
+      input
+    );
+    return enhanceTeamState(teamState, diamondScores, blendFactor);
+  }
+
+  /**
+   * Clear Diamond Certainty cache for a team or all teams.
+   */
+  clearDiamondCache(teamId?: string): void {
+    this.diamondIntegration.clearCache(teamId);
+  }
+
+  /**
+   * Get Diamond-enhanced prediction features for head-to-head analysis.
+   */
+  async getDiamondFeatures(
+    homeTeam: TeamState,
+    awayTeam: TeamState,
+    homeInput?: DiamondCertaintyInput,
+    awayInput?: DiamondCertaintyInput
+  ): Promise<ReturnType<typeof extractPredictionFeatures>> {
+    const [homeScores, awayScores] = await Promise.all([
+      this.diamondIntegration.getTeamScores(homeTeam.teamId, homeTeam, homeInput),
+      this.diamondIntegration.getTeamScores(awayTeam.teamId, awayTeam, awayInput),
+    ]);
+    return extractPredictionFeatures(homeScores, awayScores);
   }
 }

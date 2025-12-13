@@ -21,6 +21,15 @@ export { StateTracker } from './state-tracker';
 export { ExplainabilityEngine } from './explainability';
 export { CalibrationEngine } from './calibration';
 
+// Integrations
+export {
+  DiamondIntegration,
+  diamondToPsychState,
+  extractPredictionFeatures,
+  enhanceTeamState,
+  generateBaselineScores,
+} from './diamond-integration';
+
 // Constants re-exported for convenience
 export {
   PYTHAGOREAN_EXPONENTS,
