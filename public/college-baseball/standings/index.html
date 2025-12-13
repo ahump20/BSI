@@ -7,70 +7,98 @@
     <meta name="description" content="Complete conference standings, RPI rankings, strength of schedule, and tournament projections for all Division I college baseball conferences.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-    <link rel="stylesheet" href="/styles/blaze-design-system.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
     <style>
         :root {
-            --blaze-orange: #bf5700;
-            --blaze-orange-light: #d66d0f;
-            --blaze-orange-dark: #994400;
-            --blaze-sky: #9bcbeb;
-            --blaze-deep: #002244;
-            --blaze-teal: #00b2a9;
-            --blaze-platinum: #e5e4e2;
-            --blaze-charcoal: #1a1a1a;
-            --blaze-graphite: #2a2a2a;
-            --glass-white: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-ember: #FF6B35;
+            --bsi-success: #2E7D32;
+            --bsi-warning: #F9A825;
+            --bsi-error: #C62828;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Serif 4', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+            --glass-white: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 50%, #0f0f0f 100%);
             color: #ffffff;
             line-height: 1.6;
-            overflow-x: hidden;
             min-height: 100vh;
         }
 
-        #particles-js {
+        /* Navigation */
+        .nav-header {
             position: fixed;
-            width: 100%;
-            height: 100%;
             top: 0;
             left: 0;
-            z-index: 1;
-            pointer-events: none;
+            right: 0;
+            z-index: 100;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--bsi-burnt-orange);
+            padding: 0.75rem 1.5rem;
         }
 
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--bsi-burnt-orange);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: var(--font-ui);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--bsi-cream);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--bsi-burnt-orange); }
+        .nav-links a.active { color: var(--bsi-burnt-orange); }
+
         .content-wrapper {
-            position: relative;
-            z-index: 2;
-            padding: 2rem 1rem;
-            max-width: 1800px;
+            padding: 6rem 1rem 3rem;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* =============================================================================
-           PAGE HEADER
-           ============================================================================= */
-
+        /* Page Header */
         .page-header {
             background: var(--glass-white);
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 2rem;
             margin-bottom: 2rem;
         }
@@ -79,30 +107,33 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-family: var(--font-ui);
             font-size: 0.85rem;
-            color: var(--blaze-platinum);
+            color: rgba(250, 248, 245, 0.7);
             margin-bottom: 1rem;
         }
 
         .breadcrumb a {
-            color: var(--blaze-orange);
+            color: var(--bsi-burnt-orange);
             text-decoration: none;
             font-weight: 600;
         }
 
         .page-title {
+            font-family: var(--font-display);
             font-size: clamp(1.75rem, 4vw, 2.5rem);
             font-weight: 900;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #ffffff, var(--blaze-sky));
+            background: linear-gradient(135deg, #ffffff, var(--bsi-burnt-orange));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .page-subtitle {
+            font-family: var(--font-body);
             font-size: 1rem;
-            color: var(--blaze-platinum);
+            color: rgba(250, 248, 245, 0.8);
         }
 
         .stats-bar {
@@ -122,23 +153,116 @@
 
         .stat-value {
             display: block;
+            font-family: var(--font-display);
             font-size: 1.5rem;
             font-weight: 900;
-            color: var(--blaze-orange);
+            color: var(--bsi-burnt-orange);
         }
 
         .stat-label {
+            font-family: var(--font-ui);
             font-size: 0.75rem;
-            color: var(--blaze-platinum);
+            color: rgba(250, 248, 245, 0.7);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 600;
         }
 
-        /* =============================================================================
-           CONFERENCE NAVIGATION
-           ============================================================================= */
+        /* Rankings Grid */
+        .rankings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
 
+        .ranking-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .ranking-header {
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil));
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--bsi-burnt-orange);
+        }
+
+        .ranking-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .ranking-subtitle {
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .ranking-list { padding: 1rem; }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--glass-border);
+            transition: background 0.2s ease;
+        }
+
+        .ranking-item:last-child { border-bottom: none; }
+        .ranking-item:hover { background: rgba(191, 87, 0, 0.08); }
+
+        .ranking-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil));
+            border-radius: 8px;
+            font-family: var(--font-ui);
+            font-weight: 900;
+            color: white;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .ranking-number.top-3 {
+            background: linear-gradient(135deg, var(--bsi-gold), #b8941f);
+            color: #000;
+        }
+
+        .ranking-team { flex: 1; }
+
+        .ranking-team-name {
+            font-family: var(--font-ui);
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .ranking-team-record {
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            color: rgba(250, 248, 245, 0.7);
+            font-weight: 600;
+        }
+
+        .ranking-change {
+            font-family: var(--font-ui);
+            font-size: 0.85rem;
+            font-weight: 900;
+        }
+
+        .ranking-change.up { color: var(--bsi-success); }
+        .ranking-change.down { color: var(--bsi-error); }
+
+        /* Conference Navigation */
         .conference-nav {
             background: var(--glass-white);
             backdrop-filter: blur(10px);
@@ -146,43 +270,14 @@
             border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .nav-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
         }
 
         .nav-title {
+            font-family: var(--font-display);
             font-size: 1.25rem;
             font-weight: 800;
-            color: var(--blaze-orange);
-        }
-
-        .view-selector {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .view-btn {
-            background: var(--blaze-graphite);
-            border: 1px solid var(--glass-border);
-            color: var(--blaze-platinum);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .view-btn.active {
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
-            border-color: var(--blaze-orange);
-            color: white;
+            color: var(--bsi-burnt-orange);
+            margin-bottom: 1rem;
         }
 
         .conference-tabs {
@@ -190,56 +285,35 @@
             gap: 0.5rem;
             overflow-x: auto;
             padding-bottom: 0.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--blaze-orange) var(--blaze-charcoal);
         }
 
         .conference-tab {
-            background: var(--blaze-graphite);
+            background: #2a2a2a;
             border: 1px solid var(--glass-border);
-            color: var(--blaze-platinum);
+            color: rgba(250, 248, 245, 0.8);
             padding: 0.75rem 1.5rem;
             border-radius: 12px;
+            font-family: var(--font-ui);
             font-weight: 700;
             font-size: 0.9rem;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.3s ease;
             flex-shrink: 0;
-            position: relative;
-        }
-
-        .conference-tab::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--blaze-orange), var(--blaze-teal));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
         }
 
         .conference-tab:hover {
             background: rgba(191, 87, 0, 0.15);
-            border-color: var(--blaze-orange);
+            border-color: var(--bsi-burnt-orange);
         }
 
         .conference-tab.active {
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
-            border-color: var(--blaze-orange);
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil));
+            border-color: var(--bsi-burnt-orange);
             color: white;
         }
 
-        .conference-tab.active::after {
-            transform: scaleX(1);
-        }
-
-        /* =============================================================================
-           STANDINGS TABLE
-           ============================================================================= */
-
+        /* Standings Table */
         .standings-container {
             background: var(--glass-white);
             backdrop-filter: blur(10px);
@@ -250,9 +324,9 @@
         }
 
         .standings-header {
-            background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(0, 178, 169, 0.2));
+            background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(139, 69, 19, 0.2));
             padding: 1.5rem;
-            border-bottom: 2px solid var(--blaze-orange);
+            border-bottom: 2px solid var(--bsi-burnt-orange);
         }
 
         .conference-info {
@@ -264,6 +338,7 @@
         }
 
         .conference-name {
+            font-family: var(--font-display);
             font-size: 1.75rem;
             font-weight: 900;
             color: white;
@@ -272,30 +347,24 @@
         .conference-meta {
             display: flex;
             gap: 1.5rem;
+            font-family: var(--font-ui);
             font-size: 0.85rem;
-            color: var(--blaze-platinum);
+            color: rgba(250, 248, 245, 0.7);
             font-weight: 600;
         }
 
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
         .meta-value {
-            color: var(--blaze-orange);
+            color: var(--bsi-burnt-orange);
             font-weight: 900;
         }
 
-        .table-wrapper {
-            overflow-x: auto;
-        }
+        .table-wrapper { overflow-x: auto; }
 
         .standings-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 900px;
+            font-family: var(--font-ui);
         }
 
         .standings-table thead {
@@ -312,35 +381,21 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 800;
-            color: var(--blaze-sky);
-            border-bottom: 2px solid var(--blaze-orange);
+            color: var(--bsi-burnt-orange);
+            border-bottom: 2px solid var(--bsi-burnt-orange);
         }
 
-        .standings-table th:first-child {
-            text-align: center;
-            width: 50px;
-        }
-
-        .standings-table th:not(:first-child):not(:nth-child(2)) {
-            text-align: center;
-        }
+        .standings-table th:first-child { text-align: center; width: 50px; }
+        .standings-table th:not(:first-child):not(:nth-child(2)) { text-align: center; }
 
         .standings-table tbody tr {
             border-bottom: 1px solid var(--glass-border);
             transition: all 0.2s ease;
         }
 
-        .standings-table tbody tr:hover {
-            background: rgba(191, 87, 0, 0.08);
-        }
-
-        .standings-table tbody tr.tournament-bound {
-            background: rgba(0, 178, 169, 0.05);
-        }
-
-        .standings-table tbody tr.bubble-team {
-            background: rgba(255, 193, 7, 0.05);
-        }
+        .standings-table tbody tr:hover { background: rgba(191, 87, 0, 0.08); }
+        .standings-table tbody tr.tournament-bound { background: rgba(46, 125, 50, 0.05); }
+        .standings-table tbody tr.bubble-team { background: rgba(249, 168, 37, 0.05); }
 
         .standings-table td {
             padding: 1rem 0.75rem;
@@ -350,7 +405,7 @@
         .standings-table td:first-child {
             text-align: center;
             font-weight: 900;
-            color: var(--blaze-orange);
+            color: var(--bsi-burnt-orange);
             font-size: 1rem;
         }
 
@@ -359,24 +414,20 @@
             font-weight: 700;
         }
 
-        .rank-cell {
-            position: relative;
-        }
-
         .rank-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil));
             border-radius: 8px;
             font-weight: 900;
             color: white;
         }
 
         .rank-badge.top-5 {
-            background: linear-gradient(135deg, #ffd700, #ffb700);
+            background: linear-gradient(135deg, var(--bsi-gold), #b8941f);
             color: #000;
         }
 
@@ -394,22 +445,8 @@
             flex-shrink: 0;
         }
 
-        .team-info-column {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .team-name {
-            font-weight: 800;
-            font-size: 1rem;
-            line-height: 1.2;
-        }
-
-        .team-mascot {
-            font-size: 0.8rem;
-            color: var(--blaze-platinum);
-            font-weight: 600;
-        }
+        .team-name { font-weight: 800; font-size: 1rem; line-height: 1.2; }
+        .team-mascot { font-size: 0.8rem; color: rgba(250, 248, 245, 0.7); font-weight: 600; }
 
         .tournament-indicator {
             display: inline-block;
@@ -419,23 +456,11 @@
             margin-left: 0.5rem;
         }
 
-        .tournament-indicator.lock {
-            background: #10b981;
-        }
+        .tournament-indicator.lock { background: var(--bsi-success); }
+        .tournament-indicator.bubble { background: var(--bsi-warning); }
 
-        .tournament-indicator.bubble {
-            background: #f59e0b;
-        }
-
-        .win-pct {
-            color: var(--blaze-orange);
-            font-weight: 900;
-            font-size: 1rem;
-        }
-
-        .conf-record {
-            font-weight: 900;
-        }
+        .win-pct { color: var(--bsi-burnt-orange); font-weight: 900; font-size: 1rem; }
+        .conf-record { font-weight: 900; }
 
         .streak {
             font-weight: 900;
@@ -444,178 +469,13 @@
             font-size: 0.85rem;
         }
 
-        .streak.win {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
+        .streak.win { background: rgba(46, 125, 50, 0.2); color: var(--bsi-success); }
+        .streak.loss { background: rgba(200, 40, 40, 0.2); color: var(--bsi-error); }
 
-        .streak.loss {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
+        .rpi-badge { font-weight: 900; color: var(--bsi-gold); }
 
-        .rpi-badge {
-            font-weight: 900;
-            color: var(--blaze-teal);
-        }
-
-        /* =============================================================================
-           NATIONAL RANKINGS SECTION
-           ============================================================================= */
-
-        .rankings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .ranking-card {
-            background: var(--glass-white);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .ranking-header {
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
-            padding: 1.25rem;
-            border-bottom: 2px solid var(--blaze-orange);
-        }
-
-        .ranking-title {
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: white;
-            margin-bottom: 0.25rem;
-        }
-
-        .ranking-subtitle {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .ranking-list {
-            padding: 1rem;
-        }
-
-        .ranking-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--glass-border);
-            transition: background 0.2s ease;
-        }
-
-        .ranking-item:last-child {
-            border-bottom: none;
-        }
-
-        .ranking-item:hover {
-            background: rgba(191, 87, 0, 0.08);
-        }
-
-        .ranking-number {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
-            border-radius: 8px;
-            font-weight: 900;
-            color: white;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .ranking-number.top-3 {
-            background: linear-gradient(135deg, #ffd700, #ffb700);
-            color: #000;
-        }
-
-        .ranking-team {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .ranking-team-name {
-            font-weight: 800;
-            font-size: 0.95rem;
-        }
-
-        .ranking-team-record {
-            font-size: 0.8rem;
-            color: var(--blaze-platinum);
-            font-weight: 600;
-        }
-
-        .ranking-change {
-            font-size: 0.85rem;
-            font-weight: 900;
-        }
-
-        .ranking-change.up {
-            color: #10b981;
-        }
-
-        .ranking-change.down {
-            color: #ef4444;
-        }
-
-        .ranking-change.new {
-            color: var(--blaze-teal);
-        }
-
-        /* =============================================================================
-           LEGEND
-           ============================================================================= */
-
-        .legend-section {
-            background: var(--glass-white);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .legend-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            color: var(--blaze-orange);
-        }
-
-        .legend-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .legend-icon {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        /* =============================================================================
-           ANALYTICS VISUALIZATIONS
-           ============================================================================= */
-
-        .analytics-section {
-            margin-bottom: 2rem;
-        }
+        /* Charts Section */
+        .analytics-section { margin-bottom: 2rem; }
 
         .analytics-header {
             background: var(--glass-white);
@@ -628,9 +488,10 @@
         }
 
         .analytics-title {
+            font-family: var(--font-display);
             font-size: 1.75rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-gold));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -638,9 +499,9 @@
         }
 
         .analytics-subtitle {
+            font-family: var(--font-body);
             font-size: 1rem;
-            color: var(--blaze-platinum);
-            font-weight: 600;
+            color: rgba(250, 248, 245, 0.8);
         }
 
         .charts-grid {
@@ -660,20 +521,19 @@
 
         .chart-card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
-        .chart-card-wide {
-            grid-column: 1 / -1;
-        }
+        .chart-card-wide { grid-column: 1 / -1; }
 
         .chart-header {
-            background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(0, 178, 169, 0.2));
+            background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(139, 69, 19, 0.2));
             padding: 1.25rem 1.5rem;
-            border-bottom: 2px solid var(--blaze-orange);
+            border-bottom: 2px solid var(--bsi-burnt-orange);
         }
 
         .chart-title {
+            font-family: var(--font-display);
             font-size: 1.25rem;
             font-weight: 900;
             color: white;
@@ -681,8 +541,9 @@
         }
 
         .chart-subtitle {
+            font-family: var(--font-ui);
             font-size: 0.85rem;
-            color: var(--blaze-platinum);
+            color: rgba(250, 248, 245, 0.7);
             font-weight: 600;
         }
 
@@ -710,101 +571,98 @@
             border-top: 1px solid var(--glass-border);
         }
 
-        .stat-mini {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
         .stat-mini-value {
+            font-family: var(--font-ui);
             font-size: 1.1rem;
             font-weight: 900;
-            color: var(--blaze-orange);
+            color: var(--bsi-burnt-orange);
             line-height: 1.2;
         }
 
         .stat-mini-label {
+            font-family: var(--font-ui);
             font-size: 0.75rem;
-            color: var(--blaze-platinum);
+            color: rgba(250, 248, 245, 0.7);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* =============================================================================
-           RESPONSIVE
-           ============================================================================= */
-
-        @media (max-width: 768px) {
-            .content-wrapper {
-                padding: 1rem 0.5rem;
-            }
-
-            .page-header {
-                padding: 1.5rem 1rem;
-            }
-
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .conference-info {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .standings-table {
-                font-size: 0.8rem;
-            }
-
-            .standings-table th,
-            .standings-table td {
-                padding: 0.75rem 0.5rem;
-            }
-
-            .team-logo {
-                width: 24px;
-                height: 24px;
-            }
-
-            .rankings-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .chart-container {
-                padding: 1rem;
-                min-height: 250px;
-            }
-
-            .chart-stats {
-                grid-template-columns: 1fr;
-                padding: 1rem;
-            }
+        /* Legend */
+        .legend-section {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        /* =============================================================================
-           ACCESSIBILITY
-           ============================================================================= */
+        .legend-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--bsi-burnt-orange);
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-family: var(--font-ui);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Mobile Navigation */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--bsi-cream);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .content-wrapper { padding: 5rem 0.5rem 2rem; }
+            .page-header { padding: 1.5rem 1rem; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .conference-info { flex-direction: column; align-items: flex-start; }
+            .standings-table { font-size: 0.8rem; }
+            .standings-table th, .standings-table td { padding: 0.75rem 0.5rem; }
+            .team-logo { width: 24px; height: 24px; }
+            .rankings-grid, .charts-grid { grid-template-columns: 1fr; }
+            .chart-container { padding: 1rem; min-height: 250px; }
+        }
 
         .skip-link {
             position: absolute;
             top: -40px;
             left: 0;
-            background: var(--blaze-orange);
+            background: var(--bsi-burnt-orange);
             color: white;
             padding: 0.75rem 1.5rem;
             text-decoration: none;
             font-weight: 700;
-            z-index: 100;
+            z-index: 200;
         }
 
-        .skip-link:focus {
-            top: 0;
-        }
+        .skip-link:focus { top: 0; }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -816,11 +674,25 @@
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    <div id="particles-js" aria-hidden="true"></div>
+
+    <!-- Navigation Header -->
+    <header class="nav-header">
+        <nav class="nav-container">
+            <a href="/" class="nav-logo">Blaze Sports Intel</a>
+            <ul class="nav-links">
+                <li><a href="/college-baseball/" class="active">College Baseball</a></li>
+                <li><a href="/mlb/">MLB</a></li>
+                <li><a href="/nfl/">NFL</a></li>
+                <li><a href="/dashboard.html">Dashboards</a></li>
+                <li><a href="/about.html">About</a></li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="Toggle menu">☰</button>
+        </nav>
+    </header>
 
     <div class="content-wrapper">
         <!-- Page Header -->
-        <header class="page-header" data-aos="fade-down">
+        <header class="page-header">
             <nav class="breadcrumb" aria-label="Breadcrumb">
                 <a href="/">Home</a>
                 <span>/</span>
@@ -851,54 +723,53 @@
         </header>
 
         <main id="main-content">
-
             <!-- National Rankings -->
-            <section class="rankings-grid" data-aos="fade-up">
+            <section class="rankings-grid">
                 <article class="ranking-card">
                     <div class="ranking-header">
                         <h2 class="ranking-title">D1Baseball Top 25</h2>
-                        <p class="ranking-subtitle">Updated: May 14, 2025</p>
+                        <p class="ranking-subtitle">Updated: December 12, 2025</p>
                     </div>
                     <div class="ranking-list">
                         <div class="ranking-item">
                             <div class="ranking-number top-3">1</div>
                             <div class="ranking-team">
-                                <span class="ranking-team-name">Vanderbilt</span>
-                                <span class="ranking-team-record">50-7 (24-3 SEC)</span>
+                                <span class="ranking-team-name">Texas</span>
+                                <span class="ranking-team-record">SEC Champion</span>
                             </div>
-                            <div class="ranking-change up">↑1</div>
+                            <div class="ranking-change">—</div>
                         </div>
                         <div class="ranking-item">
                             <div class="ranking-number top-3">2</div>
                             <div class="ranking-team">
-                                <span class="ranking-team-name">Oregon State</span>
-                                <span class="ranking-team-record">48-8 (23-4 Pac-12)</span>
+                                <span class="ranking-team-name">Vanderbilt</span>
+                                <span class="ranking-team-record">CWS Finalist</span>
                             </div>
-                            <div class="ranking-change down">↓1</div>
+                            <div class="ranking-change">—</div>
                         </div>
                         <div class="ranking-item">
                             <div class="ranking-number top-3">3</div>
                             <div class="ranking-team">
-                                <span class="ranking-team-name">Texas</span>
-                                <span class="ranking-team-record">45-12 (22-5 SEC)</span>
+                                <span class="ranking-team-name">Tennessee</span>
+                                <span class="ranking-team-record">SEC East</span>
                             </div>
-                            <div class="ranking-change up">↑2</div>
+                            <div class="ranking-change up">↑1</div>
                         </div>
                         <div class="ranking-item">
                             <div class="ranking-number">4</div>
                             <div class="ranking-team">
                                 <span class="ranking-team-name">Wake Forest</span>
-                                <span class="ranking-team-record">46-10 (21-6 ACC)</span>
+                                <span class="ranking-team-record">ACC Champion</span>
                             </div>
-                            <div class="ranking-change">—</div>
+                            <div class="ranking-change down">↓1</div>
                         </div>
                         <div class="ranking-item">
                             <div class="ranking-number">5</div>
                             <div class="ranking-team">
-                                <span class="ranking-team-name">Tennessee</span>
-                                <span class="ranking-team-record">43-14 (20-7 SEC)</span>
+                                <span class="ranking-team-name">Oregon State</span>
+                                <span class="ranking-team-record">Pac-12</span>
                             </div>
-                            <div class="ranking-change down">↓2</div>
+                            <div class="ranking-change">—</div>
                         </div>
                     </div>
                 </article>
@@ -912,13 +783,21 @@
                         <div class="ranking-item">
                             <div class="ranking-number top-3">1</div>
                             <div class="ranking-team">
+                                <span class="ranking-team-name">Texas</span>
+                                <span class="ranking-team-record">RPI: 0.6312</span>
+                            </div>
+                            <div class="ranking-change">—</div>
+                        </div>
+                        <div class="ranking-item">
+                            <div class="ranking-number top-3">2</div>
+                            <div class="ranking-team">
                                 <span class="ranking-team-name">Vanderbilt</span>
                                 <span class="ranking-team-record">RPI: 0.6234</span>
                             </div>
                             <div class="ranking-change">—</div>
                         </div>
                         <div class="ranking-item">
-                            <div class="ranking-number top-3">2</div>
+                            <div class="ranking-number top-3">3</div>
                             <div class="ranking-team">
                                 <span class="ranking-team-name">Wake Forest</span>
                                 <span class="ranking-team-record">RPI: 0.6187</span>
@@ -926,26 +805,18 @@
                             <div class="ranking-change up">↑1</div>
                         </div>
                         <div class="ranking-item">
-                            <div class="ranking-number top-3">3</div>
-                            <div class="ranking-team">
-                                <span class="ranking-team-name">Texas</span>
-                                <span class="ranking-team-record">RPI: 0.6145</span>
-                            </div>
-                            <div class="ranking-change up">↑3</div>
-                        </div>
-                        <div class="ranking-item">
                             <div class="ranking-number">4</div>
                             <div class="ranking-team">
-                                <span class="ranking-team-name">Oregon State</span>
-                                <span class="ranking-team-record">RPI: 0.6098</span>
+                                <span class="ranking-team-name">Tennessee</span>
+                                <span class="ranking-team-record">RPI: 0.6145</span>
                             </div>
-                            <div class="ranking-change down">↓2</div>
+                            <div class="ranking-change down">↓1</div>
                         </div>
                         <div class="ranking-item">
                             <div class="ranking-number">5</div>
                             <div class="ranking-team">
-                                <span class="ranking-team-name">Tennessee</span>
-                                <span class="ranking-team-record">RPI: 0.6034</span>
+                                <span class="ranking-team-name">Oregon State</span>
+                                <span class="ranking-team-record">RPI: 0.6098</span>
                             </div>
                             <div class="ranking-change">—</div>
                         </div>
@@ -955,7 +826,7 @@
                 <article class="ranking-card">
                     <div class="ranking-header">
                         <h2 class="ranking-title">Tournament Projection</h2>
-                        <p class="ranking-subtitle">At-Large Bids</p>
+                        <p class="ranking-subtitle">At-Large Bids by Conference</p>
                     </div>
                     <div class="ranking-list">
                         <div class="ranking-item">
@@ -998,14 +869,13 @@
             </section>
 
             <!-- Analytics Visualizations -->
-            <section class="analytics-section" data-aos="fade-up">
+            <section class="analytics-section">
                 <div class="analytics-header">
                     <h2 class="analytics-title">Conference Analytics</h2>
                     <p class="analytics-subtitle">Data-driven insights into RPI distribution, team performance trends, and conference strength metrics</p>
                 </div>
 
                 <div class="charts-grid">
-                    <!-- RPI Distribution Histogram -->
                     <article class="chart-card">
                         <div class="chart-header">
                             <h3 class="chart-title">RPI Distribution</h3>
@@ -1015,47 +885,21 @@
                             <canvas id="rpiHistogram" aria-label="RPI Distribution Histogram"></canvas>
                         </div>
                         <div class="chart-stats">
-                            <div class="stat-mini">
-                                <span class="stat-mini-value">0.6234</span>
-                                <span class="stat-mini-label">Highest RPI (Vanderbilt)</span>
+                            <div>
+                                <span class="stat-mini-value">0.6312</span>
+                                <span class="stat-mini-label">Highest RPI (Texas)</span>
                             </div>
-                            <div class="stat-mini">
+                            <div>
                                 <span class="stat-mini-value">0.4521</span>
                                 <span class="stat-mini-label">Median RPI (D1)</span>
                             </div>
-                            <div class="stat-mini">
+                            <div>
                                 <span class="stat-mini-value">0.3012</span>
                                 <span class="stat-mini-label">Lowest RPI (Bottom 10%)</span>
                             </div>
                         </div>
                     </article>
 
-                    <!-- Win Percentage Progression -->
-                    <article class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">Top Teams Performance Trend</h3>
-                            <p class="chart-subtitle">Win percentage over last 30 games</p>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="winProgressionChart" aria-label="Win Percentage Progression Chart"></canvas>
-                        </div>
-                        <div class="chart-stats">
-                            <div class="stat-mini">
-                                <span class="stat-mini-value">🔥</span>
-                                <span class="stat-mini-label">Hot: Vanderbilt (8-game win streak)</span>
-                            </div>
-                            <div class="stat-mini">
-                                <span class="stat-mini-value">📈</span>
-                                <span class="stat-mini-label">Rising: Texas (8-2 in last 10)</span>
-                            </div>
-                            <div class="stat-mini">
-                                <span class="stat-mini-value">📉</span>
-                                <span class="stat-mini-label">Cooling: Florida (4-6 in last 10)</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Conference Strength Comparison -->
                     <article class="chart-card chart-card-wide">
                         <div class="chart-header">
                             <h3 class="chart-title">Conference Strength Index</h3>
@@ -1065,17 +909,17 @@
                             <canvas id="conferenceStrengthChart" aria-label="Conference Strength Comparison Chart"></canvas>
                         </div>
                         <div class="chart-stats">
-                            <div class="stat-mini">
+                            <div>
                                 <span class="stat-mini-value">SEC</span>
-                                <span class="stat-mini-label">Strongest (0.5423 avg RPI, 12 projected bids)</span>
+                                <span class="stat-mini-label">Strongest (0.5423 avg RPI)</span>
                             </div>
-                            <div class="stat-mini">
+                            <div>
                                 <span class="stat-mini-value">ACC</span>
-                                <span class="stat-mini-label">2nd (0.5201 avg RPI, 9 projected bids)</span>
+                                <span class="stat-mini-label">2nd (0.5201 avg RPI)</span>
                             </div>
-                            <div class="stat-mini">
+                            <div>
                                 <span class="stat-mini-value">Pac-12</span>
-                                <span class="stat-mini-label">3rd (0.5098 avg RPI, 7 projected bids)</span>
+                                <span class="stat-mini-label">3rd (0.5098 avg RPI)</span>
                             </div>
                         </div>
                     </article>
@@ -1083,14 +927,8 @@
             </section>
 
             <!-- Conference Navigation -->
-            <nav class="conference-nav" data-aos="fade-up">
-                <div class="nav-header">
-                    <h2 class="nav-title">Select Conference</h2>
-                    <div class="view-selector">
-                        <button class="view-btn active" data-view="conference">Conference</button>
-                        <button class="view-btn" data-view="overall">Overall</button>
-                    </div>
-                </div>
+            <nav class="conference-nav">
+                <h2 class="nav-title">Select Conference</h2>
                 <div class="conference-tabs" role="tablist">
                     <button class="conference-tab active" role="tab" data-conference="sec">SEC</button>
                     <button class="conference-tab" role="tab" data-conference="acc">ACC</button>
@@ -1100,13 +938,11 @@
                     <button class="conference-tab" role="tab" data-conference="american">American</button>
                     <button class="conference-tab" role="tab" data-conference="cusa">C-USA</button>
                     <button class="conference-tab" role="tab" data-conference="sunbelt">Sun Belt</button>
-                    <button class="conference-tab" role="tab" data-conference="mac">MAC</button>
-                    <button class="conference-tab" role="tab" data-conference="mwc">Mountain West</button>
                 </div>
             </nav>
 
             <!-- SEC Standings -->
-            <section class="standings-container" id="sec-standings" data-aos="fade-up">
+            <section class="standings-container" id="sec-standings">
                 <div class="standings-header">
                     <div class="conference-info">
                         <h2 class="conference-name">Southeastern Conference (SEC)</h2>
@@ -1132,16 +968,16 @@
                             <tr>
                                 <th scope="col">Rk</th>
                                 <th scope="col">Team</th>
-                                <th scope="col" title="Overall Wins">W</th>
-                                <th scope="col" title="Overall Losses">L</th>
-                                <th scope="col" title="Win Percentage">PCT</th>
-                                <th scope="col" title="Conference Record">Conf</th>
-                                <th scope="col" title="Home Record">Home</th>
-                                <th scope="col" title="Away Record">Away</th>
-                                <th scope="col" title="Ratings Percentage Index">RPI</th>
-                                <th scope="col" title="Strength of Schedule">SOS</th>
-                                <th scope="col" title="Current Streak">Strk</th>
-                                <th scope="col" title="Last 10 Games">L10</th>
+                                <th scope="col">W</th>
+                                <th scope="col">L</th>
+                                <th scope="col">PCT</th>
+                                <th scope="col">Conf</th>
+                                <th scope="col">Home</th>
+                                <th scope="col">Away</th>
+                                <th scope="col">RPI</th>
+                                <th scope="col">SOS</th>
+                                <th scope="col">Strk</th>
+                                <th scope="col">L10</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1149,44 +985,44 @@
                                 <td><div class="rank-badge top-5">1</div></td>
                                 <td>
                                     <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">Vanderbilt <span class="tournament-indicator lock" title="Tournament Lock"></span></span>
-                                            <span class="team-mascot">Commodores</span>
+                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas" class="team-logo" loading="lazy">
+                                        <div>
+                                            <span class="team-name">Texas <span class="tournament-indicator lock"></span></span>
+                                            <span class="team-mascot">Longhorns</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td>50</td>
-                                <td>7</td>
-                                <td class="win-pct">.877</td>
+                                <td>52</td>
+                                <td>10</td>
+                                <td class="win-pct">.839</td>
                                 <td class="conf-record">24-3</td>
                                 <td>28-2</td>
-                                <td>22-5</td>
+                                <td>24-8</td>
                                 <td class="rpi-badge">1</td>
-                                <td>12</td>
-                                <td><span class="streak win">W8</span></td>
+                                <td>5</td>
+                                <td><span class="streak win">W6</span></td>
                                 <td>9-1</td>
                             </tr>
                             <tr class="tournament-bound">
                                 <td><div class="rank-badge">2</div></td>
                                 <td>
                                     <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">Texas <span class="tournament-indicator lock" title="Tournament Lock"></span></span>
-                                            <span class="team-mascot">Longhorns</span>
+                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt" class="team-logo" loading="lazy">
+                                        <div>
+                                            <span class="team-name">Vanderbilt <span class="tournament-indicator lock"></span></span>
+                                            <span class="team-mascot">Commodores</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td>45</td>
+                                <td>50</td>
                                 <td>12</td>
-                                <td class="win-pct">.789</td>
+                                <td class="win-pct">.806</td>
                                 <td class="conf-record">22-5</td>
-                                <td>26-4</td>
-                                <td>19-8</td>
-                                <td class="rpi-badge">3</td>
+                                <td>27-4</td>
+                                <td>23-8</td>
+                                <td class="rpi-badge">2</td>
                                 <td>8</td>
-                                <td><span class="streak win">W5</span></td>
+                                <td><span class="streak win">W4</span></td>
                                 <td>8-2</td>
                             </tr>
                             <tr class="tournament-bound">
@@ -1194,19 +1030,19 @@
                                 <td>
                                     <div class="team-cell">
                                         <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png" alt="Tennessee" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">Tennessee <span class="tournament-indicator lock" title="Tournament Lock"></span></span>
+                                        <div>
+                                            <span class="team-name">Tennessee <span class="tournament-indicator lock"></span></span>
                                             <span class="team-mascot">Volunteers</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td>43</td>
-                                <td>14</td>
-                                <td class="win-pct">.754</td>
+                                <td>47</td>
+                                <td>15</td>
+                                <td class="win-pct">.758</td>
                                 <td class="conf-record">20-7</td>
                                 <td>25-5</td>
-                                <td>18-9</td>
-                                <td class="rpi-badge">5</td>
+                                <td>22-10</td>
+                                <td class="rpi-badge">4</td>
                                 <td>6</td>
                                 <td><span class="streak loss">L1</span></td>
                                 <td>7-3</td>
@@ -1216,110 +1052,44 @@
                                 <td>
                                     <div class="team-cell">
                                         <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2116.png" alt="Arkansas" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">Arkansas <span class="tournament-indicator lock" title="Tournament Lock"></span></span>
+                                        <div>
+                                            <span class="team-name">Arkansas <span class="tournament-indicator lock"></span></span>
                                             <span class="team-mascot">Razorbacks</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td>41</td>
-                                <td>16</td>
-                                <td class="win-pct">.719</td>
+                                <td>44</td>
+                                <td>18</td>
+                                <td class="win-pct">.710</td>
                                 <td class="conf-record">19-8</td>
                                 <td>24-6</td>
-                                <td>17-10</td>
+                                <td>20-12</td>
                                 <td class="rpi-badge">9</td>
                                 <td>14</td>
                                 <td><span class="streak win">W3</span></td>
                                 <td>7-3</td>
                             </tr>
-                            <tr class="tournament-bound">
+                            <tr class="bubble-team">
                                 <td><div class="rank-badge">5</div></td>
                                 <td>
                                     <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/228.png" alt="Oklahoma" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">Oklahoma <span class="tournament-indicator bubble" title="Bubble Team"></span></span>
-                                            <span class="team-mascot">Sooners</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>38</td>
-                                <td>18</td>
-                                <td class="win-pct">.679</td>
-                                <td class="conf-record">18-9</td>
-                                <td>22-7</td>
-                                <td>16-11</td>
-                                <td class="rpi-badge">18</td>
-                                <td>23</td>
-                                <td><span class="streak loss">L2</span></td>
-                                <td>5-5</td>
-                            </tr>
-                            <tr class="tournament-bound">
-                                <td><div class="rank-badge">6</div></td>
-                                <td>
-                                    <div class="team-cell">
                                         <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/333.png" alt="LSU" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">LSU <span class="tournament-indicator bubble" title="Bubble Team"></span></span>
+                                        <div>
+                                            <span class="team-name">LSU <span class="tournament-indicator bubble"></span></span>
                                             <span class="team-mascot">Tigers</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>42</td>
-                                <td>15</td>
-                                <td class="win-pct">.737</td>
-                                <td class="conf-record">19-8</td>
-                                <td>25-4</td>
-                                <td>17-11</td>
-                                <td class="rpi-badge">11</td>
-                                <td>19</td>
-                                <td><span class="streak win">W4</span></td>
-                                <td>8-2</td>
-                            </tr>
-                            <tr class="bubble-team">
-                                <td><div class="rank-badge">7</div></td>
-                                <td>
-                                    <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2117.png" alt="Ole Miss" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">Ole Miss <span class="tournament-indicator bubble" title="Bubble Team"></span></span>
-                                            <span class="team-mascot">Rebels</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>40</td>
-                                <td>17</td>
-                                <td class="win-pct">.702</td>
+                                <td>20</td>
+                                <td class="win-pct">.677</td>
                                 <td class="conf-record">17-10</td>
-                                <td>23-6</td>
-                                <td>17-11</td>
+                                <td>23-8</td>
+                                <td>19-12</td>
                                 <td class="rpi-badge">15</td>
-                                <td>21</td>
+                                <td>19</td>
                                 <td><span class="streak win">W2</span></td>
                                 <td>6-4</td>
-                            </tr>
-                            <tr>
-                                <td><div class="rank-badge">8</div></td>
-                                <td>
-                                    <div class="team-cell">
-                                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2579.png" alt="Florida" class="team-logo" loading="lazy">
-                                        <div class="team-info-column">
-                                            <span class="team-name">Florida</span>
-                                            <span class="team-mascot">Gators</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>37</td>
-                                <td>19</td>
-                                <td class="win-pct">.661</td>
-                                <td class="conf-record">16-11</td>
-                                <td>21-8</td>
-                                <td>16-11</td>
-                                <td class="rpi-badge">28</td>
-                                <td>17</td>
-                                <td><span class="streak loss">L3</span></td>
-                                <td>4-6</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1327,98 +1097,47 @@
             </section>
 
             <!-- Legend -->
-            <section class="legend-section" data-aos="fade-up">
+            <section class="legend-section">
                 <h3 class="legend-title">Legend</h3>
                 <div class="legend-items">
                     <div class="legend-item">
-                        <span class="legend-icon" style="background: #10b981;"></span>
+                        <span class="legend-icon" style="background: var(--bsi-success);"></span>
                         <span>Tournament Lock</span>
                     </div>
                     <div class="legend-item">
-                        <span class="legend-icon" style="background: #f59e0b;"></span>
+                        <span class="legend-icon" style="background: var(--bsi-warning);"></span>
                         <span>Bubble Team</span>
                     </div>
                     <div class="legend-item">
-                        <span style="font-weight: 900; color: var(--blaze-sky);">RPI</span>
+                        <span style="font-weight: 900; color: var(--bsi-burnt-orange);">RPI</span>
                         <span>Ratings Percentage Index</span>
                     </div>
                     <div class="legend-item">
-                        <span style="font-weight: 900; color: var(--blaze-sky);">SOS</span>
+                        <span style="font-weight: 900; color: var(--bsi-burnt-orange);">SOS</span>
                         <span>Strength of Schedule Rank</span>
-                    </div>
-                    <div class="legend-item">
-                        <span style="font-weight: 900; color: var(--blaze-sky);">L10</span>
-                        <span>Last 10 Games Record</span>
                     </div>
                 </div>
             </section>
-
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Initialize AOS
-        AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true });
-
-        // Initialize particles
-        if (typeof particlesJS !== 'undefined') {
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 120, density: { enable: true, value_area: 800 } },
-                    color: { value: '#bf5700' },
-                    shape: { type: 'circle' },
-                    opacity: { value: 0.12, random: true },
-                    size: { value: 2.5, random: true },
-                    line_linked: { enable: true, distance: 150, color: '#bf5700', opacity: 0.08, width: 1 },
-                    move: { enable: true, speed: 0.8, direction: 'none', random: true, out_mode: 'out' }
-                },
-                interactivity: {
-                    detect_on: 'canvas',
-                    events: { onhover: { enable: true, mode: 'grab' }, resize: true },
-                    modes: { grab: { distance: 140, line_linked: { opacity: 0.25 } } }
-                },
-                retina_detect: true
-            });
-        }
-
         // Conference tab switching
         document.querySelectorAll('.conference-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.conference-tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
-                const conference = this.dataset.conference;
-                console.log('Conference selected:', conference);
-                // In production, this would fetch and display the selected conference's standings
+                console.log('Conference selected:', this.dataset.conference);
             });
         });
 
-        // View toggle
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                console.log('View changed to:', this.dataset.view);
-            });
-        });
-
-        console.log('College Baseball Standings loaded:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-
-        // =========================================================================
-        // CHART.JS VISUALIZATIONS
-        // =========================================================================
-
-        // Wait for Chart.js to load
+        // Chart.js initialization
         if (typeof Chart !== 'undefined') {
-            // Chart.js default configuration
             Chart.defaults.color = '#e5e4e2';
             Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.12)';
-            Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            Chart.defaults.font.family = 'IBM Plex Sans, sans-serif';
 
-            // =====================================================================
-            // 1. RPI DISTRIBUTION HISTOGRAM
-            // =====================================================================
+            // RPI Histogram
             const rpiCtx = document.getElementById('rpiHistogram');
             if (rpiCtx) {
                 new Chart(rpiCtx, {
@@ -1431,261 +1150,49 @@
                             backgroundColor: 'rgba(191, 87, 0, 0.7)',
                             borderColor: 'rgba(191, 87, 0, 1)',
                             borderWidth: 2,
-                            borderRadius: 8,
-                            hoverBackgroundColor: 'rgba(0, 178, 169, 0.7)',
-                            hoverBorderColor: 'rgba(0, 178, 169, 1)'
+                            borderRadius: 8
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            title: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                                titleColor: '#bf5700',
-                                bodyColor: '#e5e4e2',
-                                borderColor: '#bf5700',
-                                borderWidth: 1,
-                                padding: 12,
-                                displayColors: false,
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.parsed.y + ' teams in this RPI range';
-                                    }
-                                }
-                            }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.08)'
-                                },
-                                ticks: {
-                                    font: {
-                                        weight: 700
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Number of Teams',
-                                    font: {
-                                        size: 12,
-                                        weight: 900
-                                    },
-                                    color: '#bf5700'
-                                }
+                                grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                                title: { display: true, text: 'Teams', color: '#BF5700', font: { weight: 900 } }
                             },
                             x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    font: {
-                                        weight: 700
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'RPI Range',
-                                    font: {
-                                        size: 12,
-                                        weight: 900
-                                    },
-                                    color: '#bf5700'
-                                }
+                                grid: { display: false },
+                                title: { display: true, text: 'RPI Range', color: '#BF5700', font: { weight: 900 } }
                             }
                         }
                     }
                 });
             }
 
-            // =====================================================================
-            // 2. WIN PERCENTAGE PROGRESSION CHART
-            // =====================================================================
-            const progressionCtx = document.getElementById('winProgressionChart');
-            if (progressionCtx) {
-                new Chart(progressionCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Game 1-5', 'Game 6-10', 'Game 11-15', 'Game 16-20', 'Game 21-25', 'Game 26-30'],
-                        datasets: [
-                            {
-                                label: 'Vanderbilt',
-                                data: [0.800, 0.850, 0.867, 0.875, 0.880, 0.877],
-                                borderColor: '#ffd700',
-                                backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointRadius: 5,
-                                pointHoverRadius: 7,
-                                pointBackgroundColor: '#ffd700',
-                                pointBorderColor: '#000',
-                                pointBorderWidth: 2
-                            },
-                            {
-                                label: 'Texas',
-                                data: [0.750, 0.767, 0.773, 0.781, 0.788, 0.789],
-                                borderColor: '#bf5700',
-                                backgroundColor: 'rgba(191, 87, 0, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointRadius: 5,
-                                pointHoverRadius: 7,
-                                pointBackgroundColor: '#bf5700',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2
-                            },
-                            {
-                                label: 'Tennessee',
-                                data: [0.800, 0.783, 0.773, 0.762, 0.760, 0.754],
-                                borderColor: '#00b2a9',
-                                backgroundColor: 'rgba(0, 178, 169, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointRadius: 5,
-                                pointHoverRadius: 7,
-                                pointBackgroundColor: '#00b2a9',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2
-                            },
-                            {
-                                label: 'Florida',
-                                data: [0.700, 0.717, 0.707, 0.688, 0.672, 0.661],
-                                borderColor: '#ef4444',
-                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointRadius: 5,
-                                pointHoverRadius: 7,
-                                pointBackgroundColor: '#ef4444',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    color: '#e5e4e2',
-                                    font: {
-                                        size: 11,
-                                        weight: 700
-                                    },
-                                    padding: 15,
-                                    usePointStyle: true
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                                titleColor: '#bf5700',
-                                bodyColor: '#e5e4e2',
-                                borderColor: '#bf5700',
-                                borderWidth: 1,
-                                padding: 12,
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.dataset.label + ': ' + (context.parsed.y * 100).toFixed(1) + '% win rate';
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                min: 0.5,
-                                max: 1.0,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.08)'
-                                },
-                                ticks: {
-                                    font: {
-                                        weight: 700
-                                    },
-                                    callback: function(value) {
-                                        return (value * 100).toFixed(0) + '%';
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Win Percentage',
-                                    font: {
-                                        size: 12,
-                                        weight: 900
-                                    },
-                                    color: '#bf5700'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    font: {
-                                        weight: 700
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Game Segments (Last 30 Games)',
-                                    font: {
-                                        size: 12,
-                                        weight: 900
-                                    },
-                                    color: '#bf5700'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // =====================================================================
-            // 3. CONFERENCE STRENGTH COMPARISON
-            // =====================================================================
-            const conferenceCtx = document.getElementById('conferenceStrengthChart');
-            if (conferenceCtx) {
-                new Chart(conferenceCtx, {
+            // Conference Strength Chart
+            const confCtx = document.getElementById('conferenceStrengthChart');
+            if (confCtx) {
+                new Chart(confCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['SEC', 'ACC', 'Pac-12', 'Big 12', 'Big Ten', 'American', 'C-USA', 'Sun Belt', 'MAC', 'Mountain West'],
+                        labels: ['SEC', 'ACC', 'Pac-12', 'Big 12', 'Big Ten', 'American', 'C-USA', 'Sun Belt'],
                         datasets: [{
                             label: 'Average RPI',
-                            data: [0.5423, 0.5201, 0.5098, 0.4876, 0.4654, 0.4401, 0.4123, 0.4098, 0.3876, 0.3745],
+                            data: [0.5423, 0.5201, 0.5098, 0.4876, 0.4654, 0.4401, 0.4123, 0.4098],
                             backgroundColor: [
                                 'rgba(191, 87, 0, 0.8)',
                                 'rgba(191, 87, 0, 0.7)',
-                                'rgba(191, 87, 0, 0.65)',
-                                'rgba(0, 178, 169, 0.7)',
-                                'rgba(0, 178, 169, 0.6)',
-                                'rgba(155, 203, 235, 0.6)',
-                                'rgba(155, 203, 235, 0.5)',
-                                'rgba(155, 203, 235, 0.45)',
-                                'rgba(155, 203, 235, 0.4)',
-                                'rgba(155, 203, 235, 0.35)'
+                                'rgba(191, 87, 0, 0.6)',
+                                'rgba(201, 162, 39, 0.6)',
+                                'rgba(201, 162, 39, 0.5)',
+                                'rgba(139, 69, 19, 0.5)',
+                                'rgba(139, 69, 19, 0.4)',
+                                'rgba(139, 69, 19, 0.35)'
                             ],
-                            borderColor: [
-                                'rgba(191, 87, 0, 1)',
-                                'rgba(191, 87, 0, 1)',
-                                'rgba(191, 87, 0, 1)',
-                                'rgba(0, 178, 169, 1)',
-                                'rgba(0, 178, 169, 1)',
-                                'rgba(155, 203, 235, 1)',
-                                'rgba(155, 203, 235, 1)',
-                                'rgba(155, 203, 235, 1)',
-                                'rgba(155, 203, 235, 1)',
-                                'rgba(155, 203, 235, 1)'
-                            ],
+                            borderColor: 'rgba(191, 87, 0, 1)',
                             borderWidth: 2,
                             borderRadius: 8
                         }]
@@ -1694,79 +1201,25 @@
                         indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                                titleColor: '#bf5700',
-                                bodyColor: '#e5e4e2',
-                                borderColor: '#bf5700',
-                                borderWidth: 1,
-                                padding: 12,
-                                displayColors: false,
-                                callbacks: {
-                                    label: function(context) {
-                                        const projectedBids = [12, 9, 7, 5, 3, 2, 1, 1, 1, 1][context.dataIndex];
-                                        return [
-                                            'Avg RPI: ' + context.parsed.x.toFixed(4),
-                                            'Projected Bids: ' + projectedBids
-                                        ];
-                                    }
-                                }
-                            }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
                             x: {
                                 min: 0.3,
                                 max: 0.6,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.08)'
-                                },
-                                ticks: {
-                                    font: {
-                                        weight: 700
-                                    },
-                                    callback: function(value) {
-                                        return value.toFixed(2);
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Average RPI',
-                                    font: {
-                                        size: 12,
-                                        weight: 900
-                                    },
-                                    color: '#bf5700'
-                                }
+                                grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                                title: { display: true, text: 'Average RPI', color: '#BF5700', font: { weight: 900 } }
                             },
-                            y: {
-                                grid: {
-                                    display: false
-                                },
-                                ticks: {
-                                    font: {
-                                        weight: 800,
-                                        size: 11
-                                    }
-                                }
-                            }
+                            y: { grid: { display: false } }
                         }
                     }
                 });
             }
-
-            console.log('Chart.js visualizations initialized:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-        } else {
-            console.warn('Chart.js not loaded - visualizations unavailable');
         }
+
+        console.log('Standings loaded:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
     </script>
 
-    <!-- Real NCAA API Integration -->
     <script src="/college-baseball/standings/api-integration.js"></script>
-    <!-- Cookie Consent Banner (GDPR/CCPA Compliance) -->
     <script src="/components/cookie-banner.js"></script>
 </body>
 </html>
