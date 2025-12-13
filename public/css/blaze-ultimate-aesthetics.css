@@ -9,8 +9,8 @@
 :root {
     /* Championship Color Palette - Enhanced */
     --blaze-primary: #ff6b00;
-    --blaze-secondary: #0066cc;
-    --blaze-accent: #00d4ff;
+    --blaze-secondary: #8B4513;
+    --blaze-accent: #BF5700;
     --blaze-gold: #ffd700;
     --blaze-platinum: #e5e4e2;
     --blaze-ember: #ff4500;
@@ -22,8 +22,8 @@
         #ff6b00 0%,
         #ff4500 25%,
         #ffd700 50%,
-        #0066cc 75%,
-        #00d4ff 100%);
+        #8B4513 75%,
+        #BF5700 100%);
 
     --gradient-holographic: linear-gradient(45deg,
         rgba(255, 107, 0, 0.8) 0%,
@@ -35,8 +35,8 @@
     --gradient-neural: conic-gradient(from 0deg,
         #ff6b00 0deg,
         #ffd700 72deg,
-        #00d4ff 144deg,
-        #0066cc 216deg,
+        #BF5700 144deg,
+        #8B4513 216deg,
         #ff4500 288deg,
         #ff6b00 360deg);
 
@@ -66,12 +66,12 @@
     --gradient-plasma: conic-gradient(from 180deg at 50% 50%,
         #ff6b00 0deg,
         #ffd700 45deg,
-        #00d4ff 90deg,
-        #0066cc 135deg,
+        #BF5700 90deg,
+        #8B4513 135deg,
         #ff4500 180deg,
         #ff6b00 225deg,
         #ffd700 270deg,
-        #00d4ff 315deg,
+        #BF5700 315deg,
         #ff6b00 360deg);
 
     /* Advanced Glass Morphism */
