@@ -4,1109 +4,426 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Baseball Intelligence | Blaze Sports Intel</title>
-    <meta name="description" content="Professional college baseball analytics, live scores, complete box scores, and comprehensive standings for all 300+ D1 programs.">
+    <meta name="description" content="Professional college baseball analytics, live scores, complete box scores, and comprehensive standings for all 300+ D1 programs. The coverage this sport deserves.">
+    <meta property="og:title" content="College Baseball Intelligence | Blaze Sports Intel">
+    <meta property="og:description" content="Real-time scores, complete box scores, and advanced analytics for 300+ D1 college baseball programs.">
+    <meta property="og:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/college-baseball/">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://blazesportsintel.com/college-baseball/">
 
-    <!-- Preconnect to optimize performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-    <!-- Core Styles -->
-    <link rel="stylesheet" href="/styles/blaze-design-system.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
 
     <style>
-        /* =============================================================================
-           BLAZE COLLEGE BASEBALL HUB - PROFESSIONAL SPORTS INTELLIGENCE DESIGN
-           Mobile-First | Data-Dense | Brand-Aligned | Performance-Optimized
-           ============================================================================= */
-
         :root {
-            --blaze-orange: #bf5700;
-            --blaze-orange-light: #d66d0f;
-            --blaze-orange-dark: #994400;
-            --blaze-sky: #9bcbeb;
-            --blaze-deep: #002244;
-            --blaze-teal: #00b2a9;
-            --blaze-platinum: #e5e4e2;
-            --blaze-charcoal: #1a1a1a;
-            --blaze-graphite: #2a2a2a;
-            --glass-white: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
-            --shadow-xl: 0 30px 90px rgba(0, 0, 0, 0.6);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-            position: relative;
-            min-height: 100vh;
-        }
-
-        /* Particle Background Container */
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Content Layer */
-        .content-wrapper {
-            position: relative;
-            z-index: 2;
-            padding-top: 80px;
-        }
-
-        /* =============================================================================
-           HERO HEADER - CHAMPIONSHIP CALIBER
-           ============================================================================= */
-
-        .hero-header {
-            background: linear-gradient(135deg,
-                rgba(191, 87, 0, 0.15) 0%,
-                rgba(0, 34, 68, 0.15) 50%,
-                rgba(0, 178, 169, 0.15) 100%);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 3rem 1.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30 L30 0 M30 30 L60 30 M30 30 L30 60 M30 30 L0 30' stroke='rgba(191,87,0,0.05)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .hero-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 12px rgba(191, 87, 0, 0.3);
-        }
-
-        .hero-eyebrow::before {
-            content: '⚾';
-            font-size: 1rem;
-        }
-
-        .hero-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #ffffff 0%, var(--blaze-sky) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1rem, 2.5vw, 1.25rem);
-            color: var(--blaze-platinum);
-            max-width: 700px;
-            margin-bottom: 2rem;
-            line-height: 1.5;
-        }
-
-        .hero-stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .stat-pill {
-            background: var(--glass-white);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .stat-pill:hover {
-            background: rgba(191, 87, 0, 0.15);
-            border-color: var(--blaze-orange);
-            transform: translateY(-2px);
-        }
-
-        .stat-value {
-            display: block;
-            font-size: 1.75rem;
-            font-weight: 900;
-            color: var(--blaze-orange);
-            line-height: 1;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--blaze-platinum);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        /* =============================================================================
-           QUICK NAVIGATION CARDS
-           ============================================================================= */
-
-        .quick-nav-section {
-            max-width: 1400px;
-            margin: 0 auto 3rem;
-            padding: 0 1.5rem;
-        }
-
-        .quick-nav-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .nav-card {
-            background: var(--glass-white);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .nav-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--blaze-orange), var(--blaze-teal));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-card:hover {
-            background: rgba(191, 87, 0, 0.12);
-            border-color: var(--blaze-orange);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .nav-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .nav-card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .nav-card-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-        }
-
-        .nav-card-description {
-            font-size: 0.95rem;
-            color: var(--blaze-platinum);
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .nav-card-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.85rem;
-            color: var(--blaze-sky);
-            font-weight: 600;
-        }
-
-        .nav-card-badge {
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* =============================================================================
-           LIVE SCORES PREVIEW
-           ============================================================================= */
-
-        .live-scores-section {
-            max-width: 1400px;
-            margin: 0 auto 3rem;
-            padding: 0 1.5rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.75rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 1.75rem;
-            background: linear-gradient(180deg, var(--blaze-orange), var(--blaze-teal));
-            border-radius: 2px;
-        }
-
-        .view-all-link {
-            color: var(--blaze-orange);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .view-all-link:hover {
-            color: var(--blaze-orange-light);
-            gap: 0.75rem;
-        }
-
-        .game-card {
-            background: var(--glass-white);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .game-card:hover {
-            background: rgba(191, 87, 0, 0.08);
-            border-color: var(--blaze-orange);
-            transform: translateX(4px);
-        }
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .game-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .status-live {
-            background: #ef4444;
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 0.5px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .status-final {
-            background: var(--blaze-graphite);
-            color: var(--blaze-platinum);
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 0.5px;
-        }
-
-        .game-matchup {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .team-row {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .team-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .team-logo {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-
-        .team-name {
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        .team-rank {
-            color: var(--blaze-orange);
-            font-weight: 900;
-            font-size: 0.85rem;
-        }
-
-        .team-record {
-            color: var(--blaze-platinum);
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .team-score {
-            font-size: 1.75rem;
-            font-weight: 900;
-            min-width: 50px;
-            text-align: right;
-        }
-
-        .team-score.winner {
-            color: var(--blaze-orange);
-        }
-
-        .game-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--glass-border);
-            font-size: 0.85rem;
-            color: var(--blaze-platinum);
-        }
-
-        /* =============================================================================
-           CONFERENCE STANDINGS PREVIEW
-           ============================================================================= */
-
-        .standings-preview-section {
-            max-width: 1400px;
-            margin: 0 auto 3rem;
-            padding: 0 1.5rem;
-        }
-
-        .conference-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--blaze-orange) var(--blaze-charcoal);
-        }
-
-        .conference-tab {
-            background: var(--glass-white);
-            border: 1px solid var(--glass-border);
-            color: var(--blaze-platinum);
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .conference-tab:hover {
-            background: rgba(191, 87, 0, 0.15);
-            border-color: var(--blaze-orange);
-        }
-
-        .conference-tab.active {
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
-            border-color: var(--blaze-orange);
-            color: white;
-        }
-
-        .standings-table-container {
-            background: var(--glass-white);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            overflow: hidden;
-        }
-
-        .standings-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .standings-table thead {
-            background: rgba(191, 87, 0, 0.15);
-            border-bottom: 2px solid var(--blaze-orange);
-        }
-
-        .standings-table th {
-            padding: 1rem;
-            text-align: left;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 800;
-            color: var(--blaze-sky);
-        }
-
-        .standings-table th:first-child {
-            text-align: center;
-            width: 50px;
-        }
-
-        .standings-table th:not(:first-child):not(:nth-child(2)) {
-            text-align: center;
-        }
-
-        .standings-table tbody tr {
-            border-bottom: 1px solid var(--glass-border);
-            transition: all 0.2s ease;
-        }
-
-        .standings-table tbody tr:hover {
-            background: rgba(191, 87, 0, 0.08);
-        }
-
-        .standings-table td {
-            padding: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .standings-table td:first-child {
-            text-align: center;
-            font-weight: 900;
-            color: var(--blaze-orange);
-        }
-
-        .standings-table td:not(:first-child):not(:nth-child(2)) {
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .team-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .team-logo-small {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-        }
-
-        .team-name-standings {
-            font-weight: 700;
-        }
-
-        .win-pct {
-            color: var(--blaze-orange);
-            font-weight: 900;
-        }
-
-        .streak-positive {
-            color: #10b981;
-            font-weight: 900;
-        }
-
-        .streak-negative {
-            color: #ef4444;
-            font-weight: 900;
-        }
-
-        /* =============================================================================
-           FEATURED CONTENT SECTION
-           ============================================================================= */
-
-        .featured-content-section {
-            max-width: 1400px;
-            margin: 0 auto 3rem;
-            padding: 0 1.5rem;
-        }
-
-        .featured-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .feature-card {
-            background: var(--glass-white);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--blaze-orange);
-        }
-
-        .feature-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: linear-gradient(135deg, var(--blaze-deep), var(--blaze-graphite));
-        }
-
-        .feature-content {
-            padding: 1.5rem;
-        }
-
-        .feature-category {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.75rem;
-        }
-
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-            line-height: 1.3;
-        }
-
-        .feature-excerpt {
-            font-size: 0.9rem;
-            color: var(--blaze-platinum);
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .feature-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--blaze-sky);
-            font-weight: 600;
-        }
-
-        /* =============================================================================
-           FOOTER
-           ============================================================================= */
-
-        footer {
-            background: var(--blaze-charcoal);
-            border-top: 1px solid var(--glass-border);
-            padding: 3rem 1.5rem 2rem;
-            margin-top: 4rem;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .footer-brand h3 {
-            font-size: 1.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-teal));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-brand p {
-            color: var(--blaze-platinum);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .footer-links h4 {
-            font-size: 1rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            color: var(--blaze-sky);
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links a {
-            color: var(--blaze-platinum);
-            text-decoration: none;
-            font-size: 0.9rem;
-            line-height: 2;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--blaze-orange);
-        }
-
-        .footer-bottom {
-            max-width: 1400px;
-            margin: 2rem auto 0;
-            padding-top: 2rem;
-            border-top: 1px solid var(--glass-border);
-            text-align: center;
-            color: var(--blaze-platinum);
-            font-size: 0.85rem;
-        }
-
-        /* =============================================================================
-           RESPONSIVE BREAKPOINTS
-           ============================================================================= */
-
-        @media (max-width: 768px) {
-            .hero-header {
-                padding: 2rem 1rem;
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .quick-nav-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .team-row {
-                grid-template-columns: 1fr auto;
-            }
-
-            .team-record {
-                display: none;
-            }
-
-            .standings-table th,
-            .standings-table td {
-                padding: 0.75rem 0.5rem;
-                font-size: 0.8rem;
-            }
-
-            .feature-content {
-                padding: 1rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .content-wrapper {
-                padding-top: 100px;
-            }
-
-            .hero-header {
-                padding: 4rem 2rem;
-            }
-
-            .nav-card {
-                padding: 2.5rem;
-            }
-        }
-
-        @media (min-width: 1400px) {
-            .hero-stats-bar {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        /* =============================================================================
-           ACCESSIBILITY
-           ============================================================================= */
-
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--blaze-orange);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            font-weight: 700;
-            z-index: 100;
-            border-radius: 0 0 8px 0;
-        }
-
-        .skip-link:focus {
-            top: 0;
-        }
-
-        /* High contrast mode support */
-        @media (prefers-contrast: high) {
-            .nav-card,
-            .game-card,
-            .feature-card {
-                border-width: 2px;
-            }
-        }
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-warm-white: #FAFAFA;
+            --bsi-ember: #FF6B35;
+            --bsi-success: #10B981;
+            --bsi-muted: #6B7280;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Serif 4', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+            --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+            --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+            --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+            --space-12: 3rem; --space-16: 4rem; --space-20: 5rem; --space-24: 6rem;
+            --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+            --duration-normal: 300ms;
+            --shadow-glow: 0 0 40px rgba(191, 87, 0, 0.15);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body { font-family: var(--font-body); background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: inherit; text-decoration: none; }
+        h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: var(--space-3) 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-display); font-weight: 700; font-size: 1.125rem; }
+        .logo-img { height: 44px; width: auto; filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3)); }
+        .logo-text { display: none; }
+        @media (min-width: 640px) { .logo-text { display: block; } .logo-img { height: 48px; } }
+        .nav-links { display: none; gap: var(--space-8); list-style: none; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; }
+        .nav-links a { color: var(--bsi-cream); opacity: 0.7; transition: all var(--duration-normal) var(--ease-out); }
+        .nav-links a:hover { opacity: 1; color: var(--bsi-burnt-orange); }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        .mobile-menu-btn { display: flex; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: var(--space-2); }
+        .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: var(--bsi-cream); }
+        @media (min-width: 768px) { .mobile-menu-btn { display: none; } }
+
+        /* Hero */
+        .hero { padding: 140px 0 var(--space-16); position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 20% 20%, rgba(191, 87, 0, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.08) 0%, transparent 50%); pointer-events: none; }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+        .hero-badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: rgba(191, 87, 0, 0.1); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 100px; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); margin-bottom: var(--space-6); }
+        .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--bsi-success); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .hero-title { font-size: clamp(2.25rem, 6vw, 3.5rem); font-weight: 700; line-height: 1.05; margin-bottom: var(--space-6); }
+        .hero-title .text-gradient { background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: clamp(1rem, 2.5vw, 1.25rem); color: rgba(250, 248, 245, 0.8); max-width: 600px; margin-bottom: var(--space-8); line-height: 1.6; }
+        .hero-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); margin-top: var(--space-8); }
+        @media (min-width: 640px) { .hero-stats { grid-template-columns: repeat(4, 1fr); } }
+        .hero-stat { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 12px; padding: var(--space-4); text-align: center; transition: all var(--duration-normal) var(--ease-out); }
+        .hero-stat:hover { background: rgba(191, 87, 0, 0.08); border-color: rgba(191, 87, 0, 0.3); transform: translateY(-2px); }
+        .stat-value { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--bsi-burnt-orange); display: block; }
+        .stat-label { font-family: var(--font-ui); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(250, 248, 245, 0.5); margin-top: var(--space-1); display: block; }
+
+        /* Section Headers */
+        section { padding: var(--space-16) 0; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-8); }
+        .section-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-2); }
+        .section-title { font-size: clamp(1.5rem, 4vw, 2rem); }
+        .view-all-link { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600; color: var(--bsi-burnt-orange); display: flex; align-items: center; gap: var(--space-2); transition: gap var(--duration-normal) var(--ease-out); }
+        .view-all-link:hover { gap: var(--space-3); }
+
+        /* Navigation Cards */
+        .nav-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
+        @media (min-width: 640px) { .nav-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .nav-grid { grid-template-columns: repeat(4, 1fr); } }
+        .nav-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: var(--space-6); position: relative; overflow: hidden; transition: all var(--duration-normal) var(--ease-out); display: block; }
+        .nav-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember)); opacity: 0; transition: opacity var(--duration-normal) var(--ease-out); }
+        .nav-card:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(191, 87, 0, 0.2); transform: translateY(-4px); }
+        .nav-card:hover::before { opacity: 1; }
+        .nav-card-icon { font-size: 2rem; margin-bottom: var(--space-4); display: block; }
+        .nav-card-title { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-2); color: var(--bsi-cream); }
+        .nav-card-description { font-size: 0.9375rem; color: rgba(250, 248, 245, 0.6); line-height: 1.5; margin-bottom: var(--space-4); }
+        .nav-card-badge { display: inline-block; padding: var(--space-1) var(--space-3); background: rgba(191, 87, 0, 0.15); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 100px; font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--bsi-ember); }
+
+        /* Rankings Section */
+        .rankings-section { background: var(--bsi-charcoal); }
+        .season-banner { background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); border: 1px solid rgba(191, 87, 0, 0.25); border-radius: 12px; padding: var(--space-6); text-align: center; margin-bottom: var(--space-6); }
+        .season-banner-icon { font-size: 2rem; margin-bottom: var(--space-2); }
+        .season-banner h3 { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-2); }
+        .season-banner p { font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); margin-bottom: var(--space-4); }
+        #season-countdown { display: flex; justify-content: center; gap: var(--space-6); }
+        .countdown-item { text-align: center; }
+        .countdown-value { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--bsi-burnt-orange); display: block; }
+        .countdown-label { font-family: var(--font-ui); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(250, 248, 245, 0.5); }
+        .rankings-list { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; overflow: hidden; }
+        .ranking-row { display: grid; grid-template-columns: 50px 1fr auto; align-items: center; gap: var(--space-4); padding: var(--space-4); border-bottom: 1px solid rgba(255, 255, 255, 0.06); transition: background var(--duration-normal) var(--ease-out); }
+        .ranking-row:last-child { border-bottom: none; }
+        .ranking-row:hover { background: rgba(191, 87, 0, 0.08); }
+        .rank-number { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--bsi-burnt-orange); text-align: center; }
+        .rank-change { display: block; font-family: var(--font-ui); font-size: 0.625rem; margin-top: 2px; }
+        .rank-up { color: var(--bsi-success); }
+        .rank-down { color: #EF4444; }
+        .rank-same { color: rgba(250, 248, 245, 0.4); }
+        .team-info { display: flex; align-items: center; gap: var(--space-3); }
+        .team-logo { width: 32px; height: 32px; object-fit: contain; border-radius: 4px; }
+        .team-name { font-family: var(--font-ui); font-weight: 600; }
+        .team-conference { font-size: 0.8125rem; color: rgba(250, 248, 245, 0.5); }
+        .rankings-footer { padding: var(--space-4); text-align: center; background: rgba(191, 87, 0, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.06); }
+        .rankings-footer a { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600; color: var(--bsi-burnt-orange); }
+        .rankings-footer p { font-size: 0.6875rem; color: rgba(250, 248, 245, 0.4); margin-top: var(--space-2); }
+        .loading-spinner { width: 32px; height: 32px; border: 3px solid rgba(255, 255, 255, 0.1); border-top-color: var(--bsi-burnt-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: var(--space-8) auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Standings Section */
+        .standings-section { background: var(--bsi-midnight); }
+        .conference-tabs { display: flex; gap: var(--space-2); margin-bottom: var(--space-6); overflow-x: auto; padding-bottom: var(--space-2); scrollbar-width: thin; scrollbar-color: var(--bsi-burnt-orange) var(--bsi-charcoal); }
+        .conference-tab { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); color: rgba(250, 248, 245, 0.6); padding: var(--space-3) var(--space-5); border-radius: 8px; font-family: var(--font-ui); font-weight: 600; font-size: 0.875rem; cursor: pointer; white-space: nowrap; transition: all var(--duration-normal) var(--ease-out); }
+        .conference-tab:hover { background: rgba(191, 87, 0, 0.1); border-color: rgba(191, 87, 0, 0.2); color: var(--bsi-cream); }
+        .conference-tab.active { background: var(--bsi-burnt-orange); border-color: var(--bsi-burnt-orange); color: white; }
+        .standings-table-container { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; overflow: hidden; }
+        .standings-table { width: 100%; border-collapse: collapse; }
+        .standings-table thead { background: rgba(191, 87, 0, 0.1); }
+        .standings-table th { padding: var(--space-4); text-align: left; font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); }
+        .standings-table th:first-child { text-align: center; width: 50px; }
+        .standings-table th:not(:first-child):not(:nth-child(2)) { text-align: center; }
+        .standings-table td { padding: var(--space-4); font-family: var(--font-ui); font-size: 0.875rem; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .standings-table td:first-child { text-align: center; font-weight: 700; color: var(--bsi-burnt-orange); }
+        .standings-table td:not(:first-child):not(:nth-child(2)) { text-align: center; }
+        .standings-table tbody tr:hover { background: rgba(191, 87, 0, 0.05); }
+        .team-cell { display: flex; align-items: center; gap: var(--space-3); }
+        .team-logo-small { width: 24px; height: 24px; object-fit: contain; }
+
+        /* Analysis Section */
+        .analysis-section { background: var(--bsi-charcoal); }
+        .analysis-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
+        @media (min-width: 768px) { .analysis-grid { grid-template-columns: repeat(3, 1fr); } }
+        .analysis-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; overflow: hidden; transition: all var(--duration-normal) var(--ease-out); }
+        .analysis-card:hover { transform: translateY(-4px); border-color: rgba(191, 87, 0, 0.2); }
+        .analysis-image { height: 160px; background: linear-gradient(135deg, var(--bsi-charcoal), var(--bsi-midnight)); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .analysis-content { padding: var(--space-5); }
+        .analysis-category { display: inline-block; padding: var(--space-1) var(--space-3); background: rgba(191, 87, 0, 0.15); border-radius: 100px; font-family: var(--font-ui); font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); margin-bottom: var(--space-3); }
+        .analysis-title { font-family: var(--font-ui); font-size: 1rem; font-weight: 600; margin-bottom: var(--space-2); line-height: 1.3; }
+        .analysis-excerpt { font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); line-height: 1.5; margin-bottom: var(--space-4); }
+        .analysis-meta { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-ui); font-size: 0.75rem; color: var(--bsi-burnt-orange); }
+
+        /* Footer */
+        footer { background: var(--bsi-charcoal); border-top: 1px solid rgba(191, 87, 0, 0.1); padding: var(--space-12) 0 var(--space-8); }
+        .footer-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-8); margin-bottom: var(--space-8); }
+        @media (min-width: 768px) { .footer-grid { grid-template-columns: 1.5fr repeat(3, 1fr); } }
+        .footer-brand h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: var(--space-3); }
+        .footer-brand h3 span { color: var(--bsi-burnt-orange); }
+        .footer-brand p { font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); line-height: 1.6; }
+        .footer-links h4 { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-burnt-orange); margin-bottom: var(--space-4); }
+        .footer-links ul { list-style: none; }
+        .footer-links a { font-family: var(--font-ui); font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); line-height: 2; transition: color var(--duration-normal) var(--ease-out); }
+        .footer-links a:hover { color: var(--bsi-cream); }
+        .footer-bottom { text-align: center; padding-top: var(--space-8); border-top: 1px solid rgba(255, 255, 255, 0.06); }
+        .footer-bottom p { font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 248, 245, 0.4); }
+        .footer-bottom a { color: var(--bsi-burnt-orange); }
+
+        /* Skip Link */
+        .skip-link { position: absolute; top: -40px; left: 0; background: var(--bsi-burnt-orange); color: white; padding: var(--space-3) var(--space-6); font-family: var(--font-ui); font-weight: 600; z-index: 10000; }
+        .skip-link:focus { top: 0; }
 
-        /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
     </style>
 </head>
 <body>
-    <!-- Skip Link for Accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Particle Background -->
-    <div id="particles-js" aria-hidden="true"></div>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="/" class="logo">
+                <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+                <span class="logo-text">Blaze Sports Intel</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/college-baseball/" style="opacity: 1; color: var(--bsi-burnt-orange);">College Baseball</a></li>
+                <li><a href="/mlb/">MLB</a></li>
+                <li><a href="/nfl/">NFL</a></li>
+                <li><a href="/dashboards/">Dashboards</a></li>
+                <li><a href="/about/">About</a></li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
 
-    <!-- Content Wrapper -->
-    <div class="content-wrapper">
-
-        <!-- Hero Header -->
-        <header class="hero-header" role="banner">
-            <div class="hero-content" data-aos="fade-up">
-                <div class="hero-eyebrow">
-                    College Baseball Intelligence
-                </div>
+    <!-- Hero -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">College Baseball Intelligence</div>
                 <h1 class="hero-title">
-                    Complete Analytics for D1 Baseball
+                    Complete Analytics for<br><span class="text-gradient">D1 Baseball</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Complete box scores, comprehensive standings, advanced analytics, and live updates for every Power 5 conference. Professional-grade baseball intelligence for all 300+ programs.
+                    Complete box scores, comprehensive standings, advanced analytics, and live updates for every Power 5 conference. The professional-grade coverage this sport deserves.
                 </p>
-                <div class="hero-stats-bar">
-                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="100">
+                <div class="hero-stats">
+                    <div class="hero-stat">
                         <span class="stat-value">300+</span>
                         <span class="stat-label">Division I Teams</span>
                     </div>
-                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="200">
+                    <div class="hero-stat">
                         <span class="stat-value">32</span>
                         <span class="stat-label">Conferences</span>
                     </div>
-                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="300">
+                    <div class="hero-stat">
                         <span class="stat-value">Live</span>
                         <span class="stat-label">Real-Time Scores</span>
                     </div>
-                    <div class="stat-pill" data-aos="fade-up" data-aos-delay="400">
+                    <div class="hero-stat">
                         <span class="stat-value">Full</span>
                         <span class="stat-label">Box Scores</span>
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Main Content -->
-        <main id="main-content">
+    <main id="main-content">
+        <!-- Quick Navigation -->
+        <section class="container">
+            <div class="nav-grid">
+                <a href="/college-baseball/games/" class="nav-card">
+                    <span class="nav-card-icon">🔴</span>
+                    <h2 class="nav-card-title">Live Games & Scores</h2>
+                    <p class="nav-card-description">Real-time updates with complete box scores, play-by-play, and advanced stats.</p>
+                    <span class="nav-card-badge">Live Now</span>
+                </a>
+                <a href="/college-baseball/standings/" class="nav-card">
+                    <span class="nav-card-icon">🏆</span>
+                    <h2 class="nav-card-title">Conference Standings</h2>
+                    <p class="nav-card-description">Complete conference and national standings with RPI and tournament projections.</p>
+                    <span class="nav-card-badge">Updated Daily</span>
+                </a>
+                <a href="/college-baseball/teams/" class="nav-card">
+                    <span class="nav-card-icon">⚾</span>
+                    <h2 class="nav-card-title">Team Analytics</h2>
+                    <p class="nav-card-description">Advanced metrics, player stats, and historical performance for all D1 programs.</p>
+                    <span class="nav-card-badge">Pro-Level Stats</span>
+                </a>
+                <a href="/dashboards/" class="nav-card">
+                    <span class="nav-card-icon">📊</span>
+                    <h2 class="nav-card-title">Conference Dashboards</h2>
+                    <p class="nav-card-description">Deep-dive dashboards with rosters, transfers, and draft prospects.</p>
+                    <span class="nav-card-badge">New</span>
+                </a>
+            </div>
+        </section>
 
-            <!-- Quick Navigation -->
-            <section class="quick-nav-section" aria-label="Quick Navigation">
-                <div class="quick-nav-grid">
-                    <a href="/college-baseball/games/" class="nav-card" data-aos="fade-up" data-aos-delay="100">
-                        <span class="nav-card-icon" aria-hidden="true">🔴</span>
-                        <h2 class="nav-card-title">Live Games & Scores</h2>
-                        <p class="nav-card-description">
-                            Real-time updates with complete box scores, play-by-play, and advanced stats for every game.
-                        </p>
-                        <div class="nav-card-meta">
-                            <span>Updated every 30 seconds</span>
-                            <span class="nav-card-badge">Live Now</span>
-                        </div>
-                    </a>
-
-                    <a href="/college-baseball/standings/" class="nav-card" data-aos="fade-up" data-aos-delay="200">
-                        <span class="nav-card-icon" aria-hidden="true">🏆</span>
-                        <h2 class="nav-card-title">Conference Standings</h2>
-                        <p class="nav-card-description">
-                            Complete conference and national standings with RPI, strength of schedule, and tournament projections.
-                        </p>
-                        <div class="nav-card-meta">
-                            <span>All 32 conferences</span>
-                            <span class="nav-card-badge">Updated Daily</span>
-                        </div>
-                    </a>
-
-                    <a href="/college-baseball/teams/" class="nav-card" data-aos="fade-up" data-aos-delay="300">
-                        <span class="nav-card-icon" aria-hidden="true">⚾</span>
-                        <h2 class="nav-card-title">Team Analytics</h2>
-                        <p class="nav-card-description">
-                            Advanced metrics, player stats, recruiting rankings, and historical performance for all D1 programs.
-                        </p>
-                        <div class="nav-card-meta">
-                            <span>300+ teams tracked</span>
-                            <span class="nav-card-badge">Pro-Level Stats</span>
-                        </div>
-                    </a>
-                </div>
-            </section>
-
-            <!-- 2026 Preseason Rankings -->
-            <section class="live-scores-section" aria-label="Preseason Rankings" data-aos="fade-up">
+        <!-- Rankings Section -->
+        <section class="rankings-section">
+            <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">2026 Preseason Top 25</h2>
-                    <a href="/college-baseball/standings/" class="view-all-link">
-                        Full Rankings →
-                    </a>
+                    <div>
+                        <p class="section-label">Preseason</p>
+                        <h2 class="section-title">2026 Top 25 Rankings</h2>
+                    </div>
+                    <a href="/college-baseball/standings/" class="view-all-link">Full Rankings →</a>
                 </div>
 
-                <!-- Off-Season Banner -->
-                <div class="game-card" style="background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(0, 178, 169, 0.1)); border-color: var(--blaze-orange);">
-                    <div style="text-align: center; padding: 1rem 0;">
-                        <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">⚾</span>
-                        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem;">2026 Season Opens February 14th</h3>
-                        <p style="color: var(--blaze-platinum); font-size: 0.9rem; margin-bottom: 0.75rem;">Preseason rankings based on D1Baseball projections</p>
-                        <div id="season-countdown" style="display: flex; justify-content: center; gap: 1.5rem; font-family: monospace;"></div>
+                <div class="season-banner">
+                    <div class="season-banner-icon">⚾</div>
+                    <h3>2026 Season Opens February 14th</h3>
+                    <p>Preseason rankings based on D1Baseball projections</p>
+                    <div id="season-countdown"></div>
+                </div>
+
+                <div id="rankings-container">
+                    <div class="rankings-list" style="padding: var(--space-8); text-align: center;">
+                        <div class="loading-spinner"></div>
+                        <p style="color: rgba(250, 248, 245, 0.5); margin-top: var(--space-4);">Loading rankings...</p>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Rankings Container (populated by JS) -->
-                <div id="rankings-container" style="margin-top: 1rem;">
-                    <div class="game-card" style="text-align: center; padding: 2rem;">
-                        <div class="loading-spinner" style="width: 40px; height: 40px; border: 3px solid var(--glass-border); border-top-color: var(--blaze-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                        <p style="margin-top: 1rem; color: var(--blaze-platinum);">Loading rankings...</p>
-                    </div>
-                </div>
-
-                <style>
-                    @keyframes spin { to { transform: rotate(360deg); } }
-                    .ranking-row {
-                        display: grid;
-                        grid-template-columns: 50px 1fr auto;
-                        align-items: center;
-                        gap: 1rem;
-                        padding: 1rem;
-                        border-bottom: 1px solid var(--glass-border);
-                        transition: background 0.2s ease;
-                    }
-                    .ranking-row:hover { background: rgba(191, 87, 0, 0.08); }
-                    .ranking-row:last-child { border-bottom: none; }
-                    .rank-number {
-                        font-size: 1.5rem;
-                        font-weight: 900;
-                        color: var(--blaze-orange);
-                        text-align: center;
-                    }
-                    .rank-change {
-                        font-size: 0.75rem;
-                        display: block;
-                        margin-top: 2px;
-                    }
-                    .rank-up { color: #10b981; }
-                    .rank-down { color: #ef4444; }
-                    .rank-same { color: var(--blaze-platinum); }
-                </style>
-            </section>
-
-            <!-- Conference Standings Preview -->
-            <section class="standings-preview-section" aria-label="Conference Standings" data-aos="fade-up">
+        <!-- Standings Section -->
+        <section class="standings-section">
+            <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Conference Standings</h2>
-                    <a href="/college-baseball/standings/" class="view-all-link">
-                        View All Conferences →
-                    </a>
+                    <div>
+                        <p class="section-label">Conference</p>
+                        <h2 class="section-title">Standings</h2>
+                    </div>
+                    <a href="/college-baseball/standings/" class="view-all-link">All Conferences →</a>
                 </div>
 
                 <div class="conference-tabs" role="tablist">
-                    <button class="conference-tab active" role="tab" aria-selected="true" aria-controls="sec-standings">SEC</button>
-                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="acc-standings">ACC</button>
-                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="big12-standings">Big 12</button>
-                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="pac12-standings">Pac-12</button>
-                    <button class="conference-tab" role="tab" aria-selected="false" aria-controls="big10-standings">Big Ten</button>
+                    <button class="conference-tab active" role="tab" data-conf="SEC">SEC</button>
+                    <button class="conference-tab" role="tab" data-conf="ACC">ACC</button>
+                    <button class="conference-tab" role="tab" data-conf="Big 12">Big 12</button>
+                    <button class="conference-tab" role="tab" data-conf="Pac-12">Pac-12</button>
+                    <button class="conference-tab" role="tab" data-conf="Big Ten">Big Ten</button>
                 </div>
 
-                <div class="standings-table-container" id="sec-standings" role="tabpanel">
+                <div class="standings-table-container">
                     <table class="standings-table">
                         <thead>
                             <tr>
-                                <th scope="col">Rk</th>
-                                <th scope="col">Team</th>
-                                <th scope="col">W</th>
-                                <th scope="col">L</th>
-                                <th scope="col">PCT</th>
-                                <th scope="col">Conf</th>
-                                <th scope="col">Strk</th>
+                                <th>Rk</th>
+                                <th>Team</th>
+                                <th>W</th>
+                                <th>L</th>
+                                <th>PCT</th>
+                                <th>Conf</th>
+                                <th>Strk</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Dynamically populated by JavaScript -->
+                        <tbody id="standings-body">
                             <tr>
-                                <td colspan="7" style="text-align: center; padding: 2rem;">
-                                    <div class="loading-spinner" style="width: 30px; height: 30px; border: 3px solid var(--glass-border); border-top-color: var(--blaze-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                                <td colspan="7" style="text-align: center; padding: var(--space-8);">
+                                    <div class="loading-spinner"></div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Featured Content -->
-            <section class="featured-content-section" aria-label="Featured Analysis" data-aos="fade-up">
+        <!-- Analysis Section -->
+        <section class="analysis-section">
+            <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Analysis & Insights</h2>
+                    <div>
+                        <p class="section-label">Featured</p>
+                        <h2 class="section-title">Analysis & Insights</h2>
+                    </div>
                 </div>
 
-                <div class="featured-grid">
-                    <article class="feature-card">
-                        <div class="feature-image" role="img" aria-label="College World Series Preview"></div>
-                        <div class="feature-content">
-                            <span class="feature-category">Tournament Preview</span>
-                            <h3 class="feature-title">2025 College World Series Bracket Projections</h3>
-                            <p class="feature-excerpt">
-                                Our models analyze RPI, strength of schedule, and conference performance to project the 64-team field. SEC dominance continues with 12 projected bids.
-                            </p>
-                            <div class="feature-meta">
+                <div class="analysis-grid">
+                    <article class="analysis-card">
+                        <div class="analysis-image">🏆</div>
+                        <div class="analysis-content">
+                            <span class="analysis-category">Tournament Preview</span>
+                            <h3 class="analysis-title">2025 College World Series Bracket Projections</h3>
+                            <p class="analysis-excerpt">Our models analyze RPI, strength of schedule, and conference performance to project the 64-team field.</p>
+                            <div class="analysis-meta">
                                 <span>📊 Analytics</span>
                                 <span>12 min read</span>
                             </div>
                         </div>
                     </article>
-
-                    <article class="feature-card">
-                        <div class="feature-image" role="img" aria-label="Power Rankings"></div>
-                        <div class="feature-content">
-                            <span class="feature-category">Power Rankings</span>
-                            <h3 class="feature-title">Week 10 D1 Baseball Power Rankings</h3>
-                            <p class="feature-excerpt">
-                                Vanderbilt solidifies #1 spot with sweep of Tennessee. Texas climbs to #3 after dominant pitching performances.
-                            </p>
-                            <div class="feature-meta">
+                    <article class="analysis-card">
+                        <div class="analysis-image">📈</div>
+                        <div class="analysis-content">
+                            <span class="analysis-category">Power Rankings</span>
+                            <h3 class="analysis-title">Week 10 D1 Baseball Power Rankings</h3>
+                            <p class="analysis-excerpt">Vanderbilt solidifies #1 spot with sweep of Tennessee. Texas climbs to #3 after dominant pitching.</p>
+                            <div class="analysis-meta">
                                 <span>🏆 Rankings</span>
                                 <span>8 min read</span>
                             </div>
                         </div>
                     </article>
-
-                    <article class="feature-card">
-                        <div class="feature-image" role="img" aria-label="Player Spotlight"></div>
-                        <div class="feature-content">
-                            <span class="feature-category">Player Spotlight</span>
-                            <h3 class="feature-title">2025 MLB Draft: Top College Pitching Prospects</h3>
-                            <p class="feature-excerpt">
-                                Scouting reports, velocity data, and advanced metrics for the top 25 college arms projected for first-round selection.
-                            </p>
-                            <div class="feature-meta">
+                    <article class="analysis-card">
+                        <div class="analysis-image">⚾</div>
+                        <div class="analysis-content">
+                            <span class="analysis-category">Draft Analysis</span>
+                            <h3 class="analysis-title">2025 MLB Draft: Top College Pitching Prospects</h3>
+                            <p class="analysis-excerpt">Scouting reports, velocity data, and advanced metrics for the top 25 college arms.</p>
+                            <div class="analysis-meta">
                                 <span>⚾ Draft</span>
                                 <span>15 min read</span>
                             </div>
                         </div>
                     </article>
                 </div>
-            </section>
+            </div>
+        </section>
+    </main>
 
-        </main>
-
-        <!-- Footer -->
-        <footer role="contentinfo">
-            <div class="footer-content">
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
                 <div class="footer-brand">
-                    <h3>Blaze Sports Intel</h3>
-                    <p>Professional sports intelligence and analytics. Turning data into dominance since 2025.</p>
+                    <h3>Blaze <span>Sports Intel</span></h3>
+                    <p>Professional sports intelligence and analytics. The coverage college baseball deserves. Born in Memphis, rooted in Texas.</p>
                 </div>
-                <nav class="footer-links" aria-label="College Baseball">
+                <nav class="footer-links">
                     <h4>College Baseball</h4>
                     <ul>
                         <li><a href="/college-baseball/games/">Live Games</a></li>
                         <li><a href="/college-baseball/standings/">Standings</a></li>
                         <li><a href="/college-baseball/teams/">Teams</a></li>
-                        <li><a href="/college-baseball/players/">Players</a></li>
+                        <li><a href="/dashboards/">Dashboards</a></li>
                     </ul>
                 </nav>
-                <nav class="footer-links" aria-label="Resources">
+                <nav class="footer-links">
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="/analytics/">Analytics</a></li>
-                        <li><a href="/api/">API Documentation</a></li>
+                        <li><a href="/api/">API</a></li>
                         <li><a href="/about/">About</a></li>
                         <li><a href="/contact/">Contact</a></li>
                     </ul>
                 </nav>
-                <nav class="footer-links" aria-label="Other Sports">
+                <nav class="footer-links">
                     <h4>Other Sports</h4>
                     <ul>
                         <li><a href="/mlb/">MLB</a></li>
@@ -1117,49 +434,37 @@
                 </nav>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Blaze Sports Intel | <a href="https://blazesportsintel.com" style="color: var(--blaze-orange); text-decoration: none;">blazesportsintel.com</a> | Data updated in real-time</p>
+                <p>&copy; 2025 Blaze Sports Intel · <a href="https://blazesportsintel.com">blazesportsintel.com</a> · Data updated in real-time</p>
             </div>
-        </footer>
+        </div>
+    </footer>
 
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <script src="/js/blaze-particles.js"></script>
     <script>
-        // Initialize AOS animations
-        AOS.init({
-            duration: 800,
-            easing: 'ease-out-cubic',
-            once: true,
-            offset: 100
-        });
+        // Season Countdown
+        function updateCountdown() {
+            const seasonStart = new Date('2026-02-14T12:00:00-06:00');
+            const now = new Date();
+            const diff = seasonStart - now;
 
-        // Initialize particles (150K configuration)
-        if (typeof particlesJS !== 'undefined') {
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 150, density: { enable: true, value_area: 800 } },
-                    color: { value: '#bf5700' },
-                    shape: { type: 'circle' },
-                    opacity: { value: 0.15, random: true },
-                    size: { value: 3, random: true },
-                    line_linked: { enable: true, distance: 150, color: '#bf5700', opacity: 0.1, width: 1 },
-                    move: { enable: true, speed: 1, direction: 'none', random: true, out_mode: 'out' }
-                },
-                interactivity: {
-                    detect_on: 'canvas',
-                    events: { onhover: { enable: true, mode: 'grab' }, resize: true },
-                    modes: { grab: { distance: 140, line_linked: { opacity: 0.3 } } }
-                },
-                retina_detect: true
-            });
+            if (diff <= 0) {
+                document.getElementById('season-countdown').innerHTML = '<span style="color: var(--bsi-burnt-orange); font-weight: 700;">Season in Progress!</span>';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            document.getElementById('season-countdown').innerHTML = `
+                <div class="countdown-item"><span class="countdown-value">${days}</span><span class="countdown-label">Days</span></div>
+                <div class="countdown-item"><span class="countdown-value">${hours}</span><span class="countdown-label">Hours</span></div>
+                <div class="countdown-item"><span class="countdown-value">${mins}</span><span class="countdown-label">Mins</span></div>
+            `;
         }
+        updateCountdown();
+        setInterval(updateCountdown, 60000);
 
-        // =================================================================
-        // FETCH REAL RANKINGS FROM D1 DATABASE
-        // =================================================================
+        // Load Rankings
         async function loadRankings() {
             const container = document.getElementById('rankings-container');
             try {
@@ -1167,13 +472,13 @@
                 const data = await res.json();
 
                 if (!data.success || !data.rankings?.length) {
-                    container.innerHTML = `<div class="game-card" style="text-align: center; padding: 2rem;">
-                        <p style="color: var(--blaze-platinum);">Rankings will be available soon.</p>
+                    container.innerHTML = `<div class="rankings-list" style="padding: var(--space-8); text-align: center;">
+                        <p style="color: rgba(250, 248, 245, 0.5);">Rankings will be available soon.</p>
                     </div>`;
                     return;
                 }
 
-                const html = `<div class="game-card" style="padding: 0; overflow: hidden;">
+                container.innerHTML = `<div class="rankings-list">
                     ${data.rankings.map(r => `
                         <div class="ranking-row">
                             <div class="rank-number">
@@ -1186,142 +491,77 @@
                                 ${r.team.logo ? `<img src="${r.team.logo}" alt="${r.team.name}" class="team-logo" loading="lazy">` : ''}
                                 <div>
                                     <span class="team-name">${r.team.name}</span>
-                                    <span style="display: block; font-size: 0.8rem; color: var(--blaze-platinum);">${r.team.conference || ''}</span>
+                                    <span class="team-conference">${r.team.conference || ''}</span>
                                 </div>
                             </div>
-                            <div style="text-align: right;">
-                                <span style="font-size: 0.75rem; color: var(--blaze-sky); text-transform: uppercase;">Preseason</span>
-                            </div>
+                            <span style="font-size: 0.6875rem; color: var(--bsi-burnt-orange); text-transform: uppercase; letter-spacing: 0.1em;">Preseason</span>
                         </div>
                     `).join('')}
-                    <div style="padding: 1rem; text-align: center; border-top: 1px solid var(--glass-border); background: rgba(191, 87, 0, 0.05);">
-                        <a href="/college-baseball/standings/" style="color: var(--blaze-orange); text-decoration: none; font-weight: 700; font-size: 0.9rem;">View Full Top 25 →</a>
-                        <p style="font-size: 0.7rem; color: var(--blaze-platinum); margin-top: 0.5rem;">
-                            Source: ${data.source} | Updated: ${data.dataStamp?.fetchedAt || new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}
-                        </p>
+                    <div class="rankings-footer">
+                        <a href="/college-baseball/standings/">View Full Top 25 →</a>
+                        <p>Source: ${data.source} · ${data.dataStamp?.fetchedAt || new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}</p>
                     </div>
                 </div>`;
-
-                container.innerHTML = html;
             } catch (err) {
                 console.error('Failed to load rankings:', err);
-                container.innerHTML = `<div class="game-card" style="text-align: center; padding: 2rem;">
-                    <p style="color: var(--blaze-platinum);">Unable to load rankings. Please try again later.</p>
+                container.innerHTML = `<div class="rankings-list" style="padding: var(--space-8); text-align: center;">
+                    <p style="color: rgba(250, 248, 245, 0.5);">Unable to load rankings. Please try again later.</p>
                 </div>`;
             }
         }
-
-        // Season countdown
-        function updateCountdown() {
-            const seasonStart = new Date('2026-02-14T12:00:00-06:00');
-            const now = new Date();
-            const diff = seasonStart - now;
-
-            if (diff <= 0) {
-                document.getElementById('season-countdown').innerHTML = '<span style="color: var(--blaze-orange); font-weight: 700;">Season in Progress!</span>';
-                return;
-            }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-            document.getElementById('season-countdown').innerHTML = `
-                <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 900; color: var(--blaze-orange);">${days}</span><br><span style="font-size: 0.7rem; color: var(--blaze-platinum);">DAYS</span></div>
-                <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 900; color: var(--blaze-orange);">${hours}</span><br><span style="font-size: 0.7rem; color: var(--blaze-platinum);">HOURS</span></div>
-                <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 900; color: var(--blaze-orange);">${mins}</span><br><span style="font-size: 0.7rem; color: var(--blaze-platinum);">MINS</span></div>
-            `;
-        }
-
-        // Load rankings and start countdown
         loadRankings();
-        updateCountdown();
-        setInterval(updateCountdown, 60000);
 
-        // =================================================================
-        // CONFERENCE STANDINGS - FETCH FROM API
-        // =================================================================
+        // Conference Tabs & Standings
         const conferenceTabs = document.querySelectorAll('.conference-tab');
-        const standingsTableBody = document.querySelector('#sec-standings tbody');
-        let currentConference = 'SEC';
+        const standingsBody = document.getElementById('standings-body');
 
         async function loadConferenceTeams(conference) {
-            if (!standingsTableBody) return;
-            standingsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem;">
-                <div class="loading-spinner" style="width: 30px; height: 30px; border: 3px solid var(--glass-border); border-top-color: var(--blaze-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-            </td></tr>`;
+            standingsBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: var(--space-8);"><div class="loading-spinner"></div></td></tr>`;
 
             try {
                 const res = await fetch(`/api/college-baseball/teams?conference=${encodeURIComponent(conference)}&limit=10`);
                 const data = await res.json();
 
                 if (!data.success || !data.teams?.length) {
-                    standingsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">No teams found for ${conference}</td></tr>`;
+                    standingsBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: var(--space-8); color: rgba(250, 248, 245, 0.5);">No teams found for ${conference}</td></tr>`;
                     return;
                 }
 
-                standingsTableBody.innerHTML = data.teams.slice(0, 5).map((team, i) => `
+                standingsBody.innerHTML = data.teams.slice(0, 5).map((team, i) => `
                     <tr>
                         <td>${i + 1}</td>
                         <td>
                             <div class="team-cell">
                                 ${team.logo ? `<img src="${team.logo}" alt="${team.name}" class="team-logo-small" loading="lazy">` : ''}
-                                <span class="team-name-standings">${team.name}</span>
+                                <span>${team.name}</span>
                             </div>
                         </td>
                         <td>—</td>
                         <td>—</td>
-                        <td class="win-pct">—</td>
                         <td>—</td>
-                        <td class="rank-same">—</td>
+                        <td>—</td>
+                        <td>—</td>
                     </tr>
-                `).join('');
-
-                // Add note about preseason
-                const note = document.createElement('tr');
-                note.innerHTML = `<td colspan="7" style="text-align: center; padding: 1rem; font-size: 0.8rem; color: var(--blaze-platinum); background: rgba(191, 87, 0, 0.05);">
-                    Season records will update when 2026 season begins · ${data.dataStamp?.fetchedAt || ''}
-                </td>`;
-                standingsTableBody.appendChild(note);
-
+                `).join('') + `<tr><td colspan="7" style="text-align: center; padding: var(--space-4); font-size: 0.75rem; color: rgba(250, 248, 245, 0.4); background: rgba(191, 87, 0, 0.03);">Records update when 2026 season begins</td></tr>`;
             } catch (err) {
-                console.error('Failed to load conference teams:', err);
-                standingsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">Unable to load standings</td></tr>`;
+                console.error('Failed to load standings:', err);
+                standingsBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: var(--space-8); color: rgba(250, 248, 245, 0.5);">Unable to load standings</td></tr>`;
             }
         }
 
         conferenceTabs.forEach(tab => {
             tab.addEventListener('click', function() {
-                conferenceTabs.forEach(t => {
-                    t.classList.remove('active');
-                    t.setAttribute('aria-selected', 'false');
-                });
+                conferenceTabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
-                this.setAttribute('aria-selected', 'true');
-                currentConference = this.textContent.trim();
-                loadConferenceTeams(currentConference);
+                loadConferenceTeams(this.dataset.conf);
             });
         });
 
-        // Load initial conference
         loadConferenceTeams('SEC');
 
-        // Keyboard navigation for cards
-        const navCards = document.querySelectorAll('.nav-card');
-        navCards.forEach(card => {
-            card.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    window.location.href = this.href;
-                }
-            });
-        });
-
-        // Data timestamp
+        // Timestamp
         console.log('Page loaded:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-        console.log('Data source: Blaze Sports Intel API v1.0');
     </script>
-    <!-- Cookie Consent Banner (GDPR/CCPA Compliance) -->
     <script src="/components/cookie-banner.js"></script>
 </body>
 </html>
