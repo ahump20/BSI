@@ -999,8 +999,8 @@
                 );
 
                 const awayMaterial = new BABYLON.StandardMaterial(`awayMat_${game.id}`, scene);
-                awayMaterial.diffuseColor = BABYLON.Color3.FromHexString(awayTeam.color || '#0066cc');
-                awayMaterial.emissiveColor = BABYLON.Color3.FromHexString(awayTeam.color || '#0066cc').scale(0.2);
+                awayMaterial.diffuseColor = BABYLON.Color3.FromHexString(awayTeam.color || '#8B4513');
+                awayMaterial.emissiveColor = BABYLON.Color3.FromHexString(awayTeam.color || '#8B4513').scale(0.2);
                 awayBox.material = awayMaterial;
 
                 console.log(`Away: ${awayTeam.name} - ${awayTeam.score}`);

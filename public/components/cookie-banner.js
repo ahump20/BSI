@@ -189,7 +189,7 @@ class CookieConsentBanner {
       }
 
       .cookie-banner-text a {
-        color: #0066cc;
+        color: #8B4513;
         text-decoration: underline;
       }
 
@@ -210,7 +210,7 @@ class CookieConsentBanner {
       }
 
       .btn-primary {
-        background: #0066cc;
+        background: #8B4513;
         color: white;
       }
 
