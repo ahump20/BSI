@@ -339,7 +339,7 @@ function renderBattingStats(team, battingStats) {
             <table class="stats-table">
                 <caption>${team.name} Batting</caption>
                 <tbody>
-                    <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">Batting statistics not available</td></tr>
+                    <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--bsi-cream);">Batting statistics not available</td></tr>
                 </tbody>
             </table>
         `;
@@ -408,7 +408,7 @@ function renderPitchingStats(teams, pitchingStats) {
             <table class="stats-table">
                 <caption>Pitching Summary</caption>
                 <tbody>
-                    <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--blaze-platinum);">Pitching statistics not available</td></tr>
+                    <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--bsi-cream);">Pitching statistics not available</td></tr>
                 </tbody>
             </table>
         `;
@@ -587,7 +587,7 @@ style.textContent = `
         text-align: center;
         padding: 4rem 2rem;
         font-size: 1.25rem;
-        color: var(--blaze-platinum);
+        color: var(--bsi-cream);
         animation: pulse 2s infinite;
     }
 
@@ -606,24 +606,24 @@ style.textContent = `
         font-size: 1.5rem;
         font-weight: 900;
         margin-bottom: 1rem;
-        color: var(--blaze-orange);
+        color: var(--bsi-burnt-orange);
     }
 
     .no-games-message p,
     .error-message p {
-        color: var(--blaze-platinum);
+        color: var(--bsi-cream);
         margin-bottom: 0.75rem;
     }
 
     .no-games-message .note {
         font-size: 0.9rem;
         font-style: italic;
-        color: var(--blaze-sky);
+        color: var(--bsi-burnt-orange);
         margin-top: 1rem;
     }
 
     .retry-btn {
-        background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
+        background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil));
         color: white;
         padding: 0.75rem 2rem;
         border-radius: 8px;

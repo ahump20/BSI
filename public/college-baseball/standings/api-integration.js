@@ -39,7 +39,7 @@ async function fetchAndRenderStandings() {
     // Show loading state
     const tableWrapper = standingsContainer.querySelector('.table-wrapper');
     if (tableWrapper) {
-        tableWrapper.innerHTML = '<div class="loading-spinner" style="text-align: center; padding: 3rem; color: var(--blaze-platinum);">Loading standings...</div>';
+        tableWrapper.innerHTML = '<div class="loading-spinner" style="text-align: center; padding: 3rem; color: var(--bsi-cream);">Loading standings...</div>';
     }
 
     try {
@@ -71,10 +71,10 @@ async function fetchAndRenderStandings() {
         // Render standings table
         if (standings.length === 0) {
             tableWrapper.innerHTML = `
-                <div class="no-data-message" style="text-align: center; padding: 3rem; color: var(--blaze-platinum);">
+                <div class="no-data-message" style="text-align: center; padding: 3rem; color: var(--bsi-cream);">
                     <h3>No Standings Available</h3>
                     <p>Standings for ${currentConference} are not available at this time.</p>
-                    <p class="note" style="font-size: 0.9rem; font-style: italic; color: var(--blaze-sky); margin-top: 1rem;">
+                    <p class="note" style="font-size: 0.9rem; font-style: italic; color: var(--bsi-burnt-orange); margin-top: 1rem;">
                         Note: College baseball is currently in off-season (October). Standings will be available when the 2026 season begins in February.
                     </p>
                 </div>
@@ -87,11 +87,11 @@ async function fetchAndRenderStandings() {
         console.error('[Standings API] Error:', error);
         if (tableWrapper) {
             tableWrapper.innerHTML = `
-                <div class="error-message" style="text-align: center; padding: 3rem; color: var(--blaze-platinum);">
+                <div class="error-message" style="text-align: center; padding: 3rem; color: var(--bsi-cream);">
                     <h3>Unable to Load Standings</h3>
                     <p>${error.message}</p>
                     <button onclick="location.reload()" class="retry-btn" style="
-                        background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-orange-dark));
+                        background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-texas-soil));
                         color: white;
                         padding: 0.75rem 2rem;
                         border-radius: 8px;
