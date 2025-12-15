@@ -268,9 +268,7 @@ export default function NFLPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display text-gradient-blaze mb-4">
-                Practice to Play.
-                <br />
-                Blaze Data Wins the Day.
+                NFL Intelligence
               </h1>
             </ScrollReveal>
 

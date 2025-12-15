@@ -266,7 +266,7 @@ export default function MLBPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
-                Practice to Play. Blaze Data Wins the Day.
+                Real-Time Data. Complete Coverage.
               </p>
             </ScrollReveal>
 

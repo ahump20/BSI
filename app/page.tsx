@@ -16,7 +16,13 @@ const navItems = [
   { label: 'Pricing', href: '/pricing' },
 ];
 
-const sportsData = [
+const sportsData: {
+  name: string;
+  icon: string;
+  href: string;
+  desc: string;
+  comingSoon?: boolean;
+}[] = [
   { name: 'MLB', icon: '⚾', href: '/mlb', desc: 'Live scores, standings & Statcast' },
   { name: 'NFL', icon: '🏈', href: '/nfl', desc: 'Live scores & standings' },
   {
@@ -25,7 +31,7 @@ const sportsData = [
     href: '/college-baseball',
     desc: 'D1 standings & schedules',
   },
-  { name: 'CFB', icon: '🏟️', href: '/cfb', desc: 'College football analytics' },
+  { name: 'CFB', icon: '🏟️', href: '/cfb', desc: 'College football analytics', comingSoon: true },
 ];
 
 const features = [
@@ -49,13 +55,13 @@ const features = [
 
 const tickerItems = [
   { id: '1', content: 'MLB: Live scores and standings streaming now', type: 'live' as const },
-  { id: '2', content: 'NFL: 2024-25 season data fully integrated', type: 'default' as const },
-  { id: '3', content: 'New: Monte Carlo simulation engine deployed', type: 'alert' as const },
+  { id: '2', content: 'NFL: 2025 season data fully integrated', type: 'default' as const },
   {
-    id: '4',
-    content: 'College Baseball: Conference standings available',
+    id: '3',
+    content: 'College Baseball: D1 standings and box scores live',
     type: 'default' as const,
   },
+  { id: '4', content: 'NCAA Football: Conference standings available', type: 'default' as const },
   { id: '5', content: 'Dashboard: Real-time multi-sport command center', type: 'default' as const },
 ];
 
@@ -85,14 +91,14 @@ export default function HomePage() {
               </Badge>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-display text-white mb-6 tracking-tight">
-                QUANTIFYING
+                BORN TO BLAZE THE
                 <br />
-                <span className="text-gradient-brand">INSTINCT</span>
+                <span className="text-gradient-brand">PATH LESS BEATEN</span>
               </h1>
 
               <p className="lead max-w-2xl mx-auto mb-10">
-                Professional sports analytics platform delivering real-time MLB, NFL, NBA, and NCAA
-                data. Live scores, predictions, and insights powered by advanced statistics.
+                Professional sports intelligence for fans who care about the game—not the networks.
+                MLB, NFL, College Baseball, NCAA Football. Real analytics, real data, real coverage.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -128,7 +134,12 @@ export default function HomePage() {
             {sportsData.map((sport, index) => (
               <ScrollReveal key={sport.name} direction="up" delay={index * 100}>
                 <Link href={sport.href}>
-                  <Card variant="interactive" className="p-6 text-center h-full">
+                  <Card variant="interactive" className="p-6 text-center h-full relative">
+                    {sport.comingSoon && (
+                      <span className="absolute top-2 right-2 px-2 py-0.5 text-xs font-semibold bg-gold/20 text-gold rounded-full">
+                        Coming Soon
+                      </span>
+                    )}
                     <span className="text-5xl mb-4 block">{sport.icon}</span>
                     <h3 className="text-xl font-display text-white mb-2">{sport.name}</h3>
                     <p className="text-white/50 text-sm">{sport.desc}</p>
