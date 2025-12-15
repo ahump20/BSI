@@ -51,8 +51,8 @@ export default function ContactPage() {
                   Get in <span className="text-gradient-blaze">Touch</span>
                 </h1>
                 <p className="text-text-secondary">
-                  Questions about college baseball coverage? Partnership opportunities? Or just want
-                  to talk baseball? I read every email.
+                  Questions about our sports coverage? Partnership opportunities? Or just want to
+                  talk sports? I read every email.
                 </p>
               </div>
             </ScrollReveal>

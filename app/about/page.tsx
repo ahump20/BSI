@@ -13,17 +13,19 @@ import { Footer } from '@/components/layout-ds/Footer';
 export const metadata: Metadata = {
   title: 'About | Blaze Sports Intel',
   description:
-    'Born in Memphis on Texas soil. The story behind Blaze Sports Intel and why college baseball deserves better coverage.',
+    'Born in Memphis on Texas soil. The story behind Blaze Sports Intel—professional sports intelligence for MLB, NFL, and NCAA.',
   openGraph: {
     title: 'About Blaze Sports Intel',
-    description: 'Born in Memphis on Texas soil. The story behind Blaze Sports Intel.',
+    description:
+      'Born in Memphis on Texas soil. Professional sports intelligence that serves the game.',
     images: [{ url: '/images/texas-soil.webp' }],
   },
 };
 
 const navItems = [
   { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'MLB', href: '/mlb' },
+  { label: 'NFL', href: '/nfl' },
   { label: 'About', href: '/about' },
   { label: 'Pricing', href: '/pricing' },
 ];
@@ -168,7 +170,7 @@ export default function AboutPage() {
                     year: '2024',
                     title: 'Blaze Sports Intel',
                     description:
-                      'Got tired of waiting for ESPN to care about college baseball. Built it myself.',
+                      'Got tired of waiting for sports coverage that actually serves the fans. Built it myself.',
                   },
                 ].map((item, index) => (
                   <ScrollReveal key={item.year} direction="left" delay={index * 50}>
@@ -200,15 +202,16 @@ export default function AboutPage() {
                 </h2>
 
                 <p className="text-xl text-text-secondary leading-relaxed mb-8">
-                  College baseball is America&apos;s most underserved major sport. ESPN barely
-                  covers it. The NCAA&apos;s own stats portal is a nightmare. Box scores disappear.
-                  Historical data is scattered across a dozen sites.
+                  Sports coverage should serve the fans, not the networks. Real-time data
+                  shouldn&apos;t be locked behind paywalls or buried in clunky interfaces. Every
+                  league—MLB, NFL, college baseball, college football—deserves analytics
+                  infrastructure that works.
                 </p>
 
                 <p className="text-text-secondary leading-relaxed mb-8">
-                  Blaze Sports Intel exists because someone had to fix it. Complete box scores.
-                  Real-time updates. Conference standings that actually work. Analytics that help
-                  coaches, scouts, and fans make better decisions.
+                  Blaze Sports Intel exists because someone had to build it right. Live scores that
+                  actually update. Standings that don&apos;t lag. Analytics that help coaches,
+                  scouts, and fans make better decisions across every sport we cover.
                 </p>
 
                 <p className="text-lg text-white font-semibold">
@@ -228,7 +231,7 @@ export default function AboutPage() {
                   Get in Touch
                 </h2>
                 <p className="text-text-secondary mb-6">
-                  Questions, partnerships, or just want to talk baseball? I read every email.
+                  Questions, partnerships, or just want to talk sports? I read every email.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a

@@ -10,22 +10,22 @@ import { Footer } from '../components/layout-ds/Footer';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'College Baseball', href: '/college-baseball/' },
-  { label: 'MLB', href: '/mlb/' },
-  { label: 'NFL', href: '/nfl/' },
-  { label: 'Pricing', href: '/pricing.html' },
+  { label: 'MLB', href: '/mlb' },
+  { label: 'NFL', href: '/nfl' },
+  { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'Pricing', href: '/pricing' },
 ];
 
 const sportsData = [
+  { name: 'MLB', icon: '⚾', href: '/mlb', desc: 'Live scores, standings & Statcast' },
+  { name: 'NFL', icon: '🏈', href: '/nfl', desc: 'Live scores & standings' },
   {
     name: 'College Baseball',
     icon: '🎓',
-    href: '/college-baseball/',
-    desc: 'The coverage this sport deserves',
+    href: '/college-baseball',
+    desc: 'D1 standings & schedules',
   },
-  { name: 'MLB', icon: '⚾', href: '/mlb/', desc: 'Live scores, standings & Statcast' },
-  { name: 'NFL', icon: '🏈', href: '/nfl/', desc: 'Live scores & standings' },
-  { name: 'CFB', icon: '🏟️', href: '/cfb/', desc: 'College football analytics' },
+  { name: 'CFB', icon: '🏟️', href: '/cfb', desc: 'College football analytics' },
 ];
 
 const features = [
@@ -48,19 +48,15 @@ const features = [
 ];
 
 const tickerItems = [
+  { id: '1', content: 'MLB: Live scores and standings streaming now', type: 'live' as const },
+  { id: '2', content: 'NFL: 2024-25 season data fully integrated', type: 'default' as const },
+  { id: '3', content: 'New: Monte Carlo simulation engine deployed', type: 'alert' as const },
   {
-    id: '1',
-    content: 'College Baseball: Full 2025 season coverage now live',
+    id: '4',
+    content: 'College Baseball: Conference standings available',
     type: 'default' as const,
   },
-  { id: '2', content: 'MLB: Spring Training data pipeline active', type: 'default' as const },
-  { id: '3', content: 'NFL: 2024-25 playoff predictions available', type: 'live' as const },
-  { id: '4', content: 'New: Monte Carlo simulation engine deployed', type: 'alert' as const },
-  {
-    id: '5',
-    content: 'College Baseball: D1 standings updated in real-time',
-    type: 'default' as const,
-  },
+  { id: '5', content: 'Dashboard: Real-time multi-sport command center', type: 'default' as const },
 ];
 
 export default function HomePage() {

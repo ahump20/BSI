@@ -9,7 +9,7 @@
 **Austin Humphrey** — Founder, Blaze Sports Intel
 - Location: Boerne, Texas
 - Contact: ahump20@outlook.com
-- Focus: Sports intelligence and analytics (college baseball filling ESPN's gaps)
+- Focus: Sports intelligence and analytics (MLB, NFL, NCAA coverage that serves fans, not networks)
 - Stack: Cloudflare Workers/D1/KV/R2 exclusively
 - Philosophy: Production-ready code, zero placeholders
 

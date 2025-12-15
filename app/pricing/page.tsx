@@ -13,7 +13,8 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 const navItems = [
   { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'MLB', href: '/mlb' },
+  { label: 'NFL', href: '/nfl' },
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Pricing', href: '/pricing' },
 ];
@@ -195,9 +196,9 @@ export default function PricingPage() {
                     'We pull from official league APIs—MLB, NFL, NBA, NCAA. No scraped garbage, no guesswork.',
                 },
                 {
-                  title: 'College Baseball Focus',
+                  title: 'Multi-Sport Coverage',
                   description:
-                    "ESPN gave up on college baseball. We didn't. Full box scores, conference standings, and analytics for 300+ D1 programs.",
+                    'MLB, NFL, NCAA—all in one platform. Live scores, standings, and analytics across every league we cover. No switching between apps.',
                 },
                 {
                   title: 'Built by a Fan, for Fans',
