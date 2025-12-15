@@ -32,37 +32,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="./images/bsi-logo-nav.png">
-    <style>
+      <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+        /* Homepage-specific overrides - base tokens from bsi-tokens.css */
         :root {
-            --bsi-burnt-orange: #BF5700;
-            --bsi-texas-soil: #8B4513;
-            --bsi-gold: #C9A227;
-            --bsi-charcoal: #1A1A1A;
-            --bsi-midnight: #0D0D0D;
-            --bsi-cream: #FAF8F5;
-            --bsi-warm-white: #FAFAFA;
-            --bsi-ember: #FF6B35;
             --bsi-flame: #E85D04;
-            --bsi-success: #10B981;
-            --bsi-muted: #6B7280;
-            --font-display: 'Playfair Display', Georgia, serif;
-            --font-body: 'Source Serif 4', Georgia, serif;
-            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
-            --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-            --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
-            --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
-            --space-12: 3rem; --space-16: 4rem; --space-20: 5rem; --space-24: 6rem;
             --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
             --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
             --duration-fast: 150ms; --duration-normal: 300ms; --duration-slow: 500ms;
             --shadow-glow: 0 0 40px rgba(191, 87, 0, 0.15);
         }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { font-size: 16px; scroll-behavior: smooth; }
-        body { font-family: var(--font-body); background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        img { max-width: 100%; height: auto; display: block; }
-        a { color: inherit; text-decoration: none; }
-        h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+        h1, h2, h3, h4 { font-family: var(--bsi-font-display); font-weight: 600; line-height: 1.1; }
         .text-gradient { background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .text-orange { color: var(--bsi-burnt-orange); }
         .text-gold { color: var(--bsi-gold); }
@@ -1392,5 +1372,6 @@
     </script>
     <!-- Live Dashboard Widget -->
     <script src="/js/live-dashboard-widget.js" defer></script>
+  <script src="/js/bsi-components.js"></script>
 </body>
 </html>

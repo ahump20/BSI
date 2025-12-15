@@ -893,3 +893,334 @@ body {
 .bsi-skip-link:focus {
   top: var(--bsi-space-4);
 }
+
+/* ========================================
+   STAT CARD COMPONENT
+   ======================================== */
+.bsi-stat-card {
+  background: var(--bsi-charcoal);
+  border: 1px solid var(--bsi-border-subtle);
+  border-radius: var(--bsi-radius-lg);
+  padding: var(--bsi-space-6);
+  text-align: center;
+  transition: all var(--bsi-transition-base);
+}
+
+.bsi-stat-card:hover {
+  border-color: var(--bsi-border-accent);
+  transform: translateY(-2px);
+}
+
+.bsi-stat-card__value {
+  font-family: var(--bsi-font-display);
+  font-size: var(--bsi-text-4xl);
+  font-weight: 700;
+  color: var(--bsi-burnt-orange);
+  line-height: 1;
+}
+
+.bsi-stat-card__label {
+  font-size: var(--bsi-text-sm);
+  color: var(--bsi-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: var(--bsi-space-2);
+}
+
+.bsi-stat-trend {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--bsi-text-xs);
+  font-weight: 600;
+  margin-top: var(--bsi-space-2);
+}
+
+.bsi-stat-trend--up { color: var(--bsi-success); }
+.bsi-stat-trend--down { color: var(--bsi-error); }
+
+/* ========================================
+   SCORE CARD COMPONENT
+   ======================================== */
+.bsi-score-card {
+  background: var(--bsi-charcoal);
+  border: 1px solid var(--bsi-border-subtle);
+  border-radius: var(--bsi-radius-lg);
+  overflow: hidden;
+}
+
+.bsi-score-card--live {
+  border-color: var(--bsi-success);
+}
+
+.bsi-score-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--bsi-space-2) var(--bsi-space-4);
+  background: var(--bsi-graphite);
+  font-size: var(--bsi-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bsi-score-card__inning {
+  color: var(--bsi-success);
+  font-weight: 600;
+}
+
+.bsi-score-card__status {
+  color: var(--bsi-text-secondary);
+}
+
+.bsi-score-card__time {
+  color: var(--bsi-text-muted);
+}
+
+.bsi-score-card__teams {
+  padding: var(--bsi-space-3) var(--bsi-space-4);
+}
+
+.bsi-score-card__team {
+  display: flex;
+  align-items: center;
+  gap: var(--bsi-space-3);
+  padding: var(--bsi-space-2) 0;
+}
+
+.bsi-score-card__team.winner .bsi-score-card__name,
+.bsi-score-card__team.winner .bsi-score-card__score {
+  font-weight: 700;
+}
+
+.bsi-score-card__logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.bsi-score-card__name {
+  flex: 1;
+  font-size: var(--bsi-text-sm);
+}
+
+.bsi-score-card__score {
+  font-family: var(--bsi-font-display);
+  font-size: var(--bsi-text-lg);
+  min-width: 2rem;
+  text-align: right;
+}
+
+/* ========================================
+   PLAYER CARD COMPONENT
+   ======================================== */
+.bsi-player-card {
+  background: var(--bsi-charcoal);
+  border: 1px solid var(--bsi-border-subtle);
+  border-radius: var(--bsi-radius-lg);
+  padding: var(--bsi-space-4);
+}
+
+.bsi-player-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--bsi-space-4);
+}
+
+.bsi-player-card__photo,
+.bsi-player-card__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bsi-player-card__avatar {
+  background: var(--bsi-burnt-orange);
+  color: var(--bsi-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--bsi-text-lg);
+}
+
+.bsi-player-card__name {
+  font-weight: 600;
+  font-size: var(--bsi-text-base);
+}
+
+.bsi-player-card__meta {
+  font-size: var(--bsi-text-sm);
+  color: var(--bsi-burnt-orange);
+}
+
+.bsi-player-card__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: var(--bsi-space-3);
+  margin-top: var(--bsi-space-4);
+  padding-top: var(--bsi-space-4);
+  border-top: 1px solid var(--bsi-border-subtle);
+}
+
+.bsi-player-card__stat {
+  text-align: center;
+}
+
+.bsi-player-card__stat-value {
+  font-family: var(--bsi-font-display);
+  font-size: var(--bsi-text-xl);
+  font-weight: 700;
+  color: var(--bsi-ember);
+}
+
+.bsi-player-card__stat-label {
+  font-size: var(--bsi-text-xs);
+  color: var(--bsi-text-muted);
+  text-transform: uppercase;
+}
+
+/* ========================================
+   STANDINGS TABLE COMPONENT
+   ======================================== */
+.bsi-standings {
+  background: var(--bsi-charcoal);
+  border: 1px solid var(--bsi-border-subtle);
+  border-radius: var(--bsi-radius-lg);
+  overflow: hidden;
+}
+
+.bsi-standings__title {
+  font-family: var(--bsi-font-display);
+  font-size: var(--bsi-text-lg);
+  font-weight: 700;
+  padding: var(--bsi-space-4);
+  border-bottom: 1px solid var(--bsi-border-subtle);
+}
+
+.bsi-standings__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bsi-standings__table th,
+.bsi-standings__table td {
+  padding: var(--bsi-space-3);
+  text-align: left;
+}
+
+.bsi-standings__table th {
+  font-size: var(--bsi-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bsi-text-secondary);
+  background: var(--bsi-graphite);
+}
+
+.bsi-standings__table tr:hover td {
+  background: var(--bsi-glass);
+}
+
+.bsi-standings__rank {
+  font-weight: 700;
+  color: var(--bsi-burnt-orange);
+  width: 40px;
+}
+
+.bsi-standings__team {
+  display: flex;
+  align-items: center;
+  gap: var(--bsi-space-3);
+}
+
+.bsi-standings__logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* ========================================
+   RANKINGS LIST COMPONENT
+   ======================================== */
+.bsi-rankings {
+  background: var(--bsi-charcoal);
+  border: 1px solid var(--bsi-border-subtle);
+  border-radius: var(--bsi-radius-lg);
+}
+
+.bsi-rankings__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--bsi-space-4);
+  border-bottom: 1px solid var(--bsi-border-subtle);
+}
+
+.bsi-rankings__title {
+  font-family: var(--bsi-font-display);
+  font-size: var(--bsi-text-lg);
+  font-weight: 700;
+}
+
+.bsi-rankings__source {
+  font-size: var(--bsi-text-xs);
+  color: var(--bsi-text-muted);
+}
+
+.bsi-rankings__list {
+  padding: var(--bsi-space-2);
+}
+
+.bsi-ranking-item {
+  display: flex;
+  align-items: center;
+  gap: var(--bsi-space-3);
+  padding: var(--bsi-space-3);
+  border-radius: var(--bsi-radius-md);
+  transition: background var(--bsi-transition-fast);
+}
+
+.bsi-ranking-item:hover {
+  background: var(--bsi-glass);
+}
+
+.bsi-ranking-item__rank {
+  font-family: var(--bsi-font-display);
+  font-size: var(--bsi-text-lg);
+  font-weight: 700;
+  color: var(--bsi-burnt-orange);
+  min-width: 2rem;
+}
+
+.bsi-ranking-item__team {
+  display: flex;
+  align-items: center;
+  gap: var(--bsi-space-3);
+  flex: 1;
+}
+
+.bsi-ranking-item__logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.bsi-ranking-item__name {
+  font-weight: 500;
+}
+
+.bsi-ranking-item__record {
+  font-size: var(--bsi-text-sm);
+  color: var(--bsi-text-secondary);
+}
+
+.bsi-ranking-item__change {
+  font-size: var(--bsi-text-sm);
+  font-weight: 600;
+  min-width: 2rem;
+  text-align: right;
+}
+
+.bsi-ranking-item__change--up { color: var(--bsi-success); }
+.bsi-ranking-item__change--down { color: var(--bsi-error); }
