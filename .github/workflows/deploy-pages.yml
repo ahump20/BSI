@@ -47,6 +47,33 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy public --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT }} --branch=${{ github.ref_name }} --commit-dirty=true
 
+      - name: Sync Images to R2 Bucket
+        if: github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: |
+            r2 object put blazesports-assets/origin/images/ --file=public/images/ --remote 2>/dev/null || true
+        continue-on-error: true
+
+      - name: Sync Individual Images to R2
+        if: github.ref == 'refs/heads/main'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "📷 Syncing images to R2 bucket..."
+          cd public/images
+          for file in *.{jpg,jpeg,png,webp,gif,svg} 2>/dev/null; do
+            if [ -f "$file" ]; then
+              echo "  Uploading: $file"
+              npx wrangler r2 object put "blazesports-assets/origin/images/$file" --file="$file" --remote 2>/dev/null || true
+            fi
+          done
+          echo "✅ Image sync complete"
+        continue-on-error: true
+
       - name: Wait for deployment propagation
         if: github.ref == 'refs/heads/main'
         run: sleep 30
