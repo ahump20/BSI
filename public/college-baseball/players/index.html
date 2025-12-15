@@ -298,11 +298,19 @@
             border-radius: var(--bsi-radius-lg);
             overflow: hidden;
             transition: border-color 0.2s, transform 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .player-card:hover {
             border-color: var(--bsi-burnt-orange);
             transform: translateY(-2px);
+        }
+
+        a.player-card {
+            color: inherit;
         }
 
         .player-header {
@@ -615,18 +623,26 @@
                         <button class="btn" onclick="applyFilters()">Search</button>
                     </div>
 
-                    <select id="team-filter" class="filter-select" onchange="applyFilters()">
-                        <option value="">All Teams</option>
-                        <option value="Texas">Texas Longhorns</option>
-                        <option value="Texas A&M">Texas A&M Aggies</option>
-                        <option value="LSU">LSU Tigers</option>
-                        <option value="Vanderbilt">Vanderbilt Commodores</option>
-                        <option value="Arkansas">Arkansas Razorbacks</option>
-                        <option value="Tennessee">Tennessee Volunteers</option>
-                        <option value="Florida">Florida Gators</option>
-                        <option value="Ole Miss">Ole Miss Rebels</option>
-                        <option value="Oklahoma">Oklahoma Sooners</option>
-                        <option value="TCU">TCU Horned Frogs</option>
+                    <select id="conference-filter" class="filter-select" onchange="applyFilters()">
+                        <option value="">All Conferences</option>
+                        <optgroup label="Power 5">
+                            <option value="SEC">SEC</option>
+                            <option value="ACC">ACC</option>
+                            <option value="BIG12">Big 12</option>
+                            <option value="BIG10">Big Ten</option>
+                            <option value="PAC12">Pac-12</option>
+                        </optgroup>
+                        <optgroup label="Group of 5">
+                            <option value="AMERICAN">American</option>
+                            <option value="SUNBELT">Sun Belt</option>
+                            <option value="CUSA">C-USA</option>
+                        </optgroup>
+                        <optgroup label="Mid-Major">
+                            <option value="MVC">MVC</option>
+                            <option value="SOUTHLAND">Southland</option>
+                            <option value="WAC">WAC</option>
+                            <option value="BIGWEST">Big West</option>
+                        </optgroup>
                     </select>
 
                     <select id="position-filter" class="filter-select" onchange="applyFilters()">
@@ -695,6 +711,7 @@
 
     <!-- BSI Components -->
     <script src="/js/bsi-components.js"></script>
+    <script src="/js/player-data.js"></script>
 
     <script>
         // Sample player data - will be replaced with API data when season starts
@@ -849,7 +866,10 @@
         let filteredPlayers = [...players];
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Try to load from live API first
+            await loadPlayersFromAPI();
+
             renderPlayers();
             updateStats();
             updateLastUpdated();
@@ -862,7 +882,7 @@
 
         function applyFilters() {
             const search = document.getElementById('search-input').value.toLowerCase();
-            const team = document.getElementById('team-filter').value;
+            const conference = document.getElementById('conference-filter').value;
             const position = document.getElementById('position-filter').value;
             const classYear = document.getElementById('class-filter').value;
             const draftOnly = document.getElementById('draft-only').checked;
@@ -870,13 +890,14 @@
             filteredPlayers = players.filter(player => {
                 // Search filter
                 if (search && !player.name.toLowerCase().includes(search) &&
-                    !player.team.toLowerCase().includes(search) &&
-                    !player.bio.hometown.toLowerCase().includes(search)) {
+                    !(player.team || '').toLowerCase().includes(search) &&
+                    !(player.team_slug || '').toLowerCase().includes(search) &&
+                    !(player.bio?.hometown || '').toLowerCase().includes(search)) {
                     return false;
                 }
 
-                // Team filter
-                if (team && player.team !== team) return false;
+                // Conference filter
+                if (conference && player.conference !== conference) return false;
 
                 // Position filter
                 if (position) {
@@ -1023,15 +1044,18 @@
                 `;
             }
 
+            const playerId = player.espn_id || player.id;
+            const profileLink = playerId ? `/college-baseball/players/profile.html?id=${playerId}` : '#';
+
             return `
-                <div class="player-card">
+                <a href="${profileLink}" class="player-card">
                     <div class="player-header">
                         <div class="player-name">${player.name}</div>
-                        <div class="player-team">${player.team}</div>
+                        <div class="player-team">${player.team || player.team_slug || ''}</div>
                         <div class="player-meta">
-                            <span>#${player.jersey}</span>
+                            ${player.jersey ? `<span>#${player.jersey}</span>` : ''}
                             <span>${player.position}</span>
-                            <span>${player.classYear}</span>
+                            <span>${player.classYear || player.year || ''}</span>
                             <span>${player.conference}</span>
                         </div>
                     </div>
@@ -1066,7 +1090,7 @@
                     </div>
 
                     ${draftHtml}
-                </div>
+                </a>
             `;
         }
 
@@ -1089,20 +1113,45 @@
             document.getElementById('last-updated').textContent = `Last updated: ${now} CT`;
         }
 
-        // Future: Connect to live API
+        // Load from BSI API
         async function loadPlayersFromAPI() {
             try {
-                const response = await fetch('/api/college-baseball/players');
+                const response = await fetch('/api/college-baseball/players?limit=500');
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.players && data.players.length > 0) {
-                        players = data.players;
+                    // API returns array directly or nested in players
+                    const apiPlayers = Array.isArray(data) ? data : (data.players || []);
+
+                    if (apiPlayers.length > 0) {
+                        // Map API format to display format
+                        players = apiPlayers.map(p => ({
+                            id: p.id,
+                            espn_id: p.espn_id || p.id,
+                            name: p.name || p.displayName || `${p.first_name} ${p.last_name}`,
+                            team: p.team,
+                            team_slug: p.team_slug,
+                            jersey: p.jersey,
+                            position: p.position,
+                            classYear: p.year,
+                            conference: p.conference,
+                            bio: {
+                                height: p.height ? `${Math.floor(p.height/12)}-${p.height%12}` : '-',
+                                weight: p.weight || '-',
+                                bats: p.bats || '-',
+                                throws: p.throws || '-',
+                                hometown: '-'
+                            },
+                            battingStats: p.stats?.batting || null,
+                            pitchingStats: p.stats?.pitching || null,
+                            headshot_url: p.headshot_url,
+                            draftProspect: { isDraftEligible: false }
+                        }));
                         filteredPlayers = [...players];
-                        applyFilters();
+                        console.log(`[BSI] Loaded ${players.length} players from API`);
                     }
                 }
             } catch (err) {
-                console.log('Using sample data - API not available');
+                console.log('[BSI] Using sample data - API not available:', err.message);
             }
         }
     </script>
