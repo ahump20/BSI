@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { SportTabs, SportTabsCompact, type Sport } from '@/components/sports/SportTabs';
 import { LiveScoresPanel } from '@/components/sports/LiveScoresPanel';
 import { StandingsTable } from '@/components/sports/StandingsTable';
@@ -15,10 +14,10 @@ import { Footer } from '../../components/layout-ds/Footer';
 
 const dashboardNavItems = [
   { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball/' },
-  { label: 'MLB', href: '/mlb/' },
-  { label: 'NFL', href: '/nfl/' },
-  { label: 'Pricing', href: '/pricing.html' },
+  { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'MLB', href: '/mlb' },
+  { label: 'NFL', href: '/nfl' },
+  { label: 'Pricing', href: '/pricing' },
 ];
 
 export default function DashboardPage() {
