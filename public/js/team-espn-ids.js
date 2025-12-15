@@ -152,7 +152,48 @@ const ESPN_TEAM_IDS = {
   'incarnate-word': '2916',
   'texas-am-corpus-christi': '357',
   'lamar': '2320',
-  'uh-arlington': '250'
+  'uh-arlington': '250',
+
+  // WAC
+  'grand-canyon': '2253',
+  'sacramento-state': '2534',
+  'cal-baptist': '2855',
+  'utah-valley': '3561',
+  'tarleton-state': '2627',
+  'abilene-christian': '2000',
+  'seattle-u': '2547',
+  'southern-utah': '253',
+
+  // Big West
+  'long-beach-state': '299',
+  'uc-irvine': '300',
+  'cal-state-fullerton': '2239',
+  'cal-state-northridge': '2463',
+  'cal-poly': '13',
+  'uc-santa-barbara': '301',
+  'uc-riverside': '27',
+  'hawaii': '62',
+
+  // SWAC
+  'southern-university': '2582',
+  'grambling-state': '2755',
+  'jackson-state': '2296',
+  'alcorn-state': '2006',
+  'alabama-state': '2011',
+  'alabama-am': '2010',
+  'prairie-view-am': '2504',
+  'texas-southern': '2640',
+
+  // Big South
+  'campbell': '2097',
+  'unc-asheville': '2427',
+  'high-point': '2272',
+  'charleston-southern': '2127',
+  'usc-upstate': '2908',
+  'gardner-webb': '2241',
+  'longwood': '2344',
+  'radford': '2520',
+  'winthrop': '2737'
 };
 
 // Conference groupings
@@ -166,7 +207,11 @@ const CONFERENCE_TEAMS = {
   'sunbelt': ['coastal-carolina', 'louisiana', 'troy', 'south-alabama', 'texas-state', 'southern-miss', 'georgia-southern', 'georgia-state', 'arkansas-state', 'appalachian-state', 'louisiana-monroe', 'james-madison', 'marshall', 'old-dominion'],
   'cusa': ['liberty', 'new-mexico-state', 'sam-houston', 'jacksonville-state', 'kennesaw-state', 'fiu', 'western-kentucky', 'middle-tennessee', 'utep', 'la-tech'],
   'mvc': ['dallas-baptist', 'indiana-state', 'illinois-state', 'evansville', 'bradley', 'missouri-state', 'southern-illinois', 'valparaiso', 'belmont'],
-  'southland': ['nicholls', 'northwestern-state', 'mcneese', 'southeastern-louisiana', 'houston-christian', 'incarnate-word', 'texas-am-corpus-christi', 'lamar', 'uh-arlington']
+  'southland': ['nicholls', 'northwestern-state', 'mcneese', 'southeastern-louisiana', 'houston-christian', 'incarnate-word', 'texas-am-corpus-christi', 'lamar', 'uh-arlington'],
+  'wac': ['grand-canyon', 'sacramento-state', 'cal-baptist', 'utah-valley', 'tarleton-state', 'abilene-christian', 'seattle-u', 'southern-utah'],
+  'bigwest': ['long-beach-state', 'uc-irvine', 'cal-state-fullerton', 'cal-state-northridge', 'cal-poly', 'uc-santa-barbara', 'uc-riverside', 'hawaii'],
+  'swac': ['southern-university', 'grambling-state', 'jackson-state', 'alcorn-state', 'alabama-state', 'alabama-am', 'prairie-view-am', 'texas-southern'],
+  'bigsouth': ['campbell', 'unc-asheville', 'high-point', 'charleston-southern', 'usc-upstate', 'gardner-webb', 'longwood', 'radford', 'winthrop']
 };
 
 // Get ESPN ID for a team slug
