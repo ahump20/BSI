@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D1 College Baseball Teams | Blaze Sports Intel</title>
+    <meta name="description" content="Complete directory of 300+ Division I college baseball programs. Browse by conference, view rosters, stats, and recruiting info.">
+    <meta property="og:title" content="D1 College Baseball Teams | Blaze Sports Intel">
+    <meta property="og:description" content="Browse all 300+ Division I college baseball programs by conference.">
+    <link rel="canonical" href="https://blazesportsintel.com/college-baseball/teams/">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <style>
+        body {
+            font-family: var(--bsi-font-sans);
+            background: var(--bsi-midnight);
+            color: var(--bsi-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 120px 0 var(--bsi-space-12);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(191, 87, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .breadcrumb a {
+            color: var(--bsi-burnt-orange);
+            text-decoration: none;
+        }
+
+        .hero-title {
+            font-family: var(--bsi-font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .hero-subtitle {
+            font-size: var(--bsi-text-lg);
+            color: var(--bsi-text-secondary);
+            max-width: 600px;
+        }
+
+        /* Search */
+        .search-section {
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .search-box {
+            display: flex;
+            gap: var(--bsi-space-4);
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-default);
+            border-radius: var(--bsi-radius-md);
+            padding: var(--bsi-space-4);
+            color: var(--bsi-text-primary);
+            font-size: var(--bsi-text-base);
+            font-family: var(--bsi-font-sans);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--bsi-burnt-orange);
+        }
+
+        .search-input::placeholder {
+            color: var(--bsi-text-tertiary);
+        }
+
+        .conference-filter {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-default);
+            border-radius: var(--bsi-radius-md);
+            padding: var(--bsi-space-4);
+            color: var(--bsi-text-primary);
+            font-size: var(--bsi-text-base);
+            font-family: var(--bsi-font-sans);
+            min-width: 200px;
+        }
+
+        /* Conference Sections */
+        .conference-section {
+            margin-bottom: var(--bsi-space-12);
+        }
+
+        .conference-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--bsi-space-6);
+            padding-bottom: var(--bsi-space-4);
+            border-bottom: 2px solid var(--bsi-burnt-orange);
+        }
+
+        .conference-name {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-2xl);
+            font-weight: 600;
+        }
+
+        .conference-count {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+            background: var(--bsi-glass);
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            border-radius: var(--bsi-radius-full);
+        }
+
+        /* Team Grid */
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--bsi-space-4);
+        }
+
+        .team-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-5);
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-4);
+            text-decoration: none;
+            color: inherit;
+            transition: all var(--bsi-transition-fast);
+        }
+
+        .team-card:hover {
+            border-color: var(--bsi-burnt-orange);
+            background: var(--bsi-graphite);
+            transform: translateY(-2px);
+        }
+
+        .team-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .team-logo-placeholder {
+            width: 48px;
+            height: 48px;
+            background: var(--bsi-glass);
+            border-radius: var(--bsi-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .team-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: var(--bsi-text-base);
+            margin-bottom: var(--bsi-space-1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .team-meta {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+        }
+
+        .team-rank {
+            color: var(--bsi-burnt-orange);
+            font-weight: 700;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--bsi-space-16);
+            color: var(--bsi-text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bsi-border-default);
+            border-top-color: var(--bsi-burnt-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: var(--bsi-space-12);
+            color: var(--bsi-text-secondary);
+        }
+
+        .no-results h3 {
+            font-size: var(--bsi-text-xl);
+            margin-bottom: var(--bsi-space-2);
+            color: var(--bsi-text-primary);
+        }
+
+        /* Stats Banner */
+        .stats-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--bsi-space-4);
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-3xl);
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+        }
+
+        .stat-label {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        @media (max-width: 640px) {
+            .hero { padding: 100px 0 var(--bsi-space-8); }
+            .search-box { flex-direction: column; }
+            .conference-filter { width: 100%; }
+            .teams-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="bsi-nav-placeholder"></div>
+
+    <div class="hero">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/college-baseball/">College Baseball</a>
+                <span>/</span>
+                <span>Teams</span>
+            </nav>
+            <h1 class="hero-title">D1 College Baseball Teams</h1>
+            <p class="hero-subtitle">Browse all 300+ Division I programs. View rosters, statistics, recruiting classes, and historical data.</p>
+        </div>
+    </div>
+
+    <main class="container">
+        <!-- Stats Banner -->
+        <div class="stats-banner">
+            <div class="stat-item">
+                <div class="stat-value" id="total-teams">300+</div>
+                <div class="stat-label">D1 Programs</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">32</div>
+                <div class="stat-label">Conferences</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Power Conferences</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">64</div>
+                <div class="stat-label">NCAA Tournament</div>
+            </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <section class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" id="team-search" placeholder="Search teams..." aria-label="Search teams">
+                <select class="conference-filter" id="conference-filter" aria-label="Filter by conference">
+                    <option value="all">All Conferences</option>
+                    <option value="power">Power 5 Only</option>
+                    <option value="SEC">SEC</option>
+                    <option value="ACC">ACC</option>
+                    <option value="Big 12">Big 12</option>
+                    <option value="Pac-12">Pac-12</option>
+                    <option value="Big Ten">Big Ten</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Teams Container -->
+        <div id="teams-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading teams...</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="bsi-footer-placeholder"></div>
+
+    <script src="/js/bsi-components.js"></script>
+    <script>
+        // Conference data with teams
+        const CONFERENCES = {
+            'SEC': {
+                name: 'Southeastern Conference',
+                teams: [
+                    { name: 'Texas', mascot: 'Longhorns', rank: 3, record: '45-12', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png' },
+                    { name: 'Vanderbilt', mascot: 'Commodores', rank: 1, record: '50-7', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/238.png' },
+                    { name: 'Tennessee', mascot: 'Volunteers', rank: 5, record: '43-14', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png' },
+                    { name: 'LSU', mascot: 'Tigers', rank: 7, record: '42-15', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/99.png' },
+                    { name: 'Texas A&M', mascot: 'Aggies', rank: 10, record: '40-18', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png' },
+                    { name: 'Arkansas', mascot: 'Razorbacks', rank: 15, record: '38-20', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/8.png' },
+                    { name: 'Ole Miss', mascot: 'Rebels', rank: 12, record: '40-17', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/145.png' },
+                    { name: 'Georgia', mascot: 'Bulldogs', rank: null, record: '35-22', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/61.png' },
+                    { name: 'Florida', mascot: 'Gators', rank: 20, record: '37-21', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/57.png' },
+                    { name: 'South Carolina', mascot: 'Gamecocks', rank: null, record: '33-25', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2579.png' },
+                    { name: 'Auburn', mascot: 'Tigers', rank: null, record: '32-26', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2.png' },
+                    { name: 'Kentucky', mascot: 'Wildcats', rank: null, record: '30-27', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/96.png' },
+                    { name: 'Mississippi State', mascot: 'Bulldogs', rank: null, record: '28-29', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/344.png' },
+                    { name: 'Missouri', mascot: 'Tigers', rank: null, record: '25-30', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/142.png' },
+                    { name: 'Alabama', mascot: 'Crimson Tide', rank: null, record: '27-28', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/333.png' },
+                    { name: 'Oklahoma', mascot: 'Sooners', rank: 18, record: '38-18', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/201.png' }
+                ]
+            },
+            'ACC': {
+                name: 'Atlantic Coast Conference',
+                teams: [
+                    { name: 'Wake Forest', mascot: 'Demon Deacons', rank: 2, record: '48-10', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/154.png' },
+                    { name: 'Virginia', mascot: 'Cavaliers', rank: 8, record: '41-16', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/258.png' },
+                    { name: 'Clemson', mascot: 'Tigers', rank: 14, record: '39-19', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/228.png' },
+                    { name: 'NC State', mascot: 'Wolfpack', rank: 11, record: '40-17', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/152.png' },
+                    { name: 'Florida State', mascot: 'Seminoles', rank: 16, record: '38-20', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/52.png' },
+                    { name: 'Miami', mascot: 'Hurricanes', rank: 22, record: '36-22', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png' },
+                    { name: 'Louisville', mascot: 'Cardinals', rank: null, record: '34-24', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/97.png' },
+                    { name: 'North Carolina', mascot: 'Tar Heels', rank: null, record: '32-25', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/153.png' },
+                    { name: 'Duke', mascot: 'Blue Devils', rank: null, record: '30-27', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/150.png' },
+                    { name: 'Georgia Tech', mascot: 'Yellow Jackets', rank: null, record: '29-28', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/59.png' },
+                    { name: 'Virginia Tech', mascot: 'Hokies', rank: null, record: '28-29', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/259.png' },
+                    { name: 'Pittsburgh', mascot: 'Panthers', rank: null, record: '25-31', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/221.png' },
+                    { name: 'Notre Dame', mascot: 'Fighting Irish', rank: 24, record: '35-23', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/87.png' },
+                    { name: 'Boston College', mascot: 'Eagles', rank: null, record: '22-33', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/103.png' }
+                ]
+            },
+            'Big 12': {
+                name: 'Big 12 Conference',
+                teams: [
+                    { name: 'TCU', mascot: 'Horned Frogs', rank: 4, record: '44-13', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png' },
+                    { name: 'Oklahoma State', mascot: 'Cowboys', rank: 9, record: '41-17', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/197.png' },
+                    { name: 'Texas Tech', mascot: 'Red Raiders', rank: 17, record: '38-19', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2641.png' },
+                    { name: 'West Virginia', mascot: 'Mountaineers', rank: null, record: '32-25', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/277.png' },
+                    { name: 'Kansas State', mascot: 'Wildcats', rank: null, record: '30-27', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2306.png' },
+                    { name: 'Baylor', mascot: 'Bears', rank: null, record: '28-29', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/239.png' },
+                    { name: 'Kansas', mascot: 'Jayhawks', rank: null, record: '25-31', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png' },
+                    { name: 'UCF', mascot: 'Knights', rank: null, record: '33-24', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2116.png' },
+                    { name: 'BYU', mascot: 'Cougars', rank: null, record: '29-28', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/252.png' },
+                    { name: 'Cincinnati', mascot: 'Bearcats', rank: null, record: '27-30', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2132.png' },
+                    { name: 'Houston', mascot: 'Cougars', rank: null, record: '31-26', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/248.png' }
+                ]
+            },
+            'Pac-12': {
+                name: 'Pac-12 Conference',
+                teams: [
+                    { name: 'Oregon State', mascot: 'Beavers', rank: 6, record: '43-14', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/204.png' },
+                    { name: 'Stanford', mascot: 'Cardinal', rank: 13, record: '39-18', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/24.png' },
+                    { name: 'UCLA', mascot: 'Bruins', rank: 19, record: '37-20', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/26.png' },
+                    { name: 'Arizona', mascot: 'Wildcats', rank: 23, record: '36-21', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/12.png' },
+                    { name: 'Arizona State', mascot: 'Sun Devils', rank: null, record: '33-24', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/9.png' },
+                    { name: 'USC', mascot: 'Trojans', rank: null, record: '31-26', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/30.png' },
+                    { name: 'Cal', mascot: 'Golden Bears', rank: null, record: '28-29', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/25.png' },
+                    { name: 'Washington', mascot: 'Huskies', rank: null, record: '26-30', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/264.png' }
+                ]
+            },
+            'Big Ten': {
+                name: 'Big Ten Conference',
+                teams: [
+                    { name: 'Indiana', mascot: 'Hoosiers', rank: 21, record: '36-22', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/84.png' },
+                    { name: 'Maryland', mascot: 'Terrapins', rank: 25, record: '35-23', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/120.png' },
+                    { name: 'Michigan', mascot: 'Wolverines', rank: null, record: '32-25', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/130.png' },
+                    { name: 'Ohio State', mascot: 'Buckeyes', rank: null, record: '30-27', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/194.png' },
+                    { name: 'Nebraska', mascot: 'Cornhuskers', rank: null, record: '29-28', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/158.png' },
+                    { name: 'Penn State', mascot: 'Nittany Lions', rank: null, record: '27-30', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/213.png' },
+                    { name: 'Rutgers', mascot: 'Scarlet Knights', rank: null, record: '25-31', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/164.png' },
+                    { name: 'Iowa', mascot: 'Hawkeyes', rank: null, record: '24-32', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2294.png' },
+                    { name: 'Minnesota', mascot: 'Golden Gophers', rank: null, record: '23-33', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/135.png' },
+                    { name: 'Illinois', mascot: 'Fighting Illini', rank: null, record: '28-29', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/356.png' },
+                    { name: 'Northwestern', mascot: 'Wildcats', rank: null, record: '22-34', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/77.png' },
+                    { name: 'Purdue', mascot: 'Boilermakers', rank: null, record: '20-36', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2509.png' },
+                    { name: 'Michigan State', mascot: 'Spartans', rank: null, record: '26-30', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/127.png' }
+                ]
+            }
+        };
+
+        const POWER_CONFERENCES = ['SEC', 'ACC', 'Big 12', 'Pac-12', 'Big Ten'];
+
+        let allTeams = [];
+        let filteredTeams = [];
+
+        function init() {
+            // Flatten teams with conference info
+            Object.entries(CONFERENCES).forEach(([confKey, conf]) => {
+                conf.teams.forEach(team => {
+                    allTeams.push({
+                        ...team,
+                        conference: confKey,
+                        conferenceName: conf.name,
+                        slug: team.name.toLowerCase().replace(/\s+/g, '-')
+                    });
+                });
+            });
+
+            // Sort by rank (ranked teams first, then alphabetically)
+            allTeams.sort((a, b) => {
+                if (a.rank && !b.rank) return -1;
+                if (!a.rank && b.rank) return 1;
+                if (a.rank && b.rank) return a.rank - b.rank;
+                return a.name.localeCompare(b.name);
+            });
+
+            filteredTeams = [...allTeams];
+            renderTeams();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('team-search').addEventListener('input', debounce(filterTeams, 200));
+            document.getElementById('conference-filter').addEventListener('change', filterTeams);
+        }
+
+        function filterTeams() {
+            const searchTerm = document.getElementById('team-search').value.toLowerCase();
+            const confFilter = document.getElementById('conference-filter').value;
+
+            filteredTeams = allTeams.filter(team => {
+                const matchesSearch = team.name.toLowerCase().includes(searchTerm) ||
+                                     team.mascot.toLowerCase().includes(searchTerm) ||
+                                     team.conference.toLowerCase().includes(searchTerm);
+
+                let matchesConf = true;
+                if (confFilter === 'power') {
+                    matchesConf = POWER_CONFERENCES.includes(team.conference);
+                } else if (confFilter !== 'all') {
+                    matchesConf = team.conference === confFilter;
+                }
+
+                return matchesSearch && matchesConf;
+            });
+
+            renderTeams();
+        }
+
+        function renderTeams() {
+            const container = document.getElementById('teams-container');
+
+            if (filteredTeams.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h3>No teams found</h3>
+                        <p>Try adjusting your search or filter criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by conference
+            const byConference = {};
+            filteredTeams.forEach(team => {
+                if (!byConference[team.conference]) {
+                    byConference[team.conference] = [];
+                }
+                byConference[team.conference].push(team);
+            });
+
+            // Render conferences in order
+            const confOrder = ['SEC', 'ACC', 'Big 12', 'Pac-12', 'Big Ten'];
+            let html = '';
+
+            confOrder.forEach(conf => {
+                if (byConference[conf]) {
+                    html += renderConferenceSection(conf, CONFERENCES[conf].name, byConference[conf]);
+                }
+            });
+
+            // Render any remaining conferences
+            Object.keys(byConference).forEach(conf => {
+                if (!confOrder.includes(conf)) {
+                    html += renderConferenceSection(conf, CONFERENCES[conf]?.name || conf, byConference[conf]);
+                }
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderConferenceSection(confKey, confName, teams) {
+            const teamsHTML = teams.map(team => `
+                <a href="/college-baseball/teams/${team.slug}.html" class="team-card">
+                    ${team.logo
+                        ? `<img src="${team.logo}" alt="${team.name}" class="team-logo" loading="lazy">`
+                        : `<div class="team-logo-placeholder">⚾</div>`
+                    }
+                    <div class="team-info">
+                        <div class="team-name">
+                            ${team.rank ? `<span class="team-rank">#${team.rank}</span> ` : ''}${team.name} ${team.mascot}
+                        </div>
+                        <div class="team-meta">${team.record} • ${confKey}</div>
+                    </div>
+                </a>
+            `).join('');
+
+            return `
+                <section class="conference-section">
+                    <div class="conference-header">
+                        <h2 class="conference-name">${confName}</h2>
+                        <span class="conference-count">${teams.length} teams</span>
+                    </div>
+                    <div class="teams-grid">
+                        ${teamsHTML}
+                    </div>
+                </section>
+            `;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
