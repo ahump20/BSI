@@ -1,14 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge, LiveBadge } from '@/components/ui/Badge';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';

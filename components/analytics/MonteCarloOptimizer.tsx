@@ -247,7 +247,7 @@ const runSimulation = (league, iterations) => {
   // Generate random compositions
   for (let i = 0; i < iterations; i++) {
     const composition = {};
-    let remaining = 100;
+    const _remaining = 100; // Used for composition validation
     
     // Generate random percentages that sum to 100
     const randoms = archetypes.map(() => Math.random());

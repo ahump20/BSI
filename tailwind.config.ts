@@ -45,6 +45,21 @@ const config: Config = {
         midnight: '#0d0d12',
         ember: '#FF6B35',
         flame: '#E85D04',
+        graphite: '#242424',
+        // Text Colors
+        text: {
+          primary: '#fafafa',
+          secondary: '#a3a3a3',
+          tertiary: '#737373',
+          muted: '#525252',
+        },
+        // Border Colors
+        border: {
+          subtle: 'rgba(255, 255, 255, 0.06)',
+          DEFAULT: 'rgba(255, 255, 255, 0.1)',
+          strong: 'rgba(255, 255, 255, 0.15)',
+          accent: 'rgba(191, 87, 0, 0.4)',
+        },
         // Background variants
         background: {
           primary: '#0d0d12',
@@ -82,10 +97,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['Bebas Neue', 'Impact', 'Arial Black', 'sans-serif'],
-        mono: ['SF Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
-        body: ['Source Serif 4', 'Georgia', 'serif'],
+        sans: ['var(--font-inter)', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        display: ['var(--font-oswald)', 'Oswald', 'var(--font-bebas)', 'Bebas Neue', 'Impact', 'Arial Black', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+        serif: ['var(--font-playfair)', 'Playfair Display', 'Georgia', 'serif'],
       },
       fontSize: {
         xs: ['clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)', { lineHeight: '1.5' }],
