@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference USA Baseball | Blaze Sports Intel</title>
+    <meta name="description" content="Conference USA baseball coverage with standings, team rankings, and schedules. A conference in rebuild mode after 2023 realignment with emerging programs.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/bsi-logo-192.png">
+
+    <!-- BSI Design System -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+        }
+
+        .font-display { font-family: 'Oswald', sans-serif; }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--bsi-space-4) var(--bsi-space-6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+            text-decoration: none;
+            color: var(--bsi-cream);
+        }
+
+        .nav-logo img { height: 40px; width: auto; }
+
+        .nav-links {
+            display: flex;
+            gap: var(--bsi-space-6);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--bsi-cream);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active { color: var(--bsi-burnt-orange); }
+
+        /* Conference USA Navy to Red gradient */
+        .hero {
+            background: linear-gradient(135deg, #002D72 0%, #9D2235 100%);
+            padding: 120px 0 var(--bsi-space-12);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            margin-bottom: var(--bsi-space-4);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb a { color: rgba(255, 255, 255, 0.7); text-decoration: none; }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255, 255, 255, 0.5); }
+
+        .hero-header {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-6);
+        }
+
+        .conference-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: var(--bsi-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--bsi-space-4);
+        }
+
+        .conference-logo img { max-width: 100%; max-height: 100%; }
+
+        .hero-content h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .hero-content p {
+            font-size: 1.125rem;
+            max-width: 600px;
+            opacity: 0.9;
+        }
+
+        .kicker {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .conference-badge {
+            display: inline-block;
+            padding: var(--bsi-space-1) var(--bsi-space-3);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--bsi-radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: var(--bsi-space-3);
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--bsi-space-4);
+            margin-top: var(--bsi-space-8);
+        }
+
+        @media (max-width: 768px) {
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .hero-header { flex-direction: column; text-align: center; }
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-4);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.8;
+            margin-top: var(--bsi-space-1);
+        }
+
+        main { padding: var(--bsi-space-12) 0; }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: var(--bsi-space-6);
+            padding-bottom: var(--bsi-space-2);
+            border-bottom: 2px solid var(--bsi-burnt-orange);
+        }
+
+        .standings-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: var(--bsi-radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table th, .standings-table td {
+            padding: var(--bsi-space-3) var(--bsi-space-4);
+            text-align: left;
+        }
+
+        .standings-table th {
+            background: rgba(0, 0, 0, 0.3);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(250, 248, 245, 0.6);
+            font-weight: 600;
+        }
+
+        .standings-table td { border-bottom: 1px solid rgba(191, 87, 0, 0.1); }
+        .standings-table tr:hover td { background: rgba(191, 87, 0, 0.05); }
+
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+        }
+
+        .team-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--bsi-radius-sm);
+            background: white;
+            padding: 2px;
+        }
+
+        .team-name { font-weight: 600; color: white; }
+        .team-name a { color: white; text-decoration: none; }
+        .team-name a:hover { color: var(--bsi-burnt-orange); }
+        .record { font-weight: 600; color: var(--bsi-burnt-orange); }
+        .conf-record { color: rgba(250, 248, 245, 0.7); }
+
+        .new-member-badge {
+            display: inline-block;
+            background: rgba(25, 118, 210, 0.3);
+            color: #64B5F6;
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: var(--bsi-radius-sm);
+            margin-left: var(--bsi-space-2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-12);
+        }
+
+        .team-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-4);
+            transition: border-color 0.2s, transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .team-card:hover {
+            border-color: var(--bsi-burnt-orange);
+            transform: translateY(-2px);
+        }
+
+        .team-card-logo {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--bsi-radius-md);
+            background: white;
+            padding: var(--bsi-space-2);
+            flex-shrink: 0;
+        }
+
+        .team-card-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+        .team-card-info h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: var(--bsi-space-1);
+        }
+
+        .team-card-info p { font-size: 0.875rem; color: rgba(250, 248, 245, 0.6); }
+
+        .team-card-record {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--bsi-burnt-orange);
+            margin-top: var(--bsi-space-1);
+        }
+
+        .history-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .history-card h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--bsi-space-4);
+            color: var(--bsi-gold);
+        }
+
+        .history-card p {
+            color: rgba(250, 248, 245, 0.8);
+            margin-bottom: var(--bsi-space-4);
+            line-height: 1.7;
+        }
+
+        .history-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--bsi-space-4);
+            margin-top: var(--bsi-space-6);
+            padding-top: var(--bsi-space-6);
+            border-top: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        @media (max-width: 600px) { .history-stats { grid-template-columns: 1fr; } }
+
+        .history-stat { text-align: center; }
+
+        .history-stat-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+        }
+
+        .history-stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(250, 248, 245, 0.5);
+            margin-top: var(--bsi-space-1);
+        }
+
+        /* Rebuild Banner */
+        .rebuild-card {
+            background: linear-gradient(135deg, rgba(157, 34, 53, 0.15) 0%, var(--bsi-charcoal) 100%);
+            border: 1px solid rgba(157, 34, 53, 0.4);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .rebuild-card h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--bsi-space-4);
+            color: #9D2235;
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+        }
+
+        .rebuild-icon {
+            font-size: 1.5rem;
+        }
+
+        .season-banner {
+            background: linear-gradient(90deg, rgba(25, 118, 210, 0.2) 0%, rgba(25, 118, 210, 0.1) 100%);
+            border: 1px solid rgba(25, 118, 210, 0.3);
+            border-radius: var(--bsi-radius-md);
+            padding: var(--bsi-space-4);
+            margin-bottom: var(--bsi-space-8);
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-4);
+        }
+
+        .season-banner-icon { font-size: 1.5rem; }
+        .season-banner-text h4 { font-weight: 600; margin-bottom: var(--bsi-space-1); }
+        .season-banner-text p { font-size: 0.875rem; color: rgba(250, 248, 245, 0.7); }
+
+        footer {
+            background: var(--bsi-charcoal);
+            border-top: 1px solid rgba(191, 87, 0, 0.2);
+            padding: var(--bsi-space-8) 0;
+            text-align: center;
+        }
+
+        .footer-text { font-size: 0.75rem; color: rgba(250, 248, 245, 0.5); }
+        .footer-text a { color: var(--bsi-burnt-orange); text-decoration: none; }
+
+        .data-attribution {
+            margin-top: var(--bsi-space-12);
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" onerror="this.style.display='none'">
+                <span class="font-display" style="font-size: 1.25rem; font-weight: 700;">BLAZE SPORTS INTEL</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/college-baseball/" class="active">College Baseball</a></li>
+                <li><a href="/college-baseball/games/">Games</a></li>
+                <li><a href="/college-baseball/standings/">Standings</a></li>
+                <li><a href="/college-baseball/players/">Players</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/college-baseball/">College Baseball</a>
+                <span>/</span>
+                <span style="color: white;">Conference USA</span>
+            </div>
+
+            <div class="hero-header">
+                <div class="conference-logo">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa_conf/500/cusa.png" alt="Conference USA Logo">
+                </div>
+                <div class="hero-content">
+                    <span class="kicker">Conference Coverage</span>
+                    <h1 class="font-display">Conference USA <span style="color: #9D2235;">Baseball</span></h1>
+                    <p>Conference USA enters a new era after massive 2023-24 realignment. With 6 new members joining in 2024, C-USA is rebuilding its identity with programs spanning from Virginia to New Mexico.</p>
+                    <span class="conference-badge">10 Teams &bull; 2026 Season &bull; Rebuild Mode</span>
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Teams</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">New Members (2024)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">CWS Appearances (All-Time)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45+</div>
+                    <div class="stat-label">MLB Draft Picks (2024)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <div class="season-banner">
+                <div class="season-banner-icon">&#9201;</div>
+                <div class="season-banner-text">
+                    <h4>2026 Conference USA Season Opens February 14</h4>
+                    <p>Standings and results will update live once conference play begins. Currently showing projected rankings.</p>
+                </div>
+            </div>
+
+            <!-- Rebuild Mode Banner -->
+            <div class="rebuild-card">
+                <h3><span class="rebuild-icon">&#128679;</span> Conference in Rebuild Mode</h3>
+                <p style="color: rgba(250, 248, 245, 0.8); margin-bottom: var(--bsi-space-3);">
+                    Conference USA underwent dramatic realignment in 2023-24, losing 9 members to other conferences while adding 6 new programs. The conference now spans from Liberty (Virginia) to UTEP (Texas) and New Mexico State.
+                </p>
+                <p style="color: rgba(250, 248, 245, 0.6); font-size: 0.875rem;">
+                    <strong>2024 Additions:</strong> Jacksonville State, Kennesaw State, Liberty, New Mexico State, Sam Houston, and the return of LA Tech from the Sun Belt.
+                </p>
+            </div>
+
+            <h2 class="section-title">2026 Projected Standings</h2>
+            <div class="standings-card">
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">#</th>
+                            <th>Team</th>
+                            <th>Overall</th>
+                            <th>Conf</th>
+                            <th>Streak</th>
+                            <th>RPI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="standings-body"></tbody>
+                </table>
+            </div>
+
+            <h2 class="section-title">Conference USA Teams</h2>
+            <div class="teams-grid" id="teams-grid"></div>
+
+            <h2 class="section-title">Conference History</h2>
+            <div class="history-card">
+                <h3>A Conference Reborn</h3>
+                <p>
+                    Conference USA was founded in 1995 and has seen constant membership flux throughout its history. The conference has produced notable baseball programs and MLB talent, though it has never claimed a national championship.
+                </p>
+                <p>
+                    The 2023-24 realignment was the most dramatic in conference history. UAB, Rice, UTSA, North Texas, Charlotte, and FAU departed for the American Athletic Conference. Southern Miss, Marshall, and Old Dominion left for the Sun Belt. This exodus forced C-USA to rebuild almost entirely.
+                </p>
+                <p>
+                    The new-look Conference USA features an interesting mix: established programs like LA Tech and FIU, rising FCS powers making the FBS jump (Jacksonville State, Kennesaw State, Sam Houston), and independents seeking conference homes (Liberty, New Mexico State).
+                </p>
+
+                <div class="history-stats">
+                    <div class="history-stat">
+                        <div class="history-stat-value">0</div>
+                        <div class="history-stat-label">National Championships</div>
+                    </div>
+                    <div class="history-stat">
+                        <div class="history-stat-value">3</div>
+                        <div class="history-stat-label">CWS Appearances (All-Time)</div>
+                    </div>
+                    <div class="history-stat">
+                        <div class="history-stat-value">400+</div>
+                        <div class="history-stat-label">MLB Draft Picks (All-Time)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-attribution">
+                <p>Conference data sourced from official Conference USA and NCAA statistics.</p>
+                <p id="last-updated">Last updated: --</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p class="footer-text">
+                &copy; 2025 <a href="/">Blaze Sports Intel</a>. All rights reserved.<br>
+                Practice to Play. Blaze Data Wins the Day.
+            </p>
+        </div>
+    </footer>
+
+    <script src="/js/bsi-components.js"></script>
+
+    <script>
+        const cusaTeams = [
+            { name: 'Liberty', slug: 'liberty', espnId: 2335, record: '0-0', confRecord: '0-0', streak: '--', rpi: 1, city: 'Lynchburg, VA', newMember: true },
+            { name: 'Sam Houston', slug: 'sam-houston', espnId: 2534, record: '0-0', confRecord: '0-0', streak: '--', rpi: 2, city: 'Huntsville, TX', newMember: true },
+            { name: 'LA Tech', slug: 'la-tech', espnId: 2348, record: '0-0', confRecord: '0-0', streak: '--', rpi: 3, city: 'Ruston, LA' },
+            { name: 'Jacksonville State', slug: 'jacksonville-state', espnId: 55, record: '0-0', confRecord: '0-0', streak: '--', rpi: 4, city: 'Jacksonville, AL', newMember: true },
+            { name: 'Kennesaw State', slug: 'kennesaw-state', espnId: 338, record: '0-0', confRecord: '0-0', streak: '--', rpi: 5, city: 'Kennesaw, GA', newMember: true },
+            { name: 'Middle Tennessee', slug: 'middle-tennessee', espnId: 2393, record: '0-0', confRecord: '0-0', streak: '--', rpi: 6, city: 'Murfreesboro, TN' },
+            { name: 'FIU', slug: 'fiu', espnId: 2229, record: '0-0', confRecord: '0-0', streak: '--', rpi: 7, city: 'Miami, FL' },
+            { name: 'Western Kentucky', slug: 'western-kentucky', espnId: 98, record: '0-0', confRecord: '0-0', streak: '--', rpi: 8, city: 'Bowling Green, KY' },
+            { name: 'New Mexico State', slug: 'new-mexico-state', espnId: 166, record: '0-0', confRecord: '0-0', streak: '--', rpi: 9, city: 'Las Cruces, NM', newMember: true },
+            { name: 'UTEP', slug: 'utep', espnId: 2638, record: '0-0', confRecord: '0-0', streak: '--', rpi: 10, city: 'El Paso, TX' }
+        ];
+
+        function renderStandings() {
+            const tbody = document.getElementById('standings-body');
+            tbody.innerHTML = cusaTeams.map((team, index) => {
+                let badges = '';
+                if (team.newMember) {
+                    badges += `<span class="new-member-badge">New 2024</span>`;
+                }
+                return `
+                <tr>
+                    <td style="font-weight: 600; color: rgba(250, 248, 245, 0.5);">${index + 1}</td>
+                    <td>
+                        <div class="team-cell">
+                            <img class="team-logo" src="https://a.espncdn.com/i/teamlogos/ncaa/500/${team.espnId}.png" alt="${team.name}">
+                            <span class="team-name">
+                                <a href="/college-baseball/teams/${team.slug}.html">${team.name}</a>
+                                ${badges}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="record">${team.record}</td>
+                    <td class="conf-record">${team.confRecord}</td>
+                    <td>${team.streak}</td>
+                    <td>${team.rpi}</td>
+                </tr>
+            `}).join('');
+        }
+
+        function renderTeamsGrid() {
+            const grid = document.getElementById('teams-grid');
+            grid.innerHTML = cusaTeams.map(team => {
+                let badges = '';
+                if (team.newMember) {
+                    badges += `<span class="new-member-badge">New 2024</span>`;
+                }
+                return `
+                <a href="/college-baseball/teams/${team.slug}.html" class="team-card">
+                    <div class="team-card-logo">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/${team.espnId}.png" alt="${team.name}">
+                    </div>
+                    <div class="team-card-info">
+                        <h3>${team.name} ${badges}</h3>
+                        <p>${team.city}</p>
+                        <div class="team-card-record">${team.record} (${team.confRecord} C-USA)</div>
+                    </div>
+                </a>
+            `}).join('');
+        }
+
+        function updateLastUpdated() {
+            const now = new Date().toLocaleString('en-US', {
+                timeZone: 'America/Chicago',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('last-updated').textContent = `Last updated: ${now} CT`;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStandings();
+            renderTeamsGrid();
+            updateLastUpdated();
+        });
+    </script>
+</body>
+</html>
