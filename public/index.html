@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2.1.0 - Cache-bust 2025-12-14-nav-fix -->
+<!-- v2.0.1 - Cache-bust 2025-12-14-nav-fix -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -88,17 +88,17 @@
 
         /* Dropdown Navigation */
         .nav-dropdown { position: relative; }
-        .dropdown-trigger { cursor: pointer; display: flex; align-items: center; gap: 4px; padding: var(--space-2) 0; }
-        .dropdown-arrow { font-size: 0.65em; transition: transform var(--duration-normal) var(--ease-out); }
-        .nav-dropdown:hover .dropdown-arrow { transform: rotate(180deg); }
-        .dropdown-menu { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(10px); min-width: 200px; background: var(--bsi-midnight); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 12px; padding: var(--space-4) 0; opacity: 0; visibility: hidden; transition: all var(--duration-normal) var(--ease-out); list-style: none; z-index: 1001; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05); }
+        .dropdown-trigger { cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .dropdown-arrow { font-size: 0.6em; transition: transform var(--duration-normal) var(--ease-out); opacity: 0.6; }
+        .nav-dropdown:hover .dropdown-arrow { transform: rotate(180deg); opacity: 1; }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(8px); min-width: clamp(200px, 25vw, 260px); background: var(--bsi-midnight); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(191, 87, 0, 0.25); border-radius: 12px; padding: var(--space-4) 0; opacity: 0; visibility: hidden; transition: all var(--duration-normal) var(--ease-out); list-style: none; z-index: 1000; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset; }
         .nav-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-        .dropdown-menu li a { display: block; padding: var(--space-2) var(--space-5); color: var(--bsi-cream); opacity: 0.85; font-size: 0.875rem; transition: all var(--duration-fast) var(--ease-out); white-space: nowrap; }
-        .dropdown-menu li a:hover { background: rgba(191, 87, 0, 0.15); opacity: 1; color: var(--bsi-ember); }
+        .dropdown-menu li a { display: block; padding: var(--space-3) var(--space-5); color: var(--bsi-cream); opacity: 0.85; font-size: 0.875rem; transition: all var(--duration-fast) var(--ease-out); border-radius: 0; }
+        .dropdown-menu li a:hover { background: rgba(191, 87, 0, 0.15); opacity: 1; padding-left: calc(var(--space-5) + 4px); }
         .dropdown-menu li a::after { display: none; }
-        .dropdown-header { padding: var(--space-2) var(--space-5); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--bsi-burnt-orange); font-weight: 600; opacity: 1 !important; margin-top: var(--space-1); }
+        .dropdown-header { padding: var(--space-2) var(--space-5) var(--space-3); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--bsi-ember); font-weight: 600; opacity: 1 !important; margin-top: var(--space-2); }
         .dropdown-header:first-child { margin-top: 0; }
-        .dropdown-divider { height: 1px; background: rgba(191, 87, 0, 0.15); margin: var(--space-3) 0; }
+        .dropdown-divider { height: 1px; background: rgba(191, 87, 0, 0.15); margin: var(--space-3) var(--space-4); }
 
         .nav-cta { display: none; }
         @media (min-width: 1024px) { .nav-cta { display: block; } }
@@ -628,22 +628,24 @@
                 <li class="nav-dropdown">
                     <a href="#" class="dropdown-trigger">Pro Sports <span class="dropdown-arrow">▼</span></a>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-header">Pro Leagues</li>
+                        <li class="dropdown-header">League Analytics</li>
                         <li><a href="/dashboards/mlb-league-analytics">MLB</a></li>
                         <li><a href="/dashboards/nfl-league-analytics">NFL</a></li>
                         <li><a href="/dashboards/nba-league-analytics">NBA</a></li>
                         <li class="dropdown-divider"></li>
-                        <li class="dropdown-header">Pro Teams</li>
+                        <li class="dropdown-header">Team Analytics</li>
                         <li><a href="/dashboards/cardinals-advanced-analytics">St. Louis Cardinals</a></li>
                         <li><a href="/dashboards/titans-advanced-analytics">Tennessee Titans</a></li>
                         <li><a href="/dashboards/grizzlies-advanced-analytics">Memphis Grizzlies</a></li>
                     </ul>
                 </li>
                 <li class="nav-dropdown">
-                    <a href="#" class="dropdown-trigger">College <span class="dropdown-arrow">▼</span></a>
+                    <a href="#" class="dropdown-trigger">College Sports <span class="dropdown-arrow">▼</span></a>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-header">College Sports</li>
+                        <li class="dropdown-header">League Analytics</li>
                         <li><a href="/dashboards/ncaa-football-league-analytics">NCAA Football</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li class="dropdown-header">Team Analytics</li>
                         <li><a href="/dashboards/longhorns-advanced-analytics">Texas Longhorns</a></li>
                     </ul>
                 </li>
@@ -682,10 +684,10 @@
                 </ul>
             </li>
             <li class="mobile-dropdown">
-                <span class="mobile-dropdown-header">College</span>
+                <span class="mobile-dropdown-header">College Sports</span>
                 <ul class="mobile-submenu">
                     <li><a href="/dashboards/ncaa-football-league-analytics">NCAA Football</a></li>
-                    <li><a href="/dashboards/longhorns-advanced-analytics">Longhorns</a></li>
+                    <li><a href="/dashboards/longhorns-advanced-analytics">Texas Longhorns</a></li>
                 </ul>
             </li>
             <li><a href="#origin">Our Story</a></li>

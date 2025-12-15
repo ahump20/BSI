@@ -1,35 +1,41 @@
 /**
- * BSI Design System - Token Exports
- *
- * Central export for all design tokens
- * Import from '@/styles/tokens' or './tokens'
+ * BSI Design Tokens - Central Export
  */
 
-export { colors } from './colors';
-export type {
-  Colors,
-  BrandColor,
-  BackgroundColor,
-  SemanticColor,
-  NeutralColor,
-  SportsColor,
-} from './colors';
+export * from './colors';
+export * from './typography';
+export * from './spacing';
 
-export { typography } from './typography';
-export type { Typography, FontFamily, FontSize, FontWeight } from './typography';
+// Convenience re-exports
+import { colors } from './colors';
+import { typography, textStyles } from './typography';
+import { 
+  spacing, 
+  breakpoints, 
+  containers,
+  radii, 
+  shadows, 
+  zIndex,
+  durations,
+  easings,
+  blur,
+  aspectRatios
+} from './spacing';
 
-export { spacing } from './spacing';
-export type { Spacing, SpacingKey } from './spacing';
-
-export { breakpoints, mediaQueries } from './breakpoints';
-export type { Breakpoints, BreakpointKey } from './breakpoints';
-
-// Combined tokens object for convenience
 export const tokens = {
-  colors: require('./colors').colors,
-  typography: require('./typography').typography,
-  spacing: require('./spacing').spacing,
-  breakpoints: require('./breakpoints').breakpoints,
+  colors,
+  typography,
+  textStyles,
+  spacing,
+  breakpoints,
+  containers,
+  radii,
+  shadows,
+  zIndex,
+  durations,
+  easings,
+  blur,
+  aspectRatios,
 } as const;
 
 export default tokens;

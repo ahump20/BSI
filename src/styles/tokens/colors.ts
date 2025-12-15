@@ -1,60 +1,94 @@
 /**
- * BSI Design System - Color Tokens
- *
- * Brand colors for Blaze Sports Intel
- * Use these instead of hardcoded hex values
+ * BSI Color System - Cinematic Grit / Texas Soil / Intel
+ * 
+ * Design Language: Dark cinematic UI with burnt orange accent
+ * Think: premium sports intel platform, not flashy sports site
  */
 
 export const colors = {
+  // Core Brand
   brand: {
-    burntOrange: '#BF5700', // UT Official - Heritage, passion
-    texasSoil: '#8B4513', // West Columbia earth - Roots
-    ember: '#FF6B35', // Interactive accent
-    gold: '#C9A227', // Value highlights
-    primary: '#BF5700', // Alias for burntOrange
-    secondary: '#1A1A1A', // Alias for charcoal
-    accent: '#FF6B35', // Alias for ember
+    burntOrange: '#BF5700',     // Primary brand - UT Burnt Orange
+    blaze: '#FF4500',           // Accent highlight - Blaze orange
+    ember: '#FF6B35',           // Secondary accent - softer orange
+    texasSoil: '#8B4513',       // Earth tone - grounding color
   },
+
+  // Background Hierarchy (Dark UI)
   background: {
-    charcoal: '#1A1A1A', // Premium editorial dark
-    midnight: '#0D0D0D', // True dark backgrounds
-    cream: '#FAF8F5', // Warm newspaper aesthetic
-    warmWhite: '#FAFAFA', // Clean text backgrounds
+    midnight: '#0D0D0D',        // Deepest - page background
+    charcoal: '#1A1A1A',        // Primary surface
+    graphite: '#242424',        // Elevated surface
+    slate: '#2D2D2D',           // Cards, containers
+    steel: '#363636',           // Hover states
   },
+
+  // Text Hierarchy
+  text: {
+    primary: '#FAFAFA',         // High emphasis
+    secondary: '#A3A3A3',       // Medium emphasis
+    tertiary: '#737373',        // Low emphasis
+    muted: '#525252',           // Disabled, hints
+    inverse: '#0D0D0D',         // On light backgrounds
+  },
+
+  // Semantic States
   semantic: {
-    success: '#2E7D32', // Winning, positive stats
-    warning: '#F9A825', // Caution, watch stats
-    error: '#C62828', // Losing, negative stats
-    info: '#1976D2', // Informational, neutral
+    success: '#22C55E',         // Green - wins, positive
+    warning: '#F59E0B',         // Amber - caution
+    error: '#EF4444',           // Red - losses, errors
+    info: '#3B82F6',            // Blue - informational
   },
-  neutral: {
+
+  // Sport-Specific Accents (use sparingly)
+  sport: {
+    baseball: '#BF5700',        // Burnt Orange
+    football: '#8B4513',        // Texas Soil
+    basketball: '#FF6B35',      // Ember
+    track: '#F59E0B',           // Gold
+  },
+
+  // Team Colors (for arcade games and visualizations)
+  sports: {
+    cardinals: '#C41E3A',       // St. Louis Cardinals Red
+    longhorns: '#BF5700',       // Texas Longhorns Burnt Orange
+    titans: '#4B92DB',          // Tennessee Titans Navy
+    grizzlies: '#5D76A9',       // Memphis Grizzlies Beale Street Blue
+  },
+
+  // Utility
+  utility: {
     white: '#FFFFFF',
     black: '#000000',
-    gray: {
-      50: '#F9FAFB',
-      100: '#F3F4F6',
-      200: '#E5E7EB',
-      300: '#D1D5DB',
-      400: '#9CA3AF',
-      500: '#6B7280',
-      600: '#4B5563',
-      700: '#374151',
-      800: '#1F2937',
-      900: '#111827',
-    },
+    transparent: 'transparent',
+    overlay: 'rgba(0, 0, 0, 0.7)',
+    overlayLight: 'rgba(0, 0, 0, 0.5)',
+    overlayHeavy: 'rgba(0, 0, 0, 0.85)',
+    grain: 'rgba(255, 255, 255, 0.03)',
   },
-  // Sport-specific accent colors (favorite teams)
-  sports: {
-    cardinals: '#C41E3A', // St. Louis Cardinals
-    titans: '#4B92DB', // Tennessee Titans
-    grizzlies: '#5D76A9', // Memphis Grizzlies
-    longhorns: '#BF5700', // Texas Longhorns
+
+  // Border Colors
+  border: {
+    subtle: 'rgba(255, 255, 255, 0.06)',
+    default: 'rgba(255, 255, 255, 0.1)',
+    strong: 'rgba(255, 255, 255, 0.15)',
+    accent: 'rgba(191, 87, 0, 0.4)',
   },
 } as const;
 
-export type Colors = typeof colors;
+// CSS Custom Properties string for Tailwind config
+export const colorsCSSVars = `
+  --color-burnt-orange: ${colors.brand.burntOrange};
+  --color-blaze: ${colors.brand.blaze};
+  --color-ember: ${colors.brand.ember};
+  --color-texas-soil: ${colors.brand.texasSoil};
+  --color-midnight: ${colors.background.midnight};
+  --color-charcoal: ${colors.background.charcoal};
+  --color-graphite: ${colors.background.graphite};
+  --color-slate: ${colors.background.slate};
+  --color-steel: ${colors.background.steel};
+`;
+
 export type BrandColor = keyof typeof colors.brand;
 export type BackgroundColor = keyof typeof colors.background;
-export type SemanticColor = keyof typeof colors.semantic;
-export type NeutralColor = keyof typeof colors.neutral;
-export type SportsColor = keyof typeof colors.sports;
+export type TextColor = keyof typeof colors.text;
