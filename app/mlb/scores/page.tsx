@@ -161,12 +161,16 @@ export default function MLBScoresPage() {
           }`}
         >
           {/* Game Status Bar */}
-          <div className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-            isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
-          }`}>
-            <span className={`text-xs font-semibold uppercase ${
-              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
-            }`}>
+          <div
+            className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
+              isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
+            }`}
+          >
+            <span
+              className={`text-xs font-semibold uppercase ${
+                isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+              }`}
+            >
               {isLive ? (
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
@@ -176,9 +180,7 @@ export default function MLBScoresPage() {
                 game.status.detailedState
               )}
             </span>
-            <span className="text-xs text-text-tertiary">
-              {game.venue?.name || 'TBD'}
-            </span>
+            <span className="text-xs text-text-tertiary">{game.venue?.name || 'TBD'}</span>
           </div>
 
           {/* Teams */}
@@ -190,7 +192,9 @@ export default function MLBScoresPage() {
                   {game.teams.away.abbreviation}
                 </div>
                 <div>
-                  <p className={`font-semibold ${isFinal && game.teams.away.isWinner ? 'text-white' : 'text-text-secondary'}`}>
+                  <p
+                    className={`font-semibold ${isFinal && game.teams.away.isWinner ? 'text-white' : 'text-text-secondary'}`}
+                  >
                     {game.teams.away.name}
                   </p>
                   {game.teams.away.record && (
@@ -204,9 +208,15 @@ export default function MLBScoresPage() {
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
                 )}
-                <span className={`text-2xl font-bold font-mono ${
-                  isScheduled ? 'text-text-tertiary' : isFinal && game.teams.away.isWinner ? 'text-white' : 'text-text-secondary'
-                }`}>
+                <span
+                  className={`text-2xl font-bold font-mono ${
+                    isScheduled
+                      ? 'text-text-tertiary'
+                      : isFinal && game.teams.away.isWinner
+                        ? 'text-white'
+                        : 'text-text-secondary'
+                  }`}
+                >
                   {isScheduled ? '-' : game.teams.away.score}
                 </span>
               </div>
@@ -219,7 +229,9 @@ export default function MLBScoresPage() {
                   {game.teams.home.abbreviation}
                 </div>
                 <div>
-                  <p className={`font-semibold ${isFinal && game.teams.home.isWinner ? 'text-white' : 'text-text-secondary'}`}>
+                  <p
+                    className={`font-semibold ${isFinal && game.teams.home.isWinner ? 'text-white' : 'text-text-secondary'}`}
+                  >
                     {game.teams.home.name}
                   </p>
                   {game.teams.home.record && (
@@ -233,9 +245,15 @@ export default function MLBScoresPage() {
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
                 )}
-                <span className={`text-2xl font-bold font-mono ${
-                  isScheduled ? 'text-text-tertiary' : isFinal && game.teams.home.isWinner ? 'text-white' : 'text-text-secondary'
-                }`}>
+                <span
+                  className={`text-2xl font-bold font-mono ${
+                    isScheduled
+                      ? 'text-text-tertiary'
+                      : isFinal && game.teams.home.isWinner
+                        ? 'text-white'
+                        : 'text-text-secondary'
+                  }`}
+                >
                   {isScheduled ? '-' : game.teams.home.score}
                 </span>
               </div>
@@ -245,8 +263,12 @@ export default function MLBScoresPage() {
           {/* Game Details Footer */}
           {(isFinal || isLive) && (
             <div className="px-4 pb-3 flex items-center justify-between text-xs text-text-tertiary border-t border-border-subtle pt-3">
-              <span>H: {game.teams.away.hits}-{game.teams.home.hits}</span>
-              <span>E: {game.teams.away.errors}-{game.teams.home.errors}</span>
+              <span>
+                H: {game.teams.away.hits}-{game.teams.home.hits}
+              </span>
+              <span>
+                E: {game.teams.away.errors}-{game.teams.home.errors}
+              </span>
               <span className="text-burnt-orange hover:text-ember">Box Score →</span>
             </div>
           )}
@@ -275,7 +297,10 @@ export default function MLBScoresPage() {
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link
+                href="/mlb"
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+              >
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -318,7 +343,13 @@ export default function MLBScoresPage() {
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
                 aria-label="Previous days"
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
@@ -347,7 +378,13 @@ export default function MLBScoresPage() {
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
                 aria-label="Next days"
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
@@ -374,16 +411,20 @@ export default function MLBScoresPage() {
             ) : games.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
-                  <svg viewBox="0 0 24 24" className="w-16 h-16 text-text-tertiary mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                     <line x1="16" y1="2" x2="16" y2="6" />
                     <line x1="8" y1="2" x2="8" y2="6" />
                     <line x1="3" y1="10" x2="21" y2="10" />
                   </svg>
                   <p className="text-text-secondary">No games scheduled for this date</p>
-                  <p className="text-text-tertiary text-sm mt-2">
-                    Try selecting a different date
-                  </p>
+                  <p className="text-text-tertiary text-sm mt-2">Try selecting a different date</p>
                 </div>
               </Card>
             ) : (
@@ -396,11 +437,13 @@ export default function MLBScoresPage() {
                       Live Games
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games.filter((g) => g.status.isLive).map((game) => (
-                        <ScrollReveal key={game.id}>
-                          <GameCard game={game} />
-                        </ScrollReveal>
-                      ))}
+                      {games
+                        .filter((g) => g.status.isLive)
+                        .map((game) => (
+                          <ScrollReveal key={game.id}>
+                            <GameCard game={game} />
+                          </ScrollReveal>
+                        ))}
                     </div>
                   </div>
                 )}
@@ -410,11 +453,13 @@ export default function MLBScoresPage() {
                   <div className="mb-8">
                     <h2 className="text-lg font-semibold text-white mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games.filter((g) => g.status.isFinal).map((game) => (
-                        <ScrollReveal key={game.id}>
-                          <GameCard game={game} />
-                        </ScrollReveal>
-                      ))}
+                      {games
+                        .filter((g) => g.status.isFinal)
+                        .map((game) => (
+                          <ScrollReveal key={game.id}>
+                            <GameCard game={game} />
+                          </ScrollReveal>
+                        ))}
                     </div>
                   </div>
                 )}
@@ -424,11 +469,13 @@ export default function MLBScoresPage() {
                   <div>
                     <h2 className="text-lg font-semibold text-white mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games.filter((g) => !g.status.isLive && !g.status.isFinal).map((game) => (
-                        <ScrollReveal key={game.id}>
-                          <GameCard game={game} />
-                        </ScrollReveal>
-                      ))}
+                      {games
+                        .filter((g) => !g.status.isLive && !g.status.isFinal)
+                        .map((game) => (
+                          <ScrollReveal key={game.id}>
+                            <GameCard game={game} />
+                          </ScrollReveal>
+                        ))}
                     </div>
                   </div>
                 )}

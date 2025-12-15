@@ -144,7 +144,9 @@ export default function MLBStandingsPage() {
       if (typeof aVal === 'string' && typeof bVal === 'string') {
         return sortDirection === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       }
-      return sortDirection === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+      return sortDirection === 'asc'
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
     });
   };
 
@@ -189,7 +191,15 @@ export default function MLBStandingsPage() {
     { id: 'wildcard', label: 'Wild Card' },
   ];
 
-  const SortableHeader = ({ column, label, className = '' }: { column: string; label: string; className?: string }) => (
+  const SortableHeader = ({
+    column,
+    label,
+    className = '',
+  }: {
+    column: string;
+    label: string;
+    className?: string;
+  }) => (
     <th
       className={`text-left p-3 text-copper font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
       onClick={() => handleSort(column)}
@@ -198,18 +208,20 @@ export default function MLBStandingsPage() {
         {label}
         {sortColumn === column && (
           <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
-            {sortDirection === 'desc' ? (
-              <path d="M7 10l5 5 5-5z" />
-            ) : (
-              <path d="M7 14l5-5 5 5z" />
-            )}
+            {sortDirection === 'desc' ? <path d="M7 10l5 5 5-5z" /> : <path d="M7 14l5-5 5 5z" />}
           </svg>
         )}
       </div>
     </th>
   );
 
-  const StandingsTable = ({ teams, showDivision = false }: { teams: Team[]; showDivision?: boolean }) => (
+  const StandingsTable = ({
+    teams,
+    showDivision = false,
+  }: {
+    teams: Team[];
+    showDivision?: boolean;
+  }) => (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[700px]">
         <thead>
@@ -245,9 +257,7 @@ export default function MLBStandingsPage() {
                   >
                     {team.teamName}
                     {showDivision && (
-                      <span className="text-text-tertiary text-xs">
-                        {team.division}
-                      </span>
+                      <span className="text-text-tertiary text-xs">{team.division}</span>
                     )}
                   </Link>
                 </td>
@@ -263,10 +273,14 @@ export default function MLBStandingsPage() {
                 <td className="p-3 text-text-secondary font-mono">{team.away || '-'}</td>
                 <td className="p-3 text-text-secondary font-mono">{team.runsScored}</td>
                 <td className="p-3 text-text-secondary font-mono">{team.runsAllowed}</td>
-                <td className={`p-3 font-mono font-semibold ${diff > 0 ? 'text-success' : diff < 0 ? 'text-error' : 'text-text-secondary'}`}>
+                <td
+                  className={`p-3 font-mono font-semibold ${diff > 0 ? 'text-success' : diff < 0 ? 'text-error' : 'text-text-secondary'}`}
+                >
                   {diff > 0 ? `+${diff}` : diff}
                 </td>
-                <td className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : 'text-text-secondary'}`}>
+                <td
+                  className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : 'text-text-secondary'}`}
+                >
                   {team.streakCode || '-'}
                 </td>
                 <td className="p-3 text-text-secondary font-mono">{team.last10 || '-'}</td>
@@ -283,8 +297,8 @@ export default function MLBStandingsPage() {
     const divisionLeaders = new Set<string>();
     const divisions = ['East', 'Central', 'West'];
 
-    divisions.forEach(div => {
-      const divTeams = teams.filter(t => t.division === div);
+    divisions.forEach((div) => {
+      const divTeams = teams.filter((t) => t.division === div);
       if (divTeams.length > 0) {
         const leader = divTeams.reduce((best, current) =>
           current.wins > best.wins ? current : best
@@ -294,7 +308,7 @@ export default function MLBStandingsPage() {
     });
 
     const wcTeams = teams
-      .filter(t => !divisionLeaders.has(t.teamName))
+      .filter((t) => !divisionLeaders.has(t.teamName))
       .sort((a, b) => b.wins - a.wins);
 
     const wcSpots = 3; // 3 wild card spots per league
@@ -317,16 +331,25 @@ export default function MLBStandingsPage() {
           <tbody>
             {wcTeams.map((team, idx) => {
               const isInWCSpot = idx < wcSpots;
-              const wcGb = idx === 0 ? 0 : (wcTeams[0].wins - team.wins + (team.losses - wcTeams[0].losses)) / 2;
+              const wcGb =
+                idx === 0
+                  ? 0
+                  : (wcTeams[0].wins - team.wins + (team.losses - wcTeams[0].losses)) / 2;
 
               return (
                 <tr
                   key={team.teamName}
                   className={`border-b border-border-subtle hover:bg-white/5 transition-colors ${
-                    isInWCSpot ? 'bg-success/5' : idx === wcSpots ? 'border-t-2 border-burnt-orange' : ''
+                    isInWCSpot
+                      ? 'bg-success/5'
+                      : idx === wcSpots
+                        ? 'border-t-2 border-burnt-orange'
+                        : ''
                   }`}
                 >
-                  <td className={`p-3 font-bold ${isInWCSpot ? 'text-success' : 'text-text-tertiary'}`}>
+                  <td
+                    className={`p-3 font-bold ${isInWCSpot ? 'text-success' : 'text-text-tertiary'}`}
+                  >
                     {isInWCSpot ? idx + 1 : '-'}
                   </td>
                   <td className="p-3">
@@ -346,7 +369,9 @@ export default function MLBStandingsPage() {
                   <td className="p-3 text-text-secondary font-mono">
                     {wcGb === 0 ? '-' : wcGb.toFixed(1)}
                   </td>
-                  <td className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : 'text-text-secondary'}`}>
+                  <td
+                    className={`p-3 font-mono ${team.streakCode?.startsWith('W') ? 'text-success' : team.streakCode?.startsWith('L') ? 'text-error' : 'text-text-secondary'}`}
+                  >
                     {team.streakCode || '-'}
                   </td>
                   <td className="p-3 text-text-secondary font-mono">{team.last10 || '-'}</td>
@@ -373,7 +398,10 @@ export default function MLBStandingsPage() {
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link
+                href="/mlb"
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+              >
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -401,7 +429,8 @@ export default function MLBStandingsPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary max-w-2xl">
-                Complete Major League Baseball standings with division, league, and wild card views. Updated throughout the season.
+                Complete Major League Baseball standings with division, league, and wild card views.
+                Updated throughout the season.
               </p>
             </ScrollReveal>
           </Container>
@@ -439,13 +468,25 @@ export default function MLBStandingsPage() {
                         <table className="w-full">
                           <thead>
                             <tr className="border-b-2 border-burnt-orange">
-                              {['#', 'Team', 'W', 'L', 'PCT', 'GB', 'HOME', 'AWAY', 'RS', 'RA', 'DIFF', 'STRK', 'L10'].map(
-                                (h) => (
-                                  <th key={h} className="text-left p-3 text-copper font-semibold">
-                                    {h}
-                                  </th>
-                                )
-                              )}
+                              {[
+                                '#',
+                                'Team',
+                                'W',
+                                'L',
+                                'PCT',
+                                'GB',
+                                'HOME',
+                                'AWAY',
+                                'RS',
+                                'RA',
+                                'DIFF',
+                                'STRK',
+                                'L10',
+                              ].map((h) => (
+                                <th key={h} className="text-left p-3 text-copper font-semibold">
+                                  {h}
+                                </th>
+                              ))}
                             </tr>
                           </thead>
                           <tbody>

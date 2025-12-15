@@ -123,17 +123,27 @@ export default function MLBStatsPage() {
   const currentStatConfig = currentStats.find((s) => s.id === selectedStat);
 
   const LeaderCard = ({ leader, rank }: { leader: StatLeader; rank: number }) => (
-    <div className={`flex items-center gap-4 p-4 rounded-lg ${
-      rank === 1 ? 'bg-burnt-orange/10 border border-burnt-orange' :
-      rank <= 3 ? 'bg-graphite' : 'bg-charcoal'
-    }`}>
+    <div
+      className={`flex items-center gap-4 p-4 rounded-lg ${
+        rank === 1
+          ? 'bg-burnt-orange/10 border border-burnt-orange'
+          : rank <= 3
+            ? 'bg-graphite'
+            : 'bg-charcoal'
+      }`}
+    >
       {/* Rank */}
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-        rank === 1 ? 'bg-burnt-orange text-white' :
-        rank === 2 ? 'bg-gold/20 text-gold' :
-        rank === 3 ? 'bg-copper/20 text-copper' :
-        'bg-graphite text-text-tertiary'
-      }`}>
+      <div
+        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+          rank === 1
+            ? 'bg-burnt-orange text-white'
+            : rank === 2
+              ? 'bg-gold/20 text-gold'
+              : rank === 3
+                ? 'bg-copper/20 text-copper'
+                : 'bg-graphite text-text-tertiary'
+        }`}
+      >
         {rank}
       </div>
 
@@ -145,14 +155,18 @@ export default function MLBStatsPage() {
 
       {/* Stat Value */}
       <div className="text-right">
-        <p className={`text-2xl font-bold font-mono ${
-          rank === 1 ? 'text-burnt-orange' : 'text-white'
-        }`}>
+        <p
+          className={`text-2xl font-bold font-mono ${
+            rank === 1 ? 'text-burnt-orange' : 'text-white'
+          }`}
+        >
           {currentStatConfig?.format(leader.value as number) || leader.value}
         </p>
         {leader.supportingStats && (
           <p className="text-xs text-text-tertiary">
-            {Object.entries(leader.supportingStats).map(([k, v]) => `${k}: ${v}`).join(' | ')}
+            {Object.entries(leader.supportingStats)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(' | ')}
           </p>
         )}
       </div>
@@ -168,7 +182,10 @@ export default function MLBStatsPage() {
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link
+                href="/mlb"
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+              >
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -196,7 +213,8 @@ export default function MLBStatsPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary max-w-2xl">
-                League leaders in batting, pitching, and fielding statistics. Updated daily throughout the season.
+                League leaders in batting, pitching, and fielding statistics. Updated daily
+                throughout the season.
               </p>
             </ScrollReveal>
           </Container>
@@ -281,7 +299,13 @@ export default function MLBStatsPage() {
             ) : currentLeaders.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
-                  <svg viewBox="0 0 24 24" className="w-16 h-16 text-text-tertiary mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
                     <path d="M3 3v18h18M8 17V9m4 8V5m4 12v-6" />
                   </svg>
                   <p className="text-text-secondary">No stat leaders available</p>
@@ -295,7 +319,11 @@ export default function MLBStatsPage() {
                 <Card variant="default" padding="lg">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-3">
-                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="currentColor">
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="w-6 h-6 text-burnt-orange"
+                        fill="currentColor"
+                      >
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                       </svg>
                       {currentStatConfig?.label} Leaders

@@ -61,7 +61,13 @@ const mlbTeams: Team[] = [
   { id: 'tor', name: 'Toronto Blue Jays', abbreviation: 'TOR', division: 'East', league: 'AL' },
   // AL Central
   { id: 'cws', name: 'Chicago White Sox', abbreviation: 'CWS', division: 'Central', league: 'AL' },
-  { id: 'cle', name: 'Cleveland Guardians', abbreviation: 'CLE', division: 'Central', league: 'AL' },
+  {
+    id: 'cle',
+    name: 'Cleveland Guardians',
+    abbreviation: 'CLE',
+    division: 'Central',
+    league: 'AL',
+  },
   { id: 'det', name: 'Detroit Tigers', abbreviation: 'DET', division: 'Central', league: 'AL' },
   { id: 'kc', name: 'Kansas City Royals', abbreviation: 'KC', division: 'Central', league: 'AL' },
   { id: 'min', name: 'Minnesota Twins', abbreviation: 'MIN', division: 'Central', league: 'AL' },
@@ -82,7 +88,13 @@ const mlbTeams: Team[] = [
   { id: 'cin', name: 'Cincinnati Reds', abbreviation: 'CIN', division: 'Central', league: 'NL' },
   { id: 'mil', name: 'Milwaukee Brewers', abbreviation: 'MIL', division: 'Central', league: 'NL' },
   { id: 'pit', name: 'Pittsburgh Pirates', abbreviation: 'PIT', division: 'Central', league: 'NL' },
-  { id: 'stl', name: 'St. Louis Cardinals', abbreviation: 'STL', division: 'Central', league: 'NL' },
+  {
+    id: 'stl',
+    name: 'St. Louis Cardinals',
+    abbreviation: 'STL',
+    division: 'Central',
+    league: 'NL',
+  },
   // NL West
   { id: 'ari', name: 'Arizona Diamondbacks', abbreviation: 'ARI', division: 'West', league: 'NL' },
   { id: 'col', name: 'Colorado Rockies', abbreviation: 'COL', division: 'West', league: 'NL' },
@@ -108,9 +120,8 @@ export default function MLBTeamsPage() {
             // Merge records into teams
             setTeams((prev) =>
               prev.map((team) => {
-                const standing = data.standings.find(
-                  (s: { teamName: string }) =>
-                    s.teamName.includes(team.name.split(' ').pop() || '')
+                const standing = data.standings.find((s: { teamName: string }) =>
+                  s.teamName.includes(team.name.split(' ').pop() || '')
                 );
                 if (standing) {
                   return {
@@ -134,7 +145,8 @@ export default function MLBTeamsPage() {
     fetchRecords();
   }, []);
 
-  const filteredTeams = selectedLeague === 'all' ? teams : teams.filter((t) => t.league === selectedLeague);
+  const filteredTeams =
+    selectedLeague === 'all' ? teams : teams.filter((t) => t.league === selectedLeague);
 
   // Group by division
   const teamsByDivision: Record<string, Team[]> = {};
@@ -144,15 +156,20 @@ export default function MLBTeamsPage() {
     teamsByDivision[key].push(team);
   });
 
-  const divisionOrder = selectedLeague === 'NL'
-    ? ['NL East', 'NL Central', 'NL West']
-    : selectedLeague === 'AL'
-    ? ['AL East', 'AL Central', 'AL West']
-    : ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
+  const divisionOrder =
+    selectedLeague === 'NL'
+      ? ['NL East', 'NL Central', 'NL West']
+      : selectedLeague === 'AL'
+        ? ['AL East', 'AL Central', 'AL West']
+        : ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
 
   const TeamCard = ({ team }: { team: Team }) => (
     <Link href={`/mlb/teams/${team.id}`} className="block group">
-      <Card variant="default" padding="md" className="h-full transition-all group-hover:border-burnt-orange">
+      <Card
+        variant="default"
+        padding="md"
+        className="h-full transition-all group-hover:border-burnt-orange"
+      >
         <div className="flex items-center gap-4">
           {/* Team Logo Placeholder */}
           <div className="w-16 h-16 bg-charcoal rounded-lg flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
@@ -163,7 +180,9 @@ export default function MLBTeamsPage() {
             <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors truncate">
               {team.name}
             </p>
-            <p className="text-xs text-text-tertiary">{team.league} {team.division}</p>
+            <p className="text-xs text-text-tertiary">
+              {team.league} {team.division}
+            </p>
             {team.wins !== undefined && (
               <p className="text-sm text-text-secondary mt-1 font-mono">
                 {team.wins}-{team.losses}
@@ -171,7 +190,13 @@ export default function MLBTeamsPage() {
             )}
           </div>
 
-          <svg viewBox="0 0 24 24" className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            viewBox="0 0 24 24"
+            className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M9 18l6-6-6-6" />
           </svg>
         </div>
@@ -188,7 +213,10 @@ export default function MLBTeamsPage() {
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link
+                href="/mlb"
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+              >
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -216,7 +244,8 @@ export default function MLBTeamsPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary max-w-2xl">
-                Browse all 30 Major League Baseball teams. View rosters, schedules, statistics, and depth charts.
+                Browse all 30 Major League Baseball teams. View rosters, schedules, statistics, and
+                depth charts.
               </p>
             </ScrollReveal>
           </Container>
@@ -237,7 +266,11 @@ export default function MLBTeamsPage() {
                       : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  {league === 'all' ? 'All Teams' : league === 'AL' ? 'American League' : 'National League'}
+                  {league === 'all'
+                    ? 'All Teams'
+                    : league === 'AL'
+                      ? 'American League'
+                      : 'National League'}
                 </button>
               ))}
             </div>
@@ -250,7 +283,11 @@ export default function MLBTeamsPage() {
               return (
                 <div key={division} className="mb-8">
                   <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-burnt-orange" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-5 h-5 text-burnt-orange"
+                      fill="currentColor"
+                    >
                       <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                     </svg>
                     {division}
