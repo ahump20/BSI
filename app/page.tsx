@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '../components/cinematic/ScrollReveal';
+import { IntelTicker } from '../components/cinematic/IntelTicker';
 import { Navbar } from '../components/layout-ds/Navbar';
 import { Footer } from '../components/layout-ds/Footer';
 
@@ -40,11 +41,24 @@ const features = [
   },
 ];
 
+const tickerItems = [
+  { id: '1', content: 'College Baseball: Full 2025 season coverage now live', type: 'default' as const },
+  { id: '2', content: 'MLB: Spring Training data pipeline active', type: 'default' as const },
+  { id: '3', content: 'NFL: 2024-25 playoff predictions available', type: 'live' as const },
+  { id: '4', content: 'New: Monte Carlo simulation engine deployed', type: 'alert' as const },
+  { id: '5', content: 'College Baseball: D1 standings updated in real-time', type: 'default' as const },
+];
+
 export default function HomePage() {
   return (
     <main id="main-content" className="min-h-screen">
       {/* Navbar */}
       <Navbar items={navItems} />
+
+      {/* Intel Ticker */}
+      <div className="pt-16">
+        <IntelTicker items={tickerItems} speed={40} variant="accent" pauseOnHover />
+      </div>
 
       {/* Hero Section */}
       <Section padding="xl" className="relative pt-32 overflow-hidden">

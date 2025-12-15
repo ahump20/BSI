@@ -11,6 +11,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { ScrollReveal } from '../../components/cinematic/ScrollReveal';
 import { Navbar } from '../../components/layout-ds/Navbar';
+import { Footer } from '../../components/layout-ds/Footer';
 
 const dashboardNavItems = [
   { label: 'Home', href: '/' },
@@ -102,6 +103,9 @@ export default function DashboardPage() {
           </div>
         </Container>
       </Section>
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }
