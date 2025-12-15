@@ -10,22 +10,22 @@ import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
-  title: 'College Baseball Intelligence | Blaze Sports Intel',
+  title: 'College Baseball | Blaze Sports Intel',
   description:
-    'Complete NCAA Division I college baseball coverage with full box scores, batting/pitching lines, conference standings, RPI rankings, team rosters, and MLB Draft prospect tracking. Practice to Play. Blaze Data Wins the Day.',
+    'NCAA Division I baseball coverage with box scores, conference standings, RPI rankings, team rosters, and player statistics for all 300+ D1 programs.',
   openGraph: {
-    title: 'College Baseball Intelligence | Blaze Sports Intel',
+    title: 'College Baseball | Blaze Sports Intel',
     description:
-      'Complete NCAA Division I college baseball coverage with full box scores, conference standings, RPI rankings, and player statistics for all 300+ D1 programs.',
+      'NCAA Division I baseball coverage with box scores, standings, and analytics for 300+ D1 programs.',
     url: 'https://blazesportsintel.com/college-baseball',
     images: [{ url: '/images/texas-soil.jpg' }],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'College Baseball Intelligence | Blaze Sports Intel',
+    title: 'College Baseball | Blaze Sports Intel',
     description:
-      'Complete NCAA Division I college baseball coverage. Real-time scores, complete box scores, advanced analytics for 300+ D1 programs.',
+      'NCAA Division I baseball coverage. Real-time scores and analytics for 300+ D1 programs.',
   },
 };
 
@@ -168,21 +168,20 @@ export default function CollegeBaseballPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display mb-4">
-                Complete Analytics for <span className="text-gradient-blaze">D1 Baseball</span>
+                NCAA Division I <span className="text-gradient-blaze">Baseball</span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
-                Practice to Play. Blaze Data Wins the Day.
+                Real-Time Data. Complete Coverage.
               </p>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={200}>
               <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Complete box scores, comprehensive standings, advanced analytics, and live updates
-                for every Power 5 conference. Professional-grade baseball intelligence for all 300+
-                programs.
+                Box scores, conference standings, advanced analytics, and live updates for every
+                Power 5 conference. Professional-grade sports intelligence for all 300+ D1 programs.
               </p>
             </ScrollReveal>
 
@@ -391,11 +390,11 @@ export default function CollegeBaseballPage() {
             <ScrollReveal>
               <div className="max-w-xl mx-auto text-center relative z-10">
                 <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mb-4">
-                  Ready for Real <span className="text-gradient-blaze">Baseball Intelligence</span>?
+                  NCAA Division I <span className="text-gradient-blaze">Baseball Coverage</span>
                 </h2>
                 <p className="text-text-secondary mb-8">
-                  Complete coverage for the sport that deserves it. Real-time scores, full box
-                  scores, and the analytics infrastructure college baseball has always needed.
+                  Complete D1 baseball coverage with box scores, standings, and real-time updates
+                  for all 300+ programs.
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Link href="/college-baseball/games">

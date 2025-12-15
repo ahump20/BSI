@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Contact | Blaze Sports Intel',
   description:
-    'Get in touch with Blaze Sports Intel. Questions about college baseball coverage, partnerships, or just want to talk baseball.',
+    'Get in touch with Blaze Sports Intel. Questions about sports coverage, partnerships, or platform features.',
   openGraph: {
     title: 'Contact | Blaze Sports Intel',
     description: 'Get in touch with Blaze Sports Intel.',
