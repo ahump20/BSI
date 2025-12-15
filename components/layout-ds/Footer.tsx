@@ -63,7 +63,7 @@ export function Footer({
                 BLAZE<span className="text-burnt-orange">SPORTS</span>
               </Link>
               <p className="mt-4 text-sm text-text-tertiary max-w-xs">
-                Deep intelligence for the sports that matter. College baseball first, always.
+                Deep intelligence for the sports that matter. MLB, NFL, NCAA—real data, no fluff.
               </p>
 
               {/* Social links */}
@@ -152,9 +152,9 @@ const defaultSections: FooterSection[] = [
   {
     title: 'Sports',
     links: [
-      { label: 'College Baseball', href: '/college-baseball' },
       { label: 'MLB', href: '/mlb' },
       { label: 'NFL', href: '/nfl' },
+      { label: 'College Baseball', href: '/college-baseball' },
       { label: 'College Football', href: '/college-football' },
     ],
   },
