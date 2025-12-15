@@ -737,18 +737,26 @@
         </div>
     </main>
 
+    <!-- Live Scoreboard Sidebar -->
+    <aside style="position: fixed; right: var(--bsi-space-4); top: 100px; width: 300px; z-index: 50; display: none;" class="live-scoreboard-sidebar" id="scoreboard-sidebar">
+        <div style="background: var(--bsi-charcoal); border: 1px solid var(--bsi-border-subtle); border-radius: var(--bsi-radius-lg); padding: var(--bsi-space-4);">
+            <div id="live-scoreboard"></div>
+        </div>
+    </aside>
+
     <div id="bsi-footer-placeholder"></div>
 
     <script src="/js/bsi-components.js"></script>
+    <script src="/js/team-espn-ids.js"></script>
+    <script src="/js/college-baseball-data.js"></script>
+    <script src="/js/live-scoreboard.js"></script>
+    <script src="/js/team-page-init.js"></script>
     <script>
         // Tab functionality
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                // Update buttons
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-
-                // Update content
                 const tabId = this.dataset.tab;
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.getElementById(tabId).classList.add('active');
