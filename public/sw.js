@@ -11,7 +11,7 @@
  * Version: 1.0.0
  */
 
-const CACHE_VERSION = 'blaze-sports-v2-phase20e';
+const CACHE_VERSION = 'blaze-sports-v3-pwa';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const API_CACHE = `${CACHE_VERSION}-api`;
 const IMAGE_CACHE = `${CACHE_VERSION}-images`;
@@ -25,8 +25,17 @@ const STATIC_ASSETS = [
   '/mlb',
   '/nfl',
   '/college-baseball',
+  '/college-baseball/draft',
+  '/college-baseball/draft/index.html',
+  '/college-baseball/tools/compare.html',
+  '/college-baseball/recruiting/tracker.html',
+  '/college-baseball/players',
+  '/college-baseball/players/index.html',
+  '/college-baseball/teams',
+  '/college-baseball/teams/index.html',
   '/js/analytics.min.js',
   '/js/analytics-statcast.min.js',
+  '/js/advanced-stats.js',
   '/js/feedback-widget.min.js',
   '/js/data-freshness-component.min.js',
   '/js/error-handler.min.js',

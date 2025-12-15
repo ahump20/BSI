@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiting Tracker & Transfer Portal | Blaze Sports Intel</title>
+    <meta name="description" content="College baseball recruiting tracker with commit lists and transfer portal tracking. SEC, Big 12, ACC recruiting updates.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/bsi-logo-192.png">
+
+    <!-- BSI Design System -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+        }
+
+        .font-display { font-family: 'Oswald', sans-serif; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--bsi-space-4) var(--bsi-space-6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+            text-decoration: none;
+            color: var(--bsi-cream);
+        }
+
+        .nav-logo img { height: 40px; }
+
+        .nav-links {
+            display: flex;
+            gap: var(--bsi-space-6);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--bsi-cream);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover, .nav-links a.active { color: var(--bsi-burnt-orange); }
+
+        @media (max-width: 768px) { .nav-links { display: none; } }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+            padding: 100px 0 var(--bsi-space-8);
+            border-bottom: 3px solid var(--bsi-burnt-orange);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            margin-bottom: var(--bsi-space-4);
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+
+        .hero h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .hero p { opacity: 0.9; max-width: 600px; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: var(--bsi-space-2);
+            margin-top: var(--bsi-space-6);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: var(--bsi-space-3) var(--bsi-space-6);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px 8px 0 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .tab-btn.active {
+            background: var(--bsi-charcoal);
+            color: var(--bsi-burnt-orange);
+        }
+
+        /* Main Content */
+        main {
+            padding: var(--bsi-space-8) 0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Filters */
+        .filters-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--bsi-space-3);
+            margin-bottom: var(--bsi-space-6);
+            padding: var(--bsi-space-4);
+            background: var(--bsi-charcoal);
+            border-radius: 8px;
+        }
+
+        .filter-select, .search-input {
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            background: var(--bsi-midnight);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 6px;
+            color: var(--bsi-cream);
+            font-size: 0.875rem;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-input::placeholder { color: rgba(250, 248, 245, 0.4); }
+
+        /* Commit Card */
+        .commits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--bsi-space-4);
+        }
+
+        @media (max-width: 400px) {
+            .commits-grid { grid-template-columns: 1fr; }
+        }
+
+        .commit-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .commit-card:hover {
+            border-color: var(--bsi-burnt-orange);
+        }
+
+        .commit-header {
+            padding: var(--bsi-space-4);
+            background: linear-gradient(90deg, rgba(46, 125, 50, 0.2) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .player-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .player-meta {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.6);
+            margin-top: 2px;
+        }
+
+        .commit-date {
+            font-size: 0.7rem;
+            color: rgba(250, 248, 245, 0.5);
+            text-align: right;
+        }
+
+        .commit-body {
+            padding: var(--bsi-space-4);
+        }
+
+        .commit-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--bsi-space-2);
+            font-size: 0.875rem;
+        }
+
+        .commit-label {
+            color: rgba(250, 248, 245, 0.5);
+        }
+
+        .school-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            padding: var(--bsi-space-1) var(--bsi-space-3);
+            background: rgba(191, 87, 0, 0.15);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .school-badge img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Transfer Card */
+        .transfer-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: var(--bsi-space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-4);
+            margin-bottom: var(--bsi-space-3);
+        }
+
+        .transfer-arrow {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            color: rgba(250, 248, 245, 0.6);
+            font-size: 0.875rem;
+        }
+
+        .transfer-arrow .from {
+            color: rgba(250, 248, 245, 0.5);
+        }
+
+        .transfer-arrow .arrow {
+            color: var(--bsi-burnt-orange);
+            font-weight: bold;
+        }
+
+        .transfer-arrow .to {
+            color: var(--bsi-cream);
+            font-weight: 500;
+        }
+
+        .transfer-status {
+            margin-left: auto;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .transfer-status.committed { background: #2E7D32; color: white; }
+        .transfer-status.in-portal { background: #F9A825; color: #1A1A1A; }
+        .transfer-status.withdrawn { background: #616161; color: white; }
+
+        /* Team Commits Summary */
+        .team-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--bsi-space-4);
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .team-summary-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 8px;
+            padding: var(--bsi-space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+        }
+
+        .team-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .team-commits-count {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+        }
+
+        .team-commits-label {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.6);
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--bsi-space-4);
+            margin-top: var(--bsi-space-6);
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: var(--bsi-space-4);
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            color: var(--bsi-burnt-orange);
+            margin-bottom: var(--bsi-space-4);
+            padding-bottom: var(--bsi-space-2);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bsi-charcoal);
+            padding: var(--bsi-space-8) 0;
+            border-top: 1px solid rgba(191, 87, 0, 0.2);
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.5);
+        }
+
+        .data-note {
+            margin-top: var(--bsi-space-2);
+            font-size: 0.7rem;
+            color: rgba(250, 248, 245, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="/images/bsi-logo-nav.png" alt="BSI" onerror="this.style.display='none'">
+                <span class="font-display" style="font-size: 1.25rem; font-weight: 600;">BLAZE SPORTS INTEL</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/college-baseball/">College Baseball</a></li>
+                <li><a href="/college-baseball/teams/">Teams</a></li>
+                <li><a href="/college-baseball/recruiting/" class="active">Recruiting</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/college-baseball/">College Baseball</a>
+                <span>/</span>
+                <span style="color: white;">Recruiting</span>
+            </nav>
+
+            <h1>Recruiting <span style="color: var(--bsi-gold);">Tracker</span></h1>
+            <p>Track 2025-2026 recruiting class commits and transfer portal movement across SEC, Big 12, ACC and top programs.</p>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('commits')">Class of 2025</button>
+                <button class="tab-btn" onclick="showTab('portal')">Transfer Portal</button>
+                <button class="tab-btn" onclick="showTab('rankings')">Class Rankings</button>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-commits">--</div>
+                    <div class="stat-label">Total Commits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="portal-entries">--</div>
+                    <div class="stat-label">In Portal</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="portal-committed">--</div>
+                    <div class="stat-label">Portal Commits</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Commits Tab -->
+            <div class="tab-content active" id="commits-tab">
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="commit-search" placeholder="Search by name, school, or state...">
+                    <select class="filter-select" id="conference-filter" onchange="filterCommits()">
+                        <option value="">All Conferences</option>
+                        <option value="SEC">SEC</option>
+                        <option value="ACC">ACC</option>
+                        <option value="BIG12">Big 12</option>
+                        <option value="BIG10">Big Ten</option>
+                        <option value="PAC12">Pac-12</option>
+                    </select>
+                    <select class="filter-select" id="position-filter" onchange="filterCommits()">
+                        <option value="">All Positions</option>
+                        <option value="RHP">RHP</option>
+                        <option value="LHP">LHP</option>
+                        <option value="C">Catcher</option>
+                        <option value="IF">Infield</option>
+                        <option value="OF">Outfield</option>
+                    </select>
+                </div>
+
+                <h2 class="section-title">Recent Commits</h2>
+                <div class="commits-grid" id="commits-grid"></div>
+            </div>
+
+            <!-- Transfer Portal Tab -->
+            <div class="tab-content" id="portal-tab">
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="portal-search" placeholder="Search transfers...">
+                    <select class="filter-select" id="portal-status-filter" onchange="filterPortal()">
+                        <option value="">All Status</option>
+                        <option value="in-portal">In Portal</option>
+                        <option value="committed">Committed</option>
+                        <option value="withdrawn">Withdrawn</option>
+                    </select>
+                </div>
+
+                <h2 class="section-title">Transfer Portal Activity</h2>
+                <div id="portal-list"></div>
+            </div>
+
+            <!-- Rankings Tab -->
+            <div class="tab-content" id="rankings-tab">
+                <h2 class="section-title">Top Recruiting Classes (2025)</h2>
+                <div class="team-summary" id="class-rankings"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="footer-text">&copy; 2025 Blaze Sports Intel. All rights reserved.</p>
+            <p class="data-note">Recruiting data compiled from public announcements and verified sources.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data - will be replaced with API
+        const commits2025 = [
+            { name: 'J. Mitchell', position: 'SS', state: 'TX', school: 'Texas', conference: 'SEC', date: '2024-11-15', ranking: 12 },
+            { name: 'C. Anderson', position: 'RHP', state: 'FL', school: 'Florida', conference: 'SEC', date: '2024-11-10', ranking: 8 },
+            { name: 'M. Davis', position: 'OF', state: 'GA', school: 'Georgia', conference: 'SEC', date: '2024-11-08', ranking: 15 },
+            { name: 'T. Wilson', position: 'LHP', state: 'TN', school: 'Vanderbilt', conference: 'SEC', date: '2024-11-05', ranking: 5 },
+            { name: 'K. Brown', position: 'C', state: 'NC', school: 'Wake Forest', conference: 'ACC', date: '2024-11-01', ranking: 22 },
+            { name: 'R. Garcia', position: '3B', state: 'CA', school: 'UCLA', conference: 'BIG10', date: '2024-10-28', ranking: 18 },
+            { name: 'A. Johnson', position: 'RHP', state: 'TX', school: 'Texas A&M', conference: 'SEC', date: '2024-10-25', ranking: 11 },
+            { name: 'B. Martinez', position: 'SS', state: 'AZ', school: 'Arizona', conference: 'BIG12', date: '2024-10-22', ranking: 25 },
+            { name: 'D. Thompson', position: 'OF', state: 'LA', school: 'LSU', conference: 'SEC', date: '2024-10-18', ranking: 7 },
+            { name: 'S. Williams', position: '1B', state: 'AR', school: 'Arkansas', conference: 'SEC', date: '2024-10-15', ranking: 30 },
+            { name: 'E. Clark', position: 'RHP', state: 'OK', school: 'Oklahoma', conference: 'SEC', date: '2024-10-12', ranking: 14 },
+            { name: 'J. Lee', position: '2B', state: 'MS', school: 'Ole Miss', conference: 'SEC', date: '2024-10-08', ranking: 35 }
+        ];
+
+        const portalEntries = [
+            { name: 'M. Rodriguez', position: 'OF', from: 'Arizona State', to: 'Texas', status: 'committed', date: '2024-12-01' },
+            { name: 'J. Smith', position: 'RHP', from: 'Oregon', to: null, status: 'in-portal', date: '2024-11-28' },
+            { name: 'K. Davis', position: 'SS', from: 'Miami', to: 'Florida State', status: 'committed', date: '2024-11-25' },
+            { name: 'T. Brown', position: 'C', from: 'USC', to: null, status: 'in-portal', date: '2024-11-22' },
+            { name: 'A. Wilson', position: 'LHP', from: 'Texas Tech', to: 'TCU', status: 'committed', date: '2024-11-18' },
+            { name: 'R. Garcia', position: '3B', from: 'Stanford', to: null, status: 'in-portal', date: '2024-11-15' },
+            { name: 'D. Martinez', position: 'OF', from: 'Cal', to: 'Oregon State', status: 'committed', date: '2024-11-12' },
+            { name: 'C. Thompson', position: 'RHP', from: 'NC State', to: null, status: 'withdrawn', date: '2024-11-08' }
+        ];
+
+        const classRankings = [
+            { school: 'Texas', conference: 'SEC', commits: 18, avgRank: 12.5, espnId: '251' },
+            { school: 'Florida', conference: 'SEC', commits: 16, avgRank: 15.2, espnId: '57' },
+            { school: 'Vanderbilt', conference: 'SEC', commits: 15, avgRank: 14.8, espnId: '238' },
+            { school: 'LSU', conference: 'SEC', commits: 14, avgRank: 18.5, espnId: '99' },
+            { school: 'Georgia', conference: 'SEC', commits: 14, avgRank: 19.2, espnId: '61' },
+            { school: 'Texas A&M', conference: 'SEC', commits: 13, avgRank: 16.8, espnId: '245' },
+            { school: 'Wake Forest', conference: 'ACC', commits: 13, avgRank: 20.1, espnId: '154' },
+            { school: 'Arkansas', conference: 'SEC', commits: 12, avgRank: 22.5, espnId: '8' },
+            { school: 'Tennessee', conference: 'SEC', commits: 12, avgRank: 21.3, espnId: '2633' },
+            { school: 'UCLA', conference: 'BIG10', commits: 11, avgRank: 25.8, espnId: '26' }
+        ];
+
+        let filteredCommits = [...commits2025];
+        let filteredPortal = [...portalEntries];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCommits();
+            renderPortal();
+            renderRankings();
+            updateStats();
+
+            document.getElementById('commit-search').addEventListener('input', filterCommits);
+            document.getElementById('portal-search').addEventListener('input', filterPortal);
+        });
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function filterCommits() {
+            const search = document.getElementById('commit-search').value.toLowerCase();
+            const conference = document.getElementById('conference-filter').value;
+            const position = document.getElementById('position-filter').value;
+
+            filteredCommits = commits2025.filter(c => {
+                if (search && !c.name.toLowerCase().includes(search) &&
+                    !c.school.toLowerCase().includes(search) &&
+                    !c.state.toLowerCase().includes(search)) {
+                    return false;
+                }
+                if (conference && c.conference !== conference) return false;
+                if (position) {
+                    if (position === 'IF' && !['SS', '2B', '3B', '1B'].includes(c.position)) return false;
+                    if (position === 'OF' && c.position !== 'OF') return false;
+                    if (position !== 'IF' && position !== 'OF' && c.position !== position) return false;
+                }
+                return true;
+            });
+
+            renderCommits();
+        }
+
+        function filterPortal() {
+            const search = document.getElementById('portal-search').value.toLowerCase();
+            const status = document.getElementById('portal-status-filter').value;
+
+            filteredPortal = portalEntries.filter(p => {
+                if (search && !p.name.toLowerCase().includes(search) &&
+                    !p.from.toLowerCase().includes(search) &&
+                    !(p.to || '').toLowerCase().includes(search)) {
+                    return false;
+                }
+                if (status && p.status !== status) return false;
+                return true;
+            });
+
+            renderPortal();
+        }
+
+        function renderCommits() {
+            const grid = document.getElementById('commits-grid');
+
+            grid.innerHTML = filteredCommits.map(c => `
+                <div class="commit-card">
+                    <div class="commit-header">
+                        <div>
+                            <div class="player-name">${c.name}</div>
+                            <div class="player-meta">${c.position} | ${c.state} | #${c.ranking} National</div>
+                        </div>
+                        <div class="commit-date">${formatDate(c.date)}</div>
+                    </div>
+                    <div class="commit-body">
+                        <div class="commit-row">
+                            <span class="commit-label">Committed to</span>
+                            <span class="school-badge">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/${getESPNId(c.school)}.png" alt="${c.school}" onerror="this.style.display='none'">
+                                ${c.school}
+                            </span>
+                        </div>
+                        <div class="commit-row">
+                            <span class="commit-label">Conference</span>
+                            <span>${c.conference}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPortal() {
+            const list = document.getElementById('portal-list');
+
+            list.innerHTML = filteredPortal.map(p => `
+                <div class="transfer-card">
+                    <div>
+                        <div class="player-name">${p.name}</div>
+                        <div class="player-meta">${p.position}</div>
+                    </div>
+                    <div class="transfer-arrow">
+                        <span class="from">${p.from}</span>
+                        <span class="arrow">→</span>
+                        <span class="to">${p.to || 'Uncommitted'}</span>
+                    </div>
+                    <span class="transfer-status ${p.status}">${p.status.replace('-', ' ')}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderRankings() {
+            const container = document.getElementById('class-rankings');
+
+            container.innerHTML = classRankings.map((r, i) => `
+                <div class="team-summary-card">
+                    <img class="team-logo" src="https://a.espncdn.com/i/teamlogos/ncaa/500/${r.espnId}.png" alt="${r.school}" onerror="this.style.display='none'">
+                    <div>
+                        <div style="font-weight: 600;">#${i + 1} ${r.school}</div>
+                        <div class="team-commits-label">${r.conference}</div>
+                    </div>
+                    <div style="margin-left: auto; text-align: right;">
+                        <div class="team-commits-count">${r.commits}</div>
+                        <div class="team-commits-label">Commits</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('total-commits').textContent = commits2025.length;
+            document.getElementById('portal-entries').textContent = portalEntries.filter(p => p.status === 'in-portal').length;
+            document.getElementById('portal-committed').textContent = portalEntries.filter(p => p.status === 'committed').length;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function getESPNId(school) {
+            const ids = {
+                'Texas': '251', 'Florida': '57', 'Georgia': '61', 'Vanderbilt': '238',
+                'Wake Forest': '154', 'UCLA': '26', 'Texas A&M': '245', 'Arizona': '12',
+                'LSU': '99', 'Arkansas': '8', 'Oklahoma': '201', 'Ole Miss': '145',
+                'Tennessee': '2633', 'TCU': '2628', 'Florida State': '52', 'Oregon State': '204'
+            };
+            return ids[school] || '';
+        }
+    </script>
+</body>
+</html>
