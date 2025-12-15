@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohio State Buckeyes Baseball | Blaze Sports Intel</title>
+    <meta name="description" content="Ohio State Buckeyes baseball roster, statistics, schedule, and recruiting for the 2026 season. Complete coverage from Blaze Sports Intel.">
+    <meta property="og:title" content="Ohio State Buckeyes Baseball | Blaze Sports Intel">
+    <meta property="og:description" content="Complete Ohio State Buckeyes baseball coverage - roster, stats, schedule, and recruiting. Nick Swisher's alma mater.">
+    <link rel="canonical" href="https://blazesportsintel.com/college-baseball/teams/ohio-state.html">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <style>
+        body {
+            font-family: var(--bsi-font-sans);
+            background: var(--bsi-midnight);
+            color: var(--bsi-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        /* Hero */
+        .team-hero {
+            background: linear-gradient(135deg, #BB0000 0%, #666666 100%);
+            padding: 120px 0 var(--bsi-space-12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            font-size: var(--bsi-text-sm);
+            color: rgba(255,255,255,0.7);
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .breadcrumb a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-6);
+        }
+
+        .team-logo-large {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-3);
+        }
+
+        .team-title {
+            font-family: var(--bsi-font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .team-subtitle {
+            font-size: var(--bsi-text-lg);
+            color: rgba(255,255,255,0.8);
+        }
+
+        .team-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            background: rgba(255,255,255,0.15);
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            border-radius: var(--bsi-radius-full);
+            font-size: var(--bsi-text-sm);
+            font-weight: 600;
+            margin-top: var(--bsi-space-3);
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--bsi-space-4);
+            margin-top: var(--bsi-space-8);
+        }
+
+        .hero-stat {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: var(--bsi-space-4);
+            border-radius: var(--bsi-radius-md);
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-2xl);
+            font-weight: 700;
+        }
+
+        .hero-stat-label {
+            font-size: var(--bsi-text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Main Content */
+        main {
+            padding: var(--bsi-space-12) 0;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: var(--bsi-space-2);
+            margin-bottom: var(--bsi-space-8);
+            overflow-x: auto;
+            padding-bottom: var(--bsi-space-2);
+        }
+
+        .tab-btn {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            color: var(--bsi-text-secondary);
+            padding: var(--bsi-space-3) var(--bsi-space-6);
+            border-radius: var(--bsi-radius-md);
+            font-family: var(--bsi-font-sans);
+            font-weight: 600;
+            font-size: var(--bsi-text-sm);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--bsi-transition-fast);
+        }
+
+        .tab-btn:hover {
+            background: var(--bsi-graphite);
+            color: var(--bsi-text-primary);
+        }
+
+        .tab-btn.active {
+            background: #BB0000;
+            border-color: #BB0000;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Roster Table */
+        .roster-section h2 {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-xl);
+            margin-bottom: var(--bsi-space-4);
+            color: #BB0000;
+        }
+
+        .roster-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bsi-charcoal);
+            border-radius: var(--bsi-radius-lg);
+            overflow: hidden;
+        }
+
+        .roster-table th {
+            background: rgba(187, 0, 0, 0.2);
+            padding: var(--bsi-space-4);
+            text-align: left;
+            font-size: var(--bsi-text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #BB0000;
+            font-weight: 700;
+        }
+
+        .roster-table td {
+            padding: var(--bsi-space-4);
+            border-bottom: 1px solid var(--bsi-border-subtle);
+        }
+
+        .roster-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .roster-table tr:hover {
+            background: var(--bsi-graphite);
+        }
+
+        .player-name {
+            font-weight: 600;
+        }
+
+        .player-number {
+            color: #BB0000;
+            font-weight: 700;
+            width: 40px;
+        }
+
+        /* Schedule */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--bsi-space-3);
+        }
+
+        .game-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto auto;
+            gap: var(--bsi-space-4);
+            align-items: center;
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-md);
+            padding: var(--bsi-space-4);
+            transition: all var(--bsi-transition-fast);
+        }
+
+        .game-item:hover {
+            border-color: #BB0000;
+        }
+
+        .game-date {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+        }
+
+        .game-opponent {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+        }
+
+        .opponent-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .opponent-name {
+            font-weight: 600;
+        }
+
+        .game-result {
+            font-weight: 700;
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            border-radius: var(--bsi-radius-sm);
+        }
+
+        .game-result.win {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--bsi-success);
+        }
+
+        .game-result.loss {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--bsi-error);
+        }
+
+        .game-score {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-lg);
+            font-weight: 700;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Recruiting */
+        .recruit-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-5);
+            display: flex;
+            gap: var(--bsi-space-4);
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .recruit-info {
+            flex: 1;
+        }
+
+        .recruit-name {
+            font-weight: 700;
+            font-size: var(--bsi-text-lg);
+            margin-bottom: var(--bsi-space-1);
+        }
+
+        .recruit-meta {
+            color: var(--bsi-text-secondary);
+            font-size: var(--bsi-text-sm);
+        }
+
+        .recruit-rating {
+            display: flex;
+            gap: 2px;
+            margin-top: var(--bsi-space-2);
+        }
+
+        .star {
+            color: var(--bsi-gold);
+        }
+
+        .star.empty {
+            color: var(--bsi-text-tertiary);
+        }
+
+        /* Season Banner */
+        .season-banner {
+            background: linear-gradient(135deg, rgba(187, 0, 0, 0.15), rgba(102, 102, 102, 0.1));
+            border: 1px solid rgba(187, 0, 0, 0.3);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-6);
+            text-align: center;
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .season-banner h3 {
+            font-family: var(--bsi-font-display);
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .season-banner p {
+            color: var(--bsi-text-secondary);
+        }
+
+        /* Notable Alumni */
+        .alumni-highlight {
+            background: linear-gradient(135deg, rgba(187, 0, 0, 0.2), rgba(102, 102, 102, 0.1));
+            border: 1px solid rgba(187, 0, 0, 0.4);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .alumni-highlight h3 {
+            font-family: var(--bsi-font-display);
+            color: #BB0000;
+            margin-bottom: var(--bsi-space-3);
+        }
+
+        .alumni-highlight p {
+            color: var(--bsi-text-secondary);
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .alumni-highlight strong {
+            color: var(--bsi-text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .team-header { flex-direction: column; text-align: center; }
+            .hero-stats { grid-template-columns: repeat(2, 1fr); }
+            .game-item { grid-template-columns: 1fr; gap: var(--bsi-space-2); }
+            .tabs { gap: var(--bsi-space-1); }
+            .tab-btn { padding: var(--bsi-space-2) var(--bsi-space-4); font-size: var(--bsi-text-xs); }
+        }
+    </style>
+</head>
+<body>
+    <div id="bsi-nav-placeholder"></div>
+
+    <!-- Team Hero -->
+    <section class="team-hero">
+        <div class="container">
+            <div class="hero-content">
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="/">Home</a>
+                    <span>/</span>
+                    <a href="/college-baseball/">College Baseball</a>
+                    <span>/</span>
+                    <a href="/college-baseball/teams/">Teams</a>
+                    <span>/</span>
+                    <span>Ohio State</span>
+                </nav>
+
+                <div class="team-header">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/194.png" alt="Ohio State Buckeyes" class="team-logo-large">
+                    <div>
+                        <h1 class="team-title">Ohio State Buckeyes</h1>
+                        <p class="team-subtitle">Big Ten • Bill Davis Stadium • Columbus, OH</p>
+                        <span class="team-badge">Consistent Big Ten Contender</span>
+                    </div>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">36-20</div>
+                        <div class="hero-stat-label">2025 Record</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">17-7</div>
+                        <div class="hero-stat-label">Big Ten Record</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">9</div>
+                        <div class="hero-stat-label">Conference Titles</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">4</div>
+                        <div class="hero-stat-label">CWS Appearances</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">#32</div>
+                        <div class="hero-stat-label">Recruiting Class</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- Notable Alumni Highlight -->
+        <div class="alumni-highlight">
+            <h3>Buckeye Legends</h3>
+            <p><strong>Nick Swisher (2000-02)</strong> - World Series Champion (2009), 2x All-Star, 245 career HR</p>
+            <p><strong>Steve Arlin (1966-68)</strong> - All-American, MLB All-Star with San Diego Padres</p>
+            <p><strong>Big Ten Titles:</strong> 9 conference championships including 2016, 2019, 2022</p>
+        </div>
+
+        <!-- Season Banner -->
+        <div class="season-banner">
+            <h3>2026 Season Opens February 14th</h3>
+            <p>Data below reflects 2025 season results and current roster projections.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" role="tablist">
+            <button class="tab-btn active" role="tab" data-tab="roster">Roster</button>
+            <button class="tab-btn" role="tab" data-tab="schedule">Schedule</button>
+            <button class="tab-btn" role="tab" data-tab="stats">Statistics</button>
+            <button class="tab-btn" role="tab" data-tab="recruiting">Recruiting</button>
+        </div>
+
+        <!-- Roster Tab -->
+        <div id="roster" class="tab-content active">
+            <div class="roster-section">
+                <h2>Pitchers</h2>
+                <table class="roster-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Pos</th>
+                            <th>Yr</th>
+                            <th>B/T</th>
+                            <th>Hometown</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="player-number">26</td>
+                            <td class="player-name">Gavin Bruni</td>
+                            <td>RHP</td>
+                            <td>Sr</td>
+                            <td>R/R</td>
+                            <td>Cincinnati, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">32</td>
+                            <td class="player-name">Isaiah Coupet</td>
+                            <td>LHP</td>
+                            <td>Jr</td>
+                            <td>L/L</td>
+                            <td>Cleveland, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">41</td>
+                            <td class="player-name">Nate Haberthier</td>
+                            <td>RHP</td>
+                            <td>So</td>
+                            <td>R/R</td>
+                            <td>Dayton, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">17</td>
+                            <td class="player-name">Wyatt Loncar</td>
+                            <td>RHP</td>
+                            <td>Jr</td>
+                            <td>R/R</td>
+                            <td>Toledo, OH</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="roster-section" style="margin-top: var(--bsi-space-8);">
+                <h2>Position Players</h2>
+                <table class="roster-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Pos</th>
+                            <th>Yr</th>
+                            <th>B/T</th>
+                            <th>Hometown</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="player-number">3</td>
+                            <td class="player-name">Kade Kern</td>
+                            <td>CF</td>
+                            <td>Sr</td>
+                            <td>L/R</td>
+                            <td>Archbold, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">5</td>
+                            <td class="player-name">Zach Dezenzo</td>
+                            <td>SS</td>
+                            <td>Jr</td>
+                            <td>R/R</td>
+                            <td>Alliance, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">12</td>
+                            <td class="player-name">Marcus Ernst</td>
+                            <td>2B</td>
+                            <td>Sr</td>
+                            <td>R/R</td>
+                            <td>Dublin, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">21</td>
+                            <td class="player-name">Tyler Pettorini</td>
+                            <td>3B</td>
+                            <td>Jr</td>
+                            <td>R/R</td>
+                            <td>Mentor, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">14</td>
+                            <td class="player-name">Brent Todys</td>
+                            <td>C</td>
+                            <td>Sr</td>
+                            <td>R/R</td>
+                            <td>Westerville, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">9</td>
+                            <td class="player-name">Mitchell Okuley</td>
+                            <td>RF</td>
+                            <td>Jr</td>
+                            <td>L/L</td>
+                            <td>Powell, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">28</td>
+                            <td class="player-name">Trey Lipsey</td>
+                            <td>LF</td>
+                            <td>So</td>
+                            <td>R/R</td>
+                            <td>Akron, OH</td>
+                        </tr>
+                        <tr>
+                            <td class="player-number">11</td>
+                            <td class="player-name">Drew Reckart</td>
+                            <td>1B</td>
+                            <td>Jr</td>
+                            <td>L/L</td>
+                            <td>Gahanna, OH</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="schedule" class="tab-content">
+            <h2 style="font-family: var(--bsi-font-display); margin-bottom: var(--bsi-space-6);">2025 Season Results</h2>
+            <div class="schedule-list">
+                <div class="game-item">
+                    <div class="game-date">Feb 16</div>
+                    <div class="game-opponent">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2226.png" alt="Kent State" class="opponent-logo">
+                        <span class="opponent-name">vs Kent State</span>
+                    </div>
+                    <span class="game-result win">W</span>
+                    <span class="game-score">8-3</span>
+                </div>
+                <div class="game-item">
+                    <div class="game-date">Feb 23</div>
+                    <div class="game-opponent">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2229.png" alt="Bowling Green" class="opponent-logo">
+                        <span class="opponent-name">vs Bowling Green</span>
+                    </div>
+                    <span class="game-result win">W</span>
+                    <span class="game-score">10-2</span>
+                </div>
+                <div class="game-item">
+                    <div class="game-date">Mar 8</div>
+                    <div class="game-opponent">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/130.png" alt="Michigan" class="opponent-logo">
+                        <span class="opponent-name">vs Michigan</span>
+                    </div>
+                    <span class="game-result loss">L</span>
+                    <span class="game-score">4-5</span>
+                </div>
+                <div class="game-item">
+                    <div class="game-date">Mar 22</div>
+                    <div class="game-opponent">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/120.png" alt="Maryland" class="opponent-logo">
+                        <span class="opponent-name">vs Maryland</span>
+                    </div>
+                    <span class="game-result loss">L</span>
+                    <span class="game-score">3-5</span>
+                </div>
+                <div class="game-item">
+                    <div class="game-date">Apr 5</div>
+                    <div class="game-opponent">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/356.png" alt="Illinois" class="opponent-logo">
+                        <span class="opponent-name">@ Illinois</span>
+                    </div>
+                    <span class="game-result win">W</span>
+                    <span class="game-score">7-4</span>
+                </div>
+                <div class="game-item">
+                    <div class="game-date">Apr 19</div>
+                    <div class="game-opponent">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/158.png" alt="Nebraska" class="opponent-logo">
+                        <span class="opponent-name">@ Nebraska</span>
+                    </div>
+                    <span class="game-result win">W</span>
+                    <span class="game-score">6-4</span>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: var(--bsi-space-6); color: var(--bsi-text-secondary);">
+                Full 2026 schedule available when released.
+            </p>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="stats" class="tab-content">
+            <h2 style="font-family: var(--bsi-font-display); margin-bottom: var(--bsi-space-6);">2025 Team Statistics</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--bsi-space-6);">
+                <div style="background: var(--bsi-charcoal); border-radius: var(--bsi-radius-lg); padding: var(--bsi-space-6);">
+                    <h3 style="color: #BB0000; margin-bottom: var(--bsi-space-4);">Batting</h3>
+                    <div style="display: grid; gap: var(--bsi-space-3);">
+                        <div style="display: flex; justify-content: space-between;"><span>Team AVG</span><strong>.282</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Home Runs</span><strong>68</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>RBI</span><strong>378</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>OBP</span><strong>.368</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>SLG</span><strong>.452</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Stolen Bases</span><strong>55</strong></div>
+                    </div>
+                </div>
+                <div style="background: var(--bsi-charcoal); border-radius: var(--bsi-radius-lg); padding: var(--bsi-space-6);">
+                    <h3 style="color: #BB0000; margin-bottom: var(--bsi-space-4);">Pitching</h3>
+                    <div style="display: grid; gap: var(--bsi-space-3);">
+                        <div style="display: flex; justify-content: space-between;"><span>Team ERA</span><strong>3.85</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>WHIP</span><strong>1.29</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Strikeouts</span><strong>512</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Walks</span><strong>182</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Saves</span><strong>17</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Opp. AVG</span><strong>.248</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recruiting Tab -->
+        <div id="recruiting" class="tab-content">
+            <h2 style="font-family: var(--bsi-font-display); margin-bottom: var(--bsi-space-6);">2026 Recruiting Class</h2>
+            <p style="color: var(--bsi-text-secondary); margin-bottom: var(--bsi-space-6);">
+                #32 ranked recruiting class nationally per Perfect Game
+            </p>
+
+            <div class="recruit-card">
+                <div class="recruit-info">
+                    <div class="recruit-name">B.M. (RHP)</div>
+                    <div class="recruit-meta">Archbishop Moeller HS • Cincinnati, OH • 6'4" 200 lbs</div>
+                    <div class="recruit-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star empty">★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recruit-card">
+                <div class="recruit-info">
+                    <div class="recruit-name">J.W. (SS)</div>
+                    <div class="recruit-meta">St. Xavier HS • Cincinnati, OH • 6'1" 180 lbs</div>
+                    <div class="recruit-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star empty">★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recruit-card">
+                <div class="recruit-info">
+                    <div class="recruit-name">K.T. (OF)</div>
+                    <div class="recruit-meta">St. Ignatius HS • Cleveland, OH • 5'11" 185 lbs</div>
+                    <div class="recruit-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star empty">★</span>
+                        <span class="star empty">★</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recruit-card">
+                <div class="recruit-info">
+                    <div class="recruit-name">A.H. (C)</div>
+                    <div class="recruit-meta">Elder HS • Cincinnati, OH • 6'2" 200 lbs</div>
+                    <div class="recruit-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star empty">★</span>
+                        <span class="star empty">★</span>
+                    </div>
+                </div>
+            </div>
+
+            <p style="color: var(--bsi-text-tertiary); font-size: var(--bsi-text-sm); margin-top: var(--bsi-space-6);">
+                Note: Minor names shown as initials per BSI privacy policy.
+            </p>
+        </div>
+    </main>
+
+    <div id="bsi-footer-placeholder"></div>
+
+    <script src="/js/bsi-components.js"></script>
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update buttons
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update content
+                const tabId = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
