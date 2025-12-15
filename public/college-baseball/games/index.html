@@ -12,30 +12,13 @@
 
       <link rel="stylesheet" href="/css/bsi-tokens.css">
   <style>
-        :root {
-            --bsi-burnt-orange: #BF5700;
-            --bsi-texas-soil: #8B4513;
-            --bsi-gold: #C9A227;
-            --bsi-charcoal: #1A1A1A;
-            --bsi-midnight: #0D0D0D;
-            --bsi-cream: #FAF8F5;
-            --bsi-ember: #FF6B35;
-            --bsi-success: #2E7D32;
-            --bsi-warning: #F9A825;
-            --bsi-error: #C62828;
-            --font-display: 'Playfair Display', Georgia, serif;
-            --font-body: 'Source Serif 4', Georgia, serif;
-            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
-            --glass-white: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-
+        /* Page-specific styles - tokens inherited from bsi-tokens.css */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: var(--font-body);
+            font-family: var(--bsi-font-sans);
             background: linear-gradient(135deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 50%, #0f0f0f 100%);
-            color: #ffffff;
+            color: var(--bsi-text-primary);
             line-height: 1.6;
             min-height: 100vh;
         }
@@ -484,8 +467,16 @@
             </nav>
             <h1 class="page-title">Live College Baseball Games</h1>
             <p class="page-subtitle">Complete box scores, real-time updates, and comprehensive stats for every D1 game.</p>
-            <div class="live-indicator">12 Games Live Now</div>
+            <div class="live-indicator" id="live-status">Checking game status...</div>
         </header>
+
+        <!-- Offseason Banner -->
+        <div id="offseason-banner" style="display: none; background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚾</div>
+            <h3 style="font-family: var(--bsi-font-sans); font-weight: 700; margin-bottom: 0.5rem;">2026 Season Opens February 14th</h3>
+            <p style="color: var(--bsi-text-secondary); margin-bottom: 1rem;">Games below are from the 2025 season for demonstration purposes.</p>
+            <div id="season-countdown" style="display: flex; justify-content: center; gap: 1.5rem;"></div>
+        </div>
 
         <main id="main-content">
             <!-- Controls Bar -->
@@ -661,6 +652,41 @@
     </div>
 
     <script>
+        // Season status check
+        (function() {
+            const seasonStart = new Date('2026-02-14T12:00:00-06:00');
+            const now = new Date();
+            const isOffseason = now < seasonStart;
+            const liveStatus = document.getElementById('live-status');
+            const offseasonBanner = document.getElementById('offseason-banner');
+
+            if (isOffseason) {
+                liveStatus.textContent = 'Offseason — 2026 Season Coming Soon';
+                liveStatus.style.background = 'var(--bsi-burnt-orange)';
+                liveStatus.style.animation = 'none';
+                offseasonBanner.style.display = 'block';
+
+                // Countdown
+                function updateCountdown() {
+                    const diff = seasonStart - new Date();
+                    if (diff <= 0) return;
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    document.getElementById('season-countdown').innerHTML = `
+                        <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 700; color: var(--bsi-burnt-orange);">${days}</span><br><span style="font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-text-secondary);">Days</span></div>
+                        <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 700; color: var(--bsi-burnt-orange);">${hours}</span><br><span style="font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-text-secondary);">Hours</span></div>
+                        <div style="text-align: center;"><span style="font-size: 1.5rem; font-weight: 700; color: var(--bsi-burnt-orange);">${mins}</span><br><span style="font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-text-secondary);">Mins</span></div>
+                    `;
+                }
+                updateCountdown();
+                setInterval(updateCountdown, 60000);
+            } else {
+                // In season - fetch live game count
+                liveStatus.textContent = 'Loading live games...';
+            }
+        })();
+
         // Filter functionality
         document.querySelectorAll('.filter-select').forEach(select => {
             select.addEventListener('change', function() {
@@ -680,6 +706,7 @@
         console.log('Games loaded:', new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
     </script>
 
+    <script src="/js/bsi-stat-components.js"></script>
     <script src="/college-baseball/games/api-integration.js"></script>
     <script src="/components/cookie-banner.js"></script>
 </body>

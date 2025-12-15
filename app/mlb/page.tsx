@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
+import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -18,47 +19,73 @@ const navItems = [
 ];
 
 interface Team {
-  TeamID?: number;
-  City?: string;
-  Name?: string;
-  Division?: string;
-  Wins?: number;
-  Losses?: number;
-  Percentage?: number;
-  GamesBack?: string;
-  HomeWins?: number;
-  HomeLosses?: number;
-  AwayWins?: number;
-  AwayLosses?: number;
-  Last10Wins?: number;
-  Last10Losses?: number;
-  Streak?: string;
+  teamName: string;
+  wins: number;
+  losses: number;
+  winPercentage: number;
+  gamesBack: number;
+  division: string;
+  league: string;
+  runsScored: number;
+  runsAllowed: number;
+  streakCode: string;
 }
 
 interface Game {
-  id: string;
+  id: number;
   date: string;
-  gameDate: string;
-  status?: {
-    abstractGameState?: string;
-    detailedState?: string;
+  status: {
+    state: string;
+    detailedState: string;
+    inning?: number;
+    inningState?: string;
+    isLive: boolean;
+    isFinal: boolean;
   };
   teams: {
     away: {
-      team: { name: string };
-      score?: number;
-      isWinner?: boolean;
+      name: string;
+      abbreviation: string;
+      score: number;
+      isWinner: boolean;
+      hits: number;
+      errors: number;
     };
     home: {
-      team: { name: string };
-      score?: number;
-      isWinner?: boolean;
+      name: string;
+      abbreviation: string;
+      score: number;
+      isWinner: boolean;
+      hits: number;
+      errors: number;
     };
   };
-  venue?: { name: string };
+  venue: { name: string };
+}
+
+interface DataMeta {
+  dataSource: string;
+  lastUpdated: string;
+  timezone: string;
 }
 
 type TabType = 'standings' | 'teams' | 'players' | 'schedule';
+
+/**
+ * Format timestamp in America/Chicago timezone
+ */
+function formatTimestamp(isoString?: string): string {
+  const date = isoString ? new Date(isoString) : new Date();
+  return date.toLocaleString('en-US', {
+    timeZone: 'America/Chicago',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }) + ' CT';
+}
 
 export default function MLBPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
@@ -66,6 +93,54 @@ export default function MLBPage() {
   const [schedule, setSchedule] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [meta, setMeta] = useState<DataMeta | null>(null);
+  const [hasLiveGames, setHasLiveGames] = useState(false);
+
+  const fetchStandings = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/mlb/standings');
+      if (!res.ok) throw new Error('Failed to fetch standings');
+      const data = await res.json();
+
+      if (data.standings) {
+        setStandings(data.standings);
+      }
+      if (data.meta) {
+        setMeta(data.meta);
+      }
+      setLoading(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchSchedule = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Fetch today's games
+      const res = await fetch('/api/mlb/scores');
+      if (!res.ok) throw new Error('Failed to fetch scores');
+      const data = await res.json();
+
+      if (data.games) {
+        setSchedule(data.games);
+        setHasLiveGames(data.live || false);
+      }
+      if (data.meta) {
+        setMeta(data.meta);
+      }
+      setLoading(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (activeTab === 'standings') {
@@ -73,101 +148,31 @@ export default function MLBPage() {
     } else if (activeTab === 'schedule') {
       fetchSchedule();
     }
-  }, [activeTab]);
+  }, [activeTab, fetchStandings, fetchSchedule]);
 
-  const fetchStandings = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/mlb/standings?season=2025');
-      if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json();
-
-      const teams: Team[] = [];
-      if (data.records) {
-        data.records.forEach((record: any) => {
-          if (record.teams) {
-            record.teams.forEach((teamData: any) => {
-              teams.push({
-                TeamID: teamData.team?.id,
-                City: teamData.team?.name?.split(' ').slice(0, -1).join(' ') || '',
-                Name: teamData.team?.name?.split(' ').slice(-1)[0] || teamData.team?.name,
-                Division: record.division?.name || 'Unknown',
-                Wins: teamData.wins || 0,
-                Losses: teamData.losses || 0,
-                Percentage: parseFloat(teamData.winningPercentage) || 0,
-                GamesBack: teamData.gamesBack || '-',
-                HomeWins: teamData.records?.splitRecords?.find((r: any) => r.type === 'home')?.wins || 0,
-                HomeLosses: teamData.records?.splitRecords?.find((r: any) => r.type === 'home')?.losses || 0,
-                AwayWins: teamData.records?.splitRecords?.find((r: any) => r.type === 'away')?.wins || 0,
-                AwayLosses: teamData.records?.splitRecords?.find((r: any) => r.type === 'away')?.losses || 0,
-                Last10Wins: teamData.records?.splitRecords?.find((r: any) => r.type === 'lastTen')?.wins || 0,
-                Last10Losses: teamData.records?.splitRecords?.find((r: any) => r.type === 'lastTen')?.losses || 0,
-                Streak: teamData.streak?.streakCode || '-',
-              });
-            });
-          }
-        });
-      }
-      setStandings(teams);
-      setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
-      setLoading(false);
+  // Auto-refresh for live games (every 30 seconds)
+  useEffect(() => {
+    if (activeTab === 'schedule' && hasLiveGames) {
+      const interval = setInterval(fetchSchedule, 30000);
+      return () => clearInterval(interval);
     }
-  };
+  }, [activeTab, hasLiveGames, fetchSchedule]);
 
-  const fetchSchedule = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const dates = [];
-      for (let i = -3; i <= 3; i++) {
-        const date = new Date();
-        date.setDate(date.getDate() + i);
-        dates.push(date.toISOString().split('T')[0]);
-      }
-
-      const responses = await Promise.all(
-        dates.map((date) => fetch(`/api/mlb/scoreboard?date=${date}`).then((r) => r.json()))
-      );
-
-      const allGames: Game[] = [];
-      responses.forEach((data) => {
-        if (data.games) {
-          allGames.push(...data.games.map((game: any) => ({ ...game, date: data.date })));
-        }
-      });
-
-      allGames.sort((a, b) => new Date(b.gameDate).getTime() - new Date(a.gameDate).getTime());
-      setSchedule(allGames);
-      setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  const getTimestamp = () =>
-    new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }) + ' CDT';
-
-  // Group standings by division
+  // Group standings by league and division
   const standingsByDivision: Record<string, Team[]> = {};
   standings.forEach((team) => {
-    const div = team.Division || 'Unknown';
-    if (!standingsByDivision[div]) standingsByDivision[div] = [];
-    standingsByDivision[div].push(team);
-  });
-  Object.keys(standingsByDivision).forEach((div) => {
-    standingsByDivision[div].sort((a, b) => (b.Wins || 0) - (a.Wins || 0));
+    const divKey = `${team.league} ${team.division}`;
+    if (!standingsByDivision[divKey]) standingsByDivision[divKey] = [];
+    standingsByDivision[divKey].push(team);
   });
 
-  // Group schedule by date
-  const scheduleByDate: Record<string, Game[]> = {};
-  schedule.forEach((game) => {
-    if (!scheduleByDate[game.date]) scheduleByDate[game.date] = [];
-    scheduleByDate[game.date].push(game);
+  // Sort teams within each division by wins
+  Object.keys(standingsByDivision).forEach((div) => {
+    standingsByDivision[div].sort((a, b) => b.wins - a.wins);
   });
+
+  // Division display order
+  const divisionOrder = ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
     {
@@ -273,18 +278,56 @@ export default function MLBPage() {
             {activeTab === 'standings' && (
               <>
                 {loading ? (
-                  <div className="text-center py-16">
-                    <div className="inline-block w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin" />
-                    <p className="text-text-tertiary mt-4">Loading MLB standings...</p>
+                  <div className="space-y-6">
+                    {[1, 2, 3].map((i) => (
+                      <Card key={i} variant="default" padding="lg">
+                        <CardHeader>
+                          <Skeleton variant="text" width={200} height={24} />
+                        </CardHeader>
+                        <CardContent>
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <thead>
+                                <tr className="border-b-2 border-burnt-orange">
+                                  {['Rank', 'Team', 'W', 'L', 'PCT', 'GB', 'RS', 'RA', 'STRK'].map((h) => (
+                                    <th key={h} className="text-left p-3 text-copper font-semibold">{h}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {[1, 2, 3, 4, 5].map((j) => (
+                                  <SkeletonTableRow key={j} columns={9} />
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 ) : error ? (
                   <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                     <p className="text-error font-semibold">Data Unavailable</p>
                     <p className="text-text-secondary text-sm mt-1">{error}</p>
+                    <button
+                      onClick={fetchStandings}
+                      className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </Card>
+                ) : standings.length === 0 ? (
+                  <Card variant="default" padding="lg">
+                    <div className="text-center py-8">
+                      <p className="text-text-secondary">No standings data available</p>
+                      <p className="text-text-tertiary text-sm mt-2">
+                        Standings will be available when the 2025 season begins
+                      </p>
+                    </div>
                   </Card>
                 ) : (
-                  Object.keys(standingsByDivision)
-                    .sort()
+                  divisionOrder
+                    .filter((div) => standingsByDivision[div]?.length > 0)
                     .map((division) => (
                       <ScrollReveal key={division}>
                         <Card variant="default" padding="lg" className="mb-6">
@@ -311,46 +354,40 @@ export default function MLBPage() {
                                     <th className="text-left p-3 text-copper font-semibold">L</th>
                                     <th className="text-left p-3 text-copper font-semibold">PCT</th>
                                     <th className="text-left p-3 text-copper font-semibold">GB</th>
-                                    <th className="text-left p-3 text-copper font-semibold">Home</th>
-                                    <th className="text-left p-3 text-copper font-semibold">Away</th>
-                                    <th className="text-left p-3 text-copper font-semibold">L10</th>
-                                    <th className="text-left p-3 text-copper font-semibold">Streak</th>
+                                    <th className="text-left p-3 text-copper font-semibold">RS</th>
+                                    <th className="text-left p-3 text-copper font-semibold">RA</th>
+                                    <th className="text-left p-3 text-copper font-semibold">STRK</th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {standingsByDivision[division].map((team, idx) => (
                                     <tr
-                                      key={team.TeamID || idx}
+                                      key={team.teamName}
                                       className="border-b border-border-subtle hover:bg-white/5 transition-colors"
                                     >
                                       <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                      <td className="p-3 font-semibold text-white">
-                                        {team.City} {team.Name}
-                                      </td>
-                                      <td className="p-3 text-text-secondary">{team.Wins || 0}</td>
-                                      <td className="p-3 text-text-secondary">{team.Losses || 0}</td>
+                                      <td className="p-3 font-semibold text-white">{team.teamName}</td>
+                                      <td className="p-3 text-text-secondary">{team.wins}</td>
+                                      <td className="p-3 text-text-secondary">{team.losses}</td>
                                       <td className="p-3 text-text-secondary">
-                                        {team.Percentage ? team.Percentage.toFixed(3) : '.000'}
-                                      </td>
-                                      <td className="p-3 text-text-secondary">{team.GamesBack || '-'}</td>
-                                      <td className="p-3 text-text-secondary">
-                                        {team.HomeWins || 0}-{team.HomeLosses || 0}
+                                        {team.winPercentage.toFixed(3).replace('0.', '.')}
                                       </td>
                                       <td className="p-3 text-text-secondary">
-                                        {team.AwayWins || 0}-{team.AwayLosses || 0}
+                                        {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
                                       </td>
-                                      <td className="p-3 text-text-secondary">
-                                        {team.Last10Wins || 0}-{team.Last10Losses || 0}
-                                      </td>
-                                      <td className="p-3 text-text-secondary">{team.Streak || '-'}</td>
+                                      <td className="p-3 text-text-secondary">{team.runsScored}</td>
+                                      <td className="p-3 text-text-secondary">{team.runsAllowed}</td>
+                                      <td className="p-3 text-text-secondary">{team.streakCode}</td>
                                     </tr>
                                   ))}
                                 </tbody>
                               </table>
                             </div>
-                            <div className="mt-4 pt-4 border-t border-border-subtle text-xs text-text-tertiary">
-                              Data Source: MLB Stats API via blazesportsintel.com/api | Last Updated:{' '}
-                              {getTimestamp()}
+                            <div className="mt-4 pt-4 border-t border-border-subtle">
+                              <DataSourceBadge
+                                source={meta?.dataSource || 'MLB Stats API'}
+                                timestamp={formatTimestamp(meta?.lastUpdated)}
+                              />
                             </div>
                           </CardContent>
                         </Card>
@@ -441,121 +478,148 @@ export default function MLBPage() {
             {activeTab === 'schedule' && (
               <>
                 {loading ? (
-                  <div className="text-center py-16">
-                    <div className="inline-block w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin" />
-                    <p className="text-text-tertiary mt-4">Loading MLB schedule...</p>
+                  <div className="space-y-4">
+                    {[1, 2, 3, 4].map((i) => (
+                      <SkeletonScoreCard key={i} />
+                    ))}
                   </div>
                 ) : error ? (
                   <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
                     <p className="text-error font-semibold">Data Unavailable</p>
                     <p className="text-text-secondary text-sm mt-1">{error}</p>
+                    <button
+                      onClick={fetchSchedule}
+                      className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </Card>
+                ) : schedule.length === 0 ? (
+                  <Card variant="default" padding="lg">
+                    <div className="text-center py-8">
+                      <p className="text-text-secondary">No games scheduled for today</p>
+                      <p className="text-text-tertiary text-sm mt-2">
+                        Check back during the MLB season for live scores
+                      </p>
+                    </div>
                   </Card>
                 ) : (
-                  Object.keys(scheduleByDate)
-                    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-                    .map((date) => (
-                      <ScrollReveal key={date}>
-                        <Card variant="default" padding="lg" className="mb-6">
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-3">
-                              <svg
-                                viewBox="0 0 24 24"
-                                className="w-6 h-6 text-burnt-orange"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                              </svg>
-                              {new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                timeZone: 'UTC',
-                              })}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-4">
-                              {scheduleByDate[date].map((game, idx) => {
-                                const isComplete = game.status?.abstractGameState === 'Final';
-                                const isLive = game.status?.abstractGameState === 'Live';
+                  <ScrollReveal>
+                    <Card variant="default" padding="lg">
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <svg
+                              viewBox="0 0 24 24"
+                              className="w-6 h-6 text-burnt-orange"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                              <line x1="16" y1="2" x2="16" y2="6" />
+                              <line x1="8" y1="2" x2="8" y2="6" />
+                              <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                            Today&apos;s Games
+                          </div>
+                          {hasLiveGames && <LiveBadge />}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          {schedule.map((game) => {
+                            const isComplete = game.status.isFinal;
+                            const isLive = game.status.isLive;
 
-                                return (
-                                  <div
-                                    key={game.id || idx}
-                                    className={`bg-graphite rounded-lg p-4 flex justify-between items-center border ${
-                                      isLive ? 'border-success' : 'border-border-subtle'
-                                    }`}
-                                  >
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <span className="font-semibold text-white">
-                                          {game.teams.away.team.name}
-                                        </span>
-                                        {isComplete && game.teams.away.isWinner && (
-                                          <svg
-                                            viewBox="0 0 24 24"
-                                            className="w-4 h-4 text-success"
-                                            fill="currentColor"
-                                          >
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                          </svg>
-                                        )}
-                                        <span className="ml-auto text-burnt-orange font-bold">
-                                          {game.teams.away.score ?? '-'}
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-white">
-                                          {game.teams.home.team.name}
-                                        </span>
-                                        {isComplete && game.teams.home.isWinner && (
-                                          <svg
-                                            viewBox="0 0 24 24"
-                                            className="w-4 h-4 text-success"
-                                            fill="currentColor"
-                                          >
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                          </svg>
-                                        )}
-                                        <span className="ml-auto text-burnt-orange font-bold">
-                                          {game.teams.home.score ?? '-'}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div className="ml-6 text-right">
-                                      <div
-                                        className={`font-semibold text-sm ${
-                                          isLive
-                                            ? 'text-success'
-                                            : isComplete
-                                              ? 'text-text-tertiary'
-                                              : 'text-burnt-orange'
-                                        }`}
+                            return (
+                              <div
+                                key={game.id}
+                                className={`bg-graphite rounded-lg p-4 flex justify-between items-center border ${
+                                  isLive ? 'border-success' : 'border-border-subtle'
+                                }`}
+                              >
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="font-semibold text-white">
+                                      {game.teams.away.name}
+                                    </span>
+                                    {isComplete && game.teams.away.isWinner && (
+                                      <svg
+                                        viewBox="0 0 24 24"
+                                        className="w-4 h-4 text-success"
+                                        fill="currentColor"
                                       >
-                                        {game.status?.detailedState || 'Scheduled'}
-                                      </div>
-                                      <div className="text-xs text-text-tertiary mt-1">
-                                        {game.venue?.name || 'TBD'}
-                                      </div>
-                                    </div>
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                      </svg>
+                                    )}
+                                    <span className="ml-auto text-burnt-orange font-bold text-lg">
+                                      {game.teams.away.score}
+                                    </span>
                                   </div>
-                                );
-                              })}
-                            </div>
-                            <div className="mt-4 pt-4 border-t border-border-subtle text-xs text-text-tertiary">
-                              Data Source: MLB Stats API via blazesportsintel.com/api | Last Updated:{' '}
-                              {getTimestamp()}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </ScrollReveal>
-                    ))
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-white">
+                                      {game.teams.home.name}
+                                    </span>
+                                    {isComplete && game.teams.home.isWinner && (
+                                      <svg
+                                        viewBox="0 0 24 24"
+                                        className="w-4 h-4 text-success"
+                                        fill="currentColor"
+                                      >
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                      </svg>
+                                    )}
+                                    <span className="ml-auto text-burnt-orange font-bold text-lg">
+                                      {game.teams.home.score}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="ml-6 text-right min-w-[100px]">
+                                  {isLive ? (
+                                    <div className="flex items-center justify-end gap-1.5">
+                                      <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                                      <span className="text-success font-semibold text-sm">
+                                        {game.status.inningState} {game.status.inning}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <div
+                                      className={`font-semibold text-sm ${
+                                        isComplete ? 'text-text-tertiary' : 'text-burnt-orange'
+                                      }`}
+                                    >
+                                      {game.status.detailedState}
+                                    </div>
+                                  )}
+                                  <div className="text-xs text-text-tertiary mt-1">
+                                    {game.venue?.name || 'TBD'}
+                                  </div>
+                                  {(isComplete || isLive) && (
+                                    <div className="text-xs text-text-tertiary mt-1">
+                                      H: {game.teams.away.hits}-{game.teams.home.hits} |
+                                      E: {game.teams.away.errors}-{game.teams.home.errors}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-border-subtle">
+                          <DataSourceBadge
+                            source={meta?.dataSource || 'MLB Stats API'}
+                            timestamp={formatTimestamp(meta?.lastUpdated)}
+                          />
+                          {hasLiveGames && (
+                            <span className="text-xs text-text-tertiary ml-4">
+                              Auto-refreshing every 30 seconds
+                            </span>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </ScrollReveal>
                 )}
               </>
             )}

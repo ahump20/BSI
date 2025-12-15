@@ -97,6 +97,10 @@
 
           <div class="bsi-nav-links">
             ${navLinksHTML}
+            <button class="bsi-theme-toggle" id="bsi-theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+              <svg class="bsi-theme-icon bsi-theme-icon--sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <svg class="bsi-theme-icon bsi-theme-icon--moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
             <a href="/login.html" class="bsi-btn bsi-btn-ghost">Sign In</a>
             <a href="/signup.html" class="bsi-btn bsi-btn-primary">Get Started</a>
           </div>
@@ -114,6 +118,11 @@
           ${mobileLinksHTML}
           <li><a href="/login.html">Sign In</a></li>
           <li><a href="/signup.html" style="color: var(--bsi-burnt-orange);">Get Started</a></li>
+          <li style="padding-top: var(--bsi-space-4); border-top: 1px solid rgba(255,255,255,0.1); margin-top: var(--bsi-space-4);">
+            <button class="bsi-theme-toggle-mobile" id="bsi-theme-toggle-mobile" style="display: flex; align-items: center; gap: 0.5rem; background: none; border: none; color: var(--bsi-cream); font-family: var(--bsi-font-ui); font-size: 1rem; cursor: pointer; padding: 0;">
+              <span class="bsi-theme-label">Switch to Light Mode</span>
+            </button>
+          </li>
         </ul>
       </div>
     `;
@@ -301,6 +310,36 @@
     }
   }
 
+  // Initialize theme toggle buttons
+  function initThemeToggleButtons() {
+    const desktopToggle = document.getElementById('bsi-theme-toggle');
+    const mobileToggle = document.getElementById('bsi-theme-toggle-mobile');
+    const mobileLabel = document.querySelector('.bsi-theme-label');
+
+    function updateLabel() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      if (mobileLabel) {
+        mobileLabel.textContent = current === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+      }
+    }
+
+    if (desktopToggle) {
+      desktopToggle.addEventListener('click', function() {
+        toggleTheme();
+        updateLabel();
+      });
+    }
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function() {
+        toggleTheme();
+        updateLabel();
+      });
+    }
+
+    updateLabel();
+  }
+
   // Initialize everything when DOM is ready
   function init() {
     injectComponents();
@@ -308,6 +347,7 @@
     initNavScroll();
     initMobileMenu();
     initScrollReveal();
+    initThemeToggleButtons();
   }
 
   // Run on DOM ready
@@ -317,12 +357,41 @@
     init();
   }
 
+  // Theme toggle functionality
+  function initThemeToggle() {
+    // Check saved preference or system preference
+    const savedTheme = localStorage.getItem('bsi-theme');
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme || (systemDark ? 'dark' : 'light');
+
+    document.documentElement.setAttribute('data-theme', theme);
+
+    // Listen for system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+      if (!localStorage.getItem('bsi-theme')) {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('bsi-theme', next);
+    return next;
+  }
+
+  // Initialize theme on load
+  initThemeToggle();
+
   // Expose API for customization
   window.BSI = {
     config: BSI_CONFIG,
     navLinks: NAV_LINKS,
     footerColumns: FOOTER_COLUMNS,
-    reinit: init
+    reinit: init,
+    toggleTheme: toggleTheme
   };
 
 })();
