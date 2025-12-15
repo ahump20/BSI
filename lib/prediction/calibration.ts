@@ -61,7 +61,7 @@ export class CalibrationEngine {
   ): number {
     // Convert result to binary outcome for home team
     const homeWon = actualResult === 'W';
-    const outcome = predictedForHome ? (homeWon ? 1 : 0) : (homeWon ? 0 : 1);
+    const outcome = predictedForHome ? (homeWon ? 1 : 0) : homeWon ? 0 : 1;
 
     return Math.pow(predictedProb - outcome, 2);
   }
@@ -86,10 +86,7 @@ export class CalibrationEngine {
    *
    * More punishing of confident wrong predictions.
    */
-  calculateLogLoss(
-    predictedProb: number,
-    actualResult: GameResult
-  ): number {
+  calculateLogLoss(predictedProb: number, actualResult: GameResult): number {
     const outcome = actualResult === 'W' ? 1 : 0;
     const epsilon = 1e-15; // Prevent log(0)
 
@@ -119,13 +116,12 @@ export class CalibrationEngine {
 
       // Filter predictions in this bucket
       const bucketPredictions = predictions.filter(
-        p => p.predictedProb >= lowerBound && p.predictedProb < upperBound
+        (p) => p.predictedProb >= lowerBound && p.predictedProb < upperBound
       );
 
       // Calculate actual win rate
-      const wins = bucketPredictions.filter(p => p.actualResult === 'W').length;
-      const actualWinRate =
-        bucketPredictions.length > 0 ? wins / bucketPredictions.length : 0;
+      const wins = bucketPredictions.filter((p) => p.actualResult === 'W').length;
+      const actualWinRate = bucketPredictions.length > 0 ? wins / bucketPredictions.length : 0;
 
       // Expected win rate is midpoint of bucket
       const expectedWinRate = (lowerBound + upperBound) / 2;
@@ -183,17 +179,15 @@ export class CalibrationEngine {
 
     // Accuracy when predicting >50% probability
     const confidentPredictions = predictions.filter(
-      p => p.predictedProb > 0.5 || p.predictedProb < 0.5
+      (p) => p.predictedProb > 0.5 || p.predictedProb < 0.5
     );
-    const correctConfident = confidentPredictions.filter(p => {
+    const correctConfident = confidentPredictions.filter((p) => {
       const predictedHomeWin = p.predictedProb > 0.5;
       const actualHomeWin = p.actualResult === 'W';
       return predictedHomeWin === actualHomeWin;
     });
     const accuracyAt50 =
-      confidentPredictions.length > 0
-        ? correctConfident.length / confidentPredictions.length
-        : 0;
+      confidentPredictions.length > 0 ? correctConfident.length / confidentPredictions.length : 0;
 
     const calibrationBuckets = this.generateCalibrationBuckets(predictions);
 
@@ -236,15 +230,12 @@ export class CalibrationEngine {
    *
    * Typical Elo-only models achieve ~0.20 Brier score.
    */
-  private calculateEloImprovement(
-    brierScore: number,
-    sport: SupportedSport
-  ): number {
+  private calculateEloImprovement(brierScore: number, sport: SupportedSport): number {
     const typicalEloBrier: Record<SupportedSport, number> = {
       cfb: 0.22,
       cbb: 0.23,
       nfl: 0.21,
-      nba: 0.20,
+      nba: 0.2,
       mlb: 0.24,
     };
 
@@ -271,11 +262,7 @@ export class CalibrationEngine {
     const calibrationComponent = Math.max(0, 1 - calibrationError * 5);
 
     // Weighted average
-    return (
-      brierComponent * 0.5 +
-      sampleComponent * 0.2 +
-      calibrationComponent * 0.3
-    );
+    return brierComponent * 0.5 + sampleComponent * 0.2 + calibrationComponent * 0.3;
   }
 
   // ============================================================================
@@ -303,7 +290,7 @@ export class CalibrationEngine {
       }, 0) / predictions.length;
 
     // Calculate accuracy
-    const correct = predictions.filter(p => {
+    const correct = predictions.filter((p) => {
       const predictedHome = p.predictedProb > 0.5;
       const actualHome = p.actualResult === 'W';
       return predictedHome === actualHome;
@@ -311,25 +298,19 @@ export class CalibrationEngine {
     const accuracy = correct.length / predictions.length;
 
     // Get calibration
-    const calibration = await this.generateCalibrationResult(
-      sport,
-      '1.0.0',
-      predictions
-    );
+    const calibration = await this.generateCalibrationResult(sport, '1.0.0', predictions);
 
     // Find best and worst predictions
-    const sortedByConfidence = [...predictions].sort(
-      (a, b) => b.confidence - a.confidence
-    );
+    const sortedByConfidence = [...predictions].sort((a, b) => b.confidence - a.confidence);
 
     const bestPredictions = sortedByConfidence
-      .filter(p => {
+      .filter((p) => {
         const predictedHome = p.predictedProb > 0.5;
         const actualHome = p.actualResult === 'W';
         return predictedHome === actualHome;
       })
       .slice(0, 5)
-      .map(p => ({
+      .map((p) => ({
         gameId: p.gameId,
         predicted: p.predictedProb,
         actual: p.actualResult,
@@ -337,13 +318,13 @@ export class CalibrationEngine {
       }));
 
     const worstPredictions = sortedByConfidence
-      .filter(p => {
+      .filter((p) => {
         const predictedHome = p.predictedProb > 0.5;
         const actualHome = p.actualResult === 'W';
         return predictedHome !== actualHome;
       })
       .slice(0, 5)
-      .map(p => ({
+      .map((p) => ({
         gameId: p.gameId,
         predicted: p.predictedProb,
         actual: p.actualResult,
@@ -379,7 +360,7 @@ export class CalibrationEngine {
     const insights: Record<string, string> = {};
 
     // Analyze upset rate
-    const upsets = predictions.filter(p => {
+    const upsets = predictions.filter((p) => {
       const favoredHome = p.predictedProb > 0.5;
       const actualHome = p.actualResult === 'W';
       return (
@@ -455,9 +436,7 @@ export class CalibrationEngine {
   /**
    * Generate model health report.
    */
-  generateHealthReport(
-    calibration: CalibrationResult
-  ): {
+  generateHealthReport(calibration: CalibrationResult): {
     status: 'healthy' | 'warning' | 'critical';
     brierStatus: string;
     calibrationStatus: string;
@@ -470,7 +449,7 @@ export class CalibrationEngine {
     if (calibration.brierScore <= TARGET_BRIER_SCORE) {
       brierStatus = `Excellent (${calibration.brierScore.toFixed(4)})`;
       brierScore = 100;
-    } else if (calibration.brierScore <= 0.10) {
+    } else if (calibration.brierScore <= 0.1) {
       brierStatus = `Good (${calibration.brierScore.toFixed(4)})`;
       brierScore = 80;
     } else if (calibration.brierScore <= 0.15) {
@@ -482,15 +461,13 @@ export class CalibrationEngine {
     }
 
     // Calibration assessment
-    const calibrationError = this.calculateCalibrationError(
-      calibration.calibrationBuckets
-    );
+    const calibrationError = this.calculateCalibrationError(calibration.calibrationBuckets);
     let calibrationStatus: string;
     let calScore = 0;
     if (calibrationError < 0.05) {
       calibrationStatus = 'Well-calibrated';
       calScore = 100;
-    } else if (calibrationError < 0.10) {
+    } else if (calibrationError < 0.1) {
       calibrationStatus = 'Acceptably calibrated';
       calScore = 70;
     } else {
@@ -568,8 +545,8 @@ export class CalibrationEngine {
         updated_at = datetime('now')
     `;
 
-    const bucketCounts = calibration.calibrationBuckets.map(b => b.predictedCount);
-    const bucketActual = calibration.calibrationBuckets.map(b => b.actualWinRate);
+    const bucketCounts = calibration.calibrationBuckets.map((b) => b.predictedCount);
+    const bucketActual = calibration.calibrationBuckets.map((b) => b.actualWinRate);
 
     await this.env.DB.prepare(query)
       .bind(

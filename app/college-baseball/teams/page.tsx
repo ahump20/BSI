@@ -10,7 +10,8 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'College Baseball Teams | Blaze Sports Intel',
-  description: 'Browse all D1 college baseball teams by conference. Complete team profiles, rosters, and analytics.',
+  description:
+    'Browse all D1 college baseball teams by conference. Complete team profiles, rosters, and analytics.',
   openGraph: {
     title: 'College Baseball Teams | Blaze Sports Intel',
     description: 'Browse all D1 college baseball teams by conference.',
@@ -132,12 +133,15 @@ export default function TeamsPage() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-12">
-                <Badge variant="primary" className="mb-4">300+ D1 Programs</Badge>
+                <Badge variant="primary" className="mb-4">
+                  300+ D1 Programs
+                </Badge>
                 <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display mb-4">
                   College Baseball <span className="text-gradient-blaze">Teams</span>
                 </h1>
                 <p className="text-text-secondary max-w-2xl mx-auto">
-                  Browse teams by conference. Each team page includes roster, schedule, stats, and analytics.
+                  Browse teams by conference. Each team page includes roster, schedule, stats, and
+                  analytics.
                 </p>
               </div>
             </ScrollReveal>
@@ -179,7 +183,10 @@ export default function TeamsPage() {
                 <p className="text-text-tertiary text-sm mb-4">
                   Looking for a specific team? More conferences coming soon.
                 </p>
-                <Link href="/contact" className="text-burnt-orange hover:text-ember transition-colors">
+                <Link
+                  href="/contact"
+                  className="text-burnt-orange hover:text-ember transition-colors"
+                >
                   Request a team
                 </Link>
               </div>

@@ -1,6 +1,6 @@
 /**
  * BSI Cinematic Components - Central Export
- * 
+ *
  * Premium visual effects and interaction layer
  */
 

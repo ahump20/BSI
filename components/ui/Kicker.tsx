@@ -80,25 +80,17 @@ const spacingClasses = {
  * Visual separator with optional label
  */
 export const Divider = forwardRef<HTMLDivElement, DividerProps>(
-  ({ 
-    className, 
-    variant = 'default', 
-    orientation = 'horizontal',
-    spacing = 'md',
-    label,
-    ...props 
-  }, ref) => {
+  (
+    { className, variant = 'default', orientation = 'horizontal', spacing = 'md', label, ...props },
+    ref
+  ) => {
     if (orientation === 'vertical') {
       return (
         <div
           ref={ref}
           role="separator"
           aria-orientation="vertical"
-          className={cn(
-            'w-px h-full min-h-[1rem]',
-            dividerVariantClasses[variant],
-            className
-          )}
+          className={cn('w-px h-full min-h-[1rem]', dividerVariantClasses[variant], className)}
           {...props}
         />
       );
@@ -110,17 +102,11 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           ref={ref}
           role="separator"
           aria-orientation="horizontal"
-          className={cn(
-            'flex items-center gap-4',
-            spacingClasses[spacing],
-            className
-          )}
+          className={cn('flex items-center gap-4', spacingClasses[spacing], className)}
           {...props}
         >
           <div className={cn('flex-1 h-px', dividerVariantClasses[variant])} />
-          <span className="text-xs text-text-tertiary uppercase tracking-wider">
-            {label}
-          </span>
+          <span className="text-xs text-text-tertiary uppercase tracking-wider">{label}</span>
           <div className={cn('flex-1 h-px', dividerVariantClasses[variant])} />
         </div>
       );

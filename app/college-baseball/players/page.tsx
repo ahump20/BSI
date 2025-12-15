@@ -392,9 +392,7 @@ export default function CollegeBaseballPlayersPage() {
               <Card padding="lg" className="text-center">
                 <div className="text-text-tertiary text-4xl mb-4">?</div>
                 <h3 className="text-xl font-semibold text-white mb-2">No Players Found</h3>
-                <p className="text-text-secondary">
-                  Try adjusting your search or filter criteria.
-                </p>
+                <p className="text-text-secondary">Try adjusting your search or filter criteria.</p>
               </Card>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -403,9 +401,7 @@ export default function CollegeBaseballPlayersPage() {
                     <Card variant="hover" padding="none" className="overflow-hidden">
                       {/* Player Header */}
                       <div className="p-4 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border-subtle">
-                        <h3 className="font-display text-xl font-bold text-white">
-                          {player.name}
-                        </h3>
+                        <h3 className="font-display text-xl font-bold text-white">{player.name}</h3>
                         <p className="text-text-secondary text-sm">{player.team}</p>
                         <div className="flex flex-wrap gap-3 mt-2 text-xs text-text-tertiary">
                           <span>#{player.jersey}</span>
@@ -436,7 +432,9 @@ export default function CollegeBaseballPlayersPage() {
                           </div>
                           <div className="col-span-5 md:col-span-1">
                             <div className="text-text-tertiary text-xs uppercase">Hometown</div>
-                            <div className="text-white font-medium truncate">{player.bio.hometown}</div>
+                            <div className="text-white font-medium truncate">
+                              {player.bio.hometown}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -549,7 +547,8 @@ export default function CollegeBaseballPlayersPage() {
             <div className="mt-12 text-center text-xs text-text-tertiary">
               <p>Player data sourced from official NCAA statistics.</p>
               <p className="mt-1">
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>

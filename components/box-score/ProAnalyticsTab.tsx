@@ -183,7 +183,8 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
       </button>
       <div className="upgrade-note">
         <small>
-          BlazeSportsIntel brings MLB-caliber analytics to college baseball—the coverage the sport deserves.
+          BlazeSportsIntel brings MLB-caliber analytics to college baseball—the coverage the sport
+          deserves.
         </small>
       </div>
     </div>

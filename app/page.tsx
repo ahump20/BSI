@@ -17,7 +17,12 @@ const navItems = [
 ];
 
 const sportsData = [
-  { name: 'College Baseball', icon: '🎓', href: '/college-baseball/', desc: 'The coverage this sport deserves' },
+  {
+    name: 'College Baseball',
+    icon: '🎓',
+    href: '/college-baseball/',
+    desc: 'The coverage this sport deserves',
+  },
   { name: 'MLB', icon: '⚾', href: '/mlb/', desc: 'Live scores, standings & Statcast' },
   { name: 'NFL', icon: '🏈', href: '/nfl/', desc: 'Live scores & standings' },
   { name: 'CFB', icon: '🏟️', href: '/cfb/', desc: 'College football analytics' },
@@ -27,7 +32,8 @@ const features = [
   {
     icon: '📊',
     title: 'Real-Time Data',
-    description: 'Live scores updated every 30 seconds. Never miss a play with instant notifications.',
+    description:
+      'Live scores updated every 30 seconds. Never miss a play with instant notifications.',
   },
   {
     icon: '🎯',
@@ -42,11 +48,19 @@ const features = [
 ];
 
 const tickerItems = [
-  { id: '1', content: 'College Baseball: Full 2025 season coverage now live', type: 'default' as const },
+  {
+    id: '1',
+    content: 'College Baseball: Full 2025 season coverage now live',
+    type: 'default' as const,
+  },
   { id: '2', content: 'MLB: Spring Training data pipeline active', type: 'default' as const },
   { id: '3', content: 'NFL: 2024-25 playoff predictions available', type: 'live' as const },
   { id: '4', content: 'New: Monte Carlo simulation engine deployed', type: 'alert' as const },
-  { id: '5', content: 'College Baseball: D1 standings updated in real-time', type: 'default' as const },
+  {
+    id: '5',
+    content: 'College Baseball: D1 standings updated in real-time',
+    type: 'default' as const,
+  },
 ];
 
 export default function HomePage() {

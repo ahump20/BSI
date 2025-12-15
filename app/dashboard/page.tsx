@@ -36,7 +36,9 @@ export default function DashboardPage() {
           <ScrollReveal direction="up">
             <div className="mb-8 flex items-center justify-between">
               <div>
-                <h1 className="text-3xl md:text-4xl font-display text-white mb-2">COMMAND CENTER</h1>
+                <h1 className="text-3xl md:text-4xl font-display text-white mb-2">
+                  COMMAND CENTER
+                </h1>
                 <p className="text-white/60">
                   Real-time scores, standings, and analytics across all leagues
                 </p>

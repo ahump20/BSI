@@ -9,6 +9,7 @@ Production-ready React components for BlazeSportsIntel.com featuring Cloudflare 
 Three reusable video components using Cloudflare Stream:
 
 #### InlineClip
+
 Short clips (12-60s) placed between content sections. Click-to-play.
 
 ```tsx
@@ -18,10 +19,11 @@ import { InlineClip } from './StreamVideo';
   streamId="9c532757647485d89cb77cb510333863"
   title="AI in Sports: Recovery Protocols"
   description="Exploring psychedelic research for CTE treatment in athletes."
-/>
+/>;
 ```
 
 #### HeroReel
+
 Autoplay-muted clip under homepage hero. Respects mobile data (tap-to-play on mobile).
 
 ```tsx
@@ -31,10 +33,11 @@ import { HeroReel } from './StreamVideo';
   streamId="slice_000"
   title="The Conversation"
   description="A deep dive into sports science frontiers."
-/>
+/>;
 ```
 
 #### LeagueDeepDive
+
 Featured video at top of league analytics pages. Expandable layout.
 
 ```tsx
@@ -44,7 +47,7 @@ import { LeagueDeepDive } from './StreamVideo';
   streamId="full-lecture-id"
   title="College Baseball Analytics: What ESPN Misses"
   description="In-depth analysis of coverage gaps and data opportunities."
-/>
+/>;
 ```
 
 ### Historical Record Book (HistoricalRecordBook.tsx)
@@ -59,7 +62,7 @@ import { HistoricalRecordBook } from './HistoricalRecordBook';
   teamName="Texas Longhorns"
   league="NCAA_BB"
   apiBaseUrl="https://bsi-records-api.your-account.workers.dev"
-/>
+/>;
 ```
 
 ## Configuration
@@ -80,25 +83,25 @@ Customer Code: `mpdvoybjqct2pzls`
 
 Complete video inventory from Cloudflare Stream (sorted by duration):
 
-| File | Duration | Stream ID | Recommended Use |
-|------|----------|-----------|-----------------|
-| slice_006.mp4 | 29s | `803f4d36546295cf91c3660e160bc9e7` | **HeroReel** (homepage background) |
-| slice_008.mp4 | 46s | `8b7efb55ece2eed6bf921be783f3744e` | InlineClip |
-| slice_010.mp4 | 46s | `803cc447f6543473716038e20f5680c8` | InlineClip |
-| slice_005.mp4 | 47s | `9c532757647485d89cb77cb510333863` | InlineClip |
-| slice_002.mp4 | 48s | `ffefcf3466e89a319d4cbb1ebfcf23f2` | InlineClip |
-| slice_013.mp4 | 52s | `655bb4b37c34c7f370275b717da377c0` | InlineClip |
-| slice_036.mp4 | 53s | `105206f2d4be6b59adaa6159987f4e4d` | InlineClip |
-| slice_012.mp4 | 54s | `3dad0df878eb1ce0e4984c28c003fd43` | InlineClip |
-| slice_000.mp4 | 56s | `37fcebbccfc8dd672345183ce4196125` | InlineClip |
-| slice_025.mp4 | 58s | `4447962cf9ebf3737d4269ba4deb3e8b` | InlineClip |
-| slice_023.mp4 | 59s | `1d1893034cafc71da1fbe397e2caf2e3` | InlineClip |
-| slice_011.mp4 | 61s | `51e9ee20d66ebcba415f7542f2f42a86` | InlineClip |
-| slice_001.mp4 | 63s | `2e6718ffaae98bbddb0b76a21e54532e` | InlineClip |
-| slice_004.mp4 | 63s | `98fc435b58ebb503e8d0c44b43216a23` | InlineClip |
-| slice_007.mp4 | 71s | `f4d79215697743047a30328a3d24a9f8` | **LeagueDeepDive** |
-| slice_014.mp4 | 78s | `f19e74f58362de01fa8de894d8f89a87` | **LeagueDeepDive** |
-| slice_003.mp4 | 79s | `a7e1b7e2650de8b65231b8c0f1144c6f` | **LeagueDeepDive** |
+| File          | Duration | Stream ID                          | Recommended Use                    |
+| ------------- | -------- | ---------------------------------- | ---------------------------------- |
+| slice_006.mp4 | 29s      | `803f4d36546295cf91c3660e160bc9e7` | **HeroReel** (homepage background) |
+| slice_008.mp4 | 46s      | `8b7efb55ece2eed6bf921be783f3744e` | InlineClip                         |
+| slice_010.mp4 | 46s      | `803cc447f6543473716038e20f5680c8` | InlineClip                         |
+| slice_005.mp4 | 47s      | `9c532757647485d89cb77cb510333863` | InlineClip                         |
+| slice_002.mp4 | 48s      | `ffefcf3466e89a319d4cbb1ebfcf23f2` | InlineClip                         |
+| slice_013.mp4 | 52s      | `655bb4b37c34c7f370275b717da377c0` | InlineClip                         |
+| slice_036.mp4 | 53s      | `105206f2d4be6b59adaa6159987f4e4d` | InlineClip                         |
+| slice_012.mp4 | 54s      | `3dad0df878eb1ce0e4984c28c003fd43` | InlineClip                         |
+| slice_000.mp4 | 56s      | `37fcebbccfc8dd672345183ce4196125` | InlineClip                         |
+| slice_025.mp4 | 58s      | `4447962cf9ebf3737d4269ba4deb3e8b` | InlineClip                         |
+| slice_023.mp4 | 59s      | `1d1893034cafc71da1fbe397e2caf2e3` | InlineClip                         |
+| slice_011.mp4 | 61s      | `51e9ee20d66ebcba415f7542f2f42a86` | InlineClip                         |
+| slice_001.mp4 | 63s      | `2e6718ffaae98bbddb0b76a21e54532e` | InlineClip                         |
+| slice_004.mp4 | 63s      | `98fc435b58ebb503e8d0c44b43216a23` | InlineClip                         |
+| slice_007.mp4 | 71s      | `f4d79215697743047a30328a3d24a9f8` | **LeagueDeepDive**                 |
+| slice_014.mp4 | 78s      | `f19e74f58362de01fa8de894d8f89a87` | **LeagueDeepDive**                 |
+| slice_003.mp4 | 79s      | `a7e1b7e2650de8b65231b8c0f1144c6f` | **LeagueDeepDive**                 |
 
 All videos: 1920×1108 resolution, ready to stream.
 
@@ -143,6 +146,7 @@ GET /api/records/:league/:teamId      # Get full record book
 Valid leagues: `MLB`, `NFL`, `NBA`, `NCAA_FB`, `NCAA_BB`
 
 Example response:
+
 ```json
 {
   "teamId": "texas-baseball",
@@ -161,13 +165,13 @@ Example response:
 
 All components use BSI brand tokens:
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| Burnt Orange | `#BF5700` | Primary accent, CTAs |
-| Texas Soil | `#8B4513` | Secondary accent, citations |
-| Charcoal | `#1A1A1A` | Card backgrounds |
-| Midnight | `#0D0D0D` | Page backgrounds |
-| Ember | `#FF6B35` | Accent highlights only |
+| Token        | Value     | Usage                       |
+| ------------ | --------- | --------------------------- |
+| Burnt Orange | `#BF5700` | Primary accent, CTAs        |
+| Texas Soil   | `#8B4513` | Secondary accent, citations |
+| Charcoal     | `#1A1A1A` | Card backgrounds            |
+| Midnight     | `#0D0D0D` | Page backgrounds            |
+| Ember        | `#FF6B35` | Accent highlights only      |
 
 ## Data Integrity
 
@@ -177,6 +181,7 @@ All components use BSI brand tokens:
 - `source_name` - Name of source (Baseball Reference, ESPN, NCAA.com, etc.)
 
 Accepted sources:
+
 - Baseball Reference
 - Pro Football Reference
 - Basketball Reference

@@ -224,9 +224,7 @@ export default function PricingPage() {
                 <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mb-4">
                   Questions?
                 </h2>
-                <p className="text-text-secondary mb-6">
-                  Reach out anytime. I read every email.
-                </p>
+                <p className="text-text-secondary mb-6">Reach out anytime. I read every email.</p>
                 <a
                   href="mailto:ahump20@outlook.com"
                   className="text-burnt-orange hover:text-ember transition-colors font-semibold"

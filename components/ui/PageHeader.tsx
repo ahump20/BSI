@@ -37,40 +37,37 @@ const subtitleSizeClasses = {
  * Consistent page title treatment with optional kicker, subtitle, and actions
  */
 export const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(
-  ({ 
-    className, 
-    title,
-    subtitle,
-    kicker,
-    align = 'left',
-    size = 'md',
-    actions,
-    gradient = false,
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      title,
+      subtitle,
+      kicker,
+      align = 'left',
+      size = 'md',
+      actions,
+      gradient = false,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <div
         ref={ref}
-        className={cn(
-          'mb-8 md:mb-12',
-          align === 'center' && 'text-center',
-          className
-        )}
+        className={cn('mb-8 md:mb-12', align === 'center' && 'text-center', className)}
         {...props}
       >
-        <div className={cn(
-          'flex flex-col gap-4',
-          align === 'center' && 'items-center',
-          actions && 'md:flex-row md:items-end md:justify-between'
-        )}>
+        <div
+          className={cn(
+            'flex flex-col gap-4',
+            align === 'center' && 'items-center',
+            actions && 'md:flex-row md:items-end md:justify-between'
+          )}
+        >
           <div className={cn(actions && 'md:max-w-2xl')}>
-            {kicker && (
-              <span className="kicker block mb-2 md:mb-3">
-                {kicker}
-              </span>
-            )}
-            
-            <h1 
+            {kicker && <span className="kicker block mb-2 md:mb-3">{kicker}</span>}
+
+            <h1
               className={cn(
                 'font-display font-bold uppercase tracking-display',
                 titleSizeClasses[size],
@@ -80,23 +77,21 @@ export const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(
             >
               {title}
             </h1>
-            
+
             {subtitle && (
-              <p className={cn(
-                'mt-3 md:mt-4 text-text-secondary max-w-2xl',
-                subtitleSizeClasses[size],
-                align === 'center' && 'mx-auto'
-              )}>
+              <p
+                className={cn(
+                  'mt-3 md:mt-4 text-text-secondary max-w-2xl',
+                  subtitleSizeClasses[size],
+                  align === 'center' && 'mx-auto'
+                )}
+              >
                 {subtitle}
               </p>
             )}
           </div>
-          
-          {actions && (
-            <div className="flex-shrink-0">
-              {actions}
-            </div>
-          )}
+
+          {actions && <div className="flex-shrink-0">{actions}</div>}
         </div>
       </div>
     );

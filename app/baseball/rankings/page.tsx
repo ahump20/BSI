@@ -75,9 +75,7 @@ export default function BaseballRankingsPage() {
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
                     D1Baseball <span className="text-gradient-blaze">Top 25</span>
                   </h1>
-                  <p className="text-text-secondary mt-2">
-                    2026 Preseason Rankings
-                  </p>
+                  <p className="text-text-secondary mt-2">2026 Preseason Rankings</p>
                 </div>
                 <Badge variant="primary">Updated Weekly</Badge>
               </div>
@@ -198,7 +196,8 @@ export default function BaseballRankingsPage() {
             <div className="mt-8 text-center text-xs text-text-tertiary">
               <p>Rankings from D1Baseball. Updated every Monday during the season.</p>
               <p className="mt-1">
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>

@@ -375,10 +375,12 @@ export default function CollegeBaseballRankingsPage() {
 
             {/* Data Attribution */}
             <div className="mt-12 text-center text-xs text-text-tertiary">
-              <p>Rankings sourced from official polls and D1Baseball. Updated weekly during season.</p>
+              <p>
+                Rankings sourced from official polls and D1Baseball. Updated weekly during season.
+              </p>
               <p className="mt-1">
-                Last updated:{' '}
-                {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>

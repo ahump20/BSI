@@ -24,7 +24,8 @@ export default function NotFound() {
                 Page Not <span className="text-gradient-blaze">Found</span>
               </h2>
               <p className="text-text-secondary mb-8">
-                Looks like this play got called back. The page you are looking for does not exist or has been moved.
+                Looks like this play got called back. The page you are looking for does not exist or
+                has been moved.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/">

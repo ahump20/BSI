@@ -1,6 +1,6 @@
 /**
  * BSI Color System - Cinematic Grit / Texas Soil / Intel
- * 
+ *
  * Design Language: Dark cinematic UI with burnt orange accent
  * Think: premium sports intel platform, not flashy sports site
  */
@@ -8,52 +8,52 @@
 export const colors = {
   // Core Brand
   brand: {
-    burntOrange: '#BF5700',     // Primary brand - UT Burnt Orange
-    blaze: '#FF4500',           // Accent highlight - Blaze orange
-    ember: '#FF6B35',           // Secondary accent - softer orange
-    texasSoil: '#8B4513',       // Earth tone - grounding color
+    burntOrange: '#BF5700', // Primary brand - UT Burnt Orange
+    blaze: '#FF4500', // Accent highlight - Blaze orange
+    ember: '#FF6B35', // Secondary accent - softer orange
+    texasSoil: '#8B4513', // Earth tone - grounding color
   },
 
   // Background Hierarchy (Dark UI)
   background: {
-    midnight: '#0D0D0D',        // Deepest - page background
-    charcoal: '#1A1A1A',        // Primary surface
-    graphite: '#242424',        // Elevated surface
-    slate: '#2D2D2D',           // Cards, containers
-    steel: '#363636',           // Hover states
+    midnight: '#0D0D0D', // Deepest - page background
+    charcoal: '#1A1A1A', // Primary surface
+    graphite: '#242424', // Elevated surface
+    slate: '#2D2D2D', // Cards, containers
+    steel: '#363636', // Hover states
   },
 
   // Text Hierarchy
   text: {
-    primary: '#FAFAFA',         // High emphasis
-    secondary: '#A3A3A3',       // Medium emphasis
-    tertiary: '#737373',        // Low emphasis
-    muted: '#525252',           // Disabled, hints
-    inverse: '#0D0D0D',         // On light backgrounds
+    primary: '#FAFAFA', // High emphasis
+    secondary: '#A3A3A3', // Medium emphasis
+    tertiary: '#737373', // Low emphasis
+    muted: '#525252', // Disabled, hints
+    inverse: '#0D0D0D', // On light backgrounds
   },
 
   // Semantic States
   semantic: {
-    success: '#22C55E',         // Green - wins, positive
-    warning: '#F59E0B',         // Amber - caution
-    error: '#EF4444',           // Red - losses, errors
-    info: '#3B82F6',            // Blue - informational
+    success: '#22C55E', // Green - wins, positive
+    warning: '#F59E0B', // Amber - caution
+    error: '#EF4444', // Red - losses, errors
+    info: '#3B82F6', // Blue - informational
   },
 
   // Sport-Specific Accents (use sparingly)
   sport: {
-    baseball: '#BF5700',        // Burnt Orange
-    football: '#8B4513',        // Texas Soil
-    basketball: '#FF6B35',      // Ember
-    track: '#F59E0B',           // Gold
+    baseball: '#BF5700', // Burnt Orange
+    football: '#8B4513', // Texas Soil
+    basketball: '#FF6B35', // Ember
+    track: '#F59E0B', // Gold
   },
 
   // Team Colors (for arcade games and visualizations)
   sports: {
-    cardinals: '#C41E3A',       // St. Louis Cardinals Red
-    longhorns: '#BF5700',       // Texas Longhorns Burnt Orange
-    titans: '#4B92DB',          // Tennessee Titans Navy
-    grizzlies: '#5D76A9',       // Memphis Grizzlies Beale Street Blue
+    cardinals: '#C41E3A', // St. Louis Cardinals Red
+    longhorns: '#BF5700', // Texas Longhorns Burnt Orange
+    titans: '#4B92DB', // Tennessee Titans Navy
+    grizzlies: '#5D76A9', // Memphis Grizzlies Beale Street Blue
   },
 
   // Utility

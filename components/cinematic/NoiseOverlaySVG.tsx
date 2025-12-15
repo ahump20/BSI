@@ -15,7 +15,7 @@ interface NoiseOverlayProps {
 
 /**
  * NoiseOverlay - SVG-based noise texture (no external PNG required)
- * 
+ *
  * Uses an inline SVG filter to generate noise, which is more reliable
  * than depending on an external PNG file.
  */
@@ -75,22 +75,13 @@ export function NoiseOverlay({
               stitchTiles="stitch"
               result="noise"
             />
-            <feColorMatrix
-              type="saturate"
-              values="0"
-              in="noise"
-              result="mono"
-            />
+            <feColorMatrix type="saturate" values="0" in="noise" result="mono" />
           </filter>
         </defs>
       </svg>
 
       {/* Noise overlay */}
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{ zIndex }}
-        aria-hidden="true"
-      >
+      <div className="pointer-events-none fixed inset-0" style={{ zIndex }} aria-hidden="true">
         <div
           className={`absolute inset-0 ${showAnimation ? 'animate-grain' : ''}`}
           style={{
@@ -105,16 +96,37 @@ export function NoiseOverlay({
       {showAnimation && (
         <style jsx global>{`
           @keyframes grain {
-            0%, 100% { transform: translate(0, 0) scale(1.5); }
-            10% { transform: translate(-1%, -1%) scale(1.5); }
-            20% { transform: translate(1%, 1%) scale(1.5); }
-            30% { transform: translate(-1%, 1%) scale(1.5); }
-            40% { transform: translate(1%, -1%) scale(1.5); }
-            50% { transform: translate(-1%, 0%) scale(1.5); }
-            60% { transform: translate(1%, 0%) scale(1.5); }
-            70% { transform: translate(0%, 1%) scale(1.5); }
-            80% { transform: translate(0%, -1%) scale(1.5); }
-            90% { transform: translate(1%, 1%) scale(1.5); }
+            0%,
+            100% {
+              transform: translate(0, 0) scale(1.5);
+            }
+            10% {
+              transform: translate(-1%, -1%) scale(1.5);
+            }
+            20% {
+              transform: translate(1%, 1%) scale(1.5);
+            }
+            30% {
+              transform: translate(-1%, 1%) scale(1.5);
+            }
+            40% {
+              transform: translate(1%, -1%) scale(1.5);
+            }
+            50% {
+              transform: translate(-1%, 0%) scale(1.5);
+            }
+            60% {
+              transform: translate(1%, 0%) scale(1.5);
+            }
+            70% {
+              transform: translate(0%, 1%) scale(1.5);
+            }
+            80% {
+              transform: translate(0%, -1%) scale(1.5);
+            }
+            90% {
+              transform: translate(1%, 1%) scale(1.5);
+            }
           }
           .animate-grain {
             animation: grain 8s steps(10) infinite;

@@ -86,7 +86,10 @@ export default function SignupPage() {
                     )}
 
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Name
                       </label>
                       <Input
@@ -101,7 +104,10 @@ export default function SignupPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Email
                       </label>
                       <Input
@@ -116,7 +122,10 @@ export default function SignupPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="password" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Password
                       </label>
                       <Input
@@ -132,36 +141,54 @@ export default function SignupPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="confirmPassword"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Confirm Password
                       </label>
                       <Input
                         id="confirmPassword"
                         type="password"
                         value={formData.confirmPassword}
-                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, confirmPassword: e.target.value })
+                        }
                         placeholder="Confirm your password"
                         required
                         autoComplete="new-password"
                       />
                     </div>
 
-                    <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
+                      className="w-full"
+                      disabled={loading}
+                    >
                       {loading ? 'Creating account...' : 'Create Account'}
                     </Button>
 
                     <p className="text-text-tertiary text-xs text-center">
                       By signing up, you agree to our{' '}
-                      <Link href="/terms" className="text-burnt-orange hover:text-ember">Terms</Link>
-                      {' '}and{' '}
-                      <Link href="/privacy" className="text-burnt-orange hover:text-ember">Privacy Policy</Link>
+                      <Link href="/terms" className="text-burnt-orange hover:text-ember">
+                        Terms
+                      </Link>{' '}
+                      and{' '}
+                      <Link href="/privacy" className="text-burnt-orange hover:text-ember">
+                        Privacy Policy
+                      </Link>
                     </p>
                   </form>
 
                   <div className="mt-6 text-center">
                     <p className="text-text-tertiary text-sm">
                       Already have an account?{' '}
-                      <Link href="/auth/login" className="text-burnt-orange hover:text-ember transition-colors">
+                      <Link
+                        href="/auth/login"
+                        className="text-burnt-orange hover:text-ember transition-colors"
+                      >
                         Sign in
                       </Link>
                     </p>

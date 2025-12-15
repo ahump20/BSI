@@ -46,11 +46,7 @@ function easeOutCubic(t: number): number {
 }
 
 // Format number with separators
-function formatNumber(
-  num: number, 
-  decimals: number = 0, 
-  separator: string = ','
-): string {
+function formatNumber(num: number, decimals: number = 0, separator: string = ','): string {
   const fixed = num.toFixed(decimals);
   const [integer, decimal] = fixed.split('.');
   const formatted = integer.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
@@ -59,7 +55,7 @@ function formatNumber(
 
 /**
  * StatCounter component
- * 
+ *
  * Animated counter that counts up to a target number.
  * Only animates with REAL data - no placeholder values.
  * Respects prefers-reduced-motion.
@@ -86,7 +82,7 @@ export function StatCounter({
   useEffect(() => {
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(motionQuery.matches);
-    
+
     // If reduced motion, show final value immediately
     if (motionQuery.matches) {
       setDisplayValue(value);
@@ -100,7 +96,7 @@ export function StatCounter({
         setHasAnimated(true);
       }
     };
-    
+
     motionQuery.addEventListener('change', handler);
     return () => motionQuery.removeEventListener('change', handler);
   }, [value]);
@@ -116,7 +112,7 @@ export function StatCounter({
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easedProgress = easeOutCubic(progress);
-      
+
       const currentValue = startValue + (value - startValue) * easedProgress;
       setDisplayValue(currentValue);
 
@@ -170,7 +166,7 @@ export function StatCounter({
 
   return (
     <div ref={ref} className={cn('text-center', className)}>
-      <div 
+      <div
         className={cn(
           'font-display font-bold tracking-tight text-text-primary tabular-nums',
           sizeClasses[size]
@@ -181,10 +177,12 @@ export function StatCounter({
         <span className="text-burnt-orange">{suffix}</span>
       </div>
       {label && (
-        <p className={cn(
-          'mt-2 text-text-secondary uppercase tracking-wider font-medium',
-          labelSizeClasses[size]
-        )}>
+        <p
+          className={cn(
+            'mt-2 text-text-secondary uppercase tracking-wider font-medium',
+            labelSizeClasses[size]
+          )}
+        >
           {label}
         </p>
       )}
@@ -207,10 +205,7 @@ export interface StatGroupProps {
 
 export function StatGroup({ stats, size = 'md', className }: StatGroupProps) {
   return (
-    <div className={cn(
-      'grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12',
-      className
-    )}>
+    <div className={cn('grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12', className)}>
       {stats.map((stat, index) => (
         <StatCounter
           key={index}

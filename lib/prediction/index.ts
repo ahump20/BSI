@@ -31,8 +31,4 @@ export {
 } from './diamond-integration';
 
 // Constants re-exported for convenience
-export {
-  PYTHAGOREAN_EXPONENTS,
-  HOME_ADVANTAGE,
-  PSYCHOLOGY_PARAMS,
-} from './types';
+export { PYTHAGOREAN_EXPONENTS, HOME_ADVANTAGE, PSYCHOLOGY_PARAMS } from './types';

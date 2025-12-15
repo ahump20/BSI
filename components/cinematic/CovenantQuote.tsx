@@ -16,13 +16,13 @@ export interface CovenantQuoteProps {
 
 /**
  * CovenantQuote component
- * 
+ *
  * Special treatment for the Texas philosophy/covenant quotes.
  * Uses Playfair Display italic for elegant presentation.
- * 
+ *
  * Canonical quote:
- * "Texas is how you choose to treat the best and worst of us — 
- *  a covenant with oneself and the company he keeps to never 
+ * "Texas is how you choose to treat the best and worst of us —
+ *  a covenant with oneself and the company he keeps to never
  *  stop dreaming beyond the horizon…"
  */
 export function CovenantQuote({
@@ -52,12 +52,13 @@ export function CovenantQuote({
         )}
 
         {/* Opening quote mark */}
-        <span 
+        <span
           className={cn(
             'absolute font-serif text-burnt-orange/20',
             variant === 'default' && 'text-6xl md:text-8xl -top-4 -left-2 md:-left-8',
             variant === 'minimal' && 'text-4xl -top-2 -left-1',
-            variant === 'featured' && 'text-8xl md:text-[10rem] -top-8 md:-top-12 left-0 md:-left-12',
+            variant === 'featured' &&
+              'text-8xl md:text-[10rem] -top-8 md:-top-12 left-0 md:-left-12'
           )}
           aria-hidden="true"
         >
@@ -71,7 +72,8 @@ export function CovenantQuote({
             'relative z-10',
             variant === 'default' && 'text-xl md:text-2xl lg:text-3xl max-w-3xl',
             variant === 'minimal' && 'text-lg md:text-xl max-w-2xl',
-            variant === 'featured' && 'text-2xl md:text-3xl lg:text-4xl max-w-4xl mx-auto text-center',
+            variant === 'featured' &&
+              'text-2xl md:text-3xl lg:text-4xl max-w-4xl mx-auto text-center'
           )}
         >
           {quote}
@@ -79,20 +81,17 @@ export function CovenantQuote({
 
         {/* Attribution */}
         {attribution && (
-          <footer className={cn(
-            'mt-6 text-text-tertiary',
-            variant === 'featured' && 'text-center',
-          )}>
+          <footer
+            className={cn('mt-6 text-text-tertiary', variant === 'featured' && 'text-center')}
+          >
             <span className="text-burnt-orange mr-2">—</span>
-            <cite className="not-italic text-sm uppercase tracking-wider">
-              {attribution}
-            </cite>
+            <cite className="not-italic text-sm uppercase tracking-wider">{attribution}</cite>
           </footer>
         )}
 
         {/* Closing quote mark for featured */}
         {variant === 'featured' && (
-          <span 
+          <span
             className="absolute font-serif text-burnt-orange/20 text-8xl md:text-[10rem] -bottom-16 md:-bottom-20 right-0 md:-right-12"
             aria-hidden="true"
           >

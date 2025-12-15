@@ -9,17 +9,17 @@ export * from './spacing';
 // Convenience re-exports
 import { colors } from './colors';
 import { typography, textStyles } from './typography';
-import { 
-  spacing, 
-  breakpoints, 
+import {
+  spacing,
+  breakpoints,
   containers,
-  radii, 
-  shadows, 
+  radii,
+  shadows,
   zIndex,
   durations,
   easings,
   blur,
-  aspectRatios
+  aspectRatios,
 } from './spacing';
 
 export const tokens = {

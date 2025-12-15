@@ -37,7 +37,7 @@ const directionTransforms = {
 
 /**
  * ScrollReveal component
- * 
+ *
  * Reveals content with animation when scrolled into view.
  * Uses IntersectionObserver for performance.
  * Respects prefers-reduced-motion.
@@ -67,7 +67,7 @@ export function ScrollReveal({
       setPrefersReducedMotion(e.matches);
       if (e.matches) setIsRevealed(true);
     };
-    
+
     motionQuery.addEventListener('change', handler);
     return () => motionQuery.removeEventListener('change', handler);
   }, []);

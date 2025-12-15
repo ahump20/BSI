@@ -97,11 +97,7 @@ export class ExplainabilityEngine {
     tier: SubscriptionTier
   ): PredictionExplanation {
     const topFactors = shapValues.slice(0, 5);
-    const humanSummary = this.generateNarrativeSummary(
-      topFactors,
-      features,
-      prediction
-    );
+    const humanSummary = this.generateNarrativeSummary(topFactors, features, prediction);
     const confidence = this.assessConfidence(features, shapValues);
     const uncertaintyDrivers = this.identifyUncertainty(features, shapValues);
 
@@ -135,7 +131,7 @@ export class ExplainabilityEngine {
     let opening: string;
     if (probDiff > 0.25) {
       opening = `The ${favoredTeam} team is heavily favored in this matchup.`;
-    } else if (probDiff > 0.10) {
+    } else if (probDiff > 0.1) {
       opening = `The ${favoredTeam} team holds a moderate advantage.`;
     } else {
       opening = `This projects as a competitive, closely-contested game.`;
@@ -145,7 +141,7 @@ export class ExplainabilityEngine {
     const explanations: string[] = [opening];
 
     // Add top positive factor
-    const positiveFactors = topFactors.filter(f => f.direction === 'positive');
+    const positiveFactors = topFactors.filter((f) => f.direction === 'positive');
     if (positiveFactors.length > 0) {
       const topPositive = positiveFactors[0];
       const desc = FACTOR_DESCRIPTIONS[topPositive.feature]?.positive;
@@ -155,7 +151,7 @@ export class ExplainabilityEngine {
     }
 
     // Add top negative factor (for balance)
-    const negativeFactors = topFactors.filter(f => f.direction === 'negative');
+    const negativeFactors = topFactors.filter((f) => f.direction === 'negative');
     if (negativeFactors.length > 0) {
       const topNegative = negativeFactors[0];
       const desc = FACTOR_DESCRIPTIONS[topNegative.feature]?.negative;
@@ -226,20 +222,20 @@ export class ExplainabilityEngine {
   /**
    * Identify the key factors driving the prediction.
    */
-  analyzeKeyFactors(
-    shapValues: ShapValue[]
-  ): { primary: ShapValue; supporting: ShapValue[]; opposing: ShapValue[] } {
+  analyzeKeyFactors(shapValues: ShapValue[]): {
+    primary: ShapValue;
+    supporting: ShapValue[];
+    opposing: ShapValue[];
+  } {
     const sorted = [...shapValues].sort((a, b) => b.importance - a.importance);
     const primary = sorted[0];
 
     const supporting = sorted
       .slice(1)
-      .filter(s => s.direction === primary.direction)
+      .filter((s) => s.direction === primary.direction)
       .slice(0, 2);
 
-    const opposing = sorted
-      .filter(s => s.direction !== primary.direction)
-      .slice(0, 2);
+    const opposing = sorted.filter((s) => s.direction !== primary.direction).slice(0, 2);
 
     return { primary, supporting, opposing };
   }
@@ -260,9 +256,7 @@ export class ExplainabilityEngine {
       'mentalFortressDiff',
     ];
 
-    const psychFactors = shapValues.filter(s =>
-      psychFeatures.includes(s.feature)
-    );
+    const psychFactors = shapValues.filter((s) => psychFeatures.includes(s.feature));
 
     const total = psychFactors.reduce((sum, f) => sum + f.shapValue, 0);
 
@@ -276,10 +270,7 @@ export class ExplainabilityEngine {
   /**
    * Assess overall confidence in the prediction.
    */
-  assessConfidence(
-    features: MLFeatures,
-    shapValues: ShapValue[]
-  ): ConfidenceLevel {
+  assessConfidence(features: MLFeatures, shapValues: ShapValue[]): ConfidenceLevel {
     let confidenceScore = 0.5; // Start neutral
 
     // Large rating difference increases confidence
@@ -291,9 +282,7 @@ export class ExplainabilityEngine {
 
     // Agreement among top factors increases confidence
     const topFactors = shapValues.slice(0, 5);
-    const sameDirection = topFactors.filter(
-      f => f.direction === topFactors[0].direction
-    ).length;
+    const sameDirection = topFactors.filter((f) => f.direction === topFactors[0].direction).length;
     confidenceScore += (sameDirection - 2) * 0.05;
 
     // Rivalry decreases confidence
@@ -309,7 +298,7 @@ export class ExplainabilityEngine {
     // Map to confidence level
     if (confidenceScore >= 0.65) {
       return 'high';
-    } else if (confidenceScore >= 0.40) {
+    } else if (confidenceScore >= 0.4) {
       return 'medium';
     }
     return 'low';
@@ -318,10 +307,7 @@ export class ExplainabilityEngine {
   /**
    * Identify sources of uncertainty in the prediction.
    */
-  identifyUncertainty(
-    features: MLFeatures,
-    shapValues: ShapValue[]
-  ): string[] {
+  identifyUncertainty(features: MLFeatures, shapValues: ShapValue[]): string[] {
     const uncertainties: string[] = [];
 
     // Close matchup
@@ -331,7 +317,7 @@ export class ExplainabilityEngine {
 
     // Conflicting signals
     const topFactors = shapValues.slice(0, 5);
-    const positiveCount = topFactors.filter(f => f.direction === 'positive').length;
+    const positiveCount = topFactors.filter((f) => f.direction === 'positive').length;
     if (positiveCount >= 2 && positiveCount <= 3) {
       uncertainties.push('Key factors point in different directions');
     }
@@ -342,10 +328,7 @@ export class ExplainabilityEngine {
     }
 
     // Momentum instability
-    if (
-      Math.abs(features.homeMomentum) > 0.6 ||
-      Math.abs(features.awayMomentum) > 0.6
-    ) {
+    if (Math.abs(features.homeMomentum) > 0.6 || Math.abs(features.awayMomentum) > 0.6) {
       uncertainties.push('Extreme momentum may not sustain');
     }
 
@@ -416,7 +399,7 @@ export class ExplainabilityEngine {
    */
   formatTopFactorsMarkdown(topFactors: ShapValue[]): string {
     return topFactors
-      .map(f => {
+      .map((f) => {
         const sign = f.shapValue >= 0 ? '▲' : '▼';
         const pct = Math.abs(f.shapValue * 100).toFixed(1);
         return `- ${sign} ${f.displayName}: ${pct}% impact`;
@@ -438,18 +421,16 @@ export class ExplainabilityEngine {
     upgradePrompt: string | null;
   } {
     const homeFavored = prediction.homeWinProbability > 0.5;
-    const favoredProb = homeFavored
-      ? prediction.homeWinProbability
-      : prediction.awayWinProbability;
+    const favoredProb = homeFavored ? prediction.homeWinProbability : prediction.awayWinProbability;
 
     const title = `${Math.round(favoredProb * 100)}% ${
       homeFavored ? 'Home' : 'Away'
     } Win Probability`;
 
-    const factors = prediction.explanation.topFactors.slice(0, 3).map(f => ({
+    const factors = prediction.explanation.topFactors.slice(0, 3).map((f) => ({
       name: f.displayName,
       impact: `${Math.abs(f.shapValue * 100).toFixed(1)}%`,
-      direction: f.direction === 'positive' ? 'up' as const : 'down' as const,
+      direction: f.direction === 'positive' ? ('up' as const) : ('down' as const),
     }));
 
     const upgradePrompt =

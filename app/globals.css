@@ -402,7 +402,7 @@ body {
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
   /* Blaze Orange (accent) */
-  --color-blaze: #FF4500;
+  --color-blaze: #ff4500;
 
   /* Border Colors */
   --color-border-subtle: rgba(255, 255, 255, 0.06);
@@ -436,16 +436,37 @@ body {
 }
 
 @keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -25%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 35%); }
-  90% { transform: translate(-10%, 10%); }
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-5%, -10%);
+  }
+  20% {
+    transform: translate(-15%, 5%);
+  }
+  30% {
+    transform: translate(7%, -25%);
+  }
+  40% {
+    transform: translate(-5%, 25%);
+  }
+  50% {
+    transform: translate(-15%, 10%);
+  }
+  60% {
+    transform: translate(15%, 0%);
+  }
+  70% {
+    transform: translate(0%, 15%);
+  }
+  80% {
+    transform: translate(3%, 35%);
+  }
+  90% {
+    transform: translate(-10%, 10%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -492,7 +513,9 @@ body {
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: transform 0.1s ease-out, opacity 0.2s;
+  transition:
+    transform 0.1s ease-out,
+    opacity 0.2s;
   mix-blend-mode: difference;
 }
 
@@ -505,7 +528,11 @@ body {
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: transform 0.15s ease-out, width 0.2s, height 0.2s, opacity 0.2s;
+  transition:
+    transform 0.15s ease-out,
+    width 0.2s,
+    height 0.2s,
+    opacity 0.2s;
   opacity: 0.5;
 }
 
@@ -526,7 +553,7 @@ body.custom-cursor-active {
 
 body.custom-cursor-active a,
 body.custom-cursor-active button,
-body.custom-cursor-active [role="button"],
+body.custom-cursor-active [role='button'],
 body.custom-cursor-active input,
 body.custom-cursor-active select,
 body.custom-cursor-active textarea {
@@ -537,7 +564,12 @@ body.custom-cursor-active textarea {
    Typography Cinematic
    ======================================== */
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.15;
@@ -591,7 +623,8 @@ h4 {
 .divider {
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent,
     var(--color-border-default) 20%,
     var(--color-border-default) 80%,
@@ -601,7 +634,8 @@ h4 {
 }
 
 .divider-accent {
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent,
     var(--color-burnt-orange) 20%,
     var(--color-burnt-orange) 80%,
@@ -617,8 +651,9 @@ h4 {
 .reveal {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.8s var(--ease-smooth),
-              transform 0.8s var(--ease-smooth);
+  transition:
+    opacity 0.8s var(--ease-smooth),
+    transform 0.8s var(--ease-smooth);
 }
 
 .reveal.revealed {
@@ -654,16 +689,29 @@ h4 {
 .reveal-stagger > * {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s var(--ease-smooth),
-              transform 0.6s var(--ease-smooth);
+  transition:
+    opacity 0.6s var(--ease-smooth),
+    transform 0.6s var(--ease-smooth);
 }
 
-.reveal-stagger.revealed > *:nth-child(1) { transition-delay: 0ms; }
-.reveal-stagger.revealed > *:nth-child(2) { transition-delay: 100ms; }
-.reveal-stagger.revealed > *:nth-child(3) { transition-delay: 200ms; }
-.reveal-stagger.revealed > *:nth-child(4) { transition-delay: 300ms; }
-.reveal-stagger.revealed > *:nth-child(5) { transition-delay: 400ms; }
-.reveal-stagger.revealed > *:nth-child(6) { transition-delay: 500ms; }
+.reveal-stagger.revealed > *:nth-child(1) {
+  transition-delay: 0ms;
+}
+.reveal-stagger.revealed > *:nth-child(2) {
+  transition-delay: 100ms;
+}
+.reveal-stagger.revealed > *:nth-child(3) {
+  transition-delay: 200ms;
+}
+.reveal-stagger.revealed > *:nth-child(4) {
+  transition-delay: 300ms;
+}
+.reveal-stagger.revealed > *:nth-child(5) {
+  transition-delay: 400ms;
+}
+.reveal-stagger.revealed > *:nth-child(6) {
+  transition-delay: 500ms;
+}
 
 .reveal-stagger.revealed > * {
   opacity: 1;
@@ -687,8 +735,9 @@ h4 {
    ======================================== */
 
 .image-depth {
-  transition: transform var(--transition-normal) var(--ease-smooth),
-              box-shadow var(--transition-normal) var(--ease-smooth);
+  transition:
+    transform var(--transition-normal) var(--ease-smooth),
+    box-shadow var(--transition-normal) var(--ease-smooth);
 }
 
 .image-depth:hover {
@@ -755,7 +804,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
-[role="button"]:focus-visible {
+[role='button']:focus-visible {
   outline: 2px solid var(--color-burnt-orange);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(191, 87, 0, 0.2);

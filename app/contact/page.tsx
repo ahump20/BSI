@@ -28,8 +28,13 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const subject = formData.subject || 'Contact from BlazeSportsIntel.com';
-    const body = 'Name: ' + formData.name + '\nEmail: ' + formData.email + '\n\n' + formData.message;
-    const mailtoLink = 'mailto:ahump20@outlook.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    const body =
+      'Name: ' + formData.name + '\nEmail: ' + formData.email + '\n\n' + formData.message;
+    const mailtoLink =
+      'mailto:ahump20@outlook.com?subject=' +
+      encodeURIComponent(subject) +
+      '&body=' +
+      encodeURIComponent(body);
     window.location.href = mailtoLink;
   };
 
@@ -55,7 +60,10 @@ export default function ContactPage() {
               <Card padding="lg" className="max-w-xl mx-auto">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Name
                     </label>
                     <Input
@@ -68,7 +76,10 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Email
                     </label>
                     <Input
@@ -81,7 +92,10 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="subject"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Subject
                     </label>
                     <Input
@@ -93,7 +107,10 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Message
                     </label>
                     <textarea

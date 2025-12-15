@@ -36,15 +36,10 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  * Form input field with consistent styling
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ 
-    className, 
-    type = 'text',
-    size = 'md',
-    error = false,
-    leftAddon,
-    rightAddon,
-    ...props 
-  }, ref) => {
+  (
+    { className, type = 'text', size = 'md', error = false, leftAddon, rightAddon, ...props },
+    ref
+  ) => {
     const inputElement = (
       <input
         ref={ref}
@@ -96,11 +91,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     <textarea
       ref={ref}
       aria-invalid={error || undefined}
-      className={cn(
-        baseInputClasses,
-        'min-h-[100px] py-3 px-4 text-sm resize-y',
-        className
-      )}
+      className={cn(baseInputClasses, 'min-h-[100px] py-3 px-4 text-sm resize-y', className)}
       {...props}
     />
   )
@@ -130,20 +121,17 @@ export const FormField = ({
 }: FormFieldProps) => (
   <div className={cn('space-y-1.5', className)}>
     {label && (
-      <label 
-        htmlFor={htmlFor}
-        className="block text-sm font-medium text-text-primary"
-      >
+      <label htmlFor={htmlFor} className="block text-sm font-medium text-text-primary">
         {label}
         {required && <span className="text-error ml-1">*</span>}
       </label>
     )}
     {children}
-    {hint && !error && (
-      <p className="text-xs text-text-tertiary">{hint}</p>
-    )}
+    {hint && !error && <p className="text-xs text-text-tertiary">{hint}</p>}
     {error && (
-      <p className="text-xs text-error" role="alert">{error}</p>
+      <p className="text-xs text-error" role="alert">
+        {error}
+      </p>
     )}
   </div>
 );

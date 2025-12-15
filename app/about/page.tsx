@@ -161,7 +161,8 @@ export default function AboutPage() {
                   {
                     year: '2021',
                     title: 'Northwestern Mutual',
-                    description: 'Top 10% nationally. Learned that data wins when stories fall short.',
+                    description:
+                      'Top 10% nationally. Learned that data wins when stories fall short.',
                   },
                   {
                     year: '2024',

@@ -15,12 +15,7 @@ import {
   type ChampionDimensionKey,
 } from '../analytics/diamond-certainty-engine';
 
-import type {
-  PsychologicalState,
-  TeamState,
-  TeamDiamondScores,
-  SupportedSport,
-} from './types';
+import type { PsychologicalState, TeamState, TeamDiamondScores, SupportedSport } from './types';
 
 // ============================================================================
 // Dimension Mapping
@@ -49,13 +44,13 @@ const DIMENSION_MAPPING: Record<
  * Based on correlation analysis with actual game outcomes.
  */
 const DIMENSION_IMPORTANCE: Record<ChampionDimensionKey, number> = {
-  clutchGene: 0.20,
+  clutchGene: 0.2,
   killerInstinct: 0.15,
   flowState: 0.15,
   mentalFortress: 0.15,
-  predatorMindset: 0.10,
-  championAura: 0.10,
-  winnerDNA: 0.10,
+  predatorMindset: 0.1,
+  championAura: 0.1,
+  winnerDNA: 0.1,
   beastMode: 0.05,
 };
 
@@ -111,9 +106,7 @@ export function reportToTeamScores(
  * Convert Diamond Certainty dimensions to psychological state.
  * Aggregates all 8 dimensions into the 4 psychological variables.
  */
-export function diamondToPsychState(
-  diamondScores: TeamDiamondScores
-): PsychologicalState {
+export function diamondToPsychState(diamondScores: TeamDiamondScores): PsychologicalState {
   // Initialize accumulators
   const stateAccum: Record<keyof PsychologicalState, { sum: number; weight: number }> = {
     confidence: { sum: 0, weight: 0 },
@@ -138,18 +131,17 @@ export function diamondToPsychState(
 
   // Calculate final values with normalization
   return {
-    confidence: stateAccum.confidence.weight > 0
-      ? stateAccum.confidence.sum / stateAccum.confidence.weight
-      : 0.5,
-    focus: stateAccum.focus.weight > 0
-      ? stateAccum.focus.sum / stateAccum.focus.weight
-      : 0.5,
-    cohesion: stateAccum.cohesion.weight > 0
-      ? stateAccum.cohesion.sum / stateAccum.cohesion.weight
-      : 0.5,
-    leadershipInfluence: stateAccum.leadershipInfluence.weight > 0
-      ? stateAccum.leadershipInfluence.sum / stateAccum.leadershipInfluence.weight
-      : 0.5,
+    confidence:
+      stateAccum.confidence.weight > 0
+        ? stateAccum.confidence.sum / stateAccum.confidence.weight
+        : 0.5,
+    focus: stateAccum.focus.weight > 0 ? stateAccum.focus.sum / stateAccum.focus.weight : 0.5,
+    cohesion:
+      stateAccum.cohesion.weight > 0 ? stateAccum.cohesion.sum / stateAccum.cohesion.weight : 0.5,
+    leadershipInfluence:
+      stateAccum.leadershipInfluence.weight > 0
+        ? stateAccum.leadershipInfluence.sum / stateAccum.leadershipInfluence.weight
+        : 0.5,
   };
 }
 
@@ -221,15 +213,9 @@ export function enhanceTeamState(
 
   return {
     ...teamState,
-    confidence:
-      teamState.confidence * (1 - blendFactor) +
-      diamondPsych.confidence * blendFactor,
-    focus:
-      teamState.focus * (1 - blendFactor) +
-      diamondPsych.focus * blendFactor,
-    cohesion:
-      teamState.cohesion * (1 - blendFactor) +
-      diamondPsych.cohesion * blendFactor,
+    confidence: teamState.confidence * (1 - blendFactor) + diamondPsych.confidence * blendFactor,
+    focus: teamState.focus * (1 - blendFactor) + diamondPsych.focus * blendFactor,
+    cohesion: teamState.cohesion * (1 - blendFactor) + diamondPsych.cohesion * blendFactor,
     leadershipInfluence:
       teamState.leadershipInfluence * (1 - blendFactor) +
       diamondPsych.leadershipInfluence * blendFactor,
@@ -237,9 +223,7 @@ export function enhanceTeamState(
     clutchFactor: normalizeScore(diamondScores.dimensions.clutchGene),
     adversityResponse: normalizeScore(diamondScores.dimensions.mentalFortress),
     momentumScore: normalizeScore(
-      (diamondScores.dimensions.flowState +
-        diamondScores.dimensions.killerInstinct) /
-        2
+      (diamondScores.dimensions.flowState + diamondScores.dimensions.killerInstinct) / 2
     ),
   };
 }
@@ -266,7 +250,7 @@ export function generateBaselineScores(
     cfb: 1.0,
     cbb: 0.95,
     nfl: 1.05,
-    nba: 0.90,
+    nba: 0.9,
     mlb: 0.92,
   };
 

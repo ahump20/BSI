@@ -74,7 +74,10 @@ export default function LoginPage() {
                     )}
 
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Email
                       </label>
                       <Input
@@ -89,7 +92,10 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="password" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Password
                       </label>
                       <Input
@@ -103,7 +109,13 @@ export default function LoginPage() {
                       />
                     </div>
 
-                    <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
+                      className="w-full"
+                      disabled={loading}
+                    >
                       {loading ? 'Signing in...' : 'Sign In'}
                     </Button>
                   </form>
@@ -111,7 +123,10 @@ export default function LoginPage() {
                   <div className="mt-6 text-center">
                     <p className="text-text-tertiary text-sm">
                       Do not have an account?{' '}
-                      <Link href="/auth/signup" className="text-burnt-orange hover:text-ember transition-colors">
+                      <Link
+                        href="/auth/signup"
+                        className="text-burnt-orange hover:text-ember transition-colors"
+                      >
                         Sign up
                       </Link>
                     </p>

@@ -15,7 +15,7 @@ export interface CustomCursorProps {
 
 /**
  * CustomCursor component
- * 
+ *
  * Custom cursor with dot + outline spotlight effect.
  * Automatically disabled on touch devices and when prefers-reduced-motion is set.
  */
@@ -29,7 +29,7 @@ export function CustomCursor({
   const [enabled, setEnabled] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  
+
   const dotRef = useRef<HTMLDivElement>(null);
   const outlineRef = useRef<HTMLDivElement>(null);
   const mousePosition = useRef({ x: 0, y: 0 });
@@ -48,8 +48,8 @@ export function CustomCursor({
     }
 
     // Check for touch device
-    const isTouchDevice = 
-      'ontouchstart' in window || 
+    const isTouchDevice =
+      'ontouchstart' in window ||
       navigator.maxTouchPoints > 0 ||
       window.matchMedia('(pointer: coarse)').matches;
 
@@ -70,13 +70,12 @@ export function CustomCursor({
   const animateOutline = useCallback(() => {
     const dx = mousePosition.current.x - outlinePosition.current.x;
     const dy = mousePosition.current.y - outlinePosition.current.y;
-    
+
     outlinePosition.current.x += dx * 0.15;
     outlinePosition.current.y += dy * 0.15;
 
     if (outlineRef.current) {
-      outlineRef.current.style.transform = 
-        `translate(${outlinePosition.current.x}px, ${outlinePosition.current.y}px) translate(-50%, -50%)`;
+      outlineRef.current.style.transform = `translate(${outlinePosition.current.x}px, ${outlinePosition.current.y}px) translate(-50%, -50%)`;
     }
 
     rafId.current = requestAnimationFrame(animateOutline);
@@ -85,10 +84,9 @@ export function CustomCursor({
   // Mouse move handler
   const handleMouseMove = useCallback((e: MouseEvent) => {
     mousePosition.current = { x: e.clientX, y: e.clientY };
-    
+
     if (dotRef.current) {
-      dotRef.current.style.transform = 
-        `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      dotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
     }
   }, []);
 
@@ -131,7 +129,7 @@ export function CustomCursor({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
-      
+
       interactiveElements.forEach((el) => {
         el.removeEventListener('mouseenter', handleElementEnter);
         el.removeEventListener('mouseleave', handleElementLeave);
@@ -158,7 +156,7 @@ export function CustomCursor({
           transform: isHovering ? 'scale(0.5)' : undefined,
         }}
       />
-      
+
       {/* Outline (follows with delay) */}
       <div
         ref={outlineRef}

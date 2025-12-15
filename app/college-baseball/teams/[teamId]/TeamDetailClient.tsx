@@ -259,8 +259,18 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           className="text-burnt-orange hover:text-burnt-orange/80 transition-colors text-sm flex items-center gap-1"
                         >
                           Official Website
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
                           </svg>
                         </a>
                       )}
@@ -301,9 +311,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       <div className="font-display text-3xl md:text-4xl font-bold text-success">
                         #{team.stats.rpi}
                       </div>
-                      <div className="text-text-tertiary text-xs uppercase tracking-wider">
-                        RPI
-                      </div>
+                      <div className="text-text-tertiary text-xs uppercase tracking-wider">RPI</div>
                     </div>
                   </div>
                 )}
@@ -313,7 +321,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </Section>
 
         {/* Tabs Navigation */}
-        <Section padding="none" className="bg-charcoal border-b border-border-subtle sticky top-16 z-30">
+        <Section
+          padding="none"
+          className="bg-charcoal border-b border-border-subtle sticky top-16 z-30"
+        >
           <Container>
             <div className="flex gap-1">
               {(['overview', 'roster', 'schedule'] as const).map((tab) => (
@@ -551,8 +562,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <div className="mt-12 text-center text-xs text-text-tertiary">
               <p>Team data sourced from official NCAA statistics.</p>
               <p className="mt-1">
-                Last updated:{' '}
-                {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>

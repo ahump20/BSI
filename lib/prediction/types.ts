@@ -45,7 +45,7 @@ export const HOME_ADVANTAGE: Record<SupportedSport, number> = {
 // Psychology model parameters
 export const PSYCHOLOGY_PARAMS = {
   alpha: 0.75, // Persistence factor (how much previous state carries forward)
-  beta: 0.20, // Outcome sensitivity (how much new results affect state)
+  beta: 0.2, // Outcome sensitivity (how much new results affect state)
   epsilon: 0.03, // Random noise amplitude
   minValue: 0.0,
   maxValue: 1.0,

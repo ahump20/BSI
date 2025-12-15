@@ -24,7 +24,7 @@ export interface MobileMenuProps {
 
 /**
  * MobileMenu component
- * 
+ *
  * Full-screen mobile navigation with:
  * - Slide-in animation
  * - Focus trapping
@@ -32,12 +32,7 @@ export interface MobileMenuProps {
  * - Body scroll lock
  * - Proper ARIA attributes
  */
-export function MobileMenu({
-  isOpen,
-  onClose,
-  items,
-  actions,
-}: MobileMenuProps) {
+export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -49,7 +44,7 @@ export function MobileMenu({
     if (isOpen) {
       onClose();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Body scroll lock
@@ -58,7 +53,7 @@ export function MobileMenu({
       const scrollY = window.scrollY;
       document.body.style.setProperty('--scroll-position', `-${scrollY}px`);
       document.body.classList.add('scroll-locked');
-      
+
       return () => {
         document.body.classList.remove('scroll-locked');
         document.body.style.removeProperty('--scroll-position');
@@ -86,11 +81,11 @@ export function MobileMenu({
       const focusableElements = menuRef.current.querySelectorAll<HTMLElement>(
         'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
-      
+
       if (focusableElements.length > 0) {
         firstFocusableRef.current = focusableElements[0];
         lastFocusableRef.current = focusableElements[focusableElements.length - 1];
-        
+
         // Focus close button on open
         closeButtonRef.current?.focus();
       }
@@ -153,9 +148,7 @@ export function MobileMenu({
       >
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-border-subtle">
-          <span className="font-display text-lg font-bold text-text-primary">
-            Menu
-          </span>
+          <span className="font-display text-lg font-bold text-text-primary">Menu</span>
           <button
             ref={closeButtonRef}
             onClick={onClose}
@@ -177,8 +170,8 @@ export function MobileMenu({
                     'flex items-center justify-between px-4 py-3 rounded-lg',
                     'text-lg font-medium transition-colors',
                     'hover:bg-graphite',
-                    isActive(item.href) 
-                      ? 'text-burnt-orange bg-burnt-orange/10' 
+                    isActive(item.href)
+                      ? 'text-burnt-orange bg-burnt-orange/10'
                       : 'text-text-primary'
                   )}
                   style={{
@@ -201,11 +194,7 @@ export function MobileMenu({
         <div className="mx-6 h-px bg-border-subtle" />
 
         {/* Actions */}
-        {actions && (
-          <div className="px-6 py-6">
-            {actions}
-          </div>
-        )}
+        {actions && <div className="px-6 py-6">{actions}</div>}
 
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-border-subtle">
@@ -221,14 +210,14 @@ export function MobileMenu({
 // Close icon
 function CloseIcon() {
   return (
-    <svg 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <line x1="18" y1="6" x2="6" y2="18" />

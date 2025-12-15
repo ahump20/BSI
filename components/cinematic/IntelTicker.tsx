@@ -39,7 +39,7 @@ const typeClasses = {
 
 /**
  * IntelTicker component
- * 
+ *
  * Horizontally scrolling ticker for news, scores, or alerts.
  * Respects prefers-reduced-motion by showing static content.
  */
@@ -89,9 +89,7 @@ export function IntelTicker({
               {item.type === 'live' && (
                 <span className="inline-block w-2 h-2 rounded-full bg-error mr-2 animate-pulse" />
               )}
-              <span className={typeClasses[item.type || 'default']}>
-                {item.content}
-              </span>
+              <span className={typeClasses[item.type || 'default']}>{item.content}</span>
               {index < items.length - 1 && (
                 <span className="ml-3 text-text-muted">{separator}</span>
               )}
@@ -105,11 +103,7 @@ export function IntelTicker({
   return (
     <div
       ref={containerRef}
-      className={cn(
-        'relative overflow-hidden py-2',
-        variantClasses[variant],
-        className
-      )}
+      className={cn('relative overflow-hidden py-2', variantClasses[variant], className)}
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
       role="marquee"
@@ -136,11 +130,7 @@ export function IntelTicker({
             className="flex items-center gap-6 px-4 text-sm"
           >
             {items.map((item) => (
-              <TickerItemContent
-                key={`${copy}-${item.id}`}
-                item={item}
-                separator={separator}
-              />
+              <TickerItemContent key={`${copy}-${item.id}`} item={item} separator={separator} />
             ))}
           </div>
         ))}
@@ -161,22 +151,18 @@ export function IntelTicker({
 }
 
 // Individual ticker item
-function TickerItemContent({
-  item,
-  separator,
-}: {
-  item: TickerItem;
-  separator: React.ReactNode;
-}) {
+function TickerItemContent({ item, separator }: { item: TickerItem; separator: React.ReactNode }) {
   const content = (
     <span className="flex items-center">
       {item.type === 'live' && (
         <span className="inline-block w-2 h-2 rounded-full bg-error mr-2 animate-pulse" />
       )}
-      <span className={cn(
-        typeClasses[item.type || 'default'],
-        item.href && 'hover:text-burnt-orange transition-colors'
-      )}>
+      <span
+        className={cn(
+          typeClasses[item.type || 'default'],
+          item.href && 'hover:text-burnt-orange transition-colors'
+        )}
+      >
         {item.content}
       </span>
       <span className="ml-6 text-text-muted">{separator}</span>

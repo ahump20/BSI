@@ -436,8 +436,16 @@ export class StateTracker {
       gameId: result.gameId,
       sport: result.sport as SupportedSport,
       timestamp: result.forecastTimestamp,
-      homeTeam: { teamId: '', name: '', state: { confidence: 0.5, focus: 0.5, cohesion: 0.5, leadershipInfluence: 0.5 } },
-      awayTeam: { teamId: '', name: '', state: { confidence: 0.5, focus: 0.5, cohesion: 0.5, leadershipInfluence: 0.5 } },
+      homeTeam: {
+        teamId: '',
+        name: '',
+        state: { confidence: 0.5, focus: 0.5, cohesion: 0.5, leadershipInfluence: 0.5 },
+      },
+      awayTeam: {
+        teamId: '',
+        name: '',
+        state: { confidence: 0.5, focus: 0.5, cohesion: 0.5, leadershipInfluence: 0.5 },
+      },
       homeWinProbability: result.homeWinProbability,
       awayWinProbability: result.awayWinProbability,
       drawProbability: result.drawProbability,

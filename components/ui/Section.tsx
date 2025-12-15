@@ -36,15 +36,18 @@ const backgroundClasses = {
  * Provides consistent vertical spacing and backgrounds for page sections
  */
 export const Section = forwardRef<HTMLElement, SectionProps>(
-  ({ 
-    className, 
-    padding = 'default', 
-    background = 'transparent',
-    borderTop = false,
-    as: Component = 'section',
-    children, 
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      padding = 'default',
+      background = 'transparent',
+      borderTop = false,
+      as: Component = 'section',
+      children,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <Component
         ref={ref as any}

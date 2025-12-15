@@ -35,28 +35,37 @@ export default function PrivacyPage() {
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-4">What We Collect</h2>
                   <p className="text-text-secondary leading-relaxed">
-                    Account info (email, name), usage data, and device info. Payments via Stripe—we never store card numbers.
+                    Account info (email, name), usage data, and device info. Payments via Stripe—we
+                    never store card numbers.
                   </p>
                 </section>
 
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-4">How We Use It</h2>
                   <p className="text-text-secondary leading-relaxed">
-                    To provide the service, process payments, improve the platform, and send important updates.
+                    To provide the service, process payments, improve the platform, and send
+                    important updates.
                   </p>
                 </section>
 
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-4">We Don't Sell Your Data</h2>
                   <p className="text-text-secondary leading-relaxed">
-                    We only share with Stripe (payments) and Cloudflare (hosting). No data brokers, no advertisers.
+                    We only share with Stripe (payments) and Cloudflare (hosting). No data brokers,
+                    no advertisers.
                   </p>
                 </section>
 
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-4">Your Rights</h2>
                   <p className="text-text-secondary leading-relaxed">
-                    Access, correct, or delete your data anytime. Email <a href="mailto:ahump20@outlook.com" className="text-burnt-orange hover:text-ember">ahump20@outlook.com</a>
+                    Access, correct, or delete your data anytime. Email{' '}
+                    <a
+                      href="mailto:ahump20@outlook.com"
+                      className="text-burnt-orange hover:text-ember"
+                    >
+                      ahump20@outlook.com
+                    </a>
                   </p>
                 </section>
 

@@ -150,7 +150,8 @@ export default function CollegeBaseballGamesPage() {
               <Card padding="lg" className="text-center">
                 <p className="text-warning mb-4">{error}</p>
                 <p className="text-text-tertiary text-sm">
-                  College baseball season runs February through June. Check back during the season for live games.
+                  College baseball season runs February through June. Check back during the season
+                  for live games.
                 </p>
               </Card>
             )}
@@ -160,7 +161,8 @@ export default function CollegeBaseballGamesPage() {
               <Card padding="lg" className="text-center">
                 <p className="text-text-secondary mb-2">No games scheduled for today.</p>
                 <p className="text-text-tertiary text-sm">
-                  College baseball season runs February through June. Check back during the season for live games.
+                  College baseball season runs February through June. Check back during the season
+                  for live games.
                 </p>
               </Card>
             )}
@@ -173,7 +175,9 @@ export default function CollegeBaseballGamesPage() {
                     <Card variant="hover" padding="md" className="h-full">
                       {/* Status Badge */}
                       <div className="flex items-center justify-between mb-4">
-                        <Badge variant="default">{game.homeTeam.conference || game.awayTeam.conference}</Badge>
+                        <Badge variant="default">
+                          {game.homeTeam.conference || game.awayTeam.conference}
+                        </Badge>
                         {game.status === 'live' ? (
                           <LiveBadge />
                         ) : game.status === 'final' ? (
@@ -250,7 +254,9 @@ export default function CollegeBaseballGamesPage() {
                             Inning {game.inning}
                           </span>
                           {game.situation && (
-                            <span className="text-sm text-text-tertiary ml-2">{game.situation}</span>
+                            <span className="text-sm text-text-tertiary ml-2">
+                              {game.situation}
+                            </span>
                           )}
                         </div>
                       )}
@@ -258,7 +264,9 @@ export default function CollegeBaseballGamesPage() {
                       {/* TV Info */}
                       {game.tv && (
                         <div className="mt-2">
-                          <Badge variant="default" className="text-xs">{game.tv}</Badge>
+                          <Badge variant="default" className="text-xs">
+                            {game.tv}
+                          </Badge>
                         </div>
                       )}
                     </Card>
@@ -270,11 +278,14 @@ export default function CollegeBaseballGamesPage() {
             {/* Data Attribution */}
             <div className="mt-12 text-center text-xs text-text-tertiary">
               <p>
-                Data sourced from ESPN College Baseball API. Updated every 30 seconds during live games.
+                Data sourced from ESPN College Baseball API. Updated every 30 seconds during live
+                games.
               </p>
               {lastUpdated && (
                 <p className="mt-1">
-                  Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                  Last updated:{' '}
+                  {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                  CT
                 </p>
               )}
             </div>

@@ -1,7 +1,7 @@
 /**
  * BSI Historical Records API Worker
  * Serves franchise records, season records, postseason history, key eras, and all-time players
- * 
+ *
  * Deployed to: bsi-records-api.{account}.workers.dev
  * Bindings: D1 (bsi-historical-db)
  */
@@ -301,9 +301,7 @@ async function getKeyEras(db: D1Database, teamId: string): Promise<KeyEra[]> {
     headCoach: row.head_coach as string | undefined,
     overallRecord: row.overall_record as string | undefined,
     championships: row.championships as number,
-    notablePlayers: row.notable_players
-      ? JSON.parse(row.notable_players as string)
-      : undefined,
+    notablePlayers: row.notable_players ? JSON.parse(row.notable_players as string) : undefined,
     summary: row.summary as string,
     significance: row.significance as string | undefined,
     sourceUrl: row.source_url as string,

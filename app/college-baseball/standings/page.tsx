@@ -54,7 +54,9 @@ export default function CollegeBaseballStandingsPage() {
     async function fetchStandings() {
       try {
         setLoading(true);
-        const response = await fetch('/api/college-baseball/standings?conference=' + encodeURIComponent(selectedConference));
+        const response = await fetch(
+          '/api/college-baseball/standings?conference=' + encodeURIComponent(selectedConference)
+        );
         const result = await response.json();
 
         if (result.success && result.data) {
@@ -132,9 +134,7 @@ export default function CollegeBaseballStandingsPage() {
                     <h2 className="font-display text-2xl font-bold text-white">
                       {currentConf?.fullName}
                     </h2>
-                    <p className="text-text-tertiary text-sm mt-1">
-                      2025 Conference Standings
-                    </p>
+                    <p className="text-text-tertiary text-sm mt-1">2025 Conference Standings</p>
                   </div>
                   <Badge variant="primary">Updated Daily</Badge>
                 </div>
@@ -154,7 +154,8 @@ export default function CollegeBaseballStandingsPage() {
               <Card padding="lg" className="text-center">
                 <p className="text-warning mb-4">{error}</p>
                 <p className="text-text-tertiary text-sm">
-                  College baseball season runs February through June. Standings will be available during the season.
+                  College baseball season runs February through June. Standings will be available
+                  during the season.
                 </p>
               </Card>
             )}
@@ -162,7 +163,9 @@ export default function CollegeBaseballStandingsPage() {
             {/* Empty State */}
             {!loading && !error && standings.length === 0 && (
               <Card padding="lg" className="text-center">
-                <p className="text-text-secondary mb-2">No standings data available for {currentConf?.name}.</p>
+                <p className="text-text-secondary mb-2">
+                  No standings data available for {currentConf?.name}.
+                </p>
                 <p className="text-text-tertiary text-sm">
                   College baseball season runs February through June. Check back during the season.
                 </p>
@@ -217,12 +220,14 @@ export default function CollegeBaseballStandingsPage() {
                             </td>
                             <td className="py-4 px-4 text-center">
                               <span className="text-white">
-                                {standing.conferenceRecord?.wins ?? 0}-{standing.conferenceRecord?.losses ?? 0}
+                                {standing.conferenceRecord?.wins ?? 0}-
+                                {standing.conferenceRecord?.losses ?? 0}
                               </span>
                             </td>
                             <td className="py-4 px-4 text-center">
                               <span className="text-text-secondary">
-                                {standing.overallRecord?.wins ?? 0}-{standing.overallRecord?.losses ?? 0}
+                                {standing.overallRecord?.wins ?? 0}-
+                                {standing.overallRecord?.losses ?? 0}
                               </span>
                             </td>
                             <td className="py-4 px-4 text-center hidden md:table-cell">
@@ -232,7 +237,9 @@ export default function CollegeBaseballStandingsPage() {
                             </td>
                             <td className="py-4 px-4 text-center">
                               {standing.rpi ? (
-                                <span className="text-burnt-orange font-semibold">#{standing.rpi}</span>
+                                <span className="text-burnt-orange font-semibold">
+                                  #{standing.rpi}
+                                </span>
                               ) : (
                                 <span className="text-text-tertiary">—</span>
                               )}
@@ -258,12 +265,12 @@ export default function CollegeBaseballStandingsPage() {
 
             {/* Data Attribution */}
             <div className="mt-8 text-center text-xs text-text-tertiary">
-              <p>
-                Data sourced from ESPN College Baseball API. RPI rankings from NCAA.
-              </p>
+              <p>Data sourced from ESPN College Baseball API. RPI rankings from NCAA.</p>
               {lastUpdated && (
                 <p className="mt-1">
-                  Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                  Last updated:{' '}
+                  {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                  CT
                 </p>
               )}
             </div>

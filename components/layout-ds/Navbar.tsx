@@ -30,20 +30,14 @@ export interface NavbarProps {
 
 /**
  * Navbar component
- * 
+ *
  * Main site navigation with:
  * - Sticky positioning with blur on scroll
  * - Active route highlighting
  * - Mobile menu toggle
  * - Smooth show/hide on scroll
  */
-export function Navbar({
-  items,
-  logo,
-  actions,
-  variant = 'sticky',
-  className,
-}: NavbarProps) {
+export function Navbar({ items, logo, actions, variant = 'sticky', className }: NavbarProps) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -53,17 +47,17 @@ export function Navbar({
   // Handle scroll for blur effect and hide/show
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
-    
+
     // Blur effect kicks in after 50px scroll
     setIsScrolled(currentScrollY > 50);
-    
+
     // Hide on scroll down, show on scroll up (only after 100px)
     if (currentScrollY > 100) {
       setIsVisible(currentScrollY < lastScrollY || currentScrollY < 100);
     } else {
       setIsVisible(true);
     }
-    
+
     setLastScrollY(currentScrollY);
   }, [lastScrollY]);
 
@@ -86,7 +80,7 @@ export function Navbar({
           variant === 'fixed' && 'fixed top-0 left-0',
           variant === 'sticky' && 'sticky top-0',
           variant === 'static' && 'relative',
-          isScrolled 
+          isScrolled
             ? 'bg-midnight/80 backdrop-blur-xl border-b border-border-subtle shadow-lg'
             : 'bg-transparent',
           !isVisible && variant !== 'static' && '-translate-y-full',
@@ -94,7 +88,7 @@ export function Navbar({
         )}
       >
         <Container>
-          <nav 
+          <nav
             className="flex items-center justify-between h-16 md:h-20"
             role="navigation"
             aria-label="Main navigation"
@@ -102,8 +96,8 @@ export function Navbar({
             {/* Logo */}
             <div className="flex-shrink-0">
               {logo || (
-                <Link 
-                  href="/" 
+                <Link
+                  href="/"
                   className="font-display text-xl font-bold text-text-primary hover:text-burnt-orange transition-colors"
                 >
                   BLAZE<span className="text-burnt-orange">SPORTS</span>INTEL
@@ -114,20 +108,14 @@ export function Navbar({
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
               {items.map((item) => (
-                <NavLink 
-                  key={item.href} 
-                  item={item} 
-                  isActive={isActive(item.href)}
-                />
+                <NavLink key={item.href} item={item} isActive={isActive(item.href)} />
               ))}
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-4">
               {/* Desktop actions */}
-              <div className="hidden lg:flex items-center gap-3">
-                {actions}
-              </div>
+              <div className="hidden lg:flex items-center gap-3">{actions}</div>
 
               {/* Mobile menu button */}
               <button
@@ -156,22 +144,14 @@ export function Navbar({
 }
 
 // Nav link component
-function NavLink({ 
-  item, 
-  isActive 
-}: { 
-  item: NavItem; 
-  isActive: boolean;
-}) {
+function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
   return (
     <Link
       href={item.href}
       className={cn(
         'relative px-4 py-2 text-sm font-medium transition-colors',
         'hover:text-burnt-orange',
-        isActive 
-          ? 'text-burnt-orange' 
-          : 'text-text-secondary'
+        isActive ? 'text-burnt-orange' : 'text-text-secondary'
       )}
     >
       {item.label}
@@ -191,14 +171,14 @@ function NavLink({
 // Menu icon
 function MenuIcon() {
   return (
-    <svg 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <line x1="3" y1="6" x2="21" y2="6" />

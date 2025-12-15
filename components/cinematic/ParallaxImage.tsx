@@ -23,14 +23,16 @@ export interface ParallaxImageProps extends Omit<ImageProps, 'onMouseMove'> {
 
 const overlayClasses = {
   none: '',
-  bottom: 'after:absolute after:inset-0 after:bg-gradient-to-t after:from-midnight after:via-transparent after:to-transparent',
+  bottom:
+    'after:absolute after:inset-0 after:bg-gradient-to-t after:from-midnight after:via-transparent after:to-transparent',
   full: 'after:absolute after:inset-0 after:bg-midnight/40',
-  vignette: 'after:absolute after:inset-0 after:bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)]',
+  vignette:
+    'after:absolute after:inset-0 after:bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)]',
 };
 
 /**
  * ParallaxImage component
- * 
+ *
  * Enhanced image with hover lift, parallax scroll, and tilt effects.
  * Uses next/image for optimization.
  * Respects prefers-reduced-motion.
@@ -69,43 +71,46 @@ export function ParallaxImage({
 
     const handleScroll = () => {
       if (!containerRef.current) return;
-      
+
       const rect = containerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      
+
       // Calculate how far through viewport the element has scrolled
       const progress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
       const clampedProgress = Math.max(0, Math.min(1, progress));
-      
+
       // Calculate parallax offset
       const offset = (clampedProgress - 0.5) * rect.height * parallaxIntensity;
-      
-      setTransform(prev => ({ ...prev, y: offset }));
+
+      setTransform((prev) => ({ ...prev, y: offset }));
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial calculation
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [parallax, parallaxIntensity, prefersReducedMotion]);
 
   // Tilt effect on hover
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!tilt || prefersReducedMotion || !containerRef.current) return;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!tilt || prefersReducedMotion || !containerRef.current) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    
-    const tiltX = (y - 0.5) * tiltIntensity;
-    const tiltY = (x - 0.5) * -tiltIntensity;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
 
-    setTransform(prev => ({ ...prev, x: tiltX, y: tiltY }));
-  }, [tilt, tiltIntensity, prefersReducedMotion]);
+      const tiltX = (y - 0.5) * tiltIntensity;
+      const tiltY = (x - 0.5) * -tiltIntensity;
+
+      setTransform((prev) => ({ ...prev, x: tiltX, y: tiltY }));
+    },
+    [tilt, tiltIntensity, prefersReducedMotion]
+  );
 
   const handleMouseEnter = useCallback(() => {
     if (hoverLift && !prefersReducedMotion) {
-      setTransform(prev => ({ ...prev, scale: 1.02 }));
+      setTransform((prev) => ({ ...prev, scale: 1.02 }));
     }
   }, [hoverLift, prefersReducedMotion]);
 
@@ -117,11 +122,7 @@ export function ParallaxImage({
   if (prefersReducedMotion) {
     return (
       <div className={cn('relative overflow-hidden', containerClassName)}>
-        <Image
-          alt={alt}
-          className={cn('w-full h-full object-cover', className)}
-          {...imageProps}
-        />
+        <Image alt={alt} className={cn('w-full h-full object-cover', className)} {...imageProps} />
       </div>
     );
   }

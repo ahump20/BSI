@@ -33,7 +33,7 @@ export interface FooterProps {
 
 /**
  * Footer component
- * 
+ *
  * Site footer with:
  * - Link sections
  * - Social links
@@ -56,17 +56,16 @@ export function Footer({
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
             {/* Brand column */}
             <div className="col-span-2 md:col-span-4 lg:col-span-1 mb-8 lg:mb-0">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="inline-block font-display text-xl font-bold text-text-primary hover:text-burnt-orange transition-colors"
               >
                 BLAZE<span className="text-burnt-orange">SPORTS</span>
               </Link>
               <p className="mt-4 text-sm text-text-tertiary max-w-xs">
-                Deep intelligence for the sports that matter. 
-                College baseball first, always.
+                Deep intelligence for the sports that matter. College baseball first, always.
               </p>
-              
+
               {/* Social links */}
               {socials && socials.length > 0 && (
                 <div className="flex gap-4 mt-6">
@@ -129,14 +128,14 @@ export function Footer({
             © {currentYear} Blaze Sports Intel. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link 
-              href="/privacy" 
+            <Link
+              href="/privacy"
               className="text-xs text-text-muted hover:text-text-secondary transition-colors"
             >
               Privacy
             </Link>
-            <Link 
-              href="/terms" 
+            <Link
+              href="/terms"
               className="text-xs text-text-muted hover:text-text-secondary transition-colors"
             >
               Terms

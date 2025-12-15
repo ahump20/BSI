@@ -13,14 +13,14 @@ export interface NoiseOverlayProps {
 
 /**
  * NoiseOverlay component
- * 
+ *
  * Adds a subtle film grain texture over the entire viewport.
  * Fixed position, non-interactive, respects prefers-reduced-motion.
  */
-export function NoiseOverlay({ 
-  opacity = 0.025, 
+export function NoiseOverlay({
+  opacity = 0.025,
   cssOnly = false,
-  disableOnMobile = false 
+  disableOnMobile = false,
 }: NoiseOverlayProps) {
   const [mounted, setMounted] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
@@ -63,13 +63,7 @@ export function NoiseOverlay({
   }
 
   // Image-based noise (better quality, requires noise.png)
-  return (
-    <div
-      aria-hidden="true"
-      className="noise-overlay"
-      style={{ opacity }}
-    />
-  );
+  return <div aria-hidden="true" className="noise-overlay" style={{ opacity }} />;
 }
 
 export default NoiseOverlay;
