@@ -311,6 +311,82 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       });
     }
 
+    // === COLLEGE BASEBALL ROUTES ===
+    if (path === '/college-baseball' || path === '/college-baseball/') {
+      return serveAsset(env, 'origin/college-baseball/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/college-baseball/')) {
+      const subPath = path.replace('/college-baseball/', '');
+      // Try exact file match first
+      let assetPath = `origin/college-baseball/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        // Try as directory index
+        assetPath = `origin/college-baseball/${subPath}/index.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        const contentType = assetPath.endsWith('.js') ? 'application/javascript' :
+                           assetPath.endsWith('.css') ? 'text/css' : 'text/html';
+        return new Response(asset.body, {
+          headers: { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
+    // === MLB ROUTES ===
+    if (path === '/mlb' || path === '/mlb/') {
+      return serveAsset(env, 'origin/mlb/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/mlb/') && !path.startsWith('/mlb/api')) {
+      const subPath = path.replace('/mlb/', '');
+      let assetPath = `origin/mlb/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        assetPath = `origin/mlb/${subPath}/index.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        return new Response(asset.body, {
+          headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
+    // === NFL ROUTES ===
+    if (path === '/nfl' || path === '/nfl/') {
+      return serveAsset(env, 'origin/nfl/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/nfl/') && !path.startsWith('/nfl/api')) {
+      const subPath = path.replace('/nfl/', '');
+      let assetPath = `origin/nfl/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        assetPath = `origin/nfl/${subPath}/index.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        return new Response(asset.body, {
+          headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
+    // === NBA ROUTES ===
+    if (path === '/nba' || path === '/nba/') {
+      return serveAsset(env, 'origin/nba/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/nba/') && !path.startsWith('/nba/api')) {
+      const subPath = path.replace('/nba/', '');
+      let assetPath = `origin/nba/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        assetPath = `origin/nba/${subPath}/index.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        return new Response(asset.body, {
+          headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
     // 404 for other paths (or forward to existing app)
     return new Response('Not found', { status: 404 });
   },
@@ -332,8 +408,22 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
       });
       const rawData = await response.json();
 
+      // Handle API errors (SportsDataIO returns object with Message on error)
+      if (!Array.isArray(rawData)) {
+        return new Response(JSON.stringify({
+          error: rawData.Message || 'Invalid API response',
+          games: [],
+          apiResponse: rawData,
+          source: 'SportsDataIO',
+          fetchedAt: getChicagoTimestamp()
+        }), {
+          status: response.ok ? 200 : 500,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
       // Transform to standardized format
-      const games = (rawData || []).map(game => ({
+      const games = rawData.map(game => ({
         id: game.GameID,
         status: {
           state: game.Status,
@@ -357,7 +447,7 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
         dateTime: game.DateTime
       }));
 
-      return new Response(JSON.stringify({ games, rawData, source: 'SportsDataIO', fetchedAt: getChicagoTimestamp() }), {
+      return new Response(JSON.stringify({ games, source: 'SportsDataIO', fetchedAt: getChicagoTimestamp() }), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
@@ -431,8 +521,22 @@ async function handleNBARequest(path, url, env, corsHeaders) {
       });
       const rawData = await response.json();
 
+      // Handle API errors (SportsDataIO returns object with Message on error)
+      if (!Array.isArray(rawData)) {
+        return new Response(JSON.stringify({
+          error: rawData.Message || 'Invalid API response',
+          games: [],
+          apiResponse: rawData,
+          source: 'SportsDataIO',
+          fetchedAt: getChicagoTimestamp()
+        }), {
+          status: response.ok ? 200 : 500,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
       // Transform to standardized format
-      const games = (rawData || []).map(game => ({
+      const games = rawData.map(game => ({
         id: game.GameID,
         Status: game.Status,
         AwayTeam: game.AwayTeam,
@@ -444,7 +548,7 @@ async function handleNBARequest(path, url, env, corsHeaders) {
         DateTime: game.DateTime
       }));
 
-      return new Response(JSON.stringify({ games, rawData, source: 'SportsDataIO', fetchedAt: getChicagoTimestamp() }), {
+      return new Response(JSON.stringify({ games, source: 'SportsDataIO', fetchedAt: getChicagoTimestamp() }), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
@@ -656,8 +760,21 @@ async function handleNCAAFootballScores(env, corsHeaders) {
 
     const rawData = await response.json();
 
+    // Handle API errors (returns object with error message on failure)
+    if (!Array.isArray(rawData)) {
+      return new Response(JSON.stringify({
+        error: rawData.error || rawData.message || 'Invalid API response',
+        games: [],
+        source: 'CollegeFootballData',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        status: response.ok ? 200 : 500,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
     // Transform to standardized format
-    const games = (rawData || []).slice(0, 10).map(game => ({
+    const games = rawData.slice(0, 10).map(game => ({
       id: game.id,
       status: game.completed ? 'Final' : (game.start_time_tbd ? 'TBD' : 'Scheduled'),
       awayTeam: game.away_team,
