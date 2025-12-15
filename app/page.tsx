@@ -9,17 +9,17 @@ import { Footer } from '../components/layout-ds/Footer';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'MLB', href: '/sports/mlb' },
-  { label: 'NFL', href: '/sports/nfl' },
-  { label: 'NBA', href: '/sports/nba' },
-  { label: 'Pricing', href: '/pricing' },
+  { label: 'College Baseball', href: '/college-baseball/' },
+  { label: 'MLB', href: '/mlb/' },
+  { label: 'NFL', href: '/nfl/' },
+  { label: 'Pricing', href: '/pricing.html' },
 ];
 
 const sportsData = [
-  { name: 'MLB', icon: '⚾', href: '/sports/mlb', desc: 'Live scores, standings & stats' },
-  { name: 'NFL', icon: '🏈', href: '/sports/nfl', desc: 'Live scores, standings & stats' },
-  { name: 'NBA', icon: '🏀', href: '/sports/nba', desc: 'Live scores, standings & stats' },
-  { name: 'NCAA', icon: '🎓', href: '/college-baseball/', desc: 'College baseball coverage' },
+  { name: 'College Baseball', icon: '🎓', href: '/college-baseball/', desc: 'The coverage this sport deserves' },
+  { name: 'MLB', icon: '⚾', href: '/mlb/', desc: 'Live scores, standings & Statcast' },
+  { name: 'NFL', icon: '🏈', href: '/nfl/', desc: 'Live scores & standings' },
+  { name: 'CFB', icon: '🏟️', href: '/cfb/', desc: 'College football analytics' },
 ];
 
 const features = [

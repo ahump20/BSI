@@ -14,10 +14,10 @@ import { Navbar } from '../../components/layout-ds/Navbar';
 
 const dashboardNavItems = [
   { label: 'Home', href: '/' },
-  { label: 'MLB', href: '/sports/mlb' },
-  { label: 'NFL', href: '/sports/nfl' },
-  { label: 'NBA', href: '/sports/nba' },
-  { label: 'Pricing', href: '/pricing' },
+  { label: 'College Baseball', href: '/college-baseball/' },
+  { label: 'MLB', href: '/mlb/' },
+  { label: 'NFL', href: '/nfl/' },
+  { label: 'Pricing', href: '/pricing.html' },
 ];
 
 export default function DashboardPage() {
