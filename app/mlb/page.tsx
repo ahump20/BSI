@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -16,6 +18,79 @@ const navItems = [
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
   { label: 'Dashboard', href: '/dashboard' },
+];
+
+const mlbFeatures = [
+  {
+    href: '/mlb/scores',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+    title: 'Live Scores',
+    description:
+      'Real-time scores and game updates for all 30 MLB teams. Box scores, line scores, and play-by-play.',
+    badge: 'Live Now',
+    badgeVariant: 'success' as const,
+    isLive: true,
+  },
+  {
+    href: '/mlb/standings',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <line x1="3" y1="9" x2="21" y2="9" />
+        <line x1="9" y1="21" x2="9" y2="9" />
+      </svg>
+    ),
+    title: 'Division Standings',
+    description:
+      'Complete AL and NL standings with win percentage, games back, run differential, and streak data.',
+    badge: 'Updated Daily',
+    badgeVariant: 'primary' as const,
+  },
+  {
+    href: '/mlb/teams',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+    title: 'Team Profiles',
+    description:
+      'Rosters, schedules, and statistics for all 30 MLB teams across the American and National Leagues.',
+    badge: '30 Teams',
+    badgeVariant: 'warning' as const,
+  },
+  {
+    href: '/mlb/stats',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <line x1="18" y1="20" x2="18" y2="10" />
+        <line x1="12" y1="20" x2="12" y2="4" />
+        <line x1="6" y1="20" x2="6" y2="14" />
+      </svg>
+    ),
+    title: 'Statcast Analytics',
+    description:
+      'Advanced metrics including exit velocity, launch angle, sprint speed, and pitch movement data.',
+    badge: 'Pro-Level',
+    badgeVariant: 'warning' as const,
+  },
+];
+
+// Division data for future use in expanded team profiles
+const _divisions = [
+  { name: 'AL East', teams: ['Yankees', 'Red Sox', 'Blue Jays', 'Rays', 'Orioles'] },
+  { name: 'AL Central', teams: ['Guardians', 'Twins', 'Tigers', 'White Sox', 'Royals'] },
+  { name: 'AL West', teams: ['Astros', 'Rangers', 'Mariners', 'Angels', 'Athletics'] },
+  { name: 'NL East', teams: ['Braves', 'Phillies', 'Mets', 'Marlins', 'Nationals'] },
+  { name: 'NL Central', teams: ['Cubs', 'Cardinals', 'Brewers', 'Reds', 'Pirates'] },
+  { name: 'NL West', teams: ['Dodgers', 'Padres', 'Giants', 'D-backs', 'Rockies'] },
 ];
 
 interface Team {
@@ -253,14 +328,15 @@ export default function MLBPage() {
 
           <Container center>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">
-                MLB Intelligence
+              <Badge variant="success" className="mb-4">
+                <span className="w-2 h-2 bg-success rounded-full animate-pulse mr-2" />
+                Major League Baseball
               </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display text-gradient-blaze mb-4">
-                MLB Intelligence
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display mb-4">
+                MLB <span className="text-gradient-blaze">Intelligence</span>
               </h1>
             </ScrollReveal>
 
@@ -271,11 +347,114 @@ export default function MLBPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={200}>
-              <p className="text-text-secondary text-center max-w-2xl mx-auto">
-                Real-time MLB standings, player statistics, and advanced analytics powered by MLB
-                Stats API.
+              <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
+                Live scores, division standings, Statcast analytics, and advanced metrics for all 30
+                MLB teams. Professional-grade baseball intelligence powered by MLB Stats API.
               </p>
             </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={250}>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Link href="/mlb/scores">
+                  <Button variant="primary" size="lg">
+                    View Live Scores
+                  </Button>
+                </Link>
+                <Link href="/mlb/standings">
+                  <Button variant="secondary" size="lg">
+                    Division Standings
+                  </Button>
+                </Link>
+              </div>
+            </ScrollReveal>
+
+            {/* Stats Bar */}
+            <ScrollReveal direction="up" delay={300}>
+              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 glass-card rounded-2xl">
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">30</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    MLB Teams
+                  </div>
+                </div>
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">162</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    Games/Season
+                  </div>
+                </div>
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">Live</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    Real-Time Scores
+                  </div>
+                </div>
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">Statcast</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    Advanced Data
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Features Section */}
+        <Section padding="lg" background="charcoal" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-12">
+                <span className="kicker">Complete MLB Coverage</span>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  Professional Baseball <span className="text-gradient-blaze">Intelligence</span>
+                </h2>
+                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                  Live scores, standings, team profiles, and Statcast analytics for every MLB game.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {mlbFeatures.map((feature, index) => (
+                <ScrollReveal key={feature.title} delay={index * 100}>
+                  <Link href={feature.href} className="block group">
+                    <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                        {feature.icon}
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-white mb-3">{feature.title}</h3>
+                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                        {feature.description}
+                      </p>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
+                        {feature.isLive ? (
+                          <LiveBadge />
+                        ) : (
+                          <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
+                        )}
+                        <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                          View
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </span>
+                      </div>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+              ))}
+            </div>
           </Container>
         </Section>
 

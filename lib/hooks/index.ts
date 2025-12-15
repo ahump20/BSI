@@ -23,9 +23,15 @@ export {
   useOnlineStatus,
   useDebounce,
   usePrevious,
+  // Game detail hooks
+  useGameDetail,
+  usePlayByPlay,
+  useGameMedia,
+  useHeadlines,
   type DataState,
   type FetchOptions,
   type PollingOptions,
+  type GameDetailState,
 } from './useSportsData';
 
 // Analytics hooks
@@ -41,3 +47,9 @@ export {
   type UserProperties,
   type PerformanceMetrics,
 } from './useAnalytics';
+
+// Gesture hooks
+export { useSwipeGesture, useSwipeRef } from './useSwipeGesture';
+
+// Pitch tracking hooks
+export { usePitchData, useAtBatPitches } from './usePitchData';

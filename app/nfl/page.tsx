@@ -5,6 +5,7 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -16,6 +17,85 @@ const navItems = [
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
   { label: 'Dashboard', href: '/dashboard' },
+];
+
+const nflFeatures = [
+  {
+    href: '/nfl',
+    tab: 'schedule',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+    title: 'Live Scores',
+    description:
+      'Real-time scores and game updates for all 32 NFL teams. Quarter-by-quarter scoring and game status.',
+    badge: 'Live Now',
+    badgeVariant: 'success' as const,
+    isLive: true,
+  },
+  {
+    href: '/nfl',
+    tab: 'standings',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <line x1="3" y1="9" x2="21" y2="9" />
+        <line x1="9" y1="21" x2="9" y2="9" />
+      </svg>
+    ),
+    title: 'Conference Standings',
+    description:
+      'Complete AFC and NFC standings with win percentage, point differential, and playoff positioning.',
+    badge: 'Updated Weekly',
+    badgeVariant: 'primary' as const,
+  },
+  {
+    href: '/nfl',
+    tab: 'teams',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+    title: 'Team Profiles',
+    description:
+      'Rosters, depth charts, and statistics for all 32 NFL teams across AFC and NFC conferences.',
+    badge: '32 Teams',
+    badgeVariant: 'warning' as const,
+  },
+  {
+    href: '/nfl',
+    tab: 'players',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <line x1="18" y1="20" x2="18" y2="10" />
+        <line x1="12" y1="20" x2="12" y2="4" />
+        <line x1="6" y1="20" x2="6" y2="14" />
+      </svg>
+    ),
+    title: 'Player Stats',
+    description:
+      'Passing, rushing, receiving, and defensive statistics. QB ratings and advanced metrics.',
+    badge: 'Pro-Level',
+    badgeVariant: 'warning' as const,
+  },
+];
+
+// Division data for future use in expanded team profiles
+const _nflDivisions = [
+  { name: 'AFC East', teams: ['Bills', 'Dolphins', 'Patriots', 'Jets'] },
+  { name: 'AFC North', teams: ['Ravens', 'Bengals', 'Browns', 'Steelers'] },
+  { name: 'AFC South', teams: ['Texans', 'Colts', 'Jaguars', 'Titans'] },
+  { name: 'AFC West', teams: ['Chiefs', 'Broncos', 'Raiders', 'Chargers'] },
+  { name: 'NFC East', teams: ['Cowboys', 'Giants', 'Eagles', 'Commanders'] },
+  { name: 'NFC North', teams: ['Bears', 'Lions', 'Packers', 'Vikings'] },
+  { name: 'NFC South', teams: ['Falcons', 'Panthers', 'Saints', 'Buccaneers'] },
+  { name: 'NFC West', teams: ['Cardinals', '49ers', 'Seahawks', 'Rams'] },
 ];
 
 interface StandingsTeam {
@@ -261,23 +341,132 @@ export default function NFLPage() {
 
           <Container center>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">
-                NFL Intelligence
+              <Badge variant="success" className="mb-4">
+                <span className="w-2 h-2 bg-success rounded-full animate-pulse mr-2" />
+                National Football League
               </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display text-gradient-blaze mb-4">
-                NFL Intelligence
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display mb-4">
+                NFL <span className="text-gradient-blaze">Intelligence</span>
               </h1>
             </ScrollReveal>
 
-            <ScrollReveal direction="up" delay={200}>
-              <p className="text-text-secondary text-center max-w-2xl mx-auto">
-                Real-time NFL standings, team statistics, and advanced analytics. Championship
-                intelligence for coaches who decide faster. ALL 272 regular season games.
+            <ScrollReveal direction="up" delay={150}>
+              <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
+                Real-Time Data. Complete Coverage.
               </p>
             </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={200}>
+              <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
+                Live scores, conference standings, and advanced analytics for all 32 NFL teams.
+                Professional-grade football intelligence for all 272 regular season games.
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={250}>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Button variant="primary" size="lg" onClick={() => setActiveTab('schedule')}>
+                  View Live Scores
+                </Button>
+                <Button variant="secondary" size="lg" onClick={() => setActiveTab('standings')}>
+                  Conference Standings
+                </Button>
+              </div>
+            </ScrollReveal>
+
+            {/* Stats Bar */}
+            <ScrollReveal direction="up" delay={300}>
+              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 glass-card rounded-2xl">
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">32</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    NFL Teams
+                  </div>
+                </div>
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">272</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    Games/Season
+                  </div>
+                </div>
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">Live</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    Real-Time Scores
+                  </div>
+                </div>
+                <div className="text-center p-4">
+                  <div className="font-display text-3xl font-bold text-burnt-orange">18</div>
+                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
+                    Week Season
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Features Section */}
+        <Section padding="lg" background="charcoal" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-12">
+                <span className="kicker">Complete NFL Coverage</span>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  Professional Football <span className="text-gradient-blaze">Intelligence</span>
+                </h2>
+                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                  Live scores, standings, team profiles, and player statistics for every NFL game.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {nflFeatures.map((feature, index) => (
+                <ScrollReveal key={feature.title} delay={index * 100}>
+                  <button
+                    onClick={() => setActiveTab(feature.tab as TabType)}
+                    className="block group w-full text-left"
+                  >
+                    <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                        {feature.icon}
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-white mb-3">{feature.title}</h3>
+                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                        {feature.description}
+                      </p>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
+                        {feature.isLive ? (
+                          <LiveBadge />
+                        ) : (
+                          <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
+                        )}
+                        <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                          View
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </span>
+                      </div>
+                    </Card>
+                  </button>
+                </ScrollReveal>
+              ))}
+            </div>
           </Container>
         </Section>
 

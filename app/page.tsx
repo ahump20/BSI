@@ -7,11 +7,13 @@ import { ScrollReveal } from '../components/cinematic/ScrollReveal';
 import { IntelTicker } from '../components/cinematic/IntelTicker';
 import { Navbar } from '../components/layout-ds/Navbar';
 import { Footer } from '../components/layout-ds/Footer';
+import { LiveGamesWidget } from '../components/widgets/LiveGamesWidget';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
+  { label: 'NBA', href: '/nba' },
   { label: 'College Baseball', href: '/college-baseball' },
   { label: 'Pricing', href: '/pricing' },
 ];
@@ -25,6 +27,7 @@ const sportsData: {
 }[] = [
   { name: 'MLB', icon: '⚾', href: '/mlb', desc: 'Live scores, standings & Statcast' },
   { name: 'NFL', icon: '🏈', href: '/nfl', desc: 'Live scores & standings' },
+  { name: 'NBA', icon: '🏀', href: '/nba', desc: 'Live scores & standings' },
   {
     name: 'College Baseball',
     icon: '🎓',
@@ -56,12 +59,12 @@ const features = [
 const tickerItems = [
   { id: '1', content: 'MLB: Live scores and standings streaming now', type: 'live' as const },
   { id: '2', content: 'NFL: 2025 season data fully integrated', type: 'default' as const },
+  { id: '3', content: 'NBA: 2025-26 season standings and scores live', type: 'default' as const },
   {
-    id: '3',
+    id: '4',
     content: 'College Baseball: D1 standings and box scores live',
     type: 'default' as const,
   },
-  { id: '4', content: 'NCAA Football: Conference standings available', type: 'default' as const },
   { id: '5', content: 'Dashboard: Real-time multi-sport command center', type: 'default' as const },
 ];
 
@@ -98,7 +101,8 @@ export default function HomePage() {
 
               <p className="lead max-w-2xl mx-auto mb-10">
                 Professional sports intelligence for fans who care about the game—not the networks.
-                MLB, NFL, College Baseball, NCAA Football. Real analytics, real data, real coverage.
+                MLB, NFL, NBA, College Baseball, NCAA Football. Real analytics, real data, real
+                coverage.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -123,6 +127,18 @@ export default function HomePage() {
         </Container>
       </Section>
 
+      {/* What's Live Now */}
+      <Section padding="md" background="charcoal">
+        <Container>
+          <ScrollReveal direction="up">
+            <h2 className="text-2xl font-display text-white text-center mb-6">
+              WHAT&apos;S LIVE NOW
+            </h2>
+            <LiveGamesWidget />
+          </ScrollReveal>
+        </Container>
+      </Section>
+
       {/* Sports Grid */}
       <Section padding="lg">
         <Container>
@@ -130,7 +146,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-display text-white text-center mb-12">COVERAGE</h2>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {sportsData.map((sport, index) => (
               <ScrollReveal key={sport.name} direction="up" delay={index * 100}>
                 <Link href={sport.href}>

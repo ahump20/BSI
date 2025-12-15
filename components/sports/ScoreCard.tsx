@@ -1,6 +1,6 @@
 'use client';
 
-import { LiveBadge, GameStatusBadge, type GameStatus } from '@/components/ui/Badge';
+import { GameStatusBadge, type GameStatus } from '@/components/ui/Badge';
 
 interface Team {
   name: string;
@@ -10,6 +10,7 @@ interface Team {
 }
 
 interface ScoreCardProps {
+  gameId?: string;
   homeTeam: Team;
   awayTeam: Team;
   status: GameStatus;
@@ -19,9 +20,11 @@ interface ScoreCardProps {
   quarter?: string;
   period?: string;
   broadcast?: string;
+  onClick?: () => void;
 }
 
 export function ScoreCard({
+  gameId,
   homeTeam,
   awayTeam,
   status,
@@ -31,11 +34,37 @@ export function ScoreCard({
   quarter,
   period,
   broadcast,
+  onClick,
 }: ScoreCardProps) {
   const currentPeriod = inning || quarter || period;
+  const isClickable = !!onClick;
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
 
   return (
-    <div className="glass-card p-4 hover:shadow-glow-sm transition-shadow">
+    <div
+      className={`glass-card p-4 hover:shadow-glow-sm transition-shadow ${
+        isClickable ? 'cursor-pointer hover:ring-1 hover:ring-burnt-orange/50' : ''
+      }`}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={
+        isClickable ? `View ${awayTeam.name} vs ${homeTeam.name} game details` : undefined
+      }
+    >
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <GameStatusBadge status={status} />

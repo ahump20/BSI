@@ -456,6 +456,351 @@ export function isHockeyGame(
 // SPORT METADATA
 // ============================================================================
 
+// ============================================================================
+// PLAY-BY-PLAY TYPES
+// ============================================================================
+
+export type PlayFilter = 'all' | 'scoring' | 'key';
+
+export interface NormalizedPlay {
+  playId: string;
+  gameId: string;
+  period: number | string;
+  gameTime: string; // "3:45" or "Top 6th"
+  description: string;
+  team?: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    logo: string;
+  };
+  scoreAfter: { home: number; away: number };
+  isScoring: boolean;
+  isKeyPlay: boolean; // High leverage, turnover, big gain
+  leverageIndex?: number;
+  winProbDelta?: number;
+  videoUrl?: string; // If highlight clip available
+  players: PlayPlayer[];
+  statData?: BaseballPlayData | FootballPlayData | BasketballPlayData;
+}
+
+export interface PlayPlayer {
+  playerId: string;
+  name: string;
+  role: string; // "batter", "pitcher", "passer", "receiver", etc.
+}
+
+export interface BaseballPlayData {
+  pitchType?: string;
+  pitchSpeed?: number;
+  exitVelocity?: number;
+  launchAngle?: number;
+  hitDistance?: number;
+  sprintSpeed?: number;
+  catchProbability?: number;
+}
+
+export interface FootballPlayData {
+  yardsGained?: number;
+  epa?: number; // Expected Points Added
+  isFirstDown?: boolean;
+  isTurnover?: boolean;
+  playType?: 'pass' | 'rush' | 'punt' | 'kickoff' | 'field_goal';
+}
+
+export interface BasketballPlayData {
+  shotType?: string;
+  shotDistance?: number;
+  isFastBreak?: boolean;
+  assistedBy?: string;
+}
+
+export interface PlayByPlaySection {
+  label: string; // "1st Quarter", "Top 5th", etc.
+  period: number | string;
+  plays: NormalizedPlay[];
+  isExpanded: boolean;
+}
+
+// ============================================================================
+// VIDEO HIGHLIGHT TYPES
+// ============================================================================
+
+export type VideoSource = 'ESPN' | 'YOUTUBE' | 'CLOUDFLARE_STREAM' | 'MLB' | 'FALLBACK';
+
+export interface VideoHighlight {
+  id: string;
+  gameId?: string; // Links to specific game
+  title: string;
+  description?: string;
+  duration: number; // Seconds
+  thumbnailUrl: string;
+  videoUrl: string; // Embed URL or stream ID
+  source: VideoSource;
+  sport: UnifiedSportKey;
+  publishedAt: string;
+  playType?:
+    | 'HOME_RUN'
+    | 'TD_PASS'
+    | 'TD_RUN'
+    | 'STRIKEOUT'
+    | 'CATCH'
+    | 'DUNK'
+    | 'THREE_POINTER'
+    | 'SACK'
+    | 'INTERCEPTION'
+    | 'GENERAL';
+  teams?: {
+    home: { name: string; abbreviation: string };
+    away: { name: string; abbreviation: string };
+  };
+  featured?: boolean;
+}
+
+export interface VideoFetchResult {
+  videos: VideoHighlight[];
+  source: VideoSource;
+  fetchedAt: string;
+  fallbackUsed: boolean;
+}
+
+// ============================================================================
+// HEADLINE TYPES
+// ============================================================================
+
+export type HeadlineSource =
+  | 'ESPN'
+  | 'MLB_COM'
+  | 'BASEBALL_AMERICA'
+  | 'D1BASEBALL'
+  | 'PERFECT_GAME'
+  | 'BLEACHER_REPORT'
+  | 'AP';
+
+export type HeadlineCategory =
+  | 'BREAKING'
+  | 'INJURY'
+  | 'TRADE'
+  | 'SCORE'
+  | 'ANALYSIS'
+  | 'PREVIEW'
+  | 'RECAP'
+  | 'GENERAL';
+
+export interface Headline {
+  id: string;
+  title: string;
+  description?: string;
+  source: HeadlineSource;
+  sourceUrl: string;
+  imageUrl?: string;
+  publishedAt: string;
+  sport: UnifiedSportKey | 'ALL';
+  category: HeadlineCategory;
+  breaking?: boolean;
+  teams?: string[]; // Team abbreviations mentioned
+}
+
+export interface HeadlinesFeedResult {
+  headlines: Headline[];
+  fetchedAt: string;
+  sources: HeadlineSource[];
+  nextRefresh: string; // ISO timestamp
+}
+
+// ============================================================================
+// SPORT-SPECIFIC PLAYER BOX STATS
+// ============================================================================
+
+export interface BaseballBattingStats {
+  ab: number;
+  r: number;
+  h: number;
+  rbi: number;
+  bb: number;
+  so: number;
+  avg: string;
+  doubles?: number;
+  triples?: number;
+  hr?: number;
+  sb?: number;
+  cs?: number;
+  hbp?: number;
+  sac?: number;
+  lob?: number;
+}
+
+export interface BaseballPitchingStats {
+  ip: string;
+  h: number;
+  r: number;
+  er: number;
+  bb: number;
+  so: number;
+  era: string;
+  pitches?: number;
+  strikes?: number;
+  decision?: 'W' | 'L' | 'S' | 'H' | 'BS';
+  hr?: number;
+  hbp?: number;
+  wp?: number;
+  bk?: number;
+}
+
+export interface FootballPassingStats {
+  comp: number;
+  att: number;
+  yds: number;
+  td: number;
+  int: number;
+  qbr?: number;
+  sacks?: number;
+  sackYards?: number;
+  long?: number;
+}
+
+export interface FootballRushingStats {
+  car: number;
+  yds: number;
+  avg: string;
+  td: number;
+  long: number;
+  fumbles?: number;
+}
+
+export interface FootballReceivingStats {
+  rec: number;
+  yds: number;
+  avg: string;
+  td: number;
+  long: number;
+  targets?: number;
+}
+
+export interface FootballDefenseStats {
+  tackles: number;
+  soloTackles?: number;
+  sacks: number;
+  tacklesForLoss?: number;
+  int: number;
+  passDefended?: number;
+  ff: number; // Forced fumbles
+  fr?: number; // Fumble recoveries
+  qbHits?: number;
+}
+
+export interface BasketballPlayerStats {
+  minutes: string;
+  pts: number;
+  reb: number;
+  oreb?: number;
+  dreb?: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  to?: number;
+  fg: string; // "5-10"
+  fgPct?: string;
+  threeP: string; // "2-4"
+  threePct?: string;
+  ft: string; // "3-3"
+  ftPct?: string;
+  plusMinus: number;
+  fouls: number;
+}
+
+export interface DetailedPlayerBoxStats extends PlayerBoxStats {
+  batting?: BaseballBattingStats;
+  pitching?: BaseballPitchingStats;
+  passing?: FootballPassingStats;
+  rushing?: FootballRushingStats;
+  receiving?: FootballReceivingStats;
+  defense?: FootballDefenseStats;
+  basketball?: BasketballPlayerStats;
+  battingOrder?: number;
+  position: string;
+  headshotUrl?: string;
+}
+
+// ============================================================================
+// GAME DETAIL TAB TYPES
+// ============================================================================
+
+export type GameDetailTab =
+  | 'gamecast'
+  | 'recap'
+  | 'boxscore'
+  | 'playbyplay'
+  | 'pitchtracker'
+  | 'teamstats'
+  | 'videos';
+
+export interface GameDetailTabConfig {
+  id: GameDetailTab;
+  label: string;
+  sports: UnifiedSportKey[];
+  requiresStatus?: UnifiedGameStatus[];
+}
+
+export const GAME_DETAIL_TABS: GameDetailTabConfig[] = [
+  { id: 'gamecast', label: 'Gamecast', sports: ['mlb', 'cbb', 'nfl', 'ncaaf', 'nba', 'ncaab'] },
+  {
+    id: 'recap',
+    label: 'Recap',
+    sports: ['mlb', 'cbb', 'nfl', 'ncaaf', 'nba', 'ncaab'],
+    requiresStatus: ['FINAL'],
+  },
+  {
+    id: 'boxscore',
+    label: 'Box Score',
+    sports: ['mlb', 'cbb', 'nfl', 'ncaaf', 'nba', 'ncaab'],
+    requiresStatus: ['LIVE', 'FINAL'],
+  },
+  {
+    id: 'playbyplay',
+    label: 'Play-by-Play',
+    sports: ['mlb', 'cbb', 'nfl', 'ncaaf', 'nba', 'ncaab'],
+    requiresStatus: ['LIVE', 'FINAL'],
+  },
+  {
+    id: 'pitchtracker',
+    label: 'Pitches',
+    sports: ['mlb'],
+    requiresStatus: ['LIVE', 'FINAL'],
+  },
+  { id: 'teamstats', label: 'Team Stats', sports: ['mlb', 'cbb', 'nfl', 'ncaaf', 'nba', 'ncaab'] },
+  {
+    id: 'videos',
+    label: 'Videos',
+    sports: ['mlb', 'nfl', 'nba'],
+    requiresStatus: ['LIVE', 'FINAL'],
+  },
+];
+
+// ============================================================================
+// GAME RECAP TYPE
+// ============================================================================
+
+export interface GameRecap {
+  gameId: string;
+  headline: string;
+  summary: string;
+  keyPlays: NormalizedPlay[];
+  mvp?: {
+    player: string;
+    team: string;
+    statLine: string;
+    headshotUrl?: string;
+  };
+  source: string;
+  sourceUrl?: string;
+  generatedAt: string;
+}
+
+// ============================================================================
+// SPORT METADATA
+// ============================================================================
+
 export const SPORT_METADATA: Record<
   UnifiedSportKey,
   {

@@ -507,3 +507,499 @@ export function usePrevious<T>(value: T): T | undefined {
 
   return ref.current;
 }
+
+// ============================================================================
+// GAME DETAIL HOOKS
+// ============================================================================
+
+import type {
+  UnifiedBoxScore,
+  NormalizedPlay,
+  PlayByPlaySection,
+  PlayFilter,
+  VideoHighlight,
+  VideoFetchResult,
+  Headline,
+  HeadlinesFeedResult,
+  GameDetailTab,
+  GameRecap,
+} from '../types/adapters';
+
+export interface GameDetailState {
+  game: UnifiedGame | null;
+  boxScore: UnifiedBoxScore | null;
+  plays: NormalizedPlay[];
+  playsSections: PlayByPlaySection[];
+  videos: VideoHighlight[];
+  recap: GameRecap | null;
+  activeTab: GameDetailTab;
+  loading: {
+    game: boolean;
+    boxScore: boolean;
+    plays: boolean;
+    videos: boolean;
+    recap: boolean;
+  };
+  error: Error | null;
+}
+
+/**
+ * Master hook for game detail modal
+ * Manages all data for Gamecast, Box Score, Play-by-Play, Videos tabs
+ */
+export function useGameDetail(
+  gameId: string | null,
+  sport: UnifiedSportKey,
+  options: PollingOptions = {}
+): GameDetailState & {
+  setActiveTab: (tab: GameDetailTab) => void;
+  refetch: () => void;
+} {
+  const { interval = 30000, enabled = true } = options;
+
+  const [state, setState] = useState<GameDetailState>({
+    game: null,
+    boxScore: null,
+    plays: [],
+    playsSections: [],
+    videos: [],
+    recap: null,
+    activeTab: 'gamecast',
+    loading: { game: true, boxScore: true, plays: true, videos: true, recap: true },
+    error: null,
+  });
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isVisible = useDocumentVisibility();
+
+  const fetchGameDetail = useCallback(async () => {
+    if (!enabled || !gameId) return;
+
+    setState((prev) => ({
+      ...prev,
+      loading: { ...prev.loading, game: true, boxScore: true },
+      error: null,
+    }));
+
+    try {
+      // Fetch game summary (includes basic game info + box score)
+      const summaryRes = await fetch(`/api/game/${gameId}/summary?sport=${sport}`);
+      if (!summaryRes.ok) throw new Error(`HTTP ${summaryRes.status}`);
+
+      const summary = await summaryRes.json();
+
+      setState((prev) => ({
+        ...prev,
+        game: summary.game || null,
+        boxScore: summary.boxScore || null,
+        loading: { ...prev.loading, game: false, boxScore: false },
+      }));
+
+      // Stop polling if game is final
+      if (summary.game?.status === 'FINAL' && intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        loading: { ...prev.loading, game: false, boxScore: false },
+        error: error instanceof Error ? error : new Error('Failed to fetch game'),
+      }));
+    }
+  }, [gameId, sport, enabled]);
+
+  // Fetch plays lazily when tab is selected
+  const fetchPlays = useCallback(async () => {
+    if (!gameId) return;
+
+    setState((prev) => ({ ...prev, loading: { ...prev.loading, plays: true } }));
+
+    try {
+      const res = await fetch(`/api/game/${gameId}/plays?sport=${sport}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      const plays = data.plays || [];
+
+      // Group plays into sections by period
+      const sections = groupPlaysBySections(plays, sport);
+
+      setState((prev) => ({
+        ...prev,
+        plays,
+        playsSections: sections,
+        loading: { ...prev.loading, plays: false },
+      }));
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        loading: { ...prev.loading, plays: false },
+        error: error instanceof Error ? error : new Error('Failed to fetch plays'),
+      }));
+    }
+  }, [gameId, sport]);
+
+  // Fetch videos lazily when tab is selected
+  const fetchVideos = useCallback(async () => {
+    if (!gameId) return;
+
+    setState((prev) => ({ ...prev, loading: { ...prev.loading, videos: true } }));
+
+    try {
+      const res = await fetch(`/api/game/${gameId}/videos?sport=${sport}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = (await res.json()) as VideoFetchResult;
+      setState((prev) => ({
+        ...prev,
+        videos: data.videos || [],
+        loading: { ...prev.loading, videos: false },
+      }));
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        videos: [],
+        loading: { ...prev.loading, videos: false },
+      }));
+    }
+  }, [gameId, sport]);
+
+  // Fetch recap for finished games
+  const fetchRecap = useCallback(async () => {
+    if (!gameId || state.game?.status !== 'FINAL') return;
+
+    setState((prev) => ({ ...prev, loading: { ...prev.loading, recap: true } }));
+
+    try {
+      const res = await fetch(`/api/game/${gameId}/recap?sport=${sport}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      setState((prev) => ({
+        ...prev,
+        recap: data.recap || null,
+        loading: { ...prev.loading, recap: false },
+      }));
+    } catch {
+      setState((prev) => ({
+        ...prev,
+        loading: { ...prev.loading, recap: false },
+      }));
+    }
+  }, [gameId, sport, state.game?.status]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchGameDetail();
+  }, [fetchGameDetail]);
+
+  // Polling for live games
+  useEffect(() => {
+    if (!enabled || !gameId || state.game?.status === 'FINAL') return;
+    if (!isVisible) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      return;
+    }
+
+    intervalRef.current = setInterval(fetchGameDetail, interval);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [fetchGameDetail, interval, enabled, gameId, state.game?.status, isVisible]);
+
+  // Lazy load tab content
+  useEffect(() => {
+    if (state.activeTab === 'playbyplay' && state.plays.length === 0) {
+      fetchPlays();
+    }
+    if (state.activeTab === 'videos' && state.videos.length === 0) {
+      fetchVideos();
+    }
+    if (state.activeTab === 'recap' && !state.recap && state.game?.status === 'FINAL') {
+      fetchRecap();
+    }
+  }, [
+    state.activeTab,
+    state.plays.length,
+    state.videos.length,
+    state.recap,
+    state.game?.status,
+    fetchPlays,
+    fetchVideos,
+    fetchRecap,
+  ]);
+
+  const setActiveTab = useCallback((tab: GameDetailTab) => {
+    setState((prev) => ({ ...prev, activeTab: tab }));
+  }, []);
+
+  return {
+    ...state,
+    setActiveTab,
+    refetch: fetchGameDetail,
+  };
+}
+
+/**
+ * Hook for play-by-play with filtering
+ */
+export function usePlayByPlay(
+  gameId: string | null,
+  sport: UnifiedSportKey,
+  filter: PlayFilter = 'all',
+  options: PollingOptions = {}
+): DataState<NormalizedPlay[]> & {
+  sections: PlayByPlaySection[];
+  refetch: () => void;
+} {
+  const { interval = 30000, enabled = true } = options;
+
+  const [state, setState] = useState<DataState<NormalizedPlay[]>>({
+    data: null,
+    loading: true,
+    error: null,
+    lastUpdated: null,
+    isStale: false,
+  });
+  const [sections, setSections] = useState<PlayByPlaySection[]>([]);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchPlays = useCallback(async () => {
+    if (!enabled || !gameId) return;
+
+    setState((prev) => ({ ...prev, loading: prev.data === null }));
+
+    try {
+      const res = await fetch(`/api/game/${gameId}/plays?sport=${sport}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      let plays: NormalizedPlay[] = data.plays || [];
+
+      // Apply filter
+      if (filter === 'scoring') {
+        plays = plays.filter((p) => p.isScoring);
+      } else if (filter === 'key') {
+        plays = plays.filter((p) => p.isKeyPlay || p.isScoring);
+      }
+
+      // Group into sections
+      const grouped = groupPlaysBySections(plays, sport);
+
+      setState({
+        data: plays,
+        loading: false,
+        error: null,
+        lastUpdated: new Date(),
+        isStale: false,
+      });
+      setSections(grouped);
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error : new Error('Failed to fetch plays'),
+      }));
+    }
+  }, [gameId, sport, filter, enabled]);
+
+  useEffect(() => {
+    fetchPlays();
+  }, [fetchPlays]);
+
+  // Polling
+  useEffect(() => {
+    if (!enabled || !gameId) return;
+
+    intervalRef.current = setInterval(fetchPlays, interval);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [fetchPlays, interval, enabled, gameId]);
+
+  return { ...state, sections, refetch: fetchPlays };
+}
+
+/**
+ * Hook for game video highlights
+ */
+export function useGameMedia(
+  gameId: string | null,
+  sport: UnifiedSportKey,
+  options: FetchOptions = {}
+): DataState<VideoFetchResult> & { refetch: () => void } {
+  const { enabled = true } = options;
+
+  const [state, setState] = useState<DataState<VideoFetchResult>>({
+    data: null,
+    loading: true,
+    error: null,
+    lastUpdated: null,
+    isStale: false,
+  });
+
+  const fetchMedia = useCallback(async () => {
+    if (!enabled || !gameId) return;
+
+    setState((prev) => ({ ...prev, loading: true, error: null }));
+
+    try {
+      const res = await fetch(`/api/game/${gameId}/videos?sport=${sport}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = (await res.json()) as VideoFetchResult;
+      setState({
+        data,
+        loading: false,
+        error: null,
+        lastUpdated: new Date(),
+        isStale: false,
+      });
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error : new Error('Failed to fetch videos'),
+      }));
+    }
+  }, [gameId, sport, enabled]);
+
+  useEffect(() => {
+    fetchMedia();
+  }, [fetchMedia]);
+
+  return { ...state, refetch: fetchMedia };
+}
+
+/**
+ * Hook for headlines/news feed
+ */
+export function useHeadlines(
+  sport: UnifiedSportKey | 'ALL',
+  options: PollingOptions = {}
+): DataState<Headline[]> & { refetch: () => void } {
+  const { interval = 300000, enabled = true } = options; // 5 min default
+
+  const [state, setState] = useState<DataState<Headline[]>>({
+    data: null,
+    loading: true,
+    error: null,
+    lastUpdated: null,
+    isStale: false,
+  });
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchHeadlines = useCallback(async () => {
+    if (!enabled) return;
+
+    setState((prev) => ({ ...prev, loading: prev.data === null }));
+
+    try {
+      const res = await fetch(`/api/headlines?sport=${sport}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = (await res.json()) as HeadlinesFeedResult;
+      setState({
+        data: data.headlines || [],
+        loading: false,
+        error: null,
+        lastUpdated: new Date(),
+        isStale: false,
+      });
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error : new Error('Failed to fetch headlines'),
+      }));
+    }
+  }, [sport, enabled]);
+
+  useEffect(() => {
+    fetchHeadlines();
+  }, [fetchHeadlines]);
+
+  // Polling
+  useEffect(() => {
+    if (!enabled) return;
+
+    intervalRef.current = setInterval(fetchHeadlines, interval);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [fetchHeadlines, interval, enabled]);
+
+  return { ...state, refetch: fetchHeadlines };
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Group plays into sections by period/inning
+ */
+function groupPlaysBySections(
+  plays: NormalizedPlay[],
+  sport: UnifiedSportKey
+): PlayByPlaySection[] {
+  const groups = new Map<string | number, NormalizedPlay[]>();
+
+  for (const play of plays) {
+    const key = play.period;
+    if (!groups.has(key)) {
+      groups.set(key, []);
+    }
+    groups.get(key)!.push(play);
+  }
+
+  const sections: PlayByPlaySection[] = [];
+  const sortedKeys = Array.from(groups.keys()).sort((a, b) => {
+    const numA = typeof a === 'number' ? a : parseInt(String(a), 10) || 0;
+    const numB = typeof b === 'number' ? b : parseInt(String(b), 10) || 0;
+    return numB - numA; // Most recent first
+  });
+
+  for (const key of sortedKeys) {
+    sections.push({
+      label: formatPeriodLabel(key, sport),
+      period: key,
+      plays: groups.get(key) || [],
+      isExpanded: sections.length === 0, // First section expanded by default
+    });
+  }
+
+  return sections;
+}
+
+function formatPeriodLabel(period: string | number, sport: UnifiedSportKey): string {
+  const num = typeof period === 'number' ? period : parseInt(String(period), 10);
+
+  if (sport === 'mlb' || sport === 'cbb') {
+    return `${getOrdinal(num)} Inning`;
+  }
+  if (sport === 'nfl' || sport === 'ncaaf') {
+    return `${getOrdinal(num)} Quarter`;
+  }
+  if (sport === 'nba' || sport === 'ncaab' || sport === 'wcbb' || sport === 'wnba') {
+    if (num <= 4) return `${getOrdinal(num)} Quarter`;
+    return `OT${num - 4}`;
+  }
+  if (sport === 'nhl') {
+    if (num <= 3) return `${getOrdinal(num)} Period`;
+    return `OT${num - 3}`;
+  }
+  return String(period);
+}
+
+function getOrdinal(n: number): string {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}

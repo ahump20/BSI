@@ -1,9 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ScoreCard, ScoreCardSkeleton } from './ScoreCard';
 import { LiveBadge } from '@/components/ui/Badge';
+import { GameDetailModal } from '@/components/game-detail';
 import type { Sport } from './SportTabs';
+import type { UnifiedSportKey } from '@/lib/types/adapters';
 
 const API_BASE = 'https://blazesportsintel.com/api';
 
@@ -112,11 +115,32 @@ function getMockGames(sport: Sport): Game[] {
   return mockGames[sport] || [];
 }
 
+// Map Sport to UnifiedSportKey for the modal
+const SPORT_KEY_MAP: Record<Sport, UnifiedSportKey> = {
+  mlb: 'mlb',
+  nfl: 'nfl',
+  nba: 'nba',
+  ncaa: 'cbb', // Default to college baseball for NCAA
+};
+
 interface LiveScoresPanelProps {
   sport: Sport;
 }
 
 export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleGameClick = (gameId: string) => {
+    setSelectedGameId(gameId);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedGameId(null);
+  };
+
   const {
     data: games,
     isLoading,
@@ -170,6 +194,7 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
           {games.map((game) => (
             <ScoreCard
               key={game.id}
+              gameId={game.id}
               homeTeam={game.homeTeam}
               awayTeam={game.awayTeam}
               status={game.status}
@@ -178,6 +203,7 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
               inning={game.inning}
               quarter={game.quarter}
               period={game.period}
+              onClick={() => handleGameClick(game.id)}
             />
           ))}
         </div>
@@ -187,6 +213,14 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
           <p className="text-white/40 text-sm mt-1">Check back later for upcoming matchups</p>
         </div>
       )}
+
+      {/* Game Detail Modal */}
+      <GameDetailModal
+        gameId={selectedGameId}
+        sport={SPORT_KEY_MAP[sport]}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }

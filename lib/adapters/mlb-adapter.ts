@@ -763,6 +763,262 @@ export function calculateAdvancedPitchingStats(stats: PitchingStats): {
   return { kPer9, bbPer9, kPerBb, hPer9, hrPer9, kPct, bbPct };
 }
 
+// ==========================================================================
+// Live Game Methods
+// ==========================================================================
+
+export interface LiveGameData {
+  gameId: number;
+  gameStatus: string;
+  inning: number;
+  inningHalf: 'top' | 'bottom';
+  outs: number;
+  balls: number;
+  strikes: number;
+  runners: {
+    first: boolean;
+    second: boolean;
+    third: boolean;
+  };
+  homeScore: number;
+  awayScore: number;
+  currentBatter?: {
+    id: number;
+    name: string;
+    avg: string;
+  };
+  currentPitcher?: {
+    id: number;
+    name: string;
+    era: string;
+    pitchCount: number;
+  };
+  lastPlay?: string;
+}
+
+export interface PitchData {
+  pitchNumber: number;
+  type: string;
+  speed: number;
+  spinRate?: number;
+  result: string;
+  zone?: number;
+  coordinates?: {
+    x: number;
+    y: number;
+  };
+  breakAngle?: number;
+  breakLength?: number;
+}
+
+export interface AtBatData {
+  atBatIndex: number;
+  batter: {
+    id: number;
+    name: string;
+  };
+  pitcher: {
+    id: number;
+    name: string;
+  };
+  result: string;
+  description: string;
+  pitches: PitchData[];
+  rbi: number;
+  isScoring: boolean;
+}
+
+export interface ScheduleGame {
+  gamePk: number;
+  gameDate: string;
+  gameTime: string;
+  status: string;
+  detailedState: string;
+  homeTeam: {
+    id: number;
+    name: string;
+    abbreviation: string;
+    score?: number;
+  };
+  awayTeam: {
+    id: number;
+    name: string;
+    abbreviation: string;
+    score?: number;
+  };
+  venue: {
+    id: number;
+    name: string;
+  };
+  seriesDescription?: string;
+  seriesGameNumber?: number;
+}
+
+// Add live game methods to MlbAdapter class
+MlbAdapter.prototype.fetchLiveGameData = async function (
+  gamePk: number
+): Promise<LiveGameData | null> {
+  const url = `${MLB_STATS_API_BASE}.1/game/${gamePk}/feed/live`;
+  const cacheKey = `mlb:live:${gamePk}`;
+
+  try {
+    const response = await this.fetchWithCache<any>(url, cacheKey, 15); // 15 second cache for live data
+
+    const liveData = response.liveData;
+    const gameData = response.gameData;
+
+    if (!liveData || !gameData) return null;
+
+    const linescore = liveData.linescore;
+    const plays = liveData.plays;
+    const currentPlay = plays?.currentPlay;
+
+    return {
+      gameId: gamePk,
+      gameStatus: gameData.status?.detailedState || 'Unknown',
+      inning: linescore?.currentInning || 1,
+      inningHalf: linescore?.isTopInning ? 'top' : 'bottom',
+      outs: linescore?.outs || 0,
+      balls: currentPlay?.count?.balls || 0,
+      strikes: currentPlay?.count?.strikes || 0,
+      runners: {
+        first: !!linescore?.offense?.first,
+        second: !!linescore?.offense?.second,
+        third: !!linescore?.offense?.third,
+      },
+      homeScore: linescore?.teams?.home?.runs || 0,
+      awayScore: linescore?.teams?.away?.runs || 0,
+      currentBatter: currentPlay?.matchup?.batter
+        ? {
+            id: currentPlay.matchup.batter.id,
+            name: currentPlay.matchup.batter.fullName,
+            avg: currentPlay.matchup.batterStats?.avg || '.000',
+          }
+        : undefined,
+      currentPitcher: currentPlay?.matchup?.pitcher
+        ? {
+            id: currentPlay.matchup.pitcher.id,
+            name: currentPlay.matchup.pitcher.fullName,
+            era: currentPlay.matchup.pitcherStats?.era || '0.00',
+            pitchCount: currentPlay.matchup.pitcherStats?.numberOfPitches || 0,
+          }
+        : undefined,
+      lastPlay: plays?.allPlays?.[plays.allPlays.length - 1]?.result?.description,
+    };
+  } catch (error) {
+    console.error(`Error fetching live game data for ${gamePk}:`, error);
+    return null;
+  }
+};
+
+MlbAdapter.prototype.fetchPitchByPitch = async function (gamePk: number): Promise<AtBatData[]> {
+  const url = `${MLB_STATS_API_BASE}.1/game/${gamePk}/feed/live`;
+  const cacheKey = `mlb:pbp:${gamePk}`;
+
+  try {
+    const response = await this.fetchWithCache<any>(url, cacheKey, 30); // 30 second cache
+
+    const allPlays = response.liveData?.plays?.allPlays || [];
+
+    return allPlays.map((play: any, index: number) => ({
+      atBatIndex: index,
+      batter: {
+        id: play.matchup?.batter?.id || 0,
+        name: play.matchup?.batter?.fullName || 'Unknown',
+      },
+      pitcher: {
+        id: play.matchup?.pitcher?.id || 0,
+        name: play.matchup?.pitcher?.fullName || 'Unknown',
+      },
+      result: play.result?.type || '',
+      description: play.result?.description || '',
+      pitches: (play.playEvents || [])
+        .filter((e: any) => e.isPitch)
+        .map((pitch: any, pitchIndex: number) => ({
+          pitchNumber: pitchIndex + 1,
+          type: pitch.details?.type?.description || 'Unknown',
+          speed: pitch.pitchData?.startSpeed || 0,
+          spinRate: pitch.pitchData?.breaks?.spinRate,
+          result: pitch.details?.description || '',
+          zone: pitch.pitchData?.zone,
+          coordinates: pitch.pitchData?.coordinates
+            ? {
+                x: pitch.pitchData.coordinates.pX,
+                y: pitch.pitchData.coordinates.pZ,
+              }
+            : undefined,
+          breakAngle: pitch.pitchData?.breaks?.breakAngle,
+          breakLength: pitch.pitchData?.breaks?.breakLength,
+        })),
+      rbi: play.result?.rbi || 0,
+      isScoring: play.about?.isScoringPlay || false,
+    }));
+  } catch (error) {
+    console.error(`Error fetching pitch-by-pitch for ${gamePk}:`, error);
+    return [];
+  }
+};
+
+MlbAdapter.prototype.fetchSchedule = async function (
+  date: string,
+  teamId?: number
+): Promise<ScheduleGame[]> {
+  let url = `${MLB_STATS_API_BASE}/schedule?sportId=1&date=${date}&hydrate=team,venue`;
+  if (teamId) {
+    url += `&teamId=${teamId}`;
+  }
+  const cacheKey = `mlb:schedule:${date}:${teamId || 'all'}`;
+
+  try {
+    const response = await this.fetchWithCache<any>(url, cacheKey, CACHE_TTLS.schedule);
+
+    const dates = response.dates || [];
+    if (dates.length === 0) return [];
+
+    return dates[0].games.map((game: any) => ({
+      gamePk: game.gamePk,
+      gameDate: game.officialDate,
+      gameTime: game.gameDate,
+      status: game.status?.abstractGameState || 'Unknown',
+      detailedState: game.status?.detailedState || 'Unknown',
+      homeTeam: {
+        id: game.teams?.home?.team?.id,
+        name: game.teams?.home?.team?.name,
+        abbreviation: game.teams?.home?.team?.abbreviation,
+        score: game.teams?.home?.score,
+      },
+      awayTeam: {
+        id: game.teams?.away?.team?.id,
+        name: game.teams?.away?.team?.name,
+        abbreviation: game.teams?.away?.team?.abbreviation,
+        score: game.teams?.away?.score,
+      },
+      venue: {
+        id: game.venue?.id,
+        name: game.venue?.name,
+      },
+      seriesDescription: game.seriesDescription,
+      seriesGameNumber: game.seriesGameNumber,
+    }));
+  } catch (error) {
+    console.error(`Error fetching schedule for ${date}:`, error);
+    return [];
+  }
+};
+
+// Declare additional methods on MlbAdapter
+declare module './mlb-adapter' {
+  interface MlbAdapter {
+    fetchLiveGameData(gamePk: number): Promise<LiveGameData | null>;
+    fetchPitchByPitch(gamePk: number): Promise<AtBatData[]>;
+    fetchSchedule(date: string, teamId?: number): Promise<ScheduleGame[]>;
+  }
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
 /**
  * Format innings pitched for display
  */

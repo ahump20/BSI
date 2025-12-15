@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Container } from '../ui/Container';
-import { Button } from '../ui/Button';
 import { MobileMenu } from './MobileMenu';
 
 export interface NavItem {
