@@ -6,52 +6,50 @@ import { SportTabs, SportTabsCompact, type Sport } from '@/components/sports/Spo
 import { LiveScoresPanel } from '@/components/sports/LiveScoresPanel';
 import { StandingsTable } from '@/components/sports/StandingsTable';
 import { LiveBadge } from '@/components/ui/Badge';
+import { Container } from '@/components/ui/Container';
+import { Section } from '@/components/ui/Section';
+import { Card } from '@/components/ui/Card';
+import { ScrollReveal } from '../../components/cinematic/ScrollReveal';
+import { Navbar } from '../../components/layout-ds/Navbar';
+
+const dashboardNavItems = [
+  { label: 'Home', href: '/' },
+  { label: 'MLB', href: '/sports/mlb' },
+  { label: 'NFL', href: '/sports/nfl' },
+  { label: 'NBA', href: '/sports/nba' },
+  { label: 'Pricing', href: '/pricing' },
+];
 
 export default function DashboardPage() {
   const [activeSport, setActiveSport] = useState<Sport>('nfl');
 
   return (
     <main id="main-content" className="min-h-screen">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-fixed bg-midnight/80 backdrop-blur-glass border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-3">
-              <img
-                src="/images/logo/blaze-logo.png"
-                alt="Blaze Sports Intel"
-                className="h-10 w-auto"
-              />
-              <span className="font-display text-xl text-white tracking-wide hidden sm:inline">
-                BLAZE SPORTS INTEL
-              </span>
-            </Link>
-
-            <div className="flex items-center gap-4">
-              <LiveBadge />
-              <Link href="/pricing" className="btn-primary text-sm">
-                Upgrade
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Navbar */}
+      <Navbar items={dashboardNavItems} />
 
       {/* Dashboard Content */}
-      <div className="pt-20 pb-12 px-4">
-        <div className="max-w-7xl mx-auto">
+      <Section padding="lg" className="pt-24">
+        <Container size="wide">
           {/* Hero Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-display text-white mb-2">COMMAND CENTER</h1>
-            <p className="text-white/60">
-              Real-time scores, standings, and analytics across all leagues
-            </p>
-          </div>
+          <ScrollReveal direction="up">
+            <div className="mb-8 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-display text-white mb-2">COMMAND CENTER</h1>
+                <p className="text-white/60">
+                  Real-time scores, standings, and analytics across all leagues
+                </p>
+              </div>
+              <LiveBadge />
+            </div>
+          </ScrollReveal>
 
           {/* Sport Tabs - Desktop */}
-          <div className="hidden md:block mb-8">
-            <SportTabs defaultSport={activeSport} onSportChange={setActiveSport} />
-          </div>
+          <ScrollReveal direction="up" delay={100}>
+            <div className="hidden md:block mb-8">
+              <SportTabs defaultSport={activeSport} onSportChange={setActiveSport} />
+            </div>
+          </ScrollReveal>
 
           {/* Sport Tabs - Mobile */}
           <div className="md:hidden mb-6">
@@ -61,35 +59,37 @@ export default function DashboardPage() {
           {/* Main Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Scores Section - 2 columns */}
-            <div className="lg:col-span-2">
+            <ScrollReveal direction="left" delay={200} className="lg:col-span-2">
               <LiveScoresPanel sport={activeSport} />
-            </div>
+            </ScrollReveal>
 
             {/* Standings Section - 1 column */}
-            <div>
+            <ScrollReveal direction="right" delay={300}>
               <StandingsTable sport={activeSport} limit={5} />
-            </div>
+            </ScrollReveal>
           </div>
 
           {/* Quick Stats */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="stat-card">
-              <div className="stat-label">Live Games</div>
-              <div className="stat-value text-success">2</div>
+          <ScrollReveal direction="up" delay={400}>
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="p-4">
+                <div className="stat-label">Live Games</div>
+                <div className="stat-value text-success">2</div>
+              </Card>
+              <Card className="p-4">
+                <div className="stat-label">Today&apos;s Games</div>
+                <div className="stat-value">8</div>
+              </Card>
+              <Card className="p-4">
+                <div className="stat-label">Refresh Rate</div>
+                <div className="stat-value text-burnt-orange">30s</div>
+              </Card>
+              <Card className="p-4">
+                <div className="stat-label">Data Source</div>
+                <div className="stat-value text-info text-base">Official</div>
+              </Card>
             </div>
-            <div className="stat-card">
-              <div className="stat-label">Today&apos;s Games</div>
-              <div className="stat-value">8</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Refresh Rate</div>
-              <div className="stat-value text-burnt-orange">30s</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Data Source</div>
-              <div className="stat-value text-info text-base">Official</div>
-            </div>
-          </div>
+          </ScrollReveal>
 
           {/* Data Attribution */}
           <div className="mt-8 text-center text-xs text-white/40">
@@ -100,8 +100,8 @@ export default function DashboardPage() {
               MLB via statsapi.mlb.com | NFL via ESPN | NBA via NBA.com | NCAA via NCAA.org
             </p>
           </div>
-        </div>
-      </div>
+        </Container>
+      </Section>
     </main>
   );
 }
