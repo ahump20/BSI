@@ -1,0 +1,23 @@
+# Cache headers for Cloudflare Pages
+# HTML pages - revalidate frequently
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/college-baseball/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/dashboards/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Static assets - cache longer
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable

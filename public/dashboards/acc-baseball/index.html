@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACC Baseball | Conference Dashboard | Blaze Sports Intel</title>
+    <meta name="description" content="Complete ACC baseball coverage: team dashboards, rankings, schedules, and analytics for all 17 baseball programs.">
+    <link rel="canonical" href="https://blazesportsintel.com/dashboards/acc-baseball/">
+
+    <style>
+        :root { --conf-primary: #013A81; --conf-secondary: #A5ACAF; --bsi-charcoal: #1A1A1A; --bsi-midnight: #0D0D0D; --bsi-cream: #FAF8F5; --bsi-ember: #FF6B35; --bsi-gold: #C9A227; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; }
+        .page-header { background: linear-gradient(135deg, var(--conf-primary) 0%, #001A4D 100%); padding: 3rem 2rem; text-align: center; }
+        .page-header h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .page-header p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+        .nav-breadcrumb { background: var(--bsi-charcoal); padding: 1rem 2rem; }
+        .nav-breadcrumb a { color: var(--bsi-ember); text-decoration: none; }
+        .nav-breadcrumb span { color: rgba(255,255,255,0.5); margin: 0 0.5rem; }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--conf-primary); }
+        .teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .team-card { background: var(--bsi-charcoal); border-radius: 12px; overflow: hidden; transition: transform 0.2s; text-decoration: none; color: inherit; }
+        .team-card:hover { transform: translateY(-4px); }
+        .team-card-header { padding: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+        .team-logo { width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .team-logo img { width: 80%; height: 80%; object-fit: contain; }
+        .team-info h3 { font-size: 1.1rem; font-weight: 700; }
+        .team-info p { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+        .team-card-stats { padding: 1rem 1.5rem; background: var(--bsi-midnight); display: flex; justify-content: space-between; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 1.25rem; font-weight: 800; color: var(--conf-primary); }
+        .stat-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+        .other-conferences { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+        .conf-link { padding: 0.5rem 1rem; background: var(--bsi-midnight); border-radius: 6px; color: var(--bsi-cream); text-decoration: none; font-size: 0.9rem; }
+        .conf-link:hover { background: var(--bsi-ember); }
+        .footer { background: var(--bsi-charcoal); padding: 2rem; text-align: center; margin-top: 2rem; }
+        .footer-logo { font-size: 1.5rem; font-weight: 800; color: var(--bsi-ember); }
+        .footer-tagline { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+        .footer-timestamp { margin-top: 1rem; font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+    </style>
+</head>
+<body>
+    <nav class="nav-breadcrumb">
+        <a href="/">Blaze Sports Intel</a><span>›</span>
+        <a href="/college-baseball/">College Baseball</a><span>›</span>ACC
+    </nav>
+
+    <header class="page-header">
+        <h1>ACC Baseball</h1>
+        <p>Complete coverage of all 17 ACC baseball programs.</p>
+    </header>
+
+    <main class="main-content">
+        <h2 class="section-title">Team Dashboards</h2>
+        <div class="teams-grid">
+            <a href="clemson.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #F56600, #522D80);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/228.png" alt="Clemson"></div><div class="team-info"><h3>Clemson Tigers</h3><p>Clemson, SC</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#6</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="wake-forest.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #9E7E38, #000000);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/154.png" alt="Wake Forest"></div><div class="team-info"><h3>Wake Forest Demon Deacons</h3><p>Winston-Salem, NC</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#11</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="virginia.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #232D4B, #F84C1E);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/258.png" alt="Virginia"></div><div class="team-info"><h3>Virginia Cavaliers</h3><p>Charlottesville, VA</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#13</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="north-carolina.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #7BAFD4, #13294B);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/153.png" alt="North Carolina"></div><div class="team-info"><h3>North Carolina Tar Heels</h3><p>Chapel Hill, NC</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#23</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="nc-state.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #CC0000, #000000);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/152.png" alt="NC State"></div><div class="team-info"><h3>NC State Wolfpack</h3><p>Raleigh, NC</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#25</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="florida-state.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #782F40, #CEB888);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/52.png" alt="Florida State"></div><div class="team-info"><h3>Florida State Seminoles</h3><p>Tallahassee, FL</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#27</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="miami.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #F47321, #005030);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png" alt="Miami"></div><div class="team-info"><h3>Miami Hurricanes</h3><p>Coral Gables, FL</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#31</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="louisville.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #AD0000, #000000);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/97.png" alt="Louisville"></div><div class="team-info"><h3>Louisville Cardinals</h3><p>Louisville, KY</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">#34</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="duke.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #003087, #FFFFFF);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/150.png" alt="Duke"></div><div class="team-info"><h3>Duke Blue Devils</h3><p>Durham, NC</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">NR</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="notre-dame.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #0C2340, #C99700);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/87.png" alt="Notre Dame"></div><div class="team-info"><h3>Notre Dame Fighting Irish</h3><p>Notre Dame, IN</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">NR</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="georgia-tech.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #B3A369, #003057);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/59.png" alt="Georgia Tech"></div><div class="team-info"><h3>Georgia Tech Yellow Jackets</h3><p>Atlanta, GA</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">NR</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="virginia-tech.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #630031, #CF4420);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/259.png" alt="Virginia Tech"></div><div class="team-info"><h3>Virginia Tech Hokies</h3><p>Blacksburg, VA</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">NR</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="pittsburgh.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #003594, #FFB81C);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/221.png" alt="Pittsburgh"></div><div class="team-info"><h3>Pittsburgh Panthers</h3><p>Pittsburgh, PA</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">NR</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="boston-college.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #98002E, #BC9B6A);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/103.png" alt="Boston College"></div><div class="team-info"><h3>Boston College Eagles</h3><p>Chestnut Hill, MA</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">NR</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+            <a href="syracuse.html" class="team-card">
+                <div class="team-card-header" style="background: linear-gradient(135deg, #F76900, #000E54);"><div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/183.png" alt="Syracuse"></div><div class="team-info"><h3>Syracuse Orange</h3><p>Syracuse, NY</p></div></div>
+                <div class="team-card-stats"><div class="stat"><div class="stat-value">NR</div><div class="stat-label">Preseason</div></div></div>
+            </a>
+        </div>
+
+        <h2 class="section-title">Other Conferences</h2>
+        <div class="other-conferences">
+            <a href="../sec-baseball/" class="conf-link">SEC</a>
+            <a href="../pac-12-baseball/" class="conf-link">Pac-12</a>
+            <a href="../big-ten-baseball/" class="conf-link">Big Ten</a>
+            <a href="../big-12-baseball/" class="conf-link">Big 12</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-logo">BLAZE SPORTS INTEL</div>
+        <div class="footer-tagline">The coverage these athletes deserve.</div>
+        <p class="footer-timestamp">Data sources: D1Baseball, Baseball America, NCAA | Updated: <span id="timestamp"></span></p>
+    </footer>
+    <script>document.getElementById('timestamp').textContent = new Date().toLocaleDateString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' CT';</script>
+</body>
+</html>
