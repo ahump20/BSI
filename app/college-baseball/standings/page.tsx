@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -18,31 +18,61 @@ const navItems = [
 ];
 
 const conferences = [
-  { id: 'sec', name: 'SEC', fullName: 'Southeastern Conference' },
-  { id: 'acc', name: 'ACC', fullName: 'Atlantic Coast Conference' },
-  { id: 'big12', name: 'Big 12', fullName: 'Big 12 Conference' },
-  { id: 'bigten', name: 'Big Ten', fullName: 'Big Ten Conference' },
-  { id: 'pac12', name: 'Pac-12', fullName: 'Pacific-12 Conference' },
-  { id: 'sunbelt', name: 'Sun Belt', fullName: 'Sun Belt Conference' },
-  { id: 'aac', name: 'AAC', fullName: 'American Athletic Conference' },
+  { id: 'SEC', name: 'SEC', fullName: 'Southeastern Conference' },
+  { id: 'ACC', name: 'ACC', fullName: 'Atlantic Coast Conference' },
+  { id: 'Big 12', name: 'Big 12', fullName: 'Big 12 Conference' },
+  { id: 'Big Ten', name: 'Big Ten', fullName: 'Big Ten Conference' },
+  { id: 'Pac-12', name: 'Pac-12', fullName: 'Pacific-12 Conference' },
+  { id: 'Sun Belt', name: 'Sun Belt', fullName: 'Sun Belt Conference' },
+  { id: 'AAC', name: 'AAC', fullName: 'American Athletic Conference' },
 ];
 
-// Sample standings data - will be replaced with live API
-const secStandings = [
-  { rank: 1, team: 'Texas A&M', confW: 18, confL: 6, overallW: 45, overallL: 12, rpi: 1 },
-  { rank: 2, team: 'Florida', confW: 17, confL: 7, overallW: 43, overallL: 14, rpi: 3 },
-  { rank: 3, team: 'LSU', confW: 16, confL: 8, overallW: 42, overallL: 15, rpi: 2 },
-  { rank: 4, team: 'Texas', confW: 15, confL: 9, overallW: 40, overallL: 17, rpi: 5 },
-  { rank: 5, team: 'Tennessee', confW: 15, confL: 9, overallW: 39, overallL: 18, rpi: 4 },
-  { rank: 6, team: 'Arkansas', confW: 14, confL: 10, overallW: 38, overallL: 19, rpi: 8 },
-  { rank: 7, team: 'Vanderbilt', confW: 13, confL: 11, overallW: 36, overallL: 21, rpi: 12 },
-  { rank: 8, team: 'Georgia', confW: 12, confL: 12, overallW: 34, overallL: 23, rpi: 15 },
-  { rank: 9, team: 'Ole Miss', confW: 11, confL: 13, overallW: 32, overallL: 25, rpi: 18 },
-  { rank: 10, team: 'Auburn', confW: 10, confL: 14, overallW: 30, overallL: 27, rpi: 22 },
-];
+interface TeamStanding {
+  rank: number;
+  team: {
+    id: string;
+    name: string;
+    shortName: string;
+    logo?: string;
+  };
+  conferenceRecord: { wins: number; losses: number };
+  overallRecord: { wins: number; losses: number };
+  winPct: number;
+  rpi?: number;
+  sos?: number;
+  streak?: string;
+}
 
 export default function CollegeBaseballStandingsPage() {
-  const [selectedConference, setSelectedConference] = useState('sec');
+  const [selectedConference, setSelectedConference] = useState('SEC');
+  const [standings, setStandings] = useState<TeamStanding[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchStandings() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/college-baseball/standings?conference=' + encodeURIComponent(selectedConference));
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          setStandings(result.data);
+          setLastUpdated(result.timestamp || result.cacheTime || new Date().toISOString());
+          setError(null);
+        } else {
+          setError(result.message || 'Failed to fetch standings');
+        }
+      } catch (err) {
+        setError('Failed to load standings. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStandings();
+  }, [selectedConference]);
 
   const currentConf = conferences.find((c) => c.id === selectedConference);
 
@@ -111,85 +141,131 @@ export default function CollegeBaseballStandingsPage() {
               </Card>
             </ScrollReveal>
 
-            {/* Standings Table */}
-            <ScrollReveal direction="up" delay={200}>
-              <Card padding="none" className="overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-charcoal border-b border-border-subtle">
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                          Rank
-                        </th>
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                          Team
-                        </th>
-                        <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                          Conf
-                        </th>
-                        <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                          Overall
-                        </th>
-                        <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                          RPI
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {secStandings.map((team, index) => (
-                        <tr
-                          key={team.team}
-                          className={`border-b border-border-subtle hover:bg-charcoal/50 transition-colors ${
-                            index < 4 ? 'bg-success/5' : ''
-                          }`}
-                        >
-                          <td className="py-4 px-4">
-                            <span className="font-display text-lg font-bold text-burnt-orange">
-                              {team.rank}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4">
-                            <span className="font-semibold text-white">{team.team}</span>
-                          </td>
-                          <td className="py-4 px-4 text-center">
-                            <span className="text-white">
-                              {team.confW}-{team.confL}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4 text-center">
-                            <span className="text-text-secondary">
-                              {team.overallW}-{team.overallL}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4 text-center">
-                            <span className="text-burnt-orange font-semibold">#{team.rpi}</span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+            {/* Loading State */}
+            {loading && standings.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
+                <p className="text-text-secondary">Loading standings...</p>
+              </div>
+            )}
 
-                {/* Legend */}
-                <div className="px-4 py-3 bg-charcoal border-t border-border-subtle">
-                  <div className="flex items-center gap-4 text-xs text-text-tertiary">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-success/20 rounded" />
-                      <span>NCAA Tournament Projection</span>
+            {/* Error State */}
+            {error && (
+              <Card padding="lg" className="text-center">
+                <p className="text-warning mb-4">{error}</p>
+                <p className="text-text-tertiary text-sm">
+                  College baseball season runs February through June. Standings will be available during the season.
+                </p>
+              </Card>
+            )}
+
+            {/* Empty State */}
+            {!loading && !error && standings.length === 0 && (
+              <Card padding="lg" className="text-center">
+                <p className="text-text-secondary mb-2">No standings data available for {currentConf?.name}.</p>
+                <p className="text-text-tertiary text-sm">
+                  College baseball season runs February through June. Check back during the season.
+                </p>
+              </Card>
+            )}
+
+            {/* Standings Table */}
+            {standings.length > 0 && (
+              <ScrollReveal direction="up" delay={200}>
+                <Card padding="none" className="overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-charcoal border-b border-border-subtle">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                            Rank
+                          </th>
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                            Team
+                          </th>
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                            Conf
+                          </th>
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                            Overall
+                          </th>
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                            Win%
+                          </th>
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                            RPI
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {standings.map((standing, index) => (
+                          <tr
+                            key={standing.team?.id || index}
+                            className={`border-b border-border-subtle hover:bg-charcoal/50 transition-colors ${
+                              index < 4 ? 'bg-success/5' : ''
+                            }`}
+                          >
+                            <td className="py-4 px-4">
+                              <span className="font-display text-lg font-bold text-burnt-orange">
+                                {standing.rank || index + 1}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4">
+                              <span className="font-semibold text-white">
+                                {standing.team?.name || standing.team?.shortName || 'Unknown'}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-center">
+                              <span className="text-white">
+                                {standing.conferenceRecord?.wins ?? 0}-{standing.conferenceRecord?.losses ?? 0}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-center">
+                              <span className="text-text-secondary">
+                                {standing.overallRecord?.wins ?? 0}-{standing.overallRecord?.losses ?? 0}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-center hidden md:table-cell">
+                              <span className="text-text-secondary">
+                                {standing.winPct ? (standing.winPct * 100).toFixed(1) + '%' : '—'}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-center">
+                              {standing.rpi ? (
+                                <span className="text-burnt-orange font-semibold">#{standing.rpi}</span>
+                              ) : (
+                                <span className="text-text-tertiary">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Legend */}
+                  <div className="px-4 py-3 bg-charcoal border-t border-border-subtle">
+                    <div className="flex items-center gap-4 text-xs text-text-tertiary">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-success/20 rounded" />
+                        <span>NCAA Tournament Projection</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            </ScrollReveal>
+                </Card>
+              </ScrollReveal>
+            )}
 
             {/* Data Attribution */}
             <div className="mt-8 text-center text-xs text-text-tertiary">
               <p>
-                RPI rankings from NCAA. Conference standings updated daily during season.
+                Data sourced from ESPN College Baseball API. RPI rankings from NCAA.
               </p>
-              <p className="mt-1">
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
-              </p>
+              {lastUpdated && (
+                <p className="mt-1">
+                  Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                </p>
+              )}
             </div>
           </Container>
         </Section>

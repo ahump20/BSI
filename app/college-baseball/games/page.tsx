@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -17,67 +17,74 @@ const navItems = [
   { label: 'Standings', href: '/college-baseball/standings' },
 ];
 
-// Sample games data - will be replaced with live API
-const todaysGames = [
-  {
-    id: '1',
-    away: { name: 'Texas', rank: 4, score: 5 },
-    home: { name: 'Oklahoma', score: 3 },
-    status: 'Final',
-    inning: 'F',
-    conference: 'SEC',
-  },
-  {
-    id: '2',
-    away: { name: 'LSU', rank: 3, score: 2 },
-    home: { name: 'Alabama', score: 2 },
-    status: 'Live',
-    inning: 'T7',
-    conference: 'SEC',
-  },
-  {
-    id: '3',
-    away: { name: 'Florida', rank: 2, score: 0 },
-    home: { name: 'Georgia', score: 0 },
-    status: 'Scheduled',
-    time: '7:00 PM CT',
-    conference: 'SEC',
-  },
-  {
-    id: '4',
-    away: { name: 'Texas A&M', rank: 1, score: 8 },
-    home: { name: 'Arkansas', rank: 8, score: 4 },
-    status: 'Final',
-    inning: 'F',
-    conference: 'SEC',
-  },
-  {
-    id: '5',
-    away: { name: 'Wake Forest', rank: 12 },
-    home: { name: 'NC State' },
-    status: 'Scheduled',
-    time: '6:00 PM CT',
-    conference: 'ACC',
-  },
-  {
-    id: '6',
-    away: { name: 'TCU', rank: 15 },
-    home: { name: 'Texas Tech', rank: 18 },
-    status: 'Scheduled',
-    time: '7:30 PM CT',
-    conference: 'Big 12',
-  },
-];
+interface Game {
+  id: string;
+  date: string;
+  time: string;
+  status: 'scheduled' | 'live' | 'final' | 'postponed' | 'canceled';
+  inning?: number;
+  homeTeam: {
+    id: string;
+    name: string;
+    shortName: string;
+    conference: string;
+    score: number | null;
+    record: { wins: number; losses: number };
+    logo?: string;
+  };
+  awayTeam: {
+    id: string;
+    name: string;
+    shortName: string;
+    conference: string;
+    score: number | null;
+    record: { wins: number; losses: number };
+    logo?: string;
+  };
+  venue: string;
+  tv?: string;
+  situation?: string;
+}
 
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
 
 export default function CollegeBaseballGamesPage() {
   const [selectedConference, setSelectedConference] = useState('All');
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-  const filteredGames =
-    selectedConference === 'All'
-      ? todaysGames
-      : todaysGames.filter((g) => g.conference === selectedConference);
+  useEffect(() => {
+    async function fetchGames() {
+      try {
+        setLoading(true);
+        const confParam = selectedConference !== 'All' ? '&conference=' + selectedConference : '';
+        const response = await fetch('/api/college-baseball/schedule?' + confParam);
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          setGames(result.data);
+          setLastUpdated(result.timestamp || new Date().toISOString());
+          setError(null);
+        } else {
+          setError(result.message || 'Failed to fetch games');
+        }
+      } catch (err) {
+        setError('Failed to load games. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchGames();
+
+    // Refresh every 30 seconds for live games
+    const interval = setInterval(fetchGames, 30000);
+    return () => clearInterval(interval);
+  }, [selectedConference]);
+
+  const filteredGames = games;
 
   return (
     <>
@@ -130,94 +137,146 @@ export default function CollegeBaseballGamesPage() {
               </div>
             </ScrollReveal>
 
+            {/* Loading State */}
+            {loading && games.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
+                <p className="text-text-secondary">Loading games...</p>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <Card padding="lg" className="text-center">
+                <p className="text-warning mb-4">{error}</p>
+                <p className="text-text-tertiary text-sm">
+                  College baseball season runs February through June. Check back during the season for live games.
+                </p>
+              </Card>
+            )}
+
+            {/* No Games State */}
+            {!loading && !error && games.length === 0 && (
+              <Card padding="lg" className="text-center">
+                <p className="text-text-secondary mb-2">No games scheduled for today.</p>
+                <p className="text-text-tertiary text-sm">
+                  College baseball season runs February through June. Check back during the season for live games.
+                </p>
+              </Card>
+            )}
+
             {/* Games Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredGames.map((game, index) => (
-                <ScrollReveal key={game.id} direction="up" delay={index * 50}>
-                  <Card variant="hover" padding="md" className="h-full">
-                    {/* Status Badge */}
-                    <div className="flex items-center justify-between mb-4">
-                      <Badge variant="default">{game.conference}</Badge>
-                      {game.status === 'Live' ? (
-                        <LiveBadge />
-                      ) : game.status === 'Final' ? (
-                        <Badge variant="default">Final</Badge>
-                      ) : (
-                        <Badge variant="primary">{game.time}</Badge>
+            {games.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredGames.map((game, index) => (
+                  <ScrollReveal key={game.id} direction="up" delay={Math.min(index * 50, 300)}>
+                    <Card variant="hover" padding="md" className="h-full">
+                      {/* Status Badge */}
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge variant="default">{game.homeTeam.conference || game.awayTeam.conference}</Badge>
+                        {game.status === 'live' ? (
+                          <LiveBadge />
+                        ) : game.status === 'final' ? (
+                          <Badge variant="default">Final</Badge>
+                        ) : game.status === 'postponed' ? (
+                          <Badge variant="warning">Postponed</Badge>
+                        ) : (
+                          <Badge variant="primary">{game.time}</Badge>
+                        )}
+                      </div>
+
+                      {/* Teams */}
+                      <div className="space-y-3">
+                        {/* Away Team */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-white">{game.awayTeam.name}</span>
+                            {game.awayTeam.record && (
+                              <span className="text-xs text-text-tertiary">
+                                ({game.awayTeam.record.wins}-{game.awayTeam.record.losses})
+                              </span>
+                            )}
+                          </div>
+                          {game.awayTeam.score !== null && (
+                            <span
+                              className={`font-display text-xl font-bold ${
+                                game.status === 'final' &&
+                                game.awayTeam.score > (game.homeTeam.score ?? 0)
+                                  ? 'text-success'
+                                  : 'text-white'
+                              }`}
+                            >
+                              {game.awayTeam.score}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Home Team */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-white">{game.homeTeam.name}</span>
+                            {game.homeTeam.record && (
+                              <span className="text-xs text-text-tertiary">
+                                ({game.homeTeam.record.wins}-{game.homeTeam.record.losses})
+                              </span>
+                            )}
+                          </div>
+                          {game.homeTeam.score !== null && (
+                            <span
+                              className={`font-display text-xl font-bold ${
+                                game.status === 'final' &&
+                                game.homeTeam.score > (game.awayTeam.score ?? 0)
+                                  ? 'text-success'
+                                  : 'text-white'
+                              }`}
+                            >
+                              {game.homeTeam.score}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Venue */}
+                      {game.venue && game.venue !== 'TBD' && (
+                        <div className="mt-4 pt-4 border-t border-border-subtle">
+                          <span className="text-xs text-text-tertiary">{game.venue}</span>
+                        </div>
                       )}
-                    </div>
 
-                    {/* Teams */}
-                    <div className="space-y-3">
-                      {/* Away Team */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {game.away.rank && (
-                            <span className="text-xs text-burnt-orange font-semibold">
-                              #{game.away.rank}
-                            </span>
-                          )}
-                          <span className="font-semibold text-white">{game.away.name}</span>
-                        </div>
-                        {game.away.score !== undefined && (
-                          <span
-                            className={`font-display text-xl font-bold ${
-                              game.status === 'Final' &&
-                              game.away.score > (game.home.score ?? 0)
-                                ? 'text-success'
-                                : 'text-white'
-                            }`}
-                          >
-                            {game.away.score}
+                      {/* Inning indicator for live games */}
+                      {game.status === 'live' && game.inning && (
+                        <div className="mt-2">
+                          <span className="text-sm text-burnt-orange font-semibold">
+                            Inning {game.inning}
                           </span>
-                        )}
-                      </div>
-
-                      {/* Home Team */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {game.home.rank && (
-                            <span className="text-xs text-burnt-orange font-semibold">
-                              #{game.home.rank}
-                            </span>
+                          {game.situation && (
+                            <span className="text-sm text-text-tertiary ml-2">{game.situation}</span>
                           )}
-                          <span className="font-semibold text-white">{game.home.name}</span>
                         </div>
-                        {game.home.score !== undefined && (
-                          <span
-                            className={`font-display text-xl font-bold ${
-                              game.status === 'Final' &&
-                              game.home.score > (game.away.score ?? 0)
-                                ? 'text-success'
-                                : 'text-white'
-                            }`}
-                          >
-                            {game.home.score}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                      )}
 
-                    {/* Inning indicator for live games */}
-                    {game.status === 'Live' && (
-                      <div className="mt-4 pt-4 border-t border-border-subtle">
-                        <span className="text-sm text-text-tertiary">
-                          {game.inning?.startsWith('T') ? 'Top' : 'Bot'}{' '}
-                          {game.inning?.replace(/[TB]/, '')}
-                        </span>
-                      </div>
-                    )}
-                  </Card>
-                </ScrollReveal>
-              ))}
-            </div>
+                      {/* TV Info */}
+                      {game.tv && (
+                        <div className="mt-2">
+                          <Badge variant="default" className="text-xs">{game.tv}</Badge>
+                        </div>
+                      )}
+                    </Card>
+                  </ScrollReveal>
+                ))}
+              </div>
+            )}
 
             {/* Data Attribution */}
             <div className="mt-12 text-center text-xs text-text-tertiary">
               <p>
-                Data sourced from official NCAA statistics. Updated in real-time during live games.
+                Data sourced from ESPN College Baseball API. Updated every 30 seconds during live games.
               </p>
-              <p className="mt-1">Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT</p>
+              {lastUpdated && (
+                <p className="mt-1">
+                  Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                </p>
+              )}
             </div>
           </Container>
         </Section>
