@@ -1265,7 +1265,7 @@
                         }} onClick={() => toggleCard('system-status')}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                                 <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
-                                    <i className="fas fa-server" style={{ color: '#06b6d4', marginRight: '8px' }}></i>
+                                    <i className="fas fa-server" style={{ color: '#BF5700', marginRight: '8px' }}></i>
                                     System Status
                                 </h3>
                                 <span style={{
