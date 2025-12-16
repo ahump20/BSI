@@ -188,9 +188,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
       return (
         <Card variant="default" padding="lg">
           <div className="text-center py-8">
-            <p className="text-text-secondary">Roster data not available</p>
+            <p className="text-text-secondary">Roster data loading or not yet available.</p>
             <p className="text-text-tertiary text-sm mt-2">
-              Roster will be available when the 2025 season begins
+              The 40-man roster will populate once spring training rosters are finalized. Check back when the boys report to camp.
             </p>
           </div>
         </Card>
@@ -397,10 +397,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <line x1="8" y1="2" x2="8" y2="6" />
           <line x1="3" y1="10" x2="21" y2="10" />
         </svg>
-        <p className="text-text-secondary">Team schedule available when 2025 season begins</p>
+        <p className="text-text-secondary">Schedule drops when Opening Day gets closer.</p>
+        <p className="text-text-tertiary text-sm mt-2 mb-4">
+          MLB releases the full slate in late January. We'll have it the minute it's official.
+        </p>
         <Link
           href="/mlb/scores"
-          className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
         >
           View Today&apos;s Games
           <svg
@@ -425,7 +428,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-text-tertiary">
-            Team batting statistics coming soon
+            Team batting stats populate once the season starts. No spring training fluff—only regular season numbers.
           </div>
         </CardContent>
       </Card>
@@ -435,7 +438,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-text-tertiary">
-            Team pitching statistics coming soon
+            Rotation and bullpen stats show up when games count. Check back after Opening Day.
           </div>
         </CardContent>
       </Card>

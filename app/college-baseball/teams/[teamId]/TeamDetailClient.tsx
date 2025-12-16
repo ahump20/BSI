@@ -401,7 +401,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         )}
                       </div>
                     ) : (
-                      <p className="text-text-tertiary">Statistics not available</p>
+                      <p className="text-text-tertiary">Season stats populate once conference play starts. Check back when the schedule heats up.</p>
                     )}
                   </Card>
                 </ScrollReveal>
@@ -493,8 +493,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       </table>
                     </div>
                   ) : (
-                    <div className="p-8 text-center text-text-tertiary">
-                      Roster information not available
+                    <div className="p-8 text-center">
+                      <p className="text-text-secondary">Roster data loading or not yet available.</p>
+                      <p className="text-text-tertiary text-sm mt-2">
+                        College rosters finalize after fall ball. We'll have every name, number, and position once the program posts it.
+                      </p>
                     </div>
                   )}
                 </Card>
@@ -550,8 +553,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       ))}
                     </div>
                   ) : (
-                    <div className="p-8 text-center text-text-tertiary">
-                      Schedule information not available
+                    <div className="p-8 text-center">
+                      <p className="text-text-secondary">Schedule not yet released.</p>
+                      <p className="text-text-tertiary text-sm mt-2">
+                        Most programs drop their full schedule in late fall. We'll have every game the minute it's official—conference and non-con alike.
+                      </p>
                     </div>
                   )}
                 </Card>
