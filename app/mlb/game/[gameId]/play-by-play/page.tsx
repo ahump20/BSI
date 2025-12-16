@@ -15,13 +15,9 @@ export default function PlayByPlayPage() {
   const [filter, setFilter] = useState<'all' | 'scoring'>('all');
   const [expandedInnings, setExpandedInnings] = useState<Set<string>>(new Set(['1']));
 
-  if (loading || error || !game) {
-    return null; // Layout handles loading/error states
-  }
+  const plays = game?.plays || [];
 
-  const plays = game.plays || [];
-
-  // Filter plays
+  // Filter plays - must be before early return
   const filteredPlays = useMemo(() => {
     if (filter === 'scoring') {
       return plays.filter((p) => p.isScoring);
@@ -29,7 +25,7 @@ export default function PlayByPlayPage() {
     return plays;
   }, [plays, filter]);
 
-  // Group plays by inning
+  // Group plays by inning - must be before early return
   const playsByInning = useMemo(() => {
     const groups: Record<string, typeof plays> = {};
     filteredPlays.forEach((play) => {
@@ -39,6 +35,10 @@ export default function PlayByPlayPage() {
     });
     return groups;
   }, [filteredPlays]);
+
+  if (loading || error || !game) {
+    return null; // Layout handles loading/error states
+  }
 
   const toggleInning = (inning: string) => {
     const newExpanded = new Set(expandedInnings);

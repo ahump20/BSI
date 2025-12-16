@@ -4,6 +4,11 @@ import { useGameData } from '../layout';
 import { BoxScoreTable } from '@/components/box-score';
 import { Card } from '@/components/ui/Card';
 
+// Required for static export
+export function generateStaticParams() {
+  return [{ gameId: 'placeholder' }];
+}
+
 /**
  * Full Box Score Page
  *

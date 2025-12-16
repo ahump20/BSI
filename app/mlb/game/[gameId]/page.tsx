@@ -5,11 +5,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { BoxScoreTable } from '@/components/box-score';
 
-// Generate static params for static export
-export function generateStaticParams() {
-  return [{ gameId: 'placeholder' }];
-}
-
 /**
  * Game Summary Page (default tab)
  *
