@@ -8,7 +8,7 @@ const ToolsShowcase = () => {
       id: 'college-baseball',
       title: 'Live College Baseball Box Scores',
       description:
-        "Comprehensive game tracking that fills ESPN's coverage void. Real-time play-by-play, advanced metrics (OPS, WHIP, K/9, BB%), pitch counts, and lineup cards. The only source for complete digital coverage of college baseball.",
+        'Complete game tracking with real-time play-by-play, advanced metrics (OPS, WHIP, K/9, BB%), pitch counts, and lineup cards. Professional-grade analytics for every D1 program, every game.',
       icon: '⚾',
       badge: 'Core Differentiator',
       features: [
@@ -56,7 +56,7 @@ const ToolsShowcase = () => {
       id: 'recruiting-tracker',
       title: 'Cross-Sport Recruiting Tracker',
       description:
-        'Aggregated recruiting intelligence across football, baseball, and basketball. Live class rankings, transfer portal activity, composite ratings, and commits by date. Filterable by sport, position, rating, and geography—with emphasis on Group of Five and FCS programs mainstream sites ignore.',
+        'Aggregated recruiting intelligence across football, baseball, and basketball. Live class rankings, transfer portal activity, composite ratings, and commits by date. Filterable by sport, position, rating, and geography—with comprehensive coverage for Group of Five and FCS programs.',
       icon: '🎓',
       badge: 'Comprehensive Coverage',
       features: [
@@ -93,8 +93,8 @@ const ToolsShowcase = () => {
         <div className="hero-section">
           <h1 className="hero-title">Production Sports Tools</h1>
           <p className="hero-subtitle">
-            Five production-ready tools built on Cloudflare Workers/D1/KV/R2, addressing mainstream
-            coverage gaps in college sports analytics.
+            Five production-ready tools built on Cloudflare Workers/D1/KV/R2, delivering
+            professional-grade college sports analytics.
           </p>
         </div>
 
@@ -126,14 +126,14 @@ const ToolsShowcase = () => {
         </div>
 
         <section className="coverage-gap-section">
-          <h2>Addressing Coverage Gaps</h2>
+          <h2>Built for Real Fans</h2>
           <div className="gap-highlights">
             <div className="gap-card">
               <h3>College Baseball Digital Coverage</h3>
               <p>
-                ESPN and major outlets provide minimal digital coverage for college baseball despite
-                it being revenue-generating. Our Live Box Scores (#1), Win Probability Engine (#2),
-                and Player Projections (#3) fill this void with comprehensive, real-time analytics.
+                College baseball deserves comprehensive digital coverage. Our Live Box Scores (#1),
+                Win Probability Engine (#2), and Player Projections (#3) deliver real-time analytics
+                for all 300+ D1 programs—every game, every team, every play.
               </p>
             </div>
             <div className="gap-card">
@@ -148,8 +148,8 @@ const ToolsShowcase = () => {
               <h3>Real-Time Intelligence</h3>
               <p>
                 Our Breaking News Push Alerts (#5) connects to the Trend and Highlights Analyzer for
-                automated, editorially-voiced content generation—delivering insights before
-                mainstream outlets even notice the story.
+                automated, editorially-voiced content generation—delivering real-time insights with
+                our editorial voice.
               </p>
             </div>
           </div>
