@@ -1,6 +1,6 @@
 # Blaze Sports Intel
 
-**The college baseball coverage ESPN ignores.**
+**Born to Blaze the Path Less Beaten.**
 
 Blaze Sports Intel (BSI) is a sports intelligence platform providing real-time analytics, complete box scores, and advanced statistics for college baseball—plus coverage of MLB, NFL, NCAA Football, and more.
 

@@ -3,7 +3,7 @@
 Use this file as the single source of truth for tone, themes, and origin story.
 
 ## Non-negotiables
-- The coverage ESPN won't give you.
+- Comprehensive sports intelligence fans deserve.
 - Texas isn't just a place — it's a covenant: treat people right, root for underdogs, never stop dreaming beyond the horizon.
 - Authenticity over polish. Substance over flash.
 

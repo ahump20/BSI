@@ -52,7 +52,7 @@
 │ Logo | Games Standings  │
 ├─────────────────────────┤
 │ HERO (Compressed)       │ ← 200px max height
-│ "ESPN Won't. We Will."  │    Tagline + 1 CTA
+│ "Born to Blaze"         │    Tagline + 1 CTA
 │ [View Games →]          │
 ├─────────────────────────┤
 │ LIVE SCORES             │ ← Horizontal scroll
@@ -464,7 +464,7 @@ Benefits:
 - Generic → Distinct (visual differentiation)
 - Cluttered → Clean (premium feel)
 - Desktop-first → Mobile-native
-- "ESPN clone" → "The anti-ESPN"
+- Generic sports site → Authentic Texas sports intelligence
 
 ---
 

@@ -16,8 +16,8 @@ For brainstorming and implementing new features. Combines role prompting with st
 <context>
 Platform: Blaze Sports Intel (blazesportsintel.com)
 Stack: Cloudflare Workers, D1, KV, R2 exclusively
-Sports covered: College baseball (primary), MLB, NFL, NCAA football, NBA
-Brand position: Analytics infrastructure for underserved sports; mobile-first; anti-ESPN
+Sports covered: MLB, NFL, NBA, College Baseball, NCAA Football
+Brand position: Real analytics—not just scores. Built by a fan who got tired of waiting.
 </context>
 
 <current_state>

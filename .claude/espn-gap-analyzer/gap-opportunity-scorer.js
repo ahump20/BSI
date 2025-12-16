@@ -50,7 +50,7 @@ const CONFIG = {
         ncaa_programs: 297, // D1 programs
         estimated_fans: 5_000_000, // Conservative estimate
         avg_attendance: 3_000, // Per game
-        tv_viewership: 'ESPN neglects = massive YouTube/streaming opportunity'
+        tv_viewership: 'Underserved market = massive YouTube/streaming opportunity'
       },
       implementation_notes: {
         data_sources: ['NCAA Stats API', 'D1Baseball', 'Conference sites'],
@@ -58,7 +58,7 @@ const CONFIG = {
         estimated_dev_time: '6-8 weeks',
         maintenance_effort: 'Moderate (season: Feb-June)'
       },
-      competitive_advantage: 'First mover in comprehensive college baseball coverage. ESPN has ceded this market entirely.'
+      competitive_advantage: 'First mover in comprehensive college baseball coverage. Underserved market with passionate fanbase.'
     },
 
     'college-track-field': {

@@ -12,7 +12,7 @@ This document outlines the comprehensive graphics engine overhaul for Blaze Spor
 
 ### Mission Alignment
 
-**"ESPN Won't Show You Box Scores. We Will."**
+**"Complete Box Scores. Every Game. Every Player."**
 
 The visual design must communicate:
 - **Authority**: Professional, trustworthy data presentation
@@ -707,7 +707,7 @@ This graphics engine overhaul transforms Blaze Sports Intel from a functional co
 - **Performance-Optimized** - Fast load times on mobile devices
 - **Data-Driven Visualizations** - Charts, graphs, and 3D representations
 
-**Mission**: Show what ESPN won't. Do it with world-class design.
+**Mission**: Comprehensive sports intelligence with world-class design.
 
 ---
 

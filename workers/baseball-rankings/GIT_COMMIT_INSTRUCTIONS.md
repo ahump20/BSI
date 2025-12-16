@@ -116,7 +116,7 @@ Once committed to git:
 
 1. **Add Cloudflare Analytics monitoring**
 2. **Integrate with Game Center** at `/college-baseball/games`
-3. **Build box score feature** (the ESPN killer)
+3. **Build box score feature** (core differentiator)
 4. **Implement auto-generated previews/recaps**
 
 ---

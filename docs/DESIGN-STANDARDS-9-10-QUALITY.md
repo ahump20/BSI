@@ -2,7 +2,7 @@
 
 **Current Assessment:** 3/10
 **Target:** 9/10+
-**Focus:** College Baseball platform (ESPN's biggest gap)
+**Focus:** College Baseball platform with comprehensive coverage
 **Primary Device:** iPhone portrait mode
 **Brand Core:** Burnt orange (#BF5700), professional sports intelligence
 
@@ -74,7 +74,7 @@
 │ HEADER (60px)           │ ← Sticky, minimal, burnt orange accent
 ├─────────────────────────┤
 │ HERO (300px max)        │ ← Compressed: tagline + 1 CTA
-│ "ESPN Won't. We Will."  │
+│ "Born to Blaze"         │
 │ [View Live Games →]     │
 ├─────────────────────────┤
 │ LIVE SCORES TICKER      │ ← Horizontal scroll, real data
@@ -783,12 +783,12 @@ export async function onRequest({ request, env }) {
 
 ### Long-Term Vision
 
-**Blaze = The anti-ESPN for college baseball**
+**Blaze = Professional-grade sports intelligence for passionate fans**
 
-- ESPN shows you ads and scores → Blaze shows you complete intelligence
-- ESPN treats mobile as afterthought → Blaze treats mobile as priority
-- ESPN hides data sources → Blaze cites every statistic
-- ESPN designed for desktop → Blaze designed for iPhone in your hand during games
+- Complete intelligence: not just scores, but the full picture
+- Mobile-first: designed for the iPhone in your hand during games
+- Transparent data: every statistic cites its source
+- Fan-focused: built by someone who cares about the same teams you do
 
 **When users say "9/10," they mean:**
 - "I found what I needed in seconds"

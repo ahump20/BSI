@@ -471,7 +471,7 @@ node readme-generator.js
 - ⚾ **MLB Coverage**: Real-time scores, standings, player stats
 - 🏈 **NFL Analytics**: Live scores, team stats, player projections
 - 🏀 **NCAA Basketball**: Conference standings, tournament projections
-- ⚾ **College Baseball**: Complete box scores (what ESPN won't provide)
+- ⚾ **College Baseball**: Complete box scores with full player stats
 
 ## 🚀 Tech Stack
 

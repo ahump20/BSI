@@ -134,7 +134,7 @@ export function welcomeEmail(
       </p>
 
       <p style="color:#999;font-size:14px;line-height:1.6;margin:0 0 24px;">
-        We cover what ESPN won't—starting with college baseball. Live scores, real-time standings,
+        Comprehensive sports intelligence—starting with college baseball. Live scores, real-time standings,
         and analytics that actually mean something.
       </p>
 
@@ -165,7 +165,7 @@ export function welcomeEmail(
 
 You're in. Real sports analytics, no corporate slop.
 
-We cover what ESPN won't—starting with college baseball. Live scores, real-time standings, and analytics that actually mean something.
+Comprehensive sports intelligence—starting with college baseball. Live scores, real-time standings, and analytics that actually mean something.
 
 Get started: https://blazesportsintel.com/college-baseball
 

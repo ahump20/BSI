@@ -3,15 +3,15 @@
  *
  * GET /api/college-baseball/games/:gameId
  *   - Fetches complete game data including box score
- *   - Generates auto-generated game recap (ESPN KILLER FEATURE)
+ *   - Generates auto-generated game recap (CORE FEATURE)
  *   - Provides play-by-play data
  *
  * Query Parameters:
  *   - include: comma-separated list ('boxscore', 'recap', 'playbyplay', 'preview')
  *   - format: 'full' | 'compact' (default: 'full')
  *
- * ESPN GAP: ESPN app shows only score and inning for college baseball.
- * We provide COMPLETE box scores, player stats, and auto-generated recaps.
+ * BSI ADVANTAGE: Complete box scores, player stats, and auto-generated recaps
+ * for every college baseball game—comprehensive coverage fans deserve.
  *
  * Examples:
  *   /api/college-baseball/games/401778104
@@ -131,7 +131,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       response.boxscore = boxscore;
     }
 
-    // Generate auto-generated recap if requested (ESPN KILLER FEATURE)
+    // Generate auto-generated recap if requested (CORE FEATURE)
     if (include.has('recap')) {
       response.recap = await generateGameRecap(game, boxscore, env);
     }
@@ -200,7 +200,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 };
 
 // ============================================================================
-// AUTO-GENERATED GAME RECAP (ESPN KILLER FEATURE)
+// AUTO-GENERATED GAME RECAP (CORE FEATURE)
 // ============================================================================
 
 /**

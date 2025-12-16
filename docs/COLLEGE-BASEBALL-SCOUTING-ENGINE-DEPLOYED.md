@@ -353,6 +353,6 @@ This is the differentiation ESPN can't provide and won't build.
 
 ---
 
-**🔥 Blaze Sports Intel - Building What ESPN Won't™**
+**🔥 Blaze Sports Intel - Born to Blaze the Path Less Beaten**
 
 *College baseball scouting engine deployed: October 16, 2025, 19:23 CDT*

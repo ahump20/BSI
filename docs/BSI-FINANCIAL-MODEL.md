@@ -8,7 +8,7 @@
 
 ## Company Overview
 
-**Blaze Sports Intel** — A sports intelligence platform focused on college baseball analytics, filling coverage gaps left by ESPN and major sports networks.
+**Blaze Sports Intel** — A sports intelligence platform delivering professional-grade analytics for MLB, NFL, NBA, College Baseball, and NCAA Football.
 
 **Founder:** Austin Humphrey
 **Location:** Boerne, Texas

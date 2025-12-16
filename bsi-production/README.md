@@ -1,6 +1,6 @@
 # Blaze Sports Intel — Home Page
 
-**Born in Memphis. Rooted in Texas soil. Covering the sports that deserve better.**
+**Born in Memphis. Rooted in Texas soil. Built for fans who care.**
 
 *Courage • Grit • Leadership*
 
@@ -105,16 +105,17 @@ wrangler deploy
 
 ### Brand Values
 
-- **Courage**: Taking on the sports media ignores
+- **Courage**: Building what fans deserve
 - **Grit**: Building something from nothing
 - **Leadership**: Charting the path less beaten
 
 ## Coverage
 
-- **College Baseball** (Primary Focus)
-- College Football (FCS & G5)
-- MLB
-- NFL
+- MLB (Cardinals focus, all 30 teams)
+- NFL (Titans focus, all 32 teams)
+- College Baseball (all 300+ D1 programs)
+- NCAA Football (FBS, FCS, all conferences)
+- NBA (Grizzlies focus, all 30 teams)
 
 ---
 

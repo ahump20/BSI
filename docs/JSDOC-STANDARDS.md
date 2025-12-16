@@ -14,12 +14,12 @@ Every API file should start with a file-level JSDoc comment:
  * @module api/college-baseball/games
  * @description
  * Fetches complete game data including box scores, auto-generated recaps,
- * and play-by-play data. This is our ESPN KILLER FEATURE for college baseball.
+ * and play-by-play data. This is our core differentiator for college baseball.
  *
  * @see {@link https://blazesportsintel.com/docs/api/college-baseball}
  *
- * ESPN GAP: ESPN app shows only score and inning for college baseball.
- * We provide COMPLETE box scores, player stats, and auto-generated recaps.
+ * BSI ADVANTAGE: Complete box scores, player stats, and auto-generated recaps
+ * for every college baseball game—comprehensive coverage fans deserve.
  *
  * @example
  * GET /api/college-baseball/games/401778104

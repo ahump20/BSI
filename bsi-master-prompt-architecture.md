@@ -775,7 +775,7 @@ Build the /games/:gameId/play-by-play page for blazesportsintel.com.
 
 CONTEXT:
 - Pitch-by-pitch for baseball, play-by-play for football/basketball
-- College baseball: This is the BIG opportunity—ESPN barely covers this
+- College baseball: This is the BIG opportunity—comprehensive pitch-by-pitch coverage
 - Must handle both live and completed games
 
 REQUIREMENTS:
@@ -1026,7 +1026,7 @@ Build the /teams/:teamId/depth-chart page for blazesportsintel.com.
 CONTEXT:
 - Baseball: Lineup card style showing batting order + pitching rotation
 - Football: Position-based depth chart
-- Focus on baseball since ESPN neglects this
+- Focus on baseball as our primary differentiator
 
 REQUIREMENTS (Baseball):
 1. Team header (inherited)
