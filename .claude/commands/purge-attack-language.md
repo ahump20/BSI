@@ -4,13 +4,43 @@
 
 You are executing a CRITICAL brand narrative overhaul for blazesportsintel.com. This is a ONE-SHOT operation that must be completed without breaking any features.
 
-**THE PROBLEM:** The codebase contains negative, attack-oriented language that positions BSI against ESPN/mainstream media rather than standing on its own merits. This undermines the brand and sounds whiny.
+**THE PROBLEM:** The codebase contains:
+1. Negative, attack-oriented language that positions BSI against ESPN/mainstream media
+2. Overly college-baseball-focused messaging that ignores our FULL sports coverage
 
 **THE SOLUTION:** Replace ALL attack language with positive differentiation based on:
 1. Austin's authentic story (Memphis → Texas heritage)
 2. Core values: Courage, Grit, Leadership
 3. What BSI does well—forward-looking, not backward-attacking
 4. Tagline: "Born to Blaze the Path Less Beaten"
+5. **MULTI-SPORT PLATFORM**: MLB, NFL, NBA, College Baseball, NCAA Football
+
+---
+
+## CRITICAL: MULTI-SPORT POSITIONING
+
+**BSI is NOT just a college baseball platform.** BSI covers:
+- **MLB** (Cardinals focus, all 30 teams)
+- **NFL** (Titans focus, all 32 teams)
+- **NBA** (Grizzlies focus, all 30 teams)
+- **College Baseball** (all 300+ D1 programs)
+- **NCAA Football** (FBS, FCS, all conferences)
+
+### Language Rules for Multi-Sport
+
+| WRONG | RIGHT |
+|-------|-------|
+| "college baseball platform" | "sports intelligence platform" |
+| "college baseball analytics" | "sports analytics" |
+| "complete college baseball coverage" | "complete sports coverage" |
+| "for college baseball fans" | "for sports fans who care" |
+| "Primary Focus: College Baseball" | Remove or balance with other sports |
+
+### When Discussing Sports Coverage:
+- Always list multiple sports: "MLB, NFL, NBA, College Baseball, NCAA Football"
+- Lead with professional sports when speaking generally
+- Only focus on college baseball on `/college-baseball/*` routes
+- Hero sections should highlight ALL sports, not just one
 
 ---
 
