@@ -7,7 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
+import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -342,14 +342,14 @@ export default function MLBPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
-                Real-Time Data. Complete Coverage.
+                Cardinals. Rangers. Astros. Every game, every stat, no network filter.
               </p>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={200}>
               <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Live scores, division standings, Statcast analytics, and advanced metrics for all 30
-                MLB teams. Professional-grade baseball intelligence powered by MLB Stats API.
+                Live scores, division standings, and Statcast analytics for all 30 teams—pulled straight
+                from MLB's official API. No third-party garbage. No guesswork.
               </p>
             </ScrollReveal>
 
@@ -405,12 +405,12 @@ export default function MLBPage() {
           <Container>
             <ScrollReveal>
               <div className="text-center mb-12">
-                <span className="kicker">Complete MLB Coverage</span>
+                <span className="kicker">All 30 Teams</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  Professional Baseball <span className="text-gradient-blaze">Intelligence</span>
+                  The Data You <span className="text-gradient-blaze">Actually Need</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  Live scores, standings, team profiles, and Statcast analytics for every MLB game.
+                  Scores, standings, Statcast. Straight from MLB—no middleman.
                 </p>
               </div>
             </ScrollReveal>
@@ -531,9 +531,9 @@ export default function MLBPage() {
                 ) : standings.length === 0 ? (
                   <Card variant="default" padding="lg">
                     <div className="text-center py-8">
-                      <p className="text-text-secondary">No standings data available</p>
+                      <p className="text-text-secondary">Offseason—no standings yet.</p>
                       <p className="text-text-tertiary text-sm mt-2">
-                        Standings will be available when the 2025 season begins
+                        Check back when Spring Training wraps and the boys take the field for real.
                       </p>
                     </div>
                   </Card>
@@ -676,7 +676,7 @@ export default function MLBPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-text-secondary mb-6">
-                    View player rosters by clicking on teams in the Teams tab
+                    Click on teams in the Standings tab to see rosters
                   </p>
                   <div className="bg-graphite rounded-lg p-8 text-center">
                     <svg
@@ -689,7 +689,7 @@ export default function MLBPage() {
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                     <p className="text-text-secondary">
-                      Advanced player statistics and performance metrics coming soon
+                      Exit velocity, launch angle, sprint speed—still wiring this up. Ping me if you need something specific.
                     </p>
                   </div>
                 </CardContent>
@@ -719,9 +719,9 @@ export default function MLBPage() {
                 ) : schedule.length === 0 ? (
                   <Card variant="default" padding="lg">
                     <div className="text-center py-8">
-                      <p className="text-text-secondary">No games scheduled for today</p>
+                      <p className="text-text-secondary">No games today.</p>
                       <p className="text-text-tertiary text-sm mt-2">
-                        Check back during the MLB season for live scores
+                        Off day across the league. Check back tomorrow—162 games don't play themselves.
                       </p>
                     </div>
                   </Card>

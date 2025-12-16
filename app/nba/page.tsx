@@ -6,10 +6,8 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { ScrollReveal } from '../../components/cinematic/ScrollReveal';
-import { IntelTicker } from '../../components/cinematic/IntelTicker';
-import { Navbar } from '../../components/layout-ds/Navbar';
-import { Footer } from '../../components/layout-ds/Footer';
+import { ScrollReveal, IntelTicker } from '@/components/cinematic';
+import { Navbar, Footer } from '@/components/layout-ds';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },

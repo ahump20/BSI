@@ -6,7 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
+import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -355,14 +355,14 @@ export default function NFLPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
-                Real-Time Data. Complete Coverage.
+                Titans. Cowboys. Chiefs. All 32 teams, zero network spin.
               </p>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={200}>
               <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Live scores, conference standings, and advanced analytics for all 32 NFL teams.
-                Professional-grade football intelligence for all 272 regular season games.
+                Live scores and standings for all 272 regular season games. Real data from official sources—not
+                whatever ESPN decides to show you between commercials.
               </p>
             </ScrollReveal>
 
@@ -414,12 +414,12 @@ export default function NFLPage() {
           <Container>
             <ScrollReveal>
               <div className="text-center mb-12">
-                <span className="kicker">Complete NFL Coverage</span>
+                <span className="kicker">All 32 Teams</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  Professional Football <span className="text-gradient-blaze">Intelligence</span>
+                  Every Week, <span className="text-gradient-blaze">Every Game</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  Live scores, standings, team profiles, and player statistics for every NFL game.
+                  Scores, standings, stats. No hot takes—just the numbers that matter.
                 </p>
               </div>
             </ScrollReveal>
@@ -553,9 +553,9 @@ export default function NFLPage() {
                         <ellipse cx="12" cy="12" rx="9" ry="5" />
                         <path d="M12 7v10M7 12h10" />
                       </svg>
-                      <p className="text-text-secondary">No standings data available</p>
+                      <p className="text-text-secondary">Offseason—no standings yet.</p>
                       <p className="text-text-tertiary text-sm mt-2">
-                        Standings will be available when the 2025 NFL season begins
+                        Check back when training camp wraps. 18 weeks of football don't wait for anyone.
                       </p>
                     </div>
                   </Card>
@@ -831,7 +831,7 @@ export default function NFLPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-text-secondary mb-6">
-                    Team rosters, depth charts, and injury reports
+                    Rosters, depth charts, and injury reports
                   </p>
                   <div className="bg-graphite rounded-lg p-8 text-center">
                     <svg
@@ -844,7 +844,7 @@ export default function NFLPage() {
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                     <p className="text-text-secondary">
-                      Full team information available during the season
+                      Still wiring up full rosters. Check the Standings tab for team records.
                     </p>
                   </div>
                 </CardContent>
@@ -868,7 +868,7 @@ export default function NFLPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-text-secondary mb-6">
-                    NFL player statistics and advanced metrics coming soon
+                    QB ratings, rushing yards, receiving stats, and defensive metrics
                   </p>
                   <div className="bg-graphite rounded-lg p-8 text-center">
                     <svg
@@ -881,7 +881,7 @@ export default function NFLPage() {
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                     <p className="text-text-secondary">
-                      QB ratings, receiver metrics, defensive stats, and more
+                      Passer ratings, EPA, DVOA—still building this out. Hit me up if you need something specific.
                     </p>
                   </div>
                 </CardContent>
@@ -923,9 +923,9 @@ export default function NFLPage() {
                         <line x1="8" y1="2" x2="8" y2="6" />
                         <line x1="3" y1="10" x2="21" y2="10" />
                       </svg>
-                      <p className="text-text-secondary">No games scheduled</p>
+                      <p className="text-text-secondary">No games this week.</p>
                       <p className="text-text-tertiary text-sm mt-2">
-                        Games will appear here during the NFL season
+                        Bye week or offseason. Check back Thursday through Monday when the league's in action.
                       </p>
                     </div>
                   </Card>

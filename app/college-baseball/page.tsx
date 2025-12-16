@@ -5,7 +5,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge, LiveBadge } from '@/components/ui/Badge';
-import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
+import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
@@ -174,14 +174,14 @@ export default function CollegeBaseballPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
-                Real-Time Data. Complete Coverage.
+                ESPN treats this sport like an afterthought. I don't.
               </p>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={200}>
               <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Box scores, conference standings, advanced analytics, and live updates for every
-                Power 5 conference. Professional-grade sports intelligence for all 300+ D1 programs.
+                Complete box scores with batting lines, pitching stats, and play-by-play for every D1 game.
+                SEC, Big 12, ACC—all 300+ programs, covered like they matter. Because they do.
               </p>
             </ScrollReveal>
 
@@ -237,13 +237,13 @@ export default function CollegeBaseballPage() {
           <Container>
             <ScrollReveal>
               <div className="text-center mb-12">
-                <span className="kicker">NCAA Division I Coverage</span>
+                <span className="kicker">The Sport ESPN Forgot</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  Complete College Baseball <span className="text-gradient-blaze">Coverage</span>
+                  Every D1 Program, <span className="text-gradient-blaze">Actually Covered</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  Full box scores, conference standings, team rosters, player statistics, and MLB
-                  Draft prospect tracking for NCAA Division I baseball.
+                  Full box scores—not just final scores. Conference standings. Rosters. The coverage
+                  college baseball deserves but rarely gets.
                 </p>
               </div>
             </ScrollReveal>

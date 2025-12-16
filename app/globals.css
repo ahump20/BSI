@@ -191,6 +191,11 @@ body {
     cursor: not-allowed;
   }
 
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
   /* Secondary button */
   .btn-secondary {
     display: inline-flex;
@@ -215,6 +220,11 @@ body {
     cursor: not-allowed;
   }
 
+  .btn-secondary:active:not(:disabled) {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
   /* Ghost button */
   .btn-ghost {
     display: inline-flex;
@@ -231,6 +241,11 @@ body {
   .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.1);
     color: white;
+  }
+
+  .btn-ghost:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
   }
 
   /* Skeleton loading */

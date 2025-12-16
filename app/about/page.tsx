@@ -5,7 +5,7 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
+import { ScrollReveal } from '@/components/cinematic';
 import { TexasCovenantQuote } from '@/components/cinematic/CovenantQuote';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -202,16 +202,14 @@ export default function AboutPage() {
                 </h2>
 
                 <p className="text-xl text-text-secondary leading-relaxed mb-8">
-                  Sports coverage should serve the fans, not the networks. Real-time data
-                  shouldn&apos;t be locked behind paywalls or buried in clunky interfaces. Every
-                  league—MLB, NFL, college baseball, college football—deserves analytics
-                  infrastructure that works.
+                  Every game matters to someone. MLB, NFL, NBA, College Baseball, NCAA Football—fans
+                  deserve complete analytics, not just scores. Real data. Real coverage. Real intelligence.
                 </p>
 
                 <p className="text-text-secondary leading-relaxed mb-8">
-                  Blaze Sports Intel exists because someone had to build it right. Live scores that
-                  actually update. Standings that don&apos;t lag. Analytics that help coaches,
-                  scouts, and fans make better decisions across every sport we cover.
+                  Blaze Sports Intel exists because I got tired of waiting. Live scores that update.
+                  Standings that stay current. Analytics that help coaches, scouts, and fans make
+                  better decisions across every sport we cover.
                 </p>
 
                 <p className="text-lg text-white font-semibold">

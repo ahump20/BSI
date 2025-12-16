@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ScrollReveal } from './ScrollReveal';
+import { ScrollReveal } from '../motion/ScrollReveal';
 
 export interface CovenantQuoteProps {
   /** Quote text */

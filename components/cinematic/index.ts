@@ -16,8 +16,9 @@ export type { CustomCursorProps } from './CustomCursor';
 export { IntelTicker } from './IntelTicker';
 export type { IntelTickerProps, TickerItem } from './IntelTicker';
 
-export { ScrollReveal, ScrollRevealGroup } from './ScrollReveal';
-export type { ScrollRevealProps, ScrollRevealGroupProps } from './ScrollReveal';
+// ScrollReveal now uses Framer Motion - re-exported from motion system
+export { ScrollReveal, ScrollRevealGroup } from '../motion/ScrollReveal';
+export type { ScrollRevealProps, ScrollRevealGroupProps } from '../motion/ScrollReveal';
 
 export { ParallaxImage } from './ParallaxImage';
 export type { ParallaxImageProps } from './ParallaxImage';

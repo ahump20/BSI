@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
 import { NoiseOverlay, CustomCursor } from '../components/cinematic';
+import { PageTransition, MotionProvider } from '@/components/motion';
 
 // Optimized font loading - eliminates render-blocking
 const inter = Inter({
@@ -105,11 +106,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NoiseOverlay cssOnly />
         <CustomCursor />
         <Providers>
-          <a href="#main-content" className="skip-link">
-            Skip to main content
-          </a>
-          <KonamiCodeWrapper />
-          {children}
+          <MotionProvider>
+            <a href="#main-content" className="skip-link">
+              Skip to main content
+            </a>
+            <KonamiCodeWrapper />
+            <PageTransition>
+              {children}
+            </PageTransition>
+          </MotionProvider>
         </Providers>
       </body>
     </html>

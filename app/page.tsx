@@ -3,11 +3,9 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { ScrollReveal } from '../components/cinematic/ScrollReveal';
-import { IntelTicker } from '../components/cinematic/IntelTicker';
-import { Navbar } from '../components/layout-ds/Navbar';
-import { Footer } from '../components/layout-ds/Footer';
-import { LiveGamesWidget } from '../components/widgets/LiveGamesWidget';
+import { ScrollReveal, IntelTicker } from '@/components/cinematic';
+import { Navbar, Footer } from '@/components/layout-ds';
+import { LiveGamesWidget } from '@/components/widgets/LiveGamesWidget';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -100,9 +98,8 @@ export default function HomePage() {
               </h1>
 
               <p className="lead max-w-2xl mx-auto mb-10">
-                Professional sports intelligence for fans who care about the game—not the networks.
-                MLB, NFL, NBA, College Baseball, NCAA Football. Real analytics, real data, real
-                coverage.
+                Every game matters to someone. MLB, NFL, NBA, College Baseball, NCAA Football—real
+                analytics, not just scores. Built by a fan who got tired of waiting.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
