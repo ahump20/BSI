@@ -7,21 +7,11 @@ export function generateStaticParams() {
   }));
 }
 
-export default function NFLTeamPage({
-  params,
-}: {
+interface PageProps {
   params: Promise<{ teamId: string }>;
-}) {
-  // For Next.js 15+, params is a Promise
-  // We need to handle this properly
-  return <NFLTeamPageWrapper params={params} />;
 }
 
-async function NFLTeamPageWrapper({
-  params,
-}: {
-  params: Promise<{ teamId: string }>;
-}) {
+export default async function NFLTeamPage({ params }: PageProps) {
   const { teamId } = await params;
   return <NFLTeamDetailClient teamId={teamId} />;
 }
