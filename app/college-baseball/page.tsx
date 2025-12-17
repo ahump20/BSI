@@ -34,7 +34,10 @@ const navItems = [
   { label: 'College Baseball', href: '/college-baseball' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
+  { label: 'NBA', href: '/nba' },
   { label: 'Dashboard', href: '/dashboard' },
+  { label: 'About', href: '/about' },
+  { label: 'Pricing', href: '/pricing' },
 ];
 
 const features = [
@@ -174,7 +177,7 @@ export default function CollegeBaseballPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
-                ESPN treats this sport like an afterthought. I don't.
+                Coverage this sport has always deserved.
               </p>
             </ScrollReveal>
 
@@ -237,7 +240,7 @@ export default function CollegeBaseballPage() {
           <Container>
             <ScrollReveal>
               <div className="text-center mb-12">
-                <span className="kicker">The Sport ESPN Forgot</span>
+                <span className="kicker">Complete Coverage</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
                   Every D1 Program, <span className="text-gradient-blaze">Actually Covered</span>
                 </h2>
