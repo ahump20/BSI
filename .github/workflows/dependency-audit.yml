@@ -1,0 +1,140 @@
+name: Dependency Audit
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**/package.json'
+      - '**/package-lock.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/dependency-audit.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/package.json'
+      - '**/package-lock.json'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch: # Allow manual triggers
+
+jobs:
+  audit:
+    name: Socket.dev Dependency Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Run Dependency Audit
+        id: audit
+        run: |
+          echo "Running BSI dependency audit..."
+          node scripts/audit-deps.cjs --ci
+          
+          # Save JSON payload for potential API call
+          node scripts/audit-deps.cjs --json > audit-payload.json
+          
+          echo "✅ Audit completed successfully"
+          echo "Found $(jq '.packages | length' audit-payload.json) unique dependencies"
+      
+      - name: Upload audit payload
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-payload
+          path: audit-payload.json
+          retention-days: 30
+      
+      # Optional: Integrate with Socket.dev API
+      # Uncomment and add SOCKET_API_KEY to repository secrets
+      # - name: Send to Socket.dev API
+      #   if: env.SOCKET_API_KEY != ''
+      #   env:
+      #     SOCKET_API_KEY: ${{ secrets.SOCKET_API_KEY }}
+      #   run: |
+      #     echo "Sending payload to Socket.dev API..."
+      #     
+      #     RESPONSE=$(curl -s -X POST https://api.socket.dev/v0/depscore \
+      #       -H "Authorization: Bearer $SOCKET_API_KEY" \
+      #       -H "Content-Type: application/json" \
+      #       -d @audit-payload.json)
+      #     
+      #     echo "$RESPONSE" > socket-response.json
+      #     
+      #     # Parse response and check thresholds
+      #     BLOCKED=$(echo "$RESPONSE" | jq -r '.summary.blocked // 0')
+      #     REVIEW=$(echo "$RESPONSE" | jq -r '.summary.review // 0')
+      #     
+      #     echo "📊 Socket.dev Results:"
+      #     echo "   Blocked: $BLOCKED"
+      #     echo "   Review: $REVIEW"
+      #     
+      #     if [ "$BLOCKED" -gt 0 ]; then
+      #       echo "❌ BLOCKING: $BLOCKED package(s) have critical security issues"
+      #       exit 1
+      #     fi
+      #     
+      #     if [ "$REVIEW" -gt 0 ]; then
+      #       echo "⚠️  WARNING: $REVIEW package(s) need manual review"
+      #     fi
+      
+      # - name: Upload Socket.dev response
+      #   if: env.SOCKET_API_KEY != ''
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: socket-response
+      #     path: socket-response.json
+      #     retention-days: 30
+      
+      - name: Comment on PR (summary)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const payload = JSON.parse(fs.readFileSync('audit-payload.json', 'utf8'));
+            
+            const comment = `## 🔒 Dependency Audit Results
+            
+            **Scan Date:** ${payload.metadata.timestamp}
+            **Packages Scanned:** ${payload.packages.length}
+            
+            ### Summary
+            
+            ✅ All dependencies scanned successfully.
+            
+            ### Next Steps
+            
+            To integrate with Socket.dev API:
+            1. Add \`SOCKET_API_KEY\` to repository secrets
+            2. Uncomment the API integration step in \`.github/workflows/dependency-audit.yml\`
+            3. Review scores against BSI thresholds:
+               - ✅ Healthy: ≥ 85
+               - ⚠️  Warning: 70-84
+               - ❌ Critical: < 70 (blocks deployment)
+            
+            ### Resources
+            
+            - [Scripts Documentation](../scripts/README.md)
+            - [Socket.dev API Docs](https://docs.socket.dev/reference/depscore)
+            
+            <details>
+            <summary>View Full Payload (${payload.packages.length} packages)</summary>
+            
+            \`\`\`json
+            ${JSON.stringify(payload, null, 2).slice(0, 2000)}...
+            \`\`\`
+            
+            </details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
