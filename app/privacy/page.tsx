@@ -61,10 +61,10 @@ export default function PrivacyPage() {
                   <p className="text-text-secondary leading-relaxed">
                     Access, correct, or delete your data anytime. Email{' '}
                     <a
-                      href="mailto:ahump20@outlook.com"
+                      href="mailto:Austin@blazesportsintel.com"
                       className="text-burnt-orange hover:text-ember"
                     >
-                      ahump20@outlook.com
+                      Austin@blazesportsintel.com
                     </a>
                   </p>
                 </section>
