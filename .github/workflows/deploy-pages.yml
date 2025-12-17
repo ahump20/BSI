@@ -40,12 +40,15 @@ jobs:
       - name: Build project
         run: pnpm build
 
-      - name: Copy Functions to output
+      - name: Copy Functions and lib to output
         run: |
           echo "📦 Copying Cloudflare Pages Functions..."
           cp -r functions out/functions
-          echo "✅ Functions copied to out/functions"
+          echo "📦 Copying lib folder for function imports..."
+          cp -r lib out/lib
+          echo "✅ Functions and lib copied to output"
           ls -la out/functions/api/ | head -10
+          ls -la out/lib/adapters/ | head -10
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
