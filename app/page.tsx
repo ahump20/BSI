@@ -4,7 +4,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Section, Container } from '@/components/layout-ds';
 import { ScrollReveal } from '@/components/layout-ds/ScrollReveal';
 import { IntelTicker } from '@/components/layout-ds/IntelTicker';
-import { LiveGamesWidget } from '@/components/college-baseball/LiveGamesWidget';
+import { LiveGamesWidget } from '@/components/widgets/LiveGamesWidget';
 import { HeroSection } from '@/components/hero/HeroSection';
 
 export const metadata = {
@@ -82,7 +82,7 @@ export default function HomePage() {
             {sports.map((sport, index) => (
               <ScrollReveal key={sport.name} delay={index * 100}>
                 <Link href={sport.href}>
-                  <div className="glass-card p-4 p-6 text-center h-full relative">
+                  <div className="glass-card p-6 text-center h-full relative">
                     {sport.comingSoon && (
                       <span className="absolute top-2 right-2 px-2 py-0.5 text-xs font-semibold bg-gold/20 text-gold rounded-full">
                         Coming Soon
@@ -108,7 +108,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <ScrollReveal key={feature.title} delay={index * 100}>
-                <div className="glass-card p-4 p-6 h-full">
+                <div className="glass-card p-6 h-full">
                   <div className="w-12 h-12 rounded-lg gradient-brand flex items-center justify-center mb-4">
                     <span className="text-2xl">{feature.icon}</span>
                   </div>
