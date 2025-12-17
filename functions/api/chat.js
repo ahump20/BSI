@@ -57,7 +57,7 @@ export async function onRequest({ request, env }) {
 - Real-time game updates
 
 **Contact Information:**
-- Email: ahump20@outlook.com
+- Email: Austin@blazesportsintel.com
 - Phone: (210) 273-5538
 - Twitter/X: @BISportsIntel
 - LinkedIn: Austin Humphrey
