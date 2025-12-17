@@ -1,60 +1,50 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 
 const navItems = [
   { label: 'Home', href: '/' },
   { label: 'College Baseball', href: '/college-baseball' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
+  { label: 'Dashboard', href: '/dashboard' },
 ];
 
-interface StandingsTeam {
-  TeamID: number;
-  Key: string;
-  Name: string;
-  Wins: number;
-  Losses: number;
-  Ties: number;
-  Percentage: number;
-  PointsFor: number;
-  PointsAgainst: number;
-  NetPoints: number;
-  Conference: string;
-  Division: string;
-  Streak: number;
+interface Team {
+  name: string;
+  abbreviation: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  pct: number;
+  pf: number;
+  pa: number;
+  diff: number;
+  streak: string;
+  divisionRecord: string;
+  confRecord: string;
 }
 
-interface StandingsResponse {
-  success: boolean;
-  season: number;
-  standings: {
-    afc: Record<string, StandingsTeam[]>;
-    nfc: Record<string, StandingsTeam[]>;
-  };
-  rawData: StandingsTeam[];
-  source: {
-    provider: string;
-    retrievedAt: string;
-    cacheHit: boolean;
-  };
-  meta: {
-    dataProvider: string;
-    timezone: string;
-  };
+interface Division {
+  name: string;
+  teams: Team[];
 }
 
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
+interface Conference {
+  name: string;
+  divisions: Division[];
+}
+
+function formatTimestamp(): string {
+  const date = new Date();
   return date.toLocaleString('en-US', {
     timeZone: 'America/Chicago',
     month: 'short',
@@ -66,84 +56,120 @@ function formatTimestamp(isoString?: string): string {
   }) + ' CT';
 }
 
-export default function NFLStandingsPage() {
-  const [standings, setStandings] = useState<StandingsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// Static data for off-season display
+const staticStandings: Conference[] = [
+  {
+    name: 'AFC',
+    divisions: [
+      {
+        name: 'AFC East',
+        teams: [
+          { name: 'Buffalo Bills', abbreviation: 'BUF', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Miami Dolphins', abbreviation: 'MIA', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'New England Patriots', abbreviation: 'NE', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'New York Jets', abbreviation: 'NYJ', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+      {
+        name: 'AFC North',
+        teams: [
+          { name: 'Baltimore Ravens', abbreviation: 'BAL', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Cincinnati Bengals', abbreviation: 'CIN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Cleveland Browns', abbreviation: 'CLE', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Pittsburgh Steelers', abbreviation: 'PIT', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+      {
+        name: 'AFC South',
+        teams: [
+          { name: 'Houston Texans', abbreviation: 'HOU', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Indianapolis Colts', abbreviation: 'IND', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Jacksonville Jaguars', abbreviation: 'JAX', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Tennessee Titans', abbreviation: 'TEN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+      {
+        name: 'AFC West',
+        teams: [
+          { name: 'Kansas City Chiefs', abbreviation: 'KC', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Denver Broncos', abbreviation: 'DEN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Las Vegas Raiders', abbreviation: 'LV', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Los Angeles Chargers', abbreviation: 'LAC', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'NFC',
+    divisions: [
+      {
+        name: 'NFC East',
+        teams: [
+          { name: 'Dallas Cowboys', abbreviation: 'DAL', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Philadelphia Eagles', abbreviation: 'PHI', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'New York Giants', abbreviation: 'NYG', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Washington Commanders', abbreviation: 'WAS', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+      {
+        name: 'NFC North',
+        teams: [
+          { name: 'Detroit Lions', abbreviation: 'DET', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Green Bay Packers', abbreviation: 'GB', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Minnesota Vikings', abbreviation: 'MIN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Chicago Bears', abbreviation: 'CHI', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+      {
+        name: 'NFC South',
+        teams: [
+          { name: 'Tampa Bay Buccaneers', abbreviation: 'TB', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Atlanta Falcons', abbreviation: 'ATL', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'New Orleans Saints', abbreviation: 'NO', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Carolina Panthers', abbreviation: 'CAR', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+      {
+        name: 'NFC West',
+        teams: [
+          { name: 'San Francisco 49ers', abbreviation: 'SF', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Seattle Seahawks', abbreviation: 'SEA', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Los Angeles Rams', abbreviation: 'LAR', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          { name: 'Arizona Cardinals', abbreviation: 'ARI', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+        ],
+      },
+    ],
+  },
+];
 
-  const fetchStandings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('/api/nfl/standings');
-      if (!response.ok) throw new Error('Failed to fetch standings');
-      const data: StandingsResponse = await response.json();
-      if (data.success) {
-        setStandings(data);
-      } else {
-        throw new Error('API returned unsuccessful response');
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
+export default function NFLStandingsPage() {
+  const [standings, setStandings] = useState<Conference[]>(staticStandings);
+  const [loading, setLoading] = useState(true);
+  const [selectedConference, setSelectedConference] = useState<string>('AFC');
+  const [isOffSeason, setIsOffSeason] = useState(true);
 
   useEffect(() => {
+    const fetchStandings = async () => {
+      try {
+        const res = await fetch('/api/nfl/standings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.standings && data.standings.length > 0) {
+            setStandings(data.standings);
+            setIsOffSeason(false);
+          }
+        }
+      } catch (err) {
+        // Use static data
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchStandings();
-  }, [fetchStandings]);
+  }, []);
 
-  const divisionOrder = ['East', 'North', 'South', 'West'];
-
-  const DivisionTable = ({ teams, divName }: { teams: StandingsTeam[]; divName: string }) => (
-    <div className="mb-6 last:mb-0">
-      <h4 className="text-gold font-semibold mb-3">{divName}</h4>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-burnt-orange/50">
-              <th className="text-left p-2 text-copper font-semibold text-sm">Team</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">W</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">L</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">T</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">PCT</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">PF</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">PA</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">DIFF</th>
-              <th className="text-center p-2 text-copper font-semibold text-sm">STRK</th>
-            </tr>
-          </thead>
-          <tbody>
-            {teams.map((team, idx) => {
-              const diffClass = team.NetPoints > 0 ? 'text-success' : team.NetPoints < 0 ? 'text-error' : 'text-text-secondary';
-              const streakClass = team.Streak > 0 ? 'text-success' : team.Streak < 0 ? 'text-error' : 'text-text-secondary';
-              const diffDisplay = team.NetPoints > 0 ? '+' + team.NetPoints : String(team.NetPoints);
-              const streakDisplay = team.Streak > 0 ? 'W' + team.Streak : team.Streak < 0 ? 'L' + Math.abs(team.Streak) : '-';
-
-              return (
-                <tr key={team.TeamID} className="border-b border-border-subtle hover:bg-white/5 transition-colors">
-                  <td className="p-2">
-                    <span className="text-burnt-orange font-bold mr-2">{idx + 1}</span>
-                    <span className="font-semibold text-white">{team.Name}</span>
-                  </td>
-                  <td className="text-center p-2 text-text-secondary">{team.Wins}</td>
-                  <td className="text-center p-2 text-text-secondary">{team.Losses}</td>
-                  <td className="text-center p-2 text-text-secondary">{team.Ties}</td>
-                  <td className="text-center p-2 text-text-secondary">{team.Percentage.toFixed(3).replace('0.', '.')}</td>
-                  <td className="text-center p-2 text-text-secondary">{team.PointsFor}</td>
-                  <td className="text-center p-2 text-text-secondary">{team.PointsAgainst}</td>
-                  <td className={'text-center p-2 ' + diffClass}>{diffDisplay}</td>
-                  <td className={'text-center p-2 ' + streakClass}>{streakDisplay}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+  const currentConference = standings.find(c => c.name === selectedConference);
 
   return (
     <>
@@ -166,132 +192,142 @@ export default function NFLStandingsPage() {
         {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
+
           <Container>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">{standings?.season || 2025} Season</Badge>
+              <Badge variant="primary" className="mb-4">2025 Season</Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-gradient-blaze mb-4">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
                 NFL Standings
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-text-secondary max-w-2xl">
-                Complete AFC and NFC standings with win percentage, point differential, and playoff positioning.
+              <p className="text-text-secondary mt-2">
+                Complete AFC and NFC standings with playoff positioning
               </p>
             </ScrollReveal>
           </Container>
         </Section>
 
-        {/* Standings Content */}
-        <Section padding="lg" background="charcoal" borderTop>
+        {/* Conference Tabs */}
+        <Section padding="sm" background="charcoal" borderTop>
           <Container>
+            <div className="flex gap-2">
+              {['AFC', 'NFC'].map((conf) => (
+                <button
+                  key={conf}
+                  onClick={() => setSelectedConference(conf)}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                    selectedConference === conf
+                      ? 'bg-burnt-orange text-white'
+                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                  }`}
+                >
+                  {conf}
+                </button>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
+        {/* Standings Tables */}
+        <Section padding="lg" background="charcoal">
+          <Container>
+            {isOffSeason && (
+              <Card variant="default" padding="md" className="mb-6 bg-warning/10 border-warning/30">
+                <p className="text-warning font-semibold">Off-Season</p>
+                <p className="text-text-secondary text-sm mt-1">
+                  The 2025 NFL season begins in September. Standings shown are placeholder data.
+                </p>
+              </Card>
+            )}
+
             {loading ? (
               <div className="space-y-6">
-                {['AFC', 'NFC'].map((conf) => (
-                  <Card key={conf} variant="default" padding="lg">
-                    <CardHeader>
-                      <Skeleton variant="text" width={150} height={24} />
-                    </CardHeader>
-                    <CardContent>
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b-2 border-burnt-orange">
-                            {['Team', 'W', 'L', 'T', 'PCT', 'PF', 'PA', 'DIFF', 'STRK'].map((h) => (
-                              <th key={h} className="text-left p-3 text-copper font-semibold">{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[1, 2, 3, 4].map((j) => (
-                            <SkeletonTableRow key={j} columns={9} />
-                          ))}
-                        </tbody>
-                      </table>
-                    </CardContent>
+                {[1, 2, 3, 4].map((i) => (
+                  <Card key={i} variant="default" padding="lg">
+                    <div className="animate-pulse">
+                      <div className="h-6 bg-graphite rounded w-32 mb-4"></div>
+                      <div className="space-y-2">
+                        {[1, 2, 3, 4].map((j) => (
+                          <div key={j} className="h-10 bg-graphite rounded"></div>
+                        ))}
+                      </div>
+                    </div>
                   </Card>
                 ))}
               </div>
-            ) : error ? (
-              <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
-                <p className="text-error font-semibold">Data Unavailable</p>
-                <p className="text-text-secondary text-sm mt-1">{error}</p>
-                <button onClick={fetchStandings} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors">
-                  Retry
-                </button>
-              </Card>
-            ) : !standings?.rawData?.length ? (
-              <Card variant="default" padding="lg">
-                <div className="text-center py-8">
-                  <svg viewBox="0 0 24 24" className="w-16 h-16 text-burnt-orange mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <ellipse cx="12" cy="12" rx="9" ry="5" />
-                    <path d="M12 7v10M7 12h10" />
-                  </svg>
-                  <p className="text-text-secondary">Offseason—no standings yet.</p>
-                  <p className="text-text-tertiary text-sm mt-2">Check back when the regular season kicks off.</p>
-                </div>
-              </Card>
             ) : (
-              <>
-                {/* AFC Standings */}
-                {standings.standings.afc && Object.keys(standings.standings.afc).length > 0 && (
-                  <ScrollReveal>
-                    <Card variant="default" padding="lg" className="mb-6">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-3">
-                          <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <ellipse cx="12" cy="12" rx="9" ry="5" />
-                            <path d="M12 7v10M7 12h10" />
-                          </svg>
-                          AFC Standings
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {divisionOrder.map((div) => {
-                          const teams = standings.standings.afc[div.toLowerCase()];
-                          if (!teams?.length) return null;
-                          return <DivisionTable key={div} teams={teams} divName={'AFC ' + div} />;
-                        })}
-                      </CardContent>
+              <div className="space-y-8">
+                {currentConference?.divisions.map((division, index) => (
+                  <ScrollReveal key={division.name} direction="up" delay={index * 100}>
+                    <Card variant="default" padding="lg">
+                      <h3 className="text-lg font-display font-bold text-burnt-orange mb-4">
+                        {division.name}
+                      </h3>
+
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border-subtle">
+                              <th className="text-left py-2 px-2 text-text-tertiary font-semibold">Team</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">W</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">L</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">T</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">PCT</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">PF</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">PA</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">DIFF</th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">STRK</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {division.teams.map((team, teamIndex) => (
+                              <tr
+                                key={team.abbreviation}
+                                className={`border-b border-border-subtle last:border-0 ${
+                                  teamIndex === 0 ? 'bg-success/5' : ''
+                                }`}
+                              >
+                                <td className="py-3 px-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                                      {team.abbreviation}
+                                    </span>
+                                    <span className="font-semibold text-white">{team.name}</span>
+                                  </div>
+                                </td>
+                                <td className="text-center py-3 px-2 text-white font-mono">{team.wins}</td>
+                                <td className="text-center py-3 px-2 text-white font-mono">{team.losses}</td>
+                                <td className="text-center py-3 px-2 text-white font-mono">{team.ties}</td>
+                                <td className="text-center py-3 px-2 text-white font-mono">{team.pct.toFixed(3)}</td>
+                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">{team.pf}</td>
+                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">{team.pa}</td>
+                                <td className={`text-center py-3 px-2 font-mono hidden md:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-text-secondary'}`}>
+                                  {team.diff > 0 ? '+' : ''}{team.diff}
+                                </td>
+                                <td className="text-center py-3 px-2 text-text-secondary hidden lg:table-cell">{team.streak}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </Card>
                   </ScrollReveal>
-                )}
-
-                {/* NFC Standings */}
-                {standings.standings.nfc && Object.keys(standings.standings.nfc).length > 0 && (
-                  <ScrollReveal>
-                    <Card variant="default" padding="lg" className="mb-6">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-3">
-                          <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <ellipse cx="12" cy="12" rx="9" ry="5" />
-                            <path d="M12 7v10M7 12h10" />
-                          </svg>
-                          NFC Standings
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {divisionOrder.map((div) => {
-                          const teams = standings.standings.nfc[div.toLowerCase()];
-                          if (!teams?.length) return null;
-                          return <DivisionTable key={div} teams={teams} divName={'NFC ' + div} />;
-                        })}
-                      </CardContent>
-                    </Card>
-                  </ScrollReveal>
-                )}
-
-                {/* Data Source */}
-                <Card variant="default" padding="md">
-                  <DataSourceBadge
-                    source={standings.meta?.dataProvider || 'SportsDataIO'}
-                    timestamp={formatTimestamp(standings.source?.retrievedAt)}
-                  />
-                </Card>
-              </>
+                ))}
+              </div>
             )}
+
+            {/* Data Source Footer */}
+            <div className="mt-8 pt-4 border-t border-border-subtle">
+              <DataSourceBadge
+                source="ESPN NFL API"
+                timestamp={formatTimestamp()}
+              />
+            </div>
           </Container>
         </Section>
       </main>
