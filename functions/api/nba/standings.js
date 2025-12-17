@@ -15,7 +15,7 @@ import {
 
 /**
  * NBA Standings endpoint
- * GET /api/nba/standings?conference=Eastern&division=Atlantic
+ * GET /api/nba/standings?conference=Eastern
  */
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -32,18 +32,16 @@ export async function onRequestGet(context) {
   }
 
   const url = new URL(request.url);
-
-  const conference = url.searchParams.get('conference'); // 'Eastern' or 'Western'
-  const division = url.searchParams.get('division');
+  const conference = url.searchParams.get('conference'); // 'East' or 'West'
 
   try {
-    const cacheKey = `nba:standings:${conference || division || 'all'}`;
+    const cacheKey = `nba:standings:${conference || 'all'}`;
 
     const standings = await cache(
       env,
       cacheKey,
       async () => {
-        return await fetchNBAStandings(conference, division);
+        return await fetchNBAStandings(conference);
       },
       300
     ); // 5 minute cache
@@ -66,7 +64,7 @@ export async function onRequestGet(context) {
 /**
  * Fetch NBA standings from ESPN API with retry logic
  */
-async function fetchNBAStandings(filterConference, filterDivision) {
+async function fetchNBAStandings(filterConference) {
   return await withRetry(
     async () => {
       const headers = {
@@ -86,7 +84,7 @@ async function fetchNBAStandings(filterConference, filterDivision) {
       const data = await response.json();
 
       // Process standings data
-      const processed = processNBAStandingsData(data, filterConference, filterDivision);
+      const processed = processNBAStandingsData(data, filterConference);
 
       return processed;
     },
@@ -97,9 +95,10 @@ async function fetchNBAStandings(filterConference, filterDivision) {
 
 /**
  * Process and validate NBA standings data
+ * ESPN API structure: children[] contains conferences, each with standings.entries[]
  */
-function processNBAStandingsData(data, filterConference, filterDivision) {
-  const conferences = {};
+function processNBAStandingsData(data, filterConference) {
+  const conferences = [];
 
   // ESPN NBA API structure: children array contains conferences
   const conferenceData = data.children || [];
@@ -113,105 +112,90 @@ function processNBAStandingsData(data, filterConference, filterDivision) {
       return;
     }
 
-    // Initialize conference structure
-    if (!conferences[conferenceAbbr]) {
-      conferences[conferenceAbbr] = {
-        name: conferenceName,
-        abbreviation: conferenceAbbr,
-        divisions: [],
-      };
-    }
+    // Process teams directly from conference standings (no division nesting in ESPN API)
+    const entries = conf.standings?.entries || [];
 
-    // Process divisions
-    const divisions = conf.children || [];
-    divisions.forEach((division) => {
-      const divisionName = division.name; // e.g., "Atlantic Division"
-      const divisionAbbr = divisionName?.split(' ')[0]; // "Atlantic", "Central", "Southeast", etc.
+    const teams = entries.map((entry) => {
+      const team = entry.team;
+      const stats = entry.stats || [];
 
-      // Filter by division if specified
-      if (filterDivision && !divisionName?.includes(filterDivision)) {
-        return;
-      }
+      // Helper to find stat by name
+      const getStat = (name) => stats.find((s) => s.name === name);
 
-      // Process teams in this division
-      const teams = (division.standings?.entries || []).map((entry) => {
-        const team = entry.team;
-        const stats = entry.stats || [];
+      const wins = getStat('wins')?.value || 0;
+      const losses = getStat('losses')?.value || 0;
+      const gamesPlayed = getStat('gamesPlayed')?.value || wins + losses;
+      const winPercent = getStat('winPercent')?.value || (gamesPlayed > 0 ? wins / gamesPlayed : 0);
+      const gamesBehind = getStat('gamesBehind')?.displayValue || '-';
+      const streak = getStat('streak')?.displayValue || '-';
+      const pointsFor = getStat('pointsFor')?.value || 0;
+      const pointsAgainst = getStat('pointsAgainst')?.value || 0;
 
-        const wins = stats.find((s) => s.name === 'wins')?.value || 0;
-        const losses = stats.find((s) => s.name === 'losses')?.value || 0;
-        const gamesPlayed = stats.find((s) => s.name === 'gamesPlayed')?.value || 0;
-        const winPercent = stats.find((s) => s.name === 'winPercent')?.value || 0;
-        const gamesBehind = stats.find((s) => s.name === 'gamesBehind')?.displayValue || '0.0';
-        const streak = stats.find((s) => s.name === 'streak')?.displayValue || '-';
-        const pointsFor = stats.find((s) => s.name === 'pointsFor')?.value || 0;
-        const pointsAgainst = stats.find((s) => s.name === 'pointsAgainst')?.value || 0;
+      // Get additional records
+      const vsConf = getStat('vsConf')?.displayValue || getStat('conferenceRecord')?.displayValue || 'N/A';
+      const vsDiv = getStat('vsDiv')?.displayValue || getStat('divisionRecord')?.displayValue || 'N/A';
+      const home = getStat('home')?.displayValue || getStat('homeRecord')?.displayValue || 'N/A';
+      const road = getStat('road')?.displayValue || getStat('awayRecord')?.displayValue || 'N/A';
+      const lastTen = getStat('L10')?.displayValue || getStat('last10Games')?.displayValue || 'N/A';
 
-        // Get division and conference records
-        const vsConf = stats.find((s) => s.name === 'vs. Conf.')?.displayValue || 'N/A';
-        const vsDiv = stats.find((s) => s.name === 'vs. Div.')?.displayValue || 'N/A';
-        const home = stats.find((s) => s.name === 'home')?.displayValue || 'N/A';
-        const road = stats.find((s) => s.name === 'road')?.displayValue || 'N/A';
-        const lastTen = stats.find((s) => s.name === 'L10')?.displayValue || 'N/A';
-
-        const teamData = {
-          id: team.id,
-          name: team.displayName,
-          abbreviation: team.abbreviation,
-          logo: team.logos?.[0]?.href,
+      const teamData = {
+        id: team.id,
+        name: team.displayName,
+        abbreviation: team.abbreviation,
+        logo: team.logos?.[0]?.href,
+        wins,
+        losses,
+        gamesPlayed,
+        games: 82,
+        record: {
           wins,
           losses,
-          gamesPlayed,
-          games: 82,
-          record: {
-            wins,
-            losses,
-            winningPercentage: winPercent.toFixed(3),
-            displayRecord: `${wins}-${losses}`,
-          },
-          division: divisionName,
-          divisionAbbr,
-          conference: conferenceAbbr,
-          standings: {
-            gamesBack: gamesBehind,
-            streak,
-            clinched: entry.note?.description?.includes('Clinched') || false,
-          },
-          stats: {
-            pointsFor,
-            pointsAgainst,
-            pointDifferential: pointsFor - pointsAgainst,
-            conferenceRecord: vsConf,
-            divisionRecord: vsDiv,
-            homeRecord: home,
-            roadRecord: road,
-            lastTenRecord: lastTen,
-          },
-        };
+          winningPercentage: winPercent.toFixed(3),
+          displayRecord: `${wins}-${losses}`,
+        },
+        conference: conferenceAbbr,
+        standings: {
+          gamesBack: gamesBehind,
+          streak,
+          clinched: entry.note?.description?.includes('Clinched') || false,
+        },
+        stats: {
+          pointsFor,
+          pointsAgainst,
+          pointDifferential: pointsFor - pointsAgainst,
+          conferenceRecord: vsConf,
+          divisionRecord: vsDiv,
+          homeRecord: home,
+          roadRecord: road,
+          lastTenRecord: lastTen,
+        },
+      };
 
-        // Validate record
+      // Validate record if function available
+      if (typeof validateNBARecord === 'function') {
         const validation = validateNBARecord(teamData);
         if (!validation.valid) {
           console.warn(`Invalid NBA record for ${team.displayName}:`, validation.errors);
         }
+      }
 
-        return teamData;
-      });
+      return teamData;
+    });
 
-      // Add division to conference
-      conferences[conferenceAbbr].divisions.push({
-        name: divisionName,
-        abbreviation: divisionAbbr,
-        teams: teams.sort((a, b) => {
-          // Sort by wins descending, then by winning percentage
-          if (b.wins !== a.wins) {
-            return b.wins - a.wins;
-          }
-          return parseFloat(b.record.winningPercentage) - parseFloat(a.record.winningPercentage);
-        }),
-      });
+    // Sort teams by wins descending, then by winning percentage
+    const sortedTeams = teams.sort((a, b) => {
+      if (b.wins !== a.wins) {
+        return b.wins - a.wins;
+      }
+      return parseFloat(b.record.winningPercentage) - parseFloat(a.record.winningPercentage);
+    });
+
+    conferences.push({
+      name: conferenceName,
+      abbreviation: conferenceAbbr,
+      teams: sortedTeams,
     });
   });
 
-  return Object.values(conferences);
+  return conferences;
 }
