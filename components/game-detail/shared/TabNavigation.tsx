@@ -9,6 +9,7 @@ const TAB_LABELS: Record<GameDetailTab, string> = {
   recap: 'Recap',
   boxscore: 'Box Score',
   playbyplay: 'Play-by-Play',
+  pitchtracker: 'Pitches',
   teamstats: 'Team Stats',
   videos: 'Videos',
 };
