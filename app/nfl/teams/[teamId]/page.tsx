@@ -1,10 +1,44 @@
-import NFLTeamDetailClient, { NFL_TEAMS } from './NFLTeamDetailClient';
+import NFLTeamDetailClient from './NFLTeamDetailClient';
 
-// Generate static params for all 32 NFL teams
+// Generate static params for static export
 export function generateStaticParams() {
-  return Object.keys(NFL_TEAMS).map((teamId) => ({
-    teamId,
-  }));
+  // Pre-generate all 32 NFL team pages
+  const teams = [
+    'cardinals',
+    'falcons',
+    'ravens',
+    'bills',
+    'panthers',
+    'bears',
+    'bengals',
+    'browns',
+    'cowboys',
+    'broncos',
+    'lions',
+    'packers',
+    'texans',
+    'colts',
+    'jaguars',
+    'chiefs',
+    'raiders',
+    'chargers',
+    'rams',
+    'dolphins',
+    'vikings',
+    'patriots',
+    'saints',
+    'giants',
+    'jets',
+    'eagles',
+    'steelers',
+    '49ers',
+    'seahawks',
+    'buccaneers',
+    'titans',
+    'commanders',
+  ];
+
+  return teams.map((teamId) => ({ teamId }));
 }
 
 interface PageProps {
