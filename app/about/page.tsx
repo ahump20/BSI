@@ -233,10 +233,10 @@ export default function AboutPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
-                    href="mailto:ahump20@outlook.com"
+                    href="mailto:Austin@blazesportsintel.com"
                     className="btn-primary px-6 py-3 text-center"
                   >
-                    ahump20@outlook.com
+                    Austin@blazesportsintel.com
                   </a>
                   <Link href="/pricing" className="btn-secondary px-6 py-3 text-center">
                     View Pricing
