@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react';
 
 export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: 'text' | 'circular' | 'rectangular' | 'card';
+  variant?: 'text' | 'circular' | 'rectangular' | 'card' | 'rect';
   width?: string | number;
   height?: string | number;
   lines?: number;
@@ -21,6 +21,7 @@ export function Skeleton({
     text: 'h-4 rounded',
     circular: 'rounded-full',
     rectangular: 'rounded-lg',
+    rect: 'rounded-lg',
     card: 'rounded-xl',
   };
 
@@ -38,7 +39,7 @@ export function Skeleton({
             className={`${baseStyles} ${variantStyles.text}`}
             style={{
               ...style,
-              width: i === lines - 1 ? '75%' : style.width, // Last line shorter
+              width: i === lines - 1 ? '75%' : style.width,
             }}
           />
         ))}
@@ -55,7 +56,6 @@ export function Skeleton({
   );
 }
 
-// Skeleton Card - Full card loading state
 export function SkeletonCard({ className = '' }: { className?: string }) {
   return (
     <div className={`glass-card p-4 ${className}`}>
@@ -78,20 +78,18 @@ export function SkeletonCard({ className = '' }: { className?: string }) {
   );
 }
 
-// Skeleton Table Row
 export function SkeletonTableRow({ columns = 4 }: { columns?: number }) {
   return (
     <tr>
       {Array.from({ length: columns }).map((_, i) => (
         <td key={i} className="px-4 py-3">
-          <Skeleton variant="text" width={`${60 + Math.random() * 40}%`} />
+          <Skeleton variant="text" width="70%" />
         </td>
       ))}
     </tr>
   );
 }
 
-// Skeleton Score Card
 export function SkeletonScoreCard({ className = '' }: { className?: string }) {
   return (
     <div className={`glass-card p-4 ${className}`}>
