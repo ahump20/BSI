@@ -40,6 +40,13 @@ jobs:
       - name: Build project
         run: pnpm build
 
+      - name: Copy Functions to output
+        run: |
+          echo "📦 Copying Cloudflare Pages Functions..."
+          cp -r functions out/functions
+          echo "✅ Functions copied to out/functions"
+          ls -la out/functions/api/ | head -10
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
@@ -86,6 +93,18 @@ jobs:
           elif [ "$SECRETS_CODE" = "503" ]; then
             echo "⚠️ Secrets Status: Some secrets missing"
           fi
+
+      - name: Verify NFL Standings API
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "🏈 Testing NFL API..."
+          NFL_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://blazesportsintel.com/api/nfl/standings" || echo "000")
+          if [ "$NFL_CODE" = "200" ]; then
+            echo "✅ NFL Standings API: Working"
+          else
+            echo "⚠️ NFL Standings API returned: $NFL_CODE"
+          fi
+        continue-on-error: true
 
       - name: Verify API Providers
         if: github.ref == 'refs/heads/main'
