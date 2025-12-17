@@ -50,13 +50,13 @@ export async function onRequestGet({ env, request }) {
         exportVersion: '1.0',
         timezone: 'America/Chicago',
         dataController: 'Blaze Sports Intel',
-        contactEmail: 'ahump20@outlook.com',
+        contactEmail: 'Austin@blazesportsintel.com',
       },
       legalNotice: {
         gdprCompliance: 'This export fulfills your right of access under GDPR Article 15',
         ccpaCompliance: 'This export fulfills your right to know under CCPA',
         dataRetention: 'You may request deletion of this data at any time',
-        contactForQuestions: 'ahump20@outlook.com',
+        contactForQuestions: 'Austin@blazesportsintel.com',
       },
       personalData: userData.personal || {},
       accountData: userData.account || {},
@@ -77,7 +77,7 @@ export async function onRequestGet({ env, request }) {
         dataPortability: 'You have the right to receive your data in a machine-readable format',
         objectToProcessing: 'You have the right to object to processing',
         withdrawConsent: 'You have the right to withdraw consent at any time',
-        contactToExercise: 'Email ahump20@outlook.com to exercise any of these rights',
+        contactToExercise: 'Email Austin@blazesportsintel.com to exercise any of these rights',
       },
     };
 
@@ -107,7 +107,7 @@ export async function onRequestGet({ env, request }) {
       JSON.stringify({
         error: 'Data export failed',
         message: error.message,
-        support: 'Contact ahump20@outlook.com for assistance',
+        support: 'Contact Austin@blazesportsintel.com for assistance',
       }),
       {
         status: 500,
@@ -272,7 +272,7 @@ export async function onRequestDelete({ env, request }) {
       JSON.stringify({
         error: 'Deletion failed',
         message: error.message,
-        support: 'Contact ahump20@outlook.com for assistance',
+        support: 'Contact Austin@blazesportsintel.com for assistance',
       }),
       {
         status: 500,
