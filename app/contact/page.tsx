@@ -29,9 +29,12 @@ export default function ContactPage() {
     e.preventDefault();
     const subject = formData.subject || 'Contact from BlazeSportsIntel.com';
     const body =
-      'Name: ' + formData.name + '\nEmail: ' + formData.email + '\n\n' + formData.message;
+      'Name: ' + formData.name + '
+Email: ' + formData.email + '
+
+' + formData.message;
     const mailtoLink =
-      'mailto:ahump20@outlook.com?subject=' +
+      'mailto:Austin@blazesportsintel.com?subject=' +
       encodeURIComponent(subject) +
       '&body=' +
       encodeURIComponent(body);
@@ -133,10 +136,10 @@ export default function ContactPage() {
               <div className="max-w-xl mx-auto mt-12 text-center">
                 <p className="text-text-tertiary text-sm mb-4">Or reach out directly:</p>
                 <a
-                  href="mailto:ahump20@outlook.com"
+                  href="mailto:Austin@blazesportsintel.com"
                   className="text-burnt-orange hover:text-ember transition-colors font-semibold"
                 >
-                  ahump20@outlook.com
+                  Austin@blazesportsintel.com
                 </a>
                 <p className="text-text-tertiary text-sm mt-8">
                   Blaze Intelligence LLC - Boerne, Texas
