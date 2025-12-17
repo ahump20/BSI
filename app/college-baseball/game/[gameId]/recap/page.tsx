@@ -4,11 +4,6 @@ import { useGameData } from '../layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
-// Required for static export
-export function generateStaticParams() {
-  return [{ gameId: 'placeholder' }];
-}
-
 /**
  * College Baseball Game Recap Page
  *
