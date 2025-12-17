@@ -3,7 +3,7 @@
 import type { HTMLAttributes } from 'react';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'default' | 'secondary' | 'outline';
+  variant?: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'default' | 'secondary' | 'outline' | 'accent';
   size?: 'sm' | 'md';
 }
 
@@ -17,6 +17,7 @@ const variantStyles = {
   default: 'bg-white/10 text-white/70',
   secondary: 'bg-charcoal text-text-secondary border border-border-subtle',
   outline: 'bg-transparent text-text-secondary border border-border-subtle',
+  accent: 'bg-burnt-orange text-white',
 };
 
 const sizeStyles = {
