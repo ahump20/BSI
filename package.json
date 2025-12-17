@@ -34,6 +34,9 @@
     "perf:check": "node scripts/performance-check.ts",
     "data:freshness": "node scripts/check-data-freshness.js",
     "cache:warm": "node scripts/warm-cache.js",
+    "audit:deps": "node scripts/audit-deps.js",
+    "audit:deps:json": "node scripts/audit-deps.js --json",
+    "audit:check": "node scripts/check-new-dep.js",
     "prepare": "husky install",
     "db:migrate:production": "wrangler d1 execute blazesports-historical --remote --file=schema/003_migration_drop_and_recreate.sql",
     "db:seed:production": "wrangler d1 execute blazesports-historical --remote --file=scripts/insert-test-teams-fixed.sql"
