@@ -347,7 +347,14 @@ const CompositionBar = ({ composition, height = 12 }) => {
   );
 };
 
-const StatCard = ({ label, value, subtext, color }) => (
+interface StatCardProps {
+  label: string;
+  value: string | number;
+  subtext?: string;
+  color?: string;
+}
+
+const StatCard = ({ label, value, subtext, color }: StatCardProps) => (
   <div className="rounded-lg p-3" style={{ backgroundColor: tokens.colors.charcoal }}>
     <div className="text-xs uppercase tracking-wider mb-1" style={{ color: tokens.colors.subtle }}>
       {label}
