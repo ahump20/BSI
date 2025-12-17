@@ -13,9 +13,12 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 const navItems = [
   { label: 'Home', href: '/' },
+  { label: 'College Baseball', href: '/college-baseball' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
+  { label: 'NBA', href: '/nba' },
   { label: 'Dashboard', href: '/dashboard' },
+  { label: 'About', href: '/about' },
   { label: 'Pricing', href: '/pricing' },
 ];
 
