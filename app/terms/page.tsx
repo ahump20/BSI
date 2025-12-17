@@ -60,10 +60,10 @@ export default function TermsPage() {
                   <p className="text-text-secondary leading-relaxed">
                     Questions?{' '}
                     <a
-                      href="mailto:ahump20@outlook.com"
+                      href="mailto:Austin@blazesportsintel.com"
                       className="text-burnt-orange hover:text-ember"
                     >
-                      ahump20@outlook.com
+                      Austin@blazesportsintel.com
                     </a>
                   </p>
                 </section>
