@@ -16,7 +16,10 @@ const navItems = [
   { label: 'College Baseball', href: '/college-baseball' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
+  { label: 'NBA', href: '/nba' },
   { label: 'Dashboard', href: '/dashboard' },
+  { label: 'About', href: '/about' },
+  { label: 'Pricing', href: '/pricing' },
 ];
 
 const nflFeatures = [
@@ -361,8 +364,8 @@ export default function NFLPage() {
 
             <ScrollReveal direction="up" delay={200}>
               <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Live scores and standings for all 272 regular season games. Real data from official sources—not
-                whatever ESPN decides to show you between commercials.
+                Live scores and standings for all 272 regular season games. Real data from official
+                sources—no middleman, no filter.
               </p>
             </ScrollReveal>
 
