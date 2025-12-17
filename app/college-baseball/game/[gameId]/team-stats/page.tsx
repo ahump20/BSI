@@ -3,10 +3,6 @@
 import { useGameData } from '../layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 
-// Required for static export
-export function generateStaticParams() {
-  return [{ gameId: 'placeholder' }];
-}
 
 /**
  * College Baseball Team Stats Page
