@@ -161,6 +161,22 @@ BSI includes a Model Context Protocol (MCP) server for Texas Longhorns data serv
 - Mobile-first responsive design
 - All timestamps in America/Chicago timezone
 
+### Dependency Security
+
+BSI uses Socket.dev integration for supply chain security. Before adding any new dependency:
+
+```bash
+# Check a package before installing
+npm run audit:check <package-name>
+
+# Audit all current dependencies
+npm run audit:deps
+```
+
+See [scripts/README.md](./scripts/README.md) for complete documentation.
+
+**Threshold:** All packages must score ≥70 on Socket.dev weighted evaluation (Vulnerability: 35%, Supply Chain: 25%, Maintenance: 20%, Quality: 15%, License: 5%).
+
 ---
 
 ## Data Sources
