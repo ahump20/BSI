@@ -230,10 +230,10 @@ export default function PricingPage() {
                 </h2>
                 <p className="text-text-secondary mb-6">Reach out anytime. I read every email.</p>
                 <a
-                  href="mailto:ahump20@outlook.com"
+                  href="mailto:Austin@blazesportsintel.com"
                   className="text-burnt-orange hover:text-ember transition-colors font-semibold"
                 >
-                  ahump20@outlook.com
+                  Austin@blazesportsintel.com
                 </a>
               </div>
             </ScrollReveal>
