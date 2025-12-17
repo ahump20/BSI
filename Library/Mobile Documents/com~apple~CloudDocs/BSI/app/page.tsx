@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HeroSectionWrapper } from '@/components/hero/HeroSectionWrapper';
 
 export const metadata = {
   title: 'Blaze Sports Intel | Real-Time Sports Analytics',
@@ -43,7 +44,10 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
+        {/* Three.js Ember Particles Background */}
+        <HeroSectionWrapper />
+
+        <div className="max-w-7xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-primary/20 text-primary mb-6">
             <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
             Real-Time Sports Intelligence
