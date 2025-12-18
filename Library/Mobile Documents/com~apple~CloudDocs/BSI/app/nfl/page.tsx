@@ -1,4 +1,5 @@
 'use client';
+// Force sync fix: 2025-12-18
 
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
