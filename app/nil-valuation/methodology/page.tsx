@@ -128,10 +128,10 @@ export default function NILMethodologyPage() {
                       For baseball athletes, we convert Wins Above Replacement (WAR) to NIL value using MLB market rates as a benchmark:
                     </p>
                     <div className="bg-graphite rounded-lg p-4 font-mono text-sm">
-                      <p className="text-burnt-orange mb-2">// Base calculation</p>
+                      <p className="text-burnt-orange mb-2">{'// Base calculation'}</p>
                       <p className="text-white">NIL Value = WAR × $/WAR × College Discount Factor</p>
-                      <p className="text-text-tertiary mt-4">// 2025 MLB market: ~$8M per WAR</p>
-                      <p className="text-text-tertiary">// College discount: 0.5-2% of MLB value</p>
+                      <p className="text-text-tertiary mt-4">{'// 2025 MLB market: ~$8M per WAR'}</p>
+                      <p className="text-text-tertiary">{'// College discount: 0.5-2% of MLB value'}</p>
                     </div>
                     <p className="text-text-secondary">
                       This gives a performance-based floor that we then adjust using the social and market factors from FMNV.

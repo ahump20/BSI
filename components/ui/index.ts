@@ -43,3 +43,6 @@ export { Marquee } from './Marquee';
 
 // Quote Block
 export { QuoteBlock } from './QuoteBlock';
+
+// Live ticker
+export { LiveTicker } from './LiveTicker';
