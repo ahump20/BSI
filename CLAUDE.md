@@ -29,7 +29,10 @@
 - College: Texas Longhorns (all sports)
 
 **Brand:**
-- Colors: Burnt orange (#BF5700), Texas soil (#8B4513), Ember (#FF6B35), Charcoal (#1A1A1A), Midnight (#0D0D0D), Cream (#FAF8F5), Gold (#C9A227)
+- Mascot: Blaze the Dachshund — chocolate dachshund emerging from flames, encased in shield badge
+- Logo: Shield badge with Blaze mascot, "BLAZE SPORTS INTEL" text, flame aura
+- Colors: Burnt orange (#BF5700), Texas soil (#8B4513), Ember (#FF6B35), Flame glow (#FFBA08), Charcoal (#1A1A1A), Midnight (#0D0D0D), Gold (#C9A227)
+- Flame Palette: Core (#FF6B35), Mid (#E85D04), Outer (#DC2F02), Glow (#FFBA08), Ember (#9D0208), Smoke (#370617)
 - Voice: Direct, warm, no corporate slop
 - Tagline: "Born to Blaze the Path Less Beaten"
 
@@ -164,7 +167,15 @@ export const colors = {
     burntOrange: '#BF5700',  // UT Official - Heritage, passion
     texasSoil: '#8B4513',    // West Columbia earth - Roots
     ember: '#FF6B35',        // Interactive accent
-    gold: '#C9A227',         // Value highlights
+    gold: '#C9A227',         // Championship gold - logo text
+  },
+  flame: {
+    core: '#FF6B35',         // Inner flame - brightest
+    mid: '#E85D04',          // Mid flame
+    outer: '#DC2F02',        // Outer flame edge
+    glow: '#FFBA08',         // Flame glow/highlights
+    ember: '#9D0208',        // Deep ember coals
+    smoke: '#370617',        // Dark smoke tones
   },
   background: {
     charcoal: '#1A1A1A',     // Premium editorial dark
@@ -232,12 +243,36 @@ import { BaseballIcon } from '@/components/icons';
 <BaseballIcon className="w-6 h-6 text-brand-primary" />
 ```
 
+### Mascot & Logo Usage
+**Blaze the Dachshund** — Official brand mascot
+
+Logo variants:
+- **Primary**: Shield badge with Blaze + flames (dark backgrounds)
+- **Horizontal**: Badge left, text right (headers, navigation)
+- **Stacked**: Badge top, text below (hero sections)
+- **Mark only**: Shield badge without text (favicons, app icons)
+
+Usage rules:
+- Minimum clear space: 1x badge height on all sides
+- Never stretch, rotate, or recolor the mascot
+- Flames should always glow on dark backgrounds (use `.glow-flame` class)
+- Shield badge uses gold-to-brown gradient border
+
+CSS Classes:
+- `.logo-container` — Centers logo with flex
+- `.logo-flame-bg` — Adds radial flame glow behind logo
+- `.logo-lockup-horizontal` — Side-by-side layout
+- `.logo-lockup-stacked` — Vertical layout
+- `.mascot-flame-aura` — Adds flame glow behind mascot
+- `.shield-badge` — Base shield shape with gradient
+- `.shield-badge-flame` — Shield with animated flame aura
+
 ### Asset Management
 Location: `public/`
 ```
 public/
 ├── images/
-│   ├── logos/
+│   ├── logos/          # Blaze mascot, BSI lockups
 │   ├── teams/
 │   └── players/
 ├── fonts/
@@ -247,6 +282,7 @@ public/
 - Optimize images before commit (WebP preferred)
 - Use Cloudflare R2 for large/dynamic assets
 - Reference via `/images/...` not absolute URLs
+- Logo files: Use SVG for vectors, PNG for raster with transparency
 
 ---
 
@@ -326,7 +362,7 @@ wrangler deploy --config workers/{worker-name}/wrangler.toml
 ```toml
 name = "bsi-{domain}-{function}"
 main = "src/workers/{path}/index.ts"
-compatibility_date = "2024-01-01"
+compatibility_date = "2025-01-01"
 
 [vars]
 ENVIRONMENT = "production"
@@ -462,4 +498,4 @@ Never say:
 
 ---
 
-*Last updated: November 2025*
+*Last updated: December 2025*

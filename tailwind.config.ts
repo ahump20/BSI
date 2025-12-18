@@ -44,8 +44,18 @@ const config: Config = {
         'texas-cream': '#F5E6D3',
         midnight: '#0d0d12',
         ember: '#FF6B35',
-        flame: '#E85D04',
         graphite: '#242424',
+        gold: '#C9A227',
+        // Flame Palette (logo-inspired)
+        flame: {
+          core: '#FF6B35',
+          mid: '#E85D04',
+          outer: '#DC2F02',
+          glow: '#FFBA08',
+          ember: '#9D0208',
+          smoke: '#370617',
+          DEFAULT: '#E85D04',
+        },
         // Text Colors
         text: {
           primary: '#fafafa',
@@ -135,6 +145,12 @@ const config: Config = {
         'glow-sm': '0 0 20px rgba(191, 87, 0, 0.3)',
         'glow-md': '0 0 40px rgba(191, 87, 0, 0.4), 0 0 60px rgba(191, 87, 0, 0.2)',
         'glow-lg': '0 0 60px rgba(204, 102, 0, 0.5), 0 0 100px rgba(191, 87, 0, 0.3), 0 0 140px rgba(217, 123, 56, 0.2)',
+        // Flame glow effects (logo-inspired)
+        'flame-sm': '0 0 15px rgba(255, 107, 53, 0.4), 0 0 30px rgba(255, 186, 8, 0.2)',
+        'flame-md': '0 0 30px rgba(255, 107, 53, 0.5), 0 0 60px rgba(232, 93, 4, 0.3), 0 0 90px rgba(255, 186, 8, 0.2)',
+        'flame-lg': '0 0 40px rgba(255, 107, 53, 0.6), 0 0 80px rgba(232, 93, 4, 0.4), 0 0 120px rgba(255, 186, 8, 0.3), 0 0 160px rgba(220, 47, 2, 0.2)',
+        // Shield badge shadow
+        'shield': '0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(201, 162, 39, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
       },
       backdropBlur: {
         'glass': '12px',
@@ -146,6 +162,10 @@ const config: Config = {
         'slide-in-right': 'slideInRight 0.5s ease-out forwards',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'spin-slow': 'spin 3s linear infinite',
+        // Flame animations (logo-inspired)
+        'flame-flicker': 'flameFlicker 0.5s ease-in-out infinite alternate',
+        'flame-pulse': 'flamePulse 2s ease-in-out infinite',
+        'ember-float': 'emberFloat 3s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -163,6 +183,19 @@ const config: Config = {
         pulseGlow: {
           '0%, 100%': { boxShadow: '0 0 20px rgba(191, 87, 0, 0.3)' },
           '50%': { boxShadow: '0 0 40px rgba(191, 87, 0, 0.6)' },
+        },
+        // Flame keyframes
+        flameFlicker: {
+          '0%': { opacity: '0.8', transform: 'scaleY(1) scaleX(1)' },
+          '100%': { opacity: '1', transform: 'scaleY(1.05) scaleX(0.98)' },
+        },
+        flamePulse: {
+          '0%, 100%': { boxShadow: '0 0 30px rgba(255, 107, 53, 0.4), 0 0 60px rgba(255, 186, 8, 0.2)' },
+          '50%': { boxShadow: '0 0 50px rgba(255, 107, 53, 0.6), 0 0 100px rgba(255, 186, 8, 0.4)' },
+        },
+        emberFloat: {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)', opacity: '0.6' },
+          '50%': { transform: 'translateY(-10px) rotate(5deg)', opacity: '1' },
         },
       },
       transitionTimingFunction: {

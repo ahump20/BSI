@@ -679,6 +679,389 @@
 
 /**
  * ============================================================================
+ * 15. FLAME EFFECTS (Logo-Inspired)
+ * ============================================================================
+ * Fire and ember effects extracted from the Blaze mascot logo
+ */
+
+/* Flame gradient - vertical (rising flames) */
+.gradient-flame {
+  background: linear-gradient(
+    180deg,
+    #FFBA08 0%,
+    #FF6B35 25%,
+    #E85D04 50%,
+    #DC2F02 75%,
+    #9D0208 100%
+  );
+}
+
+/* Flame gradient - horizontal (spreading flames) */
+.gradient-flame-horizontal {
+  background: linear-gradient(
+    90deg,
+    #9D0208 0%,
+    #DC2F02 25%,
+    #E85D04 50%,
+    #FF6B35 75%,
+    #FFBA08 100%
+  );
+}
+
+/* Radial flame (center glow) */
+.gradient-flame-radial {
+  background: radial-gradient(
+    ellipse at center,
+    #FFBA08 0%,
+    #FF6B35 30%,
+    #E85D04 50%,
+    #DC2F02 70%,
+    #370617 100%
+  );
+}
+
+/* Flame text gradient (BLAZE logo style) */
+.text-flame-gradient {
+  background: linear-gradient(
+    180deg,
+    #FFBA08 0%,
+    #C9A227 40%,
+    #BF5700 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Flame glow effect */
+.glow-flame {
+  box-shadow:
+    0 0 20px rgba(255, 107, 53, 0.5),
+    0 0 40px rgba(232, 93, 4, 0.3),
+    0 0 60px rgba(255, 186, 8, 0.2);
+}
+
+/* Intense flame glow (hero sections) */
+.glow-flame-intense {
+  box-shadow:
+    0 0 30px rgba(255, 107, 53, 0.6),
+    0 0 60px rgba(232, 93, 4, 0.4),
+    0 0 100px rgba(255, 186, 8, 0.3),
+    0 0 140px rgba(220, 47, 2, 0.2);
+}
+
+/* Flame flicker animation */
+@keyframes flame-flicker {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scaleY(1) scaleX(1);
+  }
+  25% {
+    opacity: 1;
+    transform: scaleY(1.02) scaleX(0.99);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scaleY(1.04) scaleX(0.98);
+  }
+  75% {
+    opacity: 1;
+    transform: scaleY(1.01) scaleX(1.01);
+  }
+}
+
+.animate-flame-flicker {
+  animation: flame-flicker 0.5s ease-in-out infinite;
+}
+
+/* Ember particle animation */
+@keyframes ember-rise {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+.ember-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #FFBA08;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #FF6B35;
+  animation: ember-rise 2s ease-out infinite;
+}
+
+/**
+ * ============================================================================
+ * 16. SHIELD BADGE COMPONENT (Logo-Inspired)
+ * ============================================================================
+ * The distinctive shield badge from the Blaze Sports Intel logo
+ */
+
+/* Base shield shape */
+.shield-badge {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    #2D2D2D 0%,
+    #1A1A1A 50%,
+    #0D0D0D 100%
+  );
+  border: 3px solid transparent;
+  border-image: linear-gradient(
+    180deg,
+    #C9A227 0%,
+    #8B4513 50%,
+    #5C2D0A 100%
+  ) 1;
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% 75%,
+    50% 100%,
+    0% 75%
+  );
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(201, 162, 39, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Shield with flame aura */
+.shield-badge-flame {
+  position: relative;
+}
+
+.shield-badge-flame::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(255, 186, 8, 0.4) 0%,
+    rgba(255, 107, 53, 0.3) 30%,
+    rgba(232, 93, 4, 0.2) 50%,
+    transparent 70%
+  );
+  z-index: -1;
+  animation: flame-flicker 0.5s ease-in-out infinite alternate;
+}
+
+/* Shield inner content area */
+.shield-content {
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Shield gold border variant */
+.shield-badge-gold {
+  border-color: #C9A227;
+  box-shadow:
+    0 0 20px rgba(201, 162, 39, 0.3),
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/**
+ * ============================================================================
+ * 17. LOGO DISPLAY STYLES
+ * ============================================================================
+ * Proper presentation of the Blaze Sports Intel logo
+ */
+
+/* Logo container */
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Logo with flame background */
+.logo-flame-bg {
+  position: relative;
+  padding: 2rem;
+}
+
+.logo-flame-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 186, 8, 0.2) 0%,
+    rgba(255, 107, 53, 0.15) 30%,
+    transparent 60%
+  );
+  z-index: -1;
+}
+
+/* Logo lockup (horizontal layout) */
+.logo-lockup-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Logo lockup (stacked layout) */
+.logo-lockup-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Tagline styling */
+.tagline {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  color: #C9A227;
+  text-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+}
+
+/**
+ * ============================================================================
+ * 18. BLAZE MASCOT INTEGRATION
+ * ============================================================================
+ * Styles for the Blaze dachshund mascot
+ */
+
+/* Mascot container */
+.mascot-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Mascot with flame aura */
+.mascot-flame-aura {
+  position: relative;
+}
+
+.mascot-flame-aura::after {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 186, 8, 0.3) 0%,
+    rgba(255, 107, 53, 0.2) 40%,
+    transparent 70%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Mascot silhouette (for loading states) */
+.mascot-silhouette {
+  filter: brightness(0) saturate(100%);
+  opacity: 0.1;
+}
+
+/**
+ * ============================================================================
+ * 19. SMOKE & ATMOSPHERE
+ * ============================================================================
+ * Smoky background effects inspired by the logo
+ */
+
+/* Smoke overlay */
+.smoke-overlay {
+  position: relative;
+}
+
+.smoke-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(55, 6, 23, 0.3) 0%,
+    rgba(13, 13, 13, 0.6) 50%,
+    rgba(13, 13, 13, 0.9) 100%
+  );
+  pointer-events: none;
+}
+
+/* Rocky terrain gradient (logo bottom) */
+.gradient-terrain {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(55, 6, 23, 0.3) 40%,
+    rgba(26, 26, 26, 0.8) 70%,
+    #0D0D0D 100%
+  );
+}
+
+/* Starfield effect (background embers) */
+.starfield-embers {
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, #FFBA08 50%, transparent 50%),
+    radial-gradient(1px 1px at 30% 60%, #FF6B35 50%, transparent 50%),
+    radial-gradient(1px 1px at 50% 10%, #C9A227 50%, transparent 50%),
+    radial-gradient(1px 1px at 70% 40%, #FFBA08 50%, transparent 50%),
+    radial-gradient(1px 1px at 90% 80%, #FF6B35 50%, transparent 50%);
+  background-size: 200px 200px;
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/**
+ * ============================================================================
+ * 20. HERO COMPOSITIONS (Logo Theme)
+ * ============================================================================
+ * Ready-to-use hero sections matching the logo aesthetic
+ */
+
+/* Primary hero with flame theme */
+.hero-blaze {
+  min-height: 60vh;
+  background:
+    radial-gradient(ellipse at center top, rgba(255, 186, 8, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at center bottom, rgba(220, 47, 2, 0.1) 0%, transparent 40%),
+    linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 50%, #0D0D0D 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-blaze::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(180deg, transparent, rgba(55, 6, 23, 0.3), rgba(13, 13, 13, 0.8));
+  pointer-events: none;
+}
+
+/* Compact hero for interior pages */
+.hero-blaze-compact {
+  min-height: 30vh;
+  background:
+    radial-gradient(ellipse at center, rgba(255, 107, 53, 0.1) 0%, transparent 60%),
+    linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 100%);
+  display: flex;
+  align-items: center;
+  padding: 3rem 1.5rem;
+}
+
+/**
+ * ============================================================================
  * END BRAND IDENTITY SYSTEM
  * ============================================================================
  */

@@ -3,6 +3,9 @@
  *
  * Design Language: Dark cinematic UI with burnt orange accent
  * Think: premium sports intel platform, not flashy sports site
+ *
+ * Logo Reference: Blaze the Dachshund in flames, shield badge design
+ * Tagline: "Born to Blaze the Path Less Beaten"
  */
 
 export const colors = {
@@ -12,6 +15,17 @@ export const colors = {
     blaze: '#FF4500', // Accent highlight - Blaze orange
     ember: '#FF6B35', // Secondary accent - softer orange
     texasSoil: '#8B4513', // Earth tone - grounding color
+    gold: '#C9A227', // Championship gold - logo text accent
+  },
+
+  // Flame Palette (extracted from logo)
+  flame: {
+    core: '#FF6B35', // Inner flame - brightest
+    mid: '#E85D04', // Mid flame
+    outer: '#DC2F02', // Outer flame edge
+    glow: '#FFBA08', // Flame glow/highlights
+    ember: '#9D0208', // Deep ember coals
+    smoke: '#370617', // Dark smoke tones
   },
 
   // Background Hierarchy (Dark UI)
@@ -82,13 +96,37 @@ export const colorsCSSVars = `
   --color-blaze: ${colors.brand.blaze};
   --color-ember: ${colors.brand.ember};
   --color-texas-soil: ${colors.brand.texasSoil};
+  --color-gold: ${colors.brand.gold};
   --color-midnight: ${colors.background.midnight};
   --color-charcoal: ${colors.background.charcoal};
   --color-graphite: ${colors.background.graphite};
   --color-slate: ${colors.background.slate};
   --color-steel: ${colors.background.steel};
+  --color-flame-core: ${colors.flame.core};
+  --color-flame-mid: ${colors.flame.mid};
+  --color-flame-outer: ${colors.flame.outer};
+  --color-flame-glow: ${colors.flame.glow};
 `;
 
+// Gradient definitions for consistent use across components
+export const gradients = {
+  // Primary flame gradient (logo-inspired)
+  flame: 'linear-gradient(180deg, #FFBA08 0%, #FF6B35 25%, #E85D04 50%, #DC2F02 75%, #9D0208 100%)',
+  flameHorizontal: 'linear-gradient(90deg, #9D0208 0%, #DC2F02 25%, #E85D04 50%, #FF6B35 75%, #FFBA08 100%)',
+  flameRadial: 'radial-gradient(ellipse at center, #FFBA08 0%, #FF6B35 30%, #E85D04 50%, #DC2F02 70%, #370617 100%)',
+
+  // Shield badge gradient (logo badge)
+  shieldDark: 'linear-gradient(180deg, #2D2D2D 0%, #1A1A1A 50%, #0D0D0D 100%)',
+  shieldBorder: 'linear-gradient(180deg, #C9A227 0%, #8B4513 50%, #5C2D0A 100%)',
+
+  // Brand text gradient (BLAZE logo text)
+  brandText: 'linear-gradient(180deg, #FFBA08 0%, #C9A227 40%, #BF5700 100%)',
+
+  // Smoke/atmosphere
+  smokeOverlay: 'linear-gradient(180deg, rgba(55, 6, 23, 0.8) 0%, rgba(13, 13, 13, 0.95) 100%)',
+} as const;
+
 export type BrandColor = keyof typeof colors.brand;
+export type FlameColor = keyof typeof colors.flame;
 export type BackgroundColor = keyof typeof colors.background;
 export type TextColor = keyof typeof colors.text;
