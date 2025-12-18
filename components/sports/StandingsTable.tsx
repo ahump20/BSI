@@ -257,7 +257,7 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-bold text-white">
-                            {team.abbreviation.slice(0, 2)}
+                            {(team.abbreviation || '??').slice(0, 2)}
                           </div>
                           <span className="text-white font-medium">{team.team}</span>
                         </div>
