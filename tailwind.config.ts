@@ -43,9 +43,12 @@ const config: Config = {
         'texas-soil': '#8B4513',
         'texas-cream': '#F5E6D3',
         midnight: '#0d0d12',
+        'true-black': '#0D0D0D',
         ember: '#FF6B35',
         flame: '#E85D04',
         graphite: '#242424',
+        gold: '#C9A227',
+        cream: '#FAF8F5',
         // Text Colors
         text: {
           primary: '#fafafa',
@@ -146,6 +149,9 @@ const config: Config = {
         'slide-in-right': 'slideInRight 0.5s ease-out forwards',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'spin-slow': 'spin 3s linear infinite',
+        'marquee': 'marquee 30s linear infinite',
+        'marquee-reverse': 'marquee-reverse 30s linear infinite',
+        'marquee-fast': 'marquee 15s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -163,6 +169,14 @@ const config: Config = {
         pulseGlow: {
           '0%, 100%': { boxShadow: '0 0 20px rgba(191, 87, 0, 0.3)' },
           '50%': { boxShadow: '0 0 40px rgba(191, 87, 0, 0.6)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'marquee-reverse': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' },
         },
       },
       transitionTimingFunction: {

@@ -826,6 +826,57 @@ textarea:focus-visible,
 }
 
 /* ========================================
+   Marquee Animation
+   ======================================== */
+
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.marquee-track {
+  display: inline-flex;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* True black background for premium sections */
+.bg-true-black {
+  background-color: #0D0D0D;
+}
+
+/* Gold accent text */
+.text-gold {
+  color: #C9A227;
+}
+
+/* Cream background */
+.bg-cream {
+  background-color: #FAF8F5;
+}
+
+/* Serif quote typography */
+.font-serif-quote {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+}
+
+/* Large decorative quote mark */
+.quote-mark {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 8rem;
+  line-height: 1;
+  color: rgba(191, 87, 0, 0.15);
+  position: absolute;
+  top: -2rem;
+  left: -1rem;
+}
+
+/* ========================================
    Print Styles
    ======================================== */
 

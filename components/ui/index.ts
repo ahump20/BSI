@@ -37,3 +37,9 @@ export type { PageHeaderProps } from './PageHeader';
 // Loading states
 export { Skeleton, SkeletonCard, SkeletonTableRow, SkeletonScoreCard } from './Skeleton';
 export type { SkeletonProps } from './Skeleton';
+
+// Marquee
+export { Marquee } from './Marquee';
+
+// Quote Block
+export { QuoteBlock } from './QuoteBlock';

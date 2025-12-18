@@ -7,3 +7,4 @@ export {
 } from './ScoreCard';
 export { LiveScoresPanel } from './LiveScoresPanel';
 export { StandingsTable } from './StandingsTable';
+export { SportsGrid } from './SportsGrid';
