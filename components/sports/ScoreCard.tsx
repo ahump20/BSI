@@ -143,7 +143,7 @@ export function ScoreCard({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange flex-shrink-0">
-              {awayTeam.abbreviation.slice(0, 3)}
+              {(awayTeam.abbreviation || '???').slice(0, 3)}
             </div>
             <div className="min-w-0">
               <p
@@ -182,7 +182,7 @@ export function ScoreCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange flex-shrink-0">
-              {homeTeam.abbreviation.slice(0, 3)}
+              {(homeTeam.abbreviation || '???').slice(0, 3)}
             </div>
             <div className="min-w-0">
               <p
