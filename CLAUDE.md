@@ -8,7 +8,7 @@
 
 **Austin Humphrey** — Founder, Blaze Sports Intel
 - Location: Boerne, Texas
-- Contact: ahump20@outlook.com
+- Contact: Austin@blazesportsintel.com
 - Focus: Sports intelligence and analytics (MLB, NFL, NCAA coverage that serves fans, not networks)
 - Stack: Cloudflare Workers/D1/KV/R2 exclusively
 - Philosophy: Production-ready code, zero placeholders
@@ -34,7 +34,22 @@
 - Tagline: "Born to Blaze the Path Less Beaten"
 
 **Background:**
-Born August 17, 1995—same day as Davy Crockett—in Memphis on Texas soil his father placed beneath the hospital bed. The doctor told my parents, "You know you ain't the first to do this—but they've ALL been from Texas." UT Austin (International Relations; European Studies, Polisci, Econ minors), Full Sail (Entertainment Business MS). Pitched a perfect game. Drove Memphis to Austin every Thanksgiving for 40+ years of Longhorn football. Top 10% nationally at Northwestern Mutual. Got tired of waiting for someone else to fix college baseball coverage.
+Born August 17, 1995—same day as Davy Crockett—in Memphis on Texas soil his father placed beneath the hospital bed. The soil came from West Columbia, birthplace of the Republic of Texas. The doctor told my parents, "You know you ain't the first to do this—but they've ALL been from Texas." The news made the local paper in El Campo—my father's hometown, where my grandad Bill founded banks after growing up dirt poor in West Texas and meeting my grandma Helen at Hardin-Simmons following his service in WWII.
+
+**Athletic History:**
+- First time at RB in 7th grade: 70 yards to the house, first play of the season
+- Boerne Champion High School: Scored first TD against big rival Kerrville Tivy
+- Marble Falls game: Scored on first play via screen pass against Coach Todd Dodge; play landed on ESPN
+- Pitched a perfect game in baseball (27 up, 27 down)
+- South Texas Sliders: Toured Texas Tech, started that day against #1 team in the country on Tech's field
+- Family has held same four season tickets to Longhorn football for 40-50 years
+- Was at the Ricky Williams record-breaking game against A&M
+
+**Education & Career:**
+UT Austin (International Relations; European Studies, Polisci, Econ minors). Full Sail (Entertainment Business MS). Top 10% nationally at Northwestern Mutual. Got tired of waiting for ESPN to fix college baseball coverage.
+
+**Brand Name Origin:**
+The name "Blaze Sports Intel" comes from my dog—a dachshund named Blaze after the first baseball team I played on: the Bartlett Blaze.
 
 **Business Model (See: docs/BSI-FINANCIAL-MODEL.md):**
 - **Pro Subscription:** $29/mo — Fans, fantasy players, amateur coaches
