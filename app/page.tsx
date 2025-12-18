@@ -3,11 +3,21 @@ import { HeroSectionWrapper } from '@/components/hero/HeroSectionWrapper';
 import { SportsGrid } from '@/components/sports/SportsGrid';
 import { QuoteBlock } from '@/components/ui/QuoteBlock';
 import { Footer } from '@/components/layout/Footer';
+import { IntelTicker } from '@/components/cinematic';
 
 export const metadata = {
   title: 'Blaze Sports Intel | Born to Blaze the Path Less Beaten',
   description: 'Real sports intelligence for fans who deserve better. MLB, NFL, NBA, and NCAA analytics built by someone who got tired of waiting for ESPN to care.',
 };
+
+const tickerItems = [
+  { id: '1', content: '300+ D1 Baseball Programs Tracked', type: 'default' as const },
+  { id: '2', content: 'Live Scores: 30-Second Updates', type: 'live' as const },
+  { id: '3', content: 'MLB • NFL • NBA • NCAA Coverage', type: 'default' as const },
+  { id: '4', content: 'Enterprise API Access Available', type: 'default' as const },
+  { id: '5', content: 'NIL Valuation: 5,200+ Athletes', type: 'default' as const },
+  { id: '6', content: 'Transfer Portal Intel Updated Daily', type: 'live' as const },
+];
 
 export default function HomePage() {
   return (
@@ -32,6 +42,9 @@ export default function HomePage() {
               <Link href="/nba" className="text-white/60 hover:text-white transition-colors text-sm font-medium">
                 NBA
               </Link>
+              <Link href="/about" className="text-white/60 hover:text-white transition-colors text-sm font-medium">
+                About
+              </Link>
             </div>
             <Link
               href="/pricing"
@@ -42,6 +55,15 @@ export default function HomePage() {
           </div>
         </div>
       </nav>
+
+      {/* Intel Ticker - Business Stats */}
+      <div className="fixed top-16 left-0 right-0 z-40">
+        <IntelTicker
+          items={tickerItems}
+          speed={25}
+          variant="accent"
+        />
+      </div>
 
       {/* Hero Section - Full viewport with new design */}
       <HeroSectionWrapper />
@@ -73,10 +95,10 @@ export default function HomePage() {
               View Pricing
             </Link>
             <Link
-              href="/dashboard"
+              href="/about"
               className="px-8 py-4 border border-white/30 hover:border-burnt-orange-500 text-white hover:text-burnt-orange-400 font-semibold text-lg rounded-lg transition-all duration-300"
             >
-              Explore Dashboard
+              Our Story
             </Link>
           </div>
         </div>
