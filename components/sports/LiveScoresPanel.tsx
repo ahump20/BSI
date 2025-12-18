@@ -44,8 +44,10 @@ async function fetchScores(sport: Sport): Promise<Game[]> {
       // Return mock data for development
       return getMockGames(sport);
     }
-    const data = (await res.json()) as { games?: Game[]; data?: Game[] };
-    return data.games || data.data || [];
+    const data = await res.json();
+    // Safely extract games array from various response shapes
+    const gamesArray = data?.games || data?.data || data;
+    return Array.isArray(gamesArray) ? gamesArray : [];
   } catch {
     // Return mock data if API fails
     return getMockGames(sport);
@@ -153,7 +155,9 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
     staleTime: 10_000,
   });
 
-  const liveGames = games?.filter((g) => g.status === 'live') || [];
+  // Safely filter for live games - ensure games is actually an array
+  const gamesArray = Array.isArray(games) ? games : [];
+  const liveGames = gamesArray.filter((g) => g.status === 'live');
   const hasLiveGames = liveGames.length > 0;
 
   return (
@@ -189,9 +193,9 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
           <p className="text-white/60">Unable to load scores</p>
           <p className="text-white/40 text-sm mt-1">Please try again later</p>
         </div>
-      ) : games && games.length > 0 ? (
+      ) : gamesArray.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {games.map((game) => (
+          {gamesArray.map((game) => (
             <ScoreCard
               key={game.id}
               gameId={game.id}
