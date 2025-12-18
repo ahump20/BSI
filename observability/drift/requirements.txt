@@ -1,6 +1,12 @@
 # Blaze Intelligence Data Drift Monitoring Requirements
 # Python 3.11+
 
+# =====================================================
+# SECURITY: Pinned dependencies to address CVEs
+# =====================================================
+urllib3>=2.3.0  # CVE fixes for compressed data handling
+filelock>=3.18.0  # CVE fix for TOCTOU race condition
+
 # Core Data Processing
 pandas>=2.1.0
 numpy>=1.24.0
