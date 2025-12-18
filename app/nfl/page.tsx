@@ -1,4 +1,5 @@
 'use client';
+// Force sync fix: 2025-12-18
 
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
@@ -172,9 +173,15 @@ export default function NFLPage() {
                           </h4>
                           <div className="flex flex-wrap gap-2">
                             {div.teams.map((team) => (
-                              <Badge key={team} variant="secondary" className="text-sm">
-                                {team}
-                              </Badge>
+                              <Link
+                                key={team}
+                                href={`/nfl/teams/${team.toLowerCase().replace(/\s+/g, '-')}`}
+                                className="inline-block"
+                              >
+                                <Badge variant="secondary" className="text-sm hover:bg-burnt-orange hover:text-white transition-colors cursor-pointer">
+                                  {team}
+                                </Badge>
+                              </Link>
                             ))}
                           </div>
                         </Card>
