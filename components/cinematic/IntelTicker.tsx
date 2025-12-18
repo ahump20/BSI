@@ -45,7 +45,7 @@ const typeClasses = {
  */
 export function IntelTicker({
   items,
-  speed = 50,
+  speed = 25,
   pauseOnHover = true,
   variant = 'default',
   separator = '•',
