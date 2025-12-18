@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -43,6 +43,29 @@ const chapters = [
 
 export default function AboutPage() {
   const [activeChapter, setActiveChapter] = useState(0);
+
+  // Scroll-based chapter tracking
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const scrollWithOffset = scrollPosition + 200;
+
+      chapters.forEach((chapter, index) => {
+        const element = document.getElementById(chapter.id);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollWithOffset >= offsetTop && scrollWithOffset < offsetTop + offsetHeight) {
+            setActiveChapter(index);
+          }
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const progressPercentage = ((activeChapter + 1) / chapters.length) * 100;
 
   return (
     <main className="min-h-screen bg-midnight text-cream">
@@ -103,26 +126,57 @@ export default function AboutPage() {
       {/* Chapter Navigation */}
       <div className="sticky top-16 z-40 bg-charcoal/95 backdrop-blur-sm border-y border-white/10">
         <Container>
-          <div className="flex overflow-x-auto py-3 gap-2 no-scrollbar">
-            {chapters.map((chapter, index) => (
-              <button
-                key={chapter.id}
-                onClick={() => {
-                  setActiveChapter(index);
-                  document.getElementById(chapter.id)?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                  activeChapter === index
-                    ? 'bg-burnt-orange text-white'
-                    : 'bg-midnight/50 text-gray-400 hover:text-white hover:bg-midnight'
-                }`}
-                style={activeChapter === index ? { backgroundColor: colors.burntOrange } : {}}
-              >
-                {chapter.title}
-              </button>
-            ))}
+          <div className="flex items-center justify-between py-3 gap-4">
+            <div className="flex overflow-x-auto gap-2 no-scrollbar flex-1">
+              {chapters.map((chapter, index) => (
+                <button
+                  key={chapter.id}
+                  onClick={() => {
+                    setActiveChapter(index);
+                    document.getElementById(chapter.id)?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                    activeChapter === index
+                      ? 'bg-burnt-orange text-white'
+                      : 'bg-midnight/50 text-gray-400 hover:text-white hover:bg-midnight'
+                  }`}
+                  style={activeChapter === index ? { backgroundColor: colors.burntOrange } : {}}
+                >
+                  {chapter.title}
+                </button>
+              ))}
+            </div>
+            {/* Chapter indicator - desktop only */}
+            <div className="hidden md:flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs text-gray-500">{activeChapter + 1}/{chapters.length}</span>
+              {chapters.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setActiveChapter(index);
+                    document.getElementById(chapters[index].id)?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="w-2 h-2 rounded-full transition-all duration-300"
+                  style={{
+                    backgroundColor: index === activeChapter ? colors.burntOrange : '#374151',
+                    transform: index === activeChapter ? 'scale(1.5)' : 'scale(1)',
+                  }}
+                  aria-label={`Go to ${chapters[index].title}`}
+                />
+              ))}
+            </div>
           </div>
         </Container>
+        {/* Progress Bar */}
+        <div className="h-0.5 bg-midnight relative">
+          <div
+            className="absolute left-0 top-0 h-full transition-all duration-500 ease-out"
+            style={{
+              width: `${progressPercentage}%`,
+              backgroundColor: colors.burntOrange,
+            }}
+          />
+        </div>
       </div>
 
       {/* Chapter 1: The Soil */}
