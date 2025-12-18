@@ -112,7 +112,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
         const data = await response.json();
         if (data.success && data.rawData) {
           const teamData = data.rawData.find(
-            (t: { Key: string }) => t.Key?.toLowerCase() === team.abbreviation.toLowerCase()
+            (t: { Team: string }) => t.Team?.toUpperCase() === team.abbreviation.toUpperCase()
           );
           if (teamData) {
             setStats({
