@@ -30,8 +30,10 @@ async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
     if (!res.ok) {
       return getMockStandings(sport);
     }
-    const data = (await res.json()) as { standings?: TeamStanding[]; data?: TeamStanding[] };
-    return data.standings || data.data || [];
+    const data = await res.json();
+    // Safely extract standings array from various response shapes
+    const standingsArray = data?.standings || data?.data || data;
+    return Array.isArray(standingsArray) ? standingsArray : [];
   } catch {
     return getMockStandings(sport);
   }
@@ -173,7 +175,9 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
     staleTime: 60_000,
   });
 
-  const displayStandings = standings?.slice(0, limit) || [];
+  // Safely handle standings data - ensure it's an array before slicing
+  const standingsArray = Array.isArray(standings) ? standings : [];
+  const displayStandings = standingsArray.slice(0, limit);
 
   return (
     <div>
