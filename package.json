@@ -93,7 +93,7 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.11",
     "vitest": "^4.0.1",
-    "wrangler": "^4.51.0"
+    "wrangler": "^4.56.0"
   },
   "optionalDependencies": {
     "@cloudflare/workerd-darwin-arm64": "^1.20251128.0"
