@@ -75,29 +75,6 @@ interface TeamStats {
   streak: number;
 }
 
-interface Player {
-  id: string;
-  name: string;
-  number: string;
-  position: string;
-  age?: number;
-  height?: string;
-  weight?: number;
-  college?: string;
-  experience?: number;
-}
-
-interface Injury {
-  id: string;
-  player: string;
-  position: string;
-  injury: string;
-  status: string;
-  updated: string;
-}
-
-type TabType = 'overview' | 'roster' | 'schedule' | 'injuries';
-
 function formatTimestamp(): string {
   return new Date().toLocaleString('en-US', {
     timeZone: 'America/Chicago',
@@ -116,12 +93,8 @@ interface NFLTeamDetailClientProps {
 
 export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps) {
   const [stats, setStats] = useState<TeamStats | null>(null);
-  const [roster, setRoster] = useState<Player[]>([]);
-  const [injuries, setInjuries] = useState<Injury[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
-  const [positionFilter, setPositionFilter] = useState<string>('all');
 
   const team = NFL_TEAMS[teamId?.toLowerCase()];
 
@@ -133,7 +106,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
     }
     setLoading(true);
     try {
-      // Fetch standings data
+      // Try to fetch from standings API
       const response = await fetch('/api/nfl/standings');
       if (response.ok) {
         const data = await response.json();
@@ -153,33 +126,6 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
           }
         }
       }
-
-      // Try to fetch roster data
-      try {
-        const rosterRes = await fetch(`/api/nfl/teams/${team.abbreviation.toLowerCase()}/roster`);
-        if (rosterRes.ok) {
-          const rosterData = await rosterRes.json();
-          if (rosterData.roster) {
-            setRoster(rosterData.roster);
-          }
-        }
-      } catch {
-        // Roster API may not exist yet
-      }
-
-      // Try to fetch injuries data
-      try {
-        const injuriesRes = await fetch(`/api/nfl/teams/${team.abbreviation.toLowerCase()}/injuries`);
-        if (injuriesRes.ok) {
-          const injuriesData = await injuriesRes.json();
-          if (injuriesData.injuries) {
-            setInjuries(injuriesData.injuries);
-          }
-        }
-      } catch {
-        // Injuries API may not exist yet
-      }
-
       setLoading(false);
     } catch {
       setError('Unable to load team data');
@@ -201,7 +147,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
               <Card variant="default" padding="lg" className="text-center">
                 <h1 className="text-2xl font-bold text-white mb-4">Team Not Found</h1>
                 <p className="text-text-secondary mb-6">
-                  The team you&apos;re looking for doesn&apos;t exist.
+                  The team you're looking for doesn't exist.
                 </p>
                 <Link href="/nfl/teams" className="text-burnt-orange hover:underline">
                   ← Back to All Teams
@@ -224,301 +170,6 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
   const streakDisplay = stats
     ? (stats.streak > 0 ? 'W' + stats.streak : stats.streak < 0 ? 'L' + Math.abs(stats.streak) : '-')
     : '-';
-
-  const tabs: { id: TabType; label: string }[] = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'roster', label: 'Roster' },
-    { id: 'schedule', label: 'Schedule' },
-    { id: 'injuries', label: 'Injuries' },
-  ];
-
-  const positionGroups = [
-    { id: 'all', label: 'All' },
-    { id: 'offense', label: 'Offense' },
-    { id: 'defense', label: 'Defense' },
-    { id: 'special', label: 'Special Teams' },
-  ];
-
-  const filterRoster = (players: Player[]) => {
-    if (positionFilter === 'all') return players;
-    if (positionFilter === 'offense') {
-      return players.filter(p => ['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'OG', 'C', 'OL'].includes(p.position));
-    }
-    if (positionFilter === 'defense') {
-      return players.filter(p => ['DE', 'DT', 'NT', 'LB', 'ILB', 'OLB', 'CB', 'S', 'FS', 'SS', 'DB', 'DL'].includes(p.position));
-    }
-    if (positionFilter === 'special') {
-      return players.filter(p => ['K', 'P', 'LS', 'KR', 'PR'].includes(p.position));
-    }
-    return players;
-  };
-
-  const OverviewContent = () => (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {/* Record Card */}
-      <ScrollReveal>
-        <Card variant="default" padding="lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-              </svg>
-              Season Record
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <Skeleton variant="text" width="100%" height={60} />
-            ) : stats ? (
-              <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">
-                  {stats.wins}-{stats.losses}{stats.ties > 0 ? `-${stats.ties}` : ''}
-                </div>
-                <div className="text-text-secondary">
-                  Win Pct: {((stats.wins / (stats.wins + stats.losses + stats.ties)) || 0).toFixed(3).replace('0.', '.')}
-                </div>
-              </div>
-            ) : (
-              <div className="text-center text-text-secondary">
-                Season data unavailable
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </ScrollReveal>
-
-      {/* Points Card */}
-      <ScrollReveal delay={100}>
-        <Card variant="default" padding="lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <ellipse cx="12" cy="12" rx="9" ry="5" />
-                <path d="M12 7v10M7 12h10" />
-              </svg>
-              Points
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <Skeleton variant="text" width="100%" height={60} />
-            ) : stats ? (
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-success">{stats.pointsFor}</div>
-                  <div className="text-text-tertiary text-sm">PF</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-error">{stats.pointsAgainst}</div>
-                  <div className="text-text-tertiary text-sm">PA</div>
-                </div>
-                <div>
-                  <div className={`text-2xl font-bold ${stats.pointsFor - stats.pointsAgainst > 0 ? 'text-success' : stats.pointsFor - stats.pointsAgainst < 0 ? 'text-error' : 'text-text-secondary'}`}>
-                    {diffDisplay}
-                  </div>
-                  <div className="text-text-tertiary text-sm">DIFF</div>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center text-text-secondary">
-                Points data unavailable
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </ScrollReveal>
-
-      {/* Streak Card */}
-      <ScrollReveal delay={200}>
-        <Card variant="default" padding="lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Current Streak
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <Skeleton variant="text" width="100%" height={60} />
-            ) : stats ? (
-              <div className="text-center">
-                <div className={`text-4xl font-bold ${stats.streak > 0 ? 'text-success' : stats.streak < 0 ? 'text-error' : 'text-text-secondary'}`}>
-                  {streakDisplay}
-                </div>
-                <div className="text-text-secondary mt-2">
-                  {stats.streak > 0 ? 'Winning Streak' : stats.streak < 0 ? 'Losing Streak' : 'No Streak'}
-                </div>
-              </div>
-            ) : (
-              <div className="text-center text-text-secondary">
-                Streak data unavailable
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </ScrollReveal>
-    </div>
-  );
-
-  const RosterContent = () => {
-    if (roster.length === 0) {
-      return (
-        <Card variant="default" padding="lg">
-          <div className="text-center py-8">
-            <svg viewBox="0 0 24 24" className="w-16 h-16 text-text-tertiary mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-            </svg>
-            <p className="text-text-secondary">Roster data loading or not yet available.</p>
-            <p className="text-text-tertiary text-sm mt-2">
-              The 53-man roster will populate once finalized. Check back during the regular season.
-            </p>
-          </div>
-        </Card>
-      );
-    }
-
-    const filteredRoster = filterRoster(roster);
-
-    return (
-      <>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {positionGroups.map((group) => (
-            <button
-              key={group.id}
-              onClick={() => setPositionFilter(group.id)}
-              className={`px-4 py-2 rounded-md text-sm transition-all ${
-                positionFilter === group.id
-                  ? 'bg-burnt-orange text-white font-semibold'
-                  : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              {group.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRoster.map((player) => (
-            <Card
-              key={player.id}
-              variant="default"
-              padding="md"
-              className="hover:border-burnt-orange transition-all"
-            >
-              <div className="flex items-start gap-4">
-                <div
-                  className="w-14 h-14 rounded-lg flex items-center justify-center text-xl font-bold flex-shrink-0"
-                  style={{ backgroundColor: team.primaryColor + '30', color: team.primaryColor }}
-                >
-                  {player.number || '-'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white truncate">{player.name}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="secondary" className="text-xs">
-                      {player.position}
-                    </Badge>
-                    {player.experience !== undefined && (
-                      <span className="text-xs text-text-tertiary">
-                        {player.experience === 0 ? 'Rookie' : `${player.experience} yr${player.experience > 1 ? 's' : ''}`}
-                      </span>
-                    )}
-                  </div>
-                  {player.college && (
-                    <p className="text-xs text-text-tertiary mt-1">{player.college}</p>
-                  )}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </>
-    );
-  };
-
-  const ScheduleContent = () => (
-    <Card variant="default" padding="lg">
-      <div className="text-center py-8">
-        <svg viewBox="0 0 24 24" className="w-16 h-16 text-text-tertiary mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-        </svg>
-        <p className="text-text-secondary">Schedule data coming soon.</p>
-        <p className="text-text-tertiary text-sm mt-2 mb-4">
-          The full 2025 schedule will be available when the NFL releases it.
-        </p>
-        <Link
-          href="/nfl"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
-        >
-          View Today&apos;s Games
-          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </Link>
-      </div>
-    </Card>
-  );
-
-  const InjuriesContent = () => {
-    if (injuries.length === 0) {
-      return (
-        <Card variant="default" padding="lg">
-          <div className="text-center py-8">
-            <svg viewBox="0 0 24 24" className="w-16 h-16 text-success mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-              <polyline points="22 4 12 14.01 9 11.01" />
-            </svg>
-            <p className="text-success font-semibold">Full Strength</p>
-            <p className="text-text-tertiary text-sm mt-2">
-              No injuries reported. The squad is healthy and ready to compete.
-            </p>
-          </div>
-        </Card>
-      );
-    }
-
-    return (
-      <Card variant="default" padding="lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <svg viewBox="0 0 24 24" className="w-6 h-6 text-warning" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            Injury Report
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {injuries.map((injury) => (
-              <div
-                key={injury.id}
-                className="flex items-center justify-between p-4 bg-graphite rounded-lg"
-              >
-                <div className="flex items-center gap-4">
-                  <Badge
-                    variant={injury.status === 'Out' ? 'warning' : injury.status === 'Doubtful' ? 'warning' : 'secondary'}
-                    className="text-xs"
-                  >
-                    {injury.status}
-                  </Badge>
-                  <div>
-                    <p className="font-semibold text-white">{injury.player}</p>
-                    <p className="text-text-tertiary text-sm">{injury.position} · {injury.injury}</p>
-                  </div>
-                </div>
-                <span className="text-text-tertiary text-xs">{injury.updated}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
 
   return (
     <>
@@ -573,49 +224,115 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
           </Container>
         </Section>
 
-        {/* Tabs and Content */}
+        {/* Team Stats */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            {/* Tab Navigation */}
-            <div className="flex gap-2 mb-8 border-b border-border-subtle overflow-x-auto pb-px">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                    activeTab === tab.id
-                      ? 'text-burnt-orange border-burnt-orange'
-                      : 'text-text-tertiary border-transparent hover:text-white'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Tab Content */}
-            {loading && activeTab !== 'overview' ? (
-              <Card variant="default" padding="lg">
-                <div className="space-y-4">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 bg-graphite rounded-lg">
-                      <Skeleton variant="rect" width={56} height={56} className="rounded-lg" />
-                      <div className="flex-1">
-                        <Skeleton variant="text" width={150} height={18} />
-                        <Skeleton variant="text" width={100} height={14} className="mt-2" />
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {/* Record Card */}
+              <ScrollReveal>
+                <Card variant="default" padding="lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                      </svg>
+                      Season Record
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {loading ? (
+                      <Skeleton variant="text" width="100%" height={60} />
+                    ) : stats ? (
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-white mb-2">
+                          {stats.wins}-{stats.losses}{stats.ties > 0 ? `-${stats.ties}` : ''}
+                        </div>
+                        <div className="text-text-secondary">
+                          Win Pct: {((stats.wins / (stats.wins + stats.losses + stats.ties)) || 0).toFixed(3).replace('0.', '.')}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            ) : (
-              <ScrollReveal key={activeTab}>
-                {activeTab === 'overview' && <OverviewContent />}
-                {activeTab === 'roster' && <RosterContent />}
-                {activeTab === 'schedule' && <ScheduleContent />}
-                {activeTab === 'injuries' && <InjuriesContent />}
+                    ) : (
+                      <div className="text-center text-text-secondary">
+                        Season data unavailable
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </ScrollReveal>
-            )}
+
+              {/* Points Card */}
+              <ScrollReveal delay={100}>
+                <Card variant="default" padding="lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <ellipse cx="12" cy="12" rx="9" ry="5" />
+                        <path d="M12 7v10M7 12h10" />
+                      </svg>
+                      Points
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {loading ? (
+                      <Skeleton variant="text" width="100%" height={60} />
+                    ) : stats ? (
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <div className="text-2xl font-bold text-success">{stats.pointsFor}</div>
+                          <div className="text-text-tertiary text-sm">PF</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-error">{stats.pointsAgainst}</div>
+                          <div className="text-text-tertiary text-sm">PA</div>
+                        </div>
+                        <div>
+                          <div className={`text-2xl font-bold ${stats.pointsFor - stats.pointsAgainst > 0 ? 'text-success' : stats.pointsFor - stats.pointsAgainst < 0 ? 'text-error' : 'text-text-secondary'}`}>
+                            {diffDisplay}
+                          </div>
+                          <div className="text-text-tertiary text-sm">DIFF</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center text-text-secondary">
+                        Points data unavailable
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+
+              {/* Streak Card */}
+              <ScrollReveal delay={200}>
+                <Card variant="default" padding="lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Current Streak
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {loading ? (
+                      <Skeleton variant="text" width="100%" height={60} />
+                    ) : stats ? (
+                      <div className="text-center">
+                        <div className={`text-4xl font-bold ${stats.streak > 0 ? 'text-success' : stats.streak < 0 ? 'text-error' : 'text-text-secondary'}`}>
+                          {streakDisplay}
+                        </div>
+                        <div className="text-text-secondary mt-2">
+                          {stats.streak > 0 ? 'Winning Streak' : stats.streak < 0 ? 'Losing Streak' : 'No Streak'}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center text-text-secondary">
+                        Streak data unavailable
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+            </div>
 
             {/* Quick Links */}
             <ScrollReveal delay={300}>

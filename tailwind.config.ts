@@ -65,7 +65,9 @@ const config: Config = {
           secondary: '#a3a3a3',
           tertiary: '#737373',
           muted: '#525252',
+          bone: '#F5F5DC', // Warm text on dark
         },
+        bone: '#F5F5DC',
         // Border Colors
         border: {
           subtle: 'rgba(255, 255, 255, 0.06)',
@@ -225,9 +227,20 @@ const config: Config = {
         },
       },
       transitionTimingFunction: {
+        // BSI Signature easing - fast attack, smooth settle
+        'blaze': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'blaze-ease': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'snap-back': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
         'ease-out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
         'ease-elastic': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
         'ease-bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+      },
+      transitionDuration: {
+        'micro': '150ms',
+        'fast': '300ms',
+        'medium': '500ms',
+        'slow': '800ms',
+        'cinematic': '1500ms',
       },
       zIndex: {
         'dropdown': '1000',

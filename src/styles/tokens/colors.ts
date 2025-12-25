@@ -3,6 +3,8 @@
  * Design Language: Cinematic Grit / Texas Soil / Intel
  *
  * Version 2.0.0 | Deep South Sports Authority
+ *
+ * GLSL exports included for Three.js shader integration
  */
 
 export const colors = {
@@ -102,6 +104,7 @@ export const colors = {
     tertiary: '#737373', // Low emphasis
     muted: '#525252', // Disabled, hints
     inverse: '#0D0D0D', // On light backgrounds
+    bone: '#F5F5DC', // Warm text on dark
   },
 
   // ========================================
@@ -253,6 +256,88 @@ export const colors = {
 } as const;
 
 // ========================================
+// GLSL-Ready Colors (normalized RGB for Three.js shaders)
+// ========================================
+
+/**
+ * GLSL-Ready Colors (normalized RGB for Three.js shaders)
+ *
+ * Usage in shader:
+ * uniform vec3 uEmberColor;
+ * // Then in JS: material.uniforms.uEmberColor.value = new THREE.Color(colorsGLSL.ember.hex)
+ *
+ * Or copy the vec3 string directly into GLSL:
+ * vec3 ember = vec3(1.0, 0.420, 0.208);
+ */
+export const colorsGLSL = {
+  // Brand colors as vec3 objects
+  burntOrange: {
+    hex: '#BF5700',
+    vec3: 'vec3(0.749, 0.341, 0.0)',
+    rgb: [0.749, 0.341, 0.0] as const,
+  },
+  texasSoil: {
+    hex: '#8B4513',
+    vec3: 'vec3(0.545, 0.271, 0.075)',
+    rgb: [0.545, 0.271, 0.075] as const,
+  },
+  ember: {
+    hex: '#FF6B35',
+    vec3: 'vec3(1.0, 0.420, 0.208)',
+    rgb: [1.0, 0.42, 0.208] as const,
+  },
+  gold: {
+    hex: '#C9A227',
+    vec3: 'vec3(0.788, 0.635, 0.153)',
+    rgb: [0.788, 0.635, 0.153] as const,
+  },
+
+  // Background colors for shaders
+  charcoal: {
+    hex: '#1A1A1A',
+    vec3: 'vec3(0.102, 0.102, 0.102)',
+    rgb: [0.102, 0.102, 0.102] as const,
+  },
+  midnight: {
+    hex: '#0D0D0D',
+    vec3: 'vec3(0.051, 0.051, 0.051)',
+    rgb: [0.051, 0.051, 0.051] as const,
+  },
+  cream: {
+    hex: '#FAF8F5',
+    vec3: 'vec3(0.98, 0.973, 0.961)',
+    rgb: [0.98, 0.973, 0.961] as const,
+  },
+
+  // Semantic for particle effects
+  success: {
+    hex: '#22C55E',
+    vec3: 'vec3(0.133, 0.773, 0.369)',
+    rgb: [0.133, 0.773, 0.369] as const,
+  },
+  error: {
+    hex: '#EF4444',
+    vec3: 'vec3(0.937, 0.267, 0.267)',
+    rgb: [0.937, 0.267, 0.267] as const,
+  },
+} as const;
+
+/**
+ * GLSL Shader Snippet - paste into your shader files
+ * Contains all BSI brand colors as constants
+ */
+export const glslColorSnippet = `
+// BSI Brand Colors - Normalized RGB
+const vec3 BURNT_ORANGE = vec3(0.749, 0.341, 0.0);
+const vec3 TEXAS_SOIL = vec3(0.545, 0.271, 0.075);
+const vec3 EMBER = vec3(1.0, 0.420, 0.208);
+const vec3 GOLD = vec3(0.788, 0.635, 0.153);
+const vec3 CHARCOAL = vec3(0.102, 0.102, 0.102);
+const vec3 MIDNIGHT = vec3(0.051, 0.051, 0.051);
+const vec3 CREAM = vec3(0.98, 0.973, 0.961);
+`;
+
+// ========================================
 // CSS CUSTOM PROPERTIES
 // ========================================
 
@@ -325,3 +410,4 @@ export type TeamColors = keyof typeof colors.teams;
 export type BurntOrangeShade = keyof typeof colors.burntOrange;
 export type GoldShade = keyof typeof colors.gold;
 export type CharcoalShade = keyof typeof colors.charcoal;
+export type GLSLColor = keyof typeof colorsGLSL;

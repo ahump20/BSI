@@ -3,4 +3,3 @@
  */
 
 export { HeroSection } from './HeroSection';
-export { HeroSectionWrapper } from './HeroSectionWrapper';
