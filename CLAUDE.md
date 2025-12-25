@@ -10,7 +10,7 @@
 - Location: Boerne, Texas
 - Contact: Austin@blazesportsintel.com
 - Focus: Sports intelligence and analytics (MLB, NFL, NCAA coverage that serves fans, not networks)
-- Stack: Cloudflare Workers/D1/KV/R2 exclusively
+- Stack: Next.js + Cloudflare Workers/D1/KV/R2/Pages
 - Philosophy: Production-ready code, zero placeholders
 
 **Project:**
@@ -66,12 +66,11 @@ The name "Blaze Sports Intel" comes from my dog—a dachshund named Blaze after 
 ## ABSOLUTE RULES (NEVER VIOLATE)
 
 ### 1. ONE LOCATION
-- **Local:** `/Users/AustinHumphrey/BSI`
-- **Remote:** `github.com/ahump20/BSI` (main branch)
-- **Deploy:** Cloudflare Workers/Pages from this repo ONLY
-- NEVER create files anywhere else
+- **Repository:** `github.com/ahump20/BSI` (main branch)
+- **Deploy:** Cloudflare Pages/Workers from this repo ONLY
+- NEVER create files outside the project structure
 - NEVER create new repos (no BSI-NextGen, BSI-v2, blaze-new, etc.)
-- NEVER create folders outside the structure below
+- NEVER create folders outside the canonical structure below
 
 ### 2. REPLACE, DON'T ADD
 - When updating: **overwrite the original file**
@@ -102,32 +101,96 @@ Every new file = audit for obsolete files:
 
 ```
 BSI/
-├── src/
-│   ├── workers/              # Cloudflare Worker source code
-│   │   ├── api/              # API endpoints (bsi-api-*)
-│   │   ├── ingest/           # Data ingestion (bsi-ingest-*)
-│   │   ├── public/           # Public site (blazesportsintel.com)
-│   │   └── mcp/              # MCP servers
-│   ├── components/           # Reusable UI components
-│   ├── lib/                  # Shared utilities
-│   ├── types/                # TypeScript definitions
-│   └── styles/               # Global styles, tokens
-├── public/                   # Static assets ONLY (images, fonts)
-├── workers/                  # wrangler.toml files (one per worker)
-├── scripts/                  # Build/deploy automation
+├── app/                      # Next.js App Router (primary frontend)
+│   ├── layout.tsx            # Root layout
+│   ├── page.tsx              # Homepage
+│   ├── globals.css           # Global styles
+│   ├── providers.tsx         # React context providers
+│   ├── mlb/                  # MLB routes
+│   ├── nfl/                  # NFL routes
+│   ├── nba/                  # NBA routes
+│   ├── college-baseball/     # College baseball routes
+│   ├── cfb/                  # College football routes
+│   ├── dashboard/            # User dashboard
+│   ├── auth/                 # Authentication pages
+│   ├── checkout/             # Stripe checkout flow
+│   └── pricing/              # Pricing page
+├── components/               # Shared React components
+│   ├── ui/                   # Base UI primitives (Button, Card, Input, etc.)
+│   ├── layout/               # Layout components (Footer, Header, Navbar)
+│   ├── analytics/            # Analytics visualizations
+│   ├── sports/               # Sport-specific components
+│   └── [feature]/            # Feature-specific component folders
+├── lib/                      # Shared utilities and business logic
+│   ├── api/                  # API client utilities
+│   ├── analytics/            # Analytics engines
+│   ├── sports-data/          # Sports data fetching/parsing
+│   ├── utils/                # General utilities
+│   ├── types/                # TypeScript type definitions
+│   └── validation/           # Zod schemas and validation
+├── hooks/                    # Custom React hooks
+├── workers/                  # Cloudflare Worker definitions
+│   ├── ingest/               # Data ingestion workers
+│   ├── prediction/           # Prediction engine workers
+│   └── baseball-rankings/    # Rankings calculation workers
+├── functions/                # Cloudflare Pages Functions (API routes)
+├── public/                   # Static assets (images, fonts, favicon)
+├── data/                     # Static JSON data files
+├── tests/                    # Test suites
+│   ├── api/                  # API endpoint tests
+│   ├── integration/          # Integration tests
+│   ├── validation/           # Schema validation tests
+│   └── visual/               # Visual regression tests
 ├── docs/                     # Documentation
+├── scripts/                  # Build/deploy automation
+├── schema/                   # Database schemas and migrations
+├── migrations/               # D1 migration files
 ├── .github/                  # GitHub workflows
 ├── CLAUDE.md                 # This file
 ├── package.json
 ├── tsconfig.json
-└── wrangler.toml             # Root config (if single worker)
+├── tailwind.config.ts        # Tailwind with BSI design tokens
+├── wrangler.toml             # Primary Cloudflare config
+└── vitest.config.ts          # Test configuration
 ```
 
 **DO NOT CREATE:**
 - Random folders in root
 - Nested `src/src/` or `workers/workers/`
-- `dist/`, `build/`, `out/` (gitignored, auto-generated)
+- `dist/`, `build/`, `out/`, `.next/` (gitignored, auto-generated)
 - `archive/`, `old/`, `backup/`, `deprecated/`
+
+---
+
+## TECH STACK
+
+### Frontend
+- **Framework:** Next.js 16 (App Router)
+- **Styling:** Tailwind CSS with custom design tokens
+- **State:** React Query (@tanstack/react-query)
+- **Animations:** Framer Motion
+- **3D:** React Three Fiber + Drei
+- **Charts:** Recharts
+- **Icons:** Lucide React
+
+### Backend
+- **Runtime:** Cloudflare Workers
+- **Database:** Cloudflare D1 (SQLite)
+- **Cache:** Cloudflare KV
+- **Storage:** Cloudflare R2
+- **AI:** Cloudflare Workers AI + Vectorize
+- **Analytics:** Cloudflare Analytics Engine
+
+### Testing
+- **Unit/Integration:** Vitest
+- **E2E/Accessibility:** Playwright with axe-core
+- **Visual Regression:** Percy
+
+### Development
+- **Package Manager:** npm (pnpm available)
+- **Linting:** ESLint with TypeScript parser
+- **Formatting:** Prettier
+- **Hooks:** Husky pre-commit
 
 ---
 
@@ -136,11 +199,12 @@ BSI/
 ### Files
 | Type | Convention | Example |
 |------|------------|---------|
-| Workers | `bsi-{domain}-{function}.ts` | `bsi-baseball-ingest.ts` |
+| Pages | kebab-case folder + page.tsx | `app/college-baseball/page.tsx` |
 | Components | PascalCase | `GameCard.tsx`, `ScoreBoard.tsx` |
 | Utilities | camelCase | `formatStats.ts`, `parseSchedule.ts` |
-| Types | PascalCase with `.types.ts` | `Game.types.ts` |
-| Styles | kebab-case | `game-card.css` |
+| Hooks | camelCase with `use` prefix | `useGameData.ts`, `useLiveScores.ts` |
+| Types | PascalCase | `Game.types.ts`, `Player.types.ts` |
+| Workers | kebab-case | `baseball-rankings/`, `ingest/` |
 
 ### FORBIDDEN Names
 - `index2.html`, `index-new.html`, `index-backup.html`
@@ -153,125 +217,92 @@ BSI/
 |------|------------|---------|
 | Workers | `bsi-{domain}-{function}` | `bsi-baseball-ingest` |
 | KV | `BSI_{DOMAIN}_{PURPOSE}` | `BSI_BASEBALL_CACHE` |
-| D1 | `bsi-{domain}-db` | `bsi-baseball-db` |
-| R2 | `bsi-{domain}-{asset-type}` | `bsi-media-videos` |
+| D1 | `bsi-{domain}-db` | `bsi-historical-db` |
+| R2 | `bsi-{domain}-{asset-type}` | `blaze-sports-data-lake` |
 
 ---
 
 ## DESIGN SYSTEM
 
-### Token Definitions
-Location: `src/styles/tokens/`
-```
-tokens/
-├── colors.ts        # Color palette
-├── typography.ts    # Font families, sizes, weights
-├── spacing.ts       # Margin/padding scale
-├── breakpoints.ts   # Responsive breakpoints
-└── index.ts         # Combined export
-```
+### Tailwind Configuration
+All design tokens are defined in `tailwind.config.ts`. Use Tailwind classes—never hardcode values.
 
-Format:
+**Brand Colors:**
 ```typescript
-// colors.ts
-export const colors = {
-  brand: {
-    burntOrange: '#BF5700',  // UT Official - Heritage, passion
-    texasSoil: '#8B4513',    // West Columbia earth - Roots
-    ember: '#FF6B35',        // Interactive accent
-    gold: '#C9A227',         // Value highlights
-  },
-  background: {
-    charcoal: '#1A1A1A',     // Premium editorial dark
-    midnight: '#0D0D0D',     // True dark backgrounds
-    cream: '#FAF8F5',        // Warm newspaper aesthetic
-    warmWhite: '#FAFAFA',    // Clean text backgrounds
-  },
-  semantic: {
-    success: '#2E7D32',      // Winning, positive stats
-    warning: '#F9A825',      // Caution, watch stats
-    error: '#C62828',        // Losing, negative stats
-    info: '#1976D2',         // Informational, neutral
-  },
-} as const;
-```
-
-### Component Architecture
-Location: `src/components/`
-
-Structure per component:
-```
-components/
-├── GameCard/
-│   ├── GameCard.tsx        # Component logic
-│   ├── GameCard.styles.ts  # Styled/CSS
-│   ├── GameCard.types.ts   # TypeScript interfaces
-│   ├── GameCard.test.ts    # Tests (optional)
-│   └── index.ts            # Re-export
-```
-
-Pattern:
-```typescript
-// GameCard.tsx
-import type { GameCardProps } from './GameCard.types';
-import { styles } from './GameCard.styles';
-
-export function GameCard({ game, variant = 'default' }: GameCardProps) {
-  // Component logic
+'burnt-orange': {
+  600: '#BF5700',  // Primary Brand - UT Burnt Orange
+  DEFAULT: '#BF5700',
 }
+'texas-soil': '#8B4513'
+'ember': '#FF6B35'
+'gold': { 500: '#FDB913', DEFAULT: '#FDB913' }
+'charcoal': { 800: '#1f2937', 950: '#0a0a0f', DEFAULT: '#1f2937' }
+'midnight': '#0d0d12'
+```
+
+**Sport Colors:**
+```typescript
+baseball: { DEFAULT: '#BF5700', diamond: '#6B8E23', dirt: '#8B7355' }
+football: { DEFAULT: '#8B4513', grass: '#228B22', field: '#355E3B' }
+basketball: { DEFAULT: '#FF6B35', court: '#E25822', paint: '#1E40AF' }
+track: { DEFAULT: '#F59E0B', surface: '#DC143C', lane: '#FFD700' }
+```
+
+**Team Colors:**
+```typescript
+cardinals: { DEFAULT: '#C41E3A', secondary: '#0C2340' }
+titans: { DEFAULT: '#002244', secondary: '#4B92DB' }
+longhorns: { DEFAULT: '#BF5700' }
+grizzlies: { DEFAULT: '#5D76A9', secondary: '#FDB927' }
+```
+
+### Component Patterns
+
+**UI Primitives** (`components/ui/`):
+- `Button.tsx` - Variants: primary, secondary, ghost, danger
+- `Card.tsx` - Variants: default, elevated, glass
+- `Input.tsx` - With validation states
+- `Badge.tsx` - Status indicators
+- `Skeleton.tsx` - Loading states
+
+**Usage:**
+```tsx
+import { Button, Card, Badge } from '@/components/ui';
+
+<Card variant="glass">
+  <Badge variant="success">Live</Badge>
+  <Button variant="primary">View Game</Button>
+</Card>
 ```
 
 ### Styling Approach
 - **Primary:** Tailwind CSS utility classes
-- **Custom:** CSS Modules for complex components
-- **Tokens:** Always use design tokens, never hardcode values
+- **Tokens:** Always use Tailwind config values
 - **Responsive:** Mobile-first (`min-width` breakpoints)
+- **Dark Mode:** `dark:` prefix, class-based toggling
+- **Glass Effects:** `backdrop-blur-glass`, `bg-surface-light`
 
-```typescript
-// ✅ CORRECT
-<div className="bg-brand-primary text-white p-4 md:p-6">
+```tsx
+// CORRECT - using Tailwind tokens
+<div className="bg-burnt-orange-600 text-white p-4 md:p-6 backdrop-blur-glass">
 
-// ❌ WRONG - hardcoded values
-<div style={{ backgroundColor: '#FF6B35', padding: '16px' }}>
+// WRONG - hardcoded values
+<div style={{ backgroundColor: '#BF5700', padding: '16px' }}>
 ```
-
-### Icon System
-Location: `src/components/icons/`
-- Use Lucide React as base icon library
-- Custom icons as SVG components
-- Naming: `{Name}Icon.tsx` (e.g., `BaseballIcon.tsx`)
-
-```typescript
-// Usage
-import { BaseballIcon } from '@/components/icons';
-<BaseballIcon className="w-6 h-6 text-brand-primary" />
-```
-
-### Asset Management
-Location: `public/`
-```
-public/
-├── images/
-│   ├── logos/
-│   ├── teams/
-│   └── players/
-├── fonts/
-└── favicon.ico
-```
-
-- Optimize images before commit (WebP preferred)
-- Use Cloudflare R2 for large/dynamic assets
-- Reference via `/images/...` not absolute URLs
 
 ---
 
 ## SPORTS DATA SOURCES
 
 ### Primary Sources
-- MLB: statsapi.mlb.com, Baseball-Reference
-- NFL: ESPN API, Pro-Football-Reference
-- NCAA: Official NCAA stats, D1Baseball
-- Youth: Perfect Game, MaxPreps
+| Sport | Primary | Secondary |
+|-------|---------|-----------|
+| MLB | statsapi.mlb.com | Baseball-Reference, FanGraphs |
+| NFL | ESPN API, NFL.com | Pro-Football-Reference |
+| NBA | NBA API, ESPN | Basketball-Reference |
+| NCAA Baseball | NCAA Stats, D1Baseball | Perfect Game |
+| NCAA Football | ESPN, CFBD API | Sports-Reference |
+| Youth | Perfect Game, MaxPreps | THSBCA |
 
 ### Update Frequency
 - Live scores: Real-time during games
@@ -280,12 +311,139 @@ public/
 - Player stats: Daily during season
 
 ### Data Quality Standards
-- Always cite sources with timestamps (America/Chicago)
+- Always cite sources with timestamps (America/Chicago timezone)
 - Cross-reference 3+ sources for critical data
 - Use absolute dates, never relative ("2025-01-10" not "last week")
 - Flag uncertainty explicitly
 - Validate sports statistics against official sources
 - Privacy: Always redact minors' full names (use initials/jersey numbers)
+
+---
+
+## NEXT.JS APP ROUTER PATTERNS
+
+### Route Structure
+```
+app/
+├── layout.tsx          # Root layout with providers
+├── page.tsx            # Homepage
+├── [sport]/
+│   ├── layout.tsx      # Sport-specific layout (optional)
+│   ├── page.tsx        # Sport landing page
+│   └── [team]/
+│       └── page.tsx    # Team detail page
+```
+
+### Data Fetching
+```tsx
+// Server Component (default) - fetch at build or request time
+export default async function Page() {
+  const data = await fetchGameData(); // Direct fetch, no useEffect
+  return <GameCard game={data} />;
+}
+
+// Client Component - for interactivity
+'use client';
+import { useQuery } from '@tanstack/react-query';
+
+export function LiveScores() {
+  const { data } = useQuery({ queryKey: ['scores'], queryFn: fetchScores });
+  return <ScoreBoard scores={data} />;
+}
+```
+
+### Metadata
+```tsx
+export const metadata = {
+  title: 'College Baseball | Blaze Sports Intel',
+  description: 'Live scores, standings, and analytics',
+};
+```
+
+---
+
+## CLOUDFLARE DEPLOYMENT
+
+### Deploy Commands
+```bash
+# Deploy Next.js to Cloudflare Pages
+npm run deploy
+
+# Deploy individual worker
+wrangler deploy --config workers/{worker-name}/wrangler.toml
+
+# Deploy preview environment
+npm run deploy:preview
+```
+
+### wrangler.toml Template
+```toml
+name = "bsi-{domain}-{function}"
+main = "src/index.ts"
+compatibility_date = "2025-03-07"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "your-kv-id"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-historical-db"
+database_id = "your-d1-id"
+```
+
+### Active Resources
+| Resource | Binding | Purpose |
+|----------|---------|---------|
+| KV | `KV` | Unified caching (scores, odds, sessions) |
+| D1 | `DB` | Historical sports data, NIL valuations |
+| R2 | `SPORTS_DATA` | Sports data lake |
+| R2 | `NIL_ARCHIVE` | NIL historical archives |
+| AI | `AI` | Workers AI inference |
+| Vectorize | `VECTORIZE` | Semantic search |
+| Analytics | `ANALYTICS` | Time-series metrics |
+
+---
+
+## TESTING
+
+### Running Tests
+```bash
+npm test                  # Run all tests
+npm run test:api          # API endpoint tests
+npm run test:integration  # Integration tests
+npm run test:a11y         # Accessibility tests (Playwright)
+npm run test:coverage     # With coverage report
+```
+
+### Test File Locations
+```
+tests/
+├── api/                  # API endpoint tests (vitest)
+│   ├── mlb.test.ts
+│   ├── nfl.test.ts
+│   └── nba.test.ts
+├── integration/          # Integration tests
+├── validation/           # Schema validation
+└── visual/               # Visual regression (Playwright)
+```
+
+### Writing Tests
+```typescript
+import { describe, it, expect } from 'vitest';
+
+describe('MLB API', () => {
+  it('returns valid standings', async () => {
+    const response = await fetchStandings();
+    expect(response.standings).toBeDefined();
+    expect(response.standings.length).toBeGreaterThan(0);
+  });
+});
+```
 
 ---
 
@@ -298,20 +456,15 @@ public/
 2. If truncated, run `get_metadata` then re-fetch specific nodes
 3. Run `get_screenshot` for visual reference
 4. Download assets, then implement
-5. Translate to BSI conventions (not raw Figma output)
+5. Translate to BSI Tailwind tokens (not raw Figma output)
 6. Validate 1:1 with Figma before complete
 
 **Implementation rules:**
 - Figma MCP output is **reference**, not final code
-- Replace Tailwind utilities with BSI tokens when applicable
+- Replace generic Tailwind with BSI tokens (`burnt-orange-600`, not `orange-600`)
 - Reuse existing components—never duplicate
-- Match BSI color system, typography, spacing
+- Match BSI typography, spacing, animation patterns
 - Respect existing routing/state patterns
-
-**Asset rules:**
-- If Figma MCP returns localhost source → use directly
-- DO NOT import new icon packages—use Figma payload
-- DO NOT create placeholders if source provided
 
 ### Cloudflare MCP Integration
 
@@ -329,55 +482,33 @@ Available tools:
 
 ---
 
-## CLOUDFLARE DEPLOYMENT
-
-### Deploy Command
-```bash
-# From BSI root
-wrangler deploy --config workers/{worker-name}/wrangler.toml
-```
-
-### wrangler.toml Template
-```toml
-name = "bsi-{domain}-{function}"
-main = "src/workers/{path}/index.ts"
-compatibility_date = "2024-01-01"
-
-[vars]
-ENVIRONMENT = "production"
-
-[[kv_namespaces]]
-binding = "CACHE"
-id = "xxx"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "bsi-{domain}-db"
-database_id = "xxx"
-```
-
-### Canonical Workers (DO NOT DUPLICATE)
-| Worker | Purpose | Status |
-|--------|---------|--------|
-| `bsi-mcp-server` | MCP interface | Active |
-| `blaze-sports-api` | Primary REST API | Active |
-| `espn-data-cache` | ESPN data layer | Active |
-| `bsi-baseball-ingest` | College baseball data | Active |
-
-Before creating a new worker, verify it doesn't duplicate existing functionality.
-
----
-
 ## CODE QUALITY REQUIREMENTS
 
 - Zero TODO comments or placeholders
-- Complete error handling
-- TypeScript when applicable
+- Complete error handling with proper types
+- TypeScript strict mode
 - WCAG AA accessibility minimum
 - Mobile-first responsive design
 - Performance optimized (lazy loading, code splitting)
-- API Keys: NEVER commit to files, always use environment variables
-- Current year is 2025, not 2024
+- API Keys: NEVER commit to files, always use environment variables/secrets
+- Current year is 2025
+
+### TypeScript Standards
+```typescript
+// Use explicit types for function parameters and returns
+function calculateERA(earnedRuns: number, inningsPitched: number): number {
+  return (earnedRuns / inningsPitched) * 9;
+}
+
+// Use Zod for runtime validation
+import { z } from 'zod';
+const GameSchema = z.object({
+  id: z.string(),
+  homeTeam: z.string(),
+  awayTeam: z.string(),
+  status: z.enum(['scheduled', 'live', 'final']),
+});
+```
 
 ---
 
@@ -408,24 +539,14 @@ Be genuine, be useful, be honest. Challenge wrong ideas with evidence. Never fab
 
 ---
 
-## REMOTE ENVIRONMENT
-
-**Always use BSI cloud environment for API calls and deployments.**
-
-- Remote env name: `BSI`
-- Sync local `.env` with cloud env when keys change
-- Reference: `/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/.env`
-
----
-
 ## SESSION PROTOCOL
 
 ### On Every New Session
 ```
 1. Read this CLAUDE.md
-2. Confirm working directory: ~/...CloudDocs/BSI/
-3. Verify BSI remote env is active
-4. Search for existing files before creating
+2. Confirm working directory is BSI root
+3. Search for existing files before creating
+4. Check recent git commits for context
 ```
 
 ### After Every Feature
@@ -449,13 +570,14 @@ Be genuine, be useful, be honest. Challenge wrong ideas with evidence. Never fab
 ## RED FLAGS (STOP AND ASK)
 
 Stop immediately if about to:
-- Create a file outside `BSI/` structure
+- Create a file outside BSI structure
 - Create a second `index.html` anywhere
 - Create a folder not in canonical structure
 - Name something with `-v2`, `-new`, `-backup`
 - Create a new repo or "NextGen" variant
 - Deploy a worker that duplicates existing functionality
 - Hardcode colors, spacing, or other design values
+- Skip Tailwind tokens for inline styles
 
 ---
 
@@ -471,10 +593,43 @@ Never say:
 
 ---
 
+## COMMON TASKS
+
+### Add a New Sport Page
+1. Create route: `app/{sport}/page.tsx`
+2. Add layout if needed: `app/{sport}/layout.tsx`
+3. Create components in `components/{sport}/`
+4. Add data fetching in `lib/sports-data/`
+5. Add tests in `tests/api/{sport}.test.ts`
+
+### Add a New Component
+1. Check `components/ui/` for existing primitives
+2. Create in appropriate feature folder
+3. Use Tailwind tokens from `tailwind.config.ts`
+4. Export from folder's `index.ts`
+5. Add to Storybook if applicable
+
+### Deploy a Change
+```bash
+# 1. Run tests
+npm test
+
+# 2. Build locally
+npm run build
+
+# 3. Deploy to preview
+npm run deploy:preview
+
+# 4. Verify, then deploy to production
+npm run deploy:production
+```
+
+---
+
 ## WHEN IN DOUBT
 
 **Update existing. Delete old. One location. No sprawl.**
 
 ---
 
-*Last updated: November 2025*
+*Last updated: December 2025*
