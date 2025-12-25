@@ -2,15 +2,16 @@
  * BSI Typography System
  *
  * Primary: Inter - Clean, readable body text
- * Display: Oswald - Bold, commanding headlines
+ * Display: Bebas Neue → Oswald - Bold, commanding headlines
  * Accent: Playfair Display - Elegant quotes (covenant moments)
+ * Mono: JetBrains Mono - Code and data
  */
 
 export const typography = {
   // Font Families
   fontFamily: {
     sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-    display: ['Oswald', 'Impact', 'sans-serif'],
+    display: ['Bebas Neue', 'Oswald', 'Impact', 'sans-serif'],
     serif: ['Playfair Display', 'Georgia', 'serif'],
     mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
   },
