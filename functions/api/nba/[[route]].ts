@@ -226,6 +226,256 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       });
     }
 
+    // Players endpoint - individual player stats
+    if (route[0] === 'players') {
+      const playerId = route[1];
+
+      if (!playerId) {
+        return new Response(
+          JSON.stringify({
+            error: 'Player ID required',
+            example: '/api/nba/players/4431678',
+            hint: 'Get player IDs from team rosters at /api/nba/teams/{teamId}',
+          }),
+          { status: 400, headers }
+        );
+      }
+
+      const cacheKey = `nba:player:${playerId}`;
+      let playerData = null;
+
+      if (env.SPORTS_CACHE) {
+        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+        if (cached) playerData = cached;
+      }
+
+      if (!playerData) {
+        const athleteResponse = await fetch(
+          `https://site.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/${playerId}`,
+          {
+            headers: {
+              'User-Agent': 'BlazeSportsIntel/1.0',
+              Accept: 'application/json',
+            },
+          }
+        );
+
+        if (!athleteResponse.ok) {
+          return new Response(
+            JSON.stringify({
+              error: 'Player not found',
+              playerId,
+            }),
+            { status: 404, headers }
+          );
+        }
+
+        const espnData = await athleteResponse.json();
+        const athlete = espnData.athlete;
+
+        playerData = {
+          timestamp: new Date().toISOString(),
+          player: {
+            id: athlete.id,
+            name: athlete.displayName,
+            firstName: athlete.firstName,
+            lastName: athlete.lastName,
+            jersey: athlete.jersey,
+            position: athlete.position?.abbreviation,
+            positionFull: athlete.position?.name,
+            height: athlete.displayHeight,
+            weight: athlete.displayWeight,
+            age: athlete.age,
+            birthDate: athlete.displayDOB,
+            birthPlace: athlete.displayBirthPlace,
+            experience: athlete.displayExperience,
+            college: athlete.college?.name,
+            draft: athlete.displayDraft,
+            headshot: athlete.headshot?.href,
+            team: athlete.team
+              ? {
+                  id: athlete.team.id,
+                  name: athlete.team.displayName,
+                  abbreviation: athlete.team.abbreviation,
+                  logo: athlete.team.logos?.[0]?.href,
+                }
+              : null,
+          },
+          seasonStats: athlete.statsSummary
+            ? {
+                season: athlete.statsSummary.displayName,
+                stats: athlete.statsSummary.statistics?.map((stat: any) => ({
+                  name: stat.name,
+                  displayName: stat.displayName,
+                  abbreviation: stat.abbreviation,
+                  value: stat.displayValue,
+                  rank: stat.rank,
+                  rankDisplay: stat.rankDisplayValue,
+                })),
+              }
+            : null,
+          meta: {
+            dataSource: 'ESPN NBA API',
+            lastUpdated: new Date().toISOString(),
+            season: '2024-25',
+          },
+        };
+
+        if (env.SPORTS_CACHE) {
+          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(playerData), {
+            expirationTtl: 600,
+          });
+        }
+      }
+
+      return new Response(JSON.stringify(playerData, null, 2), {
+        status: 200,
+        headers,
+      });
+    }
+
+    // Games endpoint - full game details with boxscore
+    if (route[0] === 'games') {
+      const gameId = route[1];
+
+      if (!gameId) {
+        return new Response(
+          JSON.stringify({
+            error: 'Game ID required',
+            example: '/api/nba/games/401810264',
+            hint: 'Get game IDs from /api/nba/scoreboard',
+          }),
+          { status: 400, headers }
+        );
+      }
+
+      const cacheKey = `nba:game:${gameId}`;
+      let gameData = null;
+
+      if (env.SPORTS_CACHE) {
+        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+        if (cached) gameData = cached;
+      }
+
+      if (!gameData) {
+        const summaryResponse = await fetch(
+          `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${gameId}`,
+          {
+            headers: {
+              'User-Agent': 'BlazeSportsIntel/1.0',
+              Accept: 'application/json',
+            },
+          }
+        );
+
+        if (!summaryResponse.ok) {
+          return new Response(
+            JSON.stringify({
+              error: 'Game not found',
+              gameId,
+            }),
+            { status: 404, headers }
+          );
+        }
+
+        const espnData = await summaryResponse.json();
+        const header = espnData.header;
+        const competition = header?.competitions?.[0];
+        const boxscore = espnData.boxscore;
+
+        // Extract quarter-by-quarter scores
+        const competitors = competition?.competitors?.map((c: any) => ({
+          team: {
+            id: c.team?.id,
+            name: c.team?.displayName,
+            abbreviation: c.team?.abbreviation,
+            logo: c.team?.logos?.[0]?.href,
+          },
+          score: c.score,
+          homeAway: c.homeAway,
+          winner: c.winner,
+          linescores: c.linescores?.map((q: any) => q.displayValue),
+        }));
+
+        // Extract player stats from boxscore
+        const playerStats = boxscore?.players?.map((teamPlayers: any) => ({
+          team: teamPlayers.team?.displayName,
+          players: teamPlayers.statistics?.[0]?.athletes?.map((p: any) => {
+            const stats = p.stats || [];
+            const keys = teamPlayers.statistics?.[0]?.keys || [];
+            const statsObj: any = {};
+            keys.forEach((key: string, i: number) => {
+              statsObj[key] = stats[i];
+            });
+            return {
+              id: p.athlete?.id,
+              name: p.athlete?.displayName,
+              jersey: p.athlete?.jersey,
+              position: p.athlete?.position?.abbreviation,
+              starter: p.starter,
+              stats: statsObj,
+            };
+          }),
+        }));
+
+        // Extract game leaders
+        const leaders = espnData.leaders?.map((l: any) => ({
+          team: l.team?.displayName,
+          categories: l.leaders?.map((cat: any) => ({
+            category: cat.displayName,
+            leader: {
+              name: cat.leaders?.[0]?.athlete?.displayName,
+              value: cat.leaders?.[0]?.displayValue,
+              headshot: cat.leaders?.[0]?.athlete?.headshot?.href,
+            },
+          })),
+        }));
+
+        gameData = {
+          timestamp: new Date().toISOString(),
+          game: {
+            id: gameId,
+            name: header?.gameNote || competition?.competitors?.map((c: any) => c.team?.displayName).join(' vs '),
+            date: header?.competitions?.[0]?.date,
+            status: {
+              type: header?.competitions?.[0]?.status?.type?.name,
+              completed: header?.competitions?.[0]?.status?.type?.completed,
+              description: header?.competitions?.[0]?.status?.type?.description,
+              period: header?.competitions?.[0]?.status?.period,
+              clock: header?.competitions?.[0]?.status?.displayClock,
+            },
+            venue: {
+              name: espnData.gameInfo?.venue?.fullName,
+              city: espnData.gameInfo?.venue?.address?.city,
+              state: espnData.gameInfo?.venue?.address?.state,
+            },
+          },
+          competitors,
+          leaders,
+          playerStats,
+          meta: {
+            dataSource: 'ESPN NBA API',
+            lastUpdated: new Date().toISOString(),
+          },
+        };
+
+        // Cache for shorter time if game is live
+        const isLive = !header?.competitions?.[0]?.status?.type?.completed;
+        const ttl = isLive ? 30 : 3600;
+
+        if (env.SPORTS_CACHE) {
+          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(gameData), {
+            expirationTtl: ttl,
+          });
+        }
+      }
+
+      return new Response(JSON.stringify(gameData, null, 2), {
+        status: 200,
+        headers,
+      });
+    }
+
     // Standings endpoint
     if (route[0] === 'standings') {
       const cacheKey = 'nba:standings';
@@ -287,6 +537,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         availableEndpoints: [
           '/api/nba/teams',
           '/api/nba/teams/{teamId}',
+          '/api/nba/players/{playerId}',
+          '/api/nba/games/{gameId}',
           '/api/nba/scoreboard?date=YYYY-MM-DD',
           '/api/nba/standings',
         ],
