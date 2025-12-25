@@ -518,32 +518,38 @@
             if (!response.ok) throw new Error('Failed to fetch standings');
             const data = await response.json();
 
-            // Parse standings by conference - API returns { conferences: [{ name, teams }] }
+            // Parse standings by conference - API returns { standings: [{ name, teams }] }
             const eastern = [];
             const western = [];
 
-            if (data.conferences && Array.isArray(data.conferences)) {
-              data.conferences.forEach(conf => {
+            // Handle both possible response formats (standings or conferences)
+            const conferences = data.standings || data.conferences || [];
+
+            if (Array.isArray(conferences)) {
+              conferences.forEach(conf => {
                 const confName = conf.name || '';
                 const isEast = confName.toLowerCase().includes('east');
                 const isWest = confName.toLowerCase().includes('west');
 
                 if (conf.teams && Array.isArray(conf.teams)) {
-                  conf.teams.forEach((teamEntry, idx) => {
-                    const team = teamEntry.team || {};
-                    const stats = teamEntry.stats || [];
+                  conf.teams.forEach((team, idx) => {
+                    // Handle flat team object (new format) or nested format
+                    const teamData = team.team || team;
+                    const wins = team.wins ?? teamData.wins ?? 0;
+                    const losses = team.losses ?? teamData.losses ?? 0;
+                    const winPct = wins > 0 ? (wins / (wins + losses)).toFixed(3).replace(/^0/, '') : '.000';
 
                     const entry = {
                       rank: idx + 1,
-                      name: team.displayName || team.name || 'Unknown',
-                      abbreviation: team.abbreviation || '',
-                      wins: stats.find(s => s.name === 'wins')?.value || 0,
-                      losses: stats.find(s => s.name === 'losses')?.value || 0,
-                      pct: stats.find(s => s.name === 'winPercent')?.value || '.000',
-                      gb: stats.find(s => s.name === 'gamesBehind')?.displayValue || '-',
-                      streak: stats.find(s => s.name === 'streak')?.displayValue || '-',
-                      logo: team.logos?.[0]?.href || null,
-                      isGrizzlies: team.abbreviation === 'MEM'
+                      name: teamData.displayName || teamData.name || 'Unknown',
+                      abbreviation: teamData.abbreviation || '',
+                      wins: wins,
+                      losses: losses,
+                      pct: team.record?.winningPercentage || winPct,
+                      gb: team.standings?.gamesBack || team.gb || '-',
+                      streak: team.standings?.streak || team.streak || '-',
+                      logo: teamData.logo || teamData.logos?.[0]?.href || null,
+                      isGrizzlies: teamData.abbreviation === 'MEM'
                     };
 
                     if (isEast) {
@@ -556,9 +562,9 @@
               });
             }
 
-            // Sort by rank/wins
-            eastern.sort((a, b) => (a.rank || 99) - (b.rank || 99));
-            western.sort((a, b) => (a.rank || 99) - (b.rank || 99));
+            // Sort by wins descending
+            eastern.sort((a, b) => b.wins - a.wins);
+            western.sort((a, b) => b.wins - a.wins);
 
             setStandings({ eastern, western });
             setLoading(false);
