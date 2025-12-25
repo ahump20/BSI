@@ -37,7 +37,8 @@ export default function BoxScorePage() {
           </svg>
           <p className="text-text-secondary">Box score data not available yet</p>
           <p className="text-text-tertiary text-sm mt-2">
-            The full box score will appear once the game gets underway. Grab some peanuts and Cracker Jacks while you wait.
+            The full box score will appear once the game gets underway. Grab some peanuts and
+            Cracker Jacks while you wait.
           </p>
         </div>
       </Card>
@@ -46,34 +47,66 @@ export default function BoxScorePage() {
 
   return (
     <BoxScoreTable
-      linescore={game.linescore ? {
-        innings: game.linescore.innings.map(inn => ({
-          away: inn.away ?? null,
-          home: inn.home ?? null,
-        })),
-        totals: game.linescore.totals,
-      } : undefined}
+      linescore={
+        game.linescore
+          ? {
+              innings: game.linescore.innings.map((inn) => ({
+                away: inn.away ?? null,
+                home: inn.home ?? null,
+              })),
+              totals: game.linescore.totals,
+            }
+          : undefined
+      }
       boxscore={{
         away: {
-          batting: awayBatting.map(b => ({
+          batting: awayBatting.map((b) => ({
             player: { id: b.player.id, name: b.player.name, position: b.player.position },
-            ab: b.ab, r: b.r, h: b.h, rbi: b.rbi, bb: b.bb, so: b.so, avg: b.avg,
+            ab: b.ab,
+            r: b.r,
+            h: b.h,
+            rbi: b.rbi,
+            bb: b.bb,
+            so: b.so,
+            avg: b.avg,
           })),
-          pitching: awayPitching.map(p => ({
+          pitching: awayPitching.map((p) => ({
             player: { id: p.player.id, name: p.player.name },
-            decision: p.decision, ip: p.ip, h: p.h, r: p.r, er: p.er, bb: p.bb, so: p.so,
-            pitches: p.pitches, strikes: p.strikes, era: p.era,
+            decision: p.decision,
+            ip: p.ip,
+            h: p.h,
+            r: p.r,
+            er: p.er,
+            bb: p.bb,
+            so: p.so,
+            pitches: p.pitches,
+            strikes: p.strikes,
+            era: p.era,
           })),
         },
         home: {
-          batting: homeBatting.map(b => ({
+          batting: homeBatting.map((b) => ({
             player: { id: b.player.id, name: b.player.name, position: b.player.position },
-            ab: b.ab, r: b.r, h: b.h, rbi: b.rbi, bb: b.bb, so: b.so, avg: b.avg,
+            ab: b.ab,
+            r: b.r,
+            h: b.h,
+            rbi: b.rbi,
+            bb: b.bb,
+            so: b.so,
+            avg: b.avg,
           })),
-          pitching: homePitching.map(p => ({
+          pitching: homePitching.map((p) => ({
             player: { id: p.player.id, name: p.player.name },
-            decision: p.decision, ip: p.ip, h: p.h, r: p.r, er: p.er, bb: p.bb, so: p.so,
-            pitches: p.pitches, strikes: p.strikes, era: p.era,
+            decision: p.decision,
+            ip: p.ip,
+            h: p.h,
+            r: p.r,
+            er: p.er,
+            bb: p.bb,
+            so: p.so,
+            pitches: p.pitches,
+            strikes: p.strikes,
+            era: p.era,
           })),
         },
       }}

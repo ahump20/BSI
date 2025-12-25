@@ -84,9 +84,7 @@ export function AIGameCard({ game }: AIGameCardProps) {
           </div>
 
           {/* VS / Score Separator */}
-          <div className="text-text-tertiary font-medium">
-            {game.completed ? '-' : '@'}
-          </div>
+          <div className="text-text-tertiary font-medium">{game.completed ? '-' : '@'}</div>
 
           {/* Home Team */}
           <div className="flex-1 text-center">

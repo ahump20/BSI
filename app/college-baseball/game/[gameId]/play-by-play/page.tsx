@@ -70,7 +70,8 @@ export default function CollegePlayByPlayPage() {
           </svg>
           <p className="text-text-secondary">Play-by-play data not available yet.</p>
           <p className="text-text-tertiary text-sm mt-2">
-            When the game starts, every pitch, every swing, every play shows up here—the kind of detail ESPN can't be bothered to track for college baseball.
+            When the game starts, every pitch, every swing, every play shows up here—the kind of
+            detail ESPN can't be bothered to track for college baseball.
           </p>
         </div>
       </Card>

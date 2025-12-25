@@ -46,7 +46,8 @@ export default function GameSummaryPage() {
             </div>
             <p className="text-white font-semibold text-lg">{winningPitcher.player.name}</p>
             <p className="text-text-secondary text-sm mt-1">
-              {winningPitcher.ip} IP, {winningPitcher.h} H, {winningPitcher.er} ER, {winningPitcher.so} K
+              {winningPitcher.ip} IP, {winningPitcher.h} H, {winningPitcher.er} ER,{' '}
+              {winningPitcher.so} K
             </p>
           </Card>
         )}
@@ -60,7 +61,8 @@ export default function GameSummaryPage() {
             </div>
             <p className="text-white font-semibold text-lg">{losingPitcher.player.name}</p>
             <p className="text-text-secondary text-sm mt-1">
-              {losingPitcher.ip} IP, {losingPitcher.h} H, {losingPitcher.er} ER, {losingPitcher.so} K
+              {losingPitcher.ip} IP, {losingPitcher.h} H, {losingPitcher.er} ER, {losingPitcher.so}{' '}
+              K
             </p>
           </Card>
         )}
@@ -93,7 +95,8 @@ export default function GameSummaryPage() {
                 <div>
                   <p className="font-semibold text-white">{topAwayHitter.player.name}</p>
                   <p className="text-text-secondary text-sm">
-                    {topAwayHitter.h}-{topAwayHitter.ab}, {topAwayHitter.rbi} RBI, {topAwayHitter.r} R
+                    {topAwayHitter.h}-{topAwayHitter.ab}, {topAwayHitter.rbi} RBI, {topAwayHitter.r}{' '}
+                    R
                   </p>
                 </div>
               </div>
@@ -106,7 +109,8 @@ export default function GameSummaryPage() {
                 <div>
                   <p className="font-semibold text-white">{topHomeHitter.player.name}</p>
                   <p className="text-text-secondary text-sm">
-                    {topHomeHitter.h}-{topHomeHitter.ab}, {topHomeHitter.rbi} RBI, {topHomeHitter.r} R
+                    {topHomeHitter.h}-{topHomeHitter.ab}, {topHomeHitter.rbi} RBI, {topHomeHitter.r}{' '}
+                    R
                   </p>
                 </div>
               </div>
@@ -118,34 +122,66 @@ export default function GameSummaryPage() {
       {/* Quick Box Score Preview */}
       {game.boxscore && (
         <BoxScoreTable
-          linescore={game.linescore ? {
-            innings: game.linescore.innings.map(inn => ({
-              away: inn.away ?? null,
-              home: inn.home ?? null,
-            })),
-            totals: game.linescore.totals,
-          } : undefined}
+          linescore={
+            game.linescore
+              ? {
+                  innings: game.linescore.innings.map((inn) => ({
+                    away: inn.away ?? null,
+                    home: inn.home ?? null,
+                  })),
+                  totals: game.linescore.totals,
+                }
+              : undefined
+          }
           boxscore={{
             away: {
-              batting: awayBatting.slice(0, 5).map(b => ({
+              batting: awayBatting.slice(0, 5).map((b) => ({
                 player: { id: b.player.id, name: b.player.name, position: b.player.position },
-                ab: b.ab, r: b.r, h: b.h, rbi: b.rbi, bb: b.bb, so: b.so, avg: b.avg,
+                ab: b.ab,
+                r: b.r,
+                h: b.h,
+                rbi: b.rbi,
+                bb: b.bb,
+                so: b.so,
+                avg: b.avg,
               })),
-              pitching: awayPitching.slice(0, 3).map(p => ({
+              pitching: awayPitching.slice(0, 3).map((p) => ({
                 player: { id: p.player.id, name: p.player.name },
-                decision: p.decision, ip: p.ip, h: p.h, r: p.r, er: p.er, bb: p.bb, so: p.so,
-                pitches: p.pitches, strikes: p.strikes, era: p.era,
+                decision: p.decision,
+                ip: p.ip,
+                h: p.h,
+                r: p.r,
+                er: p.er,
+                bb: p.bb,
+                so: p.so,
+                pitches: p.pitches,
+                strikes: p.strikes,
+                era: p.era,
               })),
             },
             home: {
-              batting: homeBatting.slice(0, 5).map(b => ({
+              batting: homeBatting.slice(0, 5).map((b) => ({
                 player: { id: b.player.id, name: b.player.name, position: b.player.position },
-                ab: b.ab, r: b.r, h: b.h, rbi: b.rbi, bb: b.bb, so: b.so, avg: b.avg,
+                ab: b.ab,
+                r: b.r,
+                h: b.h,
+                rbi: b.rbi,
+                bb: b.bb,
+                so: b.so,
+                avg: b.avg,
               })),
-              pitching: homePitching.slice(0, 3).map(p => ({
+              pitching: homePitching.slice(0, 3).map((p) => ({
                 player: { id: p.player.id, name: p.player.name },
-                decision: p.decision, ip: p.ip, h: p.h, r: p.r, er: p.er, bb: p.bb, so: p.so,
-                pitches: p.pitches, strikes: p.strikes, era: p.era,
+                decision: p.decision,
+                ip: p.ip,
+                h: p.h,
+                r: p.r,
+                er: p.er,
+                bb: p.bb,
+                so: p.so,
+                pitches: p.pitches,
+                strikes: p.strikes,
+                era: p.era,
               })),
             },
           }}

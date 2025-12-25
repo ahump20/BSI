@@ -34,32 +34,38 @@ const features = [
   {
     icon: '💰',
     title: 'Fair Market Value',
-    description: 'Our proprietary FMNV model calculates what an athlete is actually worth in the NIL marketplace based on performance, exposure, and market demand.',
+    description:
+      'Our proprietary FMNV model calculates what an athlete is actually worth in the NIL marketplace based on performance, exposure, and market demand.',
   },
   {
     icon: '📊',
     title: 'Program Rankings',
-    description: 'Total roster NIL value by program. See which schools have built the most valuable collectives and where your program stands.',
+    description:
+      'Total roster NIL value by program. See which schools have built the most valuable collectives and where your program stands.',
   },
   {
     icon: '🔄',
     title: 'Transfer Portal Intel',
-    description: 'Real-time portal activity with projected NIL values. Identify fits before your competition does.',
+    description:
+      'Real-time portal activity with projected NIL values. Identify fits before your competition does.',
   },
   {
     icon: '📈',
     title: 'WAR Calculations',
-    description: 'Wins Above Replacement adapted for college athletics. Understand the actual on-field value a player brings to your program.',
+    description:
+      'Wins Above Replacement adapted for college athletics. Understand the actual on-field value a player brings to your program.',
   },
   {
     icon: '🎯',
     title: 'Roster Optimization',
-    description: 'Maximize your NIL budget with data-driven roster construction. Know what positions need investment and where you can find value.',
+    description:
+      'Maximize your NIL budget with data-driven roster construction. Know what positions need investment and where you can find value.',
   },
   {
     icon: '📱',
     title: 'Market Intelligence',
-    description: 'Track year-over-year trends, regional variations, and sport-specific dynamics in the NIL marketplace.',
+    description:
+      'Track year-over-year trends, regional variations, and sport-specific dynamics in the NIL marketplace.',
   },
 ];
 
@@ -88,7 +94,9 @@ export default function NILValuationPage() {
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
-              <Badge variant="primary" className="mb-4">NIL Intelligence</Badge>
+              <Badge variant="primary" className="mb-4">
+                NIL Intelligence
+              </Badge>
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
                 style={{ fontFamily: 'Georgia, serif' }}
@@ -96,7 +104,9 @@ export default function NILValuationPage() {
                 <span style={{ color: colors.burntOrange }}>NIL Valuation</span> Engine
               </h1>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Fair Market Value calculations, transfer portal intelligence, and roster optimization tools for the 2025-26 season. Know what athletes are worth before you make offers.
+                Fair Market Value calculations, transfer portal intelligence, and roster
+                optimization tools for the 2025-26 season. Know what athletes are worth before you
+                make offers.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">
@@ -121,25 +131,45 @@ export default function NILValuationPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>$2.4B</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  $2.4B
+                </div>
                 <p className="text-gray-400 mt-1">Total NIL Market</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={100}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>5,200+</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  5,200+
+                </div>
                 <p className="text-gray-400 mt-1">Athletes Tracked</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={200}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>134</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  134
+                </div>
                 <p className="text-gray-400 mt-1">FBS Programs</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={300}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>Daily</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  Daily
+                </div>
                 <p className="text-gray-400 mt-1">Value Updates</p>
               </div>
             </ScrollReveal>
@@ -181,17 +211,16 @@ export default function NILValuationPage() {
           <div className="grid md:grid-cols-2 gap-12 items-start">
             <ScrollReveal>
               <div>
-                <Badge variant="secondary" className="mb-4">Program Rankings</Badge>
-                <h2 className="text-3xl font-bold text-white mb-4">
-                  Top 5 NIL Programs
-                </h2>
+                <Badge variant="secondary" className="mb-4">
+                  Program Rankings
+                </Badge>
+                <h2 className="text-3xl font-bold text-white mb-4">Top 5 NIL Programs</h2>
                 <p className="text-gray-400 mb-6">
-                  Total roster NIL value by program. Updated daily from verified market data and collective spending reports.
+                  Total roster NIL value by program. Updated daily from verified market data and
+                  collective spending reports.
                 </p>
                 <Link href="/pricing">
-                  <Button variant="outline">
-                    See Full Rankings →
-                  </Button>
+                  <Button variant="outline">See Full Rankings →</Button>
                 </Link>
               </div>
             </ScrollReveal>
@@ -201,7 +230,10 @@ export default function NILValuationPage() {
                 <CardContent className="p-0">
                   <div className="divide-y divide-white/10">
                     {topPrograms.map((program) => (
-                      <div key={program.name} className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
+                      <div
+                        key={program.name}
+                        className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors"
+                      >
                         <div className="flex items-center gap-4">
                           <span
                             className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
@@ -235,7 +267,8 @@ export default function NILValuationPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-white mb-4">NIL by Sport</h2>
               <p className="text-gray-400 max-w-2xl mx-auto">
-                How NIL values vary across different sports. Football dominates, but every sport has its market.
+                How NIL values vary across different sports. Football dominates, but every sport has
+                its market.
               </p>
             </div>
           </ScrollReveal>
@@ -248,7 +281,9 @@ export default function NILValuationPage() {
                     <h3 className="text-lg font-semibold text-white mb-4">{sport.sport}</h3>
                     <div className="space-y-3">
                       <div>
-                        <div className="text-2xl font-bold" style={{ color: colors.burntOrange }}>{sport.avgValue}</div>
+                        <div className="text-2xl font-bold" style={{ color: colors.burntOrange }}>
+                          {sport.avgValue}
+                        </div>
                         <div className="text-xs text-gray-500">Average Value</div>
                       </div>
                       <div className="border-t border-white/10 pt-3">
@@ -274,10 +309,14 @@ export default function NILValuationPage() {
             <div className="max-w-3xl mx-auto">
               <Card className="border-l-4" style={{ borderLeftColor: colors.burntOrange }}>
                 <CardContent className="p-8">
-                  <Badge variant="secondary" className="mb-4">Transparency</Badge>
+                  <Badge variant="secondary" className="mb-4">
+                    Transparency
+                  </Badge>
                   <h2 className="text-2xl font-bold text-white mb-4">Our Methodology</h2>
                   <p className="text-gray-400 mb-6">
-                    We believe in full transparency. Our Fair Market NIL Value (FMNV) model combines on-field performance metrics, social media reach, market exposure, and verified deal data to calculate athlete valuations.
+                    We believe in full transparency. Our Fair Market NIL Value (FMNV) model combines
+                    on-field performance metrics, social media reach, market exposure, and verified
+                    deal data to calculate athlete valuations.
                   </p>
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     <div className="text-center p-4 bg-midnight rounded-lg">
@@ -317,7 +356,8 @@ export default function NILValuationPage() {
                 Ready to Navigate <span style={{ color: colors.burntOrange }}>NIL</span> with Data?
               </h2>
               <p className="text-xl text-gray-400 mb-8">
-                Enterprise access includes full NIL Valuation tools, transfer portal alerts, and API integration for your scouting systems.
+                Enterprise access includes full NIL Valuation tools, transfer portal alerts, and API
+                integration for your scouting systems.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">

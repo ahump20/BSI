@@ -39,7 +39,12 @@ export function Marquee({
   const animationClass = reverse ? 'animate-marquee-reverse' : speedClass;
 
   return (
-    <div className={cn('marquee-container relative overflow-hidden py-4 bg-true-black border-y border-white/10', className)}>
+    <div
+      className={cn(
+        'marquee-container relative overflow-hidden py-4 bg-true-black border-y border-white/10',
+        className
+      )}
+    >
       <div
         className={cn(
           'marquee-track inline-flex gap-12',

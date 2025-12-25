@@ -36,7 +36,8 @@ export default function CollegeBoxScorePage() {
           </svg>
           <p className="text-text-secondary">Box score not available yet.</p>
           <p className="text-text-tertiary text-sm mt-2">
-            Once the first pitch flies, every at-bat and every pitch gets tracked here. The full picture, no ESPN filter.
+            Once the first pitch flies, every at-bat and every pitch gets tracked here. The full
+            picture, no ESPN filter.
           </p>
         </div>
       </Card>
@@ -89,7 +90,9 @@ export default function CollegeBoxScorePage() {
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary text-xs w-6">{batter.player.position}</span>
+                        <span className="text-text-tertiary text-xs w-6">
+                          {batter.player.position}
+                        </span>
                         <span className="text-white font-medium">{batter.player.name}</span>
                         {batter.player.year && (
                           <span className="text-text-tertiary text-xs">({batter.player.year})</span>
@@ -98,7 +101,9 @@ export default function CollegeBoxScorePage() {
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">{batter.h}</td>
+                    <td className="text-center p-3 font-mono text-white font-semibold">
+                      {batter.h}
+                    </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.bb}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.so}</td>
@@ -139,11 +144,19 @@ export default function CollegeBoxScorePage() {
                       <div className="flex items-center gap-2">
                         <span className="text-white font-medium">{pitcher.player.name}</span>
                         {pitcher.player.year && (
-                          <span className="text-text-tertiary text-xs">({pitcher.player.year})</span>
+                          <span className="text-text-tertiary text-xs">
+                            ({pitcher.player.year})
+                          </span>
                         )}
                         {pitcher.decision && (
                           <Badge
-                            variant={pitcher.decision === 'W' ? 'success' : pitcher.decision === 'L' ? 'error' : 'secondary'}
+                            variant={
+                              pitcher.decision === 'W'
+                                ? 'success'
+                                : pitcher.decision === 'L'
+                                  ? 'error'
+                                  : 'secondary'
+                            }
                             size="sm"
                           >
                             {pitcher.decision}
@@ -151,7 +164,9 @@ export default function CollegeBoxScorePage() {
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">{pitcher.ip}</td>
+                    <td className="text-center p-3 font-mono text-white font-semibold">
+                      {pitcher.ip}
+                    </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.r}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.er}</td>
@@ -210,7 +225,9 @@ export default function CollegeBoxScorePage() {
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-text-tertiary text-xs w-6">{batter.player.position}</span>
+                        <span className="text-text-tertiary text-xs w-6">
+                          {batter.player.position}
+                        </span>
                         <span className="text-white font-medium">{batter.player.name}</span>
                         {batter.player.year && (
                           <span className="text-text-tertiary text-xs">({batter.player.year})</span>
@@ -219,7 +236,9 @@ export default function CollegeBoxScorePage() {
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">{batter.h}</td>
+                    <td className="text-center p-3 font-mono text-white font-semibold">
+                      {batter.h}
+                    </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.bb}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.so}</td>
@@ -260,11 +279,19 @@ export default function CollegeBoxScorePage() {
                       <div className="flex items-center gap-2">
                         <span className="text-white font-medium">{pitcher.player.name}</span>
                         {pitcher.player.year && (
-                          <span className="text-text-tertiary text-xs">({pitcher.player.year})</span>
+                          <span className="text-text-tertiary text-xs">
+                            ({pitcher.player.year})
+                          </span>
                         )}
                         {pitcher.decision && (
                           <Badge
-                            variant={pitcher.decision === 'W' ? 'success' : pitcher.decision === 'L' ? 'error' : 'secondary'}
+                            variant={
+                              pitcher.decision === 'W'
+                                ? 'success'
+                                : pitcher.decision === 'L'
+                                  ? 'error'
+                                  : 'secondary'
+                            }
                             size="sm"
                           >
                             {pitcher.decision}
@@ -272,7 +299,9 @@ export default function CollegeBoxScorePage() {
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">{pitcher.ip}</td>
+                    <td className="text-center p-3 font-mono text-white font-semibold">
+                      {pitcher.ip}
+                    </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.r}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.er}</td>

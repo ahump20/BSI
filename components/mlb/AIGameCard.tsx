@@ -135,7 +135,12 @@ export function AIGameCard({ game }: AIGameCardProps) {
         <div className="bg-charcoal/50 rounded-lg p-4 border border-border-subtle">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-burnt-orange">
-              AI {game.contentType === 'preview' ? 'Preview' : game.contentType === 'live' ? 'Update' : 'Recap'}
+              AI{' '}
+              {game.contentType === 'preview'
+                ? 'Preview'
+                : game.contentType === 'live'
+                  ? 'Update'
+                  : 'Recap'}
             </span>
             <Badge variant="secondary" className="text-[10px]">
               Workers AI

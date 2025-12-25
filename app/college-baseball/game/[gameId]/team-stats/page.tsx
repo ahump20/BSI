@@ -3,7 +3,6 @@
 import { useGameData } from '../layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 
-
 /**
  * College Baseball Team Stats Page
  *
@@ -72,8 +71,10 @@ export default function CollegeTeamStatsPage() {
   );
 
   // Calculate batting average
-  const awayAvg = awayBattingTotals.ab > 0 ? (awayBattingTotals.h / awayBattingTotals.ab).toFixed(3) : '.000';
-  const homeAvg = homeBattingTotals.ab > 0 ? (homeBattingTotals.h / homeBattingTotals.ab).toFixed(3) : '.000';
+  const awayAvg =
+    awayBattingTotals.ab > 0 ? (awayBattingTotals.h / awayBattingTotals.ab).toFixed(3) : '.000';
+  const homeAvg =
+    homeBattingTotals.ab > 0 ? (homeBattingTotals.h / homeBattingTotals.ab).toFixed(3) : '.000';
 
   // Stats comparison data
   const comparisonStats = [
@@ -83,8 +84,18 @@ export default function CollegeTeamStatsPage() {
     { label: 'Walks', away: awayBattingTotals.bb, home: homeBattingTotals.bb },
     { label: 'Strikeouts', away: awayBattingTotals.so, home: homeBattingTotals.so },
     { label: 'Batting Avg', away: awayAvg, home: homeAvg, isAvg: true },
-    { label: 'Hits Allowed', away: awayPitchingTotals.h, home: homePitchingTotals.h, inverse: true },
-    { label: 'Walks Allowed', away: awayPitchingTotals.bb, home: homePitchingTotals.bb, inverse: true },
+    {
+      label: 'Hits Allowed',
+      away: awayPitchingTotals.h,
+      home: homePitchingTotals.h,
+      inverse: true,
+    },
+    {
+      label: 'Walks Allowed',
+      away: awayPitchingTotals.bb,
+      home: homePitchingTotals.bb,
+      inverse: true,
+    },
     { label: 'Strikeouts (P)', away: awayPitchingTotals.so, home: homePitchingTotals.so },
     { label: 'Total Pitches', away: awayPitchingTotals.pitches, home: homePitchingTotals.pitches },
   ];
@@ -106,7 +117,8 @@ export default function CollegeTeamStatsPage() {
           </svg>
           <p className="text-text-secondary">Game hasn't started yet.</p>
           <p className="text-text-tertiary text-sm mt-2">
-            Team comparisons show up once first pitch flies. Who's got the edge? You'll know soon—and it won't be buried in a ticker.
+            Team comparisons show up once first pitch flies. Who's got the edge? You'll know
+            soon—and it won't be buried in a ticker.
           </p>
         </div>
       </Card>
@@ -214,13 +226,17 @@ export default function CollegeTeamStatsPage() {
                 <p className="text-text-tertiary text-sm mb-1">Left on Base</p>
                 <div className="flex items-center justify-between">
                   <div className="text-center">
-                    <span className="text-text-tertiary text-xs">{game.teams.away.abbreviation}</span>
+                    <span className="text-text-tertiary text-xs">
+                      {game.teams.away.abbreviation}
+                    </span>
                     <p className="text-white font-bold text-lg">
                       {awayBattingTotals.h + awayBattingTotals.bb - awayBattingTotals.r}
                     </p>
                   </div>
                   <div className="text-center">
-                    <span className="text-text-tertiary text-xs">{game.teams.home.abbreviation}</span>
+                    <span className="text-text-tertiary text-xs">
+                      {game.teams.home.abbreviation}
+                    </span>
                     <p className="text-white font-bold text-lg">
                       {homeBattingTotals.h + homeBattingTotals.bb - homeBattingTotals.r}
                     </p>

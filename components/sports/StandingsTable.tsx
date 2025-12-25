@@ -49,8 +49,8 @@ interface NBATeamRaw {
 }
 
 interface NBAConference {
-  name?: string;  // API uses 'name' for conference name
-  conference?: string;  // Fallback
+  name?: string; // API uses 'name' for conference name
+  conference?: string; // Fallback
   teams?: NBATeamRaw[];
 }
 
@@ -401,14 +401,19 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
                     </tr>
                   ))
                 : displayStandings.map((team) => (
-                    <tr key={safeString(team.abbreviation || team.team, String(team.rank))} className="hover:bg-white/5 transition-colors">
+                    <tr
+                      key={safeString(team.abbreviation || team.team, String(team.rank))}
+                      className="hover:bg-white/5 transition-colors"
+                    >
                       <td className="px-4 py-3 text-white/50 text-sm">{team.rank}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-bold text-white">
                             {safeString(team.abbreviation || team.team, '??').slice(0, 2)}
                           </div>
-                          <span className="text-white font-medium">{safeString(team.team, 'Unknown')}</span>
+                          <span className="text-white font-medium">
+                            {safeString(team.team, 'Unknown')}
+                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center text-white font-mono">{team.wins}</td>

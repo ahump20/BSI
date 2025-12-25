@@ -198,8 +198,8 @@ export default function CFBPageClient() {
                   Game <span className="text-gradient-blaze">Intelligence</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  AI-generated previews before games and analytical recaps after.
-                  Powered by Workers AI for real-time insights.
+                  AI-generated previews before games and analytical recaps after. Powered by Workers
+                  AI for real-time insights.
                 </p>
               </div>
             </ScrollReveal>

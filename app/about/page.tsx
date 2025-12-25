@@ -36,18 +36,21 @@ export default function AboutPage() {
   const chapterRefs = useRef<(HTMLElement | null)[]>([]);
 
   // Smooth chapter transition with fade effect
-  const handleChapterChange = useCallback((index: number) => {
-    if (index === activeChapter || index < 0 || index >= chapters.length) return;
+  const handleChapterChange = useCallback(
+    (index: number) => {
+      if (index === activeChapter || index < 0 || index >= chapters.length) return;
 
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setActiveChapter(index);
-      setIsTransitioning(false);
-      // Scroll to the chapter
-      const chapterId = chapters[index].id;
-      document.getElementById(chapterId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-  }, [activeChapter]);
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setActiveChapter(index);
+        setIsTransitioning(false);
+        // Scroll to the chapter
+        const chapterId = chapters[index].id;
+        document.getElementById(chapterId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
+    },
+    [activeChapter]
+  );
 
   // Track scroll position to update active chapter
   useEffect(() => {
@@ -100,7 +103,9 @@ export default function AboutPage() {
 
               {/* Intro Content */}
               <div className="text-center md:text-left">
-                <Badge variant="primary" className="mb-4">The Story Behind the Stats</Badge>
+                <Badge variant="primary" className="mb-4">
+                  The Story Behind the Stats
+                </Badge>
                 <h1
                   className="text-4xl md:text-5xl font-bold mb-6"
                   style={{ fontFamily: 'Georgia, serif' }}
@@ -111,7 +116,8 @@ export default function AboutPage() {
                   className="text-xl text-gray-300 mb-8 leading-relaxed"
                   style={{ fontFamily: 'Georgia, serif' }}
                 >
-                  August 17, 1995 — the same day as Davy Crockett. Memphis hospital, but my dad put Texas soil under that bed. Because that is what Humphreys do.
+                  August 17, 1995 — the same day as Davy Crockett. Memphis hospital, but my dad put
+                  Texas soil under that bed. Because that is what Humphreys do.
                 </p>
 
                 {/* Credential Badges */}
@@ -192,7 +198,9 @@ export default function AboutPage() {
                 >
                   The Soil
                 </h2>
-                <p className="text-gray-400 mt-2">West Columbia, Texas — Birthplace of the Republic</p>
+                <p className="text-gray-400 mt-2">
+                  West Columbia, Texas — Birthplace of the Republic
+                </p>
               </div>
 
               <div
@@ -200,13 +208,20 @@ export default function AboutPage() {
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 <p className="text-xl leading-relaxed">
-                  The soil came from West Columbia — birthplace of the Republic of Texas. My father carried it across state lines in a small container, just like his father had done, and his father before him.
+                  The soil came from West Columbia — birthplace of the Republic of Texas. My father
+                  carried it across state lines in a small container, just like his father had done,
+                  and his father before him.
                 </p>
                 <p className="leading-relaxed">
-                  The doctor told my parents, &quot;You know you ain&apos;t the first to do this — but they&apos;ve ALL been from Texas.&quot; The news made the local paper in El Campo, my father&apos;s hometown. My grandfather Bill founded banks there after growing up dirt poor in West Texas and meeting my grandmother Helen at Hardin-Simmons following his service in WWII.
+                  The doctor told my parents, &quot;You know you ain&apos;t the first to do this —
+                  but they&apos;ve ALL been from Texas.&quot; The news made the local paper in El
+                  Campo, my father&apos;s hometown. My grandfather Bill founded banks there after
+                  growing up dirt poor in West Texas and meeting my grandmother Helen at
+                  Hardin-Simmons following his service in WWII.
                 </p>
                 <p className="leading-relaxed">
-                  That is where this starts. Not with statistics or algorithms. With soil and stubborn people who believe heritage matters.
+                  That is where this starts. Not with statistics or algorithms. With soil and
+                  stubborn people who believe heritage matters.
                 </p>
               </div>
             </div>
@@ -214,7 +229,10 @@ export default function AboutPage() {
 
           {/* Business Tie-In: Data Quality */}
           <ScrollReveal delay={200}>
-            <Card className="max-w-3xl mx-auto mt-12 border-l-4" style={{ borderLeftColor: colors.burntOrange }}>
+            <Card
+              className="max-w-3xl mx-auto mt-12 border-l-4"
+              style={{ borderLeftColor: colors.burntOrange }}
+            >
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
                   <div
@@ -224,9 +242,13 @@ export default function AboutPage() {
                     <span className="text-2xl">📊</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">That Standard Applies to Our Data</h3>
+                    <h3 className="text-lg font-semibold text-white mb-2">
+                      That Standard Applies to Our Data
+                    </h3>
                     <p className="text-gray-400">
-                      We cross-reference 3+ sources for every critical stat. Every data point is timestamped with America/Chicago precision. No placeholders, no estimates — real numbers or we do not ship it.
+                      We cross-reference 3+ sources for every critical stat. Every data point is
+                      timestamped with America/Chicago precision. No placeholders, no estimates —
+                      real numbers or we do not ship it.
                     </p>
                   </div>
                 </div>
@@ -257,13 +279,22 @@ export default function AboutPage() {
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 <p className="text-xl leading-relaxed">
-                  My family has held the same four season tickets to Texas Longhorn football for over 40 years. Every Thanksgiving growing up, we drove from Memphis to Austin — 12 hours of highway, barbecue stops, and the same question every year: &quot;You think we beat A&M this time?&quot;
+                  My family has held the same four season tickets to Texas Longhorn football for
+                  over 40 years. Every Thanksgiving growing up, we drove from Memphis to Austin — 12
+                  hours of highway, barbecue stops, and the same question every year: &quot;You
+                  think we beat A&M this time?&quot;
                 </p>
                 <p className="leading-relaxed">
-                  I was at the Ricky Williams record-breaking game against A&M. Section 15, row 34. My dad pointed at the field and said, &quot;Remember this — you are watching history.&quot;
+                  I was at the Ricky Williams record-breaking game against A&M. Section 15, row 34.
+                  My dad pointed at the field and said, &quot;Remember this — you are watching
+                  history.&quot;
                 </p>
                 <p className="leading-relaxed">
-                  First time I played running back in 7th grade? 70 yards to the house on the first play of the season. At Boerne Champion High School, I scored the first touchdown against our biggest rival, Kerrville Tivy. Against Marble Falls — coach Todd Dodge&apos;s team — I scored on the first play on a screen pass. That play made ESPN.
+                  First time I played running back in 7th grade? 70 yards to the house on the first
+                  play of the season. At Boerne Champion High School, I scored the first touchdown
+                  against our biggest rival, Kerrville Tivy. Against Marble Falls — coach Todd
+                  Dodge&apos;s team — I scored on the first play on a screen pass. That play made
+                  ESPN.
                 </p>
               </div>
             </div>
@@ -272,7 +303,9 @@ export default function AboutPage() {
           {/* Business Tie-In: API Coverage */}
           <ScrollReveal delay={200}>
             <div className="max-w-4xl mx-auto mt-12">
-              <h3 className="text-xl font-semibold text-white mb-6 text-center">API Coverage Across Major Leagues</h3>
+              <h3 className="text-xl font-semibold text-white mb-6 text-center">
+                API Coverage Across Major Leagues
+              </h3>
               <div className="grid md:grid-cols-4 gap-4">
                 {[
                   { sport: 'MLB', teams: '30 Teams', source: 'statsapi.mlb.com', icon: '⚾' },
@@ -285,7 +318,9 @@ export default function AboutPage() {
                       <span className="text-3xl mb-2 block">{item.icon}</span>
                       <h4 className="font-semibold text-white">{item.sport}</h4>
                       <p className="text-sm text-gray-400">{item.teams}</p>
-                      <p className="text-xs mt-2" style={{ color: colors.ember }}>{item.source}</p>
+                      <p className="text-xs mt-2" style={{ color: colors.ember }}>
+                        {item.source}
+                      </p>
                     </CardContent>
                   </Card>
                 ))}
@@ -308,7 +343,9 @@ export default function AboutPage() {
                 >
                   The Fire
                 </h2>
-                <p className="text-gray-400 mt-2">ESPN Treats College Baseball Like an Afterthought</p>
+                <p className="text-gray-400 mt-2">
+                  ESPN Treats College Baseball Like an Afterthought
+                </p>
               </div>
 
               <div
@@ -316,13 +353,19 @@ export default function AboutPage() {
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 <p className="text-xl leading-relaxed">
-                  UT Austin grad — International Relations with minors in European Studies, Political Science, and Economics. Full Sail gave me an MS in Entertainment Business. I made top 10% nationally at Northwestern Mutual before I got tired of waiting.
+                  UT Austin grad — International Relations with minors in European Studies,
+                  Political Science, and Economics. Full Sail gave me an MS in Entertainment
+                  Business. I made top 10% nationally at Northwestern Mutual before I got tired of
+                  waiting.
                 </p>
                 <p className="leading-relaxed font-semibold text-white">
                   Waiting for someone else to fix sports coverage.
                 </p>
                 <p className="leading-relaxed">
-                  ESPN treats college baseball like an afterthought. Try finding a box score for a midweek game between Rice and Houston. Try tracking your team&apos;s conference standings without clicking through 15 pages. Try getting real analytics instead of just scores.
+                  ESPN treats college baseball like an afterthought. Try finding a box score for a
+                  midweek game between Rice and Houston. Try tracking your team&apos;s conference
+                  standings without clicking through 15 pages. Try getting real analytics instead of
+                  just scores.
                 </p>
                 <p className="leading-relaxed text-xl" style={{ color: colors.ember }}>
                   Fans deserve better. So I built it myself.
@@ -337,20 +380,28 @@ export default function AboutPage() {
               <Card className="overflow-hidden">
                 <div
                   className="p-6"
-                  style={{ background: `linear-gradient(135deg, ${colors.charcoal} 0%, ${colors.midnight} 100%)` }}
+                  style={{
+                    background: `linear-gradient(135deg, ${colors.charcoal} 0%, ${colors.midnight} 100%)`,
+                  }}
                 >
                   <h3 className="text-2xl font-bold text-white mb-6">What We Built</h3>
                   <div className="grid md:grid-cols-3 gap-6">
                     <div className="text-center">
-                      <div className="text-4xl font-bold" style={{ color: colors.burntOrange }}>300+</div>
+                      <div className="text-4xl font-bold" style={{ color: colors.burntOrange }}>
+                        300+
+                      </div>
                       <p className="text-gray-400 mt-1">D1 Baseball Programs</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-4xl font-bold" style={{ color: colors.burntOrange }}>30s</div>
+                      <div className="text-4xl font-bold" style={{ color: colors.burntOrange }}>
+                        30s
+                      </div>
                       <p className="text-gray-400 mt-1">Live Score Updates</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-4xl font-bold" style={{ color: colors.burntOrange }}>100%</div>
+                      <div className="text-4xl font-bold" style={{ color: colors.burntOrange }}>
+                        100%
+                      </div>
                       <p className="text-gray-400 mt-1">Box Score Coverage</p>
                     </div>
                   </div>
@@ -382,13 +433,17 @@ export default function AboutPage() {
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 <p className="text-xl leading-relaxed">
-                  My first baseball team was the Bartlett Blaze. Years later, I got a dachshund and named him after that team.
+                  My first baseball team was the Bartlett Blaze. Years later, I got a dachshund and
+                  named him after that team.
                 </p>
                 <p className="leading-relaxed">
-                  When it came time to name the company, I pitched a perfect game once — 27 up, 27 down — but that was not the story. The story was always about blazing paths other people were afraid to walk.
+                  When it came time to name the company, I pitched a perfect game once — 27 up, 27
+                  down — but that was not the story. The story was always about blazing paths other
+                  people were afraid to walk.
                 </p>
                 <p className="leading-relaxed text-xl font-semibold">
-                  <span style={{ color: colors.burntOrange }}>Blaze Sports Intel</span> — named after a dog, built for fans who got tired of waiting.
+                  <span style={{ color: colors.burntOrange }}>Blaze Sports Intel</span> — named
+                  after a dog, built for fans who got tired of waiting.
                 </p>
               </div>
             </div>
@@ -408,7 +463,8 @@ export default function AboutPage() {
                         </h3>
                       </div>
                       <p className="text-gray-400 mb-4">
-                        Enterprise API access, historical data exports, and the tracking tools professional scouts need.
+                        Enterprise API access, historical data exports, and the tracking tools
+                        professional scouts need.
                       </p>
                       <span style={{ color: colors.ember }} className="text-sm font-medium">
                         Learn More →
@@ -427,7 +483,8 @@ export default function AboutPage() {
                         </h3>
                       </div>
                       <p className="text-gray-400 mb-4">
-                        Team dashboards, scheduling optimization, and recruiting intel for college programs.
+                        Team dashboards, scheduling optimization, and recruiting intel for college
+                        programs.
                       </p>
                       <span style={{ color: colors.ember }} className="text-sm font-medium">
                         Learn More →
@@ -462,10 +519,13 @@ export default function AboutPage() {
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 <p className="text-xl leading-relaxed">
-                  Texas is not just a place — it is a covenant. Treat people right. Never let anyone stop dreaming beyond the horizon. Root for underdogs. Question institutions that ignore what matters.
+                  Texas is not just a place — it is a covenant. Treat people right. Never let anyone
+                  stop dreaming beyond the horizon. Root for underdogs. Question institutions that
+                  ignore what matters.
                 </p>
                 <p className="leading-relaxed">
-                  <strong className="text-white">Authenticity over polish.</strong> Grit over flash. Substance over style. Family legacy matters — not as nostalgia, but as fuel.
+                  <strong className="text-white">Authenticity over polish.</strong> Grit over flash.
+                  Substance over style. Family legacy matters — not as nostalgia, but as fuel.
                 </p>
                 <blockquote
                   className="border-l-4 pl-6 my-8 text-2xl italic"
@@ -490,28 +550,37 @@ export default function AboutPage() {
                       <span className="text-green-500">✓</span>
                       <div>
                         <h4 className="font-semibold text-white">Real Data, Always</h4>
-                        <p className="text-sm text-gray-400">No placeholders, no estimates. If we cannot verify it, we do not publish it.</p>
+                        <p className="text-sm text-gray-400">
+                          No placeholders, no estimates. If we cannot verify it, we do not publish
+                          it.
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="text-green-500">✓</span>
                       <div>
                         <h4 className="font-semibold text-white">Source Transparency</h4>
-                        <p className="text-sm text-gray-400">Every stat is cited with timestamp. You know exactly where it came from.</p>
+                        <p className="text-sm text-gray-400">
+                          Every stat is cited with timestamp. You know exactly where it came from.
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="text-green-500">✓</span>
                       <div>
                         <h4 className="font-semibold text-white">Fan-First Coverage</h4>
-                        <p className="text-sm text-gray-400">We cover the games ESPN ignores. Every game matters to someone.</p>
+                        <p className="text-sm text-gray-400">
+                          We cover the games ESPN ignores. Every game matters to someone.
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="text-green-500">✓</span>
                       <div>
                         <h4 className="font-semibold text-white">Enterprise-Grade API</h4>
-                        <p className="text-sm text-gray-400">Professional tools for scouts, coaches, and media organizations.</p>
+                        <p className="text-sm text-gray-400">
+                          Professional tools for scouts, coaches, and media organizations.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -549,7 +618,8 @@ export default function AboutPage() {
                       style={{
                         backgroundColor: index === activeChapter ? colors.burntOrange : '#374151',
                         transform: index === activeChapter ? 'scale(1.3)' : 'scale(1)',
-                        boxShadow: index === activeChapter ? `0 0 12px ${colors.burntOrange}60` : 'none',
+                        boxShadow:
+                          index === activeChapter ? `0 0 12px ${colors.burntOrange}60` : 'none',
                       }}
                       aria-label={`Go to chapter ${index + 1}: ${chapters[index].title}`}
                     />
@@ -565,7 +635,11 @@ export default function AboutPage() {
                       ? 'text-gray-600 cursor-not-allowed'
                       : 'text-white'
                   }`}
-                  style={activeChapter < chapters.length - 1 ? { backgroundColor: colors.burntOrange } : {}}
+                  style={
+                    activeChapter < chapters.length - 1
+                      ? { backgroundColor: colors.burntOrange }
+                      : {}
+                  }
                 >
                   <span className="hidden sm:inline">Next</span>
                   <span>→</span>
@@ -576,7 +650,10 @@ export default function AboutPage() {
               <p className="text-center text-sm text-gray-500 mt-4">
                 {activeChapter < chapters.length - 1 ? (
                   <>
-                    Next: <span style={{ color: colors.texasSoil }}>{chapters[activeChapter + 1].title}</span>
+                    Next:{' '}
+                    <span style={{ color: colors.texasSoil }}>
+                      {chapters[activeChapter + 1].title}
+                    </span>
                   </>
                 ) : (
                   <span style={{ color: colors.gold }}>You&apos;ve completed the origin story</span>
@@ -596,7 +673,8 @@ export default function AboutPage() {
                 className="text-3xl md:text-4xl font-bold mb-6"
                 style={{ fontFamily: 'Georgia, serif' }}
               >
-                Ready to See What <span style={{ color: colors.burntOrange }}>Real Coverage</span> Looks Like?
+                Ready to See What <span style={{ color: colors.burntOrange }}>Real Coverage</span>{' '}
+                Looks Like?
               </h2>
               <p className="text-xl text-gray-400 mb-8">
                 14-day free trial. No credit card required. Cancel anytime.
@@ -614,7 +692,10 @@ export default function AboutPage() {
                 </Link>
               </div>
               <p className="text-sm text-gray-500 mt-6">
-                Questions? Email <a href="mailto:Austin@blazesportsintel.com" className="underline hover:text-white">Austin@blazesportsintel.com</a>
+                Questions? Email{' '}
+                <a href="mailto:Austin@blazesportsintel.com" className="underline hover:text-white">
+                  Austin@blazesportsintel.com
+                </a>
               </p>
             </div>
           </ScrollReveal>

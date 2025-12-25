@@ -222,7 +222,11 @@ export default function CollegeBaseballScoresPage() {
                 )}
                 <span
                   className={`text-2xl font-bold font-mono ${
-                    isScheduled ? 'text-text-tertiary' : awayWon ? 'text-white' : 'text-text-secondary'
+                    isScheduled
+                      ? 'text-text-tertiary'
+                      : awayWon
+                        ? 'text-white'
+                        : 'text-text-secondary'
                   }`}
                 >
                   {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
@@ -255,7 +259,11 @@ export default function CollegeBaseballScoresPage() {
                 )}
                 <span
                   className={`text-2xl font-bold font-mono ${
-                    isScheduled ? 'text-text-tertiary' : homeWon ? 'text-white' : 'text-text-secondary'
+                    isScheduled
+                      ? 'text-text-tertiary'
+                      : homeWon
+                        ? 'text-white'
+                        : 'text-text-secondary'
                   }`}
                 >
                   {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
@@ -337,7 +345,13 @@ export default function CollegeBaseballScoresPage() {
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
                 aria-label="Previous days"
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
@@ -366,7 +380,13 @@ export default function CollegeBaseballScoresPage() {
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
                 aria-label="Next days"
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
@@ -400,7 +420,8 @@ export default function CollegeBaseballScoresPage() {
               <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
                 <p className="text-warning font-semibold">No Games Found</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  College baseball season runs February through June. Check back during the season for live games.
+                  College baseball season runs February through June. Check back during the season
+                  for live games.
                 </p>
                 <button
                   onClick={() => fetchScores(selectedDate, selectedConference)}
@@ -490,7 +511,9 @@ export default function CollegeBaseballScoresPage() {
                     timestamp={formatTimestamp(meta?.lastUpdated)}
                   />
                   {hasLiveGames && (
-                    <span className="text-xs text-text-tertiary">Auto-refreshing every 30 seconds</span>
+                    <span className="text-xs text-text-tertiary">
+                      Auto-refreshing every 30 seconds
+                    </span>
                   )}
                 </div>
               </>

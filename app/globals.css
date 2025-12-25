@@ -74,49 +74,49 @@
   /* ========================================================================== */
 
   /* Core Brand Colors */
-  --bsi-burnt-orange-600: #BF5700;
-  --bsi-gold-500: #FDB913;
-  --bsi-texas-orange: #FF6600;
-  --bsi-ember: #FF6B35;
-  --bsi-texas-soil: #8B4513;
-  --bsi-blaze: #FF4500;
+  --bsi-burnt-orange-600: #bf5700;
+  --bsi-gold-500: #fdb913;
+  --bsi-texas-orange: #ff6600;
+  --bsi-ember: #ff6b35;
+  --bsi-texas-soil: #8b4513;
+  --bsi-blaze: #ff4500;
 
   /* Sport-Specific Palettes */
-  --bsi-baseball-primary: #BF5700;
-  --bsi-baseball-diamond: #6B8E23;
-  --bsi-baseball-dirt: #8B7355;
-  --bsi-baseball-grass: #228B22;
-  --bsi-baseball-leather: #8B4513;
+  --bsi-baseball-primary: #bf5700;
+  --bsi-baseball-diamond: #6b8e23;
+  --bsi-baseball-dirt: #8b7355;
+  --bsi-baseball-grass: #228b22;
+  --bsi-baseball-leather: #8b4513;
 
-  --bsi-football-primary: #8B4513;
-  --bsi-football-grass: #228B22;
-  --bsi-football-field: #355E3B;
-  --bsi-football-endzone: #DC2626;
+  --bsi-football-primary: #8b4513;
+  --bsi-football-grass: #228b22;
+  --bsi-football-field: #355e3b;
+  --bsi-football-endzone: #dc2626;
 
-  --bsi-basketball-primary: #FF6B35;
-  --bsi-basketball-court: #E25822;
-  --bsi-basketball-hardwood: #8B4513;
-  --bsi-basketball-paint: #1E40AF;
+  --bsi-basketball-primary: #ff6b35;
+  --bsi-basketball-court: #e25822;
+  --bsi-basketball-hardwood: #8b4513;
+  --bsi-basketball-paint: #1e40af;
 
-  --bsi-track-primary: #F59E0B;
-  --bsi-track-surface: #DC143C;
-  --bsi-track-lane: #FFD700;
-  --bsi-track-field: #10B981;
+  --bsi-track-primary: #f59e0b;
+  --bsi-track-surface: #dc143c;
+  --bsi-track-lane: #ffd700;
+  --bsi-track-field: #10b981;
 
   /* Team Colors */
-  --bsi-cardinals-red: #C41E3A;
-  --bsi-cardinals-navy: #0C2340;
-  --bsi-cardinals-gold: #FEDB00;
+  --bsi-cardinals-red: #c41e3a;
+  --bsi-cardinals-navy: #0c2340;
+  --bsi-cardinals-gold: #fedb00;
 
   --bsi-titans-navy: #002244;
-  --bsi-titans-blue: #4B92DB;
-  --bsi-titans-red: #C8102E;
+  --bsi-titans-blue: #4b92db;
+  --bsi-titans-red: #c8102e;
 
-  --bsi-longhorns-orange: #BF5700;
-  --bsi-longhorns-white: #FFFFFF;
+  --bsi-longhorns-orange: #bf5700;
+  --bsi-longhorns-white: #ffffff;
 
-  --bsi-grizzlies-blue: #5D76A9;
-  --bsi-grizzlies-gold: #FDB927;
+  --bsi-grizzlies-blue: #5d76a9;
+  --bsi-grizzlies-gold: #fdb927;
 
   /* Typography */
   --bsi-font-display: 'Bebas Neue', 'Oswald', system-ui, sans-serif;
@@ -142,10 +142,10 @@
   --bsi-motion-tackle: cubic-bezier(0.87, 0, 0.13, 1);
 
   /* Background Tokens */
-  --bsi-bg-primary: #0D0D0D;
-  --bsi-bg-secondary: #1A1A1A;
+  --bsi-bg-primary: #0d0d0d;
+  --bsi-bg-secondary: #1a1a1a;
   --bsi-bg-tertiary: #242424;
-  --bsi-bg-elevated: #2D2D2D;
+  --bsi-bg-elevated: #2d2d2d;
 
   /* Surface Tokens */
   --bsi-surface-base: rgba(255, 255, 255, 0.08);
@@ -153,8 +153,8 @@
   --bsi-surface-active: rgba(255, 255, 255, 0.15);
 
   /* Text Tokens */
-  --bsi-text-primary: #FAFAFA;
-  --bsi-text-secondary: #A3A3A3;
+  --bsi-text-primary: #fafafa;
+  --bsi-text-secondary: #a3a3a3;
   --bsi-text-tertiary: #737373;
   --bsi-text-muted: #525252;
 
@@ -169,11 +169,11 @@
 /* LIGHT THEME VARIANT                                                        */
 /* ========================================================================== */
 
-[data-theme="light"] {
-  --bsi-bg-primary: #FFFFFF;
-  --bsi-bg-secondary: #FAFAFA;
-  --bsi-bg-tertiary: #F5F5F5;
-  --bsi-bg-elevated: #EEEEEE;
+[data-theme='light'] {
+  --bsi-bg-primary: #ffffff;
+  --bsi-bg-secondary: #fafafa;
+  --bsi-bg-tertiary: #f5f5f5;
+  --bsi-bg-elevated: #eeeeee;
 
   --bsi-text-primary: rgba(0, 0, 0, 0.95);
   --bsi-text-secondary: rgba(0, 0, 0, 0.75);
@@ -195,9 +195,9 @@
   --shadow-glow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
 
   /* Override color vars for light mode */
-  --color-midnight: #FAFAFA;
-  --color-charcoal: #F5F5F5;
-  --color-graphite: #EEEEEE;
+  --color-midnight: #fafafa;
+  --color-charcoal: #f5f5f5;
+  --color-graphite: #eeeeee;
   --color-surface: rgba(0, 0, 0, 0.03);
   --color-text-primary: rgba(0, 0, 0, 0.95);
   --color-text-secondary: rgba(0, 0, 0, 0.75);
@@ -1115,52 +1115,52 @@ textarea:focus-visible,
 
 /* Sport Theme Variables */
 .bsi-theme-baseball {
-  --bsi-accent: #6B8E23;
-  --bsi-accent-secondary: #8B7355;
+  --bsi-accent: #6b8e23;
+  --bsi-accent-secondary: #8b7355;
   --bsi-surface-tint: rgba(107, 142, 35, 0.1);
 }
 
 .bsi-theme-football {
-  --bsi-accent: #355E3B;
-  --bsi-accent-secondary: #228B22;
+  --bsi-accent: #355e3b;
+  --bsi-accent-secondary: #228b22;
   --bsi-surface-tint: rgba(53, 94, 59, 0.1);
 }
 
 .bsi-theme-basketball {
-  --bsi-accent: #E25822;
-  --bsi-accent-secondary: #8B4513;
+  --bsi-accent: #e25822;
+  --bsi-accent-secondary: #8b4513;
   --bsi-surface-tint: rgba(226, 88, 34, 0.1);
 }
 
 .bsi-theme-track {
-  --bsi-accent: #DC143C;
-  --bsi-accent-secondary: #FFD700;
+  --bsi-accent: #dc143c;
+  --bsi-accent-secondary: #ffd700;
   --bsi-surface-tint: rgba(220, 20, 60, 0.1);
 }
 
 /* Team Theme Variables */
 .bsi-theme-cardinals {
-  --bsi-primary: #C41E3A;
-  --bsi-secondary: #0C2340;
-  --bsi-accent: #FEDB00;
+  --bsi-primary: #c41e3a;
+  --bsi-secondary: #0c2340;
+  --bsi-accent: #fedb00;
 }
 
 .bsi-theme-titans {
   --bsi-primary: #002244;
-  --bsi-secondary: #4B92DB;
-  --bsi-accent: #C8102E;
+  --bsi-secondary: #4b92db;
+  --bsi-accent: #c8102e;
 }
 
 .bsi-theme-longhorns {
-  --bsi-primary: #BF5700;
-  --bsi-secondary: #FFFFFF;
-  --bsi-accent: #333F48;
+  --bsi-primary: #bf5700;
+  --bsi-secondary: #ffffff;
+  --bsi-accent: #333f48;
 }
 
 .bsi-theme-grizzlies {
-  --bsi-primary: #5D76A9;
-  --bsi-secondary: #FDB927;
-  --bsi-accent: #00285E;
+  --bsi-primary: #5d76a9;
+  --bsi-secondary: #fdb927;
+  --bsi-accent: #00285e;
 }
 
 /* ========================================
@@ -1193,34 +1193,34 @@ textarea:focus-visible,
    ======================================== */
 
 .bsi-gradient-championship {
-  background: linear-gradient(135deg, #FDB913 0%, #FFC947 50%, #F59E0B 100%);
+  background: linear-gradient(135deg, #fdb913 0%, #ffc947 50%, #f59e0b 100%);
 }
 
 .bsi-gradient-texas {
-  background: linear-gradient(135deg, #BF5700 0%, #FF6600 100%);
+  background: linear-gradient(135deg, #bf5700 0%, #ff6600 100%);
 }
 
 .bsi-gradient-brand {
-  background: linear-gradient(135deg, #BF5700 0%, #CC6600 50%, #D97B38 100%);
+  background: linear-gradient(135deg, #bf5700 0%, #cc6600 50%, #d97b38 100%);
 }
 
 .bsi-gradient-sunset {
-  background: linear-gradient(135deg, #BF5700 0%, #FF6B35 50%, #F59E0B 100%);
+  background: linear-gradient(135deg, #bf5700 0%, #ff6b35 50%, #f59e0b 100%);
 }
 
 .bsi-gradient-midnight {
-  background: linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 100%);
+  background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
 }
 
 .bsi-text-gradient-championship {
-  background: linear-gradient(135deg, #FDB913 0%, #FFC947 50%, #F59E0B 100%);
+  background: linear-gradient(135deg, #fdb913 0%, #ffc947 50%, #f59e0b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .bsi-text-gradient-brand {
-  background: linear-gradient(90deg, #BF5700 0%, #FF6B35 50%, #FF7D3C 100%);
+  background: linear-gradient(90deg, #bf5700 0%, #ff6b35 50%, #ff7d3c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1231,7 +1231,8 @@ textarea:focus-visible,
    ======================================== */
 
 @keyframes bsi-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -1252,7 +1253,8 @@ textarea:focus-visible,
 }
 
 @keyframes bsi-live-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
   }
   50% {
@@ -1261,7 +1263,8 @@ textarea:focus-visible,
 }
 
 @keyframes bsi-glow-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(191, 87, 0, 0.3);
   }
   50% {
@@ -1325,7 +1328,8 @@ textarea:focus-visible,
 }
 
 @keyframes bsi-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
     animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
@@ -1420,15 +1424,15 @@ textarea:focus-visible,
    ======================================== */
 
 .bsi-stat-positive {
-  color: #22C55E;
+  color: #22c55e;
 }
 
 .bsi-stat-negative {
-  color: #EF4444;
+  color: #ef4444;
 }
 
 .bsi-stat-neutral {
-  color: #3B82F6;
+  color: #3b82f6;
 }
 
 .bsi-stat-highlight {
@@ -1436,23 +1440,23 @@ textarea:focus-visible,
 }
 
 .bsi-heatmap-cold {
-  background-color: #3B82F6;
+  background-color: #3b82f6;
 }
 
 .bsi-heatmap-cool {
-  background-color: #06B6D4;
+  background-color: #06b6d4;
 }
 
 .bsi-heatmap-neutral {
-  background-color: #FAF8F5;
+  background-color: #faf8f5;
 }
 
 .bsi-heatmap-warm {
-  background-color: #F59E0B;
+  background-color: #f59e0b;
 }
 
 .bsi-heatmap-hot {
-  background-color: #EF4444;
+  background-color: #ef4444;
 }
 
 /* ========================================
@@ -1465,7 +1469,7 @@ textarea:focus-visible,
   align-items: center;
   gap: 0.375rem;
   padding: 0.25rem 0.625rem;
-  background: #EF4444;
+  background: #ef4444;
   color: white;
   font-size: 0.75rem;
   font-weight: 600;
@@ -1595,7 +1599,9 @@ textarea:focus-visible,
 .bsi-page-enter-active {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
 }
 
 /* ========================================
@@ -1615,11 +1621,21 @@ textarea:focus-visible,
   }
 }
 
-.bsi-stagger-1 { animation-delay: 0.1s; }
-.bsi-stagger-2 { animation-delay: 0.2s; }
-.bsi-stagger-3 { animation-delay: 0.3s; }
-.bsi-stagger-4 { animation-delay: 0.4s; }
-.bsi-stagger-5 { animation-delay: 0.5s; }
+.bsi-stagger-1 {
+  animation-delay: 0.1s;
+}
+.bsi-stagger-2 {
+  animation-delay: 0.2s;
+}
+.bsi-stagger-3 {
+  animation-delay: 0.3s;
+}
+.bsi-stagger-4 {
+  animation-delay: 0.4s;
+}
+.bsi-stagger-5 {
+  animation-delay: 0.5s;
+}
 
 /* ========================================
    BSI SCROLL REVEAL
@@ -1628,7 +1644,9 @@ textarea:focus-visible,
 .bsi-reveal {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
 }
 
 .bsi-reveal.visible {
@@ -1652,9 +1670,11 @@ textarea:focus-visible,
   left: 50%;
   width: 0;
   height: 0;
-  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
   transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
+  transition:
+    width 0.6s ease,
+    height 0.6s ease;
   pointer-events: none;
 }
 
@@ -1689,12 +1709,12 @@ html {
   html {
     scroll-behavior: auto;
   }
-  
+
   .skeleton {
     animation: none;
     background: rgba(31, 41, 55, 1);
   }
-  
+
   .bsi-card-entrance,
   .bsi-reveal {
     opacity: 1;

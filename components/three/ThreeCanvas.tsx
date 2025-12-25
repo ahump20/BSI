@@ -17,12 +17,7 @@
 
 import { Suspense, useRef, useEffect, useState, ReactNode, useCallback } from 'react';
 import { Canvas, useThree, useFrame, type CanvasProps } from '@react-three/fiber';
-import {
-  Preload,
-  AdaptiveDpr,
-  AdaptiveEvents,
-  PerformanceMonitor,
-} from '@react-three/drei';
+import { Preload, AdaptiveDpr, AdaptiveEvents, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 import { usePerformanceTier, type PerformanceTier } from './usePerformanceTier';
 

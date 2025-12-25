@@ -31,9 +31,7 @@ export function QuoteBlock({ quote, author, className }: QuoteBlockProps) {
           </p>
           {author && (
             <footer className="mt-8">
-              <cite className="not-italic text-burnt-orange-400 font-medium">
-                — {author}
-              </cite>
+              <cite className="not-italic text-burnt-orange-400 font-medium">— {author}</cite>
             </footer>
           )}
         </blockquote>

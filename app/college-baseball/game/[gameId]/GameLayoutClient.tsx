@@ -215,7 +215,11 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
   const tabs = [
     { id: 'summary', label: 'Summary', href: `/college-baseball/game/${gameId}` },
     { id: 'box-score', label: 'Box Score', href: `/college-baseball/game/${gameId}/box-score` },
-    { id: 'play-by-play', label: 'Play-by-Play', href: `/college-baseball/game/${gameId}/play-by-play` },
+    {
+      id: 'play-by-play',
+      label: 'Play-by-Play',
+      href: `/college-baseball/game/${gameId}/play-by-play`,
+    },
     { id: 'team-stats', label: 'Team Stats', href: `/college-baseball/game/${gameId}/team-stats` },
     { id: 'recap', label: 'Recap', href: `/college-baseball/game/${gameId}/recap` },
   ];
@@ -254,7 +258,9 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
               </Link>
               <span className="text-text-tertiary">/</span>
               <span className="text-white font-medium">
-                {game ? `${game.teams.away.abbreviation} @ ${game.teams.home.abbreviation}` : `Game ${gameId}`}
+                {game
+                  ? `${game.teams.away.abbreviation} @ ${game.teams.home.abbreviation}`
+                  : `Game ${gameId}`}
               </span>
             </nav>
           </Container>

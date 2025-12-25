@@ -71,7 +71,13 @@ export default function CollegeGameSummaryPage() {
             <span className="text-success font-semibold">Game In Progress</span>
             <span className="text-text-secondary text-sm">
               — {game.status.inningState} of the {game.status.inning}
-              {game.status.inning === 1 ? 'st' : game.status.inning === 2 ? 'nd' : game.status.inning === 3 ? 'rd' : 'th'}
+              {game.status.inning === 1
+                ? 'st'
+                : game.status.inning === 2
+                  ? 'nd'
+                  : game.status.inning === 3
+                    ? 'rd'
+                    : 'th'}
             </span>
           </div>
         </Card>
@@ -96,7 +102,9 @@ export default function CollegeGameSummaryPage() {
                       <p className="font-semibold text-white">
                         {hitter.player.name}
                         {hitter.player.year && (
-                          <span className="text-text-tertiary text-xs ml-2">({hitter.player.year})</span>
+                          <span className="text-text-tertiary text-xs ml-2">
+                            ({hitter.player.year})
+                          </span>
                         )}
                       </p>
                       <p className="text-text-secondary text-sm">
@@ -178,7 +186,8 @@ export default function CollegeGameSummaryPage() {
               </div>
             ) : (
               <p className="text-text-tertiary text-sm py-4 text-center">
-                No runs across yet. College baseball's best pitching duels happen when you least expect them.
+                No runs across yet. College baseball's best pitching duels happen when you least
+                expect them.
               </p>
             )}
           </CardContent>

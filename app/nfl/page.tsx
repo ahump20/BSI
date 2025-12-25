@@ -51,7 +51,9 @@ export default function NFLPage() {
 
           <Container>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">NFL Coverage</Badge>
+              <Badge variant="primary" className="mb-4">
+                NFL Coverage
+              </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
@@ -62,7 +64,8 @@ export default function NFLPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary text-lg max-w-2xl mb-8">
-                Complete coverage of all 32 NFL teams. Standings, news, and analysis without the network spin.
+                Complete coverage of all 32 NFL teams. Standings, news, and analysis without the
+                network spin.
               </p>
             </ScrollReveal>
 
@@ -86,9 +89,7 @@ export default function NFLPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
-              <h2 className="font-display text-2xl font-bold text-white mb-8">
-                Quick Access
-              </h2>
+              <h2 className="font-display text-2xl font-bold text-white mb-8">Quick Access</h2>
             </ScrollReveal>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -100,7 +101,8 @@ export default function NFLPage() {
                       <h3 className="text-xl font-display font-bold text-white">Standings</h3>
                     </div>
                     <p className="text-text-secondary text-sm">
-                      AFC & NFC standings with playoff positioning, win percentage, and division records.
+                      AFC & NFC standings with playoff positioning, win percentage, and division
+                      records.
                     </p>
                     <span className="text-burnt-orange text-sm font-semibold mt-4 block">
                       View Standings →
@@ -159,7 +161,8 @@ export default function NFLPage() {
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
                   Every game gets a custom preview or recap written by Cloudflare Workers AI.
-                  Matchup analysis, playoff implications, odds breakdown—straight analysis, no fluff.
+                  Matchup analysis, playoff implications, odds breakdown—straight analysis, no
+                  fluff.
                 </p>
               </div>
             </ScrollReveal>
@@ -174,9 +177,7 @@ export default function NFLPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
-              <h2 className="font-display text-2xl font-bold text-white mb-8">
-                All 32 Teams
-              </h2>
+              <h2 className="font-display text-2xl font-bold text-white mb-8">All 32 Teams</h2>
             </ScrollReveal>
 
             <div className="grid gap-8 md:grid-cols-2">
@@ -190,7 +191,11 @@ export default function NFLPage() {
 
                   <div className="space-y-4">
                     {conf.divisions.map((div, divIndex) => (
-                      <ScrollReveal key={div.name} direction="up" delay={confIndex * 100 + divIndex * 50}>
+                      <ScrollReveal
+                        key={div.name}
+                        direction="up"
+                        delay={confIndex * 100 + divIndex * 50}
+                      >
                         <Card variant="default" padding="md">
                           <h4 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">
                             {div.name}
@@ -202,7 +207,10 @@ export default function NFLPage() {
                                 href={`/nfl/teams/${team.toLowerCase().replace(/\s+/g, '-')}`}
                                 className="inline-block"
                               >
-                                <Badge variant="secondary" className="text-sm hover:bg-burnt-orange hover:text-white transition-colors cursor-pointer">
+                                <Badge
+                                  variant="secondary"
+                                  className="text-sm hover:bg-burnt-orange hover:text-white transition-colors cursor-pointer"
+                                >
                                   {team}
                                 </Badge>
                               </Link>

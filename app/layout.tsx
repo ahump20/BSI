@@ -114,9 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </a>
             <Navbar items={mainNavItems} />
             <KonamiCodeWrapper />
-            <PageTransition>
-              {children}
-            </PageTransition>
+            <PageTransition>{children}</PageTransition>
           </MotionProvider>
         </Providers>
       </body>

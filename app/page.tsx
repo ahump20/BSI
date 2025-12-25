@@ -28,7 +28,13 @@ const HeroSection = dynamic(
 
 // Sport Icons as SVG components for crisp rendering
 const BaseballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    className="w-10 h-10"
+    stroke="currentColor"
+    strokeWidth={1.5}
+  >
     <circle cx="12" cy="12" r="10" />
     <path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" />
     <path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" />
@@ -36,14 +42,26 @@ const BaseballIcon = () => (
 );
 
 const FootballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    className="w-10 h-10"
+    stroke="currentColor"
+    strokeWidth={1.5}
+  >
     <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" />
     <path d="M12 7L12 17M9 10L15 14M15 10L9 14" />
   </svg>
 );
 
 const BasketballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    className="w-10 h-10"
+    stroke="currentColor"
+    strokeWidth={1.5}
+  >
     <circle cx="12" cy="12" r="10" />
     <path d="M12 2V22M2 12H22" />
     <path d="M4.5 4.5C8 8 8 16 4.5 19.5M19.5 4.5C16 8 16 16 19.5 19.5" />
@@ -51,7 +69,13 @@ const BasketballIcon = () => (
 );
 
 const StadiumIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    className="w-10 h-10"
+    stroke="currentColor"
+    strokeWidth={1.5}
+  >
     <path d="M3 21V10L12 3L21 10V21" />
     <path d="M3 14H21" />
     <rect x="8" y="14" width="8" height="7" />
@@ -150,7 +174,8 @@ export default function HomePage() {
               EVERY GAME MATTERS
             </h2>
             <p className="mt-4 text-lg text-white/60 max-w-2xl mx-auto">
-              From the College World Series to Sunday Night Football—real analytics, not just scores.
+              From the College World Series to Sunday Night Football—real analytics, not just
+              scores.
             </p>
           </div>
 
@@ -194,7 +219,9 @@ export default function HomePage() {
             </span>
             <span className="text-green-400 font-semibold text-sm">LIVE</span>
           </span>
-          <span className="text-white/50 text-sm">Real-time data streaming from official sources</span>
+          <span className="text-white/50 text-sm">
+            Real-time data streaming from official sources
+          </span>
         </div>
       </section>
 
@@ -205,7 +232,9 @@ export default function HomePage() {
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-gold/20 text-gold mb-4">
               Why BSI
             </span>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-white">BUILT DIFFERENT</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-white">
+              BUILT DIFFERENT
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -245,7 +274,10 @@ export default function HomePage() {
           <blockquote className="text-2xl md:text-3xl font-serif text-white/90 leading-relaxed mb-8">
             ESPN treats college baseball like an afterthought. Fans check scores at 11 PM and get a
             paragraph if they're lucky.
-            <span className="text-burnt-orange-400"> I got tired of waiting for someone else to fix it.</span>
+            <span className="text-burnt-orange-400">
+              {' '}
+              I got tired of waiting for someone else to fix it.
+            </span>
           </blockquote>
 
           <div className="flex items-center justify-center gap-4">
@@ -267,7 +299,8 @@ export default function HomePage() {
             Ready to experience real sports intel?
           </h2>
           <p className="text-lg text-white/60 mb-10 max-w-2xl mx-auto">
-            Join fans who refuse to settle for box scores and headlines. Get the data that actually matters.
+            Join fans who refuse to settle for box scores and headlines. Get the data that actually
+            matters.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -276,7 +309,12 @@ export default function HomePage() {
             >
               Start Free Trial
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
               </svg>
             </Link>
             <Link
@@ -312,22 +350,34 @@ export default function HomePage() {
               <h4 className="text-white font-semibold mb-4">Sports</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/college-baseball" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/college-baseball"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     College Baseball
                   </Link>
                 </li>
                 <li>
-                  <Link href="/mlb" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/mlb"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     MLB
                   </Link>
                 </li>
                 <li>
-                  <Link href="/nfl" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/nfl"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     NFL
                   </Link>
                 </li>
                 <li>
-                  <Link href="/nba" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/nba"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     NBA
                   </Link>
                 </li>
@@ -339,22 +389,34 @@ export default function HomePage() {
               <h4 className="text-white font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/about" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/about"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     About
                   </Link>
                 </li>
                 <li>
-                  <Link href="/pricing" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/pricing"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     Pricing
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/contact"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     Contact
                   </Link>
                 </li>
                 <li>
-                  <Link href="/dashboard" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/dashboard"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     Dashboard
                   </Link>
                 </li>
@@ -366,12 +428,18 @@ export default function HomePage() {
               <h4 className="text-white font-semibold mb-4">Legal</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/privacy" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/privacy"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/terms" className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm">
+                  <Link
+                    href="/terms"
+                    className="text-white/50 hover:text-burnt-orange-400 transition-colors text-sm"
+                  >
                     Terms of Service
                   </Link>
                 </li>

@@ -32,15 +32,17 @@ interface NewsItem {
 
 function formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    date.toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 function getRelativeTime(dateString: string): string {
@@ -89,9 +91,7 @@ export default function MLBNewsPage() {
     fetchNews();
   }, []);
 
-  const filteredNews = filter === 'all'
-    ? news
-    : news.filter(item => item.category === filter);
+  const filteredNews = filter === 'all' ? news : news.filter((item) => item.category === filter);
 
   const categories = [
     { id: 'all', label: 'All News' },
@@ -131,7 +131,8 @@ export default function MLBNewsPage() {
                 MLB News
               </h1>
               <p className="text-text-secondary max-w-2xl">
-                Trades, injuries, game recaps, and analysis—without the hot takes. Just the news that matters.
+                Trades, injuries, game recaps, and analysis—without the hot takes. Just the news
+                that matters.
               </p>
             </ScrollReveal>
           </Container>
@@ -190,7 +191,8 @@ export default function MLBNewsPage() {
                   </svg>
                   <p className="text-text-secondary">No news in this category right now.</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Offseason can be quiet—or it can explode with trades. Refresh or check back later.
+                    Offseason can be quiet—or it can explode with trades. Refresh or check back
+                    later.
                   </p>
                 </div>
               </Card>
@@ -213,9 +215,7 @@ export default function MLBNewsPage() {
                             >
                               {item.category}
                             </Badge>
-                            {item.team && (
-                              <Badge variant="outline">{item.team}</Badge>
-                            )}
+                            {item.team && <Badge variant="outline">{item.team}</Badge>}
                             <span className="text-text-tertiary text-xs">
                               {getRelativeTime(item.publishedAt)}
                             </span>
@@ -233,9 +233,7 @@ export default function MLBNewsPage() {
                               {item.summary}
                             </p>
                           </a>
-                          <p className="text-text-tertiary text-xs mt-2">
-                            via {item.source}
-                          </p>
+                          <p className="text-text-tertiary text-xs mt-2">via {item.source}</p>
                         </div>
                       </div>
                     </Card>

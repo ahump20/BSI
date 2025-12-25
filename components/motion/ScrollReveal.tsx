@@ -133,11 +133,7 @@ export function ScrollRevealGroup({
     >
       {Array.isArray(children)
         ? children.map((child, index) => (
-            <motion.div
-              key={index}
-              variants={childVariants}
-              transition={{ duration }}
-            >
+            <motion.div key={index} variants={childVariants} transition={{ duration }}>
               {child}
             </motion.div>
           ))
