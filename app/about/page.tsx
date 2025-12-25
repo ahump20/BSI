@@ -2,14 +2,13 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 // Brand colors
@@ -23,16 +22,6 @@ const colors = {
   gold: '#C9A227',
 };
 
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
-
 const chapters = [
   { id: 'soil', title: 'The Soil', subtitle: 'West Columbia, 1995' },
   { id: 'legacy', title: 'The Legacy', subtitle: '40 Years of Longhorn Football' },
@@ -43,34 +32,49 @@ const chapters = [
 
 export default function AboutPage() {
   const [activeChapter, setActiveChapter] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const chapterRefs = useRef<(HTMLElement | null)[]>([]);
 
-  // Scroll-based chapter tracking
+  // Smooth chapter transition with fade effect
+  const handleChapterChange = useCallback((index: number) => {
+    if (index === activeChapter || index < 0 || index >= chapters.length) return;
+
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveChapter(index);
+      setIsTransitioning(false);
+      // Scroll to the chapter
+      const chapterId = chapters[index].id;
+      document.getElementById(chapterId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+  }, [activeChapter]);
+
+  // Track scroll position to update active chapter
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const scrollWithOffset = scrollPosition + 200;
+      const scrollPosition = window.scrollY + 200; // Offset for sticky header
 
       chapters.forEach((chapter, index) => {
         const element = document.getElementById(chapter.id);
         if (element) {
           const { offsetTop, offsetHeight } = element;
-          if (scrollWithOffset >= offsetTop && scrollWithOffset < offsetTop + offsetHeight) {
-            setActiveChapter(index);
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            if (activeChapter !== index) {
+              setActiveChapter(index);
+            }
           }
         }
       });
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [activeChapter]);
 
   const progressPercentage = ((activeChapter + 1) / chapters.length) * 100;
 
   return (
-    <main className="min-h-screen bg-midnight text-cream">
-      <Navbar items={navItems} />
-
+    <main className="min-h-screen bg-midnight text-cream pt-16 md:pt-20">
       {/* Hero Section */}
       <Section className="pt-32 pb-16 bg-gradient-to-b from-charcoal to-midnight">
         <Container>
@@ -80,7 +84,7 @@ export default function AboutPage() {
               <div className="relative mx-auto md:mx-0">
                 <div className="relative w-64 md:w-80">
                   <Image
-                    src="https://blazesports-assets.ahump20.workers.dev/images/headshot.jpg"
+                    src="/images/headshot.jpg"
                     alt="Austin Humphrey - Founder of Blaze Sports Intel"
                     width={320}
                     height={427}
@@ -123,21 +127,19 @@ export default function AboutPage() {
         </Container>
       </Section>
 
-      {/* Chapter Navigation */}
-      <div className="sticky top-16 z-40 bg-charcoal/95 backdrop-blur-sm border-y border-white/10">
+      {/* Chapter Navigation with Progress Bar */}
+      <div className="sticky top-16 z-40 bg-charcoal/95 backdrop-blur-sm border-t border-white/10">
         <Container>
           <div className="flex items-center justify-between py-3 gap-4">
+            {/* Chapter Buttons */}
             <div className="flex overflow-x-auto gap-2 no-scrollbar flex-1">
               {chapters.map((chapter, index) => (
                 <button
                   key={chapter.id}
-                  onClick={() => {
-                    setActiveChapter(index);
-                    document.getElementById(chapter.id)?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  onClick={() => handleChapterChange(index)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                     activeChapter === index
-                      ? 'bg-burnt-orange text-white'
+                      ? 'text-white shadow-lg'
                       : 'bg-midnight/50 text-gray-400 hover:text-white hover:bg-midnight'
                   }`}
                   style={activeChapter === index ? { backgroundColor: colors.burntOrange } : {}}
@@ -146,27 +148,25 @@ export default function AboutPage() {
                 </button>
               ))}
             </div>
-            {/* Chapter indicator - desktop only */}
-            <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-              <span className="text-xs text-gray-500">{activeChapter + 1}/{chapters.length}</span>
+
+            {/* Chapter Dots (visible on desktop) */}
+            <div className="hidden md:flex items-center gap-2">
               {chapters.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => {
-                    setActiveChapter(index);
-                    document.getElementById(chapters[index].id)?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="w-2 h-2 rounded-full transition-all duration-300"
+                  onClick={() => handleChapterChange(index)}
+                  className="w-2 h-2 rounded-full transition-all duration-200"
                   style={{
                     backgroundColor: index === activeChapter ? colors.burntOrange : '#374151',
                     transform: index === activeChapter ? 'scale(1.5)' : 'scale(1)',
                   }}
-                  aria-label={`Go to ${chapters[index].title}`}
+                  aria-label={`Go to chapter ${index + 1}`}
                 />
               ))}
             </div>
           </div>
         </Container>
+
         {/* Progress Bar */}
         <div className="h-0.5 bg-midnight relative">
           <div
@@ -517,6 +517,71 @@ export default function AboutPage() {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          </ScrollReveal>
+
+          {/* Chapter Navigation Controls */}
+          <ScrollReveal delay={300}>
+            <div className="max-w-3xl mx-auto mt-16 pt-8 border-t border-white/10">
+              <div className="flex items-center justify-between">
+                {/* Previous Button */}
+                <button
+                  onClick={() => handleChapterChange(activeChapter - 1)}
+                  disabled={activeChapter === 0}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                    activeChapter === 0
+                      ? 'text-gray-600 cursor-not-allowed'
+                      : 'text-gray-400 hover:text-white border border-white/20 hover:border-white/40'
+                  }`}
+                  style={activeChapter > 0 ? { borderColor: colors.texasSoil } : {}}
+                >
+                  <span>←</span>
+                  <span className="hidden sm:inline">Previous</span>
+                </button>
+
+                {/* Chapter Indicator */}
+                <div className="flex items-center gap-3">
+                  {chapters.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleChapterChange(index)}
+                      className="w-3 h-3 rounded-full transition-all duration-300"
+                      style={{
+                        backgroundColor: index === activeChapter ? colors.burntOrange : '#374151',
+                        transform: index === activeChapter ? 'scale(1.3)' : 'scale(1)',
+                        boxShadow: index === activeChapter ? `0 0 12px ${colors.burntOrange}60` : 'none',
+                      }}
+                      aria-label={`Go to chapter ${index + 1}: ${chapters[index].title}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={() => handleChapterChange(activeChapter + 1)}
+                  disabled={activeChapter === chapters.length - 1}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                    activeChapter === chapters.length - 1
+                      ? 'text-gray-600 cursor-not-allowed'
+                      : 'text-white'
+                  }`}
+                  style={activeChapter < chapters.length - 1 ? { backgroundColor: colors.burntOrange } : {}}
+                >
+                  <span className="hidden sm:inline">Next</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              {/* Chapter Title Preview */}
+              <p className="text-center text-sm text-gray-500 mt-4">
+                {activeChapter < chapters.length - 1 ? (
+                  <>
+                    Next: <span style={{ color: colors.texasSoil }}>{chapters[activeChapter + 1].title}</span>
+                  </>
+                ) : (
+                  <span style={{ color: colors.gold }}>You&apos;ve completed the origin story</span>
+                )}
+              </p>
             </div>
           </ScrollReveal>
         </Container>
