@@ -49,24 +49,28 @@ interface NFLGameRaw {
   IsOver?: boolean;
 }
 
-// NBA API game structure
+// NBA API game structure - handles both flat and nested team structures
+interface NBATeamRaw {
+  id?: string;
+  teamName?: string;
+  teamTricode?: string;
+  name?: string;
+  team?: string;
+  abbreviation?: string;
+  score?: string | number;
+  record?: string;
+}
+
 interface NBAGameRaw {
   id: string;
-  homeTeam: {
-    teamName?: string;
-    teamTricode?: string;
-    name?: string;
-    abbreviation?: string;
-    score?: number;
+  homeTeam?: NBATeamRaw;
+  awayTeam?: NBATeamRaw;
+  // ESPN API uses nested teams structure
+  teams?: {
+    away?: NBATeamRaw;
+    home?: NBATeamRaw;
   };
-  awayTeam: {
-    teamName?: string;
-    teamTricode?: string;
-    name?: string;
-    abbreviation?: string;
-    score?: number;
-  };
-  status: string;
+  status: string | { state?: string; isLive?: boolean; isFinal?: boolean; detail?: string };
   gameTime?: string;
   gameStatusText?: string;
   venue?: { name?: string };
@@ -120,32 +124,68 @@ function parseNFLGames(data: NFLGamesResponse): Game[] {
 
 function parseNBAGames(games: NBAGameRaw[]): Game[] {
   return games
-    .filter((game) => game && game.homeTeam && game.awayTeam)
+    .filter((game) => {
+      if (!game) return false;
+      // Support both flat (homeTeam/awayTeam) and nested (teams.home/teams.away) structures
+      const hasFlat = game.homeTeam && game.awayTeam;
+      const hasNested = game.teams?.home && game.teams?.away;
+      return hasFlat || hasNested;
+    })
     .slice(0, 9)
-    .map((game) => ({
-      id: game.id || String(Math.random()),
-      homeTeam: {
-        name: game.homeTeam?.teamName || game.homeTeam?.name || 'Home',
-        abbreviation: game.homeTeam?.teamTricode || game.homeTeam?.abbreviation || 'HOM',
-        score: game.homeTeam?.score || 0,
-      },
-      awayTeam: {
-        name: game.awayTeam?.teamName || game.awayTeam?.name || 'Away',
-        abbreviation: game.awayTeam?.teamTricode || game.awayTeam?.abbreviation || 'AWY',
-        score: game.awayTeam?.score || 0,
-      },
-      status:
-        game.status === 'pre'
-          ? 'scheduled'
-          : game.status === 'in'
-            ? 'live'
-            : game.status === 'post'
-              ? 'final'
-              : (game.status as Game['status']) || 'scheduled',
-      gameTime: game.gameTime || game.gameStatusText,
-      venue: game.venue?.name || game.arenaName,
-      period: game.period ? `${game.period}Q` : undefined,
-    }));
+    .map((game) => {
+      // Extract teams from either structure
+      const homeTeam = game.homeTeam || game.teams?.home;
+      const awayTeam = game.awayTeam || game.teams?.away;
+
+      // Get team name - API uses 'team' field for full name
+      const homeName = homeTeam?.teamName || homeTeam?.team || homeTeam?.name || 'Home';
+      const awayName = awayTeam?.teamName || awayTeam?.team || awayTeam?.name || 'Away';
+
+      // Get abbreviation
+      const homeAbbr = homeTeam?.teamTricode || homeTeam?.abbreviation || 'HOM';
+      const awayAbbr = awayTeam?.teamTricode || awayTeam?.abbreviation || 'AWY';
+
+      // Get score (can be string or number)
+      const homeScore = typeof homeTeam?.score === 'string' ? parseInt(homeTeam.score, 10) || 0 : homeTeam?.score || 0;
+      const awayScore = typeof awayTeam?.score === 'string' ? parseInt(awayTeam.score, 10) || 0 : awayTeam?.score || 0;
+
+      // Parse status - can be string or object
+      let gameStatus: Game['status'] = 'scheduled';
+      if (typeof game.status === 'object') {
+        if (game.status.isLive) gameStatus = 'live';
+        else if (game.status.isFinal) gameStatus = 'final';
+        else if (game.status.state === 'pre') gameStatus = 'scheduled';
+        else if (game.status.state === 'in') gameStatus = 'live';
+        else if (game.status.state === 'post') gameStatus = 'final';
+      } else {
+        if (game.status === 'pre') gameStatus = 'scheduled';
+        else if (game.status === 'in') gameStatus = 'live';
+        else if (game.status === 'post') gameStatus = 'final';
+        else gameStatus = (game.status as Game['status']) || 'scheduled';
+      }
+
+      // Get game time from status detail or other fields
+      const statusDetail = typeof game.status === 'object' ? game.status.detail : undefined;
+      const gameTime = game.gameTime || game.gameStatusText || statusDetail;
+
+      return {
+        id: game.id || String(Math.random()),
+        homeTeam: {
+          name: homeName,
+          abbreviation: homeAbbr,
+          score: homeScore,
+        },
+        awayTeam: {
+          name: awayName,
+          abbreviation: awayAbbr,
+          score: awayScore,
+        },
+        status: gameStatus,
+        gameTime,
+        venue: game.venue?.name || game.arenaName,
+        period: game.period ? `${game.period}Q` : undefined,
+      };
+    });
 }
 
 async function fetchScores(sport: Sport): Promise<Game[]> {
