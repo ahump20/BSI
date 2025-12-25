@@ -1557,3 +1557,148 @@ textarea:focus-visible,
     transition: none;
   }
 }
+
+/* ========================================
+   BSI ENHANCED SKELETON SHIMMER
+   ======================================== */
+
+@keyframes bsi-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(31, 41, 55, 1) 0%,
+    rgba(55, 65, 81, 1) 50%,
+    rgba(31, 41, 55, 1) 100%
+  );
+  background-size: 200px 100%;
+  animation: bsi-shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.25rem;
+}
+
+/* ========================================
+   BSI PAGE TRANSITIONS
+   ======================================== */
+
+.bsi-page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.bsi-page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* ========================================
+   BSI CARD ENTRANCE ANIMATIONS
+   ======================================== */
+
+.bsi-card-entrance {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: bsi-card-enter 0.5s ease-out forwards;
+}
+
+@keyframes bsi-card-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bsi-stagger-1 { animation-delay: 0.1s; }
+.bsi-stagger-2 { animation-delay: 0.2s; }
+.bsi-stagger-3 { animation-delay: 0.3s; }
+.bsi-stagger-4 { animation-delay: 0.4s; }
+.bsi-stagger-5 { animation-delay: 0.5s; }
+
+/* ========================================
+   BSI SCROLL REVEAL
+   ======================================== */
+
+.bsi-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.bsi-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================================
+   BSI ENHANCED BUTTON STATES
+   ======================================== */
+
+.bsi-btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.bsi-btn-glow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  pointer-events: none;
+}
+
+.bsi-btn-glow:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* ========================================
+   BSI GRAIN TEXTURE OVERLAY
+   ======================================== */
+
+.bsi-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ========================================
+   BSI SMOOTH SCROLL
+   ======================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  .skeleton {
+    animation: none;
+    background: rgba(31, 41, 55, 1);
+  }
+  
+  .bsi-card-entrance,
+  .bsi-reveal {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
