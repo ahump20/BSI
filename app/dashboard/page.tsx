@@ -8,30 +8,16 @@ import { LiveBadge } from '@/components/ui/Badge';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { ScrollReveal } from '@/components/cinematic';
-import { Navbar, Footer } from '@/components/layout-ds';
-
-const dashboardNavItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
+import { ScrollReveal } from '../../components/cinematic/ScrollReveal';
+import { Footer } from '../../components/layout-ds/Footer';
 
 export default function DashboardPage() {
   const [activeSport, setActiveSport] = useState<Sport>('nfl');
 
   return (
-    <main id="main-content" className="min-h-screen">
-      {/* Navbar */}
-      <Navbar items={dashboardNavItems} />
-
+    <main id="main-content" className="min-h-screen pt-16 md:pt-20">
       {/* Dashboard Content */}
-      <Section padding="lg" className="pt-24">
+      <Section padding="lg" className="pt-8">
         <Container size="wide">
           {/* Hero Section */}
           <ScrollReveal direction="up">
