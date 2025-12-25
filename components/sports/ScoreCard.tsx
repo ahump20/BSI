@@ -1,7 +1,16 @@
 'use client';
 
+// Force rebuild: 2025-12-25T17:30:00-06:00
+
 import Link from 'next/link';
 import { GameStatusBadge, type GameStatus, LiveBadge } from '@/components/ui/Badge';
+
+// Helper to safely get string for display
+function safeStr(value: unknown, fallback: string = ''): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return fallback;
+}
 
 // Sport-specific color theming
 const sportThemes = {
@@ -162,9 +171,7 @@ export function ScoreCard({
   const cardContent = (
     <div
       className={`glass-card transition-all duration-200 ${
-        isClickable
-          ? `cursor-pointer hover:ring-1 hover:${theme.accentRing} hover:shadow-glow-sm`
-          : ''
+        isClickable ? `cursor-pointer hover:ring-1 hover:${theme.accentRing} hover:shadow-glow-sm` : ''
       } ${isLive ? 'ring-1 ring-success/30' : ''}`}
       onClick={!href ? handleClick : undefined}
       onKeyDown={!href ? handleKeyDown : undefined}
@@ -177,7 +184,11 @@ export function ScoreCard({
       {/* Status Bar */}
       <div
         className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-          isLive ? 'bg-success/15' : isFinal ? 'bg-charcoal-700' : theme.accentBg
+          isLive
+            ? 'bg-success/15'
+            : isFinal
+              ? 'bg-charcoal-700'
+              : theme.accentBg
         }`}
       >
         <div className="flex items-center gap-2">
@@ -238,9 +249,9 @@ export function ScoreCard({
           <div className="mt-3 pt-3 border-t border-border-subtle flex items-center justify-between text-xs">
             {linescore && !showLinescore ? (
               <span className="text-text-tertiary">
-                R: {linescore.totals.away.runs}-{linescore.totals.home.runs} | H:{' '}
-                {linescore.totals.away.hits}-{linescore.totals.home.hits} | E:{' '}
-                {linescore.totals.away.errors}-{linescore.totals.home.errors}
+                R: {linescore.totals.away.runs}-{linescore.totals.home.runs} |
+                H: {linescore.totals.away.hits}-{linescore.totals.home.hits} |
+                E: {linescore.totals.away.errors}-{linescore.totals.home.errors}
               </span>
             ) : (
               <span className="text-text-tertiary">{broadcast || ''}</span>
@@ -288,35 +299,37 @@ function TeamRow({ team, isWinner, isScheduled, theme }: TeamRowProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-            isWinner ? `${theme.badgeBg} ${theme.badgeText}` : 'bg-charcoal text-burnt-orange'
-          }`}
-        >
-          {team.abbreviation.slice(0, 3)}
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+          isWinner ? `${theme.badgeBg} ${theme.badgeText}` : 'bg-charcoal text-burnt-orange'
+        }`}>
+          {safeStr(team.abbreviation, 'TBD').slice(0, 3)}
         </div>
         <div className="min-w-0">
           <p
-            className={`font-semibold truncate ${isWinner ? 'text-white' : 'text-text-secondary'}`}
+            className={`font-semibold truncate ${
+              isWinner ? 'text-white' : 'text-text-secondary'
+            }`}
           >
             {team.name}
           </p>
-          {team.record && <p className="text-xs text-text-tertiary">{team.record}</p>}
+          {team.record && (
+            <p className="text-xs text-text-tertiary">{team.record}</p>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-2">
         {isWinner && (
-          <svg
-            viewBox="0 0 24 24"
-            className="w-4 h-4 text-success flex-shrink-0"
-            fill="currentColor"
-          >
+          <svg viewBox="0 0 24 24" className="w-4 h-4 text-success flex-shrink-0" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
           </svg>
         )}
         <span
           className={`text-2xl font-bold font-mono tabular-nums min-w-[2ch] text-right ${
-            isScheduled ? 'text-text-tertiary' : isWinner ? 'text-white' : 'text-text-secondary'
+            isScheduled
+              ? 'text-text-tertiary'
+              : isWinner
+                ? 'text-white'
+                : 'text-text-secondary'
           }`}
         >
           {isScheduled ? '-' : team.score}
@@ -337,13 +350,7 @@ interface LinescoreTableProps {
   theme: typeof sportThemes.mlb;
 }
 
-function LinescoreTable({
-  linescore,
-  awayAbbr,
-  homeAbbr,
-  maxInnings = 9,
-  theme,
-}: LinescoreTableProps) {
+function LinescoreTable({ linescore, awayAbbr, homeAbbr, maxInnings = 9, theme }: LinescoreTableProps) {
   const innings = linescore.innings;
   const displayInnings = Math.max(innings.length, maxInnings);
 
@@ -357,11 +364,7 @@ function LinescoreTable({
               {i + 1}
             </th>
           ))}
-          <th
-            className={`text-center font-bold py-1 w-6 border-l border-border-subtle ${theme.accent}`}
-          >
-            R
-          </th>
+          <th className={`text-center font-bold py-1 w-6 border-l border-border-subtle ${theme.accent}`}>R</th>
           <th className="text-center font-medium py-1 w-6">H</th>
           <th className="text-center font-medium py-1 w-6">E</th>
         </tr>
@@ -379,9 +382,7 @@ function LinescoreTable({
             {linescore.totals.away.runs}
           </td>
           <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.away.hits}</td>
-          <td className="text-center py-1 font-mono tabular-nums">
-            {linescore.totals.away.errors}
-          </td>
+          <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.away.errors}</td>
         </tr>
         {/* Home Team */}
         <tr className="text-text-secondary">
@@ -395,9 +396,7 @@ function LinescoreTable({
             {linescore.totals.home.runs}
           </td>
           <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.home.hits}</td>
-          <td className="text-center py-1 font-mono tabular-nums">
-            {linescore.totals.home.errors}
-          </td>
+          <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.home.errors}</td>
         </tr>
       </tbody>
     </table>
@@ -407,11 +406,7 @@ function LinescoreTable({
 /**
  * Loading Skeleton for ScoreCard with sport-specific theming
  */
-export function ScoreCardSkeleton({
-  sport = 'mlb',
-}: {
-  sport?: 'mlb' | 'nfl' | 'nba' | 'cbb' | 'ncaaf';
-}) {
+export function ScoreCardSkeleton({ sport = 'mlb' }: { sport?: 'mlb' | 'nfl' | 'nba' | 'cbb' | 'ncaaf' }) {
   const theme = sportThemes[sport] || sportThemes.mlb;
 
   return (
@@ -456,7 +451,11 @@ export function ScoreCardGrid({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 ${className}`}>{children}</div>;
+  return (
+    <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 export default ScoreCard;

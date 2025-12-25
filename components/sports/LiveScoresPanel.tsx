@@ -1,6 +1,6 @@
 'use client';
 
-// Force rebuild: 2025-12-25T15:45:00-06:00
+// Force rebuild: 2025-12-25T18:00:00-06:00
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -160,14 +160,8 @@ function parseNBAGames(games: NBAGameRaw[]): Game[] {
       const awayAbbr = safeString(awayTeam?.teamTricode || awayTeam?.abbreviation, 'AWY');
 
       // Get score (can be string or number)
-      const homeScore =
-        typeof homeTeam?.score === 'string'
-          ? parseInt(homeTeam.score, 10) || 0
-          : Number(homeTeam?.score) || 0;
-      const awayScore =
-        typeof awayTeam?.score === 'string'
-          ? parseInt(awayTeam.score, 10) || 0
-          : Number(awayTeam?.score) || 0;
+      const homeScore = typeof homeTeam?.score === 'string' ? parseInt(homeTeam.score, 10) || 0 : Number(homeTeam?.score) || 0;
+      const awayScore = typeof awayTeam?.score === 'string' ? parseInt(awayTeam.score, 10) || 0 : Number(awayTeam?.score) || 0;
 
       // Parse status - can be string or object
       let gameStatus: Game['status'] = 'scheduled';
@@ -185,8 +179,7 @@ function parseNBAGames(games: NBAGameRaw[]): Game[] {
       }
 
       // Get game time from status detail or other fields
-      const statusDetail =
-        typeof game.status === 'object' && game.status !== null ? game.status.detail : undefined;
+      const statusDetail = typeof game.status === 'object' && game.status !== null ? game.status.detail : undefined;
       const gameTime = game.gameTime || game.gameStatusText || statusDetail;
 
       return {
@@ -226,12 +219,7 @@ async function fetchScores(sport: Sport): Promise<Game[]> {
     const data = await res.json();
 
     // Handle NFL nested structure
-    if (
-      sport === 'nfl' &&
-      data.games &&
-      typeof data.games === 'object' &&
-      !Array.isArray(data.games)
-    ) {
+    if (sport === 'nfl' && data.games && typeof data.games === 'object' && !Array.isArray(data.games)) {
       return parseNFLGames(data as NFLGamesResponse);
     }
 
