@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Basketball</title>
+  <!-- Ball -->
+  <circle cx="32" cy="32" r="28" fill="#FF6B35" stroke="#BF5700" stroke-width="2"/>
+  <!-- Vertical line -->
+  <path d="M32 4V60" stroke="#1A1A1A" stroke-width="2"/>
+  <!-- Horizontal line -->
+  <path d="M4 32H60" stroke="#1A1A1A" stroke-width="2"/>
+  <!-- Left curve -->
+  <path d="M20 8C10 20 10 44 20 56" stroke="#1A1A1A" stroke-width="2" fill="none"/>
+  <!-- Right curve -->
+  <path d="M44 8C54 20 54 44 44 56" stroke="#1A1A1A" stroke-width="2" fill="none"/>
+  <!-- Highlight -->
+  <circle cx="20" cy="20" r="6" fill="#FF8C5A" opacity="0.4"/>
+</svg>

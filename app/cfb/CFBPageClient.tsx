@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-import { CFBGamesList } from '@/components/cfb';
+import { CFBGamesList, CFBArticlesList } from '@/components/cfb';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -186,20 +186,67 @@ export default function CFBPageClient() {
           </Container>
         </Section>
 
-        {/* AI Game Previews & Recaps Section */}
+        {/* This Week's Games - Previews */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
               <div className="text-center mb-12">
                 <Badge variant="primary" className="mb-4">
-                  AI-Powered
+                  Game Previews
                 </Badge>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  Game <span className="text-gradient-blaze">Intelligence</span>
+                  This Week&apos;s <span className="text-gradient-blaze">Games</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  AI-generated previews before games and analytical recaps after.
-                  Powered by Workers AI for real-time insights.
+                  In-depth previews with key matchups, trends, and projections.
+                  Data-first analysis—no fluff, no empty hype.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={100}>
+              <CFBArticlesList type="preview" limit={6} showViewAll />
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Recent Game Recaps */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-12">
+                <Badge variant="success" className="mb-4">
+                  Game Recaps
+                </Badge>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  Recent <span className="text-gradient-blaze">Recaps</span>
+                </h2>
+                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                  Post-game breakdowns covering how games were decided and what it means going forward.
+                  Sharp analysis within hours of final whistles.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={100}>
+              <CFBArticlesList type="recap" limit={6} showViewAll />
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ESPN Live Scores - Fallback */}
+        <Section padding="lg" background="charcoal" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-12">
+                <Badge variant="warning" className="mb-4">
+                  Live Data
+                </Badge>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  Live <span className="text-gradient-blaze">Scores</span>
+                </h2>
+                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                  Real-time scores powered by ESPN with AI-generated insights.
                 </p>
               </div>
             </ScrollReveal>

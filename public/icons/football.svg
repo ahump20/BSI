@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Football</title>
+  <!-- Ball shape -->
+  <ellipse cx="32" cy="32" rx="28" ry="18" fill="#8B4513" stroke="#5D3A1A" stroke-width="2" transform="rotate(-30 32 32)"/>
+  <!-- Laces background -->
+  <path d="M26 20L38 44" stroke="#FAF8F5" stroke-width="4" stroke-linecap="round"/>
+  <!-- Laces detail -->
+  <path d="M24 26L30 24M25 32L35 28M28 38L38 34M32 44L40 40" stroke="#FAF8F5" stroke-width="2" stroke-linecap="round"/>
+  <!-- Highlight -->
+  <ellipse cx="22" cy="26" rx="4" ry="2" fill="#A0522D" opacity="0.5" transform="rotate(-30 22 26)"/>
+</svg>

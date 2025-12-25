@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Texas Longhorns</title>
+  <!-- Longhorn silhouette -->
+  <path d="M4 28C4 28 8 24 12 26C16 28 18 32 20 32C22 32 24 28 28 26C30 25 32 26 32 26C32 26 34 25 36 26C40 28 42 32 44 32C46 32 48 28 52 26C56 24 60 28 60 28L56 36C56 36 52 38 48 36C44 34 42 30 40 30C38 30 36 34 32 36C28 34 26 30 24 30C22 30 20 34 16 36C12 38 8 36 8 36L4 28Z" fill="#BF5700" stroke="#8B4513" stroke-width="1"/>
+  <!-- Head center -->
+  <ellipse cx="32" cy="40" rx="8" ry="12" fill="#BF5700"/>
+  <!-- Nose detail -->
+  <ellipse cx="32" cy="48" rx="4" ry="3" fill="#8B4513"/>
+  <!-- Eyes -->
+  <circle cx="28" cy="38" r="2" fill="#1A1A1A"/>
+  <circle cx="36" cy="38" r="2" fill="#1A1A1A"/>
+  <!-- Hook 'em horns gesture hint -->
+  <path d="M32 54L32 58M28 56L28 60M36 56L36 60" stroke="#BF5700" stroke-width="2" stroke-linecap="round"/>
+</svg>
