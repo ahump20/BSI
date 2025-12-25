@@ -106,3 +106,21 @@ BSI Business Plan Docs/
 # Analysis outputs (generated)
 BSI_*_ACTIONABLE_STEPS.md
 BSI_*_ANALYSIS.md
+
+# System directories (never track these)
+Library/
+Desktop/
+Documents/
+Downloads/
+Applications/
+.claude/
+.cursor/
+.aws/
+.npm/
+.nvm/
+.ssh/
+.config/
+.local/
+
+# BSI local copies (use the root BSI/ folder only)
+BSI-local/
