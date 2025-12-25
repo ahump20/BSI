@@ -3,6 +3,50 @@
 import Link from 'next/link';
 import { GameStatusBadge, type GameStatus, LiveBadge } from '@/components/ui/Badge';
 
+// Sport-specific color theming
+const sportThemes = {
+  mlb: {
+    accent: 'text-baseball',
+    accentBg: 'bg-baseball/10',
+    accentRing: 'ring-baseball/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(34,139,34,0.15)]',
+    badgeBg: 'bg-baseball/20',
+    badgeText: 'text-baseball',
+  },
+  nfl: {
+    accent: 'text-football',
+    accentBg: 'bg-football/10',
+    accentRing: 'ring-football/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(139,69,19,0.15)]',
+    badgeBg: 'bg-football/20',
+    badgeText: 'text-football',
+  },
+  nba: {
+    accent: 'text-basketball',
+    accentBg: 'bg-basketball/10',
+    accentRing: 'ring-basketball/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(255,107,53,0.15)]',
+    badgeBg: 'bg-basketball/20',
+    badgeText: 'text-basketball',
+  },
+  cbb: {
+    accent: 'text-burnt-orange',
+    accentBg: 'bg-burnt-orange/10',
+    accentRing: 'ring-burnt-orange/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(191,87,0,0.15)]',
+    badgeBg: 'bg-burnt-orange/20',
+    badgeText: 'text-burnt-orange',
+  },
+  ncaaf: {
+    accent: 'text-burnt-orange',
+    accentBg: 'bg-burnt-orange/10',
+    accentRing: 'ring-burnt-orange/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(191,87,0,0.15)]',
+    badgeBg: 'bg-burnt-orange/20',
+    badgeText: 'text-burnt-orange',
+  },
+};
+
 // Team interface for score cards
 interface Team {
   name: string;
@@ -49,7 +93,7 @@ export interface ScoreCardProps {
 }
 
 /**
- * ESPN-style ScoreCard Component
+ * ESPN-style ScoreCard Component with Sport-Specific Theming
  *
  * Displays game scores with team info, status, and optional linescore.
  * Supports MLB, NFL, NBA, college baseball, and college football.
@@ -73,6 +117,9 @@ export function ScoreCard({
   compact = false,
   showLinescore = true,
 }: ScoreCardProps) {
+  // Get sport-specific theme
+  const theme = sportThemes[sport] || sportThemes.mlb;
+
   // Defensive null checks - ensure team objects have required properties
   const safeHomeTeam = {
     name: homeTeam?.name || 'Home',
@@ -115,7 +162,7 @@ export function ScoreCard({
   const cardContent = (
     <div
       className={`glass-card transition-all duration-200 ${
-        isClickable ? 'cursor-pointer hover:ring-1 hover:ring-burnt-orange/50 hover:shadow-glow-sm' : ''
+        isClickable ? `cursor-pointer hover:ring-1 hover:${theme.accentRing} hover:shadow-glow-sm` : ''
       } ${isLive ? 'ring-1 ring-success/30' : ''}`}
       onClick={!href ? handleClick : undefined}
       onKeyDown={!href ? handleKeyDown : undefined}
@@ -132,7 +179,7 @@ export function ScoreCard({
             ? 'bg-success/15'
             : isFinal
               ? 'bg-charcoal-700'
-              : 'bg-burnt-orange/10'
+              : theme.accentBg
         }`}
       >
         <div className="flex items-center gap-2">
@@ -144,7 +191,7 @@ export function ScoreCard({
           ) : (
             <span
               className={`text-xs font-semibold uppercase ${
-                isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+                isFinal ? 'text-text-tertiary' : theme.accent
               }`}
             >
               {isFinal ? 'FINAL' : gameTime || 'TBD'}
@@ -159,87 +206,32 @@ export function ScoreCard({
       {/* Teams Section */}
       <div className="p-4">
         {/* Away Team */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange flex-shrink-0">
-              {safeAwayTeam.abbreviation.slice(0, 3)}
-            </div>
-            <div className="min-w-0">
-              <p
-                className={`font-semibold truncate ${
-                  isFinal && safeAwayTeam.isWinner ? 'text-white' : 'text-text-secondary'
-                }`}
-              >
-                {safeAwayTeam.name}
-              </p>
-              {safeAwayTeam.record && (
-                <p className="text-xs text-text-tertiary">{safeAwayTeam.record}</p>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {isFinal && safeAwayTeam.isWinner && (
-              <svg viewBox="0 0 24 24" className="w-4 h-4 text-success flex-shrink-0" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-              </svg>
-            )}
-            <span
-              className={`text-2xl font-bold font-mono min-w-[2ch] text-right ${
-                isScheduled
-                  ? 'text-text-tertiary'
-                  : isFinal && safeAwayTeam.isWinner
-                    ? 'text-white'
-                    : 'text-text-secondary'
-              }`}
-            >
-              {isScheduled ? '-' : safeAwayTeam.score}
-            </span>
-          </div>
-        </div>
+        <TeamRow
+          team={safeAwayTeam}
+          isWinner={isFinal && safeAwayTeam.isWinner}
+          isScheduled={isScheduled}
+          theme={theme}
+        />
 
         {/* Home Team */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange flex-shrink-0">
-              {safeHomeTeam.abbreviation.slice(0, 3)}
-            </div>
-            <div className="min-w-0">
-              <p
-                className={`font-semibold truncate ${
-                  isFinal && safeHomeTeam.isWinner ? 'text-white' : 'text-text-secondary'
-                }`}
-              >
-                {safeHomeTeam.name}
-              </p>
-              {safeHomeTeam.record && (
-                <p className="text-xs text-text-tertiary">{safeHomeTeam.record}</p>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {isFinal && safeHomeTeam.isWinner && (
-              <svg viewBox="0 0 24 24" className="w-4 h-4 text-success flex-shrink-0" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-              </svg>
-            )}
-            <span
-              className={`text-2xl font-bold font-mono min-w-[2ch] text-right ${
-                isScheduled
-                  ? 'text-text-tertiary'
-                  : isFinal && safeHomeTeam.isWinner
-                    ? 'text-white'
-                    : 'text-text-secondary'
-              }`}
-            >
-              {isScheduled ? '-' : safeHomeTeam.score}
-            </span>
-          </div>
+        <div className="mt-3">
+          <TeamRow
+            team={safeHomeTeam}
+            isWinner={isFinal && safeHomeTeam.isWinner}
+            isScheduled={isScheduled}
+            theme={theme}
+          />
         </div>
 
         {/* Linescore (Baseball) */}
         {isBaseball && showLinescore && linescore && !compact && (isFinal || isLive) && (
           <div className="mt-4 pt-3 border-t border-border-subtle overflow-x-auto">
-            <LinescoreTable linescore={linescore} awayAbbr={safeAwayTeam.abbreviation} homeAbbr={safeHomeTeam.abbreviation} />
+            <LinescoreTable
+              linescore={linescore}
+              awayAbbr={safeAwayTeam.abbreviation}
+              homeAbbr={safeHomeTeam.abbreviation}
+              theme={theme}
+            />
           </div>
         )}
 
@@ -256,7 +248,7 @@ export function ScoreCard({
               <span className="text-text-tertiary">{broadcast || ''}</span>
             )}
             {isClickable && (
-              <span className="text-burnt-orange font-semibold hover:text-ember transition-colors">
+              <span className={`${theme.accent} font-semibold hover:opacity-80 transition-opacity`}>
                 Box Score
               </span>
             )}
@@ -279,6 +271,66 @@ export function ScoreCard({
 }
 
 /**
+ * Team Row Component with winner styling
+ */
+interface TeamRowProps {
+  team: {
+    name: string;
+    abbreviation: string;
+    score: number;
+    record?: string;
+    isWinner?: boolean;
+  };
+  isWinner?: boolean;
+  isScheduled: boolean;
+  theme: typeof sportThemes.mlb;
+}
+
+function TeamRow({ team, isWinner, isScheduled, theme }: TeamRowProps) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+          isWinner ? `${theme.badgeBg} ${theme.badgeText}` : 'bg-charcoal text-burnt-orange'
+        }`}>
+          {team.abbreviation.slice(0, 3)}
+        </div>
+        <div className="min-w-0">
+          <p
+            className={`font-semibold truncate ${
+              isWinner ? 'text-white' : 'text-text-secondary'
+            }`}
+          >
+            {team.name}
+          </p>
+          {team.record && (
+            <p className="text-xs text-text-tertiary">{team.record}</p>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {isWinner && (
+          <svg viewBox="0 0 24 24" className="w-4 h-4 text-success flex-shrink-0" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+          </svg>
+        )}
+        <span
+          className={`text-2xl font-bold font-mono tabular-nums min-w-[2ch] text-right ${
+            isScheduled
+              ? 'text-text-tertiary'
+              : isWinner
+                ? 'text-white'
+                : 'text-text-secondary'
+          }`}
+        >
+          {isScheduled ? '-' : team.score}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Compact Linescore Table for Baseball
  */
 interface LinescoreTableProps {
@@ -286,9 +338,10 @@ interface LinescoreTableProps {
   awayAbbr: string;
   homeAbbr: string;
   maxInnings?: number;
+  theme: typeof sportThemes.mlb;
 }
 
-function LinescoreTable({ linescore, awayAbbr, homeAbbr, maxInnings = 9 }: LinescoreTableProps) {
+function LinescoreTable({ linescore, awayAbbr, homeAbbr, maxInnings = 9, theme }: LinescoreTableProps) {
   const innings = linescore.innings;
   const displayInnings = Math.max(innings.length, maxInnings);
 
@@ -302,7 +355,7 @@ function LinescoreTable({ linescore, awayAbbr, homeAbbr, maxInnings = 9 }: Lines
               {i + 1}
             </th>
           ))}
-          <th className="text-center font-bold py-1 w-6 border-l border-border-subtle text-burnt-orange">R</th>
+          <th className={`text-center font-bold py-1 w-6 border-l border-border-subtle ${theme.accent}`}>R</th>
           <th className="text-center font-medium py-1 w-6">H</th>
           <th className="text-center font-medium py-1 w-6">E</th>
         </tr>
@@ -312,29 +365,29 @@ function LinescoreTable({ linescore, awayAbbr, homeAbbr, maxInnings = 9 }: Lines
         <tr className="text-text-secondary">
           <td className="font-semibold text-white py-1 pr-2">{awayAbbr}</td>
           {Array.from({ length: displayInnings }, (_, i) => (
-            <td key={i} className="text-center py-1 font-mono">
+            <td key={i} className="text-center py-1 font-mono tabular-nums">
               {innings[i]?.away ?? '-'}
             </td>
           ))}
-          <td className="text-center py-1 font-mono font-bold text-white border-l border-border-subtle">
+          <td className="text-center py-1 font-mono tabular-nums font-bold text-white border-l border-border-subtle">
             {linescore.totals.away.runs}
           </td>
-          <td className="text-center py-1 font-mono">{linescore.totals.away.hits}</td>
-          <td className="text-center py-1 font-mono">{linescore.totals.away.errors}</td>
+          <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.away.hits}</td>
+          <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.away.errors}</td>
         </tr>
         {/* Home Team */}
         <tr className="text-text-secondary">
           <td className="font-semibold text-white py-1 pr-2">{homeAbbr}</td>
           {Array.from({ length: displayInnings }, (_, i) => (
-            <td key={i} className="text-center py-1 font-mono">
+            <td key={i} className="text-center py-1 font-mono tabular-nums">
               {innings[i]?.home ?? '-'}
             </td>
           ))}
-          <td className="text-center py-1 font-mono font-bold text-white border-l border-border-subtle">
+          <td className="text-center py-1 font-mono tabular-nums font-bold text-white border-l border-border-subtle">
             {linescore.totals.home.runs}
           </td>
-          <td className="text-center py-1 font-mono">{linescore.totals.home.hits}</td>
-          <td className="text-center py-1 font-mono">{linescore.totals.home.errors}</td>
+          <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.home.hits}</td>
+          <td className="text-center py-1 font-mono tabular-nums">{linescore.totals.home.errors}</td>
         </tr>
       </tbody>
     </table>
@@ -342,12 +395,14 @@ function LinescoreTable({ linescore, awayAbbr, homeAbbr, maxInnings = 9 }: Lines
 }
 
 /**
- * Loading Skeleton for ScoreCard
+ * Loading Skeleton for ScoreCard with sport-specific theming
  */
-export function ScoreCardSkeleton() {
+export function ScoreCardSkeleton({ sport = 'mlb' }: { sport?: 'mlb' | 'nfl' | 'nba' | 'cbb' | 'ncaaf' }) {
+  const theme = sportThemes[sport] || sportThemes.mlb;
+
   return (
     <div className="glass-card">
-      <div className="px-4 py-2 bg-charcoal-700 rounded-t-lg flex justify-between">
+      <div className={`px-4 py-2 ${theme.accentBg} rounded-t-lg flex justify-between`}>
         <div className="skeleton w-16 h-4 rounded" />
         <div className="skeleton w-24 h-4 rounded" />
       </div>
