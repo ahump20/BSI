@@ -1,5 +1,7 @@
 'use client';
 
+// Force rebuild: 2025-12-25T15:45:00-06:00
+
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ScoreCard, ScoreCardSkeleton } from './ScoreCard';
