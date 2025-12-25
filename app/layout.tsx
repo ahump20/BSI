@@ -102,7 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={\`dark \${inter.variable} \${oswald.variable} \${playfair.variable} \${bebasNeue.variable} \${jetbrainsMono.variable}\`}
+      className={`dark ${inter.variable} ${oswald.variable} ${playfair.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-midnight text-white antialiased min-h-screen font-sans">
         <NoiseOverlay cssOnly />
