@@ -12,17 +12,30 @@ const config: Config = {
       colors: {
         // Brand Colors - Burnt Orange Scale
         'burnt-orange': {
-          50: '#fff5ed',
-          100: '#ffead5',
-          200: '#ffd0aa',
-          300: '#ffad74',
-          400: '#ff7d3c',
-          500: '#bf5700', // Primary Brand
-          600: '#9c4500',
-          700: '#7d3700',
-          800: '#5e2900',
-          900: '#3f1c00',
-          DEFAULT: '#bf5700',
+          50: '#FFF4E6',
+          100: '#FFE4C4',
+          200: '#FFCC99',
+          300: '#FFB066',
+          400: '#FF9333',
+          500: '#FF7700',
+          600: '#BF5700', // Primary Brand - UT Burnt Orange
+          700: '#994500',
+          800: '#733400',
+          900: '#4D2300',
+          DEFAULT: '#BF5700',
+        },
+        gold: {
+          50: '#FFFBEB',
+          100: '#FFF3C4',
+          200: '#FFE588',
+          300: '#FFD54F',
+          400: '#FFC947',
+          500: '#FDB913', // Primary gold accent
+          600: '#F59E0B',
+          700: '#D97706',
+          800: '#B45309',
+          900: '#92400E',
+          DEFAULT: '#FDB913',
         },
         // Charcoal/Neutral Scale
         charcoal: {
@@ -43,12 +56,9 @@ const config: Config = {
         'texas-soil': '#8B4513',
         'texas-cream': '#F5E6D3',
         midnight: '#0d0d12',
-        'true-black': '#0D0D0D',
         ember: '#FF6B35',
         flame: '#E85D04',
         graphite: '#242424',
-        gold: '#C9A227',
-        cream: '#FAF8F5',
         // Text Colors
         text: {
           primary: '#fafafa',
@@ -98,10 +108,56 @@ const config: Config = {
           light: '#60a5fa',
           dark: '#2563eb',
         },
+        // Sport Colors
+        baseball: {
+          DEFAULT: '#BF5700',
+          diamond: '#6B8E23',
+          dirt: '#8B7355',
+          grass: '#228B22',
+          warning: '#FF6B35',
+          leather: '#8B4513',
+        },
+        football: {
+          DEFAULT: '#8B4513',
+          grass: '#228B22',
+          field: '#355E3B',
+          endzone: '#DC2626',
+        },
+        basketball: {
+          DEFAULT: '#FF6B35',
+          court: '#E25822',
+          hardwood: '#8B4513',
+          paint: '#1E40AF',
+        },
+        track: {
+          DEFAULT: '#F59E0B',
+          surface: '#DC143C',
+          lane: '#FFD700',
+          field: '#10B981',
+        },
+        // Team Colors
+        cardinals: {
+          DEFAULT: '#C41E3A',
+          secondary: '#0C2340',
+          gold: '#FEDB00',
+        },
+        titans: {
+          DEFAULT: '#002244',
+          secondary: '#4B92DB',
+          red: '#C8102E',
+        },
+        longhorns: {
+          DEFAULT: '#BF5700',
+          secondary: '#FFFFFF',
+        },
+        grizzlies: {
+          DEFAULT: '#5D76A9',
+          secondary: '#FDB927',
+        },
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['var(--font-oswald)', 'Oswald', 'var(--font-bebas)', 'Bebas Neue', 'Impact', 'Arial Black', 'sans-serif'],
+        display: ['var(--font-bebas)', 'Bebas Neue', 'var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
         mono: ['var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
         serif: ['var(--font-playfair)', 'Playfair Display', 'Georgia', 'serif'],
       },
@@ -149,9 +205,6 @@ const config: Config = {
         'slide-in-right': 'slideInRight 0.5s ease-out forwards',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'spin-slow': 'spin 3s linear infinite',
-        'marquee': 'marquee 30s linear infinite',
-        'marquee-reverse': 'marquee-reverse 30s linear infinite',
-        'marquee-fast': 'marquee 15s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -169,14 +222,6 @@ const config: Config = {
         pulseGlow: {
           '0%, 100%': { boxShadow: '0 0 20px rgba(191, 87, 0, 0.3)' },
           '50%': { boxShadow: '0 0 40px rgba(191, 87, 0, 0.6)' },
-        },
-        marquee: {
-          '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-50%)' },
-        },
-        'marquee-reverse': {
-          '0%': { transform: 'translateX(-50%)' },
-          '100%': { transform: 'translateX(0%)' },
         },
       },
       transitionTimingFunction: {
