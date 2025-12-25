@@ -17,14 +17,14 @@ import { Marquee } from '@/components/ui/Marquee';
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen bg-true-black flex flex-col">
+    <section className="relative min-h-screen bg-midnight flex flex-col">
       {/* Three.js Ember Particles Background */}
       <div className="absolute inset-0 -z-10">
         <HeroEmbers className="" />
       </div>
 
       {/* Gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-true-black/60 via-transparent to-true-black/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none" />
 
       {/* Hero Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-24 pb-16 relative z-10">
