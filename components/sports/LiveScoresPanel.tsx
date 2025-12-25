@@ -30,6 +30,121 @@ interface Game {
   period?: string;
 }
 
+// NFL API game structure
+interface NFLGameRaw {
+  GlobalGameID?: number;
+  GameID?: number;
+  AwayTeam: string;
+  HomeTeam: string;
+  AwayTeamName?: string;
+  HomeTeamName?: string;
+  AwayScore?: number;
+  HomeScore?: number;
+  Status?: string;
+  DateTime?: string;
+  StadiumDetails?: { Name?: string };
+  Quarter?: string;
+  TimeRemaining?: string;
+  IsInProgress?: boolean;
+  IsOver?: boolean;
+}
+
+// NBA API game structure
+interface NBAGameRaw {
+  id: string;
+  homeTeam: {
+    teamName?: string;
+    teamTricode?: string;
+    name?: string;
+    abbreviation?: string;
+    score?: number;
+  };
+  awayTeam: {
+    teamName?: string;
+    teamTricode?: string;
+    name?: string;
+    abbreviation?: string;
+    score?: number;
+  };
+  status: string;
+  gameTime?: string;
+  gameStatusText?: string;
+  venue?: { name?: string };
+  arenaName?: string;
+  period?: number;
+}
+
+// NFL nested games structure
+interface NFLGamesResponse {
+  games?: {
+    live?: NFLGameRaw[];
+    final?: NFLGameRaw[];
+    scheduled?: NFLGameRaw[];
+  };
+}
+
+function parseNFLGames(data: NFLGamesResponse): Game[] {
+  const gamesObj = data.games || {};
+  const allGames: NFLGameRaw[] = [
+    ...(gamesObj.live || []),
+    ...(gamesObj.final || []),
+    ...(gamesObj.scheduled || []),
+  ];
+
+  return allGames.slice(0, 9).map((game) => ({
+    id: String(game.GlobalGameID || game.GameID || Math.random()),
+    homeTeam: {
+      name: game.HomeTeamName || game.HomeTeam,
+      abbreviation: game.HomeTeam,
+      score: game.HomeScore || 0,
+    },
+    awayTeam: {
+      name: game.AwayTeamName || game.AwayTeam,
+      abbreviation: game.AwayTeam,
+      score: game.AwayScore || 0,
+    },
+    status: game.IsInProgress ? 'live' : game.IsOver ? 'final' : 'scheduled',
+    gameTime: game.DateTime
+      ? new Date(game.DateTime).toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          timeZone: 'America/Chicago',
+        })
+      : undefined,
+    venue: game.StadiumDetails?.Name,
+    quarter: game.Quarter ? `${game.Quarter} - ${game.TimeRemaining || ''}` : undefined,
+  }));
+}
+
+function parseNBAGames(games: NBAGameRaw[]): Game[] {
+  return games.slice(0, 9).map((game) => ({
+    id: game.id,
+    homeTeam: {
+      name: game.homeTeam.teamName || game.homeTeam.name || 'Home',
+      abbreviation: game.homeTeam.teamTricode || game.homeTeam.abbreviation || 'HOM',
+      score: game.homeTeam.score || 0,
+    },
+    awayTeam: {
+      name: game.awayTeam.teamName || game.awayTeam.name || 'Away',
+      abbreviation: game.awayTeam.teamTricode || game.awayTeam.abbreviation || 'AWY',
+      score: game.awayTeam.score || 0,
+    },
+    status:
+      game.status === 'pre'
+        ? 'scheduled'
+        : game.status === 'in'
+          ? 'live'
+          : game.status === 'post'
+            ? 'final'
+            : (game.status as Game['status']),
+    gameTime: game.gameTime || game.gameStatusText,
+    venue: game.venue?.name || game.arenaName,
+    period: game.period ? `${game.period}Q` : undefined,
+  }));
+}
+
 async function fetchScores(sport: Sport): Promise<Game[]> {
   const endpoints: Record<Sport, string> = {
     mlb: `${API_BASE}/mlb/scores`,
@@ -45,9 +160,26 @@ async function fetchScores(sport: Sport): Promise<Game[]> {
       return getMockGames(sport);
     }
     const data = await res.json();
-    // Safely extract games array from various response shapes
-    const gamesArray = data?.games || data?.data || data;
-    return Array.isArray(gamesArray) ? gamesArray : [];
+
+    // Handle NFL nested structure
+    if (sport === 'nfl' && data.games && typeof data.games === 'object' && !Array.isArray(data.games)) {
+      return parseNFLGames(data as NFLGamesResponse);
+    }
+
+    // Handle NBA array structure
+    if (sport === 'nba' && data.games && Array.isArray(data.games)) {
+      return parseNBAGames(data.games as NBAGameRaw[]);
+    }
+
+    // Fallback for flat arrays (MLB, NCAA)
+    if (data.games && Array.isArray(data.games)) {
+      return data.games as Game[];
+    }
+    if (data.data && Array.isArray(data.data)) {
+      return data.data as Game[];
+    }
+
+    return getMockGames(sport);
   } catch {
     // Return mock data if API fails
     return getMockGames(sport);
@@ -155,9 +287,7 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
     staleTime: 10_000,
   });
 
-  // Safely filter for live games - ensure games is actually an array
-  const gamesArray = Array.isArray(games) ? games : [];
-  const liveGames = gamesArray.filter((g) => g.status === 'live');
+  const liveGames = games?.filter((g) => g.status === 'live') || [];
   const hasLiveGames = liveGames.length > 0;
 
   return (
@@ -193,9 +323,9 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
           <p className="text-white/60">Unable to load scores</p>
           <p className="text-white/40 text-sm mt-1">Please try again later</p>
         </div>
-      ) : gamesArray.length > 0 ? (
+      ) : games && games.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {gamesArray.map((game) => (
+          {games.map((game) => (
             <ScoreCard
               key={game.id}
               gameId={game.id}
