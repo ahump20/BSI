@@ -68,14 +68,16 @@ function parseNFLStandings(rawData: NFLTeamRaw[]): TeamStanding[] {
 function parseNBAStandings(conferences: NBAConference[]): TeamStanding[] {
   // Flatten all teams from all conferences, sort by wins
   const allTeams: TeamStanding[] = [];
-  let rank = 1;
 
   conferences.forEach((conf) => {
-    conf.teams?.forEach((team) => {
+    if (!conf?.teams) return;
+    conf.teams.forEach((team) => {
+      if (!team) return;
+      const teamName = team.name || 'Unknown';
       allTeams.push({
         rank: 0, // Will be set after sorting
-        team: team.name,
-        abbreviation: team.abbreviation || team.name.substring(0, 3).toUpperCase(),
+        team: teamName,
+        abbreviation: team.abbreviation || teamName.substring(0, 3).toUpperCase(),
         wins: team.wins || 0,
         losses: team.losses || 0,
         pct: team.wins && team.losses ? (team.wins / (team.wins + team.losses)).toFixed(3).replace(/^0/, '') : '.000',
