@@ -73,6 +73,25 @@ export function ScoreCard({
   compact = false,
   showLinescore = true,
 }: ScoreCardProps) {
+  // Defensive null checks - ensure team objects have required properties
+  const safeHomeTeam = {
+    name: homeTeam?.name || 'Home',
+    abbreviation: homeTeam?.abbreviation || 'HOM',
+    score: homeTeam?.score ?? 0,
+    logo: homeTeam?.logo,
+    record: homeTeam?.record,
+    isWinner: homeTeam?.isWinner,
+  };
+
+  const safeAwayTeam = {
+    name: awayTeam?.name || 'Away',
+    abbreviation: awayTeam?.abbreviation || 'AWY',
+    score: awayTeam?.score ?? 0,
+    logo: awayTeam?.logo,
+    record: awayTeam?.record,
+    isWinner: awayTeam?.isWinner,
+  };
+
   const currentPeriod = inning ? `${inningState || ''} ${inning}`.trim() : quarter || period;
   const isClickable = !!onClick || !!href;
   const isLive = status === 'live';
@@ -103,7 +122,7 @@ export function ScoreCard({
       role={isClickable && !href ? 'button' : undefined}
       tabIndex={isClickable && !href ? 0 : undefined}
       aria-label={
-        isClickable ? `View ${awayTeam.name} vs ${homeTeam.name} game details` : undefined
+        isClickable ? `View ${safeAwayTeam.name} vs ${safeHomeTeam.name} game details` : undefined
       }
     >
       {/* Status Bar */}
@@ -143,23 +162,23 @@ export function ScoreCard({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange flex-shrink-0">
-              {(awayTeam.abbreviation || '???').slice(0, 3)}
+              {safeAwayTeam.abbreviation.slice(0, 3)}
             </div>
             <div className="min-w-0">
               <p
                 className={`font-semibold truncate ${
-                  isFinal && awayTeam.isWinner ? 'text-white' : 'text-text-secondary'
+                  isFinal && safeAwayTeam.isWinner ? 'text-white' : 'text-text-secondary'
                 }`}
               >
-                {awayTeam.name}
+                {safeAwayTeam.name}
               </p>
-              {awayTeam.record && (
-                <p className="text-xs text-text-tertiary">{awayTeam.record}</p>
+              {safeAwayTeam.record && (
+                <p className="text-xs text-text-tertiary">{safeAwayTeam.record}</p>
               )}
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {isFinal && awayTeam.isWinner && (
+            {isFinal && safeAwayTeam.isWinner && (
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-success flex-shrink-0" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
               </svg>
@@ -168,12 +187,12 @@ export function ScoreCard({
               className={`text-2xl font-bold font-mono min-w-[2ch] text-right ${
                 isScheduled
                   ? 'text-text-tertiary'
-                  : isFinal && awayTeam.isWinner
+                  : isFinal && safeAwayTeam.isWinner
                     ? 'text-white'
                     : 'text-text-secondary'
               }`}
             >
-              {isScheduled ? '-' : awayTeam.score}
+              {isScheduled ? '-' : safeAwayTeam.score}
             </span>
           </div>
         </div>
@@ -182,23 +201,23 @@ export function ScoreCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange flex-shrink-0">
-              {(homeTeam.abbreviation || '???').slice(0, 3)}
+              {safeHomeTeam.abbreviation.slice(0, 3)}
             </div>
             <div className="min-w-0">
               <p
                 className={`font-semibold truncate ${
-                  isFinal && homeTeam.isWinner ? 'text-white' : 'text-text-secondary'
+                  isFinal && safeHomeTeam.isWinner ? 'text-white' : 'text-text-secondary'
                 }`}
               >
-                {homeTeam.name}
+                {safeHomeTeam.name}
               </p>
-              {homeTeam.record && (
-                <p className="text-xs text-text-tertiary">{homeTeam.record}</p>
+              {safeHomeTeam.record && (
+                <p className="text-xs text-text-tertiary">{safeHomeTeam.record}</p>
               )}
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {isFinal && homeTeam.isWinner && (
+            {isFinal && safeHomeTeam.isWinner && (
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-success flex-shrink-0" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
               </svg>
@@ -207,12 +226,12 @@ export function ScoreCard({
               className={`text-2xl font-bold font-mono min-w-[2ch] text-right ${
                 isScheduled
                   ? 'text-text-tertiary'
-                  : isFinal && homeTeam.isWinner
+                  : isFinal && safeHomeTeam.isWinner
                     ? 'text-white'
                     : 'text-text-secondary'
               }`}
             >
-              {isScheduled ? '-' : homeTeam.score}
+              {isScheduled ? '-' : safeHomeTeam.score}
             </span>
           </div>
         </div>
@@ -220,7 +239,7 @@ export function ScoreCard({
         {/* Linescore (Baseball) */}
         {isBaseball && showLinescore && linescore && !compact && (isFinal || isLive) && (
           <div className="mt-4 pt-3 border-t border-border-subtle overflow-x-auto">
-            <LinescoreTable linescore={linescore} awayAbbr={awayTeam.abbreviation} homeAbbr={homeTeam.abbreviation} />
+            <LinescoreTable linescore={linescore} awayAbbr={safeAwayTeam.abbreviation} homeAbbr={safeHomeTeam.abbreviation} />
           </div>
         )}
 
