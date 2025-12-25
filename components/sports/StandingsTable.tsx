@@ -17,6 +17,20 @@ interface TeamStanding {
   last10?: string;
 }
 
+// MLB API response structure
+interface MLBTeamRaw {
+  teamName: string;
+  wins: number;
+  losses: number;
+  winPercentage: number;
+  gamesBack: number | null;
+  division: string;
+  league: string;
+  runsScored: number;
+  runsAllowed: number;
+  streakCode: string;
+}
+
 // NFL API response structure
 interface NFLTeamRaw {
   Team: string;
@@ -55,10 +69,19 @@ interface NBAConference {
 }
 
 // Generic API response that handles various structures
-interface APIResponse {
-  standings?: TeamStanding[] | Record<string, Record<string, NFLTeamRaw[]>> | NBAConference[];
+interface MLBAPIResponse {
+  standings?: MLBTeamRaw[];
+  league?: string;
+  season?: string;
+}
+
+interface NFLAPIResponse {
+  standings?: Record<string, Record<string, NFLTeamRaw[]>>;
   rawData?: NFLTeamRaw[];
-  data?: TeamStanding[];
+}
+
+interface NBAAPIResponse {
+  standings?: NBAConference[];
 }
 
 // Helper to safely convert streak to display string
@@ -79,6 +102,36 @@ function safeString(value: unknown, fallback: string = ''): string {
   if (typeof value === 'string') return value;
   if (typeof value === 'number') return String(value);
   return fallback;
+}
+
+// MLB team abbreviations map
+const MLB_ABBREVIATIONS: Record<string, string> = {
+  'Brewers': 'MIL', 'Phillies': 'PHI', 'Blue Jays': 'TOR', 'Yankees': 'NYY',
+  'Dodgers': 'LAD', 'Cubs': 'CHC', 'Mariners': 'SEA', 'Padres': 'SD',
+  'Red Sox': 'BOS', 'Guardians': 'CLE', 'Tigers': 'DET', 'Astros': 'HOU',
+  'Mets': 'NYM', 'Reds': 'CIN', 'Royals': 'KC', 'Rangers': 'TEX',
+  'Giants': 'SF', 'D-backs': 'ARI', 'Marlins': 'MIA', 'Cardinals': 'STL',
+  'Rays': 'TB', 'Athletics': 'OAK', 'Braves': 'ATL', 'Orioles': 'BAL',
+  'Angels': 'LAA', 'Pirates': 'PIT', 'Twins': 'MIN', 'Nationals': 'WSH',
+  'White Sox': 'CWS', 'Rockies': 'COL',
+};
+
+function parseMLBStandings(standings: MLBTeamRaw[]): TeamStanding[] {
+  if (!Array.isArray(standings)) return [];
+
+  return standings
+    .filter((team) => team && typeof team === 'object')
+    .slice(0, 10)
+    .map((team, index) => ({
+      rank: index + 1,
+      team: safeString(team.teamName, 'Unknown'),
+      abbreviation: MLB_ABBREVIATIONS[team.teamName] || team.teamName?.substring(0, 3).toUpperCase() || 'UNK',
+      wins: Number(team.wins) || 0,
+      losses: Number(team.losses) || 0,
+      pct: team.winPercentage ? Number(team.winPercentage).toFixed(3).replace(/^0/, '') : '.000',
+      gb: team.gamesBack === null ? '-' : String(team.gamesBack),
+      streak: team.streakCode || '-',
+    }));
 }
 
 function parseNFLStandings(rawData: NFLTeamRaw[]): TeamStanding[] {
@@ -156,11 +209,16 @@ async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
     if (!res.ok) {
       return getMockStandings(sport);
     }
-    const data = (await res.json()) as APIResponse;
+    const data = await res.json();
+
+    // Handle MLB structure - use standings array with teamName field
+    if (sport === 'mlb' && data.standings && Array.isArray(data.standings)) {
+      return parseMLBStandings(data.standings as MLBTeamRaw[]);
+    }
 
     // Handle NFL nested structure - use rawData which is a flat array
     if (sport === 'nfl' && data.rawData && Array.isArray(data.rawData)) {
-      return parseNFLStandings(data.rawData);
+      return parseNFLStandings(data.rawData as NFLTeamRaw[]);
     }
 
     // Handle NBA conference structure
@@ -171,14 +229,7 @@ async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
       }
     }
 
-    // Fallback to direct array (MLB, NCAA, or simple format)
-    if (data.standings && Array.isArray(data.standings)) {
-      return data.standings as TeamStanding[];
-    }
-    if (data.data && Array.isArray(data.data)) {
-      return data.data;
-    }
-
+    // Fallback to mock data
     return getMockStandings(sport);
   } catch {
     return getMockStandings(sport);
