@@ -25,7 +25,8 @@ interface NFLTeamRaw {
   Losses: number;
   Percentage: number;
   ConferenceRank: number;
-  Streak: string;
+  Streak: number | string;
+  StreakDescription?: string;
 }
 
 // NBA API response structure - handles ESPN nested standings data
@@ -60,23 +61,48 @@ interface APIResponse {
   data?: TeamStanding[];
 }
 
+// Helper to safely convert streak to display string
+function formatStreak(streak: number | string | undefined): string {
+  if (streak === undefined || streak === null) return '-';
+  if (typeof streak === 'string') return streak || '-';
+  // If it's a number, we don't know if it's W or L, just show the count
+  // Positive numbers typically indicate wins, negative indicate losses
+  if (typeof streak === 'number') {
+    if (streak === 0) return '-';
+    return streak > 0 ? `W${Math.abs(streak)}` : `L${Math.abs(streak)}`;
+  }
+  return '-';
+}
+
+// Helper to safely get string for display
+function safeString(value: unknown, fallback: string = ''): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return fallback;
+}
+
 function parseNFLStandings(rawData: NFLTeamRaw[]): TeamStanding[] {
+  if (!Array.isArray(rawData)) return [];
+
   // Sort by conference rank and map to our format
   return rawData
+    .filter((team) => team && typeof team === 'object')
     .sort((a, b) => (a.ConferenceRank || 99) - (b.ConferenceRank || 99))
     .slice(0, 10)
     .map((team, index) => ({
       rank: index + 1,
-      team: team.Name || team.Team,
-      abbreviation: team.Team?.substring(0, 3).toUpperCase() || 'UNK',
-      wins: team.Wins || 0,
-      losses: team.Losses || 0,
-      pct: team.Percentage ? team.Percentage.toFixed(3).replace(/^0/, '') : '.000',
-      streak: team.Streak || '-',
+      team: safeString(team.Name || team.Team, 'Unknown'),
+      abbreviation: safeString(team.Team, 'UNK').substring(0, 3).toUpperCase(),
+      wins: Number(team.Wins) || 0,
+      losses: Number(team.Losses) || 0,
+      pct: team.Percentage ? Number(team.Percentage).toFixed(3).replace(/^0/, '') : '.000',
+      streak: team.StreakDescription || formatStreak(team.Streak),
     }));
 }
 
 function parseNBAStandings(conferences: NBAConference[]): TeamStanding[] {
+  if (!Array.isArray(conferences)) return [];
+
   // Flatten all teams from all conferences, sort by wins
   const allTeams: TeamStanding[] = [];
 
@@ -84,28 +110,28 @@ function parseNBAStandings(conferences: NBAConference[]): TeamStanding[] {
     if (!conf?.teams || !Array.isArray(conf.teams)) return;
     conf.teams.forEach((team) => {
       if (!team) return;
-      const teamName = team.name || 'Unknown';
+      const teamName = safeString(team.name, 'Unknown');
       // Get wins/losses from direct properties or nested record
-      const wins = team.wins ?? team.record?.wins ?? 0;
-      const losses = team.losses ?? team.record?.losses ?? 0;
+      const wins = Number(team.wins ?? team.record?.wins ?? 0);
+      const losses = Number(team.losses ?? team.record?.losses ?? 0);
       // Get streak from direct property or nested standings
-      const streak = team.streak || team.standings?.streak || '-';
+      const streak = safeString(team.streak || team.standings?.streak, '-');
       // Calculate PCT or use provided value
       const pct = team.record?.winningPercentage
-        ? team.record.winningPercentage.replace(/^0/, '')
-        : wins && losses
+        ? String(team.record.winningPercentage).replace(/^0/, '')
+        : wins + losses > 0
           ? (wins / (wins + losses)).toFixed(3).replace(/^0/, '')
           : '.000';
 
       allTeams.push({
         rank: 0, // Will be set after sorting
         team: teamName,
-        abbreviation: team.abbreviation || teamName.substring(0, 3).toUpperCase(),
+        abbreviation: safeString(team.abbreviation, teamName.substring(0, 3).toUpperCase()),
         wins,
         losses,
         pct,
         streak,
-        gb: team.standings?.gamesBack,
+        gb: safeString(team.standings?.gamesBack),
       });
     });
   });
@@ -140,7 +166,7 @@ async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
     // Handle NBA conference structure
     if (sport === 'nba' && data.standings && Array.isArray(data.standings)) {
       const standings = data.standings as NBAConference[];
-      if (standings[0]?.teams) {
+      if (standings.length > 0 && standings[0]?.teams) {
         return parseNBAStandings(standings);
       }
     }
@@ -295,14 +321,15 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
     staleTime: 60_000,
   });
 
-  const displayStandings = standings?.slice(0, limit) || [];
+  // Defensive: ensure standings is an array before slicing
+  const displayStandings = Array.isArray(standings) ? standings.slice(0, limit) : [];
 
   return (
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-display text-white">STANDINGS</h2>
-        {dataUpdatedAt && (
+        {dataUpdatedAt && dataUpdatedAt > 0 && (
           <span className="text-xs text-white/40">
             Updated{' '}
             {new Date(dataUpdatedAt).toLocaleTimeString('en-US', {
@@ -374,14 +401,14 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
                     </tr>
                   ))
                 : displayStandings.map((team) => (
-                    <tr key={team.abbreviation || team.team || String(team.rank)} className="hover:bg-white/5 transition-colors">
+                    <tr key={safeString(team.abbreviation || team.team, String(team.rank))} className="hover:bg-white/5 transition-colors">
                       <td className="px-4 py-3 text-white/50 text-sm">{team.rank}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-bold text-white">
-                            {(team.abbreviation || team.team || '??').slice(0, 2)}
+                            {safeString(team.abbreviation || team.team, '??').slice(0, 2)}
                           </div>
-                          <span className="text-white font-medium">{team.team || 'Unknown'}</span>
+                          <span className="text-white font-medium">{safeString(team.team, 'Unknown')}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center text-white font-mono">{team.wins}</td>
@@ -391,20 +418,20 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
                       <td className="px-4 py-3 text-center text-white/70 font-mono">{team.pct}</td>
                       {(sport === 'mlb' || sport === 'nba') && (
                         <td className="px-4 py-3 text-center text-white/50 font-mono text-sm">
-                          {team.gb}
+                          {team.gb || '-'}
                         </td>
                       )}
                       <td className="px-4 py-3 text-center">
                         <span
                           className={`text-sm font-mono ${
-                            team.streak?.startsWith('W')
+                            safeString(team.streak).startsWith('W')
                               ? 'text-success'
-                              : team.streak?.startsWith('L')
+                              : safeString(team.streak).startsWith('L')
                                 ? 'text-error'
                                 : 'text-white/50'
                           }`}
                         >
-                          {team.streak}
+                          {team.streak || '-'}
                         </span>
                       </td>
                     </tr>
