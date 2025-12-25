@@ -8,8 +8,8 @@ import { LiveBadge } from '@/components/ui/Badge';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { ScrollReveal } from '../../components/cinematic/ScrollReveal';
-import { Footer } from '../../components/layout-ds/Footer';
+import { ScrollReveal } from '@/components/cinematic';
+import { Footer } from '@/components/layout-ds/Footer';
 
 export default function DashboardPage() {
   const [activeSport, setActiveSport] = useState<Sport>('nfl');
