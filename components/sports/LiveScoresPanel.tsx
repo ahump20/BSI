@@ -119,30 +119,33 @@ function parseNFLGames(data: NFLGamesResponse): Game[] {
 }
 
 function parseNBAGames(games: NBAGameRaw[]): Game[] {
-  return games.slice(0, 9).map((game) => ({
-    id: game.id,
-    homeTeam: {
-      name: game.homeTeam.teamName || game.homeTeam.name || 'Home',
-      abbreviation: game.homeTeam.teamTricode || game.homeTeam.abbreviation || 'HOM',
-      score: game.homeTeam.score || 0,
-    },
-    awayTeam: {
-      name: game.awayTeam.teamName || game.awayTeam.name || 'Away',
-      abbreviation: game.awayTeam.teamTricode || game.awayTeam.abbreviation || 'AWY',
-      score: game.awayTeam.score || 0,
-    },
-    status:
-      game.status === 'pre'
-        ? 'scheduled'
-        : game.status === 'in'
-          ? 'live'
-          : game.status === 'post'
-            ? 'final'
-            : (game.status as Game['status']),
-    gameTime: game.gameTime || game.gameStatusText,
-    venue: game.venue?.name || game.arenaName,
-    period: game.period ? `${game.period}Q` : undefined,
-  }));
+  return games
+    .filter((game) => game && game.homeTeam && game.awayTeam)
+    .slice(0, 9)
+    .map((game) => ({
+      id: game.id || String(Math.random()),
+      homeTeam: {
+        name: game.homeTeam?.teamName || game.homeTeam?.name || 'Home',
+        abbreviation: game.homeTeam?.teamTricode || game.homeTeam?.abbreviation || 'HOM',
+        score: game.homeTeam?.score || 0,
+      },
+      awayTeam: {
+        name: game.awayTeam?.teamName || game.awayTeam?.name || 'Away',
+        abbreviation: game.awayTeam?.teamTricode || game.awayTeam?.abbreviation || 'AWY',
+        score: game.awayTeam?.score || 0,
+      },
+      status:
+        game.status === 'pre'
+          ? 'scheduled'
+          : game.status === 'in'
+            ? 'live'
+            : game.status === 'post'
+              ? 'final'
+              : (game.status as Game['status']) || 'scheduled',
+      gameTime: game.gameTime || game.gameStatusText,
+      venue: game.venue?.name || game.arenaName,
+      period: game.period ? `${game.period}Q` : undefined,
+    }));
 }
 
 async function fetchScores(sport: Sport): Promise<Game[]> {
