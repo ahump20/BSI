@@ -17,6 +17,80 @@ interface TeamStanding {
   last10?: string;
 }
 
+// NFL API response structure
+interface NFLTeamRaw {
+  Team: string;
+  Name: string;
+  Wins: number;
+  Losses: number;
+  Percentage: number;
+  ConferenceRank: number;
+  Streak: string;
+}
+
+// NBA API response structure
+interface NBATeamRaw {
+  name: string;
+  abbreviation: string;
+  wins: number;
+  losses: number;
+  streak?: string;
+}
+
+interface NBAConference {
+  conference: string;
+  teams: NBATeamRaw[];
+}
+
+// Generic API response that handles various structures
+interface APIResponse {
+  standings?: TeamStanding[] | Record<string, Record<string, NFLTeamRaw[]>> | NBAConference[];
+  rawData?: NFLTeamRaw[];
+  data?: TeamStanding[];
+}
+
+function parseNFLStandings(rawData: NFLTeamRaw[]): TeamStanding[] {
+  // Sort by conference rank and map to our format
+  return rawData
+    .sort((a, b) => (a.ConferenceRank || 99) - (b.ConferenceRank || 99))
+    .slice(0, 10)
+    .map((team, index) => ({
+      rank: index + 1,
+      team: team.Name || team.Team,
+      abbreviation: team.Team?.substring(0, 3).toUpperCase() || 'UNK',
+      wins: team.Wins || 0,
+      losses: team.Losses || 0,
+      pct: team.Percentage ? team.Percentage.toFixed(3).replace(/^0/, '') : '.000',
+      streak: team.Streak || '-',
+    }));
+}
+
+function parseNBAStandings(conferences: NBAConference[]): TeamStanding[] {
+  // Flatten all teams from all conferences, sort by wins
+  const allTeams: TeamStanding[] = [];
+  let rank = 1;
+
+  conferences.forEach((conf) => {
+    conf.teams?.forEach((team) => {
+      allTeams.push({
+        rank: 0, // Will be set after sorting
+        team: team.name,
+        abbreviation: team.abbreviation || team.name.substring(0, 3).toUpperCase(),
+        wins: team.wins || 0,
+        losses: team.losses || 0,
+        pct: team.wins && team.losses ? (team.wins / (team.wins + team.losses)).toFixed(3).replace(/^0/, '') : '.000',
+        streak: team.streak || '-',
+      });
+    });
+  });
+
+  // Sort by wins descending, then update ranks
+  return allTeams
+    .sort((a, b) => b.wins - a.wins)
+    .slice(0, 10)
+    .map((team, index) => ({ ...team, rank: index + 1 }));
+}
+
 async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
   const endpoints: Record<Sport, string> = {
     mlb: `${API_BASE}/mlb/standings`,
@@ -30,10 +104,30 @@ async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
     if (!res.ok) {
       return getMockStandings(sport);
     }
-    const data = await res.json();
-    // Safely extract standings array from various response shapes
-    const standingsArray = data?.standings || data?.data || data;
-    return Array.isArray(standingsArray) ? standingsArray : [];
+    const data = (await res.json()) as APIResponse;
+
+    // Handle NFL nested structure - use rawData which is a flat array
+    if (sport === 'nfl' && data.rawData && Array.isArray(data.rawData)) {
+      return parseNFLStandings(data.rawData);
+    }
+
+    // Handle NBA conference structure
+    if (sport === 'nba' && data.standings && Array.isArray(data.standings)) {
+      const standings = data.standings as NBAConference[];
+      if (standings[0]?.teams) {
+        return parseNBAStandings(standings);
+      }
+    }
+
+    // Fallback to direct array (MLB, NCAA, or simple format)
+    if (data.standings && Array.isArray(data.standings)) {
+      return data.standings as TeamStanding[];
+    }
+    if (data.data && Array.isArray(data.data)) {
+      return data.data;
+    }
+
+    return getMockStandings(sport);
   } catch {
     return getMockStandings(sport);
   }
@@ -175,9 +269,7 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
     staleTime: 60_000,
   });
 
-  // Safely handle standings data - ensure it's an array before slicing
-  const standingsArray = Array.isArray(standings) ? standings : [];
-  const displayStandings = standingsArray.slice(0, limit);
+  const displayStandings = standings?.slice(0, limit) || [];
 
   return (
     <div>
@@ -261,7 +353,7 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-bold text-white">
-                            {(team.abbreviation || '??').slice(0, 2)}
+                            {team.abbreviation.slice(0, 2)}
                           </div>
                           <span className="text-white font-medium">{team.team}</span>
                         </div>
