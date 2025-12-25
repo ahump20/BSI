@@ -1016,8 +1016,8 @@
               </h2>
               <div style={{ display: 'grid', gap: '15px' }}>
                 {scores.map((game, idx) => {
-                  const homeTeam = game.competitions?.[0]?.competitors?.find(c => c.homeAway === 'home') || game.homeTeam;
-                  const awayTeam = game.competitions?.[0]?.competitors?.find(c => c.homeAway === 'away') || game.awayTeam;
+                  const homeTeam = game.competitions?.[0]?.competitors?.find(c => c.homeAway === 'home') || game.teams?.find(t => t.homeAway === 'home') || game.homeTeam;
+                  const awayTeam = game.competitions?.[0]?.competitors?.find(c => c.homeAway === 'away') || game.teams?.find(t => t.homeAway === 'away') || game.awayTeam;
                   const status = game.status?.type?.description || game.status || 'Scheduled';
                   const isLive = status.toLowerCase().includes('progress') || status.toLowerCase().includes('live');
                   const isFinal = status.toLowerCase().includes('final');
