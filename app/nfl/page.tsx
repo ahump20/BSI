@@ -1,5 +1,4 @@
 'use client';
-// Force sync fix: 2025-12-18
 
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
@@ -9,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
+import { NFLGamesList } from '@/components/nfl';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -146,8 +146,32 @@ export default function NFLPage() {
           </Container>
         </Section>
 
+        {/* AI Game Intelligence Section */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-12">
+                <Badge variant="primary" className="mb-4">
+                  Powered by Workers AI
+                </Badge>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  AI-Powered <span className="text-gradient-blaze">Game Intelligence</span>
+                </h2>
+                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                  Every game gets a custom preview or recap written by Cloudflare Workers AI.
+                  Matchup analysis, playoff implications, odds breakdown—straight analysis, no fluff.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={100}>
+              <NFLGamesList limit={6} />
+            </ScrollReveal>
+          </Container>
+        </Section>
+
         {/* Divisions Grid */}
-        <Section padding="lg" background="midnight">
+        <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
               <h2 className="font-display text-2xl font-bold text-white mb-8">

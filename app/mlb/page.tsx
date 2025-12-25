@@ -11,6 +11,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { MLBGamesList } from '@/components/mlb';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -458,6 +459,30 @@ export default function MLBPage() {
                 </ScrollReveal>
               ))}
             </div>
+          </Container>
+        </Section>
+
+        {/* AI Game Intelligence Section */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-12">
+                <Badge variant="primary" className="mb-4">
+                  Powered by Workers AI
+                </Badge>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  AI-Powered <span className="text-gradient-blaze">Game Intelligence</span>
+                </h2>
+                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
+                  Every game gets a custom preview or recap written by Cloudflare Workers AI.
+                  Pitching matchups, hitting trends, standings implications—no cookie-cutter content.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={100}>
+              <MLBGamesList limit={6} />
+            </ScrollReveal>
           </Container>
         </Section>
 
