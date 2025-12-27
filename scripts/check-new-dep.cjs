@@ -12,7 +12,6 @@
  *   node scripts/check-new-dep.cjs @types/node latest
  */
 
-const fs = require('fs');
 const path = require('path');
 
 // Scoring configuration
