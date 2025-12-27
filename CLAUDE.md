@@ -379,7 +379,7 @@ npm run deploy:preview
 ### wrangler.toml Template
 ```toml
 name = "bsi-{domain}-{function}"
-main = "src/index.ts"
+main = "index.ts"
 compatibility_date = "2025-03-07"
 compatibility_flags = ["nodejs_compat"]
 
