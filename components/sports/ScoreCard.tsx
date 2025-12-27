@@ -109,7 +109,8 @@ function safeStr(value: unknown, fallback: string = ''): string {
  * - **NCAAF (College Football)**: Burnt orange - BSI brand color (Tailwind `burnt-orange`)
  *
  * @constant
- * @type {Record<SupportedSport, SportTheme>}
+ * @type {Record<string, SportTheme>}
+ * Keys are expected to align with the SupportedSport union defined below.
  *
  * @example
  * // Access theme for a specific sport
