@@ -12,7 +12,6 @@
  *   node scripts/check-new-dep.cjs @types/node latest
  */
 
-const path = require('path');
 
 // Scoring configuration
 const SCORING_WEIGHTS = {
