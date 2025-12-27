@@ -100,10 +100,16 @@ export function LiveGamesWidget() {
         ): Promise<Game[]> => {
           if (res.status === 'rejected') return [];
           const data = await res.value.json();
-          if (!data.data?.games) return [];
+          // Defensive: ensure games is an array before filtering
+          const gamesArray = Array.isArray(data.data?.games)
+            ? data.data.games
+            : Array.isArray(data.games)
+              ? data.games
+              : [];
+          if (gamesArray.length === 0) return [];
 
-          return data.data.games
-            .filter((g: any) => g.status?.isLive)
+          return gamesArray
+            .filter((g: any) => g && g.status?.isLive)
             .map((g: any) => ({
               ...g,
               league,

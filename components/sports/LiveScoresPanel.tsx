@@ -1,5 +1,7 @@
 'use client';
 
+// Force rebuild: 2025-12-25T18:00:00-06:00
+
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ScoreCard, ScoreCardSkeleton } from './ScoreCard';
@@ -30,6 +32,176 @@ interface Game {
   period?: string;
 }
 
+// NFL API game structure
+interface NFLGameRaw {
+  GlobalGameID?: number;
+  GameID?: number;
+  AwayTeam: string;
+  HomeTeam: string;
+  AwayTeamName?: string;
+  HomeTeamName?: string;
+  AwayScore?: number;
+  HomeScore?: number;
+  Status?: string;
+  DateTime?: string;
+  StadiumDetails?: { Name?: string };
+  Quarter?: string;
+  TimeRemaining?: string;
+  IsInProgress?: boolean;
+  IsOver?: boolean;
+}
+
+// NBA API game structure - handles both flat and nested team structures
+interface NBATeamRaw {
+  id?: string;
+  teamName?: string;
+  teamTricode?: string;
+  name?: string;
+  team?: string;
+  abbreviation?: string;
+  score?: string | number;
+  record?: string;
+}
+
+interface NBAGameRaw {
+  id: string;
+  homeTeam?: NBATeamRaw;
+  awayTeam?: NBATeamRaw;
+  // ESPN API uses nested teams structure
+  teams?: {
+    away?: NBATeamRaw;
+    home?: NBATeamRaw;
+  };
+  status: string | { state?: string; isLive?: boolean; isFinal?: boolean; detail?: string };
+  gameTime?: string;
+  gameStatusText?: string;
+  venue?: { name?: string };
+  arenaName?: string;
+  period?: number;
+}
+
+// NFL nested games structure
+interface NFLGamesResponse {
+  games?: {
+    live?: NFLGameRaw[];
+    final?: NFLGameRaw[];
+    scheduled?: NFLGameRaw[];
+  };
+}
+
+// Helper to safely convert to string
+function safeString(value: unknown, fallback: string = ''): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return fallback;
+}
+
+function parseNFLGames(data: NFLGamesResponse): Game[] {
+  const gamesObj = data.games || {};
+  const allGames: NFLGameRaw[] = [
+    ...(Array.isArray(gamesObj.live) ? gamesObj.live : []),
+    ...(Array.isArray(gamesObj.final) ? gamesObj.final : []),
+    ...(Array.isArray(gamesObj.scheduled) ? gamesObj.scheduled : []),
+  ];
+
+  return allGames
+    .filter((game) => game && typeof game === 'object')
+    .slice(0, 9)
+    .map((game) => ({
+      id: String(game.GlobalGameID || game.GameID || Math.random()),
+      homeTeam: {
+        name: safeString(game.HomeTeamName || game.HomeTeam, 'Home'),
+        abbreviation: safeString(game.HomeTeam, 'HOM'),
+        score: Number(game.HomeScore) || 0,
+      },
+      awayTeam: {
+        name: safeString(game.AwayTeamName || game.AwayTeam, 'Away'),
+        abbreviation: safeString(game.AwayTeam, 'AWY'),
+        score: Number(game.AwayScore) || 0,
+      },
+      status: game.IsInProgress ? 'live' : game.IsOver ? 'final' : 'scheduled',
+      gameTime: game.DateTime
+        ? new Date(game.DateTime).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZone: 'America/Chicago',
+          })
+        : undefined,
+      venue: game.StadiumDetails?.Name,
+      quarter: game.Quarter ? `${game.Quarter} - ${game.TimeRemaining || ''}` : undefined,
+    }));
+}
+
+function parseNBAGames(games: NBAGameRaw[]): Game[] {
+  if (!Array.isArray(games)) return [];
+
+  return games
+    .filter((game) => {
+      if (!game || typeof game !== 'object') return false;
+      // Support both flat (homeTeam/awayTeam) and nested (teams.home/teams.away) structures
+      const hasFlat = game.homeTeam && game.awayTeam;
+      const hasNested = game.teams?.home && game.teams?.away;
+      return hasFlat || hasNested;
+    })
+    .slice(0, 9)
+    .map((game) => {
+      // Extract teams from either structure
+      const homeTeam = game.homeTeam || game.teams?.home;
+      const awayTeam = game.awayTeam || game.teams?.away;
+
+      // Get team name - API uses 'team' field for full name
+      const homeName = safeString(homeTeam?.teamName || homeTeam?.team || homeTeam?.name, 'Home');
+      const awayName = safeString(awayTeam?.teamName || awayTeam?.team || awayTeam?.name, 'Away');
+
+      // Get abbreviation
+      const homeAbbr = safeString(homeTeam?.teamTricode || homeTeam?.abbreviation, 'HOM');
+      const awayAbbr = safeString(awayTeam?.teamTricode || awayTeam?.abbreviation, 'AWY');
+
+      // Get score (can be string or number)
+      const homeScore = typeof homeTeam?.score === 'string' ? parseInt(homeTeam.score, 10) || 0 : Number(homeTeam?.score) || 0;
+      const awayScore = typeof awayTeam?.score === 'string' ? parseInt(awayTeam.score, 10) || 0 : Number(awayTeam?.score) || 0;
+
+      // Parse status - can be string or object
+      let gameStatus: Game['status'] = 'scheduled';
+      if (typeof game.status === 'object' && game.status !== null) {
+        if (game.status.isLive) gameStatus = 'live';
+        else if (game.status.isFinal) gameStatus = 'final';
+        else if (game.status.state === 'pre') gameStatus = 'scheduled';
+        else if (game.status.state === 'in') gameStatus = 'live';
+        else if (game.status.state === 'post') gameStatus = 'final';
+      } else if (typeof game.status === 'string') {
+        if (game.status === 'pre') gameStatus = 'scheduled';
+        else if (game.status === 'in') gameStatus = 'live';
+        else if (game.status === 'post') gameStatus = 'final';
+        else gameStatus = (game.status as Game['status']) || 'scheduled';
+      }
+
+      // Get game time from status detail or other fields
+      const statusDetail = typeof game.status === 'object' && game.status !== null ? game.status.detail : undefined;
+      const gameTime = game.gameTime || game.gameStatusText || statusDetail;
+
+      return {
+        id: String(game.id || Math.random()),
+        homeTeam: {
+          name: homeName,
+          abbreviation: homeAbbr,
+          score: homeScore,
+        },
+        awayTeam: {
+          name: awayName,
+          abbreviation: awayAbbr,
+          score: awayScore,
+        },
+        status: gameStatus,
+        gameTime,
+        venue: game.venue?.name || game.arenaName,
+        period: game.period ? `${game.period}Q` : undefined,
+      };
+    });
+}
+
 async function fetchScores(sport: Sport): Promise<Game[]> {
   const endpoints: Record<Sport, string> = {
     mlb: `${API_BASE}/mlb/scores`,
@@ -44,8 +216,27 @@ async function fetchScores(sport: Sport): Promise<Game[]> {
       // Return mock data for development
       return getMockGames(sport);
     }
-    const data = (await res.json()) as { games?: Game[]; data?: Game[] };
-    return data.games || data.data || [];
+    const data = await res.json();
+
+    // Handle NFL nested structure
+    if (sport === 'nfl' && data.games && typeof data.games === 'object' && !Array.isArray(data.games)) {
+      return parseNFLGames(data as NFLGamesResponse);
+    }
+
+    // Handle NBA array structure
+    if (sport === 'nba' && data.games && Array.isArray(data.games)) {
+      return parseNBAGames(data.games as NBAGameRaw[]);
+    }
+
+    // Fallback for flat arrays (MLB, NCAA)
+    if (data.games && Array.isArray(data.games)) {
+      return data.games as Game[];
+    }
+    if (data.data && Array.isArray(data.data)) {
+      return data.data as Game[];
+    }
+
+    return getMockGames(sport);
   } catch {
     // Return mock data if API fails
     return getMockGames(sport);
@@ -153,7 +344,9 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
     staleTime: 10_000,
   });
 
-  const liveGames = games?.filter((g) => g.status === 'live') || [];
+  // Defensive: ensure games is an array before filtering
+  const gamesArray = Array.isArray(games) ? games : [];
+  const liveGames = gamesArray.filter((g) => g && g.status === 'live');
   const hasLiveGames = liveGames.length > 0;
 
   return (
@@ -164,7 +357,7 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
           <h2 className="text-xl font-display text-white">SCORES</h2>
           {hasLiveGames && <LiveBadge />}
         </div>
-        {dataUpdatedAt && (
+        {dataUpdatedAt && dataUpdatedAt > 0 && (
           <span className="text-xs text-white/40">
             Updated{' '}
             {new Date(dataUpdatedAt).toLocaleTimeString('en-US', {
@@ -189,9 +382,9 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
           <p className="text-white/60">Unable to load scores</p>
           <p className="text-white/40 text-sm mt-1">Please try again later</p>
         </div>
-      ) : games && games.length > 0 ? (
+      ) : gamesArray.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {games.map((game) => (
+          {gamesArray.map((game) => (
             <ScoreCard
               key={game.id}
               gameId={game.id}

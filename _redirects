@@ -1,6 +1,0 @@
-# Redirect www to non-www
-https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301!
-
-# API documentation redirects
-/api-docs /docs 301
-/swagger /docs 301
