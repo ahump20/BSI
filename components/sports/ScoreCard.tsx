@@ -102,7 +102,7 @@ function safeStr(value: unknown, fallback: string = ''): string {
  * | badgeText    | Badge text color matching sport                  | Winner team text         |
  *
  * ## Color Associations
- * - **MLB (Baseball)**: Forest green (#228B22) - evokes baseball field grass
+ * - **MLB (Baseball)**: Forest green–inspired theme - evokes baseball field grass
  * - **NFL (Football)**: Saddle brown (Tailwind `text-football`, approx #8B4513) - evokes pigskin leather
  * - **NBA (Basketball)**: Orange - evokes basketball color
  * - **CBB (College Baseball)**: Burnt orange - BSI brand color (Tailwind `burnt-orange`)
