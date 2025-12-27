@@ -103,7 +103,7 @@ function safeStr(value: unknown, fallback: string = ''): string {
  *
  * ## Color Associations
  * - **MLB (Baseball)**: Forest green (#228B22) - evokes baseball field grass
- * - **NFL (Football)**: Saddle brown (#8B4513) - evokes pigskin leather
+ * - **NFL (Football)**: Saddle brown (Tailwind `text-football`, approx #8B4513) - evokes pigskin leather
  * - **NBA (Basketball)**: Orange - evokes basketball color
  * - **CBB (College Baseball)**: Burnt orange - BSI brand color (Tailwind `burnt-orange`)
  * - **NCAAF (College Football)**: Burnt orange - BSI brand color (Tailwind `burnt-orange`)
