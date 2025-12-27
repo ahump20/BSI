@@ -7,9 +7,9 @@
  * a Socket.dev compatible payload for supply chain security analysis.
  * 
  * Usage:
- *   node scripts/audit-deps.js              # Interactive mode with full output
- *   node scripts/audit-deps.js --json       # JSON output only
- *   node scripts/audit-deps.js --ci         # CI mode with exit codes
+ *   node scripts/audit-deps.cjs              # Interactive mode with full output
+ *   node scripts/audit-deps.cjs --json       # JSON output only
+ *   node scripts/audit-deps.cjs --ci         # CI mode with exit codes
  */
 
 const fs = require('fs');
