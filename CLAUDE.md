@@ -286,8 +286,8 @@ import { Button, Card, Badge } from '@/components/ui';
 // CORRECT - using Tailwind tokens
 <div className="bg-burnt-orange-600 text-white p-4 md:p-6 backdrop-blur-glass">
 
-// WRONG - hardcoded values
-<div style={{ backgroundColor: '#BF5700', padding: '16px' }}>
+// WRONG - hardcoded, non-design-system values
+<div style={{ backgroundColor: '#FF0000', padding: '16px' }}>
 ```
 
 ---
