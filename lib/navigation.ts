@@ -19,6 +19,7 @@ export const mainNavItems: NavItem[] = [
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
   { label: 'NBA', href: '/nba' },
+  { label: 'Vision AI', href: '/vision-AI-Intelligence', badge: 'AI' },
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'About', href: '/about' },
   { label: 'Pricing', href: '/pricing' },
