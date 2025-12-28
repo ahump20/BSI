@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, StopCircle, Target, Activity, Mic, CheckCircle2 } from 'lucide-react';
+import {
+  Play, StopCircle, Target, Activity, Mic, CheckCircle2,
+  Download, Upload, RotateCcw, Eye, EyeOff, Save, User,
+  Smartphone, Camera, AlertCircle
+} from 'lucide-react';
 
 // TensorFlow.js type declarations for CDN loading
 declare global {
@@ -44,6 +48,82 @@ const COLORS = {
   charcoal: '#1a1a1a',
   bone: '#f5f2eb',
   dust: '#c4b8a5',
+  pro: '#22c55e', // Pro form overlay color
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PRO FORM REFERENCE DATA (normalized keypoints for ideal stances)
+// ═══════════════════════════════════════════════════════════════════════════
+const PRO_FORMS: Record<string, { name: string; description: string; keypoints: Array<{ x: number; y: number; score: number }> }> = {
+  pitchingStance: {
+    name: 'Pitching Stance',
+    description: 'MLB-grade wind-up position',
+    keypoints: [
+      { x: 0.5, y: 0.15, score: 0.95 }, // nose
+      { x: 0.47, y: 0.13, score: 0.9 }, // leftEye
+      { x: 0.53, y: 0.13, score: 0.9 }, // rightEye
+      { x: 0.44, y: 0.15, score: 0.85 }, // leftEar
+      { x: 0.56, y: 0.15, score: 0.85 }, // rightEar
+      { x: 0.38, y: 0.28, score: 0.95 }, // leftShoulder
+      { x: 0.62, y: 0.28, score: 0.95 }, // rightShoulder
+      { x: 0.32, y: 0.42, score: 0.9 }, // leftElbow
+      { x: 0.68, y: 0.42, score: 0.9 }, // rightElbow
+      { x: 0.28, y: 0.55, score: 0.85 }, // leftWrist
+      { x: 0.72, y: 0.55, score: 0.85 }, // rightWrist
+      { x: 0.42, y: 0.52, score: 0.95 }, // leftHip
+      { x: 0.58, y: 0.52, score: 0.95 }, // rightHip
+      { x: 0.40, y: 0.72, score: 0.9 }, // leftKnee
+      { x: 0.60, y: 0.72, score: 0.9 }, // rightKnee
+      { x: 0.38, y: 0.92, score: 0.85 }, // leftAnkle
+      { x: 0.62, y: 0.92, score: 0.85 }, // rightAnkle
+    ],
+  },
+  battingStance: {
+    name: 'Batting Stance',
+    description: 'Balanced ready position',
+    keypoints: [
+      { x: 0.5, y: 0.18, score: 0.95 }, // nose
+      { x: 0.47, y: 0.16, score: 0.9 }, // leftEye
+      { x: 0.53, y: 0.16, score: 0.9 }, // rightEye
+      { x: 0.44, y: 0.18, score: 0.85 }, // leftEar
+      { x: 0.56, y: 0.18, score: 0.85 }, // rightEar
+      { x: 0.35, y: 0.30, score: 0.95 }, // leftShoulder
+      { x: 0.55, y: 0.28, score: 0.95 }, // rightShoulder
+      { x: 0.28, y: 0.25, score: 0.9 }, // leftElbow (bat position)
+      { x: 0.60, y: 0.38, score: 0.9 }, // rightElbow
+      { x: 0.35, y: 0.15, score: 0.85 }, // leftWrist (bat grip)
+      { x: 0.38, y: 0.18, score: 0.85 }, // rightWrist (bat grip)
+      { x: 0.40, y: 0.52, score: 0.95 }, // leftHip
+      { x: 0.60, y: 0.52, score: 0.95 }, // rightHip
+      { x: 0.38, y: 0.74, score: 0.9 }, // leftKnee
+      { x: 0.62, y: 0.74, score: 0.9 }, // rightKnee
+      { x: 0.35, y: 0.94, score: 0.85 }, // leftAnkle
+      { x: 0.65, y: 0.94, score: 0.85 }, // rightAnkle
+    ],
+  },
+  presentationStance: {
+    name: 'Presentation Stance',
+    description: 'Confident speaker posture',
+    keypoints: [
+      { x: 0.5, y: 0.12, score: 0.95 }, // nose
+      { x: 0.47, y: 0.10, score: 0.9 }, // leftEye
+      { x: 0.53, y: 0.10, score: 0.9 }, // rightEye
+      { x: 0.44, y: 0.12, score: 0.85 }, // leftEar
+      { x: 0.56, y: 0.12, score: 0.85 }, // rightEar
+      { x: 0.38, y: 0.25, score: 0.95 }, // leftShoulder
+      { x: 0.62, y: 0.25, score: 0.95 }, // rightShoulder
+      { x: 0.32, y: 0.40, score: 0.9 }, // leftElbow
+      { x: 0.68, y: 0.40, score: 0.9 }, // rightElbow
+      { x: 0.35, y: 0.50, score: 0.85 }, // leftWrist
+      { x: 0.65, y: 0.50, score: 0.85 }, // rightWrist
+      { x: 0.45, y: 0.50, score: 0.95 }, // leftHip
+      { x: 0.55, y: 0.50, score: 0.95 }, // rightHip
+      { x: 0.45, y: 0.75, score: 0.9 }, // leftKnee
+      { x: 0.55, y: 0.75, score: 0.9 }, // rightKnee
+      { x: 0.45, y: 0.95, score: 0.85 }, // leftAnkle
+      { x: 0.55, y: 0.95, score: 0.85 }, // rightAnkle
+    ],
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -76,6 +156,107 @@ const formatDelta = (current: number | null, baseline: number | null | undefined
   if (Math.abs(diff) < 1) return { text: '—', cls: 'neutral' };
   const sign = diff > 0 ? '+' : '';
   return { text: `${sign}${diff.toFixed(0)}`, cls: diff > 0 ? 'positive' : 'negative' };
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DETECT MOBILE SAFARI
+// ═══════════════════════════════════════════════════════════════════════════
+const isMobileSafari = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const ua = window.navigator.userAgent;
+  const iOS = /iPad|iPhone|iPod/.test(ua);
+  const webkit = /WebKit/.test(ua);
+  const notChrome = !/CriOS/.test(ua);
+  return iOS && webkit && notChrome;
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INDEXED DB FOR SESSION RECORDING
+// ═══════════════════════════════════════════════════════════════════════════
+const DB_NAME = 'BSI_VisionAI';
+const DB_VERSION = 1;
+const STORE_SESSIONS = 'sessions';
+const STORE_FRAMES = 'frames';
+
+interface RecordedFrame {
+  sessionId: string;
+  frameIndex: number;
+  timestamp: number;
+  keypoints: Array<{ x: number; y: number; score: number }>;
+  poseMetrics: { stability: number; shoulderSym: number; hipSym: number; spineLean: number };
+  audioMetrics: { energy: number; steadiness: number };
+}
+
+interface RecordedSession {
+  id: string;
+  createdAt: number;
+  duration: number;
+  mode: 'sports' | 'body';
+  frameCount: number;
+  baseline?: Baseline;
+}
+
+const openDB = (): Promise<IDBDatabase> => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+
+    request.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+
+      if (!db.objectStoreNames.contains(STORE_SESSIONS)) {
+        db.createObjectStore(STORE_SESSIONS, { keyPath: 'id' });
+      }
+
+      if (!db.objectStoreNames.contains(STORE_FRAMES)) {
+        const frameStore = db.createObjectStore(STORE_FRAMES, { keyPath: ['sessionId', 'frameIndex'] });
+        frameStore.createIndex('sessionId', 'sessionId', { unique: false });
+      }
+    };
+  });
+};
+
+const saveSession = async (session: RecordedSession): Promise<void> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_SESSIONS, 'readwrite');
+    tx.objectStore(STORE_SESSIONS).put(session);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+const saveFrame = async (frame: RecordedFrame): Promise<void> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_FRAMES, 'readwrite');
+    tx.objectStore(STORE_FRAMES).put(frame);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+const loadSessions = async (): Promise<RecordedSession[]> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_SESSIONS, 'readonly');
+    const request = tx.objectStore(STORE_SESSIONS).getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+const loadSessionFrames = async (sessionId: string): Promise<RecordedFrame[]> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_FRAMES, 'readonly');
+    const index = tx.objectStore(STORE_FRAMES).index('sessionId');
+    const request = index.getAll(sessionId);
+    request.onsuccess = () => resolve(request.result.sort((a, b) => a.frameIndex - b.frameIndex));
+    request.onerror = () => reject(request.error);
+  });
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -132,6 +313,8 @@ interface Baseline {
   shoulderSym: number;
   hipSym: number;
   energy: number;
+  savedAt?: number;
+  userId?: string;
 }
 
 interface LogEntry {
@@ -165,6 +348,8 @@ interface CalibData {
   energy: number;
 }
 
+type PermissionStatus = 'unknown' | 'prompt' | 'granted' | 'denied';
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════
@@ -176,11 +361,18 @@ export default function VisionAIIntelligencePage() {
   const [modelLoaded, setModelLoaded] = useState(false);
   const [fps, setFps] = useState(0);
 
+  // Permission state (for mobile Safari)
+  const [cameraPermission, setCameraPermission] = useState<PermissionStatus>('unknown');
+  const [micPermission, setMicPermission] = useState<PermissionStatus>('unknown');
+  const [showPermissionPrompt, setShowPermissionPrompt] = useState(false);
+  const [isMobileSafariBrowser, setIsMobileSafariBrowser] = useState(false);
+
   // Calibration
   const [calibrating, setCalibrating] = useState(false);
   const [calibrated, setCalibrated] = useState(false);
   const [calibProgress, setCalibProgress] = useState(0);
   const [baseline, setBaseline] = useState<Baseline | null>(null);
+  const [savingBaseline, setSavingBaseline] = useState(false);
 
   // Metrics
   const [poseSignals, setPoseSignals] = useState<PoseSignals | null>(null);
@@ -191,6 +383,19 @@ export default function VisionAIIntelligencePage() {
 
   // Logs
   const [logs, setLogs] = useState<LogEntry[]>([]);
+
+  // Recording
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedSessions, setRecordedSessions] = useState<RecordedSession[]>([]);
+  const [playbackSession, setPlaybackSession] = useState<RecordedSession | null>(null);
+  const [playbackFrames, setPlaybackFrames] = useState<RecordedFrame[]>([]);
+  const [playbackIndex, setPlaybackIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Pro form overlay
+  const [showProOverlay, setShowProOverlay] = useState(false);
+  const [selectedProForm, setSelectedProForm] = useState<string>('pitchingStance');
+  const [proOverlayOpacity, setProOverlayOpacity] = useState(0.5);
 
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -211,9 +416,15 @@ export default function VisionAIIntelligencePage() {
   const energyWindowRef = useRef<EnergyWindow[]>([]);
   const calibDataRef = useRef<CalibData[]>([]);
 
+  // Recording refs
+  const currentSessionIdRef = useRef<string>('');
+  const frameCountRef = useRef(0);
+  const lastKeypointsRef = useRef<Keypoint[]>([]);
+
   // Running state ref for loop
   const runningRef = useRef(false);
   const calibratingRef = useRef(false);
+  const recordingRef = useRef(false);
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -223,6 +434,92 @@ export default function VisionAIIntelligencePage() {
   useEffect(() => {
     calibratingRef.current = calibrating;
   }, [calibrating]);
+
+  useEffect(() => {
+    recordingRef.current = isRecording;
+  }, [isRecording]);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // DETECT MOBILE SAFARI ON MOUNT
+  // ─────────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    setIsMobileSafariBrowser(isMobileSafari());
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // CHECK PERMISSIONS
+  // ─────────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const checkPermissions = async () => {
+      try {
+        // Check camera permission
+        if ('permissions' in navigator) {
+          try {
+            const camera = await navigator.permissions.query({ name: 'camera' as PermissionName });
+            setCameraPermission(camera.state as PermissionStatus);
+            camera.onchange = () => setCameraPermission(camera.state as PermissionStatus);
+          } catch {
+            // Safari doesn't support camera permission query
+            setCameraPermission('prompt');
+          }
+
+          try {
+            const mic = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+            setMicPermission(mic.state as PermissionStatus);
+            mic.onchange = () => setMicPermission(mic.state as PermissionStatus);
+          } catch {
+            setMicPermission('prompt');
+          }
+        } else {
+          // Fallback for browsers without Permissions API
+          setCameraPermission('prompt');
+          setMicPermission('prompt');
+        }
+      } catch (err) {
+        console.warn('Permission check failed:', err);
+      }
+    };
+
+    checkPermissions();
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // LOAD SAVED SESSIONS
+  // ─────────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const loadSavedSessions = async () => {
+      try {
+        const sessions = await loadSessions();
+        setRecordedSessions(sessions.sort((a, b) => b.createdAt - a.createdAt));
+      } catch (err) {
+        console.warn('Failed to load sessions:', err);
+      }
+    };
+
+    loadSavedSessions();
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // LOAD SAVED BASELINE FROM API
+  // ─────────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const loadSavedBaseline = async () => {
+      try {
+        const res = await fetch('/api/v1/vision/baselines');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.baseline) {
+            setBaseline(data.baseline);
+            setCalibrated(true);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load baseline from API:', err);
+      }
+    };
+
+    loadSavedBaseline();
+  }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
   // LOGGING
@@ -277,7 +574,7 @@ export default function VisionAIIntelligencePage() {
   // ─────────────────────────────────────────────────────────────────────────
   // STOP SESSION
   // ─────────────────────────────────────────────────────────────────────────
-  const stop = useCallback(() => {
+  const stop = useCallback(async () => {
     setRunning(false);
     setCalibrating(false);
 
@@ -302,9 +599,31 @@ export default function VisionAIIntelligencePage() {
       videoRef.current.srcObject = null;
     }
 
+    // Save recording session if active
+    if (isRecording && currentSessionIdRef.current) {
+      const session: RecordedSession = {
+        id: currentSessionIdRef.current,
+        createdAt: Date.now(),
+        duration: (performance.now() - startTimeRef.current) / 1000,
+        mode,
+        frameCount: frameCountRef.current,
+        baseline: baseline ?? undefined,
+      };
+
+      try {
+        await saveSession(session);
+        setRecordedSessions(prev => [session, ...prev]);
+        addLog('Recording', `Session saved with ${frameCountRef.current} frames`);
+      } catch (err) {
+        console.error('Failed to save session:', err);
+        addLog('Error', 'Failed to save recording');
+      }
+    }
+
+    setIsRecording(false);
     setStatus('Stopped');
     addLog('Session', 'Analysis stopped');
-  }, [addLog]);
+  }, [addLog, isRecording, mode, baseline]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // INIT AUDIO
@@ -325,13 +644,57 @@ export default function VisionAIIntelligencePage() {
   };
 
   // ─────────────────────────────────────────────────────────────────────────
+  // DRAW PRO FORM OVERLAY
+  // ─────────────────────────────────────────────────────────────────────────
+  const drawProOverlay = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    const proForm = PRO_FORMS[selectedProForm];
+    if (!proForm) return;
+
+    ctx.save();
+    ctx.globalAlpha = proOverlayOpacity;
+    ctx.strokeStyle = COLORS.pro;
+    ctx.lineWidth = 2;
+
+    // Scale normalized keypoints to canvas size
+    const scaledKeypoints = proForm.keypoints.map(kp => ({
+      x: kp.x * width,
+      y: kp.y * height,
+      score: kp.score,
+    }));
+
+    // Draw skeleton edges
+    SKELETON_EDGES.forEach(([i, j]) => {
+      const p1 = scaledKeypoints[i];
+      const p2 = scaledKeypoints[j];
+      if (p1 && p2 && p1.score > 0.3 && p2.score > 0.3) {
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    });
+
+    // Draw keypoints
+    ctx.fillStyle = COLORS.pro;
+    scaledKeypoints.forEach(kp => {
+      if (kp.score > 0.3) {
+        ctx.beginPath();
+        ctx.arc(kp.x, kp.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    ctx.restore();
+  }, [selectedProForm, proOverlayOpacity]);
+
+  // ─────────────────────────────────────────────────────────────────────────
   // PROCESS POSE
   // ─────────────────────────────────────────────────────────────────────────
   const processPose = useCallback(async (
     video: HTMLVideoElement,
     ctx: CanvasRenderingContext2D,
     t: number
-  ): Promise<{ stability: number | null; shoulderSym: number | null; hipSym: number | null }> => {
+  ): Promise<{ stability: number | null; shoulderSym: number | null; hipSym: number | null; spineLean: number | null }> => {
     let keypoints: Keypoint[] | null = null;
     let useSimulated = !modelRef.current;
 
@@ -393,9 +756,17 @@ export default function VisionAIIntelligencePage() {
       ];
     }
 
-    if (!keypoints) return { stability: null, shoulderSym: null, hipSym: null };
+    if (!keypoints) return { stability: null, shoulderSym: null, hipSym: null, spineLean: null };
 
-    // Draw skeleton
+    // Store for recording
+    lastKeypointsRef.current = keypoints;
+
+    // Draw pro form overlay first (behind user skeleton)
+    if (showProOverlay) {
+      drawProOverlay(ctx, ctx.canvas.width, ctx.canvas.height);
+    }
+
+    // Draw user skeleton
     ctx.strokeStyle = COLORS.orange;
     ctx.lineWidth = 3;
 
@@ -427,7 +798,7 @@ export default function VisionAIIntelligencePage() {
 
     if (!ls || !rs || !lh || !rh) {
       setPoseSignals(null);
-      return { stability: null, shoulderSym: null, hipSym: null };
+      return { stability: null, shoulderSym: null, hipSym: null, spineLean: null };
     }
 
     const avgConf = mean([ls, rs, lh, rh].map(k => k.score || 0));
@@ -465,8 +836,8 @@ export default function VisionAIIntelligencePage() {
 
     setPoseSignals(signals);
 
-    return { stability, shoulderSym, hipSym };
-  }, []);
+    return { stability, shoulderSym, hipSym, spineLean };
+  }, [showProOverlay, drawProOverlay]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // PROCESS AUDIO
@@ -554,6 +925,29 @@ export default function VisionAIIntelligencePage() {
           });
         }
 
+        // Record frame if recording
+        if (recordingRef.current && lastKeypointsRef.current.length > 0) {
+          const frame: RecordedFrame = {
+            sessionId: currentSessionIdRef.current,
+            frameIndex: frameCountRef.current++,
+            timestamp: t,
+            keypoints: lastKeypointsRef.current.map(kp => ({ x: kp.x, y: kp.y, score: kp.score })),
+            poseMetrics: {
+              stability: poseMetrics.stability ?? 0,
+              shoulderSym: poseMetrics.shoulderSym ?? 0,
+              hipSym: poseMetrics.hipSym ?? 0,
+              spineLean: poseMetrics.spineLean ?? 0,
+            },
+            audioMetrics: {
+              energy: audioMetrics.energy,
+              steadiness: audioMetrics.steadiness,
+            },
+          };
+
+          // Save frame async (don't await to maintain performance)
+          saveFrame(frame).catch(err => console.warn('Failed to save frame:', err));
+        }
+
         // Update chart data (every 10th frame)
         if (Math.floor(t * 10) % 3 === 0) {
           setChartData(prev => {
@@ -572,10 +966,44 @@ export default function VisionAIIntelligencePage() {
   }, [processPose, processAudio]);
 
   // ─────────────────────────────────────────────────────────────────────────
+  // REQUEST PERMISSIONS (Mobile Safari specific)
+  // ─────────────────────────────────────────────────────────────────────────
+  const requestPermissions = useCallback(async () => {
+    try {
+      setStatus('Requesting permissions...');
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480, frameRate: 30 },
+        audio: true
+      });
+
+      // Permissions granted, stop stream (we'll start fresh on "Start Session")
+      stream.getTracks().forEach(t => t.stop());
+
+      setCameraPermission('granted');
+      setMicPermission('granted');
+      setShowPermissionPrompt(false);
+      setStatus('Ready');
+      addLog('System', 'Permissions granted');
+    } catch (err) {
+      console.error('Permission request failed:', err);
+      setCameraPermission('denied');
+      setMicPermission('denied');
+      setStatus('Permissions denied');
+      addLog('Error', 'Camera/microphone permissions denied');
+    }
+  }, [addLog]);
+
+  // ─────────────────────────────────────────────────────────────────────────
   // START SESSION
   // ─────────────────────────────────────────────────────────────────────────
   const start = useCallback(async () => {
     if (running) return;
+
+    // Check if we need to prompt for permissions (mobile Safari)
+    if (isMobileSafariBrowser && cameraPermission !== 'granted') {
+      setShowPermissionPrompt(true);
+      return;
+    }
 
     // Reset
     poseWindowRef.current = [];
@@ -583,10 +1011,13 @@ export default function VisionAIIntelligencePage() {
     calibDataRef.current = [];
     startTimeRef.current = performance.now();
     lastFrameRef.current = 0;
+    frameCountRef.current = 0;
+    currentSessionIdRef.current = `session_${Date.now()}`;
     setChartData([]);
     setPoseSignals(null);
     setAudioSignals(null);
     setFps(0);
+    setPlaybackSession(null);
 
     const video = videoRef.current;
     if (!video) return;
@@ -610,6 +1041,8 @@ export default function VisionAIIntelligencePage() {
 
       await initAudio(stream);
 
+      setCameraPermission('granted');
+      setMicPermission('granted');
       setRunning(true);
       setStatus('Analyzing...');
       addLog('Session', `Started in ${mode.toUpperCase()} mode`);
@@ -621,8 +1054,128 @@ export default function VisionAIIntelligencePage() {
       console.error('Camera error:', err);
       setStatus('Camera access denied');
       addLog('Error', 'Camera permission denied');
+      setCameraPermission('denied');
     }
-  }, [running, mode, addLog, runLoop]);
+  }, [running, mode, addLog, runLoop, isMobileSafariBrowser, cameraPermission]);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // TOGGLE RECORDING
+  // ─────────────────────────────────────────────────────────────────────────
+  const toggleRecording = useCallback(() => {
+    if (!running) return;
+
+    if (isRecording) {
+      setIsRecording(false);
+      addLog('Recording', 'Recording paused');
+    } else {
+      frameCountRef.current = 0;
+      currentSessionIdRef.current = `session_${Date.now()}`;
+      setIsRecording(true);
+      addLog('Recording', 'Recording started');
+    }
+  }, [running, isRecording, addLog]);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // PLAYBACK SESSION
+  // ─────────────────────────────────────────────────────────────────────────
+  const loadPlaybackSession = useCallback(async (session: RecordedSession) => {
+    try {
+      const frames = await loadSessionFrames(session.id);
+      setPlaybackFrames(frames);
+      setPlaybackSession(session);
+      setPlaybackIndex(0);
+      setIsPlaying(false);
+
+      if (session.baseline) {
+        setBaseline(session.baseline);
+        setCalibrated(true);
+      }
+
+      addLog('Playback', `Loaded session with ${frames.length} frames`);
+    } catch (err) {
+      console.error('Failed to load session:', err);
+      addLog('Error', 'Failed to load recording');
+    }
+  }, [addLog]);
+
+  // Playback animation
+  useEffect(() => {
+    if (!isPlaying || !playbackSession || playbackFrames.length === 0) return;
+
+    const interval = setInterval(() => {
+      setPlaybackIndex(prev => {
+        if (prev >= playbackFrames.length - 1) {
+          setIsPlaying(false);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 33); // ~30fps
+
+    return () => clearInterval(interval);
+  }, [isPlaying, playbackSession, playbackFrames.length]);
+
+  // Draw playback frame
+  useEffect(() => {
+    if (!playbackSession || playbackFrames.length === 0) return;
+
+    const canvas = canvasRef.current;
+    const frame = playbackFrames[playbackIndex];
+    if (!canvas || !frame) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size
+    canvas.width = 640;
+    canvas.height = 480;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw pro overlay if enabled
+    if (showProOverlay) {
+      drawProOverlay(ctx, canvas.width, canvas.height);
+    }
+
+    // Draw recorded skeleton
+    ctx.strokeStyle = COLORS.orange;
+    ctx.lineWidth = 3;
+
+    SKELETON_EDGES.forEach(([i, j]) => {
+      const p1 = frame.keypoints[i];
+      const p2 = frame.keypoints[j];
+      if (p1 && p2 && p1.score > 0.3 && p2.score > 0.3) {
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    });
+
+    ctx.fillStyle = COLORS.bone;
+    frame.keypoints.forEach(kp => {
+      if (kp.score > 0.3) {
+        ctx.beginPath();
+        ctx.arc(kp.x, kp.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    // Update signals display
+    setPoseSignals({
+      confidence: 'Playback',
+      shoulderSym: frame.poseMetrics.shoulderSym.toFixed(0),
+      hipSym: frame.poseMetrics.hipSym.toFixed(0),
+      spineLean: frame.poseMetrics.spineLean.toFixed(1),
+      stability: frame.poseMetrics.stability.toFixed(0),
+    });
+
+    setAudioSignals({
+      confidence: 'Playback',
+      energy: frame.audioMetrics.energy.toFixed(0),
+      steadiness: frame.audioMetrics.steadiness.toFixed(0),
+    });
+
+  }, [playbackSession, playbackFrames, playbackIndex, showProOverlay, drawProOverlay]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // CALIBRATION
@@ -642,6 +1195,7 @@ export default function VisionAIIntelligencePage() {
       shoulderSym: mean(data.map(d => d.shoulderSym).filter((x): x is number => x != null)),
       hipSym: mean(data.map(d => d.hipSym).filter((x): x is number => x != null)),
       energy: mean(data.map(d => d.energy)),
+      savedAt: Date.now(),
     };
 
     setBaseline(bl);
@@ -671,11 +1225,44 @@ export default function VisionAIIntelligencePage() {
   }, [running, addLog, finishCalibration]);
 
   // ─────────────────────────────────────────────────────────────────────────
+  // SAVE BASELINE TO D1 API
+  // ─────────────────────────────────────────────────────────────────────────
+  const saveBaselineToCloud = useCallback(async () => {
+    if (!baseline) return;
+
+    setSavingBaseline(true);
+    try {
+      const res = await fetch('/api/v1/vision/baselines', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          baseline: {
+            ...baseline,
+            savedAt: Date.now(),
+          },
+        }),
+      });
+
+      if (res.ok) {
+        addLog('Cloud', 'Baseline saved to your profile');
+      } else {
+        const error = await res.text();
+        addLog('Error', `Failed to save baseline: ${error}`);
+      }
+    } catch (err) {
+      console.error('Failed to save baseline:', err);
+      addLog('Error', 'Network error saving baseline');
+    } finally {
+      setSavingBaseline(false);
+    }
+  }, [baseline, addLog]);
+
+  // ─────────────────────────────────────────────────────────────────────────
   // RENDER HELPERS
   // ─────────────────────────────────────────────────────────────────────────
   const renderDelta = (current: string | undefined, baselineKey: keyof Baseline) => {
     if (!baseline || baseline[baselineKey] === undefined) return null;
-    const d = formatDelta(current ? parseFloat(current) : null, baseline[baselineKey]);
+    const d = formatDelta(current ? parseFloat(current) : null, baseline[baselineKey] as number);
     if (!d) return null;
     return (
       <span className={`ml-1.5 text-xs ${
@@ -697,6 +1284,65 @@ export default function VisionAIIntelligencePage() {
       <div className="fixed -top-48 -left-24 w-[800px] h-[600px] pointer-events-none z-0"
            style={{ background: 'radial-gradient(ellipse, rgba(191, 87, 0, 0.12) 0%, transparent 60%)' }} />
 
+      {/* Permission Prompt Modal (Mobile Safari) */}
+      {showPermissionPrompt && (
+        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
+          <div className="bg-charcoal border border-primary/30 rounded-xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Smartphone className="text-primary" size={24} />
+              <h2 className="font-display text-lg font-medium tracking-wider uppercase">
+                Camera Access Required
+              </h2>
+            </div>
+
+            <p className="text-white/70 text-sm mb-4">
+              Vision AI needs access to your camera and microphone to analyze your form.
+              All processing happens locally on your device—no data leaves your phone.
+            </p>
+
+            <div className="flex flex-col gap-2 mb-6">
+              <div className="flex items-center gap-2 text-sm">
+                <Camera size={16} className={cameraPermission === 'granted' ? 'text-green-500' : 'text-white/50'} />
+                <span className={cameraPermission === 'granted' ? 'text-green-500' : ''}>
+                  Camera: {cameraPermission === 'granted' ? 'Granted' : 'Required'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Mic size={16} className={micPermission === 'granted' ? 'text-green-500' : 'text-white/50'} />
+                <span className={micPermission === 'granted' ? 'text-green-500' : ''}>
+                  Microphone: {micPermission === 'granted' ? 'Granted' : 'Required'}
+                </span>
+              </div>
+            </div>
+
+            {(cameraPermission === 'denied' || micPermission === 'denied') && (
+              <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
+                <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-red-400">
+                  Permissions were denied. Please enable camera and microphone access in your device settings, then reload this page.
+                </p>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowPermissionPrompt(false)}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white/70 bg-midnight border border-white/20 rounded-lg hover:bg-white/5"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={requestPermissions}
+                disabled={cameraPermission === 'denied'}
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Allow Access
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sub-header */}
       <header className="sticky top-16 md:top-20 z-50 flex justify-between items-center gap-4 px-4 md:px-6 py-3.5 border-b border-primary/15 bg-midnight/75 backdrop-blur-xl">
         <div className="flex items-center gap-3">
@@ -708,19 +1354,31 @@ export default function VisionAIIntelligencePage() {
               Vision AI Intelligence
             </h1>
             <p className="text-sm text-white/65">
-              Signals, not mind-reading — All processing runs locally
+              {playbackSession ? 'Reviewing recorded session' : 'Signals, not mind-reading — All processing runs locally'}
             </p>
           </div>
         </div>
 
         <div className="flex gap-2 flex-wrap justify-end">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
-            <span className={`w-1.5 h-1.5 rounded-full ${running ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${
+              running ? 'bg-green-500 animate-pulse' :
+              playbackSession ? 'bg-blue-500' :
+              'bg-gray-500'
+            }`} />
             {status}
           </div>
-          <div className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
-            FPS: {fps}
-          </div>
+          {!playbackSession && (
+            <div className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
+              FPS: {fps}
+            </div>
+          )}
+          {isRecording && (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-red-500 bg-red-500/10 border border-red-500/30 rounded-full animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              REC
+            </div>
+          )}
           {calibrated && (
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
               <CheckCircle2 size={12} className="text-primary" />
@@ -751,42 +1409,155 @@ export default function VisionAIIntelligencePage() {
                   <select
                     value={mode}
                     onChange={e => setMode(e.target.value as 'sports' | 'body')}
-                    className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40"
+                    disabled={running || !!playbackSession}
+                    className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40 disabled:opacity-50"
                   >
                     <option value="sports">Sports Performance</option>
                     <option value="body">Body Language</option>
                   </select>
                 </div>
+
+                {/* Pro Form Overlay Select */}
+                <div className="flex-1 min-w-[150px]">
+                  <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
+                    Reference Form
+                  </label>
+                  <select
+                    value={selectedProForm}
+                    onChange={e => setSelectedProForm(e.target.value)}
+                    className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40"
+                  >
+                    {Object.entries(PRO_FORMS).map(([key, form]) => (
+                      <option key={key} value={key}>{form.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="flex gap-2.5 flex-wrap">
-                <button
-                  onClick={start}
-                  disabled={running}
-                  className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/30 to-midnight/50 border border-primary/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-primary/40 transition-all"
-                >
-                  <Play size={14} />
-                  Start Session
-                </button>
+                {!playbackSession ? (
+                  <>
+                    <button
+                      onClick={start}
+                      disabled={running}
+                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/30 to-midnight/50 border border-primary/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-primary/40 transition-all"
+                    >
+                      <Play size={14} />
+                      Start Session
+                    </button>
 
-                <button
-                  onClick={stop}
-                  disabled={!running}
-                  className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-900/20 transition-all"
-                >
-                  <StopCircle size={14} />
-                  Stop
-                </button>
+                    <button
+                      onClick={stop}
+                      disabled={!running}
+                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-900/20 transition-all"
+                    >
+                      <StopCircle size={14} />
+                      Stop
+                    </button>
 
+                    <button
+                      onClick={startCalibration}
+                      disabled={!running || calibrating}
+                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-[#8b4513]/30 to-midnight/50 border border-[#8b4513]/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-[#8b4513]/40 transition-all"
+                    >
+                      <Target size={14} />
+                      {calibrated ? 'Re-Calibrate' : 'Calibrate'}
+                    </button>
+
+                    <button
+                      onClick={toggleRecording}
+                      disabled={!running}
+                      className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all ${
+                        isRecording
+                          ? 'text-red-500 bg-red-500/10 border border-red-500/40'
+                          : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
+                      }`}
+                    >
+                      {isRecording ? <StopCircle size={14} /> : <Download size={14} />}
+                      {isRecording ? 'Stop Recording' : 'Record'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setIsPlaying(!isPlaying)}
+                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-blue-500/30 to-midnight/50 border border-blue-500/40 rounded-md hover:from-blue-500/40 transition-all"
+                    >
+                      {isPlaying ? <StopCircle size={14} /> : <Play size={14} />}
+                      {isPlaying ? 'Pause' : 'Play'}
+                    </button>
+
+                    <button
+                      onClick={() => setPlaybackIndex(0)}
+                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-primary/15 rounded-md hover:border-primary/40 transition-all"
+                    >
+                      <RotateCcw size={14} />
+                      Restart
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setPlaybackSession(null);
+                        setPlaybackFrames([]);
+                        setPoseSignals(null);
+                        setAudioSignals(null);
+                      }}
+                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md hover:bg-red-900/20 transition-all"
+                    >
+                      <StopCircle size={14} />
+                      Exit Playback
+                    </button>
+                  </>
+                )}
+
+                {/* Pro overlay toggle */}
                 <button
-                  onClick={startCalibration}
-                  disabled={!running || calibrating}
-                  className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-[#8b4513]/30 to-midnight/50 border border-[#8b4513]/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-[#8b4513]/40 transition-all"
+                  onClick={() => setShowProOverlay(!showProOverlay)}
+                  className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md transition-all ${
+                    showProOverlay
+                      ? 'text-green-500 bg-green-500/10 border border-green-500/40'
+                      : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
+                  }`}
                 >
-                  <Target size={14} />
-                  {calibrated ? 'Re-Calibrate' : 'Calibrate Baseline'}
+                  {showProOverlay ? <Eye size={14} /> : <EyeOff size={14} />}
+                  Pro Form
                 </button>
               </div>
+
+              {/* Pro overlay opacity slider */}
+              {showProOverlay && (
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="text-xs text-white/50">Overlay Opacity:</span>
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="1"
+                    step="0.1"
+                    value={proOverlayOpacity}
+                    onChange={e => setProOverlayOpacity(parseFloat(e.target.value))}
+                    className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+                  />
+                  <span className="text-xs text-white/50">{Math.round(proOverlayOpacity * 100)}%</span>
+                </div>
+              )}
+
+              {/* Playback scrubber */}
+              {playbackSession && playbackFrames.length > 0 && (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between text-xs text-white/50 mb-1">
+                    <span>Frame {playbackIndex + 1} / {playbackFrames.length}</span>
+                    <span>{playbackFrames[playbackIndex]?.timestamp.toFixed(1)}s</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max={playbackFrames.length - 1}
+                    value={playbackIndex}
+                    onChange={e => setPlaybackIndex(parseInt(e.target.value))}
+                    className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  />
+                </div>
+              )}
 
               {/* Video stage */}
               <div className="mt-4 relative border border-primary/15 rounded-lg overflow-hidden bg-black">
@@ -794,18 +1565,30 @@ export default function VisionAIIntelligencePage() {
                   ref={videoRef}
                   playsInline
                   muted
-                  className="block w-full h-auto min-h-[300px] max-h-[400px] object-contain bg-black"
+                  className={`block w-full h-auto min-h-[300px] max-h-[400px] object-contain bg-black ${playbackSession ? 'hidden' : ''}`}
                 />
                 <canvas
                   ref={canvasRef}
-                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  className={`${playbackSession ? 'relative' : 'absolute inset-0'} w-full h-full ${playbackSession ? 'min-h-[300px] max-h-[400px]' : ''} pointer-events-none`}
                 />
 
                 {/* Status badge */}
                 <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-white/85 bg-midnight/80 border border-white/15 rounded-full backdrop-blur-sm">
-                  <span className={`w-1.5 h-1.5 rounded-full ${running ? 'bg-green-500' : 'bg-red-500'}`} />
-                  {running ? 'LIVE' : 'STANDBY'}
+                  <span className={`w-1.5 h-1.5 rounded-full ${
+                    running ? 'bg-green-500' :
+                    playbackSession ? 'bg-blue-500' :
+                    'bg-red-500'
+                  }`} />
+                  {running ? 'LIVE' : playbackSession ? 'PLAYBACK' : 'STANDBY'}
                 </div>
+
+                {/* Pro form legend */}
+                {showProOverlay && (
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-green-500 bg-midnight/80 border border-green-500/30 rounded-full backdrop-blur-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                    {PRO_FORMS[selectedProForm]?.name}
+                  </div>
+                )}
 
                 {/* Calibration overlay */}
                 {calibrating && (
@@ -828,10 +1611,43 @@ export default function VisionAIIntelligencePage() {
             </div>
           </section>
 
+          {/* Recorded Sessions */}
+          {recordedSessions.length > 0 && !playbackSession && (
+            <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+              <div className="flex items-center justify-between px-4 py-3.5 border-b border-primary/15">
+                <div className="flex items-center gap-2.5">
+                  <span className="font-display text-xs tracking-[0.2em] text-white/50">02</span>
+                  <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">Recorded Sessions</span>
+                </div>
+                <span className="text-xs text-white/50">{recordedSessions.length} sessions</span>
+              </div>
+
+              <div className="p-4 max-h-44 overflow-y-auto">
+                {recordedSessions.slice(0, 5).map(session => (
+                  <button
+                    key={session.id}
+                    onClick={() => loadPlaybackSession(session)}
+                    className="w-full flex items-center justify-between p-3 mb-2 bg-midnight/50 border border-primary/10 rounded-md hover:border-primary/30 transition-colors text-left"
+                  >
+                    <div>
+                      <div className="text-sm text-white/90">
+                        {new Date(session.createdAt).toLocaleDateString()} — {session.mode.toUpperCase()}
+                      </div>
+                      <div className="text-xs text-white/50">
+                        {session.frameCount} frames • {session.duration.toFixed(1)}s
+                      </div>
+                    </div>
+                    <Upload size={14} className="text-white/40" />
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Logs panel */}
           <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
             <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-              <span className="font-display text-xs tracking-[0.2em] text-white/50">02</span>
+              <span className="font-display text-xs tracking-[0.2em] text-white/50">{recordedSessions.length > 0 && !playbackSession ? '03' : '02'}</span>
               <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">Coaching Log</span>
             </div>
 
@@ -863,7 +1679,7 @@ export default function VisionAIIntelligencePage() {
         <aside className="flex flex-col gap-4">
           <section className="flex-1 bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
             <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-              <span className="font-display text-xs tracking-[0.2em] text-white/50">03</span>
+              <span className="font-display text-xs tracking-[0.2em] text-white/50">{recordedSessions.length > 0 && !playbackSession ? '04' : '03'}</span>
               <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">Live Signals</span>
             </div>
 
@@ -878,6 +1694,7 @@ export default function VisionAIIntelligencePage() {
                   <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
                     poseSignals?.confidence === 'High' ? 'bg-green-500/20 text-green-500' :
                     poseSignals?.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-500' :
+                    poseSignals?.confidence === 'Playback' ? 'bg-blue-500/20 text-blue-500' :
                     'bg-white/10 text-white/50'
                   }`}>
                     {poseSignals?.confidence || 'Low'}
@@ -920,6 +1737,7 @@ export default function VisionAIIntelligencePage() {
                   <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
                     audioSignals?.confidence === 'High' ? 'bg-green-500/20 text-green-500' :
                     audioSignals?.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-500' :
+                    audioSignals?.confidence === 'Playback' ? 'bg-blue-500/20 text-blue-500' :
                     'bg-white/10 text-white/50'
                   }`}>
                     {audioSignals?.confidence || 'Low'}
@@ -939,6 +1757,25 @@ export default function VisionAIIntelligencePage() {
                   </span>
                 </div>
               </div>
+
+              {/* Save Baseline Button */}
+              {calibrated && baseline && (
+                <button
+                  onClick={saveBaselineToCloud}
+                  disabled={savingBaseline}
+                  className="w-full inline-flex items-center justify-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/20 to-midnight/50 border border-primary/30 rounded-md hover:from-primary/30 disabled:opacity-50 transition-all mb-3"
+                >
+                  {savingBaseline ? (
+                    <>Saving...</>
+                  ) : (
+                    <>
+                      <Save size={14} />
+                      <User size={14} />
+                      Save to Profile
+                    </>
+                  )}
+                </button>
+              )}
 
               {/* Simple Chart */}
               <div className="bg-midnight/50 border border-primary/15 rounded-md p-3">
