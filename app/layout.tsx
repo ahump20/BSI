@@ -6,6 +6,7 @@ import { KonamiCodeWrapper } from '@/components/easter-eggs';
 import { NoiseOverlay, CustomCursor } from '../components/cinematic';
 import { PageTransition, MotionProvider } from '@/components/motion';
 import { Navbar } from '@/components/layout-ds/Navbar';
+import { BottomNav, DEFAULT_NAV_ITEMS } from '@/components/sports';
 import { mainNavItems } from '@/lib/navigation';
 
 // Optimized font loading - eliminates render-blocking
@@ -104,7 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`dark ${inter.variable} ${oswald.variable} ${playfair.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="bg-midnight text-white antialiased min-h-screen font-sans">
+      <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />
         <CustomCursor />
         <Providers>
@@ -117,6 +118,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <PageTransition>
               {children}
             </PageTransition>
+            {/* Mobile Bottom Navigation - hidden on desktop */}
+            <BottomNav items={DEFAULT_NAV_ITEMS} className="md:hidden" />
           </MotionProvider>
         </Providers>
       </body>

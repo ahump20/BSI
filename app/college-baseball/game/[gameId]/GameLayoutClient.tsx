@@ -11,6 +11,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { CitationFooter } from '@/components/sports';
 
 // ============================================================================
 // TYPES
@@ -479,17 +480,16 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                 <ScrollReveal key={pathname}>{children}</ScrollReveal>
 
                 {/* Data Source Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle flex items-center justify-between flex-wrap gap-4">
-                  <span className="text-xs text-text-tertiary">
-                    Source: {meta?.dataSource || 'NCAA / D1Baseball'} | Updated:{' '}
-                    {formatTimestamp(meta?.lastUpdated)}
-                  </span>
-                  {game.status.isLive && (
-                    <span className="text-xs text-text-tertiary">
-                      Auto-refreshing every 30 seconds
-                    </span>
-                  )}
-                </div>
+                <CitationFooter
+                  source={meta?.dataSource || 'NCAA / D1Baseball'}
+                  fetchedAt={meta?.lastUpdated || new Date().toISOString()}
+                  className="mt-8"
+                />
+                {game.status.isLive && (
+                  <p className="text-xs text-text-tertiary text-center mt-2">
+                    Auto-refreshing every 30 seconds
+                  </p>
+                )}
               </Container>
             </Section>
           </>
