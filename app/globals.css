@@ -517,6 +517,52 @@ body {
   .shadow-glow-lg {
     box-shadow: var(--shadow-glow-lg);
   }
+
+  /* ========================================================================== */
+  /* BSI VISION COACH UTILITIES                                                  */
+  /* ========================================================================== */
+
+  /* BSI Color Utilities for Vision Coach */
+  .bg-bsi-midnight {
+    background-color: #0d0d0d;
+  }
+
+  .bg-bsi-charcoal {
+    background-color: #1a1a1a;
+  }
+
+  .bg-bsi-orange {
+    background-color: #bf5700;
+  }
+
+  .bg-bsi-soil {
+    background-color: #8b4513;
+  }
+
+  .text-bsi-bone {
+    color: #f5f2eb;
+  }
+
+  .text-bsi-orange {
+    color: #bf5700;
+  }
+
+  .text-bsi-dust {
+    color: #c4b8a5;
+  }
+
+  .border-bsi-orange {
+    border-color: #bf5700;
+  }
+
+  /* Font family utilities for Vision Coach */
+  .font-oswald {
+    font-family: var(--font-oswald), 'Oswald', var(--bsi-font-display);
+  }
+
+  .font-cormorant {
+    font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  }
 }
 
 @keyframes pulse {
