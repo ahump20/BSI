@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>AI Robot</title>
+  <!-- Antenna -->
+  <circle cx="32" cy="8" r="4" fill="#BF5700"/>
+  <line x1="32" y1="12" x2="32" y2="20" stroke="#BF5700" stroke-width="2"/>
+  <!-- Head -->
+  <rect x="14" y="18" width="36" height="28" rx="6" fill="#1A1A1A" stroke="#BF5700" stroke-width="2"/>
+  <!-- Eyes -->
+  <circle cx="24" cy="32" r="5" fill="#BF5700"/>
+  <circle cx="40" cy="32" r="5" fill="#BF5700"/>
+  <circle cx="25" cy="31" r="2" fill="#FFD93D"/>
+  <circle cx="41" cy="31" r="2" fill="#FFD93D"/>
+  <!-- Mouth -->
+  <rect x="24" y="40" width="16" height="3" rx="1.5" fill="#BF5700"/>
+  <!-- Body -->
+  <rect x="20" y="48" width="24" height="12" rx="4" fill="#1A1A1A" stroke="#BF5700" stroke-width="2"/>
+  <!-- Body detail -->
+  <rect x="28" y="52" width="8" height="4" rx="1" fill="#BF5700"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Baseball</title>
+  <!-- Ball -->
+  <circle cx="32" cy="32" r="28" fill="#FAF8F5" stroke="#BF5700" stroke-width="2"/>
+  <!-- Stitches left -->
+  <path d="M18 12C14 20 14 44 18 52" stroke="#C62828" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M14 16C12 18 12 20 14 22M14 26C12 28 12 30 14 32M14 36C12 38 12 40 14 42M14 46C12 48 12 50 14 52" stroke="#C62828" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <!-- Stitches right -->
+  <path d="M46 12C50 20 50 44 46 52" stroke="#C62828" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M50 16C52 18 52 20 50 22M50 26C52 28 52 30 50 32M50 36C52 38 52 40 50 42M50 46C52 48 52 50 50 52" stroke="#C62828" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+</svg>

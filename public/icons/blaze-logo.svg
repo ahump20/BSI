@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Blaze Sports Intel Logo</title>
+  <!-- Flame outer -->
+  <path d="M32 4C24 16 16 24 16 36C16 44.837 23.163 52 32 52C40.837 52 48 44.837 48 36C48 24 40 16 32 4Z" fill="#BF5700"/>
+  <!-- Flame inner glow -->
+  <path d="M32 16C28 24 24 28 24 36C24 40.418 27.582 44 32 44C36.418 44 40 40.418 40 36C40 28 36 24 32 16Z" fill="#FF6B35"/>
+  <!-- Flame core -->
+  <path d="M32 28C30 32 28 34 28 38C28 40.209 29.791 42 32 42C34.209 42 36 40.209 36 38C36 34 34 32 32 28Z" fill="#FFD93D"/>
+  <!-- BSI text base -->
+  <text x="32" y="60" font-family="Arial Black, sans-serif" font-size="8" font-weight="900" fill="#BF5700" text-anchor="middle">BSI</text>
+</svg>

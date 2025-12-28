@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Information</title>
+  <!-- Circle -->
+  <circle cx="32" cy="32" r="28" fill="#1A1A1A" stroke="#BF5700" stroke-width="2"/>
+  <!-- Dot -->
+  <circle cx="32" cy="18" r="4" fill="#BF5700"/>
+  <!-- Line -->
+  <path d="M32 28V48" stroke="#BF5700" stroke-width="6" stroke-linecap="round"/>
+  <!-- Glow -->
+  <circle cx="32" cy="32" r="20" fill="none" stroke="#BF5700" stroke-width="0.5" opacity="0.3"/>
+</svg>

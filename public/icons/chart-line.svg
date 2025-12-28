@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Analytics Chart</title>
+  <!-- Grid background -->
+  <rect x="8" y="8" width="48" height="48" rx="4" fill="#1A1A1A" stroke="#BF5700" stroke-width="2"/>
+  <!-- Grid lines -->
+  <path d="M8 24H56M8 40H56" stroke="#BF5700" stroke-width="0.5" opacity="0.3"/>
+  <path d="M24 8V56M40 8V56" stroke="#BF5700" stroke-width="0.5" opacity="0.3"/>
+  <!-- Chart line -->
+  <path d="M12 44L22 36L32 40L42 24L52 20" stroke="#FF6B35" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Data points -->
+  <circle cx="12" cy="44" r="3" fill="#BF5700"/>
+  <circle cx="22" cy="36" r="3" fill="#BF5700"/>
+  <circle cx="32" cy="40" r="3" fill="#BF5700"/>
+  <circle cx="42" cy="24" r="3" fill="#BF5700"/>
+  <circle cx="52" cy="20" r="3" fill="#BF5700"/>
+</svg>

@@ -377,10 +377,14 @@ function StandingBar({
                   <div
                     className="text-right font-medium"
                     style={{
-                      color: team.streak.startsWith('W') ? '#22c55e' : '#ef4444',
+                      color: typeof team.streak === 'string'
+                        ? (team.streak.startsWith('W') ? '#22c55e' : '#ef4444')
+                        : (team.streak > 0 ? '#22c55e' : '#ef4444'),
                     }}
                   >
-                    {team.streak}
+                    {typeof team.streak === 'string'
+                      ? team.streak
+                      : (team.streak > 0 ? `W${team.streak}` : `L${Math.abs(team.streak)}`)}
                   </div>
                 </>
               )}
