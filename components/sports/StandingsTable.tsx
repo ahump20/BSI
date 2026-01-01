@@ -48,8 +48,8 @@ interface NBATeamRaw {
 }
 
 interface NBAConference {
-  name?: string;  // API uses 'name' for conference name
-  conference?: string;  // Fallback
+  name?: string; // API uses 'name' for conference name
+  conference?: string; // Fallback
   teams?: NBATeamRaw[];
 }
 
@@ -375,7 +375,10 @@ export function StandingsTable({ sport, limit = 10 }: StandingsTableProps) {
                     </tr>
                   ))
                 : displayStandings.map((team) => (
-                    <tr key={team.abbreviation || team.team || String(team.rank)} className="hover:bg-white/5 transition-colors">
+                    <tr
+                      key={team.abbreviation || team.team || String(team.rank)}
+                      className="hover:bg-white/5 transition-colors"
+                    >
                       <td className="px-4 py-3 text-white/50 text-sm">{team.rank}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
