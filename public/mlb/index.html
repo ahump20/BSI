@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLB Analytics | Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="Real-time MLB standings, live scores, team statistics, and advanced analytics. Complete coverage of all 30 MLB teams with Statcast data and player metrics."
+    />
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --blaze-burnt-orange: #BF5700;
+        --blaze-ember: #CC6600;
+        --bsi-charcoal: #1A1A1A;
+        --bsi-midnight: #0D0D0D;
+        --gradient-primary: linear-gradient(135deg, #BF5700 0%, #CC6600 50%, #D97B38 100%);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bsi-midnight);
+        color: #fff;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .nav {
+        background: rgba(26, 26, 26, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .nav-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-logo {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+        color: var(--blaze-burnt-orange);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover { color: var(--blaze-burnt-orange); }
+
+      .hero {
+        background: linear-gradient(180deg, rgba(191,87,0,0.2) 0%, transparent 100%);
+        padding: 4rem 2rem;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(3rem, 8vw, 5rem);
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+      }
+
+      .hero p {
+        font-size: 1.25rem;
+        color: rgba(255,255,255,0.7);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+      }
+
+      .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+      }
+
+      .hero-stat {
+        text-align: center;
+      }
+
+      .hero-stat .value {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.5rem;
+        color: var(--blaze-burnt-orange);
+      }
+
+      .hero-stat .label {
+        font-size: 0.875rem;
+        color: rgba(255,255,255,0.6);
+      }
+
+      .content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .section-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+        color: var(--blaze-burnt-orange);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(191, 87, 0, 0.3);
+      }
+
+      .scores-section {
+        margin-bottom: 3rem;
+      }
+
+      .scores-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+
+      .game-card {
+        background: var(--bsi-charcoal);
+        border: 1px solid rgba(191, 87, 0, 0.2);
+        border-radius: 12px;
+        padding: 1.25rem;
+        transition: border-color 0.2s;
+      }
+
+      .game-card:hover { border-color: var(--blaze-burnt-orange); }
+
+      .game-card.live { border-color: #EF4444; }
+
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 0.75rem;
+      }
+
+      .game-status {
+        color: rgba(255,255,255,0.5);
+      }
+
+      .game-status.live {
+        color: #EF4444;
+        font-weight: 600;
+      }
+
+      .live-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        background: #EF4444;
+        border-radius: 999px;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+        animation: pulse 1s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+      }
+
+      .team-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+      }
+
+      .team-name {
+        font-weight: 500;
+      }
+
+      .score {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+      }
+
+      .score.winning { color: #22C55E; }
+
+      .standings-section {
+        margin-bottom: 3rem;
+      }
+
+      .standings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+      }
+
+      .division-card {
+        background: var(--bsi-charcoal);
+        border: 1px solid rgba(191, 87, 0, 0.2);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .division-header {
+        background: rgba(191, 87, 0, 0.1);
+        padding: 1rem 1.25rem;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.125rem;
+      }
+
+      .standings-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .standings-table th,
+      .standings-table td {
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+      }
+
+      .standings-table th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255,255,255,0.5);
+        font-weight: 500;
+      }
+
+      .standings-table td {
+        border-top: 1px solid rgba(255,255,255,0.05);
+      }
+
+      .standings-table tr:hover td {
+        background: rgba(191, 87, 0, 0.05);
+      }
+
+      .team-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .team-link:hover { color: var(--blaze-burnt-orange); }
+
+      .quick-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+      }
+
+      .quick-link {
+        background: var(--bsi-charcoal);
+        border: 1px solid rgba(191, 87, 0, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: white;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+
+      .quick-link:hover {
+        border-color: var(--blaze-burnt-orange);
+        transform: translateY(-2px);
+      }
+
+      .quick-link h3 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .quick-link p {
+        font-size: 0.875rem;
+        color: rgba(255,255,255,0.6);
+      }
+
+      .footer {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: rgba(255,255,255,0.5);
+        font-size: 0.875rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-content">
+        <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+        <ul class="nav-links">
+          <li><a href="/college-baseball">College Baseball</a></li>
+          <li><a href="/mlb" style="color: var(--blaze-burnt-orange);">MLB</a></li>
+          <li><a href="/nfl">NFL</a></li>
+          <li><a href="/nba">NBA</a></li>
+          <li><a href="/tools">Tools</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1>MLB Analytics</h1>
+      <p>Real-time scores, standings, and advanced statistics for all 30 Major League Baseball teams</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="value">30</div>
+          <div class="label">Teams</div>
+        </div>
+        <div class="hero-stat">
+          <div class="value">162</div>
+          <div class="label">Games/Season</div>
+        </div>
+        <div class="hero-stat">
+          <div class="value" id="liveGames">0</div>
+          <div class="label">Live Now</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content">
+      <section class="scores-section">
+        <h2 class="section-title">Today's Games</h2>
+        <div class="scores-grid" id="scoresGrid">
+          <div class="game-card">
+            <div class="game-header">
+              <span class="game-status">Loading...</span>
+            </div>
+            <p style="color: rgba(255,255,255,0.5);">Fetching live scores...</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-links">
+        <a href="/mlb/statcast" class="quick-link">
+          <h3>Statcast Leaders</h3>
+          <p>Exit velocity, launch angle, sprint speed</p>
+        </a>
+        <a href="/mlb/leaderboards" class="quick-link">
+          <h3>Leaderboards</h3>
+          <p>Batting, pitching, and fielding stats</p>
+        </a>
+        <a href="/mlb/teams" class="quick-link">
+          <h3>Team Pages</h3>
+          <p>Rosters, schedules, and analytics</p>
+        </a>
+        <a href="/mlb/players" class="quick-link">
+          <h3>Player Database</h3>
+          <p>Search and compare player stats</p>
+        </a>
+      </section>
+
+      <section class="standings-section">
+        <h2 class="section-title">Standings</h2>
+        <div class="standings-grid">
+          <div class="division-card">
+            <div class="division-header">NL Central</div>
+            <table class="standings-table">
+              <thead>
+                <tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><a href="/mlb/teams/stl" class="team-link">Cardinals</a></td><td>42</td><td>35</td><td>.545</td><td>-</td></tr>
+                <tr><td><a href="/mlb/teams/mil" class="team-link">Brewers</a></td><td>40</td><td>37</td><td>.519</td><td>2.0</td></tr>
+                <tr><td><a href="/mlb/teams/chc" class="team-link">Cubs</a></td><td>38</td><td>39</td><td>.494</td><td>4.0</td></tr>
+                <tr><td><a href="/mlb/teams/cin" class="team-link">Reds</a></td><td>35</td><td>42</td><td>.455</td><td>7.0</td></tr>
+                <tr><td><a href="/mlb/teams/pit" class="team-link">Pirates</a></td><td>32</td><td>45</td><td>.416</td><td>10.0</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="division-card">
+            <div class="division-header">AL West</div>
+            <table class="standings-table">
+              <thead>
+                <tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><a href="/mlb/teams/tex" class="team-link">Rangers</a></td><td>44</td><td>33</td><td>.571</td><td>-</td></tr>
+                <tr><td><a href="/mlb/teams/hou" class="team-link">Astros</a></td><td>43</td><td>34</td><td>.558</td><td>1.0</td></tr>
+                <tr><td><a href="/mlb/teams/sea" class="team-link">Mariners</a></td><td>40</td><td>37</td><td>.519</td><td>4.0</td></tr>
+                <tr><td><a href="/mlb/teams/laa" class="team-link">Angels</a></td><td>36</td><td>41</td><td>.468</td><td>8.0</td></tr>
+                <tr><td><a href="/mlb/teams/oak" class="team-link">Athletics</a></td><td>28</td><td>49</td><td>.364</td><td>16.0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+    </footer>
+
+    <script>
+      // Fetch live scores
+      async function fetchScores() {
+        try {
+          const response = await fetch('/api/mlb/scores');
+          const data = await response.json();
+
+          if (data.games && data.games.length > 0) {
+            const grid = document.getElementById('scoresGrid');
+            let liveCount = 0;
+
+            grid.innerHTML = data.games.map(game => {
+              const isLive = game.status?.isLive;
+              if (isLive) liveCount++;
+
+              return `
+                <div class="game-card ${isLive ? 'live' : ''}">
+                  <div class="game-header">
+                    ${isLive ? '<span class="live-badge"><span class="live-dot"></span>LIVE</span>' : ''}
+                    <span class="game-status ${isLive ? 'live' : ''}">${game.status?.detailedState || game.status?.state || 'Scheduled'}</span>
+                  </div>
+                  <div class="team-row">
+                    <span class="team-name">${game.teams?.away?.name || 'Away'}</span>
+                    <span class="score ${game.teams?.away?.score > game.teams?.home?.score ? 'winning' : ''}">${game.teams?.away?.score ?? '-'}</span>
+                  </div>
+                  <div class="team-row">
+                    <span class="team-name">${game.teams?.home?.name || 'Home'}</span>
+                    <span class="score ${game.teams?.home?.score > game.teams?.away?.score ? 'winning' : ''}">${game.teams?.home?.score ?? '-'}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            document.getElementById('liveGames').textContent = liveCount;
+          } else {
+            document.getElementById('scoresGrid').innerHTML = '<div class="game-card"><p style="color: rgba(255,255,255,0.5);">No games scheduled today</p></div>';
+          }
+        } catch (error) {
+          console.error('Error fetching scores:', error);
+        }
+      }
+
+      fetchScores();
+      setInterval(fetchScores, 60000); // Refresh every minute
+    </script>
+  </body>
+</html>

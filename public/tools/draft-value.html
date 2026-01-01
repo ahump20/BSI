@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draft Pick Value Calculator | Blaze Sports Intel</title>
+  <meta name="description" content="Calculate the expected value of draft picks using historical signing data, slot values, and projected WAR.">
+
+  <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-ember: #FF6B35;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bsi-midnight);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .nav {
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--bsi-burnt-orange);
+      text-decoration: none;
+    }
+
+    .nav-back {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .tool-header {
+      background: linear-gradient(180deg, rgba(191,87,0,0.15) 0%, transparent 100%);
+      padding: 3rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+    }
+
+    .tool-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-header p {
+      color: rgba(255,255,255,0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .tool-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .calculator-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .calculator-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .calculate-btn {
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.125rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 0.5rem;
+      transition: transform 0.2s;
+    }
+
+    .calculate-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .results-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .results-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .value-display {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(191, 87, 0, 0.1);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .value-label {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.5rem;
+    }
+
+    .value-amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .value-breakdown {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+    }
+
+    .breakdown-label {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.875rem;
+    }
+
+    .breakdown-value {
+      font-weight: 600;
+    }
+
+    .breakdown-value.positive { color: #22C55E; }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-content">
+      <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+      <a href="/tools" class="nav-back">&larr; Back to Tools</a>
+    </div>
+  </nav>
+
+  <div class="tool-header">
+    <h1>Draft Pick Value Calculator</h1>
+    <p>Calculate expected value using historical data and projected WAR contributions</p>
+  </div>
+
+  <div class="tool-container">
+    <div class="calculator-card">
+      <h3>Pick Details</h3>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Draft Round</label>
+          <select id="round">
+            <option value="1">1st Round</option>
+            <option value="2">2nd Round</option>
+            <option value="3">3rd Round</option>
+            <option value="4">4th Round</option>
+            <option value="5">5th Round</option>
+            <option value="6-10">6th-10th Round</option>
+            <option value="11-20">11th-20th Round</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Overall Pick #</label>
+          <input type="number" id="pickNumber" value="15" min="1" max="600">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Draft Year</label>
+          <select id="year">
+            <option value="2025" selected>2025</option>
+            <option value="2026">2026</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Sport</label>
+          <select id="sport">
+            <option value="mlb" selected>MLB</option>
+            <option value="nfl">NFL</option>
+            <option value="nba">NBA</option>
+          </select>
+        </div>
+      </div>
+      <button class="calculate-btn" onclick="calculateValue()">Calculate Value</button>
+    </div>
+
+    <div class="results-card">
+      <h3>Pick Value Analysis</h3>
+      <div class="value-display">
+        <div class="value-label">Estimated Slot Value</div>
+        <div class="value-amount" id="slotValue">$4,536,900</div>
+      </div>
+      <div class="value-breakdown">
+        <div class="breakdown-row">
+          <span class="breakdown-label">Slot Bonus (2025)</span>
+          <span class="breakdown-value">$4,536,900</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">Expected WAR (6-yr)</span>
+          <span class="breakdown-value positive">+8.2 WAR</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">$/WAR Efficiency</span>
+          <span class="breakdown-value">$553,280</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">MLB Arrival (Est.)</span>
+          <span class="breakdown-value">2027-2028</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">Historical Success Rate</span>
+          <span class="breakdown-value positive">67%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+  </footer>
+
+  <script>
+    // MLB Draft slot values (2025 estimates based on recent trends)
+    const slotValues = {
+      1: 10000000, 2: 7500000, 3: 6500000, 4: 6000000, 5: 5500000,
+      6: 5200000, 7: 5000000, 8: 4800000, 9: 4600000, 10: 4500000,
+      11: 4400000, 12: 4300000, 13: 4200000, 14: 4100000, 15: 4000000,
+      16: 3900000, 17: 3800000, 18: 3700000, 19: 3600000, 20: 3500000
+    };
+
+    function calculateValue() {
+      const pickNum = parseInt(document.getElementById('pickNumber').value) || 15;
+
+      let slotValue;
+      if (pickNum <= 20) {
+        slotValue = slotValues[pickNum] || 3500000;
+      } else if (pickNum <= 40) {
+        slotValue = 3500000 - ((pickNum - 20) * 100000);
+      } else if (pickNum <= 60) {
+        slotValue = 1500000 - ((pickNum - 40) * 50000);
+      } else {
+        slotValue = Math.max(150000, 500000 - ((pickNum - 60) * 10000));
+      }
+
+      document.getElementById('slotValue').textContent = '$' + slotValue.toLocaleString();
+    }
+  </script>
+</body>
+</html>

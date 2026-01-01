@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule Strength Analyzer | Blaze Sports Intel</title>
+  <meta name="description" content="Evaluate strength of schedule using opponent ratings, rest advantages, and travel factors.">
+
+  <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-ember: #FF6B35;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --easy: #22C55E;
+      --medium: #F59E0B;
+      --hard: #EF4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bsi-midnight);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .nav {
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--bsi-burnt-orange);
+      text-decoration: none;
+    }
+
+    .nav-back {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .tool-header {
+      background: linear-gradient(180deg, rgba(191,87,0,0.15) 0%, transparent 100%);
+      padding: 3rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+    }
+
+    .tool-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-header p {
+      color: rgba(255,255,255,0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .tool-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .team-selector {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .team-selector h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .selector-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    @media (max-width: 600px) {
+      .selector-row { grid-template-columns: 1fr; }
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-group select {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .analyze-btn {
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .sos-overview {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sos-overview h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sos-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .sos-stat {
+      text-align: center;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+    }
+
+    .sos-stat .value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .sos-stat .label {
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.5rem;
+    }
+
+    .schedule-breakdown {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .schedule-breakdown h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .month-row {
+      display: grid;
+      grid-template-columns: 100px 1fr 80px;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .month-name {
+      font-weight: 500;
+    }
+
+    .difficulty-bar {
+      height: 24px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .difficulty-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .difficulty-fill.easy { background: var(--easy); }
+    .difficulty-fill.medium { background: var(--medium); }
+    .difficulty-fill.hard { background: var(--hard); }
+
+    .difficulty-score {
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .difficulty-score.easy { color: var(--easy); }
+    .difficulty-score.medium { color: var(--medium); }
+    .difficulty-score.hard { color: var(--hard); }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-content">
+      <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+      <a href="/tools" class="nav-back">&larr; Back to Tools</a>
+    </div>
+  </nav>
+
+  <div class="tool-header">
+    <h1>Schedule Strength Analyzer</h1>
+    <p>Evaluate schedule difficulty by opponent ratings, rest, and travel factors</p>
+  </div>
+
+  <div class="tool-container">
+    <div class="team-selector">
+      <h3>Select Team</h3>
+      <div class="selector-row">
+        <div class="input-group">
+          <label>Sport</label>
+          <select id="sport">
+            <option value="mlb">MLB</option>
+            <option value="nfl">NFL</option>
+            <option value="nba">NBA</option>
+            <option value="ncaaf">NCAA Football</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Team</label>
+          <select id="team">
+            <option value="stl">St. Louis Cardinals</option>
+            <option value="chc">Chicago Cubs</option>
+            <option value="mil">Milwaukee Brewers</option>
+            <option value="cin">Cincinnati Reds</option>
+            <option value="pit">Pittsburgh Pirates</option>
+          </select>
+        </div>
+        <button class="analyze-btn">Analyze</button>
+      </div>
+    </div>
+
+    <div class="sos-overview">
+      <h3>St. Louis Cardinals - 2025 Schedule Overview</h3>
+      <div class="sos-stats">
+        <div class="sos-stat">
+          <div class="value">#12</div>
+          <div class="label">Overall SOS Rank</div>
+        </div>
+        <div class="sos-stat">
+          <div class="value">.508</div>
+          <div class="label">Opp. Win %</div>
+        </div>
+        <div class="sos-stat">
+          <div class="value">87</div>
+          <div class="label">Home Games</div>
+        </div>
+        <div class="sos-stat">
+          <div class="value">24,180</div>
+          <div class="label">Travel Miles</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="schedule-breakdown">
+      <h3>Monthly Difficulty Breakdown</h3>
+      <div class="month-row">
+        <span class="month-name">March/April</span>
+        <div class="difficulty-bar"><div class="difficulty-fill easy" style="width: 35%"></div></div>
+        <span class="difficulty-score easy">Easy</span>
+      </div>
+      <div class="month-row">
+        <span class="month-name">May</span>
+        <div class="difficulty-bar"><div class="difficulty-fill medium" style="width: 55%"></div></div>
+        <span class="difficulty-score medium">Medium</span>
+      </div>
+      <div class="month-row">
+        <span class="month-name">June</span>
+        <div class="difficulty-bar"><div class="difficulty-fill hard" style="width: 78%"></div></div>
+        <span class="difficulty-score hard">Hard</span>
+      </div>
+      <div class="month-row">
+        <span class="month-name">July</span>
+        <div class="difficulty-bar"><div class="difficulty-fill medium" style="width: 52%"></div></div>
+        <span class="difficulty-score medium">Medium</span>
+      </div>
+      <div class="month-row">
+        <span class="month-name">August</span>
+        <div class="difficulty-bar"><div class="difficulty-fill hard" style="width: 72%"></div></div>
+        <span class="difficulty-score hard">Hard</span>
+      </div>
+      <div class="month-row">
+        <span class="month-name">September</span>
+        <div class="difficulty-bar"><div class="difficulty-fill easy" style="width: 38%"></div></div>
+        <span class="difficulty-score easy">Easy</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+  </footer>
+</body>
+</html>
