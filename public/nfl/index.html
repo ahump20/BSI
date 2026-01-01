@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NFL Analytics | Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="Real-time NFL standings, live scores, team statistics, and advanced analytics. Complete coverage of all 32 NFL teams with player metrics and game predictions."
+    />
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --blaze-burnt-orange: #BF5700;
+        --blaze-ember: #CC6600;
+        --bsi-charcoal: #1A1A1A;
+        --bsi-midnight: #0D0D0D;
+        --nfl-blue: #013369;
+        --nfl-red: #D50A0A;
+        --gradient-primary: linear-gradient(135deg, #BF5700 0%, #CC6600 50%, #D97B38 100%);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bsi-midnight);
+        color: #fff;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .nav {
+        background: rgba(26, 26, 26, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .nav-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-logo {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+        color: var(--blaze-burnt-orange);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover { color: var(--blaze-burnt-orange); }
+
+      .hero {
+        background: linear-gradient(180deg, rgba(191,87,0,0.2) 0%, transparent 100%);
+        padding: 4rem 2rem;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(3rem, 8vw, 5rem);
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+      }
+
+      .hero p {
+        font-size: 1.25rem;
+        color: rgba(255,255,255,0.7);
+        max-width: 700px;
+        margin: 0 auto 2rem;
+      }
+
+      .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+      }
+
+      .hero-stat {
+        text-align: center;
+      }
+
+      .hero-stat .value {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.5rem;
+        color: var(--blaze-burnt-orange);
+      }
+
+      .hero-stat .label {
+        font-size: 0.875rem;
+        color: rgba(255,255,255,0.6);
+      }
+
+      .content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .section-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+        color: var(--blaze-burnt-orange);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(191, 87, 0, 0.3);
+      }
+
+      .scores-section {
+        margin-bottom: 3rem;
+      }
+
+      .scores-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+
+      .game-card {
+        background: var(--bsi-charcoal);
+        border: 1px solid rgba(191, 87, 0, 0.2);
+        border-radius: 12px;
+        padding: 1.25rem;
+        transition: border-color 0.2s;
+      }
+
+      .game-card:hover { border-color: var(--blaze-burnt-orange); }
+
+      .game-card.live { border-color: #EF4444; }
+
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 0.75rem;
+      }
+
+      .game-status {
+        color: rgba(255,255,255,0.5);
+      }
+
+      .week-badge {
+        background: rgba(191, 87, 0, 0.2);
+        color: var(--blaze-burnt-orange);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+      }
+
+      .team-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+      }
+
+      .team-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .team-record {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.5);
+      }
+
+      .team-name {
+        font-weight: 500;
+      }
+
+      .score {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+      }
+
+      .score.winning { color: #22C55E; }
+
+      .standings-section {
+        margin-bottom: 3rem;
+      }
+
+      .conference-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .conf-tab {
+        padding: 0.75rem 1.5rem;
+        background: var(--bsi-charcoal);
+        border: 1px solid rgba(191, 87, 0, 0.2);
+        border-radius: 8px;
+        color: rgba(255,255,255,0.7);
+        cursor: pointer;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1rem;
+        transition: all 0.2s;
+      }
+
+      .conf-tab:hover,
+      .conf-tab.active {
+        background: rgba(191, 87, 0, 0.2);
+        border-color: var(--blaze-burnt-orange);
+        color: white;
+      }
+
+      .divisions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .division-card {
+        background: var(--bsi-charcoal);
+        border: 1px solid rgba(191, 87, 0, 0.2);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .division-header {
+        background: rgba(191, 87, 0, 0.1);
+        padding: 1rem 1.25rem;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.125rem;
+      }
+
+      .standings-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .standings-table th,
+      .standings-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+      }
+
+      .standings-table th {
+        font-size: 0.6875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255,255,255,0.5);
+        font-weight: 500;
+      }
+
+      .standings-table td {
+        border-top: 1px solid rgba(255,255,255,0.05);
+        font-size: 0.875rem;
+      }
+
+      .standings-table tr:hover td {
+        background: rgba(191, 87, 0, 0.05);
+      }
+
+      .team-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .team-link:hover { color: var(--blaze-burnt-orange); }
+
+      .quick-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+      }
+
+      .quick-link {
+        background: var(--bsi-charcoal);
+        border: 1px solid rgba(191, 87, 0, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: white;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+
+      .quick-link:hover {
+        border-color: var(--blaze-burnt-orange);
+        transform: translateY(-2px);
+      }
+
+      .quick-link h3 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .quick-link p {
+        font-size: 0.875rem;
+        color: rgba(255,255,255,0.6);
+      }
+
+      .titans-callout {
+        background: linear-gradient(135deg, rgba(75, 146, 219, 0.15) 0%, rgba(191, 87, 0, 0.15) 100%);
+        border: 1px solid rgba(75, 146, 219, 0.3);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        text-align: center;
+      }
+
+      .titans-callout h3 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+        color: #4B92DB;
+        margin-bottom: 0.5rem;
+      }
+
+      .titans-callout p {
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 1rem;
+      }
+
+      .titans-callout a {
+        color: var(--blaze-burnt-orange);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: rgba(255,255,255,0.5);
+        font-size: 0.875rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-content">
+        <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+        <ul class="nav-links">
+          <li><a href="/college-baseball">College Baseball</a></li>
+          <li><a href="/mlb">MLB</a></li>
+          <li><a href="/nfl" style="color: var(--blaze-burnt-orange);">NFL</a></li>
+          <li><a href="/nba">NBA</a></li>
+          <li><a href="/tools">Tools</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1>NFL Analytics</h1>
+      <p>Real-time scores, standings, and advanced statistics for all 32 National Football League teams</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="value">32</div>
+          <div class="label">Teams</div>
+        </div>
+        <div class="hero-stat">
+          <div class="value">18</div>
+          <div class="label">Weeks</div>
+        </div>
+        <div class="hero-stat">
+          <div class="value" id="currentWeek">--</div>
+          <div class="label">Current Week</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content">
+      <div class="titans-callout">
+        <h3>Tennessee Titans Coverage</h3>
+        <p>Follow Austin's favorite NFL team with in-depth analytics, game breakdowns, and roster analysis</p>
+        <a href="/dashboards/titans-advanced-analytics.html">View Titans Dashboard &rarr;</a>
+      </div>
+
+      <section class="scores-section">
+        <h2 class="section-title">This Week's Games</h2>
+        <div class="scores-grid" id="scoresGrid">
+          <div class="game-card">
+            <div class="game-header">
+              <span class="week-badge">WEEK 13</span>
+              <span class="game-status">Loading...</span>
+            </div>
+            <p style="color: rgba(255,255,255,0.5);">Fetching scores...</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-links">
+        <a href="/dashboards/nfl-league-analytics.html" class="quick-link">
+          <h3>League Analytics</h3>
+          <p>Team rankings, efficiency metrics</p>
+        </a>
+        <a href="/cfb" class="quick-link">
+          <h3>College Football</h3>
+          <p>NCAA rankings and scores</p>
+        </a>
+        <a href="/tools/win-probability" class="quick-link">
+          <h3>Win Probability</h3>
+          <p>Live game predictions</p>
+        </a>
+        <a href="/tools/schedule-strength" class="quick-link">
+          <h3>Schedule Analysis</h3>
+          <p>Strength of schedule rankings</p>
+        </a>
+      </section>
+
+      <section class="standings-section">
+        <h2 class="section-title">Standings</h2>
+        <div class="conference-tabs">
+          <button class="conf-tab active" onclick="showConference('afc')">AFC</button>
+          <button class="conf-tab" onclick="showConference('nfc')">NFC</button>
+        </div>
+        <div class="divisions-grid" id="afcDivisions">
+          <div class="division-card">
+            <div class="division-header">AFC South</div>
+            <table class="standings-table">
+              <thead>
+                <tr><th>Team</th><th>W</th><th>L</th><th>T</th><th>PCT</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><a href="/dashboards/texans-advanced-analytics.html" class="team-link">Texans</a></td><td>8</td><td>4</td><td>0</td><td>.667</td></tr>
+                <tr><td><a href="/dashboards/colts-advanced-analytics.html" class="team-link">Colts</a></td><td>6</td><td>6</td><td>0</td><td>.500</td></tr>
+                <tr><td><a href="/dashboards/jaguars-advanced-analytics.html" class="team-link">Jaguars</a></td><td>3</td><td>9</td><td>0</td><td>.250</td></tr>
+                <tr><td><a href="/dashboards/titans-advanced-analytics.html" class="team-link">Titans</a></td><td>3</td><td>9</td><td>0</td><td>.250</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="division-card">
+            <div class="division-header">AFC North</div>
+            <table class="standings-table">
+              <thead>
+                <tr><th>Team</th><th>W</th><th>L</th><th>T</th><th>PCT</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><a href="/dashboards/ravens-advanced-analytics.html" class="team-link">Ravens</a></td><td>9</td><td>3</td><td>0</td><td>.750</td></tr>
+                <tr><td><a href="/dashboards/steelers-advanced-analytics.html" class="team-link">Steelers</a></td><td>9</td><td>3</td><td>0</td><td>.750</td></tr>
+                <tr><td><a href="/dashboards/bengals-advanced-analytics.html" class="team-link">Bengals</a></td><td>4</td><td>8</td><td>0</td><td>.333</td></tr>
+                <tr><td><a href="/dashboards/browns-advanced-analytics.html" class="team-link">Browns</a></td><td>3</td><td>9</td><td>0</td><td>.250</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="division-card">
+            <div class="division-header">AFC East</div>
+            <table class="standings-table">
+              <thead>
+                <tr><th>Team</th><th>W</th><th>L</th><th>T</th><th>PCT</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><a href="/dashboards/bills-advanced-analytics.html" class="team-link">Bills</a></td><td>10</td><td>2</td><td>0</td><td>.833</td></tr>
+                <tr><td><span class="team-link">Dolphins</span></td><td>5</td><td>7</td><td>0</td><td>.417</td></tr>
+                <tr><td><span class="team-link">Jets</span></td><td>3</td><td>9</td><td>0</td><td>.250</td></tr>
+                <tr><td><span class="team-link">Patriots</span></td><td>3</td><td>9</td><td>0</td><td>.250</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="division-card">
+            <div class="division-header">AFC West</div>
+            <table class="standings-table">
+              <thead>
+                <tr><th>Team</th><th>W</th><th>L</th><th>T</th><th>PCT</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><a href="/dashboards/chiefs-advanced-analytics.html" class="team-link">Chiefs</a></td><td>11</td><td>1</td><td>0</td><td>.917</td></tr>
+                <tr><td><a href="/dashboards/chargers-advanced-analytics.html" class="team-link">Chargers</a></td><td>8</td><td>4</td><td>0</td><td>.667</td></tr>
+                <tr><td><a href="/dashboards/broncos-advanced-analytics.html" class="team-link">Broncos</a></td><td>7</td><td>5</td><td>0</td><td>.583</td></tr>
+                <tr><td><a href="/dashboards/raiders-advanced-analytics.html" class="team-link">Raiders</a></td><td>2</td><td>10</td><td>0</td><td>.167</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+    </footer>
+
+    <script>
+      // Fetch NFL scores
+      async function fetchScores() {
+        try {
+          const response = await fetch('/api/nfl/scores');
+          const data = await response.json();
+
+          if (data.rawData && data.rawData.length > 0) {
+            const grid = document.getElementById('scoresGrid');
+            grid.innerHTML = data.rawData.slice(0, 8).map(game => `
+              <div class="game-card">
+                <div class="game-header">
+                  <span class="week-badge">WEEK ${game.Week || '--'}</span>
+                  <span class="game-status">${game.Status || 'Scheduled'}</span>
+                </div>
+                <div class="team-row">
+                  <div class="team-info">
+                    <span class="team-name">${game.AwayTeam || 'Away'}</span>
+                  </div>
+                  <span class="score ${(game.AwayScore || 0) > (game.HomeScore || 0) ? 'winning' : ''}">${game.AwayScore ?? '-'}</span>
+                </div>
+                <div class="team-row">
+                  <div class="team-info">
+                    <span class="team-name">${game.HomeTeam || 'Home'}</span>
+                  </div>
+                  <span class="score ${(game.HomeScore || 0) > (game.AwayScore || 0) ? 'winning' : ''}">${game.HomeScore ?? '-'}</span>
+                </div>
+              </div>
+            `).join('');
+
+            if (data.rawData[0]?.Week) {
+              document.getElementById('currentWeek').textContent = data.rawData[0].Week;
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching scores:', error);
+        }
+      }
+
+      function showConference(conf) {
+        // Simple tab switching - would expand with NFC data
+        document.querySelectorAll('.conf-tab').forEach(tab => tab.classList.remove('active'));
+        event.target.classList.add('active');
+      }
+
+      fetchScores();
+    </script>
+  </body>
+</html>
