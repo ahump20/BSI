@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Comparison Tool | Blaze Sports Intel</title>
+    <meta name="description" content="Compare players side-by-side with detailed statistical analysis. Perfect for scouting, fantasy, and understanding player value.">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-ember: #FF6B35;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-gold: #C9A227;
+            --bsi-success: #10B981;
+            --bsi-muted: #6B7280;
+            --bsi-blue: #3B82F6;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-ui);
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0.75rem 1.5rem;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--bsi-cream);
+            text-decoration: none;
+        }
+        .nav-logo img { height: 40px; }
+        .nav-back {
+            color: var(--bsi-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+        .nav-back:hover { color: var(--bsi-ember); }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 6rem 1.5rem 3rem;
+        }
+        .tool-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .tool-header h1 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--bsi-cream), var(--bsi-burnt-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tool-header p {
+            color: var(--bsi-muted);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .sport-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 4px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .sport-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--bsi-muted);
+            font-family: var(--font-ui);
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sport-tab.active {
+            background: var(--bsi-burnt-orange);
+            color: white;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .vs-divider { display: none; }
+        }
+        .player-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .player-card.player-1 { border-color: rgba(191, 87, 0, 0.4); }
+        .player-card.player-2 { border-color: rgba(59, 130, 246, 0.4); }
+        .player-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .player-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .player-1 .player-avatar {
+            background: rgba(191, 87, 0, 0.2);
+            color: var(--bsi-ember);
+        }
+        .player-2 .player-avatar {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--bsi-blue);
+        }
+        .player-label {
+            font-size: 0.75rem;
+            color: var(--bsi-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .player-name {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(250, 248, 245, 0.6);
+            margin-bottom: 0.375rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--bsi-cream);
+            font-family: var(--font-ui);
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--bsi-burnt-orange);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .vs-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 4rem;
+        }
+        .vs-badge {
+            width: 48px;
+            height: 48px;
+            background: rgba(191, 87, 0, 0.2);
+            border: 2px solid var(--bsi-burnt-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--bsi-ember);
+        }
+        .btn-compare {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-compare:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(191, 87, 0, 0.3);
+        }
+        .results-section {
+            display: none;
+            margin-top: 2rem;
+        }
+        .results-section.visible { display: block; }
+        .results-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .results-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .results-header p {
+            color: var(--bsi-muted);
+            font-size: 0.875rem;
+        }
+        .stat-comparison {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-row.header {
+            background: rgba(191, 87, 0, 0.1);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--bsi-muted);
+        }
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .stat-value.player-1 { color: var(--bsi-ember); }
+        .stat-value.player-2 { color: var(--bsi-blue); text-align: right; }
+        .stat-value.winner {
+            position: relative;
+        }
+        .stat-value.winner::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: currentColor;
+        }
+        .stat-value.player-2.winner::after {
+            left: auto;
+            width: 100%;
+        }
+        .stat-name {
+            text-align: center;
+            font-size: 0.8125rem;
+            color: var(--bsi-muted);
+        }
+        .stat-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+        .stat-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        .stat-bar.left .stat-bar-fill {
+            background: var(--bsi-ember);
+            float: right;
+        }
+        .stat-bar.right .stat-bar-fill {
+            background: var(--bsi-blue);
+        }
+        .verdict-card {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(191, 87, 0, 0.1);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .verdict-card h3 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--bsi-ember);
+            margin-bottom: 0.5rem;
+        }
+        .verdict-card p {
+            font-size: 0.875rem;
+            color: var(--bsi-muted);
+            line-height: 1.6;
+        }
+        .sample-players {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .sample-players p {
+            color: var(--bsi-muted);
+            font-size: 0.8125rem;
+            margin-bottom: 0.75rem;
+        }
+        .sample-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--bsi-cream);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sample-btn:hover {
+            background: rgba(191, 87, 0, 0.2);
+            border-color: var(--bsi-burnt-orange);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="nav-logo">
+            <img src="/images/bsi-logo-nav.png" alt="BSI">
+            <span>Blaze Sports Intel</span>
+        </a>
+        <a href="/tools" class="nav-back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            All Tools
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="tool-header">
+            <h1>Player Comparison</h1>
+            <p>Compare any two players side-by-side with statistical analysis and performance insights.</p>
+        </div>
+
+        <div class="sport-tabs">
+            <button class="sport-tab active" data-sport="baseball">Baseball</button>
+            <button class="sport-tab" data-sport="football">Football</button>
+        </div>
+
+        <div class="comparison-grid">
+            <!-- Player 1 -->
+            <div class="player-card player-1">
+                <div class="player-card-header">
+                    <div class="player-avatar">P1</div>
+                    <div>
+                        <div class="player-label">Player 1</div>
+                        <div class="player-name" id="p1DisplayName">Enter stats below</div>
+                    </div>
+                </div>
+                <form id="player1Form">
+                    <div class="form-group">
+                        <label>Player Name</label>
+                        <input type="text" class="form-input" id="p1Name" placeholder="e.g., Player Name">
+                    </div>
+                    <div id="p1BaseballStats">
+                        <div class="form-group">
+                            <label>Batting Average</label>
+                            <input type="text" class="form-input" id="p1Avg" placeholder=".300">
+                        </div>
+                        <div class="form-group">
+                            <label>Home Runs</label>
+                            <input type="number" class="form-input" id="p1HR" placeholder="25">
+                        </div>
+                        <div class="form-group">
+                            <label>RBI</label>
+                            <input type="number" class="form-input" id="p1RBI" placeholder="80">
+                        </div>
+                        <div class="form-group">
+                            <label>OPS</label>
+                            <input type="text" class="form-input" id="p1OPS" placeholder=".850">
+                        </div>
+                        <div class="form-group">
+                            <label>WAR</label>
+                            <input type="text" class="form-input" id="p1WAR" placeholder="4.5">
+                        </div>
+                    </div>
+                    <div id="p1FootballStats" style="display: none;">
+                        <div class="form-group">
+                            <label>Passing Yards</label>
+                            <input type="number" class="form-input" id="p1PassYds" placeholder="4000">
+                        </div>
+                        <div class="form-group">
+                            <label>Touchdowns</label>
+                            <input type="number" class="form-input" id="p1TD" placeholder="30">
+                        </div>
+                        <div class="form-group">
+                            <label>Interceptions</label>
+                            <input type="number" class="form-input" id="p1INT" placeholder="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Passer Rating</label>
+                            <input type="text" class="form-input" id="p1Rating" placeholder="95.0">
+                        </div>
+                        <div class="form-group">
+                            <label>QBR</label>
+                            <input type="text" class="form-input" id="p1QBR" placeholder="65.0">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- VS Divider -->
+            <div class="vs-divider">
+                <div class="vs-badge">VS</div>
+            </div>
+
+            <!-- Player 2 -->
+            <div class="player-card player-2">
+                <div class="player-card-header">
+                    <div class="player-avatar">P2</div>
+                    <div>
+                        <div class="player-label">Player 2</div>
+                        <div class="player-name" id="p2DisplayName">Enter stats below</div>
+                    </div>
+                </div>
+                <form id="player2Form">
+                    <div class="form-group">
+                        <label>Player Name</label>
+                        <input type="text" class="form-input" id="p2Name" placeholder="e.g., Player Name">
+                    </div>
+                    <div id="p2BaseballStats">
+                        <div class="form-group">
+                            <label>Batting Average</label>
+                            <input type="text" class="form-input" id="p2Avg" placeholder=".280">
+                        </div>
+                        <div class="form-group">
+                            <label>Home Runs</label>
+                            <input type="number" class="form-input" id="p2HR" placeholder="20">
+                        </div>
+                        <div class="form-group">
+                            <label>RBI</label>
+                            <input type="number" class="form-input" id="p2RBI" placeholder="70">
+                        </div>
+                        <div class="form-group">
+                            <label>OPS</label>
+                            <input type="text" class="form-input" id="p2OPS" placeholder=".800">
+                        </div>
+                        <div class="form-group">
+                            <label>WAR</label>
+                            <input type="text" class="form-input" id="p2WAR" placeholder="3.5">
+                        </div>
+                    </div>
+                    <div id="p2FootballStats" style="display: none;">
+                        <div class="form-group">
+                            <label>Passing Yards</label>
+                            <input type="number" class="form-input" id="p2PassYds" placeholder="3500">
+                        </div>
+                        <div class="form-group">
+                            <label>Touchdowns</label>
+                            <input type="number" class="form-input" id="p2TD" placeholder="25">
+                        </div>
+                        <div class="form-group">
+                            <label>Interceptions</label>
+                            <input type="number" class="form-input" id="p2INT" placeholder="12">
+                        </div>
+                        <div class="form-group">
+                            <label>Passer Rating</label>
+                            <input type="text" class="form-input" id="p2Rating" placeholder="90.0">
+                        </div>
+                        <div class="form-group">
+                            <label>QBR</label>
+                            <input type="text" class="form-input" id="p2QBR" placeholder="55.0">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <button class="btn-compare" id="compareBtn">Compare Players</button>
+
+        <div class="sample-players">
+            <p>Try a sample comparison:</p>
+            <button class="sample-btn" data-sample="trout-ohtani">Trout vs Ohtani (2023)</button>
+            <button class="sample-btn" data-sample="mahomes-allen">Mahomes vs Allen (2024)</button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>Statistical Comparison</h2>
+                <p id="comparisonTitle">Player 1 vs Player 2</p>
+            </div>
+
+            <div class="stat-comparison" id="statComparison">
+                <!-- Stats will be dynamically inserted here -->
+            </div>
+
+            <div class="verdict-card">
+                <h3>Analysis</h3>
+                <p id="verdictText">Based on the statistics provided, the comparison reveals key differences in player performance across multiple categories.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sport tab switching
+        document.querySelectorAll('.sport-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.sport-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const sport = tab.dataset.sport;
+
+                // Toggle stat fields
+                document.getElementById('p1BaseballStats').style.display = sport === 'baseball' ? 'block' : 'none';
+                document.getElementById('p2BaseballStats').style.display = sport === 'baseball' ? 'block' : 'none';
+                document.getElementById('p1FootballStats').style.display = sport === 'football' ? 'block' : 'none';
+                document.getElementById('p2FootballStats').style.display = sport === 'football' ? 'block' : 'none';
+
+                // Hide results when switching
+                document.getElementById('resultsSection').classList.remove('visible');
+            });
+        });
+
+        // Update display names on input
+        document.getElementById('p1Name').addEventListener('input', function() {
+            document.getElementById('p1DisplayName').textContent = this.value || 'Enter stats below';
+        });
+        document.getElementById('p2Name').addEventListener('input', function() {
+            document.getElementById('p2DisplayName').textContent = this.value || 'Enter stats below';
+        });
+
+        // Sample data
+        const samples = {
+            'trout-ohtani': {
+                sport: 'baseball',
+                p1: { name: 'Mike Trout', avg: '.263', hr: 18, rbi: 44, ops: '.867', war: '2.3' },
+                p2: { name: 'Shohei Ohtani', avg: '.304', hr: 44, rbi: 95, ops: '1.066', war: '9.6' }
+            },
+            'mahomes-allen': {
+                sport: 'football',
+                p1: { name: 'Patrick Mahomes', passYds: 4183, td: 26, int: 11, rating: '93.8', qbr: '64.2' },
+                p2: { name: 'Josh Allen', passYds: 3731, td: 28, int: 6, rating: '101.4', qbr: '71.5' }
+            }
+        };
+
+        // Sample button handlers
+        document.querySelectorAll('.sample-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sample = samples[btn.dataset.sample];
+
+                // Switch to correct sport
+                document.querySelectorAll('.sport-tab').forEach(t => {
+                    t.classList.toggle('active', t.dataset.sport === sample.sport);
+                });
+                document.getElementById('p1BaseballStats').style.display = sample.sport === 'baseball' ? 'block' : 'none';
+                document.getElementById('p2BaseballStats').style.display = sample.sport === 'baseball' ? 'block' : 'none';
+                document.getElementById('p1FootballStats').style.display = sample.sport === 'football' ? 'block' : 'none';
+                document.getElementById('p2FootballStats').style.display = sample.sport === 'football' ? 'block' : 'none';
+
+                // Fill in data
+                if (sample.sport === 'baseball') {
+                    document.getElementById('p1Name').value = sample.p1.name;
+                    document.getElementById('p1Avg').value = sample.p1.avg;
+                    document.getElementById('p1HR').value = sample.p1.hr;
+                    document.getElementById('p1RBI').value = sample.p1.rbi;
+                    document.getElementById('p1OPS').value = sample.p1.ops;
+                    document.getElementById('p1WAR').value = sample.p1.war;
+
+                    document.getElementById('p2Name').value = sample.p2.name;
+                    document.getElementById('p2Avg').value = sample.p2.avg;
+                    document.getElementById('p2HR').value = sample.p2.hr;
+                    document.getElementById('p2RBI').value = sample.p2.rbi;
+                    document.getElementById('p2OPS').value = sample.p2.ops;
+                    document.getElementById('p2WAR').value = sample.p2.war;
+                } else {
+                    document.getElementById('p1Name').value = sample.p1.name;
+                    document.getElementById('p1PassYds').value = sample.p1.passYds;
+                    document.getElementById('p1TD').value = sample.p1.td;
+                    document.getElementById('p1INT').value = sample.p1.int;
+                    document.getElementById('p1Rating').value = sample.p1.rating;
+                    document.getElementById('p1QBR').value = sample.p1.qbr;
+
+                    document.getElementById('p2Name').value = sample.p2.name;
+                    document.getElementById('p2PassYds').value = sample.p2.passYds;
+                    document.getElementById('p2TD').value = sample.p2.td;
+                    document.getElementById('p2INT').value = sample.p2.int;
+                    document.getElementById('p2Rating').value = sample.p2.rating;
+                    document.getElementById('p2QBR').value = sample.p2.qbr;
+                }
+
+                // Update display names
+                document.getElementById('p1DisplayName').textContent = sample.p1.name;
+                document.getElementById('p2DisplayName').textContent = sample.p2.name;
+
+                // Auto-compare
+                setTimeout(() => document.getElementById('compareBtn').click(), 100);
+            });
+        });
+
+        // Compare button
+        document.getElementById('compareBtn').addEventListener('click', function() {
+            const sport = document.querySelector('.sport-tab.active').dataset.sport;
+            const p1Name = document.getElementById('p1Name').value || 'Player 1';
+            const p2Name = document.getElementById('p2Name').value || 'Player 2';
+
+            let stats = [];
+            let p1Wins = 0;
+            let p2Wins = 0;
+
+            if (sport === 'baseball') {
+                stats = [
+                    { name: 'Batting Avg', p1: document.getElementById('p1Avg').value, p2: document.getElementById('p2Avg').value, higherBetter: true },
+                    { name: 'Home Runs', p1: document.getElementById('p1HR').value, p2: document.getElementById('p2HR').value, higherBetter: true },
+                    { name: 'RBI', p1: document.getElementById('p1RBI').value, p2: document.getElementById('p2RBI').value, higherBetter: true },
+                    { name: 'OPS', p1: document.getElementById('p1OPS').value, p2: document.getElementById('p2OPS').value, higherBetter: true },
+                    { name: 'WAR', p1: document.getElementById('p1WAR').value, p2: document.getElementById('p2WAR').value, higherBetter: true }
+                ];
+            } else {
+                stats = [
+                    { name: 'Passing Yards', p1: document.getElementById('p1PassYds').value, p2: document.getElementById('p2PassYds').value, higherBetter: true },
+                    { name: 'Touchdowns', p1: document.getElementById('p1TD').value, p2: document.getElementById('p2TD').value, higherBetter: true },
+                    { name: 'Interceptions', p1: document.getElementById('p1INT').value, p2: document.getElementById('p2INT').value, higherBetter: false },
+                    { name: 'Passer Rating', p1: document.getElementById('p1Rating').value, p2: document.getElementById('p2Rating').value, higherBetter: true },
+                    { name: 'QBR', p1: document.getElementById('p1QBR').value, p2: document.getElementById('p2QBR').value, higherBetter: true }
+                ];
+            }
+
+            // Build comparison HTML
+            let html = `
+                <div class="stat-row header">
+                    <span>${p1Name}</span>
+                    <span>Stat</span>
+                    <span style="text-align: right">${p2Name}</span>
+                </div>
+            `;
+
+            stats.forEach(stat => {
+                const p1Val = parseFloat(stat.p1) || 0;
+                const p2Val = parseFloat(stat.p2) || 0;
+                const maxVal = Math.max(p1Val, p2Val) || 1;
+
+                let p1Better, p2Better;
+                if (stat.higherBetter) {
+                    p1Better = p1Val > p2Val;
+                    p2Better = p2Val > p1Val;
+                } else {
+                    p1Better = p1Val < p2Val;
+                    p2Better = p2Val < p1Val;
+                }
+
+                if (p1Better) p1Wins++;
+                if (p2Better) p2Wins++;
+
+                const p1Pct = (p1Val / maxVal * 100) || 0;
+                const p2Pct = (p2Val / maxVal * 100) || 0;
+
+                html += `
+                    <div class="stat-row">
+                        <div>
+                            <span class="stat-value player-1 ${p1Better ? 'winner' : ''}">${stat.p1 || '-'}</span>
+                            <div class="stat-bar-container">
+                                <div class="stat-bar left"><div class="stat-bar-fill" style="width: ${p1Pct}%"></div></div>
+                            </div>
+                        </div>
+                        <span class="stat-name">${stat.name}</span>
+                        <div>
+                            <span class="stat-value player-2 ${p2Better ? 'winner' : ''}">${stat.p2 || '-'}</span>
+                            <div class="stat-bar-container">
+                                <div class="stat-bar right"><div class="stat-bar-fill" style="width: ${p2Pct}%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('statComparison').innerHTML = html;
+            document.getElementById('comparisonTitle').textContent = `${p1Name} vs ${p2Name}`;
+
+            // Generate verdict
+            let verdict;
+            if (p1Wins > p2Wins) {
+                verdict = `${p1Name} leads in ${p1Wins} of ${stats.length} categories. The statistical edge suggests stronger overall production, though context matters—sample size, team situation, and role all affect raw numbers.`;
+            } else if (p2Wins > p1Wins) {
+                verdict = `${p2Name} leads in ${p2Wins} of ${stats.length} categories. The numbers favor ${p2Name} across key metrics, though direct comparison requires considering playing context and supporting cast.`;
+            } else {
+                verdict = `A statistical tie at ${p1Wins} categories each. Both players show elite production in different areas—the "better" player depends on team needs and situational value.`;
+            }
+            document.getElementById('verdictText').textContent = verdict;
+
+            document.getElementById('resultsSection').classList.add('visible');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+
+            trackEvent('player_comparison_completed', { sport, p1: p1Name, p2: p2Name });
+        });
+
+        function trackEvent(eventName, properties) {
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon('/api/analytics/event', JSON.stringify({
+                    event: eventName,
+                    properties: { ...properties, tool: 'player-comparison' },
+                    timestamp: new Date().toISOString(),
+                    url: window.location.href
+                }));
+            }
+        }
+
+        // Track page load
+        trackEvent('tool_loaded', { tool: 'player-comparison' });
+    </script>
+</body>
+</html>

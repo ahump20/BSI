@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Strength Analyzer | Blaze Sports Intel</title>
+    <meta name="description" content="Analyze strength of schedule with opponent quality ratings. Calculate SOS for college baseball, football, and pro sports.">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-ember: #FF6B35;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-gold: #C9A227;
+            --bsi-success: #10B981;
+            --bsi-error: #EF4444;
+            --bsi-muted: #6B7280;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-ui);
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0.75rem 1.5rem;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--bsi-cream);
+            text-decoration: none;
+        }
+        .nav-logo img { height: 40px; }
+        .nav-back {
+            color: var(--bsi-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+        .nav-back:hover { color: var(--bsi-ember); }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 6rem 1.5rem 3rem;
+        }
+        .tool-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .tool-header h1 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--bsi-cream), var(--bsi-burnt-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tool-header p {
+            color: var(--bsi-muted);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .calculator-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .section-header h3 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+        }
+        .opponent-count {
+            font-size: 0.75rem;
+            color: var(--bsi-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+        }
+        .opponents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .opponent-row {
+            display: grid;
+            grid-template-columns: 1fr 100px 100px 40px;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        @media (max-width: 600px) {
+            .opponent-row {
+                grid-template-columns: 1fr 80px 40px;
+            }
+            .opponent-row .rating-input { display: none; }
+        }
+        .form-input, .form-select {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--bsi-cream);
+            font-family: var(--font-ui);
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--bsi-burnt-orange);
+        }
+        .form-select { cursor: pointer; }
+        .form-select option { background: var(--bsi-charcoal); }
+        .rating-input {
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+        .remove-btn {
+            width: 36px;
+            height: 36px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 6px;
+            color: var(--bsi-error);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .remove-btn:hover { background: rgba(239, 68, 68, 0.2); }
+        .add-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--bsi-muted);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .add-btn:hover {
+            border-color: var(--bsi-burnt-orange);
+            color: var(--bsi-ember);
+        }
+        .btn-calculate {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(191, 87, 0, 0.3);
+        }
+        .results-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            display: none;
+        }
+        .results-card.visible { display: block; }
+        .sos-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .sos-label {
+            font-size: 0.875rem;
+            color: var(--bsi-muted);
+            margin-bottom: 0.5rem;
+        }
+        .sos-value {
+            font-family: var(--font-mono);
+            font-size: 4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--bsi-ember), var(--bsi-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .sos-rank {
+            font-size: 1rem;
+            color: var(--bsi-muted);
+            margin-top: 0.5rem;
+        }
+        .sos-rank span {
+            color: var(--bsi-cream);
+            font-weight: 600;
+        }
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 500px) {
+            .breakdown-grid { grid-template-columns: 1fr; }
+        }
+        .breakdown-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .breakdown-item .label {
+            font-size: 0.75rem;
+            color: var(--bsi-muted);
+            margin-bottom: 0.25rem;
+        }
+        .breakdown-item .value {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .breakdown-item.elite .value { color: var(--bsi-success); }
+        .breakdown-item.avg .value { color: var(--bsi-gold); }
+        .breakdown-item.weak .value { color: var(--bsi-error); }
+        .sos-meter {
+            height: 16px;
+            background: linear-gradient(90deg, var(--bsi-error), var(--bsi-gold), var(--bsi-success));
+            border-radius: 8px;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+        .sos-meter-marker {
+            position: absolute;
+            top: -4px;
+            width: 4px;
+            height: 24px;
+            background: white;
+            border-radius: 2px;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: left 0.5s ease;
+        }
+        .sos-meter-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6875rem;
+            color: var(--bsi-muted);
+        }
+        .interpretation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(191, 87, 0, 0.1);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 8px;
+        }
+        .interpretation h4 {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            color: var(--bsi-ember);
+            margin-bottom: 0.5rem;
+        }
+        .interpretation p {
+            font-size: 0.8125rem;
+            color: var(--bsi-muted);
+            line-height: 1.6;
+        }
+        .tier-guide {
+            margin-top: 2rem;
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.15);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .tier-guide h3 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .tier-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+        .tier-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+        }
+        .tier-badge {
+            width: 40px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            font-weight: 700;
+        }
+        .tier-badge.elite { background: rgba(16, 185, 129, 0.2); color: var(--bsi-success); }
+        .tier-badge.good { background: rgba(201, 162, 39, 0.2); color: var(--bsi-gold); }
+        .tier-badge.avg { background: rgba(107, 114, 128, 0.2); color: var(--bsi-muted); }
+        .tier-badge.weak { background: rgba(239, 68, 68, 0.2); color: var(--bsi-error); }
+        .tier-desc {
+            font-size: 0.8125rem;
+            color: var(--bsi-muted);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="nav-logo">
+            <img src="/images/bsi-logo-nav.png" alt="BSI">
+            <span>Blaze Sports Intel</span>
+        </a>
+        <a href="/tools" class="nav-back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            All Tools
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="tool-header">
+            <h1>Schedule Strength Analyzer</h1>
+            <p>Calculate strength of schedule by entering opponents and their quality tier. Perfect for college baseball, football, and pro sports.</p>
+        </div>
+
+        <div class="calculator-card">
+            <div class="section-header">
+                <h3>Opponents</h3>
+                <span class="opponent-count" id="opponentCount">3 games</span>
+            </div>
+
+            <div class="opponents-list" id="opponentsList">
+                <div class="opponent-row">
+                    <input type="text" class="form-input" placeholder="Opponent name" value="Texas">
+                    <select class="form-select tier-select">
+                        <option value="elite">Elite</option>
+                        <option value="good">Good</option>
+                        <option value="average">Average</option>
+                        <option value="weak">Weak</option>
+                    </select>
+                    <input type="number" class="form-input rating-input" placeholder="Rating" value="95" min="0" max="100">
+                    <button class="remove-btn" onclick="removeOpponent(this)">×</button>
+                </div>
+                <div class="opponent-row">
+                    <input type="text" class="form-input" placeholder="Opponent name" value="LSU">
+                    <select class="form-select tier-select">
+                        <option value="elite">Elite</option>
+                        <option value="good" selected>Good</option>
+                        <option value="average">Average</option>
+                        <option value="weak">Weak</option>
+                    </select>
+                    <input type="number" class="form-input rating-input" placeholder="Rating" value="82" min="0" max="100">
+                    <button class="remove-btn" onclick="removeOpponent(this)">×</button>
+                </div>
+                <div class="opponent-row">
+                    <input type="text" class="form-input" placeholder="Opponent name" value="Arkansas">
+                    <select class="form-select tier-select">
+                        <option value="elite">Elite</option>
+                        <option value="good" selected>Good</option>
+                        <option value="average">Average</option>
+                        <option value="weak">Weak</option>
+                    </select>
+                    <input type="number" class="form-input rating-input" placeholder="Rating" value="78" min="0" max="100">
+                    <button class="remove-btn" onclick="removeOpponent(this)">×</button>
+                </div>
+            </div>
+
+            <button class="add-btn" onclick="addOpponent()">+ Add Opponent</button>
+            <button class="btn-calculate" id="calculateBtn">Calculate Strength of Schedule</button>
+        </div>
+
+        <div class="results-card" id="resultsCard">
+            <div class="sos-display">
+                <div class="sos-label">Strength of Schedule Rating</div>
+                <div class="sos-value" id="sosValue">85.0</div>
+                <div class="sos-rank">Difficulty: <span id="sosRank">Very Hard</span></div>
+            </div>
+
+            <div class="sos-meter">
+                <div class="sos-meter-marker" id="sosMeter" style="left: 85%"></div>
+            </div>
+            <div class="sos-meter-labels">
+                <span>Weak (0)</span>
+                <span>Average (50)</span>
+                <span>Elite (100)</span>
+            </div>
+
+            <div class="breakdown-grid">
+                <div class="breakdown-item elite">
+                    <div class="label">Elite Opponents</div>
+                    <div class="value" id="eliteCount">1</div>
+                </div>
+                <div class="breakdown-item avg">
+                    <div class="label">Good Opponents</div>
+                    <div class="value" id="goodCount">2</div>
+                </div>
+                <div class="breakdown-item weak">
+                    <div class="label">Weak Opponents</div>
+                    <div class="value" id="weakCount">0</div>
+                </div>
+            </div>
+
+            <div class="interpretation">
+                <h4>Analysis</h4>
+                <p id="interpretationText">This schedule rates as challenging. With multiple quality opponents, wins will carry significant weight in rankings. Teams facing this schedule can expect tough competition throughout.</p>
+            </div>
+        </div>
+
+        <div class="tier-guide">
+            <h3>Opponent Tier Guide</h3>
+            <div class="tier-list">
+                <div class="tier-item">
+                    <span class="tier-badge elite">90+</span>
+                    <span class="tier-desc"><strong>Elite:</strong> Top 25 teams, conference contenders, playoff-caliber opponents</span>
+                </div>
+                <div class="tier-item">
+                    <span class="tier-badge good">70-89</span>
+                    <span class="tier-desc"><strong>Good:</strong> Quality opponents, regional powers, tournament-level teams</span>
+                </div>
+                <div class="tier-item">
+                    <span class="tier-badge avg">50-69</span>
+                    <span class="tier-desc"><strong>Average:</strong> Mid-tier opponents, .500 teams, rebuilding programs</span>
+                </div>
+                <div class="tier-item">
+                    <span class="tier-badge weak">0-49</span>
+                    <span class="tier-desc"><strong>Weak:</strong> Bottom-tier opponents, tune-up games, guaranteed wins</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tierValues = {
+            elite: 95,
+            good: 75,
+            average: 55,
+            weak: 30
+        };
+
+        function updateCount() {
+            const rows = document.querySelectorAll('.opponent-row');
+            document.getElementById('opponentCount').textContent = `${rows.length} game${rows.length !== 1 ? 's' : ''}`;
+        }
+
+        function addOpponent() {
+            const list = document.getElementById('opponentsList');
+            const row = document.createElement('div');
+            row.className = 'opponent-row';
+            row.innerHTML = `
+                <input type="text" class="form-input" placeholder="Opponent name">
+                <select class="form-select tier-select">
+                    <option value="elite">Elite</option>
+                    <option value="good">Good</option>
+                    <option value="average" selected>Average</option>
+                    <option value="weak">Weak</option>
+                </select>
+                <input type="number" class="form-input rating-input" placeholder="Rating" value="55" min="0" max="100">
+                <button class="remove-btn" onclick="removeOpponent(this)">×</button>
+            `;
+            list.appendChild(row);
+
+            // Update rating when tier changes
+            row.querySelector('.tier-select').addEventListener('change', function() {
+                row.querySelector('.rating-input').value = tierValues[this.value];
+            });
+
+            updateCount();
+        }
+
+        function removeOpponent(btn) {
+            const list = document.getElementById('opponentsList');
+            if (list.querySelectorAll('.opponent-row').length > 1) {
+                btn.parentElement.remove();
+                updateCount();
+            }
+        }
+
+        // Update rating when tier changes
+        document.querySelectorAll('.tier-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const row = this.closest('.opponent-row');
+                row.querySelector('.rating-input').value = tierValues[this.value];
+            });
+        });
+
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const rows = document.querySelectorAll('.opponent-row');
+            let totalRating = 0;
+            let elite = 0, good = 0, average = 0, weak = 0;
+
+            rows.forEach(row => {
+                const rating = parseInt(row.querySelector('.rating-input').value) || 0;
+                const tier = row.querySelector('.tier-select').value;
+                totalRating += rating;
+
+                if (tier === 'elite') elite++;
+                else if (tier === 'good') good++;
+                else if (tier === 'average') average++;
+                else weak++;
+            });
+
+            const sos = rows.length > 0 ? (totalRating / rows.length).toFixed(1) : 0;
+
+            document.getElementById('sosValue').textContent = sos;
+            document.getElementById('sosMeter').style.left = `${sos}%`;
+            document.getElementById('eliteCount').textContent = elite;
+            document.getElementById('goodCount').textContent = good;
+            document.getElementById('weakCount').textContent = average + weak;
+
+            // Determine rank
+            let rank, interpretation;
+            if (sos >= 85) {
+                rank = 'Elite';
+                interpretation = `One of the toughest schedules possible. With ${elite} elite opponent${elite !== 1 ? 's' : ''}, every win carries significant weight. Expect this schedule to be viewed favorably by selection committees.`;
+            } else if (sos >= 70) {
+                rank = 'Very Hard';
+                interpretation = 'A challenging schedule with quality opponents throughout. Strong performance here will boost rankings and strengthen tournament resume.';
+            } else if (sos >= 55) {
+                rank = 'Above Average';
+                interpretation = 'A solid schedule with a mix of competition levels. Need to capitalize on winnable games while competing well against tougher opponents.';
+            } else if (sos >= 40) {
+                rank = 'Average';
+                interpretation = 'A middle-of-the-road schedule. Wins may not move the needle much, but losses to weaker opponents will hurt.';
+            } else {
+                rank = 'Weak';
+                interpretation = 'A soft schedule with limited quality opponents. Will need dominant wins and out-of-conference strength to build a resume.';
+            }
+
+            document.getElementById('sosRank').textContent = rank;
+            document.getElementById('interpretationText').textContent = interpretation;
+            document.getElementById('resultsCard').classList.add('visible');
+            document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
+
+            trackEvent('schedule_strength_calculated', { sos, games: rows.length });
+        });
+
+        function trackEvent(eventName, properties) {
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon('/api/analytics/event', JSON.stringify({
+                    event: eventName,
+                    properties: { ...properties, tool: 'schedule-strength' },
+                    timestamp: new Date().toISOString(),
+                    url: window.location.href
+                }));
+            }
+        }
+
+        trackEvent('tool_loaded', { tool: 'schedule-strength' });
+        updateCount();
+    </script>
+</body>
+</html>
