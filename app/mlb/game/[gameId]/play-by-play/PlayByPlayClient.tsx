@@ -15,7 +15,8 @@ export default function PlayByPlayClient() {
   const [filter, setFilter] = useState<'all' | 'scoring'>('all');
   const [expandedInnings, setExpandedInnings] = useState<Set<string>>(new Set(['1']));
 
-  const plays = game?.plays || [];
+  // Memoize to ensure stable reference when game?.plays is undefined
+  const plays = useMemo(() => game?.plays || [], [game?.plays]);
 
   // Filter plays - must be before early return
   const filteredPlays = useMemo(() => {

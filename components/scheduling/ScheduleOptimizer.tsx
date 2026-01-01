@@ -135,6 +135,7 @@ export const ScheduleOptimizer: React.FC<ScheduleOptimizerProps> = ({
   // Fetch optimization data
   useEffect(() => {
     fetchOptimizationData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchOptimizationData is stable, runs on teamId/iterations change
   }, [teamId, iterations]);
 
   const fetchOptimizationData = async () => {

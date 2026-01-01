@@ -105,6 +105,7 @@ export const WinProbabilityChart: React.FC<WinProbabilityChartProps> = ({
         wsRef.current.close();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- connectWebSocket is stable, runs on gameId/enable change
   }, [gameId, enableWebSocket]);
 
   const connectWebSocket = () => {

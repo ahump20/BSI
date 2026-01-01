@@ -35,6 +35,7 @@ const MLBAnalyticsEngine = () => {
 
   useEffect(() => {
     loadTeamData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadTeamData is stable, runs on team change
   }, [selectedTeam]);
 
   const loadTeamData = async () => {

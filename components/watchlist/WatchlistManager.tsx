@@ -152,6 +152,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadWatchlist is stable, runs on userId change
   }, [userId]);
 
   /**
@@ -167,6 +168,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
     return () => {
       disconnectWebSocket();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- connect/disconnect are stable, run on watchlist/preferences change
   }, [watchlist, preferences]);
 
   /**
@@ -182,6 +184,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
     // Refresh every 5 minutes
     const interval = setInterval(fetchUpcomingGames, 5 * 60 * 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchUpcomingGames is stable, runs on watchlist change
   }, [watchlist]);
 
   /**
@@ -206,6 +209,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
         clearTimeout(searchTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- searchTeams is stable, runs on query/sport change
   }, [searchQuery, selectedSport]);
 
   // ============================================================================

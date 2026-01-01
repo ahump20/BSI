@@ -70,6 +70,7 @@ function App() {
       dateStyle: 'medium',
       timeStyle: 'short',
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally updates when games changes
   }, [games]);
 
   const renderGameCard = (event) => {

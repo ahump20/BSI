@@ -111,6 +111,7 @@ export function PortalTracker() {
         wsRef.current.close();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPortalData/connectWebSocket are stable, mount-only effect
   }, []);
 
   const fetchPortalData = async () => {

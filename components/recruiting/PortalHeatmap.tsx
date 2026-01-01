@@ -83,6 +83,7 @@ export function PortalHeatmap() {
 
   useEffect(() => {
     fetchHeatmapData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchHeatmapData is stable, mount-only effect
   }, []);
 
   const fetchHeatmapData = async () => {
@@ -191,6 +192,7 @@ export function PortalHeatmap() {
     } else if (vizType === 'matrix') {
       renderMatrixHeatmap(data);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- render functions are stable, depend on data/vizType/dimensions
   }, [data, vizType, width, height]);
 
   // ============================================================================

@@ -80,6 +80,7 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
     } else {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchAnalytics is stable, runs on id/tier change
   }, [teamId, gameId, isPremium]);
 
   const fetchAnalytics = async () => {
