@@ -6,9 +6,9 @@
 import { LeverageEquivalencyIndex, computeLEI } from './index';
 import {
   davidFreese2011WS,
-  marioManningham2012SB,
-  aaronBoone2003ALCS,
-  malcolmButler2015SB,
+  marioManningham2012SB as _marioManningham2012SB,
+  aaronBoone2003ALCS as _aaronBoone2003ALCS,
+  malcolmButler2015SB as _malcolmButler2015SB,
   validateLEIScoring,
   getAllFamousPlays,
 } from './examples';
@@ -32,7 +32,7 @@ function fail(msg: string) {
   console.log(`${colors.red}✗${colors.reset} ${msg}`);
 }
 
-function info(msg: string) {
+function _info(msg: string) {
   console.log(`${colors.cyan}ℹ${colors.reset} ${msg}`);
 }
 

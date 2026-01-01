@@ -137,7 +137,7 @@ function parseSummary(text: string): { summary: string; insights: string[] } {
       (line) =>
         line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*')
     )
-    .map((line) => line.replace(/^[•\-\*]\s*/, '').trim())
+    .map((line) => line.replace(/^[•\-*]\s*/, '').trim())
     .filter((line) => line.length > 0);
 
   return { summary, insights };

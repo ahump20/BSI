@@ -182,7 +182,7 @@ export function validateEnvironmentOnStartup(): void {
     console.error('❌ Environment validation failed:');
     result.errors?.forEach((error) => console.error(`  - ${error}`));
     if (typeof process !== 'undefined' && typeof process.exit === 'function') {
-      process.exit(1);
+      process.exit(1); // @workers-compat-ignore - inside typeof guard
     }
     return;
   }
@@ -201,7 +201,7 @@ export function validateEnvironmentOnStartup(): void {
       // In production, exit if weak secrets are detected
       console.error('❌ Production deployment blocked due to weak secrets');
       if (typeof process !== 'undefined' && typeof process.exit === 'function') {
-        process.exit(1);
+        process.exit(1); // @workers-compat-ignore - inside typeof guard
       }
     }
   }

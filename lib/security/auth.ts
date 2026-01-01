@@ -11,7 +11,7 @@
  * - Rate limiting per user
  */
 
-import { z } from 'zod';
+import { z as _z } from 'zod';
 import { getSecret } from './secrets';
 
 // User roles
@@ -145,6 +145,7 @@ class JWTService {
     }
 
     // Fallback for Node.js
+    // eslint-disable-next-line @typescript-eslint/no-var-requires -- Dynamic require for Node.js crypto fallback
     const nodeCrypto = require('crypto');
     const hmac = nodeCrypto.createHmac('sha256', secret);
     hmac.update(data);

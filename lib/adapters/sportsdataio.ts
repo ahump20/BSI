@@ -596,10 +596,10 @@ export function createSportsDataIOAdapter(apiKey: string): SportsDataIOAdapter {
 }
 
 /**
- * Server-side only - uses process.env
+ * Server-side only - uses env bindings (Workers) or process.env (Node.js) // @workers-compat-ignore
  * For Cloudflare Functions, use createSportsDataIOAdapter(env.SPORTSDATAIO_API_KEY)
  */
 export const sportsDataIO =
   typeof process !== 'undefined' && process.env?.SPORTSDATAIO_API_KEY
-    ? new SportsDataIOAdapter(process.env.SPORTSDATAIO_API_KEY)
+    ? new SportsDataIOAdapter(process.env.SPORTSDATAIO_API_KEY) // @workers-compat-ignore - inside typeof guard
     : null;

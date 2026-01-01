@@ -68,7 +68,7 @@ function normalizeScore(score: number): number {
 /**
  * Calculate tier from score.
  */
-function scoreTier(score: number): 'generational' | 'elite' | 'ascendant' | 'developing' {
+function _scoreTier(score: number): 'generational' | 'elite' | 'ascendant' | 'developing' {
   if (score >= 90) return 'generational';
   if (score >= 75) return 'elite';
   if (score >= 55) return 'ascendant';

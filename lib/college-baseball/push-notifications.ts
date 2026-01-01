@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+/* eslint-disable no-undef */
 /**
  * Push Notification System for College Baseball
  * Granular controls for game alerts without spam
@@ -8,6 +10,9 @@
  * - Final score alerts
  * - Favorite team/player tracking
  */
+
+// Type declarations for DOM APIs used in Cloudflare Workers context
+type NotificationPermissionType = 'default' | 'denied' | 'granted';
 
 export interface NotificationPreferences {
   enabled: boolean;
@@ -41,7 +46,7 @@ export interface NotificationPayload {
 /**
  * Request notification permission from user
  */
-export async function requestNotificationPermission(): Promise<NotificationPermission> {
+export async function requestNotificationPermission(): Promise<NotificationPermissionType> {
   if (!('Notification' in window)) {
     throw new Error('Notifications not supported');
   }
@@ -74,7 +79,7 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
     // Subscribe to push notifications
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(getVapidPublicKey()) as BufferSource,
+      applicationServerKey: urlBase64ToUint8Array(getVapidPublicKey()),
     });
 
     // Send subscription to server
@@ -213,7 +218,7 @@ export async function showLocalNotification(payload: NotificationPayload): Promi
 function getVapidPublicKey(): string {
   // In production, this should be your actual VAPID public key
   if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
-    return process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    return process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY; // @workers-compat-ignore - inside typeof guard
   }
   return 'BEl62iUYgUivxIkv69yViEuiBIa-Ib37J8xYFraBudc';
 }

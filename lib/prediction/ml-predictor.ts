@@ -14,11 +14,14 @@ import type {
   GameContext,
   MLFeatures,
   ShapValue,
-  PsychologicalState,
+  PsychologicalState as _PsychologicalState,
   TeamDiamondScores,
 } from './types';
 
-import { PYTHAGOREAN_EXPONENTS, HOME_ADVANTAGE } from './types';
+import {
+  PYTHAGOREAN_EXPONENTS as _PYTHAGOREAN_EXPONENTS,
+  HOME_ADVANTAGE as _HOME_ADVANTAGE,
+} from './types';
 
 // ============================================================================
 // Model Weights
@@ -347,8 +350,8 @@ export class MLPredictor {
     const shapValues: ShapValue[] = [];
 
     // Calculate base probability (neutral features)
-    const baseProb = 0.5;
-    const actualProb = this.predict(features);
+    const _baseProb = 0.5;
+    const _actualProb = this.predict(features);
 
     // Calculate contribution of each feature
     const contributions = this.calculateFeatureContributions(features);

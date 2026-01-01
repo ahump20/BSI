@@ -106,7 +106,7 @@ export class SecretsManager {
 
       // Fallback to environment variables (Node.js only)
       if (!value && typeof process !== 'undefined') {
-        value = process.env[name] || null;
+        value = process.env[name] || null; // @workers-compat-ignore - inside typeof guard
       }
 
       // Validate required secrets
@@ -261,6 +261,7 @@ export class SecretsManager {
     }
 
     // Fallback for Node.js
+    // eslint-disable-next-line @typescript-eslint/no-var-requires -- Dynamic require for Node.js crypto fallback
     const nodeCrypto = require('crypto');
     return nodeCrypto.randomBytes(length).toString('base64');
   }

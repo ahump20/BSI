@@ -16,7 +16,7 @@ import type {
   ConfidenceLevel,
   SubscriptionTier,
   SupportedSport,
-  TeamState,
+  TeamState as _TeamState,
 } from './types';
 
 // ============================================================================

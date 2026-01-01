@@ -24,7 +24,11 @@ import type {
   GameResult,
 } from './types';
 
-import { PYTHAGOREAN_EXPONENTS, HOME_ADVANTAGE, PSYCHOLOGY_PARAMS } from './types';
+import {
+  PYTHAGOREAN_EXPONENTS,
+  HOME_ADVANTAGE,
+  PSYCHOLOGY_PARAMS as _PSYCHOLOGY_PARAMS,
+} from './types';
 
 import { PsychologyModel } from './psychology-model';
 
@@ -175,7 +179,7 @@ export class SimulationCore {
    */
   private calculateFormFactor(team: TeamSimState): number {
     // Use psychology model's momentum calculation
-    const recentForm: GameResult[] = [];
+    const _recentForm: GameResult[] = [];
     const record = team.wins + team.losses;
 
     // Infer recent form from win percentage if not tracked
@@ -430,7 +434,7 @@ export class SimulationCore {
         // Reset state for this simulation
         let currentPsych: PsychologicalState = { ...team };
         let wins = team.wins;
-        let losses = team.losses;
+        let _losses = team.losses;
         let streak = 0;
         let lastResult: GameResult | null = null;
         let peaksThisSim = 0;
@@ -479,7 +483,7 @@ export class SimulationCore {
             streak = lastResult === 'W' ? streak + 1 : 1;
             lastResult = 'W';
           } else {
-            losses++;
+            _losses++;
             streak = lastResult === 'L' ? streak + 1 : 1;
             lastResult = 'L';
           }

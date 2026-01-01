@@ -257,6 +257,7 @@ export class CSRFProtection {
     }
 
     // Fallback for Node.js
+    // eslint-disable-next-line @typescript-eslint/no-var-requires -- Dynamic require for Node.js crypto fallback
     const nodeCrypto = require('crypto');
     const hmac = nodeCrypto.createHmac('sha256', this.secret);
     hmac.update(data);

@@ -596,6 +596,7 @@ export class WHOOPv2Adapter {
    */
   verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
     // WHOOP uses HMAC-SHA256 for webhook verification
+    // eslint-disable-next-line @typescript-eslint/no-var-requires -- Dynamic require for Node.js crypto fallback
     const crypto = require('crypto');
     const expectedSignature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
 
@@ -713,7 +714,7 @@ export class WHOOPv2Adapter {
 // FACTORY & EXPORTS
 // ============================================================================
 
-// Helper to safely access process.env in both Node.js and Workers
+// Helper to safely access process.env in both Node.js and Workers // @workers-compat-ignore
 const getProcessEnv = (key: string): string | undefined =>
   typeof process !== 'undefined' ? process.env?.[key] : undefined;
 

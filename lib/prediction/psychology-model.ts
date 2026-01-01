@@ -12,7 +12,7 @@
 
 import type {
   PsychologicalState,
-  TeamState,
+  TeamState as _TeamState,
   GameOutcome,
   StateUpdateParams,
   OffseasonTransition,
@@ -20,7 +20,7 @@ import type {
   ChampionDimensionKey,
   TeamDiamondScores,
   SupportedSport,
-  PSYCHOLOGY_PARAMS,
+  PSYCHOLOGY_PARAMS as _PSYCHOLOGY_PARAMS,
 } from './types';
 
 // Default parameters for state updates

@@ -11,7 +11,7 @@ import type {
   LiveEvent,
   StartMonitoringRequest,
   StartMonitoringResponse,
-  Sport,
+  Sport as _Sport,
   EventType,
   GameState,
   EventRawData,
@@ -163,7 +163,7 @@ function calculateLeverageIndex(
 /**
  * Calculate win probability delta (simplified)
  */
-function calculateWinProbDelta(
+function _calculateWinProbDelta(
   beforeState: { inning: number; outs: number; runners: string; score: number },
   afterState: { inning: number; outs: number; runners: string; score: number }
 ): number {

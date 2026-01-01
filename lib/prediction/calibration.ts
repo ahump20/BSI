@@ -14,7 +14,7 @@ import type {
   CalibrationBucket,
   CalibrationResult,
   BacktestResult,
-  GamePrediction,
+  GamePrediction as _GamePrediction,
   CloudflareEnv,
 } from './types';
 

@@ -73,7 +73,7 @@ export interface LoggerConfig {
   sendToDatadog?: boolean;
 }
 
-// Helper to safely access process.env in both Node.js and Workers
+// Helper to safely access process.env in both Node.js and Workers // @workers-compat-ignore
 const getProcessEnv = (key: string): string | undefined =>
   typeof process !== 'undefined' ? process.env?.[key] : undefined;
 

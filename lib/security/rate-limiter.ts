@@ -161,7 +161,7 @@ export class TokenBucketRateLimiter {
     storage: KVNamespace | Map<string, string>
   ): Promise<RateLimitResult> {
     const now = Date.now();
-    const windowStart = now - this.config.window;
+    const _windowStart = now - this.config.window;
 
     // Get current bucket state
     const bucketKey = `${this.config.keyPrefix || 'rl'}:${key}`;

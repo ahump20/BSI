@@ -16,8 +16,8 @@ preview_id = "preview_8a7b3c4d5e6f7890abcdef1234567890"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "bsi-cfb-db"
-database_id = "placeholder-update-after-migration"
+database_name = "bsi-historical-db"
+database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 
 # Cron triggers:
 # - 6 AM CT: Pre-generate AI content for today's games

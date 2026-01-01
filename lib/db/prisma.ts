@@ -24,7 +24,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Helper to safely access process.env in both Node.js and Workers
+// Helper to safely access process.env in both Node.js and Workers // @workers-compat-ignore
 const getNodeEnv = () => (typeof process !== 'undefined' ? process.env?.NODE_ENV : undefined);
 
 export const prisma =

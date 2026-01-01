@@ -109,7 +109,7 @@ export class BsiPredictionEngine {
     const useDiamond = options?.useDiamondEnhancement ?? true;
 
     // Check cache first
-    const cacheKey = `prediction:${context.gameId}:${this.config.modelVersion}`;
+    const _cacheKey = `prediction:${context.gameId}:${this.config.modelVersion}`;
     const cached = await this.stateTracker.getPrediction(context.gameId);
     if (cached && this.isCacheValid(cached.timestamp, CACHE_TTL.prediction)) {
       return this.formatCachedPrediction(cached, tier);

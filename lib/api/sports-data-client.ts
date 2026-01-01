@@ -86,7 +86,7 @@ export class SportsDataClient {
    * @param env - Cloudflare env bindings (Workers) or undefined (Node.js)
    */
   private initializeProviders(env?: any): void {
-    // Get API keys from env bindings (Workers) or process.env (Node.js)
+    // Get API keys from env bindings (Workers) or process.env (Node.js) // @workers-compat-ignore
     const sportsDataIOKey =
       env?.SPORTSDATAIO_API_KEY ||
       (typeof process !== 'undefined' ? process.env?.SPORTSDATAIO_API_KEY : null) ||

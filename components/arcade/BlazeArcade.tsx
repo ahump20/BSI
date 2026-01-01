@@ -5100,7 +5100,7 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
     newCosmetics,
     recordGamePlayed,
     checkAchievements,
-    recordTeamDefeated,
+    recordTeamDefeated: _recordTeamDefeated,
     recordDailyComplete,
     clearNewAchievements,
   } = useProgression();
