@@ -63,6 +63,53 @@ The name "Blaze Sports Intel" comes from my dog—a dachshund named Blaze after 
 
 ---
 
+## TECH STACK
+
+### Frontend
+- **Framework:** Next.js 16 (App Router, static export)
+- **React:** 19.2 with React Server Components
+- **Styling:** Tailwind CSS 3.4 with custom design tokens
+- **3D Graphics:** Three.js + React Three Fiber (pitch tunneling, embers)
+- **Animation:** Framer Motion 12 for UI animations
+- **State Management:** TanStack Query v5 for server state
+- **Charts:** Recharts for data visualization
+
+### Backend
+- **Deployment:** Cloudflare Pages with Functions
+- **Database:** Cloudflare D1 (SQLite)
+- **Cache:** Cloudflare KV (key-value)
+- **Storage:** Cloudflare R2 (object storage)
+- **Workers:** Standalone Cloudflare Workers for heavy processing
+- **Auth:** Google OAuth + session management
+
+### Data Adapters
+| Provider | Sports | Usage |
+|----------|--------|-------|
+| ESPN API | MLB, NFL, NBA, CFB | Scores, schedules, standings |
+| MLB Stats API | MLB | Official stats, Statcast |
+| NCAA API | College Baseball | Teams, rosters, schedules |
+| BallDontLie | NBA | Player stats, game data |
+| CFBD | College Football | Advanced analytics |
+
+### Testing
+- **Unit/Integration:** Vitest + jsdom
+- **Accessibility:** Playwright + axe-core
+- **Visual:** Playwright visual snapshots
+- **API:** Custom test suites for each sport
+
+### Build & Deploy
+```bash
+npm run dev          # Next.js dev server
+npm run build        # Build for production (static export to /out)
+npm run deploy       # Build + deploy to Cloudflare Pages
+npm run test         # Run Vitest
+npm run test:a11y    # Run accessibility tests
+npm run lint         # ESLint
+npm run typecheck    # TypeScript check
+```
+
+---
+
 ## ABSOLUTE RULES (NEVER VIOLATE)
 
 ### 1. ONE LOCATION
@@ -100,27 +147,91 @@ Every new file = audit for obsolete files:
 
 ## PROJECT STRUCTURE
 
+This is a **Next.js 16** application deployed to **Cloudflare Pages** with serverless functions.
+
 ```
 BSI/
-├── src/
-│   ├── workers/              # Cloudflare Worker source code
-│   │   ├── api/              # API endpoints (bsi-api-*)
-│   │   ├── ingest/           # Data ingestion (bsi-ingest-*)
-│   │   ├── public/           # Public site (blazesportsintel.com)
-│   │   └── mcp/              # MCP servers
-│   ├── components/           # Reusable UI components
-│   ├── lib/                  # Shared utilities
-│   ├── types/                # TypeScript definitions
-│   └── styles/               # Global styles, tokens
-├── public/                   # Static assets ONLY (images, fonts)
-├── workers/                  # wrangler.toml files (one per worker)
-├── scripts/                  # Build/deploy automation
-├── docs/                     # Documentation
-├── .github/                  # GitHub workflows
-├── CLAUDE.md                 # This file
-├── package.json
-├── tsconfig.json
-└── wrangler.toml             # Root config (if single worker)
+├── app/                      # Next.js App Router (pages & routes)
+│   ├── mlb/                  # MLB sport section
+│   ├── nfl/                  # NFL sport section
+│   ├── nba/                  # NBA sport section
+│   ├── college-baseball/     # College baseball section
+│   ├── cfb/                  # College football section
+│   ├── auth/                 # Authentication pages
+│   ├── checkout/             # Stripe checkout flow
+│   ├── dashboard/            # User dashboard
+│   ├── data/                 # Data adapters & JSON files
+│   ├── css/                  # Global CSS (blaze-*.css)
+│   ├── globals.css           # Tailwind base styles
+│   └── layout.tsx            # Root layout
+├── components/               # Reusable React components
+│   ├── box-score/            # Universal box score components
+│   ├── cinematic/            # Visual effects (parallax, noise, etc.)
+│   ├── game-detail/          # Game detail modal system
+│   ├── headlines/            # News headline components
+│   ├── hero/                 # Hero section components
+│   ├── layout-ds/            # Design system layout (Navbar, Footer)
+│   ├── media/                # Video players & highlights
+│   ├── motion/               # Framer Motion animations
+│   ├── pitch-tracker/        # Baseball pitch visualization
+│   ├── play-by-play/         # Play-by-play components
+│   ├── recruiting/           # Portal tracker, heatmaps
+│   ├── sports/               # Score cards, standings, tabs
+│   ├── three/                # Three.js 3D components
+│   └── vision-ai/            # Vision AI intelligence components
+├── functions/                # Cloudflare Pages Functions (API)
+│   └── api/                  # All API endpoints
+│       ├── auth/             # Authentication endpoints
+│       ├── mlb/              # MLB API routes
+│       ├── nfl/              # NFL API routes
+│       ├── nba/              # NBA API routes
+│       ├── college-baseball/ # College baseball API
+│       ├── college-football/ # College football API
+│       ├── copilot/          # AI Copilot endpoints
+│       ├── game/             # Game detail endpoints
+│       └── live/             # Live scores endpoints
+├── lib/                      # Shared library code
+│   ├── adapters/             # Data source adapters (ESPN, MLB, NCAA, etc.)
+│   ├── analytics/            # Analytics engines (win prob, Pythagorean)
+│   ├── api/                  # API client utilities
+│   ├── cache/                # Tiered caching system
+│   ├── hooks/                # React hooks (useSportsData, etc.)
+│   ├── lei/                  # Live Event Intelligence engine
+│   ├── ml/                   # Machine learning models
+│   ├── nlg/                  # Natural language generation
+│   └── utils/                # Utility functions
+├── hooks/                    # Additional React hooks
+├── src/                      # Legacy/specialized source
+│   ├── basketball/           # Basketball standalone app
+│   ├── football/             # Football standalone app
+│   ├── games/                # Diamond Sluggers game
+│   ├── styles/tokens/        # Design tokens (colors, typography)
+│   └── tools/                # Tools showcase
+├── workers/                  # Standalone Cloudflare Workers
+│   ├── baseball-rankings/    # Baseball rankings worker
+│   ├── bsi-game-backend/     # Game backend worker
+│   ├── ingest/               # Data ingestion workers
+│   └── prediction/           # Prediction worker
+├── tests/                    # Test suites
+│   ├── a11y/                 # Accessibility tests (Playwright)
+│   ├── analytics/            # Analytics unit tests
+│   ├── api/                  # API integration tests
+│   ├── integration/          # Integration tests
+│   ├── validation/           # Schema validation tests
+│   └── visual/               # Visual regression tests
+├── schema/                   # D1 database schemas (SQL)
+├── scripts/                  # Build, deploy, data scripts
+├── docs/                     # Documentation (100+ markdown files)
+├── public/                   # Static assets (images, fonts, js)
+├── .claude/                  # Claude tooling (analyzers, MCP servers)
+├── .cursor/                  # Cursor IDE rules & commands
+├── .github/                  # GitHub workflows & templates
+├── CLAUDE.md                 # This file (AI assistant rules)
+├── package.json              # Dependencies & scripts
+├── tsconfig.json             # TypeScript configuration
+├── tailwind.config.ts        # Tailwind CSS configuration
+├── next.config.js            # Next.js configuration
+└── vitest.config.ts          # Vitest test configuration
 ```
 
 **DO NOT CREATE:**
@@ -265,6 +376,56 @@ public/
 
 ---
 
+## KEY COMPONENT PATTERNS
+
+### Page Components (app/)
+Each sport page follows this pattern:
+```
+app/{sport}/
+├── page.tsx              # Main sport landing page
+├── scores/page.tsx       # Live scores
+├── standings/page.tsx    # Standings tables
+├── teams/page.tsx        # Team listings
+├── teams/[teamId]/page.tsx  # Team detail
+├── game/[gameId]/        # Game detail routes
+│   ├── page.tsx          # Game summary
+│   ├── box-score/page.tsx
+│   ├── play-by-play/page.tsx
+│   ├── recap/page.tsx
+│   └── team-stats/page.tsx
+└── news/page.tsx         # Sport news
+```
+
+### Game Detail Modal (components/game-detail/)
+The universal game detail system uses:
+- `GameDetailModal.tsx` - Main modal container
+- Tab system: Gamecast, Box Score, Play-by-Play, Recap, Videos
+- Swipe gestures for mobile navigation
+- Shared components in `shared/` subdirectory
+
+### Data Fetching Pattern
+```typescript
+// In a page component
+import { useSportsData } from '@/lib/hooks/useSportsData';
+
+export default function ScoresPage() {
+  const { data, isLoading, error } = useSportsData('mlb', 'scoreboard');
+  // ...
+}
+```
+
+### Adapter Pattern (lib/adapters/)
+Each data source has an adapter that normalizes data:
+```typescript
+// lib/adapters/espn-unified-adapter.ts
+export async function getScoreboard(sport: Sport): Promise<Game[]> {
+  const raw = await fetchESPN(sport);
+  return normalizeGames(raw);
+}
+```
+
+---
+
 ## SPORTS DATA SOURCES
 
 ### Primary Sources
@@ -278,6 +439,21 @@ public/
 - Standings: 24 hours max
 - Injuries: 2 hours max
 - Player stats: Daily during season
+
+### Key API Routes (functions/api/)
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/mlb/[[teamId]]` | GET | MLB team data, scores |
+| `/api/nfl/[[route]]` | GET | NFL scores, standings |
+| `/api/nba/[[route]]` | GET | NBA scores, standings |
+| `/api/college-baseball/games/[[gameId]]` | GET | College baseball games |
+| `/api/college-baseball/teams/[teamId]` | GET | Team details |
+| `/api/college-football/scoreboard` | GET | CFB live scores |
+| `/api/copilot/search` | POST | AI-powered search |
+| `/api/copilot/insight` | POST | AI game insights |
+| `/api/live/[[route]]` | GET | Live scores across sports |
+| `/api/auth/login` | POST | User authentication |
+| `/api/auth/session` | GET | Session validation |
 
 ### Data Quality Standards
 - Always cite sources with timestamps (America/Chicago)
@@ -331,16 +507,27 @@ Available tools:
 
 ## CLOUDFLARE DEPLOYMENT
 
-### Deploy Command
+### Primary Deployment (Next.js to Cloudflare Pages)
 ```bash
-# From BSI root
+# Production deployment
+npm run deploy:production
+
+# Preview deployment
+npm run deploy:preview
+```
+
+The main site deploys as a **static export** to Cloudflare Pages with Functions in `/functions/api/`.
+
+### Standalone Workers Deployment
+```bash
+# Deploy a standalone worker
 wrangler deploy --config workers/{worker-name}/wrangler.toml
 ```
 
-### wrangler.toml Template
+### wrangler.toml Template (for standalone workers)
 ```toml
 name = "bsi-{domain}-{function}"
-main = "src/workers/{path}/index.ts"
+main = "index.ts"
 compatibility_date = "2024-01-01"
 
 [vars]
@@ -357,27 +544,71 @@ database_id = "xxx"
 ```
 
 ### Canonical Workers (DO NOT DUPLICATE)
-| Worker | Purpose | Status |
-|--------|---------|--------|
-| `bsi-mcp-server` | MCP interface | Active |
-| `blaze-sports-api` | Primary REST API | Active |
-| `espn-data-cache` | ESPN data layer | Active |
-| `bsi-baseball-ingest` | College baseball data | Active |
+| Worker | Location | Purpose | Status |
+|--------|----------|---------|--------|
+| `blazesportsintel` | Cloudflare Pages | Main site + API functions | Active |
+| `baseball-rankings` | `workers/baseball-rankings/` | Baseball rankings engine | Active |
+| `bsi-game-backend` | `workers/bsi-game-backend/` | Diamond Sluggers backend | Active |
+| `bsi-ingest` | `workers/ingest/` | Data ingestion (WHOOP, NBA) | Active |
+| `bsi-prediction` | `workers/prediction/` | Prediction worker | Active |
+
+### Key Cloudflare Resources
+| Type | Name | Purpose |
+|------|------|---------|
+| D1 | `blazesports-historical` | Historical game data |
+| KV | `BSI_CACHE` | API response cache |
+| KV | `BSI_SESSIONS` | User sessions |
+| R2 | `bsi-media` | Video/image storage |
 
 Before creating a new worker, verify it doesn't duplicate existing functionality.
+
+---
+
+## TESTING
+
+### Test Commands
+```bash
+npm run test              # Run all Vitest tests
+npm run test:ui           # Vitest with UI
+npm run test:coverage     # With coverage report
+npm run test:api          # API tests only
+npm run test:integration  # Integration tests only
+npm run test:validation   # Schema validation tests
+npm run test:a11y         # Playwright accessibility tests
+npm run test:a11y:ui      # Playwright with UI
+```
+
+### Test File Locations
+| Type | Location | Framework |
+|------|----------|-----------|
+| Unit | `tests/analytics/` | Vitest |
+| API | `tests/api/` | Vitest |
+| Integration | `tests/integration/` | Vitest |
+| Validation | `tests/validation/` | Vitest |
+| Accessibility | `tests/a11y/` | Playwright + axe-core |
+| Visual | `tests/visual/` | Playwright |
+
+### Writing Tests
+- Use `describe()` and `it()` for test organization
+- Mock external APIs using Vitest mocks
+- Test adapters should verify data normalization
+- Accessibility tests use `@axe-core/playwright`
 
 ---
 
 ## CODE QUALITY REQUIREMENTS
 
 - Zero TODO comments or placeholders
-- Complete error handling
-- TypeScript when applicable
-- WCAG AA accessibility minimum
-- Mobile-first responsive design
-- Performance optimized (lazy loading, code splitting)
+- Complete error handling with proper types
+- TypeScript for all new code (`.tsx` for components, `.ts` for utilities)
+- WCAG AA accessibility minimum (tested via Playwright + axe-core)
+- Mobile-first responsive design (Tailwind breakpoints: `sm`, `md`, `lg`, `xl`)
+- Performance optimized (lazy loading, code splitting, tiered caching)
 - API Keys: NEVER commit to files, always use environment variables
-- Current year is 2025, not 2024
+- Current year is 2026
+- Use Zod for runtime validation of API responses
+- Use TanStack Query for all data fetching in components
+- Follow existing patterns in `lib/adapters/` for new data sources
 
 ---
 
@@ -477,4 +708,4 @@ Never say:
 
 ---
 
-*Last updated: November 2025*
+*Last updated: January 2026*
