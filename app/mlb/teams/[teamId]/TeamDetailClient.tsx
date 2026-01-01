@@ -190,7 +190,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <div className="text-center py-8">
             <p className="text-text-secondary">Roster data loading or not yet available.</p>
             <p className="text-text-tertiary text-sm mt-2">
-              The 40-man roster will populate once spring training rosters are finalized. Check back when the boys report to camp.
+              The 40-man roster will populate once spring training rosters are finalized. Check back
+              when the boys report to camp.
             </p>
           </div>
         </Card>
@@ -428,7 +429,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-text-tertiary">
-            Team batting stats populate once the season starts. No spring training fluff—only regular season numbers.
+            Team batting stats populate once the season starts. No spring training fluff—only
+            regular season numbers.
           </div>
         </CardContent>
       </Card>

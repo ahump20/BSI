@@ -28,8 +28,8 @@ import {
   RPICalculation,
   SOSCalculation,
   ISRCalculation,
-  ConferenceStrengthModel,
-  TeamRecord,
+  ConferenceStrengthModel as _ConferenceStrengthModel,
+  TeamRecord as _TeamRecord,
 } from './conference-strength-model';
 
 // ============================================================================

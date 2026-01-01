@@ -27,24 +27,24 @@ export const onRequest: PagesFunction = async (context) => {
     const slug = slugParts?.join('/');
 
     if (!slug) {
-      return new Response(
-        JSON.stringify({ error: 'Article slug is required' }),
-        { status: 400, headers: corsHeaders }
-      );
+      return new Response(JSON.stringify({ error: 'Article slug is required' }), {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     const response = await fetch(`${CFB_AI_WORKER}/article/${slug}`, {
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'User-Agent': 'BSI-Pages-Function/1.0',
       },
     });
 
     if (response.status === 404) {
-      return new Response(
-        JSON.stringify({ error: 'Article not found', slug }),
-        { status: 404, headers: corsHeaders }
-      );
+      return new Response(JSON.stringify({ error: 'Article not found', slug }), {
+        status: 404,
+        headers: corsHeaders,
+      });
     }
 
     if (!response.ok) {

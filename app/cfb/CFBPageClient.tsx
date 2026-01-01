@@ -191,7 +191,8 @@ export default function CFBPageClient() {
                     Game <span className="text-gradient-blaze">Previews</span>
                   </h2>
                   <p className="text-text-secondary mt-3 max-w-xl">
-                    AI-generated previews analyzing matchups, key players, and predictions for upcoming games.
+                    AI-generated previews analyzing matchups, key players, and predictions for
+                    upcoming games.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -204,7 +205,9 @@ export default function CFBPageClient() {
                     <circle cx="15" cy="9" r="1.5" />
                     <path d="M9 15h6" />
                   </svg>
-                  <span className="text-sm text-text-tertiary">Powered by Workers AI + SportsDataIO</span>
+                  <span className="text-sm text-text-tertiary">
+                    Powered by Workers AI + SportsDataIO
+                  </span>
                 </div>
               </div>
             </ScrollReveal>
@@ -228,7 +231,8 @@ export default function CFBPageClient() {
                     Game <span className="text-gradient-blaze">Recaps</span>
                   </h2>
                   <p className="text-text-secondary mt-3 max-w-xl">
-                    Post-game analysis breaking down what happened, standout performers, and key moments.
+                    Post-game analysis breaking down what happened, standout performers, and key
+                    moments.
                   </p>
                 </div>
                 <Link href="/cfb/articles" className="hidden md:block">

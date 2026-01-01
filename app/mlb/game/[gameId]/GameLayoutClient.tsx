@@ -251,7 +251,9 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
               </Link>
               <span className="text-text-tertiary">/</span>
               <span className="text-white font-medium">
-                {game ? `${game.teams.away.abbreviation} @ ${game.teams.home.abbreviation}` : `Game ${gameId}`}
+                {game
+                  ? `${game.teams.away.abbreviation} @ ${game.teams.home.abbreviation}`
+                  : `Game ${gameId}`}
               </span>
             </nav>
           </Container>

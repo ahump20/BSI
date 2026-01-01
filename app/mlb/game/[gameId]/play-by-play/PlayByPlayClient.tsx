@@ -70,7 +70,8 @@ export default function PlayByPlayClient() {
           </svg>
           <p className="text-text-secondary">Play-by-play data not available yet</p>
           <p className="text-text-tertiary text-sm mt-2">
-            Live play updates will appear here once the game begins. Every pitch, every swing, every play.
+            Live play updates will appear here once the game begins. Every pitch, every swing, every
+            play.
           </p>
         </div>
       </Card>

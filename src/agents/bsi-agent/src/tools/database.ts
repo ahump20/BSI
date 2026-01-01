@@ -5,7 +5,7 @@
  * Designed for the D1 database: bsi-portal-db
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // -----------------------------------------------------------------------------
 // Schema Definitions
@@ -120,13 +120,13 @@ export const PortalEntrySchema = z.object({
   position: z.string().nullable(),
   conference: z.string().nullable(),
   class_year: z.string().nullable(),
-  source: z.enum(["twitter", "d1baseball", "baseballamerica", "manual"]),
+  source: z.enum(['twitter', 'd1baseball', 'baseballamerica', 'manual']),
   source_id: z.string().nullable(),
   source_url: z.string().nullable(),
   portal_date: z.string(),
   discovered_at: z.string(),
   updated_at: z.string(),
-  status: z.enum(["in_portal", "committed", "withdrawn", "unknown"]).default("in_portal"),
+  status: z.enum(['in_portal', 'committed', 'withdrawn', 'unknown']).default('in_portal'),
   engagement_score: z.number().default(0),
   profile_generated: z.boolean().default(false),
   alerts_sent: z.number().default(0),
@@ -204,7 +204,9 @@ export class PortalDatabase {
   /**
    * Insert a new portal entry.
    */
-  async insertEntry(entry: Omit<PortalEntry, "id" | "discovered_at" | "updated_at">): Promise<PortalEntry> {
+  async insertEntry(
+    entry: Omit<PortalEntry, 'id' | 'discovered_at' | 'updated_at'>
+  ): Promise<PortalEntry> {
     const now = new Date().toISOString();
     const id = `portal-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -250,12 +252,12 @@ export class PortalDatabase {
   /**
    * Upsert a portal entry (insert or update if exists).
    */
-  async upsertEntry(entry: Omit<PortalEntry, "id" | "discovered_at" | "updated_at">): Promise<{
+  async upsertEntry(entry: Omit<PortalEntry, 'id' | 'discovered_at' | 'updated_at'>): Promise<{
     entry: PortalEntry;
     isNew: boolean;
   }> {
     // Check if entry already exists
-    const existing = await this.findByPlayerAndSchool(entry.player_name, entry.school_from || "");
+    const existing = await this.findByPlayerAndSchool(entry.player_name, entry.school_from || '');
 
     if (existing) {
       // Update existing
@@ -292,7 +294,7 @@ export class PortalDatabase {
    */
   async getById(id: string): Promise<PortalEntry | null> {
     const result = await this.db
-      .prepare("SELECT * FROM portal_entries WHERE id = ?")
+      .prepare('SELECT * FROM portal_entries WHERE id = ?')
       .bind(id)
       .first<PortalEntry>();
 
@@ -307,12 +309,12 @@ export class PortalDatabase {
     const values: unknown[] = [];
 
     const allowedFields = [
-      "school_to",
-      "status",
-      "engagement_score",
-      "profile_generated",
-      "alerts_sent",
-      "updated_at",
+      'school_to',
+      'status',
+      'engagement_score',
+      'profile_generated',
+      'alerts_sent',
+      'updated_at',
     ];
 
     for (const field of allowedFields) {
@@ -325,15 +327,15 @@ export class PortalDatabase {
     if (fields.length === 0) return this.getById(id);
 
     // Always update updated_at
-    if (!fields.includes("updated_at = ?")) {
-      fields.push("updated_at = ?");
+    if (!fields.includes('updated_at = ?')) {
+      fields.push('updated_at = ?');
       values.push(new Date().toISOString());
     }
 
     values.push(id);
 
     await this.db
-      .prepare(`UPDATE portal_entries SET ${fields.join(", ")} WHERE id = ?`)
+      .prepare(`UPDATE portal_entries SET ${fields.join(', ')} WHERE id = ?`)
       .bind(...values)
       .run();
 
@@ -343,36 +345,41 @@ export class PortalDatabase {
   /**
    * Get recent portal entries.
    */
-  async getRecentEntries(options: {
-    limit?: number;
-    status?: PortalEntry["status"];
-    conference?: string;
-    since?: string;
-  } = {}): Promise<PortalEntry[]> {
+  async getRecentEntries(
+    options: {
+      limit?: number;
+      status?: PortalEntry['status'];
+      conference?: string;
+      since?: string;
+    } = {}
+  ): Promise<PortalEntry[]> {
     const { limit = 50, status, conference, since } = options;
 
-    let query = "SELECT * FROM portal_entries WHERE 1=1";
+    let query = 'SELECT * FROM portal_entries WHERE 1=1';
     const params: unknown[] = [];
 
     if (status) {
-      query += " AND status = ?";
+      query += ' AND status = ?';
       params.push(status);
     }
 
     if (conference) {
-      query += " AND LOWER(conference) = LOWER(?)";
+      query += ' AND LOWER(conference) = LOWER(?)';
       params.push(conference);
     }
 
     if (since) {
-      query += " AND portal_date >= ?";
+      query += ' AND portal_date >= ?';
       params.push(since);
     }
 
-    query += " ORDER BY portal_date DESC LIMIT ?";
+    query += ' ORDER BY portal_date DESC LIMIT ?';
     params.push(limit);
 
-    const result = await this.db.prepare(query).bind(...params).all<PortalEntry>();
+    const result = await this.db
+      .prepare(query)
+      .bind(...params)
+      .all<PortalEntry>();
 
     return result.results || [];
   }
@@ -428,13 +435,17 @@ export class PortalDatabase {
     const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
     const [total, inPortal, committed, last24, last7, conferences] = await this.db.batch([
-      this.db.prepare("SELECT COUNT(*) as count FROM portal_entries"),
+      this.db.prepare('SELECT COUNT(*) as count FROM portal_entries'),
       this.db.prepare("SELECT COUNT(*) as count FROM portal_entries WHERE status = 'in_portal'"),
       this.db.prepare("SELECT COUNT(*) as count FROM portal_entries WHERE status = 'committed'"),
-      this.db.prepare("SELECT COUNT(*) as count FROM portal_entries WHERE discovered_at >= ?").bind(yesterday),
-      this.db.prepare("SELECT COUNT(*) as count FROM portal_entries WHERE discovered_at >= ?").bind(lastWeek),
+      this.db
+        .prepare('SELECT COUNT(*) as count FROM portal_entries WHERE discovered_at >= ?')
+        .bind(yesterday),
+      this.db
+        .prepare('SELECT COUNT(*) as count FROM portal_entries WHERE discovered_at >= ?')
+        .bind(lastWeek),
       this.db.prepare(
-        "SELECT conference, COUNT(*) as count FROM portal_entries WHERE conference IS NOT NULL GROUP BY conference"
+        'SELECT conference, COUNT(*) as count FROM portal_entries WHERE conference IS NOT NULL GROUP BY conference'
       ),
     ]);
 
@@ -457,7 +468,9 @@ export class PortalDatabase {
   // Player Profile Operations
   // -------------------------------------------------------------------------
 
-  async insertProfile(profile: Omit<PlayerProfile, "id" | "created_at" | "updated_at">): Promise<PlayerProfile> {
+  async insertProfile(
+    profile: Omit<PlayerProfile, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<PlayerProfile> {
     const now = new Date().toISOString();
     const id = `profile-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -504,7 +517,7 @@ export class PortalDatabase {
 
   async getProfileByEntryId(entryId: string): Promise<PlayerProfile | null> {
     const result = await this.db
-      .prepare("SELECT * FROM player_profiles WHERE portal_entry_id = ?")
+      .prepare('SELECT * FROM player_profiles WHERE portal_entry_id = ?')
       .bind(entryId)
       .first<PlayerProfile>();
 
@@ -528,19 +541,30 @@ export class PortalDatabase {
         `INSERT INTO alert_history (id, portal_entry_id, channel, recipient, message, sent_at)
          VALUES (?, ?, ?, ?, ?, ?)`
       )
-      .bind(id, alert.portal_entry_id, alert.channel, alert.recipient || null, alert.message, new Date().toISOString())
+      .bind(
+        id,
+        alert.portal_entry_id,
+        alert.channel,
+        alert.recipient || null,
+        alert.message,
+        new Date().toISOString()
+      )
       .run();
 
     // Increment alerts_sent counter on portal entry
     await this.db
-      .prepare("UPDATE portal_entries SET alerts_sent = alerts_sent + 1 WHERE id = ?")
+      .prepare('UPDATE portal_entries SET alerts_sent = alerts_sent + 1 WHERE id = ?')
       .bind(alert.portal_entry_id)
       .run();
   }
 
-  async getAlertHistory(entryId: string): Promise<{ channel: string; sent_at: string; message: string }[]> {
+  async getAlertHistory(
+    entryId: string
+  ): Promise<{ channel: string; sent_at: string; message: string }[]> {
     const result = await this.db
-      .prepare("SELECT channel, sent_at, message FROM alert_history WHERE portal_entry_id = ? ORDER BY sent_at DESC")
+      .prepare(
+        'SELECT channel, sent_at, message FROM alert_history WHERE portal_entry_id = ? ORDER BY sent_at DESC'
+      )
       .bind(entryId)
       .all<{ channel: string; sent_at: string; message: string }>();
 
@@ -566,7 +590,7 @@ export function getDatabase(d1: D1Database): PortalDatabase {
 // -----------------------------------------------------------------------------
 
 export async function runMigrations(db: D1Database): Promise<void> {
-  console.log("[Database] Running migrations...");
+  console.log('[Database] Running migrations...');
   await db.run(PORTAL_SCHEMA);
-  console.log("[Database] Migrations complete");
+  console.log('[Database] Migrations complete');
 }

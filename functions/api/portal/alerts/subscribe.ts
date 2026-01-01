@@ -25,16 +25,13 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
 
     // Validate email
     if (!body.email || !body.email.includes('@')) {
-      return new Response(
-        JSON.stringify({ error: 'Valid email required' }),
-        {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Valid email required' }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
     }
 
     // Create subscription record

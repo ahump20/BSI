@@ -70,7 +70,7 @@ export interface StuffRating {
  * Expected outcome probability tables
  * Source: MLB Statcast data (2015-2024), 5M+ batted balls
  */
-const EXPECTED_OUTCOME_MATRIX: Record<
+const _EXPECTED_OUTCOME_MATRIX: Record<
   string,
   {
     launchAngle: { min: number; max: number };
@@ -233,8 +233,8 @@ export class ExpectedMetricsCalculator {
    */
   private static xWOBAFormula(xBA: number, xSLG: number): number {
     // wOBA linear weights (2024 season)
-    const wBB = 0.69; // walk
-    const wHBP = 0.72; // hit by pitch
+    const _wBB = 0.69; // walk
+    const _wHBP = 0.72; // hit by pitch
     const w1B = 0.88; // single
     const w2B = 1.24; // double
     const w3B = 1.57; // triple

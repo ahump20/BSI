@@ -7,9 +7,11 @@ Use this template when applying for Twitter API access at https://developer.x.co
 ## Application Details
 
 ### Use Case Category
+
 **Academic Research** or **Hobbyist/Personal Use**
 
 ### Project Name
+
 **Blaze Sports Intel - College Baseball Transfer Portal Tracker**
 
 ### Use Case Description (500+ characters required)
@@ -38,13 +40,17 @@ coverage from major sports networks.
 ```
 
 ### Will you display tweets and/or Twitter content?
+
 **No** - We extract structured data only (player names, schools) and link back to original tweets.
 
 ### Will your product, service, or analysis make Twitter content available to a government entity?
+
 **No**
 
 ### Do you plan to analyze Tweets?
+
 **Yes** - We parse tweet text to extract:
+
 - Player names
 - School names (transferring from)
 - Destination schools (if announced)
@@ -52,6 +58,7 @@ coverage from major sports networks.
 - Conference affiliation
 
 ### How will you use this data?
+
 - Display aggregated portal entries on blazesportsintel.com
 - Send push notifications to subscribed users
 - Generate statistical reports on portal trends
@@ -61,14 +68,17 @@ coverage from major sports networks.
 ## Technical Details
 
 ### API Endpoints Used
+
 - `GET /2/tweets/search/recent` (Search Tweets)
 
 ### Estimated Volume
+
 - **Reads per month:** 2,000-5,000 (well under 15K Basic tier limit)
 - **Peak usage:** Portal season (May-June), ~100-200 reads/day
 - **Off-season:** Minimal, ~10-20 reads/day
 
 ### Rate Limiting Strategy
+
 - Batch queries: Search multiple accounts in single request using `(from:user1 OR from:user2)`
 - Intelligent polling: 10-minute intervals during peak, 4-hour intervals off-season
 - Local caching: Store `since_id` to avoid re-fetching seen tweets

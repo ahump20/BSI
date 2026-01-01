@@ -13,7 +13,7 @@
  * @see https://developers.cloudflare.com/kv/
  */
 
-import type { CacheCategory, CacheStats } from './tiered-cache';
+import type { CacheCategory, CacheStats as _CacheStats } from './tiered-cache';
 
 // ============================================================================
 // TYPE DEFINITIONS

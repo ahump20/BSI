@@ -5,10 +5,7 @@ export const dynamicParams = false;
 
 export function generateStaticParams() {
   // Sample player IDs for static export
-  return [
-    { playerId: 'sample-player-1' },
-    { playerId: 'sample-player-2' },
-  ];
+  return [{ playerId: 'sample-player-1' }, { playerId: 'sample-player-2' }];
 }
 
 export default function PlayerDetailPage() {

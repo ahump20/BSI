@@ -76,8 +76,8 @@ export function useAnalytics() {
     // Send to analytics providers
     sendToProviders(event);
 
-    // Development logging
-    if (process.env.NODE_ENV === 'development') {
+    // Development logging (guarded for Workers compatibility)
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
       console.log('[Analytics]', eventName, properties);
     }
   }, []);

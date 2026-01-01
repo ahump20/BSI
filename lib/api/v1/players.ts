@@ -11,7 +11,7 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { Player, Position, HandedEnum, AcademicYear } from '@prisma/client';
+import { Player as _Player, Position, HandedEnum, AcademicYear } from '@prisma/client';
 
 export interface PlayerDetailResponse {
   // Biographical

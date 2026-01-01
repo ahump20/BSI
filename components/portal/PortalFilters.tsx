@@ -115,8 +115,10 @@ export function PortalFilters({
 }: PortalFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const positionOptions = positions || (sport === 'football' ? FOOTBALL_POSITIONS : BASEBALL_POSITIONS);
-  const conferenceOptions = conferences || (sport === 'football' ? FOOTBALL_CONFERENCES : BASEBALL_CONFERENCES);
+  const positionOptions =
+    positions || (sport === 'football' ? FOOTBALL_POSITIONS : BASEBALL_POSITIONS);
+  const conferenceOptions =
+    conferences || (sport === 'football' ? FOOTBALL_CONFERENCES : BASEBALL_CONFERENCES);
 
   const updateFilter = useCallback(
     (key: keyof FilterState, value: string) => {
@@ -129,8 +131,14 @@ export function PortalFilters({
     onFiltersChange({ position: '', conference: '', status: '', search: '' });
   }, [onFiltersChange]);
 
-  const hasActiveFilters = filters.position || filters.conference || filters.status || filters.search;
-  const activeFilterCount = [filters.position, filters.conference, filters.status, filters.search].filter(Boolean).length;
+  const hasActiveFilters =
+    filters.position || filters.conference || filters.status || filters.search;
+  const activeFilterCount = [
+    filters.position,
+    filters.conference,
+    filters.status,
+    filters.search,
+  ].filter(Boolean).length;
 
   return (
     <div
@@ -234,18 +242,21 @@ export function PortalFilters({
         {/* Results count and clear */}
         <div className="mt-4 flex items-center justify-between text-sm">
           <p className="text-text-tertiary">
-            Showing{' '}
-            <span className="text-text-primary font-medium">{filteredCount}</span>
-            {' '}of{' '}
-            <span className="text-text-primary">{totalCount}</span>
-            {' '}entries
+            Showing <span className="text-text-primary font-medium">{filteredCount}</span> of{' '}
+            <span className="text-text-primary">{totalCount}</span> entries
           </p>
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
               className="text-burnt-orange hover:text-burnt-orange-400 transition-colors flex items-center gap-1"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>

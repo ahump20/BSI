@@ -16,7 +16,7 @@ import {
   testTwitterConnection,
   setTwitterConfig,
   type PortalEntry as TwitterPortalEntry,
-} from "./tools/twitter.js";
+} from './tools/twitter.js';
 
 // Puppeteer scraping is NOT available in Workers runtime
 // Use this locally only - the Worker uses Twitter API exclusively
@@ -28,14 +28,14 @@ import {
   runMigrations,
   type D1Database,
   type PortalEntry,
-} from "./tools/database.js";
+} from './tools/database.js';
 
 import {
   processAlertQueue,
   testAlertChannels,
   setAlertsConfig,
   type AlertConfig,
-} from "./tools/alerts.js";
+} from './tools/alerts.js';
 
 // -----------------------------------------------------------------------------
 // Agent Configuration
@@ -66,11 +66,11 @@ const DEFAULT_CONFIG: AgentConfig = {
       webhook: true,
     },
     filters: {
-      conferences: ["SEC", "Big 12", "ACC", "Big Ten", "Pac-12"],
+      conferences: ['SEC', 'Big 12', 'ACC', 'Big Ten', 'Pac-12'],
       minEngagement: 10,
     },
     recipients: {
-      pushSegments: ["Subscribed Users"],
+      pushSegments: ['Subscribed Users'],
       webhookUrls: [],
     },
   },
@@ -102,36 +102,40 @@ export class PortalIntelAgent {
   // ---------------------------------------------------------------------------
 
   async initialize(): Promise<void> {
-    console.log("[Agent] Initializing Portal Intelligence Agent...");
+    console.log('[Agent] Initializing Portal Intelligence Agent...');
 
     // Initialize database if provided
     if (this.db) {
       await runMigrations(this.config.database!);
-      console.log("[Agent] Database initialized");
+      console.log('[Agent] Database initialized');
     }
 
     // Test data sources
     if (this.config.useTwitterApi) {
       const twitterTest = await testTwitterConnection();
-      console.log(`[Agent] Twitter API: ${twitterTest.success ? "✓ Connected" : "✗ " + twitterTest.message}`);
+      console.log(
+        `[Agent] Twitter API: ${twitterTest.success ? '✓ Connected' : '✗ ' + twitterTest.message}`
+      );
     }
 
     // Note: Puppeteer scraping only available locally, not in Workers
 
     // Test alert channels
     const alertTest = await testAlertChannels();
-    console.log(`[Agent] Alerts - Push: ${alertTest.push.configured ? "✓" : "✗"}, ` +
-                `Email: ${alertTest.email.configured ? "✓" : "✗"}, ` +
-                `Webhooks: ${alertTest.webhook.count}`);
+    console.log(
+      `[Agent] Alerts - Push: ${alertTest.push.configured ? '✓' : '✗'}, ` +
+        `Email: ${alertTest.email.configured ? '✓' : '✗'}, ` +
+        `Webhooks: ${alertTest.webhook.count}`
+    );
 
-    console.log("[Agent] Initialization complete");
+    console.log('[Agent] Initialization complete');
   }
 
   async shutdown(): Promise<void> {
-    console.log("[Agent] Shutting down...");
+    console.log('[Agent] Shutting down...');
     this.stopPolling();
     // Note: closeBrowser() only needed for local Puppeteer runs
-    console.log("[Agent] Shutdown complete");
+    console.log('[Agent] Shutdown complete');
   }
 
   // ---------------------------------------------------------------------------
@@ -143,7 +147,7 @@ export class PortalIntelAgent {
     newCount: number;
     sources: { name: string; count: number }[];
   }> {
-    type PartialEntry = Omit<PortalEntry, "id" | "discovered_at" | "updated_at">;
+    type PartialEntry = Omit<PortalEntry, 'id' | 'discovered_at' | 'updated_at'>;
     const allEntries: PartialEntry[] = [];
     const sources: { name: string; count: number }[] = [];
 
@@ -153,10 +157,10 @@ export class PortalIntelAgent {
         const { entries: twitterEntries } = await pollForPortalNews();
         const converted = twitterEntries.map((e) => this.convertTwitterEntry(e));
         allEntries.push(...converted);
-        sources.push({ name: "Twitter API", count: converted.length });
+        sources.push({ name: 'Twitter API', count: converted.length });
       } catch (error) {
-        console.error("[Agent] Twitter API error:", error);
-        sources.push({ name: "Twitter API", count: 0 });
+        console.error('[Agent] Twitter API error:', error);
+        sources.push({ name: 'Twitter API', count: 0 });
       }
     }
 
@@ -227,8 +231,8 @@ export class PortalIntelAgent {
         if (succeeded) {
           await this.db.recordAlert({
             portal_entry_id: entryId,
-            channel: results.find((r) => r.success)?.channel || "unknown",
-            message: results.find((r) => r.success)?.message || "",
+            channel: results.find((r) => r.success)?.channel || 'unknown',
+            message: results.find((r) => r.success)?.message || '',
           });
         }
       }
@@ -246,7 +250,7 @@ export class PortalIntelAgent {
 
   startPolling(): void {
     if (this.isRunning) {
-      console.log("[Agent] Already polling");
+      console.log('[Agent] Already polling');
       return;
     }
 
@@ -259,14 +263,16 @@ export class PortalIntelAgent {
         console.log(`[Agent] Polling at ${new Date().toISOString()}`);
         const { entries, newCount, sources } = await this.detectPortalEntries();
 
-        console.log(`[Agent] Found ${entries.length} entries (${newCount} new) from ${sources.length} sources`);
+        console.log(
+          `[Agent] Found ${entries.length} entries (${newCount} new) from ${sources.length} sources`
+        );
 
         if (newCount > 0) {
           const { alerted, failed } = await this.processNewEntries(entries);
           console.log(`[Agent] Dispatched ${alerted} alerts (${failed} failed)`);
         }
       } catch (error) {
-        console.error("[Agent] Poll error:", error);
+        console.error('[Agent] Poll error:', error);
       }
 
       // Schedule next poll
@@ -286,7 +292,7 @@ export class PortalIntelAgent {
       clearTimeout(this.pollTimer);
       this.pollTimer = null;
     }
-    console.log("[Agent] Polling stopped");
+    console.log('[Agent] Polling stopped');
   }
 
   // ---------------------------------------------------------------------------
@@ -312,7 +318,7 @@ export class PortalIntelAgent {
     lastPoll: string | null;
     isRunning: boolean;
     apiUsage?: ReturnType<typeof getApiUsage>;
-    dbStats?: Awaited<ReturnType<PortalDatabase["getStats"]>>;
+    dbStats?: Awaited<ReturnType<PortalDatabase['getStats']>>;
   }> {
     const stats: ReturnType<typeof this.getStats> extends Promise<infer T> ? T : never = {
       lastPoll: this.lastPollTime?.toISOString() || null,
@@ -334,25 +340,26 @@ export class PortalIntelAgent {
   // Entry Conversion
   // ---------------------------------------------------------------------------
 
-  private convertTwitterEntry(entry: TwitterPortalEntry): Omit<PortalEntry, "id" | "discovered_at" | "updated_at"> {
+  private convertTwitterEntry(
+    entry: TwitterPortalEntry
+  ): Omit<PortalEntry, 'id' | 'discovered_at' | 'updated_at'> {
     return {
-      player_name: entry.playerName || "Unknown",
+      player_name: entry.playerName || 'Unknown',
       school_from: entry.school,
       school_to: null,
       position: entry.position,
       conference: entry.conference,
       class_year: null,
-      source: "twitter",
+      source: 'twitter',
       source_id: entry.tweetId,
       source_url: `https://twitter.com/${entry.authorUsername}/status/${entry.tweetId}`,
       portal_date: entry.timestamp,
-      status: "in_portal",
+      status: 'in_portal',
       engagement_score: entry.engagement,
       profile_generated: false,
       alerts_sent: 0,
     };
   }
-
 }
 
 // -----------------------------------------------------------------------------
@@ -389,38 +396,38 @@ export default {
 
     try {
       // Health check
-      if (url.pathname === "/health") {
-        return new Response(JSON.stringify({ status: "ok", timestamp: new Date().toISOString() }), {
-          headers: { "Content-Type": "application/json" },
+      if (url.pathname === '/health') {
+        return new Response(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }), {
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
       // Run detection manually
-      if (url.pathname === "/detect" && request.method === "POST") {
+      if (url.pathname === '/detect' && request.method === 'POST') {
         const result = await agent.runOnce();
         return new Response(JSON.stringify(result), {
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
       // Get stats
-      if (url.pathname === "/stats") {
+      if (url.pathname === '/stats') {
         const stats = await agent.getStats();
         return new Response(JSON.stringify(stats), {
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
       // Get recent entries
-      if (url.pathname === "/entries") {
+      if (url.pathname === '/entries') {
         const db = getDatabase(env.DB);
         const entries = await db.getRecentEntries({ limit: 50 });
         return new Response(JSON.stringify({ entries }), {
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
-      return new Response("Not Found", { status: 404 });
+      return new Response('Not Found', { status: 404 });
     } finally {
       await agent.shutdown();
     }

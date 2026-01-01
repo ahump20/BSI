@@ -33,15 +33,17 @@ interface NewsItem {
 
 function formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    date.toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 function getRelativeTime(dateString: string): string {
@@ -91,9 +93,7 @@ export default function CollegeBaseballNewsPage() {
     fetchNews();
   }, []);
 
-  const filteredNews = filter === 'all'
-    ? news
-    : news.filter(item => item.category === filter);
+  const filteredNews = filter === 'all' ? news : news.filter((item) => item.category === filter);
 
   const categories = [
     { id: 'all', label: 'All News' },
@@ -134,7 +134,8 @@ export default function CollegeBaseballNewsPage() {
                 College Baseball News
               </h1>
               <p className="text-text-secondary max-w-2xl">
-                The transfer portal moves, recruiting wins, and game coverage ESPN won't give you. All 300+ D1 programs, actually covered.
+                The transfer portal moves, recruiting wins, and game coverage ESPN won't give you.
+                All 300+ D1 programs, actually covered.
               </p>
             </ScrollReveal>
           </Container>
@@ -193,7 +194,8 @@ export default function CollegeBaseballNewsPage() {
                   </svg>
                   <p className="text-text-secondary">No news in this category right now.</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    The transfer portal can be quiet between waves. Fall ball wraps, portal opens, then it's chaos. Stay tuned.
+                    The transfer portal can be quiet between waves. Fall ball wraps, portal opens,
+                    then it's chaos. Stay tuned.
                   </p>
                 </div>
               </Card>
@@ -216,9 +218,7 @@ export default function CollegeBaseballNewsPage() {
                             >
                               {item.category}
                             </Badge>
-                            {item.team && (
-                              <Badge variant="outline">{item.team}</Badge>
-                            )}
+                            {item.team && <Badge variant="outline">{item.team}</Badge>}
                             {item.conference && (
                               <Badge variant="secondary">{item.conference}</Badge>
                             )}
@@ -239,9 +239,7 @@ export default function CollegeBaseballNewsPage() {
                               {item.summary}
                             </p>
                           </a>
-                          <p className="text-text-tertiary text-xs mt-2">
-                            via {item.source}
-                          </p>
+                          <p className="text-text-tertiary text-xs mt-2">via {item.source}</p>
                         </div>
                       </div>
                     </Card>

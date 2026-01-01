@@ -70,13 +70,19 @@ function TransferArrow() {
 }
 
 // Stat display
-function StatDisplay({ label, value, mono = true }: { label: string; value: string | number; mono?: boolean }) {
+function StatDisplay({
+  label,
+  value,
+  mono = true,
+}: {
+  label: string;
+  value: string | number;
+  mono?: boolean;
+}) {
   return (
     <div className="flex items-center gap-1">
       <span className="text-text-muted">{label}</span>
-      <span className={cn('text-text-primary font-medium', mono && 'font-mono')}>
-        {value}
-      </span>
+      <span className={cn('text-text-primary font-medium', mono && 'font-mono')}>{value}</span>
     </div>
   );
 }
@@ -89,7 +95,8 @@ export function PortalCard({
   variant = 'default',
   className,
 }: PortalCardProps) {
-  const isPitcher = entry.position.includes('P') || entry.position === 'LHP' || entry.position === 'RHP';
+  const isPitcher =
+    entry.position.includes('P') || entry.position === 'LHP' || entry.position === 'RHP';
   const isHot = entry.engagement_score && entry.engagement_score >= 85;
   const isElite = entry.stars && entry.stars >= 5;
 
@@ -138,7 +145,12 @@ export function PortalCard({
                 {entry.player_name}
               </h3>
               <div className="flex items-center gap-2 flex-wrap">
-                <p className={cn('text-text-secondary', variant === 'compact' ? 'text-xs' : 'text-sm')}>
+                <p
+                  className={cn(
+                    'text-text-secondary',
+                    variant === 'compact' ? 'text-xs' : 'text-sm'
+                  )}
+                >
                   {entry.position} • {entry.class_year} • {entry.conference}
                 </p>
                 {entry.stars && sport === 'football' && (
@@ -154,7 +166,9 @@ export function PortalCard({
           </div>
 
           {/* Transfer path */}
-          <div className={cn('flex items-center gap-2', variant === 'compact' ? 'text-xs' : 'text-sm')}>
+          <div
+            className={cn('flex items-center gap-2', variant === 'compact' ? 'text-xs' : 'text-sm')}
+          >
             <span className="text-text-tertiary">{entry.school_from}</span>
             <TransferArrow />
             {entry.school_to ? (
@@ -174,7 +188,10 @@ export function PortalCard({
                       <StatDisplay label="ERA" value={entry.stats.era.toFixed(2)} />
                     )}
                     {entry.stats.wins !== undefined && entry.stats.losses !== undefined && (
-                      <StatDisplay label="W-L" value={`${entry.stats.wins}-${entry.stats.losses}`} />
+                      <StatDisplay
+                        label="W-L"
+                        value={`${entry.stats.wins}-${entry.stats.losses}`}
+                      />
                     )}
                     {entry.stats.strikeouts !== undefined && (
                       <StatDisplay label="K" value={entry.stats.strikeouts} />
@@ -198,7 +215,12 @@ export function PortalCard({
           )}
 
           {/* Footer */}
-          <div className={cn('flex items-center justify-between mt-3', variant === 'compact' && 'mt-2')}>
+          <div
+            className={cn(
+              'flex items-center justify-between mt-3',
+              variant === 'compact' && 'mt-2'
+            )}
+          >
             <span className="text-text-muted text-xs">
               Entered:{' '}
               {new Date(entry.portal_date).toLocaleDateString('en-US', {
@@ -210,7 +232,13 @@ export function PortalCard({
             {href && (
               <span className="text-burnt-orange text-xs flex items-center gap-1 group-hover:gap-2 transition-all">
                 View Profile
-                <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </span>

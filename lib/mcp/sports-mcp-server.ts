@@ -486,14 +486,14 @@ export class SportsMCPServer {
   }
 
   private async getTeamInfo(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, team, include_roster, include_stats } = args;
+    const { sport, team, include_roster: _include_roster, include_stats: _include_stats } = args;
 
     // This would call the appropriate adapter
     return this.textResult(`Team info for ${team} (${sport}) - Implementation pending`);
   }
 
   private async getGameSummary(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, game_id, teams, date } = args;
+    const { sport, game_id, teams, date: _date } = args;
 
     // This would call the appropriate adapter for game summary
     return this.textResult(
@@ -502,7 +502,7 @@ export class SportsMCPServer {
   }
 
   private async getStandings(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, conference, division } = args;
+    const { sport, conference, division: _division } = args;
 
     // This would call the appropriate adapter for standings
     return this.textResult(
@@ -511,14 +511,14 @@ export class SportsMCPServer {
   }
 
   private async getRankings(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, poll = 'all', week } = args;
+    const { sport, poll = 'all', week: _week } = args;
 
     // This would call the appropriate adapter for rankings
     return this.textResult(`Rankings for ${sport} (${poll} poll) - Implementation pending`);
   }
 
   private async getPlayerStats(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, player_name, team, season, stat_type } = args;
+    const { sport: _sport, player_name, team, season: _season, stat_type: _stat_type } = args;
 
     // This would search for player and return stats
     return this.textResult(
@@ -527,7 +527,14 @@ export class SportsMCPServer {
   }
 
   private async getSchedule(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, team, conference, start_date, end_date, week } = args;
+    const {
+      sport,
+      team,
+      conference: _conference,
+      start_date: _start_date,
+      end_date: _end_date,
+      week: _week,
+    } = args;
 
     // This would call the appropriate adapter for schedule
     return this.textResult(
@@ -615,7 +622,7 @@ export class SportsMCPServer {
   }
 
   private async getBettingOdds(args: Record<string, any>): Promise<MCPToolResult> {
-    const { sport, team, date } = args;
+    const { sport, team, date: _date } = args;
 
     // This would call BALLDONTLIE or other odds provider
     return this.textResult(

@@ -121,7 +121,8 @@ function generateId() {
  */
 function maskEmail(email) {
   const [local, domain] = email.split('@');
-  const maskedLocal = local.charAt(0) + '*'.repeat(Math.max(1, local.length - 2)) + local.charAt(local.length - 1);
+  const maskedLocal =
+    local.charAt(0) + '*'.repeat(Math.max(1, local.length - 2)) + local.charAt(local.length - 1);
   return `${maskedLocal}@${domain}`;
 }
 

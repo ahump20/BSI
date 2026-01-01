@@ -128,7 +128,17 @@ const MOCK_ENTRIES: PortalEntry[] = [
 ];
 
 // Stats card component (page-specific)
-function StatCard({ label, value, change, isLive }: { label: string; value: string | number; change?: string; isLive?: boolean }) {
+function StatCard({
+  label,
+  value,
+  change,
+  isLive,
+}: {
+  label: string;
+  value: string | number;
+  change?: string;
+  isLive?: boolean;
+}) {
   return (
     <div className="relative p-4 md:p-6 rounded-xl bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80 border border-border-subtle">
       {isLive && (
@@ -139,10 +149,14 @@ function StatCard({ label, value, change, isLive }: { label: string; value: stri
           </span>
         </div>
       )}
-      <p className="text-xs md:text-sm font-medium text-text-tertiary uppercase tracking-wide mb-1">{label}</p>
+      <p className="text-xs md:text-sm font-medium text-text-tertiary uppercase tracking-wide mb-1">
+        {label}
+      </p>
       <p className="text-2xl md:text-3xl font-display font-bold text-text-primary">{value}</p>
       {change && (
-        <p className={`text-xs mt-1 ${change.startsWith('+') ? 'text-success-light' : 'text-text-muted'}`}>
+        <p
+          className={`text-xs mt-1 ${change.startsWith('+') ? 'text-success-light' : 'text-text-muted'}`}
+        >
           {change} today
         </p>
       )}
@@ -164,16 +178,18 @@ export default function CFBTransferPortalPage() {
     if (filters.position && entry.position !== filters.position) return false;
     if (filters.conference && entry.conference !== filters.conference) return false;
     if (filters.status && entry.status !== filters.status) return false;
-    if (filters.search && !entry.player_name.toLowerCase().includes(filters.search.toLowerCase())) return false;
+    if (filters.search && !entry.player_name.toLowerCase().includes(filters.search.toLowerCase()))
+      return false;
     return true;
   });
 
   // Stats calculations
   const stats = {
     total: entries.length,
-    inPortal: entries.filter(e => e.status === 'in_portal').length,
-    committed: entries.filter(e => e.status === 'committed').length,
-    powerFour: entries.filter(e => ['SEC', 'Big Ten', 'Big 12', 'ACC'].includes(e.conference)).length,
+    inPortal: entries.filter((e) => e.status === 'in_portal').length,
+    committed: entries.filter((e) => e.status === 'committed').length,
+    powerFour: entries.filter((e) => ['SEC', 'Big Ten', 'Big 12', 'ACC'].includes(e.conference))
+      .length,
   };
 
   return (
@@ -197,8 +213,8 @@ export default function CFBTransferPortalPage() {
                 <span className="block text-burnt-orange">Transfer Portal Tracker</span>
               </h1>
               <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
-                Real-time tracking of every FBS player entering, committing, or withdrawing from the transfer portal.
-                Includes recruiting star ratings and commitment intel.
+                Real-time tracking of every FBS player entering, committing, or withdrawing from the
+                transfer portal. Includes recruiting star ratings and commitment intel.
               </p>
             </div>
           </ScrollReveal>
@@ -247,7 +263,13 @@ export default function CFBTransferPortalPage() {
           {/* Empty state */}
           {filteredEntries.length === 0 && (
             <div className="text-center py-16">
-              <svg className="w-16 h-16 mx-auto mb-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <svg
+                className="w-16 h-16 mx-auto mb-4 text-text-muted"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
                 <circle cx="11" cy="11" r="8" />
                 <path d="M21 21L16.65 16.65" />
               </svg>
@@ -261,16 +283,26 @@ export default function CFBTransferPortalPage() {
             <div className="mt-12 p-6 rounded-xl bg-gradient-to-br from-football/10 to-transparent border border-football/20">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-football/20 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-burnt-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    className="w-6 h-6 text-burnt-orange"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6V12L16 14" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-1">2025 Portal Windows</h3>
+                  <h3 className="text-lg font-semibold text-text-primary mb-1">
+                    2025 Portal Windows
+                  </h3>
                   <p className="text-text-secondary mb-3">
-                    The winter transfer window opens <strong className="text-burnt-orange">December 9, 2025</strong> for 30 days.
-                    Players must declare within 7 days of entering and have 30 days to find a new school.
+                    The winter transfer window opens{' '}
+                    <strong className="text-burnt-orange">December 9, 2025</strong> for 30 days.
+                    Players must declare within 7 days of entering and have 30 days to find a new
+                    school.
                   </p>
                   <div className="flex flex-wrap gap-4 text-sm">
                     <div>
@@ -298,8 +330,9 @@ export default function CFBTransferPortalPage() {
                 Never Miss a Transfer
               </h2>
               <p className="text-text-secondary mb-8">
-                Get instant alerts when players from your favorite schools or conferences enter the portal.
-                Pro subscribers get star ratings, NIL valuations, and exclusive commitment intel.
+                Get instant alerts when players from your favorite schools or conferences enter the
+                portal. Pro subscribers get star ratings, NIL valuations, and exclusive commitment
+                intel.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button href="/pricing" variant="primary" size="lg">

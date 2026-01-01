@@ -68,9 +68,7 @@ export function ScoreHeader({ game, className = '', onBack }: ScoreHeaderProps) 
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 bg-charcoal border-b border-gray-700 ${className}`}
-    >
+    <header className={`sticky top-0 z-50 bg-charcoal border-b border-gray-700 ${className}`}>
       {/* Optional back button row */}
       {onBack && (
         <button
@@ -79,7 +77,12 @@ export function ScoreHeader({ game, className = '', onBack }: ScoreHeaderProps) 
           aria-label="Go back"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           Back
         </button>
@@ -95,12 +98,8 @@ export function ScoreHeader({ game, className = '', onBack }: ScoreHeaderProps) 
             className="w-10 h-10 object-contain"
             loading="lazy"
           />
-          <span className="font-display text-xl font-bold uppercase">
-            {away.abbreviation}
-          </span>
-          <span className="font-mono text-3xl font-bold">
-            {away.score ?? '-'}
-          </span>
+          <span className="font-display text-xl font-bold uppercase">{away.abbreviation}</span>
+          <span className="font-mono text-3xl font-bold">{away.score ?? '-'}</span>
         </div>
 
         {/* Status */}
@@ -123,12 +122,8 @@ export function ScoreHeader({ game, className = '', onBack }: ScoreHeaderProps) 
             className="w-10 h-10 object-contain"
             loading="lazy"
           />
-          <span className="font-display text-xl font-bold uppercase">
-            {home.abbreviation}
-          </span>
-          <span className="font-mono text-3xl font-bold">
-            {home.score ?? '-'}
-          </span>
+          <span className="font-display text-xl font-bold uppercase">{home.abbreviation}</span>
+          <span className="font-mono text-3xl font-bold">{home.score ?? '-'}</span>
         </div>
       </div>
     </header>

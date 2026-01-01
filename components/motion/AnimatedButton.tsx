@@ -13,8 +13,7 @@ import { cn } from '@/lib/utils';
 import { useReducedMotion } from './hooks';
 import { buttonHover, buttonTap } from './variants';
 
-export interface AnimatedButtonProps
-  extends Omit<HTMLMotionProps<'button'>, 'children'> {
+export interface AnimatedButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   children: ReactNode;
   /** Button variant */
   variant?: 'primary' | 'secondary' | 'ghost';
@@ -27,8 +26,7 @@ export interface AnimatedButtonProps
 }
 
 const variantStyles = {
-  primary:
-    'bg-burnt-orange text-white hover:bg-burnt-orange/90 shadow-lg shadow-burnt-orange/20',
+  primary: 'bg-burnt-orange text-white hover:bg-burnt-orange/90 shadow-lg shadow-burnt-orange/20',
   secondary:
     'bg-transparent border-2 border-burnt-orange text-burnt-orange hover:bg-burnt-orange/10',
   ghost: 'bg-transparent text-white hover:bg-white/5',
@@ -48,14 +46,7 @@ const sizeStyles = {
  */
 export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(
   function AnimatedButton(
-    {
-      children,
-      variant = 'primary',
-      size = 'md',
-      disableAnimation = false,
-      className,
-      ...props
-    },
+    { children, variant = 'primary', size = 'md', disableAnimation = false, className, ...props },
     ref
   ) {
     const prefersReducedMotion = useReducedMotion();

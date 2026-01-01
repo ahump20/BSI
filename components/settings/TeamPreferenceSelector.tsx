@@ -70,9 +70,7 @@ function LeagueSection({
           compact && 'cursor-pointer hover:opacity-80 transition-opacity'
         )}
       >
-        <h4 className="text-sm font-semibold text-white/70 uppercase tracking-wider">
-          {label}
-        </h4>
+        <h4 className="text-sm font-semibold text-white/70 uppercase tracking-wider">{label}</h4>
         {selectedTeam && (
           <span
             className="text-xs px-2 py-0.5 rounded-full font-medium"
@@ -174,14 +172,8 @@ export function TeamPreferenceSelector({
   showSaveButton = true,
   className,
 }: TeamPreferenceSelectorProps) {
-  const {
-    preferences,
-    isLoaded,
-    setFavoriteTeam,
-    hasFavorites,
-    clearPreferences,
-    leagueLabels,
-  } = useTeamPreferences();
+  const { preferences, isLoaded, setFavoriteTeam, hasFavorites, clearPreferences, leagueLabels } =
+    useTeamPreferences();
 
   const [hasChanges, setHasChanges] = useState(false);
 

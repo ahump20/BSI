@@ -5,8 +5,7 @@
  * All API routes are in /functions/api/*
  */
 
-const BASE_URL =
-  typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL || '' : '';
+const BASE_URL = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL || '' : '';
 
 export interface APIError {
   message: string;

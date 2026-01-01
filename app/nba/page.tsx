@@ -49,7 +49,9 @@ export default function NBAPage() {
 
           <Container>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">NBA Coverage</Badge>
+              <Badge variant="primary" className="mb-4">
+                NBA Coverage
+              </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
@@ -60,7 +62,8 @@ export default function NBAPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary text-lg max-w-2xl mb-8">
-                All 30 NBA teams. Standings, scores, and analysis. Memphis Grizzlies coverage you can count on.
+                All 30 NBA teams. Standings, scores, and analysis. Memphis Grizzlies coverage you
+                can count on.
               </p>
             </ScrollReveal>
 
@@ -81,9 +84,7 @@ export default function NBAPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
-              <h2 className="font-display text-2xl font-bold text-white mb-8">
-                Quick Access
-              </h2>
+              <h2 className="font-display text-2xl font-bold text-white mb-8">Quick Access</h2>
             </ScrollReveal>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -95,7 +96,8 @@ export default function NBAPage() {
                       <h3 className="text-xl font-display font-bold text-white">Standings</h3>
                     </div>
                     <p className="text-text-secondary text-sm">
-                      Eastern & Western conference standings with playoff positioning and win percentage.
+                      Eastern & Western conference standings with playoff positioning and win
+                      percentage.
                     </p>
                     <span className="text-burnt-orange text-sm font-semibold mt-4 block">
                       View Standings →
@@ -128,9 +130,7 @@ export default function NBAPage() {
         <Section padding="lg" background="midnight">
           <Container>
             <ScrollReveal>
-              <h2 className="font-display text-2xl font-bold text-white mb-8">
-                All 30 Teams
-              </h2>
+              <h2 className="font-display text-2xl font-bold text-white mb-8">All 30 Teams</h2>
             </ScrollReveal>
 
             <div className="grid gap-8 md:grid-cols-2">
@@ -144,7 +144,11 @@ export default function NBAPage() {
 
                   <div className="space-y-4">
                     {conf.divisions.map((div, divIndex) => (
-                      <ScrollReveal key={div.name} direction="up" delay={confIndex * 100 + divIndex * 50}>
+                      <ScrollReveal
+                        key={div.name}
+                        direction="up"
+                        delay={confIndex * 100 + divIndex * 50}
+                      >
                         <Card variant="default" padding="md">
                           <h4 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">
                             {div.name}

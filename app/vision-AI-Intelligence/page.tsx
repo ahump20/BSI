@@ -2,9 +2,22 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Play, StopCircle, Target, Activity, Mic, CheckCircle2,
-  Download, Upload, RotateCcw, Eye, EyeOff, Save, User,
-  Smartphone, Camera, AlertCircle
+  Play,
+  StopCircle,
+  Target,
+  Activity,
+  Mic,
+  CheckCircle2,
+  Download,
+  Upload,
+  RotateCcw,
+  Eye,
+  EyeOff,
+  Save,
+  User,
+  Smartphone,
+  Camera,
+  AlertCircle,
 } from 'lucide-react';
 
 // TensorFlow.js type declarations for CDN loading
@@ -54,7 +67,10 @@ const COLORS = {
 // ═══════════════════════════════════════════════════════════════════════════
 // PRO FORM REFERENCE DATA (normalized keypoints for ideal stances)
 // ═══════════════════════════════════════════════════════════════════════════
-const PRO_FORMS: Record<string, { name: string; description: string; keypoints: Array<{ x: number; y: number; score: number }> }> = {
+const PRO_FORMS: Record<
+  string,
+  { name: string; description: string; keypoints: Array<{ x: number; y: number; score: number }> }
+> = {
   pitchingStance: {
     name: 'Pitching Stance',
     description: 'MLB-grade wind-up position',
@@ -72,8 +88,8 @@ const PRO_FORMS: Record<string, { name: string; description: string; keypoints: 
       { x: 0.72, y: 0.55, score: 0.85 }, // rightWrist
       { x: 0.42, y: 0.52, score: 0.95 }, // leftHip
       { x: 0.58, y: 0.52, score: 0.95 }, // rightHip
-      { x: 0.40, y: 0.72, score: 0.9 }, // leftKnee
-      { x: 0.60, y: 0.72, score: 0.9 }, // rightKnee
+      { x: 0.4, y: 0.72, score: 0.9 }, // leftKnee
+      { x: 0.6, y: 0.72, score: 0.9 }, // rightKnee
       { x: 0.38, y: 0.92, score: 0.85 }, // leftAnkle
       { x: 0.62, y: 0.92, score: 0.85 }, // rightAnkle
     ],
@@ -87,14 +103,14 @@ const PRO_FORMS: Record<string, { name: string; description: string; keypoints: 
       { x: 0.53, y: 0.16, score: 0.9 }, // rightEye
       { x: 0.44, y: 0.18, score: 0.85 }, // leftEar
       { x: 0.56, y: 0.18, score: 0.85 }, // rightEar
-      { x: 0.35, y: 0.30, score: 0.95 }, // leftShoulder
+      { x: 0.35, y: 0.3, score: 0.95 }, // leftShoulder
       { x: 0.55, y: 0.28, score: 0.95 }, // rightShoulder
       { x: 0.28, y: 0.25, score: 0.9 }, // leftElbow (bat position)
-      { x: 0.60, y: 0.38, score: 0.9 }, // rightElbow
+      { x: 0.6, y: 0.38, score: 0.9 }, // rightElbow
       { x: 0.35, y: 0.15, score: 0.85 }, // leftWrist (bat grip)
       { x: 0.38, y: 0.18, score: 0.85 }, // rightWrist (bat grip)
-      { x: 0.40, y: 0.52, score: 0.95 }, // leftHip
-      { x: 0.60, y: 0.52, score: 0.95 }, // rightHip
+      { x: 0.4, y: 0.52, score: 0.95 }, // leftHip
+      { x: 0.6, y: 0.52, score: 0.95 }, // rightHip
       { x: 0.38, y: 0.74, score: 0.9 }, // leftKnee
       { x: 0.62, y: 0.74, score: 0.9 }, // rightKnee
       { x: 0.35, y: 0.94, score: 0.85 }, // leftAnkle
@@ -106,18 +122,18 @@ const PRO_FORMS: Record<string, { name: string; description: string; keypoints: 
     description: 'Confident speaker posture',
     keypoints: [
       { x: 0.5, y: 0.12, score: 0.95 }, // nose
-      { x: 0.47, y: 0.10, score: 0.9 }, // leftEye
-      { x: 0.53, y: 0.10, score: 0.9 }, // rightEye
+      { x: 0.47, y: 0.1, score: 0.9 }, // leftEye
+      { x: 0.53, y: 0.1, score: 0.9 }, // rightEye
       { x: 0.44, y: 0.12, score: 0.85 }, // leftEar
       { x: 0.56, y: 0.12, score: 0.85 }, // rightEar
       { x: 0.38, y: 0.25, score: 0.95 }, // leftShoulder
       { x: 0.62, y: 0.25, score: 0.95 }, // rightShoulder
-      { x: 0.32, y: 0.40, score: 0.9 }, // leftElbow
-      { x: 0.68, y: 0.40, score: 0.9 }, // rightElbow
-      { x: 0.35, y: 0.50, score: 0.85 }, // leftWrist
-      { x: 0.65, y: 0.50, score: 0.85 }, // rightWrist
-      { x: 0.45, y: 0.50, score: 0.95 }, // leftHip
-      { x: 0.55, y: 0.50, score: 0.95 }, // rightHip
+      { x: 0.32, y: 0.4, score: 0.9 }, // leftElbow
+      { x: 0.68, y: 0.4, score: 0.9 }, // rightElbow
+      { x: 0.35, y: 0.5, score: 0.85 }, // leftWrist
+      { x: 0.65, y: 0.5, score: 0.85 }, // rightWrist
+      { x: 0.45, y: 0.5, score: 0.95 }, // leftHip
+      { x: 0.55, y: 0.5, score: 0.95 }, // rightHip
       { x: 0.45, y: 0.75, score: 0.9 }, // leftKnee
       { x: 0.55, y: 0.75, score: 0.9 }, // rightKnee
       { x: 0.45, y: 0.95, score: 0.85 }, // leftAnkle
@@ -130,17 +146,19 @@ const PRO_FORMS: Record<string, { name: string; description: string; keypoints: 
 // UTILITIES
 // ═══════════════════════════════════════════════════════════════════════════
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
-const mean = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+const mean = (arr: number[]) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0);
 const variance = (arr: number[]) => {
   if (arr.length < 2) return 0;
   const m = mean(arr);
-  return mean(arr.map(x => (x - m) ** 2));
+  return mean(arr.map((x) => (x - m) ** 2));
 };
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
   Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
-const midpoint = (a: { x: number; y: number }, b: { x: number; y: number }) =>
-  ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
-const radToDeg = (r: number) => r * 180 / Math.PI;
+const midpoint = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
+  x: (a.x + b.x) / 2,
+  y: (a.y + b.y) / 2,
+});
+const radToDeg = (r: number) => (r * 180) / Math.PI;
 
 const confLabel = (score: number) => {
   if (score >= 0.7) return 'High';
@@ -211,7 +229,9 @@ const openDB = (): Promise<IDBDatabase> => {
       }
 
       if (!db.objectStoreNames.contains(STORE_FRAMES)) {
-        const frameStore = db.createObjectStore(STORE_FRAMES, { keyPath: ['sessionId', 'frameIndex'] });
+        const frameStore = db.createObjectStore(STORE_FRAMES, {
+          keyPath: ['sessionId', 'frameIndex'],
+        });
         frameStore.createIndex('sessionId', 'sessionId', { unique: false });
       }
     };
@@ -263,10 +283,23 @@ const loadSessionFrames = async (sessionId: string): Promise<RecordedFrame[]> =>
 // MOVENET KEYPOINT INDICES
 // ═══════════════════════════════════════════════════════════════════════════
 const KEYPOINTS: Record<string, number> = {
-  nose: 0, leftEye: 1, rightEye: 2, leftEar: 3, rightEar: 4,
-  leftShoulder: 5, rightShoulder: 6, leftElbow: 7, rightElbow: 8,
-  leftWrist: 9, rightWrist: 10, leftHip: 11, rightHip: 12,
-  leftKnee: 13, rightKnee: 14, leftAnkle: 15, rightAnkle: 16
+  nose: 0,
+  leftEye: 1,
+  rightEye: 2,
+  leftEar: 3,
+  rightEar: 4,
+  leftShoulder: 5,
+  rightShoulder: 6,
+  leftElbow: 7,
+  rightElbow: 8,
+  leftWrist: 9,
+  rightWrist: 10,
+  leftHip: 11,
+  rightHip: 12,
+  leftKnee: 13,
+  rightKnee: 14,
+  leftAnkle: 15,
+  rightAnkle: 16,
 };
 
 const SKELETON_EDGES: [number, number][] = [
@@ -527,8 +560,10 @@ export default function VisionAIIntelligencePage() {
   // LOGGING
   // ─────────────────────────────────────────────────────────────────────────
   const addLog = useCallback((tag: string, msg: string) => {
-    const t = startTimeRef.current ? ((performance.now() - startTimeRef.current) / 1000).toFixed(1) : '0.0';
-    setLogs(prev => [{ t, tag, msg, id: Date.now() }, ...prev].slice(0, 50));
+    const t = startTimeRef.current
+      ? ((performance.now() - startTimeRef.current) / 1000).toFixed(1)
+      : '0.0';
+    setLogs((prev) => [{ t, tag, msg, id: Date.now() }, ...prev].slice(0, 50));
   }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -570,7 +605,9 @@ export default function VisionAIIntelligencePage() {
 
     loadModel();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [addLog]);
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -586,7 +623,7 @@ export default function VisionAIIntelligencePage() {
     }
 
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
     }
 
@@ -614,7 +651,7 @@ export default function VisionAIIntelligencePage() {
 
       try {
         await saveSession(session);
-        setRecordedSessions(prev => [session, ...prev]);
+        setRecordedSessions((prev) => [session, ...prev]);
         addLog('Recording', `Session saved with ${frameCountRef.current} frames`);
       } catch (err) {
         console.error('Failed to save session:', err);
@@ -632,7 +669,9 @@ export default function VisionAIIntelligencePage() {
   // ─────────────────────────────────────────────────────────────────────────
   const initAudio = async (stream: MediaStream) => {
     try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const ctx = new AudioContextClass();
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 2048;
@@ -648,198 +687,209 @@ export default function VisionAIIntelligencePage() {
   // ─────────────────────────────────────────────────────────────────────────
   // DRAW PRO FORM OVERLAY
   // ─────────────────────────────────────────────────────────────────────────
-  const drawProOverlay = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number) => {
-    const proForm = PRO_FORMS[selectedProForm];
-    if (!proForm) return;
+  const drawProOverlay = useCallback(
+    (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+      const proForm = PRO_FORMS[selectedProForm];
+      if (!proForm) return;
 
-    ctx.save();
-    ctx.globalAlpha = proOverlayOpacity;
-    ctx.strokeStyle = COLORS.pro;
-    ctx.lineWidth = 2;
+      ctx.save();
+      ctx.globalAlpha = proOverlayOpacity;
+      ctx.strokeStyle = COLORS.pro;
+      ctx.lineWidth = 2;
 
-    // Scale normalized keypoints to canvas size
-    const scaledKeypoints = proForm.keypoints.map(kp => ({
-      x: kp.x * width,
-      y: kp.y * height,
-      score: kp.score,
-    }));
+      // Scale normalized keypoints to canvas size
+      const scaledKeypoints = proForm.keypoints.map((kp) => ({
+        x: kp.x * width,
+        y: kp.y * height,
+        score: kp.score,
+      }));
 
-    // Draw skeleton edges
-    SKELETON_EDGES.forEach(([i, j]) => {
-      const p1 = scaledKeypoints[i];
-      const p2 = scaledKeypoints[j];
-      if (p1 && p2 && p1.score > 0.3 && p2.score > 0.3) {
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.stroke();
-      }
-    });
+      // Draw skeleton edges
+      SKELETON_EDGES.forEach(([i, j]) => {
+        const p1 = scaledKeypoints[i];
+        const p2 = scaledKeypoints[j];
+        if (p1 && p2 && p1.score > 0.3 && p2.score > 0.3) {
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+      });
 
-    // Draw keypoints
-    ctx.fillStyle = COLORS.pro;
-    scaledKeypoints.forEach(kp => {
-      if (kp.score > 0.3) {
-        ctx.beginPath();
-        ctx.arc(kp.x, kp.y, 4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    });
+      // Draw keypoints
+      ctx.fillStyle = COLORS.pro;
+      scaledKeypoints.forEach((kp) => {
+        if (kp.score > 0.3) {
+          ctx.beginPath();
+          ctx.arc(kp.x, kp.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
 
-    ctx.restore();
-  }, [selectedProForm, proOverlayOpacity]);
+      ctx.restore();
+    },
+    [selectedProForm, proOverlayOpacity]
+  );
 
   // ─────────────────────────────────────────────────────────────────────────
   // PROCESS POSE
   // ─────────────────────────────────────────────────────────────────────────
-  const processPose = useCallback(async (
-    video: HTMLVideoElement,
-    ctx: CanvasRenderingContext2D,
-    t: number
-  ): Promise<{ stability: number | null; shoulderSym: number | null; hipSym: number | null; spineLean: number | null }> => {
-    let keypoints: Keypoint[] | null = null;
-    let useSimulated = !modelRef.current;
+  const processPose = useCallback(
+    async (
+      video: HTMLVideoElement,
+      ctx: CanvasRenderingContext2D,
+      t: number
+    ): Promise<{
+      stability: number | null;
+      shoulderSym: number | null;
+      hipSym: number | null;
+      spineLean: number | null;
+    }> => {
+      let keypoints: Keypoint[] | null = null;
+      let useSimulated = !modelRef.current;
 
-    if (modelRef.current && tfRef.current && video.readyState >= 2) {
-      try {
-        const tf = tfRef.current;
-        // Prepare input tensor
-        const input = tf.tidy(() => {
-          const img = tf.browser.fromPixels(video);
-          const resized = tf.image.resizeBilinear(img, [192, 192]);
-          const casted = resized.toInt();
-          return casted.expandDims(0);
-        });
+      if (modelRef.current && tfRef.current && video.readyState >= 2) {
+        try {
+          const tf = tfRef.current;
+          // Prepare input tensor
+          const input = tf.tidy(() => {
+            const img = tf.browser.fromPixels(video);
+            const resized = tf.image.resizeBilinear(img, [192, 192]);
+            const casted = resized.toInt();
+            return casted.expandDims(0);
+          });
 
-        // Run inference
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const result = await modelRef.current.predict(input) as any;
-        const data = await result.array() as number[][][][];
-        input.dispose();
-        result.dispose();
+          // Run inference
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const result = (await modelRef.current.predict(input)) as any;
+          const data = (await result.array()) as number[][][][];
+          input.dispose();
+          result.dispose();
 
-        // Extract keypoints [1, 1, 17, 3] -> [17, 3] (y, x, confidence)
-        keypoints = data[0][0].map((kp, i) => ({
-          y: kp[0] * video.videoHeight,
-          x: kp[1] * video.videoWidth,
-          score: kp[2],
-          name: Object.keys(KEYPOINTS).find(k => KEYPOINTS[k] === i)
-        }));
-      } catch (err) {
-        console.warn('Inference error:', err);
-        useSimulated = true;
+          // Extract keypoints [1, 1, 17, 3] -> [17, 3] (y, x, confidence)
+          keypoints = data[0][0].map((kp, i) => ({
+            y: kp[0] * video.videoHeight,
+            x: kp[1] * video.videoWidth,
+            score: kp[2],
+            name: Object.keys(KEYPOINTS).find((k) => KEYPOINTS[k] === i),
+          }));
+        } catch (err) {
+          console.warn('Inference error:', err);
+          useSimulated = true;
+        }
       }
-    }
 
-    // Simulated data fallback
-    if (useSimulated) {
-      const cx = (ctx.canvas.width || 640) / 2;
-      const cy = (ctx.canvas.height || 480) / 2;
-      const noise = () => (Math.random() - 0.5) * 20;
+      // Simulated data fallback
+      if (useSimulated) {
+        const cx = (ctx.canvas.width || 640) / 2;
+        const cy = (ctx.canvas.height || 480) / 2;
+        const noise = () => (Math.random() - 0.5) * 20;
 
-      keypoints = [
-        { x: cx, y: cy - 100 + noise(), score: 0.9, name: 'nose' },
-        { x: cx - 15, y: cy - 110 + noise(), score: 0.85, name: 'leftEye' },
-        { x: cx + 15, y: cy - 110 + noise(), score: 0.85, name: 'rightEye' },
-        { x: cx - 30, y: cy - 100 + noise(), score: 0.7, name: 'leftEar' },
-        { x: cx + 30, y: cy - 100 + noise(), score: 0.7, name: 'rightEar' },
-        { x: cx - 80 + noise(), y: cy - 40 + noise(), score: 0.9, name: 'leftShoulder' },
-        { x: cx + 80 + noise(), y: cy - 40 + noise(), score: 0.9, name: 'rightShoulder' },
-        { x: cx - 100 + noise(), y: cy + 30 + noise(), score: 0.8, name: 'leftElbow' },
-        { x: cx + 100 + noise(), y: cy + 30 + noise(), score: 0.8, name: 'rightElbow' },
-        { x: cx - 110 + noise(), y: cy + 100 + noise(), score: 0.75, name: 'leftWrist' },
-        { x: cx + 110 + noise(), y: cy + 100 + noise(), score: 0.75, name: 'rightWrist' },
-        { x: cx - 50 + noise(), y: cy + 60 + noise(), score: 0.9, name: 'leftHip' },
-        { x: cx + 50 + noise(), y: cy + 60 + noise(), score: 0.9, name: 'rightHip' },
-        { x: cx - 55 + noise(), y: cy + 150 + noise(), score: 0.85, name: 'leftKnee' },
-        { x: cx + 55 + noise(), y: cy + 150 + noise(), score: 0.85, name: 'rightKnee' },
-        { x: cx - 60 + noise(), y: cy + 220 + noise(), score: 0.8, name: 'leftAnkle' },
-        { x: cx + 60 + noise(), y: cy + 220 + noise(), score: 0.8, name: 'rightAnkle' },
-      ];
-    }
-
-    if (!keypoints) return { stability: null, shoulderSym: null, hipSym: null, spineLean: null };
-
-    // Store for recording
-    lastKeypointsRef.current = keypoints;
-
-    // Draw pro form overlay first (behind user skeleton)
-    if (showProOverlay) {
-      drawProOverlay(ctx, ctx.canvas.width, ctx.canvas.height);
-    }
-
-    // Draw user skeleton
-    ctx.strokeStyle = COLORS.orange;
-    ctx.lineWidth = 3;
-
-    SKELETON_EDGES.forEach(([i, j]) => {
-      const p1 = keypoints![i];
-      const p2 = keypoints![j];
-      if (p1 && p2 && p1.score > 0.3 && p2.score > 0.3) {
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.stroke();
+        keypoints = [
+          { x: cx, y: cy - 100 + noise(), score: 0.9, name: 'nose' },
+          { x: cx - 15, y: cy - 110 + noise(), score: 0.85, name: 'leftEye' },
+          { x: cx + 15, y: cy - 110 + noise(), score: 0.85, name: 'rightEye' },
+          { x: cx - 30, y: cy - 100 + noise(), score: 0.7, name: 'leftEar' },
+          { x: cx + 30, y: cy - 100 + noise(), score: 0.7, name: 'rightEar' },
+          { x: cx - 80 + noise(), y: cy - 40 + noise(), score: 0.9, name: 'leftShoulder' },
+          { x: cx + 80 + noise(), y: cy - 40 + noise(), score: 0.9, name: 'rightShoulder' },
+          { x: cx - 100 + noise(), y: cy + 30 + noise(), score: 0.8, name: 'leftElbow' },
+          { x: cx + 100 + noise(), y: cy + 30 + noise(), score: 0.8, name: 'rightElbow' },
+          { x: cx - 110 + noise(), y: cy + 100 + noise(), score: 0.75, name: 'leftWrist' },
+          { x: cx + 110 + noise(), y: cy + 100 + noise(), score: 0.75, name: 'rightWrist' },
+          { x: cx - 50 + noise(), y: cy + 60 + noise(), score: 0.9, name: 'leftHip' },
+          { x: cx + 50 + noise(), y: cy + 60 + noise(), score: 0.9, name: 'rightHip' },
+          { x: cx - 55 + noise(), y: cy + 150 + noise(), score: 0.85, name: 'leftKnee' },
+          { x: cx + 55 + noise(), y: cy + 150 + noise(), score: 0.85, name: 'rightKnee' },
+          { x: cx - 60 + noise(), y: cy + 220 + noise(), score: 0.8, name: 'leftAnkle' },
+          { x: cx + 60 + noise(), y: cy + 220 + noise(), score: 0.8, name: 'rightAnkle' },
+        ];
       }
-    });
 
-    ctx.fillStyle = COLORS.bone;
-    keypoints.forEach(kp => {
-      if (kp.score > 0.3) {
-        ctx.beginPath();
-        ctx.arc(kp.x, kp.y, 5, 0, Math.PI * 2);
-        ctx.fill();
+      if (!keypoints) return { stability: null, shoulderSym: null, hipSym: null, spineLean: null };
+
+      // Store for recording
+      lastKeypointsRef.current = keypoints;
+
+      // Draw pro form overlay first (behind user skeleton)
+      if (showProOverlay) {
+        drawProOverlay(ctx, ctx.canvas.width, ctx.canvas.height);
       }
-    });
 
-    // Compute metrics
-    const ls = keypoints[KEYPOINTS.leftShoulder];
-    const rs = keypoints[KEYPOINTS.rightShoulder];
-    const lh = keypoints[KEYPOINTS.leftHip];
-    const rh = keypoints[KEYPOINTS.rightHip];
+      // Draw user skeleton
+      ctx.strokeStyle = COLORS.orange;
+      ctx.lineWidth = 3;
 
-    if (!ls || !rs || !lh || !rh) {
-      setPoseSignals(null);
-      return { stability: null, shoulderSym: null, hipSym: null, spineLean: null };
-    }
+      SKELETON_EDGES.forEach(([i, j]) => {
+        const p1 = keypoints![i];
+        const p2 = keypoints![j];
+        if (p1 && p2 && p1.score > 0.3 && p2.score > 0.3) {
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+      });
 
-    const avgConf = mean([ls, rs, lh, rh].map(k => k.score || 0));
-    const shoulderW = Math.max(1, dist(ls, rs));
-    const hipW = Math.max(1, dist(lh, rh));
+      ctx.fillStyle = COLORS.bone;
+      keypoints.forEach((kp) => {
+        if (kp.score > 0.3) {
+          ctx.beginPath();
+          ctx.arc(kp.x, kp.y, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
 
-    const shoulderDiff = Math.abs(ls.y - rs.y);
-    const hipDiff = Math.abs(lh.y - rh.y);
+      // Compute metrics
+      const ls = keypoints[KEYPOINTS.leftShoulder];
+      const rs = keypoints[KEYPOINTS.rightShoulder];
+      const lh = keypoints[KEYPOINTS.leftHip];
+      const rh = keypoints[KEYPOINTS.rightHip];
 
-    const shoulderSym = clamp(100 - (shoulderDiff / shoulderW) * 300, 0, 100);
-    const hipSym = clamp(100 - (hipDiff / hipW) * 300, 0, 100);
+      if (!ls || !rs || !lh || !rh) {
+        setPoseSignals(null);
+        return { stability: null, shoulderSym: null, hipSym: null, spineLean: null };
+      }
 
-    const midShoulder = midpoint(ls, rs);
-    const midHip = midpoint(lh, rh);
-    const spineLean = radToDeg(Math.atan2(midShoulder.x - midHip.x, -(midShoulder.y - midHip.y)));
+      const avgConf = mean([ls, rs, lh, rh].map((k) => k.score || 0));
+      const shoulderW = Math.max(1, dist(ls, rs));
+      const hipW = Math.max(1, dist(lh, rh));
 
-    // Stability (sway tracking)
-    poseWindowRef.current.push({ t, x: midHip.x, y: midHip.y });
-    while (poseWindowRef.current.length && t - poseWindowRef.current[0].t > 3) {
-      poseWindowRef.current.shift();
-    }
+      const shoulderDiff = Math.abs(ls.y - rs.y);
+      const hipDiff = Math.abs(lh.y - rh.y);
 
-    const xs = poseWindowRef.current.map(p => p.x);
-    const ys = poseWindowRef.current.map(p => p.y);
-    const vxy = (variance(xs) + variance(ys)) / 2;
-    const stability = clamp(100 - vxy / 10, 0, 100);
+      const shoulderSym = clamp(100 - (shoulderDiff / shoulderW) * 300, 0, 100);
+      const hipSym = clamp(100 - (hipDiff / hipW) * 300, 0, 100);
 
-    const signals: PoseSignals = {
-      confidence: confLabel(avgConf),
-      shoulderSym: shoulderSym.toFixed(0),
-      hipSym: hipSym.toFixed(0),
-      spineLean: spineLean.toFixed(1),
-      stability: stability.toFixed(0),
-    };
+      const midShoulder = midpoint(ls, rs);
+      const midHip = midpoint(lh, rh);
+      const spineLean = radToDeg(Math.atan2(midShoulder.x - midHip.x, -(midShoulder.y - midHip.y)));
 
-    setPoseSignals(signals);
+      // Stability (sway tracking)
+      poseWindowRef.current.push({ t, x: midHip.x, y: midHip.y });
+      while (poseWindowRef.current.length && t - poseWindowRef.current[0].t > 3) {
+        poseWindowRef.current.shift();
+      }
 
-    return { stability, shoulderSym, hipSym, spineLean };
-  }, [showProOverlay, drawProOverlay]);
+      const xs = poseWindowRef.current.map((p) => p.x);
+      const ys = poseWindowRef.current.map((p) => p.y);
+      const vxy = (variance(xs) + variance(ys)) / 2;
+      const stability = clamp(100 - vxy / 10, 0, 100);
+
+      const signals: PoseSignals = {
+        confidence: confLabel(avgConf),
+        shoulderSym: shoulderSym.toFixed(0),
+        hipSym: hipSym.toFixed(0),
+        spineLean: spineLean.toFixed(1),
+        stability: stability.toFixed(0),
+      };
+
+      setPoseSignals(signals);
+
+      return { stability, shoulderSym, hipSym, spineLean };
+    },
+    [showProOverlay, drawProOverlay]
+  );
 
   // ─────────────────────────────────────────────────────────────────────────
   // PROCESS AUDIO
@@ -849,7 +899,11 @@ export default function VisionAIIntelligencePage() {
       // Simulated audio
       const energy = 30 + Math.random() * 40;
       const steadiness = 60 + Math.random() * 30;
-      setAudioSignals({ confidence: 'Medium', energy: energy.toFixed(0), steadiness: steadiness.toFixed(0) });
+      setAudioSignals({
+        confidence: 'Medium',
+        energy: energy.toFixed(0),
+        steadiness: steadiness.toFixed(0),
+      });
       return { energy, steadiness };
     }
 
@@ -868,7 +922,7 @@ export default function VisionAIIntelligencePage() {
       energyWindowRef.current.shift();
     }
 
-    const energyVar = variance(energyWindowRef.current.map(x => x.e));
+    const energyVar = variance(energyWindowRef.current.map((x) => x.e));
     const steadiness = clamp(100 - energyVar / 5, 0, 100);
 
     const signals: AudioSignals = {
@@ -894,7 +948,7 @@ export default function VisionAIIntelligencePage() {
     // FPS
     if (lastFrameRef.current) {
       const delta = now - lastFrameRef.current;
-      setFps(prev => Math.round(prev * 0.9 + (1000 / delta) * 0.1));
+      setFps((prev) => Math.round(prev * 0.9 + (1000 / delta) * 0.1));
     }
     lastFrameRef.current = now;
 
@@ -933,7 +987,11 @@ export default function VisionAIIntelligencePage() {
             sessionId: currentSessionIdRef.current,
             frameIndex: frameCountRef.current++,
             timestamp: t,
-            keypoints: lastKeypointsRef.current.map(kp => ({ x: kp.x, y: kp.y, score: kp.score })),
+            keypoints: lastKeypointsRef.current.map((kp) => ({
+              x: kp.x,
+              y: kp.y,
+              score: kp.score,
+            })),
             poseMetrics: {
               stability: poseMetrics.stability ?? 0,
               shoulderSym: poseMetrics.shoulderSym ?? 0,
@@ -947,17 +1005,20 @@ export default function VisionAIIntelligencePage() {
           };
 
           // Save frame async (don't await to maintain performance)
-          saveFrame(frame).catch(err => console.warn('Failed to save frame:', err));
+          saveFrame(frame).catch((err) => console.warn('Failed to save frame:', err));
         }
 
         // Update chart data (every 10th frame)
         if (Math.floor(t * 10) % 3 === 0) {
-          setChartData(prev => {
-            const next = [...prev, {
-              t: t.toFixed(1),
-              stability: poseMetrics.stability || 0,
-              energy: audioMetrics.energy || 0,
-            }];
+          setChartData((prev) => {
+            const next = [
+              ...prev,
+              {
+                t: t.toFixed(1),
+                stability: poseMetrics.stability || 0,
+                energy: audioMetrics.energy || 0,
+              },
+            ];
             return next.slice(-40);
           });
         }
@@ -975,11 +1036,11 @@ export default function VisionAIIntelligencePage() {
       setStatus('Requesting permissions...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: 640, height: 480, frameRate: 30 },
-        audio: true
+        audio: true,
       });
 
       // Permissions granted, stop stream (we'll start fresh on "Start Session")
-      stream.getTracks().forEach(t => t.stop());
+      stream.getTracks().forEach((t) => t.stop());
 
       setCameraPermission('granted');
       setMicPermission('granted');
@@ -1028,7 +1089,7 @@ export default function VisionAIIntelligencePage() {
       setStatus('Requesting camera...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: 640, height: 480, frameRate: 30 },
-        audio: true
+        audio: true,
       });
 
       streamRef.current = stream;
@@ -1080,32 +1141,35 @@ export default function VisionAIIntelligencePage() {
   // ─────────────────────────────────────────────────────────────────────────
   // PLAYBACK SESSION
   // ─────────────────────────────────────────────────────────────────────────
-  const loadPlaybackSession = useCallback(async (session: RecordedSession) => {
-    try {
-      const frames = await loadSessionFrames(session.id);
-      setPlaybackFrames(frames);
-      setPlaybackSession(session);
-      setPlaybackIndex(0);
-      setIsPlaying(false);
+  const loadPlaybackSession = useCallback(
+    async (session: RecordedSession) => {
+      try {
+        const frames = await loadSessionFrames(session.id);
+        setPlaybackFrames(frames);
+        setPlaybackSession(session);
+        setPlaybackIndex(0);
+        setIsPlaying(false);
 
-      if (session.baseline) {
-        setBaseline(session.baseline);
-        setCalibrated(true);
+        if (session.baseline) {
+          setBaseline(session.baseline);
+          setCalibrated(true);
+        }
+
+        addLog('Playback', `Loaded session with ${frames.length} frames`);
+      } catch (err) {
+        console.error('Failed to load session:', err);
+        addLog('Error', 'Failed to load recording');
       }
-
-      addLog('Playback', `Loaded session with ${frames.length} frames`);
-    } catch (err) {
-      console.error('Failed to load session:', err);
-      addLog('Error', 'Failed to load recording');
-    }
-  }, [addLog]);
+    },
+    [addLog]
+  );
 
   // Playback animation
   useEffect(() => {
     if (!isPlaying || !playbackSession || playbackFrames.length === 0) return;
 
     const interval = setInterval(() => {
-      setPlaybackIndex(prev => {
+      setPlaybackIndex((prev) => {
         if (prev >= playbackFrames.length - 1) {
           setIsPlaying(false);
           return prev;
@@ -1154,7 +1218,7 @@ export default function VisionAIIntelligencePage() {
     });
 
     ctx.fillStyle = COLORS.bone;
-    frame.keypoints.forEach(kp => {
+    frame.keypoints.forEach((kp) => {
       if (kp.score > 0.3) {
         ctx.beginPath();
         ctx.arc(kp.x, kp.y, 5, 0, Math.PI * 2);
@@ -1176,7 +1240,6 @@ export default function VisionAIIntelligencePage() {
       energy: frame.audioMetrics.energy.toFixed(0),
       steadiness: frame.audioMetrics.steadiness.toFixed(0),
     });
-
   }, [playbackSession, playbackFrames, playbackIndex, showProOverlay, drawProOverlay]);
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1193,10 +1256,10 @@ export default function VisionAIIntelligencePage() {
     }
 
     const bl: Baseline = {
-      stability: mean(data.map(d => d.stability).filter((x): x is number => x != null)),
-      shoulderSym: mean(data.map(d => d.shoulderSym).filter((x): x is number => x != null)),
-      hipSym: mean(data.map(d => d.hipSym).filter((x): x is number => x != null)),
-      energy: mean(data.map(d => d.energy)),
+      stability: mean(data.map((d) => d.stability).filter((x): x is number => x != null)),
+      shoulderSym: mean(data.map((d) => d.shoulderSym).filter((x): x is number => x != null)),
+      hipSym: mean(data.map((d) => d.hipSym).filter((x): x is number => x != null)),
+      energy: mean(data.map((d) => d.energy)),
       savedAt: Date.now(),
     };
 
@@ -1267,11 +1330,15 @@ export default function VisionAIIntelligencePage() {
     const d = formatDelta(current ? parseFloat(current) : null, baseline[baselineKey] as number);
     if (!d) return null;
     return (
-      <span className={`ml-1.5 text-xs ${
-        d.cls === 'positive' ? 'text-green-500' :
-        d.cls === 'negative' ? 'text-red-500' :
-        'text-[#c4b8a5]'
-      }`}>
+      <span
+        className={`ml-1.5 text-xs ${
+          d.cls === 'positive'
+            ? 'text-green-500'
+            : d.cls === 'negative'
+              ? 'text-red-500'
+              : 'text-[#c4b8a5]'
+        }`}
+      >
         {d.text}
       </span>
     );
@@ -1281,10 +1348,17 @@ export default function VisionAIIntelligencePage() {
   // RENDER
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <main id="main-content" className="min-h-screen font-body text-base text-[#f5f2eb] bg-gradient-to-b from-[#050505] via-midnight to-[#080808] pt-16 md:pt-20">
+    <main
+      id="main-content"
+      className="min-h-screen font-body text-base text-[#f5f2eb] bg-gradient-to-b from-[#050505] via-midnight to-[#080808] pt-16 md:pt-20"
+    >
       {/* Radial glow */}
-      <div className="fixed -top-48 -left-24 w-[800px] h-[600px] pointer-events-none z-0"
-           style={{ background: 'radial-gradient(ellipse, rgba(191, 87, 0, 0.12) 0%, transparent 60%)' }} />
+      <div
+        className="fixed -top-48 -left-24 w-[800px] h-[600px] pointer-events-none z-0"
+        style={{
+          background: 'radial-gradient(ellipse, rgba(191, 87, 0, 0.12) 0%, transparent 60%)',
+        }}
+      />
 
       {/* Permission Prompt Modal (Mobile Safari) */}
       {showPermissionPrompt && (
@@ -1298,19 +1372,25 @@ export default function VisionAIIntelligencePage() {
             </div>
 
             <p className="text-white/70 text-sm mb-4">
-              Vision AI needs access to your camera and microphone to analyze your form.
-              All processing happens locally on your device—no data leaves your phone.
+              Vision AI needs access to your camera and microphone to analyze your form. All
+              processing happens locally on your device—no data leaves your phone.
             </p>
 
             <div className="flex flex-col gap-2 mb-6">
               <div className="flex items-center gap-2 text-sm">
-                <Camera size={16} className={cameraPermission === 'granted' ? 'text-green-500' : 'text-white/50'} />
+                <Camera
+                  size={16}
+                  className={cameraPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
+                />
                 <span className={cameraPermission === 'granted' ? 'text-green-500' : ''}>
                   Camera: {cameraPermission === 'granted' ? 'Granted' : 'Required'}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Mic size={16} className={micPermission === 'granted' ? 'text-green-500' : 'text-white/50'} />
+                <Mic
+                  size={16}
+                  className={micPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
+                />
                 <span className={micPermission === 'granted' ? 'text-green-500' : ''}>
                   Microphone: {micPermission === 'granted' ? 'Granted' : 'Required'}
                 </span>
@@ -1321,7 +1401,8 @@ export default function VisionAIIntelligencePage() {
               <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
                 <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-red-400">
-                  Permissions were denied. Please enable camera and microphone access in your device settings, then reload this page.
+                  Permissions were denied. Please enable camera and microphone access in your device
+                  settings, then reload this page.
                 </p>
               </div>
             )}
@@ -1356,18 +1437,24 @@ export default function VisionAIIntelligencePage() {
               Vision AI Intelligence
             </h1>
             <p className="text-sm text-white/65">
-              {playbackSession ? 'Reviewing recorded session' : 'Signals, not mind-reading — All processing runs locally'}
+              {playbackSession
+                ? 'Reviewing recorded session'
+                : 'Signals, not mind-reading — All processing runs locally'}
             </p>
           </div>
         </div>
 
         <div className="flex gap-2 flex-wrap justify-end">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
-            <span className={`w-1.5 h-1.5 rounded-full ${
-              running ? 'bg-green-500 animate-pulse' :
-              playbackSession ? 'bg-blue-500' :
-              'bg-gray-500'
-            }`} />
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                running
+                  ? 'bg-green-500 animate-pulse'
+                  : playbackSession
+                    ? 'bg-blue-500'
+                    : 'bg-gray-500'
+              }`}
+            />
             {status}
           </div>
           {!playbackSession && (
@@ -1394,12 +1481,13 @@ export default function VisionAIIntelligencePage() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 relative z-10">
         {/* Left column */}
         <div className="flex flex-col gap-4">
-
           {/* Controls panel */}
           <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
             <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
               <span className="font-display text-xs tracking-[0.2em] text-white/50">01</span>
-              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">Controls</span>
+              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                Controls
+              </span>
             </div>
 
             <div className="p-4">
@@ -1410,7 +1498,7 @@ export default function VisionAIIntelligencePage() {
                   </label>
                   <select
                     value={mode}
-                    onChange={e => setMode(e.target.value as 'sports' | 'body')}
+                    onChange={(e) => setMode(e.target.value as 'sports' | 'body')}
                     disabled={running || !!playbackSession}
                     className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40 disabled:opacity-50"
                   >
@@ -1426,11 +1514,13 @@ export default function VisionAIIntelligencePage() {
                   </label>
                   <select
                     value={selectedProForm}
-                    onChange={e => setSelectedProForm(e.target.value)}
+                    onChange={(e) => setSelectedProForm(e.target.value)}
                     className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40"
                   >
                     {Object.entries(PRO_FORMS).map(([key, form]) => (
-                      <option key={key} value={key}>{form.name}</option>
+                      <option key={key} value={key}>
+                        {form.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -1536,10 +1626,12 @@ export default function VisionAIIntelligencePage() {
                     max="1"
                     step="0.1"
                     value={proOverlayOpacity}
-                    onChange={e => setProOverlayOpacity(parseFloat(e.target.value))}
+                    onChange={(e) => setProOverlayOpacity(parseFloat(e.target.value))}
                     className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
                   />
-                  <span className="text-xs text-white/50">{Math.round(proOverlayOpacity * 100)}%</span>
+                  <span className="text-xs text-white/50">
+                    {Math.round(proOverlayOpacity * 100)}%
+                  </span>
                 </div>
               )}
 
@@ -1547,7 +1639,9 @@ export default function VisionAIIntelligencePage() {
               {playbackSession && playbackFrames.length > 0 && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-xs text-white/50 mb-1">
-                    <span>Frame {playbackIndex + 1} / {playbackFrames.length}</span>
+                    <span>
+                      Frame {playbackIndex + 1} / {playbackFrames.length}
+                    </span>
                     <span>{playbackFrames[playbackIndex]?.timestamp.toFixed(1)}s</span>
                   </div>
                   <input
@@ -1555,7 +1649,7 @@ export default function VisionAIIntelligencePage() {
                     min="0"
                     max={playbackFrames.length - 1}
                     value={playbackIndex}
-                    onChange={e => setPlaybackIndex(parseInt(e.target.value))}
+                    onChange={(e) => setPlaybackIndex(parseInt(e.target.value))}
                     className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
                   />
                 </div>
@@ -1576,11 +1670,11 @@ export default function VisionAIIntelligencePage() {
 
                 {/* Status badge */}
                 <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-white/85 bg-midnight/80 border border-white/15 rounded-full backdrop-blur-sm">
-                  <span className={`w-1.5 h-1.5 rounded-full ${
-                    running ? 'bg-green-500' :
-                    playbackSession ? 'bg-blue-500' :
-                    'bg-red-500'
-                  }`} />
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      running ? 'bg-green-500' : playbackSession ? 'bg-blue-500' : 'bg-red-500'
+                    }`}
+                  />
                   {running ? 'LIVE' : playbackSession ? 'PLAYBACK' : 'STANDBY'}
                 </div>
 
@@ -1599,7 +1693,8 @@ export default function VisionAIIntelligencePage() {
                       Calibrating
                     </h3>
                     <p className="text-sm text-white/75 max-w-xs">
-                      Hold still in your neutral position. This sets your baseline for delta tracking.
+                      Hold still in your neutral position. This sets your baseline for delta
+                      tracking.
                     </p>
                     <div className="mt-5 w-48 h-1 bg-white/10 rounded-sm overflow-hidden">
                       <div
@@ -1619,13 +1714,15 @@ export default function VisionAIIntelligencePage() {
               <div className="flex items-center justify-between px-4 py-3.5 border-b border-primary/15">
                 <div className="flex items-center gap-2.5">
                   <span className="font-display text-xs tracking-[0.2em] text-white/50">02</span>
-                  <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">Recorded Sessions</span>
+                  <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                    Recorded Sessions
+                  </span>
                 </div>
                 <span className="text-xs text-white/50">{recordedSessions.length} sessions</span>
               </div>
 
               <div className="p-4 max-h-44 overflow-y-auto">
-                {recordedSessions.slice(0, 5).map(session => (
+                {recordedSessions.slice(0, 5).map((session) => (
                   <button
                     key={session.id}
                     onClick={() => loadPlaybackSession(session)}
@@ -1633,7 +1730,8 @@ export default function VisionAIIntelligencePage() {
                   >
                     <div>
                       <div className="text-sm text-white/90">
-                        {new Date(session.createdAt).toLocaleDateString()} — {session.mode.toUpperCase()}
+                        {new Date(session.createdAt).toLocaleDateString()} —{' '}
+                        {session.mode.toUpperCase()}
                       </div>
                       <div className="text-xs text-white/50">
                         {session.frameCount} frames • {session.duration.toFixed(1)}s
@@ -1649,8 +1747,12 @@ export default function VisionAIIntelligencePage() {
           {/* Logs panel */}
           <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
             <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-              <span className="font-display text-xs tracking-[0.2em] text-white/50">{recordedSessions.length > 0 && !playbackSession ? '03' : '02'}</span>
-              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">Coaching Log</span>
+              <span className="font-display text-xs tracking-[0.2em] text-white/50">
+                {recordedSessions.length > 0 && !playbackSession ? '03' : '02'}
+              </span>
+              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                Coaching Log
+              </span>
             </div>
 
             <div className="p-4 max-h-44 overflow-y-auto">
@@ -1659,17 +1761,16 @@ export default function VisionAIIntelligencePage() {
                   Logs will appear here during analysis...
                 </div>
               ) : (
-                logs.map(log => (
-                  <div key={log.id} className="flex gap-3 py-2 border-l-2 border-primary/15 pl-3 ml-1 mb-1">
-                    <span className="font-mono text-xs text-white/40 min-w-[42px]">
-                      {log.t}s
-                    </span>
+                logs.map((log) => (
+                  <div
+                    key={log.id}
+                    className="flex gap-3 py-2 border-l-2 border-primary/15 pl-3 ml-1 mb-1"
+                  >
+                    <span className="font-mono text-xs text-white/40 min-w-[42px]">{log.t}s</span>
                     <span className="font-display text-[10px] tracking-[0.15em] uppercase text-primary min-w-[80px]">
                       {log.tag}
                     </span>
-                    <span className="text-sm text-white/80 flex-1">
-                      {log.msg}
-                    </span>
+                    <span className="text-sm text-white/80 flex-1">{log.msg}</span>
                   </div>
                 ))
               )}
@@ -1681,8 +1782,12 @@ export default function VisionAIIntelligencePage() {
         <aside className="flex flex-col gap-4">
           <section className="flex-1 bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
             <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-              <span className="font-display text-xs tracking-[0.2em] text-white/50">{recordedSessions.length > 0 && !playbackSession ? '04' : '03'}</span>
-              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">Live Signals</span>
+              <span className="font-display text-xs tracking-[0.2em] text-white/50">
+                {recordedSessions.length > 0 && !playbackSession ? '04' : '03'}
+              </span>
+              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                Live Signals
+              </span>
             </div>
 
             <div className="p-4">
@@ -1693,12 +1798,17 @@ export default function VisionAIIntelligencePage() {
                     <Activity size={14} />
                     Posture & Balance
                   </span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                    poseSignals?.confidence === 'High' ? 'bg-green-500/20 text-green-500' :
-                    poseSignals?.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-500' :
-                    poseSignals?.confidence === 'Playback' ? 'bg-blue-500/20 text-blue-500' :
-                    'bg-white/10 text-white/50'
-                  }`}>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                      poseSignals?.confidence === 'High'
+                        ? 'bg-green-500/20 text-green-500'
+                        : poseSignals?.confidence === 'Medium'
+                          ? 'bg-yellow-500/20 text-yellow-500'
+                          : poseSignals?.confidence === 'Playback'
+                            ? 'bg-blue-500/20 text-blue-500'
+                            : 'bg-white/10 text-white/50'
+                    }`}
+                  >
                     {poseSignals?.confidence || 'Low'}
                   </span>
                 </div>
@@ -1717,9 +1827,7 @@ export default function VisionAIIntelligencePage() {
                   </span>
 
                   <span className="text-white/65">Spine Lean</span>
-                  <span className="text-white/90 text-right">
-                    {poseSignals?.spineLean ?? '—'}°
-                  </span>
+                  <span className="text-white/90 text-right">{poseSignals?.spineLean ?? '—'}°</span>
 
                   <span className="text-white/65">Stability Score</span>
                   <span className="text-white/90 font-semibold text-right">
@@ -1736,12 +1844,17 @@ export default function VisionAIIntelligencePage() {
                     <Mic size={14} />
                     Voice Signals
                   </span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                    audioSignals?.confidence === 'High' ? 'bg-green-500/20 text-green-500' :
-                    audioSignals?.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-500' :
-                    audioSignals?.confidence === 'Playback' ? 'bg-blue-500/20 text-blue-500' :
-                    'bg-white/10 text-white/50'
-                  }`}>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                      audioSignals?.confidence === 'High'
+                        ? 'bg-green-500/20 text-green-500'
+                        : audioSignals?.confidence === 'Medium'
+                          ? 'bg-yellow-500/20 text-yellow-500'
+                          : audioSignals?.confidence === 'Playback'
+                            ? 'bg-blue-500/20 text-blue-500'
+                            : 'bg-white/10 text-white/50'
+                    }`}
+                  >
                     {audioSignals?.confidence || 'Low'}
                   </span>
                 </div>
@@ -1788,11 +1901,38 @@ export default function VisionAIIntelligencePage() {
                 </div>
 
                 {/* SVG Chart */}
-                <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="none" className="block">
+                <svg
+                  width="100%"
+                  height="100"
+                  viewBox="0 0 300 100"
+                  preserveAspectRatio="none"
+                  className="block"
+                >
                   {/* Grid */}
-                  <line x1="0" y1="25" x2="300" y2="25" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-                  <line x1="0" y1="50" x2="300" y2="50" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-                  <line x1="0" y1="75" x2="300" y2="75" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                  <line
+                    x1="0"
+                    y1="25"
+                    x2="300"
+                    y2="25"
+                    stroke="rgba(255,255,255,0.05)"
+                    strokeWidth="1"
+                  />
+                  <line
+                    x1="0"
+                    y1="50"
+                    x2="300"
+                    y2="50"
+                    stroke="rgba(255,255,255,0.05)"
+                    strokeWidth="1"
+                  />
+                  <line
+                    x1="0"
+                    y1="75"
+                    x2="300"
+                    y2="75"
+                    stroke="rgba(255,255,255,0.05)"
+                    strokeWidth="1"
+                  />
 
                   {/* Stability line */}
                   {chartData.length > 1 && (
@@ -1800,7 +1940,9 @@ export default function VisionAIIntelligencePage() {
                       fill="none"
                       stroke={COLORS.orange}
                       strokeWidth="2"
-                      points={chartData.map((d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.stability}`).join(' ')}
+                      points={chartData
+                        .map((d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.stability}`)
+                        .join(' ')}
                     />
                   )}
 
@@ -1811,7 +1953,9 @@ export default function VisionAIIntelligencePage() {
                       stroke={COLORS.dust}
                       strokeWidth="2"
                       strokeDasharray="4,2"
-                      points={chartData.map((d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.energy}`).join(' ')}
+                      points={chartData
+                        .map((d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.energy}`)
+                        .join(' ')}
                     />
                   )}
                 </svg>
@@ -1822,7 +1966,10 @@ export default function VisionAIIntelligencePage() {
                     Stability
                   </span>
                   <span className="flex items-center gap-1 text-[10px] text-white/60">
-                    <span className="w-3 h-0.5 border-dashed border-b" style={{ borderColor: COLORS.dust }} />
+                    <span
+                      className="w-3 h-0.5 border-dashed border-b"
+                      style={{ borderColor: COLORS.dust }}
+                    />
                     Energy
                   </span>
                 </div>
@@ -1832,9 +1979,9 @@ export default function VisionAIIntelligencePage() {
 
           {/* Privacy note */}
           <div className="p-3 text-xs leading-relaxed text-white/65 bg-charcoal/40 border border-primary/15 rounded-md">
-            <strong className="text-white/85">Privacy:</strong> All processing runs locally in your browser.
-            No video or audio leaves your device. This tool reports observable signals—posture geometry, voice energy—not
-            emotion, intent, or truthfulness.
+            <strong className="text-white/85">Privacy:</strong> All processing runs locally in your
+            browser. No video or audio leaves your device. This tool reports observable
+            signals—posture geometry, voice energy—not emotion, intent, or truthfulness.
           </div>
         </aside>
       </div>

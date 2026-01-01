@@ -45,15 +45,17 @@ interface Conference {
 
 function formatTimestamp(): string {
   const date = new Date();
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    date.toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 // Static data for off-season display
@@ -64,37 +66,245 @@ const staticStandings: Conference[] = [
       {
         name: 'AFC East',
         teams: [
-          { name: 'Buffalo Bills', abbreviation: 'BUF', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Miami Dolphins', abbreviation: 'MIA', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'New England Patriots', abbreviation: 'NE', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'New York Jets', abbreviation: 'NYJ', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'Buffalo Bills',
+            abbreviation: 'BUF',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Miami Dolphins',
+            abbreviation: 'MIA',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'New England Patriots',
+            abbreviation: 'NE',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'New York Jets',
+            abbreviation: 'NYJ',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
       {
         name: 'AFC North',
         teams: [
-          { name: 'Baltimore Ravens', abbreviation: 'BAL', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Cincinnati Bengals', abbreviation: 'CIN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Cleveland Browns', abbreviation: 'CLE', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Pittsburgh Steelers', abbreviation: 'PIT', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'Baltimore Ravens',
+            abbreviation: 'BAL',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Cincinnati Bengals',
+            abbreviation: 'CIN',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Cleveland Browns',
+            abbreviation: 'CLE',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Pittsburgh Steelers',
+            abbreviation: 'PIT',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
       {
         name: 'AFC South',
         teams: [
-          { name: 'Houston Texans', abbreviation: 'HOU', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Indianapolis Colts', abbreviation: 'IND', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Jacksonville Jaguars', abbreviation: 'JAX', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Tennessee Titans', abbreviation: 'TEN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'Houston Texans',
+            abbreviation: 'HOU',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Indianapolis Colts',
+            abbreviation: 'IND',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Jacksonville Jaguars',
+            abbreviation: 'JAX',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Tennessee Titans',
+            abbreviation: 'TEN',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
       {
         name: 'AFC West',
         teams: [
-          { name: 'Kansas City Chiefs', abbreviation: 'KC', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Denver Broncos', abbreviation: 'DEN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Las Vegas Raiders', abbreviation: 'LV', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Los Angeles Chargers', abbreviation: 'LAC', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'Kansas City Chiefs',
+            abbreviation: 'KC',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Denver Broncos',
+            abbreviation: 'DEN',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Las Vegas Raiders',
+            abbreviation: 'LV',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Los Angeles Chargers',
+            abbreviation: 'LAC',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
     ],
@@ -105,37 +315,245 @@ const staticStandings: Conference[] = [
       {
         name: 'NFC East',
         teams: [
-          { name: 'Dallas Cowboys', abbreviation: 'DAL', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Philadelphia Eagles', abbreviation: 'PHI', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'New York Giants', abbreviation: 'NYG', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Washington Commanders', abbreviation: 'WAS', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'Dallas Cowboys',
+            abbreviation: 'DAL',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Philadelphia Eagles',
+            abbreviation: 'PHI',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'New York Giants',
+            abbreviation: 'NYG',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Washington Commanders',
+            abbreviation: 'WAS',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
       {
         name: 'NFC North',
         teams: [
-          { name: 'Detroit Lions', abbreviation: 'DET', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Green Bay Packers', abbreviation: 'GB', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Minnesota Vikings', abbreviation: 'MIN', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Chicago Bears', abbreviation: 'CHI', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'Detroit Lions',
+            abbreviation: 'DET',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Green Bay Packers',
+            abbreviation: 'GB',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Minnesota Vikings',
+            abbreviation: 'MIN',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Chicago Bears',
+            abbreviation: 'CHI',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
       {
         name: 'NFC South',
         teams: [
-          { name: 'Tampa Bay Buccaneers', abbreviation: 'TB', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Atlanta Falcons', abbreviation: 'ATL', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'New Orleans Saints', abbreviation: 'NO', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Carolina Panthers', abbreviation: 'CAR', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'Tampa Bay Buccaneers',
+            abbreviation: 'TB',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Atlanta Falcons',
+            abbreviation: 'ATL',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'New Orleans Saints',
+            abbreviation: 'NO',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Carolina Panthers',
+            abbreviation: 'CAR',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
       {
         name: 'NFC West',
         teams: [
-          { name: 'San Francisco 49ers', abbreviation: 'SF', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Seattle Seahawks', abbreviation: 'SEA', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Los Angeles Rams', abbreviation: 'LAR', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
-          { name: 'Arizona Cardinals', abbreviation: 'ARI', wins: 0, losses: 0, ties: 0, pct: 0, pf: 0, pa: 0, diff: 0, streak: '-', divisionRecord: '0-0', confRecord: '0-0' },
+          {
+            name: 'San Francisco 49ers',
+            abbreviation: 'SF',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Seattle Seahawks',
+            abbreviation: 'SEA',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Los Angeles Rams',
+            abbreviation: 'LAR',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
+          {
+            name: 'Arizona Cardinals',
+            abbreviation: 'ARI',
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            pct: 0,
+            pf: 0,
+            pa: 0,
+            diff: 0,
+            streak: '-',
+            divisionRecord: '0-0',
+            confRecord: '0-0',
+          },
         ],
       },
     ],
@@ -169,7 +587,7 @@ export default function NFLStandingsPage() {
     fetchStandings();
   }, []);
 
-  const currentConference = standings.find(c => c.name === selectedConference);
+  const currentConference = standings.find((c) => c.name === selectedConference);
 
   return (
     <>
@@ -180,7 +598,10 @@ export default function NFLStandingsPage() {
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/nfl" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link
+                href="/nfl"
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+              >
                 NFL
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -195,7 +616,9 @@ export default function NFLStandingsPage() {
 
           <Container>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">2025 Season</Badge>
+              <Badge variant="primary" className="mb-4">
+                2025 Season
+              </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
@@ -273,15 +696,33 @@ export default function NFLStandingsPage() {
                         <table className="w-full text-sm">
                           <thead>
                             <tr className="border-b border-border-subtle">
-                              <th className="text-left py-2 px-2 text-text-tertiary font-semibold">Team</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">W</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">L</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">T</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">PCT</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">PF</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">PA</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">DIFF</th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">STRK</th>
+                              <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                                Team
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                                W
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                                L
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                                T
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                                PCT
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                                PF
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                                PA
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                                DIFF
+                              </th>
+                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                                STRK
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -300,16 +741,33 @@ export default function NFLStandingsPage() {
                                     <span className="font-semibold text-white">{team.name}</span>
                                   </div>
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">{team.wins}</td>
-                                <td className="text-center py-3 px-2 text-white font-mono">{team.losses}</td>
-                                <td className="text-center py-3 px-2 text-white font-mono">{team.ties}</td>
-                                <td className="text-center py-3 px-2 text-white font-mono">{team.pct.toFixed(3)}</td>
-                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">{team.pf}</td>
-                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">{team.pa}</td>
-                                <td className={`text-center py-3 px-2 font-mono hidden md:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-text-secondary'}`}>
-                                  {team.diff > 0 ? '+' : ''}{team.diff}
+                                <td className="text-center py-3 px-2 text-white font-mono">
+                                  {team.wins}
                                 </td>
-                                <td className="text-center py-3 px-2 text-text-secondary hidden lg:table-cell">{team.streak}</td>
+                                <td className="text-center py-3 px-2 text-white font-mono">
+                                  {team.losses}
+                                </td>
+                                <td className="text-center py-3 px-2 text-white font-mono">
+                                  {team.ties}
+                                </td>
+                                <td className="text-center py-3 px-2 text-white font-mono">
+                                  {team.pct.toFixed(3)}
+                                </td>
+                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                  {team.pf}
+                                </td>
+                                <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                  {team.pa}
+                                </td>
+                                <td
+                                  className={`text-center py-3 px-2 font-mono hidden md:table-cell ${team.diff > 0 ? 'text-success' : team.diff < 0 ? 'text-error' : 'text-text-secondary'}`}
+                                >
+                                  {team.diff > 0 ? '+' : ''}
+                                  {team.diff}
+                                </td>
+                                <td className="text-center py-3 px-2 text-text-secondary hidden lg:table-cell">
+                                  {team.streak}
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -323,10 +781,7 @@ export default function NFLStandingsPage() {
 
             {/* Data Source Footer */}
             <div className="mt-8 pt-4 border-t border-border-subtle">
-              <DataSourceBadge
-                source="ESPN NFL API"
-                timestamp={formatTimestamp()}
-              />
+              <DataSourceBadge source="ESPN NFL API" timestamp={formatTimestamp()} />
             </div>
           </Container>
         </Section>

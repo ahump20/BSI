@@ -174,7 +174,9 @@ function AlertSubscription() {
       <div className="p-6 rounded-xl bg-success/10 border border-success/30 text-center">
         <div className="text-success text-3xl mb-2">✓</div>
         <h3 className="text-lg font-semibold text-text-primary mb-2">You're on the list!</h3>
-        <p className="text-text-secondary text-sm">We'll notify you when new players enter the portal.</p>
+        <p className="text-text-secondary text-sm">
+          We'll notify you when new players enter the portal.
+        </p>
       </div>
     );
   }
@@ -183,7 +185,9 @@ function AlertSubscription() {
     <div className="p-6 rounded-xl bg-gradient-to-br from-burnt-orange/10 to-transparent border border-burnt-orange/30">
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-text-primary mb-2">Get Portal Alerts</h3>
-        <p className="text-text-secondary text-sm">Be first to know when players enter the portal. Free alerts for your favorite schools.</p>
+        <p className="text-text-secondary text-sm">
+          Be first to know when players enter the portal. Free alerts for your favorite schools.
+        </p>
       </div>
       <form onSubmit={handleSubscribe} className="flex gap-2">
         <input
@@ -199,14 +203,28 @@ function AlertSubscription() {
         </Button>
       </form>
       <p className="text-text-muted text-xs mt-3 text-center">
-        Free tier: Delayed alerts. <Link href="/pricing" className="text-burnt-orange hover:underline">Upgrade to Pro</Link> for real-time.
+        Free tier: Delayed alerts.{' '}
+        <Link href="/pricing" className="text-burnt-orange hover:underline">
+          Upgrade to Pro
+        </Link>{' '}
+        for real-time.
       </p>
     </div>
   );
 }
 
 // Stats card component (page-specific)
-function StatCard({ label, value, change, isLive }: { label: string; value: string | number; change?: string; isLive?: boolean }) {
+function StatCard({
+  label,
+  value,
+  change,
+  isLive,
+}: {
+  label: string;
+  value: string | number;
+  change?: string;
+  isLive?: boolean;
+}) {
   return (
     <div className="relative p-4 md:p-6 rounded-xl bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80 border border-border-subtle">
       {isLive && (
@@ -217,10 +235,14 @@ function StatCard({ label, value, change, isLive }: { label: string; value: stri
           </span>
         </div>
       )}
-      <p className="text-xs md:text-sm font-medium text-text-tertiary uppercase tracking-wide mb-1">{label}</p>
+      <p className="text-xs md:text-sm font-medium text-text-tertiary uppercase tracking-wide mb-1">
+        {label}
+      </p>
       <p className="text-2xl md:text-3xl font-display font-bold text-text-primary">{value}</p>
       {change && (
-        <p className={`text-xs mt-1 ${change.startsWith('+') ? 'text-success-light' : 'text-text-muted'}`}>
+        <p
+          className={`text-xs mt-1 ${change.startsWith('+') ? 'text-success-light' : 'text-text-muted'}`}
+        >
           {change} today
         </p>
       )}
@@ -278,16 +300,17 @@ export default function TransferPortalPage() {
     if (filters.position && !entry.position.includes(filters.position)) return false;
     if (filters.conference && entry.conference !== filters.conference) return false;
     if (filters.status && entry.status !== filters.status) return false;
-    if (filters.search && !entry.player_name.toLowerCase().includes(filters.search.toLowerCase())) return false;
+    if (filters.search && !entry.player_name.toLowerCase().includes(filters.search.toLowerCase()))
+      return false;
     return true;
   });
 
   // Stats calculations
   const stats = {
     total: entries.length,
-    inPortal: entries.filter(e => e.status === 'in_portal').length,
-    committed: entries.filter(e => e.status === 'committed').length,
-    withdrawn: entries.filter(e => e.status === 'withdrawn').length,
+    inPortal: entries.filter((e) => e.status === 'in_portal').length,
+    committed: entries.filter((e) => e.status === 'committed').length,
+    withdrawn: entries.filter((e) => e.status === 'withdrawn').length,
   };
 
   return (
@@ -311,8 +334,8 @@ export default function TransferPortalPage() {
                 <span className="block text-burnt-orange">Transfer Portal Tracker</span>
               </h1>
               <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
-                Real-time tracking of every D1 baseball player entering, committing, or withdrawing from the transfer portal.
-                Updated continuously throughout the portal window.
+                Real-time tracking of every D1 baseball player entering, committing, or withdrawing
+                from the transfer portal. Updated continuously throughout the portal window.
               </p>
             </div>
           </ScrollReveal>
@@ -361,7 +384,13 @@ export default function TransferPortalPage() {
           {/* Empty state */}
           {filteredEntries.length === 0 && (
             <div className="text-center py-16">
-              <svg className="w-16 h-16 mx-auto mb-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <svg
+                className="w-16 h-16 mx-auto mb-4 text-text-muted"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
                 <circle cx="11" cy="11" r="8" />
                 <path d="M21 21L16.65 16.65" />
               </svg>
@@ -375,16 +404,25 @@ export default function TransferPortalPage() {
             <div className="mt-12 p-6 rounded-xl bg-gradient-to-br from-burnt-orange/10 to-transparent border border-burnt-orange/20">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-burnt-orange/20 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-burnt-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    className="w-6 h-6 text-burnt-orange"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6V12L16 14" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-1">2025 Portal Window</h3>
+                  <h3 className="text-lg font-semibold text-text-primary mb-1">
+                    2025 Portal Window
+                  </h3>
                   <p className="text-text-secondary mb-3">
-                    The primary transfer window opens <strong className="text-burnt-orange">June 2, 2025</strong> and runs through August 1st.
-                    Players have 30 days to enter after their season ends.
+                    The primary transfer window opens{' '}
+                    <strong className="text-burnt-orange">June 2, 2025</strong> and runs through
+                    August 1st. Players have 30 days to enter after their season ends.
                   </p>
                   <div className="flex flex-wrap gap-4 text-sm">
                     <div>
@@ -409,7 +447,9 @@ export default function TransferPortalPage() {
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <ScrollReveal direction="left">
               <div>
-                <Badge variant="primary" className="mb-4">Real-Time Alerts</Badge>
+                <Badge variant="primary" className="mb-4">
+                  Real-Time Alerts
+                </Badge>
                 <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mb-4">
                   Never Miss a Transfer
                 </h2>
@@ -419,20 +459,50 @@ export default function TransferPortalPage() {
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <svg className="w-5 h-5 text-success-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-5 h-5 text-success-light"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Email alerts
                   </div>
                   <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <svg className="w-5 h-5 text-success-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-5 h-5 text-success-light"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Push notifications
                   </div>
                   <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <svg className="w-5 h-5 text-success-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-5 h-5 text-success-light"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Daily digests
                   </div>
@@ -452,13 +522,15 @@ export default function TransferPortalPage() {
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <Badge variant="primary" className="mb-4">Pricing</Badge>
+              <Badge variant="primary" className="mb-4">
+                Pricing
+              </Badge>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary mb-4">
                 Choose Your Plan
               </h2>
               <p className="text-text-secondary max-w-2xl mx-auto">
-                D1Baseball charges $145.99/year for editorial coverage—not a real database.
-                We built what should exist.
+                D1Baseball charges $145.99/year for editorial coverage—not a real database. We built
+                what should exist.
               </p>
             </div>
           </ScrollReveal>
@@ -471,20 +543,50 @@ export default function TransferPortalPage() {
                 <div className="font-display text-3xl font-bold text-text-primary mb-4">$0</div>
                 <ul className="text-text-secondary text-sm space-y-2 mb-6 text-left">
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-success-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-success-light flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Basic tracker access
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-success-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-success-light flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     24-hour delayed alerts
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-success-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-success-light flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Limited search filters
                   </li>
@@ -506,26 +608,66 @@ export default function TransferPortalPage() {
                 <p className="text-text-muted text-xs mb-4">or $79/year (save 34%)</p>
                 <ul className="text-text-secondary text-sm space-y-2 mb-6 text-left">
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-burnt-orange flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-burnt-orange flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     <span className="text-text-primary font-medium">Real-time alerts</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-burnt-orange flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-burnt-orange flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     <span className="text-text-primary font-medium">Full database access</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-burnt-orange flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-burnt-orange flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     <span className="text-text-primary font-medium">Player profiles & stats</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-burnt-orange flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-burnt-orange flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     <span className="text-text-primary font-medium">Custom watchlists</span>
                   </li>
@@ -537,32 +679,74 @@ export default function TransferPortalPage() {
 
               {/* Enterprise tier */}
               <div className="p-6 rounded-xl bg-charcoal-800/50 border border-border-subtle text-center">
-                <h3 className="font-display text-lg font-bold text-text-primary mb-2">Enterprise</h3>
+                <h3 className="font-display text-lg font-bold text-text-primary mb-2">
+                  Enterprise
+                </h3>
                 <div className="font-display text-3xl font-bold text-text-primary mb-4">
                   $199<span className="text-lg font-normal text-text-tertiary">/mo</span>
                 </div>
                 <ul className="text-text-secondary text-sm space-y-2 mb-6 text-left">
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-success-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-success-light flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     API access
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-success-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-success-light flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Custom data exports
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-success-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-success-light flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     White-label options
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-success-light flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-success-light flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Priority support
                   </li>
@@ -576,8 +760,17 @@ export default function TransferPortalPage() {
 
           {/* Back link */}
           <div className="text-center mt-12">
-            <Link href="/college-baseball" className="text-burnt-orange hover:text-burnt-orange-400 transition-colors inline-flex items-center gap-2">
-              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+            <Link
+              href="/college-baseball"
+              className="text-burnt-orange hover:text-burnt-orange-400 transition-colors inline-flex items-center gap-2"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M19 12H5M5 12L12 19M5 12L12 5" />
               </svg>
               Back to College Baseball
@@ -591,7 +784,8 @@ export default function TransferPortalPage() {
         <Container>
           <div className="text-center text-sm text-text-muted">
             <p className="mb-2">
-              <strong className="text-text-secondary">2026 Portal Window:</strong> June 2, 2026 – July 1, 2026 (Primary)
+              <strong className="text-text-secondary">2026 Portal Window:</strong> June 2, 2026 –
+              July 1, 2026 (Primary)
             </p>
             <p>
               Data sourced from official NCAA portal filings, D1Baseball, and verified social media.

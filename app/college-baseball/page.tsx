@@ -183,8 +183,9 @@ export default function CollegeBaseballPage() {
 
             <ScrollReveal direction="up" delay={200}>
               <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Complete box scores with batting lines, pitching stats, and play-by-play for every D1 game.
-                SEC, Big 12, ACC—all 300+ programs, covered like they matter. Because they do.
+                Complete box scores with batting lines, pitching stats, and play-by-play for every
+                D1 game. SEC, Big 12, ACC—all 300+ programs, covered like they matter. Because they
+                do.
               </p>
             </ScrollReveal>
 

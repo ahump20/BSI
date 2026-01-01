@@ -442,7 +442,7 @@ export class SportsDataIOAdapter {
   }
 
   async getNFLTeamRoster(teamKey: string): Promise<ApiResponse<NFLPlayer[]>> {
-    const season = this.getCurrentSeason('nfl');
+    const _season = this.getCurrentSeason('nfl');
     return sportsDataClient.fetch<NFLPlayer[]>(
       this.provider,
       this.buildUrl('nfl/scores', `/json/Players/${teamKey}`),

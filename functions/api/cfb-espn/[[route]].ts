@@ -67,69 +67,69 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const espnData = await espnResponse.json();
 
         // Categorize games
-        const games = espnData.events?.map((event: any) => {
-          const competition = event.competitions?.[0];
-          const homeTeam = competition?.competitors?.find((c: any) => c.homeAway === 'home');
-          const awayTeam = competition?.competitors?.find((c: any) => c.homeAway === 'away');
+        const games =
+          espnData.events?.map((event: any) => {
+            const competition = event.competitions?.[0];
+            const homeTeam = competition?.competitors?.find((c: any) => c.homeAway === 'home');
+            const awayTeam = competition?.competitors?.find((c: any) => c.homeAway === 'away');
 
-          const isLonghornsGame =
-            homeTeam?.team?.id === LONGHORNS_TEAM_ID ||
-            awayTeam?.team?.id === LONGHORNS_TEAM_ID;
+            const isLonghornsGame =
+              homeTeam?.team?.id === LONGHORNS_TEAM_ID || awayTeam?.team?.id === LONGHORNS_TEAM_ID;
 
-          return {
-            id: event.id,
-            name: event.name,
-            shortName: event.shortName,
-            date: event.date,
-            bowlName: event.notes?.[0]?.headline || null,
-            status: {
-              state: event.status?.type?.state,
-              completed: event.status?.type?.completed,
-              detail: event.status?.type?.detail,
-              displayClock: event.status?.displayClock,
-              period: event.status?.period,
-            },
-            venue: {
-              name: competition?.venue?.fullName,
-              city: competition?.venue?.address?.city,
-              state: competition?.venue?.address?.state,
-            },
-            homeTeam: homeTeam
-              ? {
-                  id: homeTeam.team?.id,
-                  name: homeTeam.team?.displayName,
-                  abbreviation: homeTeam.team?.abbreviation,
-                  logo: homeTeam.team?.logo,
-                  color: homeTeam.team?.color,
-                  score: homeTeam.score,
-                  winner: homeTeam.winner,
-                  isLonghorns: homeTeam.team?.id === LONGHORNS_TEAM_ID,
-                  records: homeTeam.records?.[0]?.summary,
-                }
-              : null,
-            awayTeam: awayTeam
-              ? {
-                  id: awayTeam.team?.id,
-                  name: awayTeam.team?.displayName,
-                  abbreviation: awayTeam.team?.abbreviation,
-                  logo: awayTeam.team?.logo,
-                  color: awayTeam.team?.color,
-                  score: awayTeam.score,
-                  winner: awayTeam.winner,
-                  isLonghorns: awayTeam.team?.id === LONGHORNS_TEAM_ID,
-                  records: awayTeam.records?.[0]?.summary,
-                }
-              : null,
-            isLonghornsGame,
-            broadcast: competition?.broadcasts?.[0]?.names?.join(', ') || null,
-            odds: competition?.odds?.[0]
-              ? {
-                  line: competition.odds[0].details,
-                  overUnder: competition.odds[0].overUnder,
-                }
-              : null,
-          };
-        }) || [];
+            return {
+              id: event.id,
+              name: event.name,
+              shortName: event.shortName,
+              date: event.date,
+              bowlName: event.notes?.[0]?.headline || null,
+              status: {
+                state: event.status?.type?.state,
+                completed: event.status?.type?.completed,
+                detail: event.status?.type?.detail,
+                displayClock: event.status?.displayClock,
+                period: event.status?.period,
+              },
+              venue: {
+                name: competition?.venue?.fullName,
+                city: competition?.venue?.address?.city,
+                state: competition?.venue?.address?.state,
+              },
+              homeTeam: homeTeam
+                ? {
+                    id: homeTeam.team?.id,
+                    name: homeTeam.team?.displayName,
+                    abbreviation: homeTeam.team?.abbreviation,
+                    logo: homeTeam.team?.logo,
+                    color: homeTeam.team?.color,
+                    score: homeTeam.score,
+                    winner: homeTeam.winner,
+                    isLonghorns: homeTeam.team?.id === LONGHORNS_TEAM_ID,
+                    records: homeTeam.records?.[0]?.summary,
+                  }
+                : null,
+              awayTeam: awayTeam
+                ? {
+                    id: awayTeam.team?.id,
+                    name: awayTeam.team?.displayName,
+                    abbreviation: awayTeam.team?.abbreviation,
+                    logo: awayTeam.team?.logo,
+                    color: awayTeam.team?.color,
+                    score: awayTeam.score,
+                    winner: awayTeam.winner,
+                    isLonghorns: awayTeam.team?.id === LONGHORNS_TEAM_ID,
+                    records: awayTeam.records?.[0]?.summary,
+                  }
+                : null,
+              isLonghornsGame,
+              broadcast: competition?.broadcasts?.[0]?.names?.join(', ') || null,
+              odds: competition?.odds?.[0]
+                ? {
+                    line: competition.odds[0].details,
+                    overUnder: competition.odds[0].overUnder,
+                  }
+                : null,
+            };
+          }) || [];
 
         // Sort: Live games first, then upcoming, then completed
         const liveGames = games.filter((g: any) => g.status.state === 'in');
@@ -200,26 +200,27 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const espnData = await espnResponse.json();
 
         // Process each poll
-        const polls = espnData.rankings?.map((poll: any) => ({
-          name: poll.name,
-          type: poll.type,
-          headline: poll.headline,
-          teams: poll.ranks?.map((rank: any) => ({
-            rank: rank.current,
-            previousRank: rank.previous,
-            trend: rank.trend,
-            team: {
-              id: rank.team?.id,
-              name: rank.team?.displayName,
-              abbreviation: rank.team?.abbreviation,
-              logo: rank.team?.logos?.[0]?.href,
-              color: rank.team?.color,
-              isLonghorns: rank.team?.id === LONGHORNS_TEAM_ID,
-            },
-            record: rank.recordSummary,
-            points: rank.points,
-          })),
-        })) || [];
+        const polls =
+          espnData.rankings?.map((poll: any) => ({
+            name: poll.name,
+            type: poll.type,
+            headline: poll.headline,
+            teams: poll.ranks?.map((rank: any) => ({
+              rank: rank.current,
+              previousRank: rank.previous,
+              trend: rank.trend,
+              team: {
+                id: rank.team?.id,
+                name: rank.team?.displayName,
+                abbreviation: rank.team?.abbreviation,
+                logo: rank.team?.logos?.[0]?.href,
+                color: rank.team?.color,
+                isLonghorns: rank.team?.id === LONGHORNS_TEAM_ID,
+              },
+              record: rank.recordSummary,
+              points: rank.points,
+            })),
+          })) || [];
 
         // Find Longhorns ranking across all polls
         const longhornsRankings: any = {};
@@ -377,28 +378,31 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               record: team?.record?.items?.[0]?.summary,
               venue: team?.venue,
             },
-            roster: roster?.athletes?.map((a: any) => ({
-              id: a.id,
-              name: a.fullName,
-              jersey: a.jersey,
-              position: a.position?.abbreviation,
-              height: a.displayHeight,
-              weight: a.displayWeight,
-              year: a.experience?.displayValue,
-              hometown: a.birthPlace?.city ? `${a.birthPlace.city}, ${a.birthPlace.state}` : null,
-            })) || [],
-            schedule: schedule?.events?.map((e: any) => ({
-              id: e.id,
-              name: e.name,
-              date: e.date,
-              completed: e.competitions?.[0]?.status?.type?.completed,
-              result: e.competitions?.[0]?.competitors?.find((c: any) => c.team?.id === teamId)?.winner
-                ? 'W'
-                : 'L',
-              score: e.competitions?.[0]?.competitors
-                ?.map((c: any) => `${c.team?.abbreviation} ${c.score}`)
-                .join(' - '),
-            })) || [],
+            roster:
+              roster?.athletes?.map((a: any) => ({
+                id: a.id,
+                name: a.fullName,
+                jersey: a.jersey,
+                position: a.position?.abbreviation,
+                height: a.displayHeight,
+                weight: a.displayWeight,
+                year: a.experience?.displayValue,
+                hometown: a.birthPlace?.city ? `${a.birthPlace.city}, ${a.birthPlace.state}` : null,
+              })) || [],
+            schedule:
+              schedule?.events?.map((e: any) => ({
+                id: e.id,
+                name: e.name,
+                date: e.date,
+                completed: e.competitions?.[0]?.status?.type?.completed,
+                result: e.competitions?.[0]?.competitors?.find((c: any) => c.team?.id === teamId)
+                  ?.winner
+                  ? 'W'
+                  : 'L',
+                score: e.competitions?.[0]?.competitors
+                  ?.map((c: any) => `${c.team?.abbreviation} ${c.score}`)
+                  .join(' - '),
+              })) || [],
             meta: {
               dataSource: 'ESPN College Football API',
               lastUpdated: new Date().toISOString(),
@@ -424,10 +428,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const gameId = route[1];
 
       if (!gameId) {
-        return new Response(
-          JSON.stringify({ error: 'Game ID required' }),
-          { status: 400, headers }
-        );
+        return new Response(JSON.stringify({ error: 'Game ID required' }), {
+          status: 400,
+          headers,
+        });
       }
 
       const cacheKey = `cfb:game:${gameId}`;
@@ -502,26 +506,28 @@ export const onRequest: PagesFunction<Env> = async (context) => {
                 linescores: awayTeam.linescores?.map((l: any) => l.displayValue),
               }
             : null,
-          leaders: boxscore?.teams?.map((team: any) => ({
-            team: team.team?.displayName,
-            stats: team.statistics?.slice(0, 5)?.map((stat: any) => ({
-              name: stat.displayName,
-              leader: stat.leaders?.[0]
-                ? {
-                    name: stat.leaders[0].athlete?.displayName,
-                    value: stat.leaders[0].displayValue,
-                  }
-                : null,
-            })),
-          })) || [],
-          drives: espnData.drives?.previous?.map((drive: any) => ({
-            team: drive.team?.displayName,
-            description: drive.description,
-            result: drive.result,
-            plays: drive.plays?.length,
-            yards: drive.yards,
-            timeOfPossession: drive.displayResult,
-          })) || [],
+          leaders:
+            boxscore?.teams?.map((team: any) => ({
+              team: team.team?.displayName,
+              stats: team.statistics?.slice(0, 5)?.map((stat: any) => ({
+                name: stat.displayName,
+                leader: stat.leaders?.[0]
+                  ? {
+                      name: stat.leaders[0].athlete?.displayName,
+                      value: stat.leaders[0].displayValue,
+                    }
+                  : null,
+              })),
+            })) || [],
+          drives:
+            espnData.drives?.previous?.map((drive: any) => ({
+              team: drive.team?.displayName,
+              description: drive.description,
+              result: drive.result,
+              plays: drive.plays?.length,
+              yards: drive.yards,
+              timeOfPossession: drive.displayResult,
+            })) || [],
           meta: {
             dataSource: 'ESPN College Football API',
             lastUpdated: new Date().toISOString(),
@@ -570,39 +576,40 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const espnData = await espnResponse.json();
 
         // Filter for bowl games
-        const allBowls = espnData.events
-          ?.filter((e: any) => e.notes?.[0]?.headline)
-          ?.map((event: any) => {
-            const competition = event.competitions?.[0];
-            const homeTeam = competition?.competitors?.find((c: any) => c.homeAway === 'home');
-            const awayTeam = competition?.competitors?.find((c: any) => c.homeAway === 'away');
+        const allBowls =
+          espnData.events
+            ?.filter((e: any) => e.notes?.[0]?.headline)
+            ?.map((event: any) => {
+              const competition = event.competitions?.[0];
+              const homeTeam = competition?.competitors?.find((c: any) => c.homeAway === 'home');
+              const awayTeam = competition?.competitors?.find((c: any) => c.homeAway === 'away');
 
-            return {
-              id: event.id,
-              bowlName: event.notes?.[0]?.headline,
-              date: event.date,
-              status: event.status?.type?.state,
-              completed: event.status?.type?.completed,
-              venue: competition?.venue?.fullName,
-              homeTeam: {
-                name: homeTeam?.team?.displayName,
-                abbreviation: homeTeam?.team?.abbreviation,
-                score: homeTeam?.score,
-                winner: homeTeam?.winner,
-                isLonghorns: homeTeam?.team?.id === LONGHORNS_TEAM_ID,
-              },
-              awayTeam: {
-                name: awayTeam?.team?.displayName,
-                abbreviation: awayTeam?.team?.abbreviation,
-                score: awayTeam?.score,
-                winner: awayTeam?.winner,
-                isLonghorns: awayTeam?.team?.id === LONGHORNS_TEAM_ID,
-              },
-              isLonghornsGame:
-                homeTeam?.team?.id === LONGHORNS_TEAM_ID ||
-                awayTeam?.team?.id === LONGHORNS_TEAM_ID,
-            };
-          }) || [];
+              return {
+                id: event.id,
+                bowlName: event.notes?.[0]?.headline,
+                date: event.date,
+                status: event.status?.type?.state,
+                completed: event.status?.type?.completed,
+                venue: competition?.venue?.fullName,
+                homeTeam: {
+                  name: homeTeam?.team?.displayName,
+                  abbreviation: homeTeam?.team?.abbreviation,
+                  score: homeTeam?.score,
+                  winner: homeTeam?.winner,
+                  isLonghorns: homeTeam?.team?.id === LONGHORNS_TEAM_ID,
+                },
+                awayTeam: {
+                  name: awayTeam?.team?.displayName,
+                  abbreviation: awayTeam?.team?.abbreviation,
+                  score: awayTeam?.score,
+                  winner: awayTeam?.winner,
+                  isLonghorns: awayTeam?.team?.id === LONGHORNS_TEAM_ID,
+                },
+                isLonghornsGame:
+                  homeTeam?.team?.id === LONGHORNS_TEAM_ID ||
+                  awayTeam?.team?.id === LONGHORNS_TEAM_ID,
+              };
+            }) || [];
 
         // Find Texas Longhorns bowl game
         const longhornsGame = allBowls.find((b: any) => b.isLonghornsGame);
@@ -626,10 +633,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           totalBowls: allBowls.length,
           longhornsGame,
           byDate,
-          cfpGames: allBowls.filter((b: any) =>
-            b.bowlName?.toLowerCase().includes('playoff') ||
-            b.bowlName?.toLowerCase().includes('semifinal') ||
-            b.bowlName?.toLowerCase().includes('championship')
+          cfpGames: allBowls.filter(
+            (b: any) =>
+              b.bowlName?.toLowerCase().includes('playoff') ||
+              b.bowlName?.toLowerCase().includes('semifinal') ||
+              b.bowlName?.toLowerCase().includes('championship')
           ),
           meta: {
             dataSource: 'ESPN College Football API',

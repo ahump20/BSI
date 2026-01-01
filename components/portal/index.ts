@@ -16,12 +16,7 @@ export {
 } from './PositionIcon';
 
 // Portal Card - main entry display
-export {
-  PortalCard,
-  PortalCardGrid,
-  type PortalEntry,
-  type PortalCardProps,
-} from './PortalCard';
+export { PortalCard, PortalCardGrid, type PortalEntry, type PortalCardProps } from './PortalCard';
 
 // Filter Bar with search and dropdowns
 export {

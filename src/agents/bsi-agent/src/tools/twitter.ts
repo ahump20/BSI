@@ -24,32 +24,45 @@ export function setTwitterConfig(config: { bearerToken?: string }): void {
 
 // Trusted accounts that break portal news (in priority order)
 export const PORTAL_SOURCES = [
-  { username: "kendallrogersD1", name: "Kendall Rogers", priority: 1 },
-  { username: "d1baseball", name: "D1Baseball", priority: 1 },
-  { username: "BaseballAmerica", name: "Baseball America", priority: 2 },
-  { username: "NCAABaseball", name: "NCAA Baseball", priority: 2 },
-  { username: "PG_Scouting", name: "Perfect Game", priority: 3 },
-  { username: "prepbaseball", name: "Prep Baseball Report", priority: 3 },
+  { username: 'kendallrogersD1', name: 'Kendall Rogers', priority: 1 },
+  { username: 'd1baseball', name: 'D1Baseball', priority: 1 },
+  { username: 'BaseballAmerica', name: 'Baseball America', priority: 2 },
+  { username: 'NCAABaseball', name: 'NCAA Baseball', priority: 2 },
+  { username: 'PG_Scouting', name: 'Perfect Game', priority: 3 },
+  { username: 'prepbaseball', name: 'Prep Baseball Report', priority: 3 },
 ] as const;
 
 // Keywords that indicate portal entries
 const PORTAL_KEYWORDS = [
-  "entered the transfer portal",
-  "in the transfer portal",
-  "has entered the portal",
-  "is in the portal",
-  "entering the transfer portal",
-  "portal entry",
-  "#TransferPortal",
-  "hits the portal",
+  'entered the transfer portal',
+  'in the transfer portal',
+  'has entered the portal',
+  'is in the portal',
+  'entering the transfer portal',
+  'portal entry',
+  '#TransferPortal',
+  'hits the portal',
 ];
 
 // D1 schools for context extraction
-const POWER_CONFERENCES = ["SEC", "ACC", "Big 12", "Big Ten", "Pac-12"];
+const POWER_CONFERENCES = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
 const SEC_SCHOOLS = [
-  "Texas", "Texas A&M", "LSU", "Florida", "Georgia", "Tennessee",
-  "Alabama", "Auburn", "Ole Miss", "Mississippi State", "Arkansas",
-  "Kentucky", "Missouri", "South Carolina", "Vanderbilt", "Oklahoma"
+  'Texas',
+  'Texas A&M',
+  'LSU',
+  'Florida',
+  'Georgia',
+  'Tennessee',
+  'Alabama',
+  'Auburn',
+  'Ole Miss',
+  'Mississippi State',
+  'Arkansas',
+  'Kentucky',
+  'Missouri',
+  'South Carolina',
+  'Vanderbilt',
+  'Oklahoma',
 ];
 
 // -----------------------------------------------------------------------------
@@ -84,7 +97,7 @@ export interface PortalEntry {
   author: string;
   authorUsername: string;
   timestamp: string;
-  confidence: "high" | "medium" | "low";
+  confidence: 'high' | 'medium' | 'low';
   engagement: number;
 }
 
@@ -101,12 +114,12 @@ export interface TwitterApiUsage {
 
 // Track API usage to stay within limits
 let apiCallCount = 0;
-let lastResetDate = new Date().toISOString().split("T")[0];
+let lastResetDate = new Date().toISOString().split('T')[0];
 
 const MONTHLY_LIMIT = 15000;
 
 export function getApiUsage(): TwitterApiUsage {
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
   if (today !== lastResetDate) {
     // New day, but keep monthly count
     lastResetDate = today;
@@ -143,7 +156,7 @@ export async function searchTweets(params: SearchParams): Promise<{
   oldestId?: string;
 }> {
   if (!TWITTER_BEARER) {
-    throw new Error("TWITTER_BEARER_TOKEN not configured. Get one at developer.x.com");
+    throw new Error('TWITTER_BEARER_TOKEN not configured. Get one at developer.x.com');
   }
 
   // Build optimized query
@@ -153,39 +166,36 @@ export async function searchTweets(params: SearchParams): Promise<{
   const searchParams = new URLSearchParams({
     query: fullQuery,
     max_results: String(Math.min(params.limit || 25, 100)),
-    "tweet.fields": "created_at,author_id,public_metrics",
-    "user.fields": "username,name",
-    expansions: "author_id",
+    'tweet.fields': 'created_at,author_id,public_metrics',
+    'user.fields': 'username,name',
+    expansions: 'author_id',
   });
 
   if (params.sinceId) {
-    searchParams.set("since_id", params.sinceId);
+    searchParams.set('since_id', params.sinceId);
   }
   if (params.since) {
     const sinceDate = new Date(params.since);
     // Twitter only allows searching back 7 days on Basic tier
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     if (sinceDate > sevenDaysAgo) {
-      searchParams.set("start_time", sinceDate.toISOString());
+      searchParams.set('start_time', sinceDate.toISOString());
     }
   }
 
-  const response = await fetch(
-    `https://api.twitter.com/2/tweets/search/recent?${searchParams}`,
-    {
-      headers: {
-        Authorization: `Bearer ${TWITTER_BEARER}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`https://api.twitter.com/2/tweets/search/recent?${searchParams}`, {
+    headers: {
+      Authorization: `Bearer ${TWITTER_BEARER}`,
+      'Content-Type': 'application/json',
+    },
+  });
 
   incrementApiCalls(1);
 
   if (!response.ok) {
     const error = await response.text();
     if (response.status === 429) {
-      throw new Error("Twitter rate limit exceeded. Wait before retrying.");
+      throw new Error('Twitter rate limit exceeded. Wait before retrying.');
     }
     throw new Error(`Twitter API error: ${response.status} - ${error}`);
   }
@@ -236,7 +246,7 @@ export async function searchPortalSources(options: {
   let callsUsed = 0;
 
   for (const batch of batches) {
-    const fromClause = batch.map((s) => `from:${s.username}`).join(" OR ");
+    const fromClause = batch.map((s) => `from:${s.username}`).join(' OR ');
     const query = `(${fromClause}) (portal OR transfer OR committed)`;
 
     try {
@@ -279,13 +289,15 @@ export async function searchPortalSources(options: {
 
 function buildPortalQuery(): string {
   // Optimized query that captures portal news
-  const keywords = PORTAL_KEYWORDS.slice(0, 4).map((k) => `"${k}"`).join(" OR ");
+  const keywords = PORTAL_KEYWORDS.slice(0, 4)
+    .map((k) => `"${k}"`)
+    .join(' OR ');
   return `(${keywords}) baseball`;
 }
 
 // Build a targeted query for specific schools
 export function buildSchoolQuery(schools: string[]): string {
-  const schoolClause = schools.map((s) => `"${s}"`).join(" OR ");
+  const schoolClause = schools.map((s) => `"${s}"`).join(' OR ');
   return `(${schoolClause}) (portal OR transfer) baseball`;
 }
 
@@ -297,9 +309,7 @@ function parsePortalTweet(tweet: Tweet): PortalEntry | null {
   const text = tweet.text;
 
   // Check if it's actually about portal
-  const isPortalTweet = PORTAL_KEYWORDS.some((kw) =>
-    text.toLowerCase().includes(kw.toLowerCase())
-  );
+  const isPortalTweet = PORTAL_KEYWORDS.some((kw) => text.toLowerCase().includes(kw.toLowerCase()));
 
   // Also check for commitment news
   const isCommitment = /commit|signed|announce|heading to|lands at/i.test(text);
@@ -335,7 +345,7 @@ function parsePortalTweet(tweet: Tweet): PortalEntry | null {
     for (const s of SEC_SCHOOLS) {
       if (text.includes(s)) {
         school = s;
-        conference = "SEC";
+        conference = 'SEC';
         break;
       }
     }
@@ -358,10 +368,10 @@ function parsePortalTweet(tweet: Tweet): PortalEntry | null {
     : 0;
 
   // Determine confidence
-  let confidence: "high" | "medium" | "low" = "low";
-  if (playerName && school && position) confidence = "high";
-  else if (playerName && school) confidence = "medium";
-  else if (playerName || school) confidence = "low";
+  let confidence: 'high' | 'medium' | 'low' = 'low';
+  if (playerName && school && position) confidence = 'high';
+  else if (playerName && school) confidence = 'medium';
+  else if (playerName || school) confidence = 'low';
   else return null; // Skip if we couldn't extract anything useful
 
   return {
@@ -372,7 +382,7 @@ function parsePortalTweet(tweet: Tweet): PortalEntry | null {
     conference,
     tweetId: tweet.id,
     tweetText: text,
-    author: tweet.author?.name || "Unknown",
+    author: tweet.author?.name || 'Unknown',
     authorUsername: tweet.author?.username || tweet.author_id,
     timestamp: tweet.created_at,
     confidence,
@@ -454,7 +464,7 @@ export async function testTwitterConnection(): Promise<{
   if (!TWITTER_BEARER) {
     return {
       success: false,
-      message: "TWITTER_BEARER_TOKEN not set. Get one at https://developer.x.com",
+      message: 'TWITTER_BEARER_TOKEN not set. Get one at https://developer.x.com',
     };
   }
 
@@ -472,7 +482,7 @@ export async function testTwitterConnection(): Promise<{
   } catch (error) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }

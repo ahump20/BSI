@@ -24,7 +24,7 @@ export const onRequest: PagesFunction = async (context) => {
   try {
     const response = await fetch(`${CFB_AI_WORKER}/previews`, {
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'User-Agent': 'BSI-Pages-Function/1.0',
       },
     });

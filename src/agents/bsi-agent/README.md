@@ -51,11 +51,13 @@ npm start
 ## Data Sources
 
 ### Twitter API (Optional - $200/mo)
+
 - Real-time search for portal announcements
 - Engagement metrics (likes, retweets)
 - Best for: Breaking news, high-engagement detection
 
 **Monitored accounts:**
+
 - @kendallrogersD1 (Kendall Rogers)
 - @d1baseball (D1Baseball)
 - @BaseballAmerica (Baseball America)
@@ -64,6 +66,7 @@ npm start
 - @prepbaseball (Prep Baseball Report)
 
 ### Puppeteer Scraping (Free)
+
 - D1Baseball transfer tracker page
 - Baseball America portal page
 - Twitter public profiles (rate limited)
@@ -123,6 +126,7 @@ wrangler deploy
 ### Scheduled Polling
 
 The worker includes cron triggers:
+
 - **Portal season (May-June):** Every 10 minutes
 - **Off-season:** Every 4 hours
 
@@ -130,22 +134,22 @@ The worker includes cron triggers:
 
 When deployed as a Worker:
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Health check |
-| `/detect` | POST | Trigger detection manually |
-| `/stats` | GET | Get agent statistics |
-| `/entries` | GET | List recent portal entries |
+| Endpoint   | Method | Description                |
+| ---------- | ------ | -------------------------- |
+| `/health`  | GET    | Health check               |
+| `/detect`  | POST   | Trigger detection manually |
+| `/stats`   | GET    | Get agent statistics       |
+| `/entries` | GET    | List recent portal entries |
 
 ## Cost Analysis
 
-| Component | Cost | Notes |
-|-----------|------|-------|
-| Twitter Basic | $200/mo | 15K reads - optional |
-| Cloudflare Workers | Free | 100K requests/day |
-| Cloudflare D1 | Free | 5M reads/day |
-| OneSignal | Free | 10K subscribers |
-| Resend | Free | 3K emails/month |
+| Component          | Cost    | Notes                |
+| ------------------ | ------- | -------------------- |
+| Twitter Basic      | $200/mo | 15K reads - optional |
+| Cloudflare Workers | Free    | 100K requests/day    |
+| Cloudflare D1      | Free    | 5M reads/day         |
+| OneSignal          | Free    | 10K subscribers      |
+| Resend             | Free    | 3K emails/month      |
 
 **Minimum viable:** $0/mo (scraping only)
 **Full featured:** $200/mo (with Twitter API)

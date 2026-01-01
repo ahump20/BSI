@@ -174,8 +174,7 @@ export async function detectDeviceCapabilities(): Promise<DeviceCapabilities> {
   // - Not reduced motion preference
   // - Tier is MEDIUM or higher
   // - WebGL2 or WebGPU is supported
-  const enable3D =
-    !isReducedMotion && tier !== 'LOW' && (webgl2.supported || supportsWebGPU);
+  const enable3D = !isReducedMotion && tier !== 'LOW' && (webgl2.supported || supportsWebGPU);
 
   return {
     tier,

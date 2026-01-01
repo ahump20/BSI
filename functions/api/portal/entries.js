@@ -116,7 +116,10 @@ async function fetchPortalEntries(env, filters) {
 
   // Get total count
   const countQuery = query.replace('SELECT *', 'SELECT COUNT(*) as count');
-  const countResult = await db.prepare(countQuery).bind(...params).first();
+  const countResult = await db
+    .prepare(countQuery)
+    .bind(...params)
+    .first();
   const total = countResult?.count || 0;
 
   // Add ordering and pagination
@@ -124,7 +127,10 @@ async function fetchPortalEntries(env, filters) {
   params.push(filters.limit, filters.offset);
 
   // Execute query
-  const { results } = await db.prepare(query).bind(...params).all();
+  const { results } = await db
+    .prepare(query)
+    .bind(...params)
+    .all();
 
   // Transform entries
   const entries = (results || []).map((entry) => ({

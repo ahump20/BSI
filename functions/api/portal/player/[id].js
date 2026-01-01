@@ -196,8 +196,16 @@ function getSamplePlayerData(playerId) {
         throws: 'Right',
       },
       timeline: [
-        { date: '2025-06-02', event: 'Entered Portal', description: 'Declared for transfer portal after strong junior season' },
-        { date: '2025-05-28', event: 'Season Ended', description: 'Texas A&M eliminated in Super Regional' },
+        {
+          date: '2025-06-02',
+          event: 'Entered Portal',
+          description: 'Declared for transfer portal after strong junior season',
+        },
+        {
+          date: '2025-05-28',
+          event: 'Season Ended',
+          description: 'Texas A&M eliminated in Super Regional',
+        },
         { date: '2025-05-15', event: 'Award', description: 'Named Second Team All-SEC' },
       ],
     },
@@ -233,7 +241,11 @@ function getSamplePlayerData(playerId) {
       },
       timeline: [
         { date: '2025-06-10', event: 'Committed', description: 'Announced commitment to LSU' },
-        { date: '2025-06-02', event: 'Entered Portal', description: 'Declared for transfer portal' },
+        {
+          date: '2025-06-02',
+          event: 'Entered Portal',
+          description: 'Declared for transfer portal',
+        },
         { date: '2025-05-20', event: 'Award', description: 'First Team All-SEC' },
       ],
     },
@@ -268,7 +280,11 @@ function getSamplePlayerData(playerId) {
         throws: 'Right',
       },
       timeline: [
-        { date: '2025-06-03', event: 'Entered Portal', description: 'Seeking starting opportunity' },
+        {
+          date: '2025-06-03',
+          event: 'Entered Portal',
+          description: 'Seeking starting opportunity',
+        },
       ],
     },
     'tp-2025-004': {
@@ -333,8 +349,16 @@ function getSamplePlayerData(playerId) {
         throws: 'Right',
       },
       timeline: [
-        { date: '2025-06-04', event: 'Entered Portal', description: 'High-profile pitcher enters portal' },
-        { date: '2025-05-18', event: 'Award', description: 'First Team All-SEC, Pitcher of the Year finalist' },
+        {
+          date: '2025-06-04',
+          event: 'Entered Portal',
+          description: 'High-profile pitcher enters portal',
+        },
+        {
+          date: '2025-05-18',
+          event: 'Award',
+          description: 'First Team All-SEC, Pitcher of the Year finalist',
+        },
       ],
     },
 
@@ -369,8 +393,16 @@ function getSamplePlayerData(playerId) {
         high_school: 'Westlake',
       },
       timeline: [
-        { date: '2025-12-09', event: 'Entered Portal', description: 'Star QB enters portal seeking starting role' },
-        { date: '2025-12-01', event: 'Season Ended', description: 'Georgia finishes regular season' },
+        {
+          date: '2025-12-09',
+          event: 'Entered Portal',
+          description: 'Star QB enters portal seeking starting role',
+        },
+        {
+          date: '2025-12-01',
+          event: 'Season Ended',
+          description: 'Georgia finishes regular season',
+        },
       ],
     },
     'cfb-2025-002': {
@@ -435,7 +467,11 @@ function getSamplePlayerData(playerId) {
         throws: 'Right',
       },
       timeline: [
-        { date: '2025-06-02', event: 'Entered Portal', description: 'Declared for transfer portal' },
+        {
+          date: '2025-06-02',
+          event: 'Entered Portal',
+          description: 'Declared for transfer portal',
+        },
       ],
     },
   };

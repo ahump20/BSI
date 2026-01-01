@@ -924,27 +924,46 @@ export class RealSportsDataClient {
   }
 }
 
-// Export singleton with environment variables
+// Helper to safely access process.env in both Node.js and Workers
+const getProcessEnv = (key: string): string | undefined =>
+  typeof process !== 'undefined' ? process.env?.[key] : undefined;
+
+// Lazy singleton for Workers compatibility
 // SECURITY: All API keys MUST be set via environment variables
 // No fallback keys allowed in production code
-export const realSportsDataClient = new RealSportsDataClient({
-  sportsDataIOKey:
-    process.env.SPORTSDATAIO_API_KEY ||
-    (() => {
+let _realSportsDataClient: RealSportsDataClient | null = null;
+
+export function getRealSportsDataClient(): RealSportsDataClient {
+  if (!_realSportsDataClient) {
+    const sportsDataIOKey = getProcessEnv('SPORTSDATAIO_API_KEY');
+    const collegeFBDataKey =
+      getProcessEnv('CollegeFootballData.com_API_KEY') || getProcessEnv('CFBDATA_API_KEY');
+    const theOddsAPIKey = getProcessEnv('THEODDS_API_KEY');
+
+    if (!sportsDataIOKey) {
       throw new Error('SPORTSDATAIO_API_KEY environment variable is required');
-    })(),
-  // Support both old and new environment variable names for CFBD API key
-  collegeFBDataKey:
-    process.env['CollegeFootballData.com_API_KEY'] ||
-    process.env.CFBDATA_API_KEY ||
-    (() => {
+    }
+    if (!collegeFBDataKey) {
       throw new Error(
         'CollegeFootballData.com_API_KEY or CFBDATA_API_KEY environment variable is required'
       );
-    })(),
-  theOddsAPIKey:
-    process.env.THEODDS_API_KEY ||
-    (() => {
+    }
+    if (!theOddsAPIKey) {
       throw new Error('THEODDS_API_KEY environment variable is required');
-    })(),
-});
+    }
+
+    _realSportsDataClient = new RealSportsDataClient({
+      sportsDataIOKey,
+      collegeFBDataKey,
+      theOddsAPIKey,
+    });
+  }
+  return _realSportsDataClient;
+}
+
+// Deprecated: Use getRealSportsDataClient() instead
+// Kept for backwards compatibility - will throw in Workers if accessed at import time
+export const realSportsDataClient =
+  typeof process !== 'undefined'
+    ? getRealSportsDataClient()
+    : (null as unknown as RealSportsDataClient);

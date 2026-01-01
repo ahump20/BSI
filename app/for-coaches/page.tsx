@@ -34,39 +34,45 @@ const features = [
   {
     icon: '📊',
     title: 'Team Dashboard',
-    description: 'Real-time view of your conference standings, upcoming games, and team statistics in one place.',
+    description:
+      'Real-time view of your conference standings, upcoming games, and team statistics in one place.',
   },
   {
     icon: '📅',
     title: 'Schedule Optimization',
-    description: 'Analyze your schedule strength. Understand RPI implications before finalizing non-conference games.',
+    description:
+      'Analyze your schedule strength. Understand RPI implications before finalizing non-conference games.',
   },
   {
     icon: '🎯',
     title: 'Opponent Scouting',
-    description: 'Detailed breakdowns of upcoming opponents. Pitching tendencies, batting splits, and recent performance.',
+    description:
+      'Detailed breakdowns of upcoming opponents. Pitching tendencies, batting splits, and recent performance.',
   },
   {
     icon: '📈',
     title: 'Player Development',
-    description: 'Track individual player progress across seasons. Identify growth areas with historical comparisons.',
+    description:
+      'Track individual player progress across seasons. Identify growth areas with historical comparisons.',
   },
   {
     icon: '🔍',
     title: 'Recruiting Intel',
-    description: 'Portal activity tracking. See who is entering the portal and identify potential fits for your program.',
+    description:
+      'Portal activity tracking. See who is entering the portal and identify potential fits for your program.',
   },
   {
     icon: '📱',
     title: 'Mobile Access',
-    description: 'Full functionality on mobile devices. Review data on the road, at tournaments, or during games.',
+    description:
+      'Full functionality on mobile devices. Review data on the road, at tournaments, or during games.',
   },
 ];
 
 const testimonialQuote = {
-  text: "Finally, someone built the analytics platform college baseball actually needs. We use BSI daily.",
-  author: "D1 Assistant Coach",
-  program: "SEC Program",
+  text: 'Finally, someone built the analytics platform college baseball actually needs. We use BSI daily.',
+  author: 'D1 Assistant Coach',
+  program: 'SEC Program',
 };
 
 const pricingTiers = [
@@ -114,7 +120,9 @@ export default function ForCoachesPage() {
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
-              <Badge variant="primary" className="mb-4">For College Programs</Badge>
+              <Badge variant="primary" className="mb-4">
+                For College Programs
+              </Badge>
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
                 style={{ fontFamily: 'Georgia, serif' }}
@@ -122,7 +130,8 @@ export default function ForCoachesPage() {
                 Analytics That <span style={{ color: colors.burntOrange }}>Win Games</span>
               </h1>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Team dashboards, opponent scouting, and recruiting intel designed for college baseball coaching staffs. The data you need, the way you need it.
+                Team dashboards, opponent scouting, and recruiting intel designed for college
+                baseball coaching staffs. The data you need, the way you need it.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">
@@ -175,12 +184,13 @@ export default function ForCoachesPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <ScrollReveal>
               <div>
-                <Badge variant="secondary" className="mb-4">Team Dashboard</Badge>
-                <h2 className="text-3xl font-bold text-white mb-4">
-                  Your Program at a Glance
-                </h2>
+                <Badge variant="secondary" className="mb-4">
+                  Team Dashboard
+                </Badge>
+                <h2 className="text-3xl font-bold text-white mb-4">Your Program at a Glance</h2>
                 <p className="text-gray-400 mb-6">
-                  Conference standings, upcoming matchups, recent results, and key player stats — all in one view. No more clicking through 15 different pages.
+                  Conference standings, upcoming matchups, recent results, and key player stats —
+                  all in one view. No more clicking through 15 different pages.
                 </p>
                 <ul className="space-y-3 text-gray-300">
                   <li className="flex items-center gap-2">
@@ -215,11 +225,20 @@ export default function ForCoachesPage() {
                       <h4 className="text-sm font-semibold text-gray-400 mb-2">SEC STANDINGS</h4>
                       <div className="space-y-2">
                         {['Texas A&M', 'LSU', 'Arkansas', 'Your Team'].map((team, i) => (
-                          <div key={team} className="flex justify-between items-center py-1 border-b border-white/10">
-                            <span className={team === 'Your Team' ? 'text-white font-semibold' : 'text-gray-400'}>
+                          <div
+                            key={team}
+                            className="flex justify-between items-center py-1 border-b border-white/10"
+                          >
+                            <span
+                              className={
+                                team === 'Your Team' ? 'text-white font-semibold' : 'text-gray-400'
+                              }
+                            >
                               {i + 1}. {team}
                             </span>
-                            <span className="text-gray-500 text-sm">{18 - i}-{3 + i}</span>
+                            <span className="text-gray-500 text-sm">
+                              {18 - i}-{3 + i}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -227,7 +246,13 @@ export default function ForCoachesPage() {
                     {/* Mock upcoming games */}
                     <div>
                       <h4 className="text-sm font-semibold text-gray-400 mb-2">UPCOMING</h4>
-                      <div className="flex items-center justify-between py-2" style={{ borderLeft: `3px solid ${colors.burntOrange}`, paddingLeft: '12px' }}>
+                      <div
+                        className="flex items-center justify-between py-2"
+                        style={{
+                          borderLeft: `3px solid ${colors.burntOrange}`,
+                          paddingLeft: '12px',
+                        }}
+                      >
                         <div>
                           <div className="text-white font-semibold">vs. Alabama</div>
                           <div className="text-gray-500 text-sm">Friday 6:30 PM</div>
@@ -279,16 +304,24 @@ export default function ForCoachesPage() {
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {pricingTiers.map((tier, index) => (
               <ScrollReveal key={tier.name} delay={index * 100}>
-                <Card className={`h-full ${tier.popular ? 'border-2' : ''}`} style={tier.popular ? { borderColor: colors.burntOrange } : {}}>
+                <Card
+                  className={`h-full ${tier.popular ? 'border-2' : ''}`}
+                  style={tier.popular ? { borderColor: colors.burntOrange } : {}}
+                >
                   {tier.popular && (
-                    <div className="text-center py-2" style={{ backgroundColor: colors.burntOrange }}>
+                    <div
+                      className="text-center py-2"
+                      style={{ backgroundColor: colors.burntOrange }}
+                    >
                       <span className="text-sm font-semibold text-white">MOST POPULAR</span>
                     </div>
                   )}
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold text-white mb-2">{tier.name}</h3>
                     <div className="mb-4">
-                      <span className="text-4xl font-bold" style={{ color: colors.burntOrange }}>${tier.price}</span>
+                      <span className="text-4xl font-bold" style={{ color: colors.burntOrange }}>
+                        ${tier.price}
+                      </span>
                       <span className="text-gray-400">/{tier.period}</span>
                     </div>
                     <p className="text-gray-400 mb-6">{tier.description}</p>
@@ -329,7 +362,8 @@ export default function ForCoachesPage() {
                 Ready to <span style={{ color: colors.burntOrange }}>Elevate Your Program</span>?
               </h2>
               <p className="text-xl text-gray-400 mb-8">
-                14-day free trial. No credit card required. See why coaching staffs are switching to BSI.
+                14-day free trial. No credit card required. See why coaching staffs are switching to
+                BSI.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">

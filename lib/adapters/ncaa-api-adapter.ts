@@ -17,7 +17,7 @@
  * @see https://github.com/henrygd/ncaa-api
  */
 
-import type { CacheCategory } from '../cache/tiered-cache';
+import type { CacheCategory as _CacheCategory } from '../cache/tiered-cache';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -222,7 +222,7 @@ export interface NCAAApiScheduleResponse {
 // ============================================================================
 
 const NCAA_API_BASE = 'https://data.ncaa.com/casablanca/scoreboard';
-const NCAA_SITE_BASE = 'https://ncaa.com';
+const _NCAA_SITE_BASE = 'https://ncaa.com';
 
 // Sport path mapping for NCAA.com URLs
 const SPORT_PATHS: Record<NCAAApiSport, string> = {

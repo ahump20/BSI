@@ -8,7 +8,7 @@
  * via setAlertsConfig() rather than process.env.
  */
 
-import type { PortalEntry } from "./database.js";
+import type { PortalEntry } from './database.js';
 
 // -----------------------------------------------------------------------------
 // Configuration (Workers-compatible - no process.env)
@@ -32,7 +32,7 @@ export function setAlertsConfig(config: {
   ONESIGNAL_APP_ID = config.onesignalAppId;
   ONESIGNAL_API_KEY = config.onesignalApiKey;
   RESEND_API_KEY = config.resendApiKey;
-  WEBHOOK_URLS = config.webhookUrls?.split(",") || [];
+  WEBHOOK_URLS = config.webhookUrls?.split(',') || [];
 }
 
 // -----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ export interface AlertConfig {
 }
 
 export interface AlertResult {
-  channel: "push" | "email" | "webhook";
+  channel: 'push' | 'email' | 'webhook';
   success: boolean;
   message: string;
   recipientCount?: number;
@@ -71,7 +71,7 @@ export interface AlertPayload {
   headline: string;
   body: string;
   url?: string;
-  priority: "high" | "normal" | "low";
+  priority: 'high' | 'normal' | 'low';
 }
 
 // -----------------------------------------------------------------------------
@@ -80,30 +80,30 @@ export interface AlertPayload {
 
 export function generateAlertPayload(entry: PortalEntry): AlertPayload {
   const playerName = entry.player_name;
-  const school = entry.school_from || "Unknown";
-  const position = entry.position || "";
-  const conference = entry.conference || "";
+  const school = entry.school_from || 'Unknown';
+  const position = entry.position || '';
+  const conference = entry.conference || '';
 
   // Determine priority based on engagement and conference
-  let priority: AlertPayload["priority"] = "normal";
-  if (entry.engagement_score > 100) priority = "high";
-  if (conference === "SEC" || conference === "Big 12") priority = "high";
-  if (entry.engagement_score < 10) priority = "low";
+  let priority: AlertPayload['priority'] = 'normal';
+  if (entry.engagement_score > 100) priority = 'high';
+  if (conference === 'SEC' || conference === 'Big 12') priority = 'high';
+  if (entry.engagement_score < 10) priority = 'low';
 
   // Generate headline based on status
-  let headline = "";
-  let body = "";
+  let headline = '';
+  let body = '';
 
   switch (entry.status) {
-    case "in_portal":
+    case 'in_portal':
       headline = `🚨 PORTAL: ${playerName} enters transfer portal`;
-      body = `${position ? position + " " : ""}${playerName} from ${school}${conference ? ` (${conference})` : ""} has entered the transfer portal.`;
+      body = `${position ? position + ' ' : ''}${playerName} from ${school}${conference ? ` (${conference})` : ''} has entered the transfer portal.`;
       break;
-    case "committed":
+    case 'committed':
       headline = `✅ COMMITTED: ${playerName} finds new home`;
-      body = `${playerName} has committed to ${entry.school_to || "a new program"} from ${school}.`;
+      body = `${playerName} has committed to ${entry.school_to || 'a new program'} from ${school}.`;
       break;
-    case "withdrawn":
+    case 'withdrawn':
       headline = `↩️ WITHDRAWN: ${playerName} returns to ${school}`;
       body = `${playerName} has withdrawn from the transfer portal and will stay at ${school}.`;
       break;
@@ -134,21 +134,21 @@ export async function sendPushNotification(
 ): Promise<AlertResult> {
   if (!ONESIGNAL_APP_ID || !ONESIGNAL_API_KEY) {
     return {
-      channel: "push",
+      channel: 'push',
       success: false,
-      message: "OneSignal not configured",
-      errorDetails: "Missing ONESIGNAL_APP_ID or ONESIGNAL_API_KEY",
+      message: 'OneSignal not configured',
+      errorDetails: 'Missing ONESIGNAL_APP_ID or ONESIGNAL_API_KEY',
     };
   }
 
-  const { segments = ["Subscribed Users"], playerIds } = options;
+  const { segments = ['Subscribed Users'], playerIds } = options;
 
   const notification: Record<string, unknown> = {
     app_id: ONESIGNAL_APP_ID,
     headings: { en: payload.headline },
     contents: { en: payload.body },
     url: payload.url,
-    priority: payload.priority === "high" ? 10 : payload.priority === "low" ? 1 : 5,
+    priority: payload.priority === 'high' ? 10 : payload.priority === 'low' ? 1 : 5,
     data: {
       portal_entry_id: payload.entry.id,
       player_name: payload.entry.player_name,
@@ -157,7 +157,7 @@ export async function sendPushNotification(
     },
     // Add conference-based tags for filtering
     filters: payload.entry.conference
-      ? [{ field: "tag", key: "conferences", relation: "=", value: payload.entry.conference }]
+      ? [{ field: 'tag', key: 'conferences', relation: '=', value: payload.entry.conference }]
       : undefined,
   };
 
@@ -169,10 +169,10 @@ export async function sendPushNotification(
   }
 
   try {
-    const response = await fetch("https://onesignal.com/api/v1/notifications", {
-      method: "POST",
+    const response = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Basic ${ONESIGNAL_API_KEY}`,
       },
       body: JSON.stringify(notification),
@@ -182,25 +182,25 @@ export async function sendPushNotification(
 
     if (!response.ok) {
       return {
-        channel: "push",
+        channel: 'push',
         success: false,
-        message: "OneSignal API error",
+        message: 'OneSignal API error',
         errorDetails: JSON.stringify(data),
       };
     }
 
     return {
-      channel: "push",
+      channel: 'push',
       success: true,
       message: `Push notification sent: ${data.id}`,
       recipientCount: data.recipients || 0,
     };
   } catch (error) {
     return {
-      channel: "push",
+      channel: 'push',
       success: false,
-      message: "Failed to send push notification",
-      errorDetails: error instanceof Error ? error.message : "Unknown error",
+      message: 'Failed to send push notification',
+      errorDetails: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
@@ -218,14 +218,14 @@ export async function sendEmailAlert(
 ): Promise<AlertResult> {
   if (!RESEND_API_KEY) {
     return {
-      channel: "email",
+      channel: 'email',
       success: false,
-      message: "Resend not configured",
-      errorDetails: "Missing RESEND_API_KEY",
+      message: 'Resend not configured',
+      errorDetails: 'Missing RESEND_API_KEY',
     };
   }
 
-  const { to, from = "alerts@blazesportsintel.com" } = options;
+  const { to, from = 'alerts@blazesportsintel.com' } = options;
 
   const htmlBody = `
 <!DOCTYPE html>
@@ -253,13 +253,13 @@ export async function sendEmailAlert(
 
       <div class="player-card">
         <strong>Player:</strong> ${payload.entry.player_name}<br>
-        <strong>School:</strong> ${payload.entry.school_from || "Unknown"}<br>
-        ${payload.entry.position ? `<strong>Position:</strong> ${payload.entry.position}<br>` : ""}
-        ${payload.entry.conference ? `<strong>Conference:</strong> ${payload.entry.conference}<br>` : ""}
-        <strong>Status:</strong> ${payload.entry.status.replace("_", " ").toUpperCase()}
+        <strong>School:</strong> ${payload.entry.school_from || 'Unknown'}<br>
+        ${payload.entry.position ? `<strong>Position:</strong> ${payload.entry.position}<br>` : ''}
+        ${payload.entry.conference ? `<strong>Conference:</strong> ${payload.entry.conference}<br>` : ''}
+        <strong>Status:</strong> ${payload.entry.status.replace('_', ' ').toUpperCase()}
       </div>
 
-      ${payload.url ? `<a href="${payload.url}" class="cta">View Full Profile →</a>` : ""}
+      ${payload.url ? `<a href="${payload.url}" class="cta">View Full Profile →</a>` : ''}
     </div>
     <div class="footer">
       <p>Blaze Sports Intel • Born to Blaze the Path Less Beaten</p>
@@ -271,10 +271,10 @@ export async function sendEmailAlert(
 `;
 
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
@@ -283,9 +283,9 @@ export async function sendEmailAlert(
         subject: payload.headline,
         html: htmlBody,
         tags: [
-          { name: "type", value: "portal_alert" },
-          { name: "player", value: payload.entry.player_name },
-          { name: "conference", value: payload.entry.conference || "unknown" },
+          { name: 'type', value: 'portal_alert' },
+          { name: 'player', value: payload.entry.player_name },
+          { name: 'conference', value: payload.entry.conference || 'unknown' },
         ],
       }),
     });
@@ -294,25 +294,25 @@ export async function sendEmailAlert(
 
     if (!response.ok) {
       return {
-        channel: "email",
+        channel: 'email',
         success: false,
-        message: "Resend API error",
+        message: 'Resend API error',
         errorDetails: JSON.stringify(data),
       };
     }
 
     return {
-      channel: "email",
+      channel: 'email',
       success: true,
       message: `Email sent: ${data.id}`,
       recipientCount: to.length,
     };
   } catch (error) {
     return {
-      channel: "email",
+      channel: 'email',
       success: false,
-      message: "Failed to send email",
-      errorDetails: error instanceof Error ? error.message : "Unknown error",
+      message: 'Failed to send email',
+      errorDetails: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
@@ -333,15 +333,15 @@ export async function sendWebhook(
   if (urls.length === 0) {
     return [
       {
-        channel: "webhook",
+        channel: 'webhook',
         success: false,
-        message: "No webhook URLs configured",
+        message: 'No webhook URLs configured',
       },
     ];
   }
 
   const webhookPayload = {
-    event: "portal_entry",
+    event: 'portal_entry',
     timestamp: new Date().toISOString(),
     data: {
       id: payload.entry.id,
@@ -368,28 +368,28 @@ export async function sendWebhook(
   for (const url of urls) {
     try {
       const response = await fetch(url, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "X-BSI-Event": "portal_entry",
-          "X-BSI-Signature": generateWebhookSignature(webhookPayload),
+          'Content-Type': 'application/json',
+          'X-BSI-Event': 'portal_entry',
+          'X-BSI-Signature': generateWebhookSignature(webhookPayload),
           ...options.headers,
         },
         body: JSON.stringify(webhookPayload),
       });
 
       results.push({
-        channel: "webhook",
+        channel: 'webhook',
         success: response.ok,
         message: response.ok ? `Webhook sent to ${url}` : `Webhook failed: ${response.status}`,
         errorDetails: response.ok ? undefined : await response.text(),
       });
     } catch (error) {
       results.push({
-        channel: "webhook",
+        channel: 'webhook',
         success: false,
         message: `Webhook error for ${url}`,
-        errorDetails: error instanceof Error ? error.message : "Unknown error",
+        errorDetails: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -433,14 +433,14 @@ export async function dispatchAlert(
 
   // Send push notification
   if (options.push) {
-    const pushOptions = typeof options.push === "object" ? options.push : {};
+    const pushOptions = typeof options.push === 'object' ? options.push : {};
     const pushResult = await sendPushNotification(payload, pushOptions);
     results.push(pushResult);
   }
 
   // Send email
   if (options.email) {
-    const emailOptions = typeof options.email === "object" ? options.email : { to: [] };
+    const emailOptions = typeof options.email === 'object' ? options.email : { to: [] };
     if (emailOptions.to.length > 0) {
       const emailResult = await sendEmailAlert(payload, emailOptions);
       results.push(emailResult);
@@ -449,7 +449,7 @@ export async function dispatchAlert(
 
   // Send webhooks
   if (options.webhook) {
-    const webhookOptions = typeof options.webhook === "object" ? options.webhook : {};
+    const webhookOptions = typeof options.webhook === 'object' ? options.webhook : {};
     const webhookResults = await sendWebhook(payload, webhookOptions);
     results.push(...webhookResults);
   }
@@ -480,13 +480,16 @@ export async function processAlertQueue(
 
   for (const entry of entries) {
     // Apply filters
-    if (config.filters.conferences && !config.filters.conferences.includes(entry.conference || "")) {
+    if (
+      config.filters.conferences &&
+      !config.filters.conferences.includes(entry.conference || '')
+    ) {
       continue;
     }
-    if (config.filters.schools && !config.filters.schools.includes(entry.school_from || "")) {
+    if (config.filters.schools && !config.filters.schools.includes(entry.school_from || '')) {
       continue;
     }
-    if (config.filters.positions && !config.filters.positions.includes(entry.position || "")) {
+    if (config.filters.positions && !config.filters.positions.includes(entry.position || '')) {
       continue;
     }
     if (config.filters.minEngagement && entry.engagement_score < config.filters.minEngagement) {

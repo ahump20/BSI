@@ -220,13 +220,7 @@ export function CFBArticleClient() {
                               viewBox="0 0 24 24"
                               className="w-4 h-4 stroke-burnt-orange fill-none stroke-[1.5]"
                             >
-                              <rect
-                                x="4"
-                                y="4"
-                                width="16"
-                                height="16"
-                                rx="2"
-                              />
+                              <rect x="4" y="4" width="16" height="16" rx="2" />
                               <circle cx="9" cy="9" r="1.5" />
                               <circle cx="15" cy="9" r="1.5" />
                               <path d="M9 15h6" />

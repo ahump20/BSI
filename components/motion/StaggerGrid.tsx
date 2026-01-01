@@ -42,11 +42,7 @@ export function StaggerGrid({
 
   // Render static grid if user prefers reduced motion
   if (prefersReducedMotion) {
-    return (
-      <div className={cn('grid', columns, gap, className)}>
-        {children}
-      </div>
-    );
+    return <div className={cn('grid', columns, gap, className)}>{children}</div>;
   }
 
   const childrenArray = Children.toArray(children);

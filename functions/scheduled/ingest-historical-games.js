@@ -13,7 +13,10 @@
  * - NCAA: ESPN API (2015-2024)
  */
 
-import { jsonResponse as _jsonResponse, errorResponse as _errorResponse } from '../../lib/utils/api-helpers.js';
+import {
+  jsonResponse as _jsonResponse,
+  errorResponse as _errorResponse,
+} from '../../lib/utils/api-helpers.js';
 
 /**
  * Scheduled cron handler - runs daily

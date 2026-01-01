@@ -5,7 +5,7 @@
  * Multilingual-safe templates with contextual data insertion
  */
 
-import type { Game, BoxScore, Team, Standing } from './types';
+import type { Game, BoxScore, Team as _Team, Standing } from './types';
 
 /**
  * Generate a game preview based on team data and context
@@ -144,7 +144,7 @@ export function generateInningUpdate(boxScore: BoxScore): string {
     return `End of ${formatInning(inning)}: ${awayTeam.team.shortName} ${awayTeam.score}, ${homeTeam.team.shortName} ${homeTeam.score}`;
   }
 
-  const battingTeam = inningHalf === 'top' ? awayTeam : homeTeam;
+  const _battingTeam = inningHalf === 'top' ? awayTeam : homeTeam;
   return `${formatInningHalf(inningHalf)} ${formatInning(inning)}: ${awayTeam.team.shortName} ${awayTeam.score}, ${homeTeam.team.shortName} ${homeTeam.score}`;
 }
 

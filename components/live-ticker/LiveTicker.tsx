@@ -234,7 +234,9 @@ export function LiveTicker({
   }
 
   return (
-    <div className={`bg-midnight/90 backdrop-blur-sm border border-charcoal/50 rounded-lg ${className}`}>
+    <div
+      className={`bg-midnight/90 backdrop-blur-sm border border-charcoal/50 rounded-lg ${className}`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-charcoal/50">
         <div className="flex items-center gap-2">

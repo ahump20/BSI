@@ -713,14 +713,19 @@ export class WHOOPv2Adapter {
 // FACTORY & EXPORTS
 // ============================================================================
 
+// Helper to safely access process.env in both Node.js and Workers
+const getProcessEnv = (key: string): string | undefined =>
+  typeof process !== 'undefined' ? process.env?.[key] : undefined;
+
 /**
  * Create WHOOP v2 adapter instance from environment variables
  */
 export function createWHOOPAdapter(config?: Partial<WHOOPConfig>): WHOOPv2Adapter {
   const defaultConfig: WHOOPConfig = {
-    clientId: process.env.WHOOP_CLIENT_ID || '',
-    clientSecret: process.env.WHOOP_CLIENT_SECRET || '',
-    redirectUri: process.env.WHOOP_REDIRECT_URI || 'http://localhost:3000/api/auth/whoop/callback',
+    clientId: getProcessEnv('WHOOP_CLIENT_ID') || '',
+    clientSecret: getProcessEnv('WHOOP_CLIENT_SECRET') || '',
+    redirectUri:
+      getProcessEnv('WHOOP_REDIRECT_URI') || 'http://localhost:3000/api/auth/whoop/callback',
   };
 
   return new WHOOPv2Adapter({ ...defaultConfig, ...config });

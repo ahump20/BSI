@@ -12,7 +12,7 @@ import type {
   UnifiedGame,
   UnifiedSportKey,
   TeamBoxStats,
-  PlayerBoxStats,
+  PlayerBoxStats as _PlayerBoxStats,
   DetailedPlayerBoxStats,
   ScoringSummary,
   GameLeaders,

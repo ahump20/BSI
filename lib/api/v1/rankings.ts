@@ -17,7 +17,7 @@
  */
 
 import { prisma } from '@/lib/db/prisma';
-import { PollType, Prisma } from '@prisma/client';
+import { PollType, Prisma as _Prisma } from '@prisma/client';
 
 export interface RankingsQueryParams {
   pollType?: PollType;

@@ -72,7 +72,7 @@ export class NCAAAPIAdapter {
    * This method aggregates from game data (less efficient)
    */
   async getTeamStats(params: TeamStatsQueryParams): Promise<ProviderTeamStats> {
-    const { teamId, season } = params;
+    const { teamId: _teamId, season: _season } = params;
 
     // This is a simplified implementation
     // In production, you would need to:

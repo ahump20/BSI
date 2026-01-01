@@ -35,35 +35,66 @@ interface NewsItem {
 
 const ESPN_MLB_NEWS = 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news';
 
-function categorizeArticle(article: ESPNArticle): 'trade' | 'injury' | 'game' | 'analysis' | 'general' {
+function categorizeArticle(
+  article: ESPNArticle
+): 'trade' | 'injury' | 'game' | 'analysis' | 'general' {
   const headline = (article.headline || article.title || '').toLowerCase();
   const description = (article.description || '').toLowerCase();
   const combined = `${headline} ${description}`;
 
   // Trade detection
-  if (combined.includes('trade') || combined.includes('acquire') || combined.includes('sign') ||
-      combined.includes('deal') || combined.includes('waiver') || combined.includes('dfa')) {
+  if (
+    combined.includes('trade') ||
+    combined.includes('acquire') ||
+    combined.includes('sign') ||
+    combined.includes('deal') ||
+    combined.includes('waiver') ||
+    combined.includes('dfa')
+  ) {
     return 'trade';
   }
 
   // Injury detection
-  if (combined.includes('injury') || combined.includes('injured') || combined.includes('il') ||
-      combined.includes('disabled list') || combined.includes('surgery') || combined.includes('rehab') ||
-      combined.includes('out for') || combined.includes('miss') || combined.includes('day-to-day')) {
+  if (
+    combined.includes('injury') ||
+    combined.includes('injured') ||
+    combined.includes('il') ||
+    combined.includes('disabled list') ||
+    combined.includes('surgery') ||
+    combined.includes('rehab') ||
+    combined.includes('out for') ||
+    combined.includes('miss') ||
+    combined.includes('day-to-day')
+  ) {
     return 'injury';
   }
 
   // Game recap/preview detection
-  if (combined.includes('recap') || combined.includes('preview') || combined.includes('beat') ||
-      combined.includes('defeat') || combined.includes('win') || combined.includes('lose') ||
-      combined.includes('walk-off') || combined.includes('shutout') || combined.includes('no-hitter')) {
+  if (
+    combined.includes('recap') ||
+    combined.includes('preview') ||
+    combined.includes('beat') ||
+    combined.includes('defeat') ||
+    combined.includes('win') ||
+    combined.includes('lose') ||
+    combined.includes('walk-off') ||
+    combined.includes('shutout') ||
+    combined.includes('no-hitter')
+  ) {
     return 'game';
   }
 
   // Analysis detection
-  if (combined.includes('analysis') || combined.includes('breakdown') || combined.includes('why') ||
-      combined.includes('how') || combined.includes('ranking') || combined.includes('power rankings') ||
-      combined.includes('prospect') || combined.includes('outlook')) {
+  if (
+    combined.includes('analysis') ||
+    combined.includes('breakdown') ||
+    combined.includes('why') ||
+    combined.includes('how') ||
+    combined.includes('ranking') ||
+    combined.includes('power rankings') ||
+    combined.includes('prospect') ||
+    combined.includes('outlook')
+  ) {
     return 'analysis';
   }
 
@@ -109,7 +140,7 @@ export async function onRequest(context: { request: Request }): Promise<Response
       throw new Error(`ESPN API returned ${response.status}`);
     }
 
-    const data = await response.json() as { articles?: ESPNArticle[] };
+    const data = (await response.json()) as { articles?: ESPNArticle[] };
     const espnArticles = data.articles || [];
 
     let articles: NewsItem[] = espnArticles.map((article, index) => ({
@@ -125,21 +156,22 @@ export async function onRequest(context: { request: Request }): Promise<Response
 
     // Filter by category if specified
     if (categoryFilter && categoryFilter !== 'all') {
-      articles = articles.filter(a => a.category === categoryFilter);
+      articles = articles.filter((a) => a.category === categoryFilter);
     }
 
     // Limit results
     articles = articles.slice(0, limit);
 
-    const timestamp = new Date().toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT';
+    const timestamp =
+      new Date().toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }) + ' CT';
 
     return new Response(
       JSON.stringify({

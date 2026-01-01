@@ -62,9 +62,10 @@ export function Tabs({ tabs, activeTab, onChange, className = '' }: TabsProps) {
               flex-shrink-0 px-6 py-4
               font-display text-sm uppercase tracking-wide
               border-b-2 transition-colors duration-150
-              ${isActive
-                ? 'text-burnt-orange border-burnt-orange'
-                : 'text-gray-400 border-transparent hover:text-white'
+              ${
+                isActive
+                  ? 'text-burnt-orange border-burnt-orange'
+                  : 'text-gray-400 border-transparent hover:text-white'
               }
             `}
           >

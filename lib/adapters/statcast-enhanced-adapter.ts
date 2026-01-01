@@ -336,7 +336,7 @@ export class StatcastEnhancedAdapter {
     if (params.sort_order) searchParams.set('sort_order', params.sort_order);
 
     const url = `${this.savantUrl}/statcast_search/csv?${searchParams}`;
-    const cacheKey = `statcast:search:${searchParams.toString()}`;
+    const _cacheKey = `statcast:search:${searchParams.toString()}`;
 
     // For search queries, we parse CSV
     try {
@@ -368,8 +368,8 @@ export class StatcastEnhancedAdapter {
    */
   async getBatterStats(playerId: number, season?: number): Promise<StatcastBatter> {
     const year = season || new Date().getFullYear();
-    const url = `${this.savantUrl}/player/${playerId}?year=${year}&player_type=batter`;
-    const cacheKey = `statcast:batter:${playerId}:${year}`;
+    const _url = `${this.savantUrl}/player/${playerId}?year=${year}&player_type=batter`;
+    const _cacheKey = `statcast:batter:${playerId}:${year}`;
 
     // Note: Baseball Savant doesn't have a clean JSON API for player pages
     // We'll use the leaderboard API to get stats
@@ -431,7 +431,7 @@ export class StatcastEnhancedAdapter {
    */
   async getPitcherStats(playerId: number, season?: number): Promise<StatcastPitcher> {
     const year = season || new Date().getFullYear();
-    const cacheKey = `statcast:pitcher:${playerId}:${year}`;
+    const _cacheKey = `statcast:pitcher:${playerId}:${year}`;
 
     // Get pitcher's pitch data
     const startDate = `${year}-03-01`;
@@ -468,8 +468,8 @@ export class StatcastEnhancedAdapter {
     minEvents: number = 100
   ): Promise<StatcastLeaderboard> {
     const year = season || new Date().getFullYear();
-    const url = `${this.savantUrl}/leaderboard/statcast?type=batter&year=${year}&position=&team=&min=${minEvents}&sort=exit_velocity`;
-    const cacheKey = `statcast:leaders:ev:${year}:${minEvents}`;
+    const _url = `${this.savantUrl}/leaderboard/statcast?type=batter&year=${year}&position=&team=&min=${minEvents}&sort=exit_velocity`;
+    const _cacheKey = `statcast:leaders:ev:${year}:${minEvents}`;
 
     return {
       category: 'exit_velocity',
@@ -486,8 +486,8 @@ export class StatcastEnhancedAdapter {
     playerType: 'batter' | 'pitcher' = 'batter'
   ): Promise<StatcastLeaderboard> {
     const year = season || new Date().getFullYear();
-    const url = `${this.savantUrl}/expected_statistics?type=${playerType}&year=${year}&position=&team=&min=1`;
-    const cacheKey = `statcast:leaders:xstats:${playerType}:${year}`;
+    const _url = `${this.savantUrl}/expected_statistics?type=${playerType}&year=${year}&position=&team=&min=1`;
+    const _cacheKey = `statcast:leaders:xstats:${playerType}:${year}`;
 
     return {
       category: `expected_stats_${playerType}`,
@@ -501,8 +501,8 @@ export class StatcastEnhancedAdapter {
    */
   async getSprintSpeedLeaders(season?: number): Promise<StatcastLeaderboard> {
     const year = season || new Date().getFullYear();
-    const url = `${this.savantUrl}/leaderboard/sprint_speed?year=${year}`;
-    const cacheKey = `statcast:leaders:speed:${year}`;
+    const _url = `${this.savantUrl}/leaderboard/sprint_speed?year=${year}`;
+    const _cacheKey = `statcast:leaders:speed:${year}`;
 
     return {
       category: 'sprint_speed',
@@ -517,8 +517,8 @@ export class StatcastEnhancedAdapter {
   async getOAALeaders(season?: number, position?: string): Promise<StatcastLeaderboard> {
     const year = season || new Date().getFullYear();
     const posParam = position ? `&pos=${position}` : '';
-    const url = `${this.savantUrl}/leaderboard/outs_above_average?type=Fielder&year=${year}${posParam}`;
-    const cacheKey = `statcast:leaders:oaa:${year}:${position || 'all'}`;
+    const _url = `${this.savantUrl}/leaderboard/outs_above_average?type=Fielder&year=${year}${posParam}`;
+    const _cacheKey = `statcast:leaders:oaa:${year}:${position || 'all'}`;
 
     return {
       category: 'outs_above_average',

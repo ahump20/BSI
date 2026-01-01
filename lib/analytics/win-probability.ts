@@ -423,7 +423,7 @@ export class BaseballWinProbabilityModel {
     const expectedMargin = scoreDiff + expectedHomeRuns - expectedAwayRuns;
 
     // Calculate probability using Pythagorean expectation style
-    const exponent = 1.8; // Baseball exponent
+    const _exponent = 1.8; // Baseball exponent (reserved for future Pythagorean calc)
     const homeWinProb = this.sigmoid(expectedMargin * 0.5);
 
     // Adjust for late-game certainty

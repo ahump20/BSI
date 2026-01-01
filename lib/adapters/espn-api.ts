@@ -147,7 +147,7 @@ export class ESPNAPIAdapter {
    */
   private transformTeamStats(data: any): ProviderTeamStats {
     // ESPN stats structure: data.team.record and data.team.statistics
-    const record = data?.team?.record?.items?.[0] || {};
+    const _record = data?.team?.record?.items?.[0] || {};
     const stats = data?.team?.statistics || [];
 
     // Helper to find stat by name

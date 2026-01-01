@@ -324,7 +324,7 @@ const championAuraScore = (
   return clamp(leadership * 0.35 + emotionalCommand * 0.25 + gameSwing * 0.2 + resumeBoost * 0.2);
 };
 
-const predatorMindsetScore = (
+const _predatorMindsetScore = (
   bodyLanguage: BodyLanguageSnapshot[],
   expressions: MicroExpressionSnapshot[],
   plays: PerformancePlay[]

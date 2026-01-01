@@ -26,7 +26,9 @@ function getBaseballPositionType(position: string): 'pitcher' | 'catcher' | 'inf
 }
 
 // Football position detection
-function getFootballPositionType(position: string): 'qb' | 'skill' | 'oline' | 'defense' | 'specialist' {
+function getFootballPositionType(
+  position: string
+): 'qb' | 'skill' | 'oline' | 'defense' | 'specialist' {
   if (position === 'QB') return 'qb';
   if (['RB', 'WR', 'TE'].includes(position)) return 'skill';
   if (['OL', 'OT', 'OG', 'C'].includes(position)) return 'oline';
@@ -39,27 +41,51 @@ function BaseballIcon({ type, className }: { type: string; className: string }) 
   switch (type) {
     case 'pitcher':
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <circle cx="12" cy="8" r="5" />
           <path d="M8 21V17L12 14L16 17V21" />
         </svg>
       );
     case 'catcher':
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M12 2L4 7V12C4 16.5 7.5 20.5 12 22C16.5 20.5 20 16.5 20 12V7L12 2Z" />
         </svg>
       );
     case 'outfield':
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <circle cx="12" cy="12" r="10" />
           <circle cx="12" cy="12" r="4" />
         </svg>
       );
     default: // infield
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <polygon points="12 2 22 12 12 22 2 12" />
         </svg>
       );
@@ -71,21 +97,39 @@ function FootballIcon({ type, className }: { type: string; className: string }) 
   switch (type) {
     case 'qb':
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <ellipse cx="12" cy="12" rx="9" ry="5" />
           <path d="M9 12L12 9L15 12L12 15L9 12" />
         </svg>
       );
     case 'skill':
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M12 2L4 7V17L12 22L20 17V7L12 2Z" />
           <path d="M12 22V12" />
         </svg>
       );
     case 'oline':
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <line x1="9" y1="3" x2="9" y2="21" />
           <line x1="15" y1="3" x2="15" y2="21" />
@@ -93,13 +137,25 @@ function FootballIcon({ type, className }: { type: string; className: string }) 
       );
     case 'defense':
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M12 2L4 7V12C4 16.5 7.5 20.5 12 22C16.5 20.5 20 16.5 20 12V7L12 2Z" />
         </svg>
       );
     default: // specialist
       return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className={className}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <circle cx="12" cy="12" r="10" />
           <path d="M12 6V12L16 14" />
         </svg>

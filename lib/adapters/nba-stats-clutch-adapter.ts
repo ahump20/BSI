@@ -316,7 +316,7 @@ export class NBAStatsClutchAdapter {
         };
       } else if (!isClutch && currentSituation) {
         // End current clutch window
-        const { homeScore, awayScore } = this.parseScore(event.SCORE);
+        const { homeScore: _homeScore, awayScore: _awayScore } = this.parseScore(event.SCORE);
 
         situations.push({
           ...currentSituation,

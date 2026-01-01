@@ -32,7 +32,7 @@ export interface ScrapedPortalEntry {
   school: string;
   position: string | null;
   date: string;
-  source: "twitter" | "d1baseball" | "baseballamerica";
+  source: 'twitter' | 'd1baseball' | 'baseballamerica';
 }
 
 export interface ScrapeResult<T> {
@@ -51,17 +51,17 @@ export interface ScrapeResult<T> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let puppeteerModule: any = null;
 
-async function getPuppeteer(): Promise<typeof import("puppeteer")> {
+async function getPuppeteer(): Promise<typeof import('puppeteer')> {
   if (puppeteerModule) return puppeteerModule;
 
   try {
     // Dynamic import returns the module - we need the default export
-    puppeteerModule = await import("puppeteer");
+    puppeteerModule = await import('puppeteer');
     return puppeteerModule;
   } catch {
     throw new Error(
-      "Puppeteer not installed. Run: npm install puppeteer\n" +
-        "Or use the Twitter API instead (requires $200/mo Basic tier)."
+      'Puppeteer not installed. Run: npm install puppeteer\n' +
+        'Or use the Twitter API instead (requires $200/mo Basic tier).'
     );
   }
 }
@@ -71,14 +71,14 @@ async function getPuppeteer(): Promise<typeof import("puppeteer")> {
 // -----------------------------------------------------------------------------
 
 interface BrowserInstance {
-  browser: Awaited<ReturnType<typeof import("puppeteer").launch>>;
+  browser: Awaited<ReturnType<typeof import('puppeteer').launch>>;
   lastUsed: number;
 }
 
 let browserInstance: BrowserInstance | null = null;
 const BROWSER_TIMEOUT = 5 * 60 * 1000; // 5 minutes idle timeout
 
-async function getBrowser(): Promise<BrowserInstance["browser"]> {
+async function getBrowser(): Promise<BrowserInstance['browser']> {
   const pptr = await getPuppeteer();
 
   if (browserInstance && Date.now() - browserInstance.lastUsed < BROWSER_TIMEOUT) {
@@ -98,11 +98,11 @@ async function getBrowser(): Promise<BrowserInstance["browser"]> {
   const browser = await pptr.launch({
     headless: true,
     args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
-      "--window-size=1920,1080",
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--window-size=1920,1080',
     ],
   });
 
@@ -149,12 +149,12 @@ export async function scrapeTwitterProfile(
   try {
     // Set realistic user agent
     await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     );
 
     // Navigate to profile
     await page.goto(`https://twitter.com/${username}`, {
-      waitUntil: "networkidle2",
+      waitUntil: 'networkidle2',
       timeout: 30000,
     });
 
@@ -168,17 +168,17 @@ export async function scrapeTwitterProfile(
       try {
         const tweet = await el.evaluate((node) => {
           const textEl = node.querySelector('[data-testid="tweetText"]');
-          const timeEl = node.querySelector("time");
+          const timeEl = node.querySelector('time');
           const likesEl = node.querySelector('[data-testid="like"] span');
           const retweetsEl = node.querySelector('[data-testid="retweet"] span');
           const repliesEl = node.querySelector('[data-testid="reply"] span');
 
           return {
-            text: textEl?.textContent || "",
-            timestamp: timeEl?.getAttribute("datetime") || "",
-            likes: parseInt(likesEl?.textContent || "0", 10) || 0,
-            retweets: parseInt(retweetsEl?.textContent || "0", 10) || 0,
-            replies: parseInt(repliesEl?.textContent || "0", 10) || 0,
+            text: textEl?.textContent || '',
+            timestamp: timeEl?.getAttribute('datetime') || '',
+            likes: parseInt(likesEl?.textContent || '0', 10) || 0,
+            retweets: parseInt(retweetsEl?.textContent || '0', 10) || 0,
+            replies: parseInt(repliesEl?.textContent || '0', 10) || 0,
           };
         });
 
@@ -228,10 +228,12 @@ export async function scrapeTwitterProfile(
  * Scrape the D1Baseball transfer portal page.
  * This is often the canonical source for portal entries.
  */
-export async function scrapeD1BaseballPortal(options: {
-  maxEntries?: number;
-  conference?: string;
-} = {}): Promise<ScrapeResult<ScrapedPortalEntry>> {
+export async function scrapeD1BaseballPortal(
+  options: {
+    maxEntries?: number;
+    conference?: string;
+  } = {}
+): Promise<ScrapeResult<ScrapedPortalEntry>> {
   const { maxEntries = 100, conference } = options;
   const errors: string[] = [];
   const entries: ScrapedPortalEntry[] = [];
@@ -241,31 +243,31 @@ export async function scrapeD1BaseballPortal(options: {
 
   try {
     await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     );
 
     // D1Baseball portal tracker URL (may need updating)
-    await page.goto("https://d1baseball.com/transfer-tracker/", {
-      waitUntil: "networkidle2",
+    await page.goto('https://d1baseball.com/transfer-tracker/', {
+      waitUntil: 'networkidle2',
       timeout: 30000,
     });
 
     // Wait for table to load
-    await page.waitForSelector("table", { timeout: 10000 });
+    await page.waitForSelector('table', { timeout: 10000 });
 
     // Extract portal entries from table
-    const rows = await page.$$("table tbody tr");
+    const rows = await page.$$('table tbody tr');
 
     for (const row of rows.slice(0, maxEntries)) {
       try {
         const entry = await row.evaluate((node) => {
-          const cells = node.querySelectorAll("td");
+          const cells = node.querySelectorAll('td');
           return {
-            playerName: cells[0]?.textContent?.trim() || "",
-            school: cells[1]?.textContent?.trim() || "",
+            playerName: cells[0]?.textContent?.trim() || '',
+            school: cells[1]?.textContent?.trim() || '',
             position: cells[2]?.textContent?.trim() || null,
-            date: cells[3]?.textContent?.trim() || "",
-            conference: cells[4]?.textContent?.trim() || "",
+            date: cells[3]?.textContent?.trim() || '',
+            conference: cells[4]?.textContent?.trim() || '',
           };
         });
 
@@ -280,7 +282,7 @@ export async function scrapeD1BaseballPortal(options: {
             school: entry.school,
             position: entry.position,
             date: entry.date || new Date().toISOString(),
-            source: "d1baseball",
+            source: 'd1baseball',
           });
         }
       } catch (err) {
@@ -298,7 +300,7 @@ export async function scrapeD1BaseballPortal(options: {
     data: entries,
     errors,
     scrapedAt: new Date().toISOString(),
-    source: "d1baseball.com/transfer-tracker",
+    source: 'd1baseball.com/transfer-tracker',
   };
 }
 
@@ -306,9 +308,11 @@ export async function scrapeD1BaseballPortal(options: {
 // Baseball America Portal Scraping
 // -----------------------------------------------------------------------------
 
-export async function scrapeBaseballAmericaPortal(options: {
-  maxEntries?: number;
-} = {}): Promise<ScrapeResult<ScrapedPortalEntry>> {
+export async function scrapeBaseballAmericaPortal(
+  options: {
+    maxEntries?: number;
+  } = {}
+): Promise<ScrapeResult<ScrapedPortalEntry>> {
   const { maxEntries = 100 } = options;
   const errors: string[] = [];
   const entries: ScrapedPortalEntry[] = [];
@@ -318,44 +322,44 @@ export async function scrapeBaseballAmericaPortal(options: {
 
   try {
     await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     );
 
     // BA portal tracker (may require subscription for full access)
-    await page.goto("https://www.baseballamerica.com/transfer-portal/", {
-      waitUntil: "networkidle2",
+    await page.goto('https://www.baseballamerica.com/transfer-portal/', {
+      waitUntil: 'networkidle2',
       timeout: 30000,
     });
 
     // Check for paywall
-    const paywalled = await page.$(".paywall, .subscription-required");
+    const paywalled = await page.$('.paywall, .subscription-required');
     if (paywalled) {
-      errors.push("Baseball America requires subscription for full portal access");
+      errors.push('Baseball America requires subscription for full portal access');
       return {
         success: false,
         data: [],
         errors,
         scrapedAt: new Date().toISOString(),
-        source: "baseballamerica.com/transfer-portal",
+        source: 'baseballamerica.com/transfer-portal',
       };
     }
 
     // Extract portal entries
-    const entryElements = await page.$$(".portal-entry, .transfer-item, article");
+    const entryElements = await page.$$('.portal-entry, .transfer-item, article');
 
     for (const el of entryElements.slice(0, maxEntries)) {
       try {
         const entry = await el.evaluate((node) => {
-          const nameEl = node.querySelector("h3, .player-name, .title");
-          const schoolEl = node.querySelector(".school, .from-school");
-          const posEl = node.querySelector(".position");
-          const dateEl = node.querySelector(".date, time");
+          const nameEl = node.querySelector('h3, .player-name, .title');
+          const schoolEl = node.querySelector('.school, .from-school');
+          const posEl = node.querySelector('.position');
+          const dateEl = node.querySelector('.date, time');
 
           return {
-            playerName: nameEl?.textContent?.trim() || "",
-            school: schoolEl?.textContent?.trim() || "",
+            playerName: nameEl?.textContent?.trim() || '',
+            school: schoolEl?.textContent?.trim() || '',
             position: posEl?.textContent?.trim() || null,
-            date: dateEl?.textContent?.trim() || "",
+            date: dateEl?.textContent?.trim() || '',
           };
         });
 
@@ -363,7 +367,7 @@ export async function scrapeBaseballAmericaPortal(options: {
           entries.push({
             ...entry,
             date: entry.date || new Date().toISOString(),
-            source: "baseballamerica",
+            source: 'baseballamerica',
           });
         }
       } catch (err) {
@@ -381,7 +385,7 @@ export async function scrapeBaseballAmericaPortal(options: {
     data: entries,
     errors,
     scrapedAt: new Date().toISOString(),
-    source: "baseballamerica.com/transfer-portal",
+    source: 'baseballamerica.com/transfer-portal',
   };
 }
 
@@ -405,24 +409,26 @@ export interface AggregatedPortalData {
  * Scrape multiple portal sources and deduplicate.
  * This is the main function for comprehensive portal tracking without API costs.
  */
-export async function scrapeAllPortalSources(options: {
-  includeTwitter?: boolean;
-  twitterAccounts?: string[];
-  conference?: string;
-} = {}): Promise<AggregatedPortalData> {
+export async function scrapeAllPortalSources(
+  options: {
+    includeTwitter?: boolean;
+    twitterAccounts?: string[];
+    conference?: string;
+  } = {}
+): Promise<AggregatedPortalData> {
   const {
     includeTwitter = false,
-    twitterAccounts = ["kendallrogersD1", "d1baseball"],
+    twitterAccounts = ['kendallrogersD1', 'd1baseball'],
     conference,
   } = options;
 
   const allEntries: ScrapedPortalEntry[] = [];
-  const sources: AggregatedPortalData["sources"] = [];
+  const sources: AggregatedPortalData['sources'] = [];
 
   // Scrape D1Baseball (primary source)
   const d1Result = await scrapeD1BaseballPortal({ conference });
   sources.push({
-    name: "D1Baseball",
+    name: 'D1Baseball',
     success: d1Result.success,
     count: d1Result.data.length,
     errors: d1Result.errors,
@@ -432,7 +438,7 @@ export async function scrapeAllPortalSources(options: {
   // Scrape Baseball America (may be paywalled)
   const baResult = await scrapeBaseballAmericaPortal();
   sources.push({
-    name: "Baseball America",
+    name: 'Baseball America',
     success: baResult.success,
     count: baResult.data.length,
     errors: baResult.errors,
@@ -443,7 +449,7 @@ export async function scrapeAllPortalSources(options: {
   if (includeTwitter) {
     for (const username of twitterAccounts) {
       const twitterResult = await scrapeTwitterProfile(username, {
-        filterKeywords: ["portal", "transfer", "committed"],
+        filterKeywords: ['portal', 'transfer', 'committed'],
       });
 
       // Convert tweets to portal entries
@@ -497,12 +503,12 @@ function parsePortalFromTweet(tweet: ScrapedTweet): ScrapedPortalEntry | null {
     const match = text.match(pattern);
     if (match?.groups?.name) {
       // Try to extract school from context
-      let school = match.groups.school || "";
+      let school = match.groups.school || '';
       if (!school) {
         const schoolMatch = text.match(
           /(?:from|of|former)\s+(?<school>(?:[A-Z][a-z]+\s*)+(?:State|University|College)?)/i
         );
-        school = schoolMatch?.groups?.school || "Unknown";
+        school = schoolMatch?.groups?.school || 'Unknown';
       }
 
       // Try to extract position
@@ -516,7 +522,7 @@ function parsePortalFromTweet(tweet: ScrapedTweet): ScrapedPortalEntry | null {
         school: school.trim(),
         position,
         date: tweet.timestamp,
-        source: "twitter",
+        source: 'twitter',
       };
     }
   }
@@ -545,7 +551,7 @@ export async function testScraper(): Promise<{
           entries: result.data,
           sources: [
             {
-              name: "D1Baseball",
+              name: 'D1Baseball',
               success: result.success,
               count: result.data.length,
               errors: result.errors,
@@ -558,13 +564,13 @@ export async function testScraper(): Promise<{
     } else {
       return {
         success: false,
-        message: `Scraper failed: ${result.errors.join(", ")}`,
+        message: `Scraper failed: ${result.errors.join(', ')}`,
       };
     }
   } catch (error) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: error instanceof Error ? error.message : 'Unknown error',
     };
   } finally {
     await closeBrowser();

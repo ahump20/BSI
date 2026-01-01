@@ -85,9 +85,7 @@ export function AIGameCard({ game }: AIGameCardProps) {
           </div>
 
           {/* VS / Score Separator */}
-          <div className="text-text-tertiary font-medium">
-            {game.completed ? '-' : '@'}
-          </div>
+          <div className="text-text-tertiary font-medium">{game.completed ? '-' : '@'}</div>
 
           {/* Home Team */}
           <div className="flex-1 text-center">
@@ -296,7 +294,8 @@ export function CFBArticleList({ type, limit = 6, showEmpty = true }: CFBArticle
         <CardContent>
           <p className="text-text-tertiary">{error}</p>
           <p className="text-sm text-burnt-orange mt-2">
-            CFB {type === 'preview' ? 'previews' : type === 'recap' ? 'recaps' : 'content'} will be available during the season.
+            CFB {type === 'preview' ? 'previews' : type === 'recap' ? 'recaps' : 'content'} will be
+            available during the season.
           </p>
         </CardContent>
       </Card>
@@ -308,10 +307,12 @@ export function CFBArticleList({ type, limit = 6, showEmpty = true }: CFBArticle
       <Card className="text-center py-10">
         <CardContent>
           <p className="text-text-tertiary">
-            No {type === 'preview' ? 'previews' : type === 'recap' ? 'recaps' : 'articles'} available.
+            No {type === 'preview' ? 'previews' : type === 'recap' ? 'recaps' : 'articles'}{' '}
+            available.
           </p>
           <p className="text-sm text-burnt-orange mt-2">
-            Check back during the CFB season for AI-powered {type === 'preview' ? 'game previews' : type === 'recap' ? 'game recaps' : 'content'}.
+            Check back during the CFB season for AI-powered{' '}
+            {type === 'preview' ? 'game previews' : type === 'recap' ? 'game recaps' : 'content'}.
           </p>
         </CardContent>
       </Card>

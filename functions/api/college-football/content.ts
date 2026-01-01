@@ -46,7 +46,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     const response = await fetch(proxyUrl.toString(), {
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'User-Agent': 'BSI-Pages-Function/1.0',
       },
     });

@@ -132,8 +132,10 @@ function processNBAStandingsData(data, filterConference) {
       const pointsAgainst = getStat('pointsAgainst')?.value || 0;
 
       // Get additional records
-      const vsConf = getStat('vsConf')?.displayValue || getStat('conferenceRecord')?.displayValue || 'N/A';
-      const vsDiv = getStat('vsDiv')?.displayValue || getStat('divisionRecord')?.displayValue || 'N/A';
+      const vsConf =
+        getStat('vsConf')?.displayValue || getStat('conferenceRecord')?.displayValue || 'N/A';
+      const vsDiv =
+        getStat('vsDiv')?.displayValue || getStat('divisionRecord')?.displayValue || 'N/A';
       const home = getStat('home')?.displayValue || getStat('homeRecord')?.displayValue || 'N/A';
       const road = getStat('road')?.displayValue || getStat('awayRecord')?.displayValue || 'N/A';
       const lastTen = getStat('L10')?.displayValue || getStat('last10Games')?.displayValue || 'N/A';

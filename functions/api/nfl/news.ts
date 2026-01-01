@@ -78,49 +78,96 @@ const NFL_DIVISIONS: Record<string, string> = {
   'Seattle Seahawks': 'NFC West',
 };
 
-function categorizeArticle(article: ESPNArticle): 'trade' | 'injury' | 'game' | 'draft' | 'free-agency' | 'analysis' | 'general' {
+function categorizeArticle(
+  article: ESPNArticle
+): 'trade' | 'injury' | 'game' | 'draft' | 'free-agency' | 'analysis' | 'general' {
   const headline = (article.headline || article.title || '').toLowerCase();
   const description = (article.description || '').toLowerCase();
   const combined = `${headline} ${description}`;
 
   // Draft detection
-  if (combined.includes('draft') || combined.includes('pick') || combined.includes('combine') ||
-      combined.includes('pro day') || combined.includes('mock') || combined.includes('scouting')) {
+  if (
+    combined.includes('draft') ||
+    combined.includes('pick') ||
+    combined.includes('combine') ||
+    combined.includes('pro day') ||
+    combined.includes('mock') ||
+    combined.includes('scouting')
+  ) {
     return 'draft';
   }
 
   // Free agency detection
-  if (combined.includes('free agent') || combined.includes('free-agent') || combined.includes('free agency') ||
-      combined.includes('unrestricted') || combined.includes('franchise tag') || combined.includes('contract extension')) {
+  if (
+    combined.includes('free agent') ||
+    combined.includes('free-agent') ||
+    combined.includes('free agency') ||
+    combined.includes('unrestricted') ||
+    combined.includes('franchise tag') ||
+    combined.includes('contract extension')
+  ) {
     return 'free-agency';
   }
 
   // Trade detection
-  if (combined.includes('trade') || combined.includes('acquire') || combined.includes('deal') ||
-      combined.includes('waiver') || combined.includes('release') || combined.includes('cut')) {
+  if (
+    combined.includes('trade') ||
+    combined.includes('acquire') ||
+    combined.includes('deal') ||
+    combined.includes('waiver') ||
+    combined.includes('release') ||
+    combined.includes('cut')
+  ) {
     return 'trade';
   }
 
   // Injury detection
-  if (combined.includes('injury') || combined.includes('injured') || combined.includes('ir') ||
-      combined.includes('surgery') || combined.includes('rehab') || combined.includes('out for') ||
-      combined.includes('miss') || combined.includes('questionable') || combined.includes('doubtful') ||
-      combined.includes('concussion') || combined.includes('acl') || combined.includes('torn')) {
+  if (
+    combined.includes('injury') ||
+    combined.includes('injured') ||
+    combined.includes('ir') ||
+    combined.includes('surgery') ||
+    combined.includes('rehab') ||
+    combined.includes('out for') ||
+    combined.includes('miss') ||
+    combined.includes('questionable') ||
+    combined.includes('doubtful') ||
+    combined.includes('concussion') ||
+    combined.includes('acl') ||
+    combined.includes('torn')
+  ) {
     return 'injury';
   }
 
   // Game recap/preview detection
-  if (combined.includes('recap') || combined.includes('preview') || combined.includes('beat') ||
-      combined.includes('defeat') || combined.includes('win') || combined.includes('lose') ||
-      combined.includes('touchdown') || combined.includes('overtime') || combined.includes('playoff') ||
-      combined.includes('super bowl') || combined.includes('wild card') || combined.includes('divisional')) {
+  if (
+    combined.includes('recap') ||
+    combined.includes('preview') ||
+    combined.includes('beat') ||
+    combined.includes('defeat') ||
+    combined.includes('win') ||
+    combined.includes('lose') ||
+    combined.includes('touchdown') ||
+    combined.includes('overtime') ||
+    combined.includes('playoff') ||
+    combined.includes('super bowl') ||
+    combined.includes('wild card') ||
+    combined.includes('divisional')
+  ) {
     return 'game';
   }
 
   // Analysis detection
-  if (combined.includes('analysis') || combined.includes('breakdown') || combined.includes('power rankings') ||
-      combined.includes('projection') || combined.includes('prediction') || combined.includes('outlook') ||
-      combined.includes('what went wrong') || combined.includes('what went right')) {
+  if (
+    combined.includes('analysis') ||
+    combined.includes('breakdown') ||
+    combined.includes('power rankings') ||
+    combined.includes('projection') ||
+    combined.includes('prediction') ||
+    combined.includes('outlook') ||
+    combined.includes('what went wrong') ||
+    combined.includes('what went right')
+  ) {
     return 'analysis';
   }
 
@@ -172,7 +219,7 @@ export async function onRequest(context: { request: Request }): Promise<Response
       throw new Error(`ESPN API returned ${response.status}`);
     }
 
-    const data = await response.json() as { articles?: ESPNArticle[] };
+    const data = (await response.json()) as { articles?: ESPNArticle[] };
     const espnArticles = data.articles || [];
 
     let articles: NewsItem[] = espnArticles.map((article, index) => {
@@ -192,21 +239,22 @@ export async function onRequest(context: { request: Request }): Promise<Response
 
     // Filter by category if specified
     if (categoryFilter && categoryFilter !== 'all') {
-      articles = articles.filter(a => a.category === categoryFilter);
+      articles = articles.filter((a) => a.category === categoryFilter);
     }
 
     // Limit results
     articles = articles.slice(0, limit);
 
-    const timestamp = new Date().toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT';
+    const timestamp =
+      new Date().toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }) + ' CT';
 
     return new Response(
       JSON.stringify({

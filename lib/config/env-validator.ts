@@ -70,7 +70,7 @@ const WorkersEnvSchema = BaseEnvSchema.extend({
 const EnvSchema = NodeEnvSchema;
 
 type Env = z.infer<typeof EnvSchema>;
-type WorkersEnv = z.infer<typeof WorkersEnvSchema>;
+type _WorkersEnv = z.infer<typeof WorkersEnvSchema>;
 
 // Export schemas for external use
 export { WorkersEnvSchema, NodeEnvSchema, BaseEnvSchema };
