@@ -93,8 +93,7 @@ deprecated/
 *-v2/
 *-new/
 
-# Netlify/Vercel
-.netlify/
+# Platform build outputs (prevent accidental commits)
 .vercel/
 
 # Business documents (sensitive, binary)
