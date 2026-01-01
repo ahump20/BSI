@@ -285,7 +285,6 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 - **Cache:** Cloudflare KV for sessions
 
 ### ❌ Never Use
-- Netlify deployments or commands
 - Vercel deployments or references
 - Replit for production deployment
 - Other domain names besides blazesportsintel.com
@@ -331,8 +330,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 
 ### Platform Confusion
 1. Always default to Cloudflare Pages
-2. Report any Netlify references as configuration errors
-3. Use this guide to verify proper agent selection
+2. Use this guide to verify proper agent selection
 
 ## Quick Reference
 
