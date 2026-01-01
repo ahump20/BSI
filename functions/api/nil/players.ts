@@ -358,7 +358,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       );
     }
 
-    const { players, total } = await getPlayersFromDB(db, params);
+    const { players, total: _total } = await getPlayersFromDB(db, params);
 
     // Calculate FMNV for each player
     const playersWithValuation = await Promise.all(

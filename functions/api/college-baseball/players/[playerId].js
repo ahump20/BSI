@@ -222,7 +222,7 @@ export async function onRequest(context) {
 /**
  * Convert height in inches to formatted string
  */
-function formatHeight(inches) {
+function _formatHeight(inches) {
   if (!inches) return null;
   const feet = Math.floor(inches / 12);
   const remainingInches = inches % 12;

@@ -6,7 +6,7 @@
  * @lastUpdated 2025-11-26
  */
 
-import type { ViewStyle, TextStyle, ImageStyle } from 'react-native';
+import type { ViewStyle, TextStyle, ImageStyle as _ImageStyle } from 'react-native';
 
 // ============================================================================
 // CORE GAME TYPES

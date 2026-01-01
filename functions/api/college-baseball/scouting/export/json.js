@@ -3,7 +3,7 @@
  * Returns complete scouting report data in JSON format for API integration
  */
 
-import { ok, err, rateLimit, rateLimitError, corsHeaders } from '../../../_utils.js';
+import { ok as _ok, err, rateLimit, rateLimitError, corsHeaders } from '../../../_utils.js';
 
 export async function onRequest(context) {
   const { request, env } = context;

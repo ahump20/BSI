@@ -381,7 +381,7 @@ function calculateBaseballWinProbability(game, situation) {
 
   // Inning adjustment
   const inningFactor = inning / 9; // Later innings have more certainty
-  const certaintyMultiplier = 0.5 + inningFactor * 0.5;
+  const _certaintyMultiplier = 0.5 + inningFactor * 0.5;
 
   // Outs adjustment
   const outsFactor = outs * 0.02; // Each out slightly favors defense
@@ -416,7 +416,7 @@ function calculateFootballWinProbability(game, situation) {
 
   // Quarter/time adjustment
   const quarterFactor = quarter / 4;
-  const certaintyMultiplier = 0.4 + quarterFactor * 0.6;
+  const _certaintyMultiplier = 0.4 + quarterFactor * 0.6;
 
   // Field position adjustment (home team has ball if score_differential >= 0)
   if (field_position) {

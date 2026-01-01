@@ -12,7 +12,7 @@ import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
 const CACHE_KEY_PREFIX = 'college-baseball:boxscore';
 
 export async function onRequest(context) {
-  const { request, env, params } = context;
+  const { request, env, params: _params } = context;
   const url = new URL(request.url);
 
   if (request.method === 'OPTIONS') {
@@ -102,7 +102,7 @@ export async function onRequest(context) {
     );
   } catch (error) {
     // Determine the error type and provide helpful guidance
-    const isESPNError = error.message.includes('ESPN API returned');
+    const _isESPNError = error.message.includes('ESPN API returned');
     const isNotFoundError = error.message.includes('400') || error.message.includes('404');
 
     return new Response(

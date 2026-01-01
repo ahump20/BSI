@@ -24,7 +24,7 @@ import {
   corsHeaders,
 } from '../_utils.js';
 
-const CACHE_TTL = 300; // 5 minutes
+const _CACHE_TTL = 300; // 5 minutes
 
 /**
  * Main handler for scouting reports

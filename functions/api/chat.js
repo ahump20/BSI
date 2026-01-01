@@ -100,7 +100,7 @@ Keep responses concise (2-3 sentences max unless detailed explanation requested)
     });
 
     if (!anthropicResponse.ok) {
-      const error = await anthropicResponse.text();
+      const _error = await anthropicResponse.text();
       throw new Error('Failed to get response from AI');
     }
 

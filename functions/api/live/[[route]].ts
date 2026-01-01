@@ -338,7 +338,7 @@ async function getNCAAGames(url: URL, env: Env) {
   try {
     // Fetch from NCAA.com stats API (Division I Baseball)
     // Note: NCAA.com provides public scoreboard data
-    const year = new Date().getFullYear();
+    const _year = new Date().getFullYear();
     const ncaaUrl = `https://stats.ncaa.org/season_divisions/17780/scoreboards?utf8=%E2%9C%93&season_division_id=17780&game_date=${date}`;
 
     const response = await fetch(ncaaUrl, {
@@ -352,11 +352,11 @@ async function getNCAAGames(url: URL, env: Env) {
       throw new Error(`NCAA.com returned ${response.status}`);
     }
 
-    const html = await response.text();
+    const _html = await response.text();
 
     // Parse HTML to extract game data
     // Note: This is a simplified parser - production should use a proper HTML parser
-    const games: any[] = [];
+    const _games: any[] = [];
 
     // For now, return a properly formatted response with metadata
     // indicating we're in development/transition

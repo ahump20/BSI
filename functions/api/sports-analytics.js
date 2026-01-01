@@ -4,7 +4,7 @@
  * Cloudflare Function for sports data processing
  */
 
-import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+import { rateLimit, rateLimitError, corsHeaders as _corsHeaders } from './_utils.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
@@ -29,8 +29,8 @@ export async function onRequest(context) {
   try {
     const url = new URL(request.url);
     const sport = url.searchParams.get('sport') || 'all';
-    const team = url.searchParams.get('team');
-    const league = url.searchParams.get('league');
+    const _team = url.searchParams.get('team');
+    const _league = url.searchParams.get('league');
 
     // Deep South Sports Analytics Data
     const sportsData = {

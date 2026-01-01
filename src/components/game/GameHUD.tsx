@@ -24,7 +24,7 @@ import Svg, { Path, Circle } from 'react-native-svg';
 import type { GameHUDProps, PowerUp, RunnerPositions } from './types';
 import { gameTheme } from './tokens';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get('window');
 
 // ============================================================================
 // SCOREBOARD COMPONENT
@@ -294,7 +294,7 @@ const BaseDiamond: React.FC<BaseDiamondProps> = ({ runners }) => {
   const baseSize = 70;
   const center = baseSize / 2;
   const baseRadius = 8;
-  const diamondSize = 28;
+  const _diamondSize = 28;
 
   // Base positions (rotated 45 degrees)
   const bases = {

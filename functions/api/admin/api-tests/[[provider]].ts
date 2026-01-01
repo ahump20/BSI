@@ -253,7 +253,7 @@ export const onRequest: PagesFunction<Env> = async ({ params, env, request }) =>
 
   if (provider === 'all') {
     // Run all tests with rate limiting
-    for (const [name, testFn] of Object.entries(PROVIDERS)) {
+    for (const [_name, testFn] of Object.entries(PROVIDERS)) {
       const result = await testFn(env);
       results.push(result);
       // Rate limit between providers

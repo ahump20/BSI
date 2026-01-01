@@ -13,7 +13,7 @@
  * - NCAA: ESPN API (2015-2024)
  */
 
-import { jsonResponse, errorResponse } from '../../lib/utils/api-helpers.js';
+import { jsonResponse as _jsonResponse, errorResponse as _errorResponse } from '../../lib/utils/api-helpers.js';
 
 /**
  * Scheduled cron handler - runs daily
@@ -247,7 +247,7 @@ async function ingestNBAHistorical(env, seasons, results) {
       }
 
       // NBA season format: 2024 = 2023-24 season
-      const seasonStr = `${season - 1}-${season.toString().slice(-2)}`;
+      const _seasonStr = `${season - 1}-${season.toString().slice(-2)}`;
       const url = `https://api.sportsdata.io/v3/nba/scores/json/Games/${season}?key=${API_KEY}`;
 
       const response = await fetch(url);

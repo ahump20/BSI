@@ -73,15 +73,19 @@ export interface LoggerConfig {
   sendToDatadog?: boolean;
 }
 
+// Helper to safely access process.env in both Node.js and Workers
+const getProcessEnv = (key: string): string | undefined =>
+  typeof process !== 'undefined' ? process.env?.[key] : undefined;
+
 const DEFAULT_CONFIG: LoggerConfig = {
-  level: (process.env.LOG_LEVEL as LogLevel) || LogLevel.INFO,
-  service: process.env.SERVICE_NAME || 'bsi-api',
-  version: process.env.APP_VERSION || '1.0.0',
-  environment: process.env.NODE_ENV || 'development',
-  prettyPrint: process.env.NODE_ENV === 'development',
+  level: (getProcessEnv('LOG_LEVEL') as LogLevel) || LogLevel.INFO,
+  service: getProcessEnv('SERVICE_NAME') || 'bsi-api',
+  version: getProcessEnv('APP_VERSION') || '1.0.0',
+  environment: getProcessEnv('NODE_ENV') || 'development',
+  prettyPrint: getProcessEnv('NODE_ENV') === 'development',
   redact: ['password', 'token', 'secret', 'apiKey', 'authorization'],
-  sendToSentry: process.env.SENTRY_DSN ? true : false,
-  sendToDatadog: process.env.DD_API_KEY ? true : false,
+  sendToSentry: getProcessEnv('SENTRY_DSN') ? true : false,
+  sendToDatadog: getProcessEnv('DD_API_KEY') ? true : false,
 };
 
 /**
@@ -349,7 +353,7 @@ export class Logger {
    * Send log to Datadog
    */
   private async sendToDatadog(entry: LogEntry): Promise<void> {
-    const apiKey = process.env.DD_API_KEY;
+    const apiKey = typeof process !== 'undefined' ? process.env?.DD_API_KEY : undefined;
     if (!apiKey) return;
 
     try {

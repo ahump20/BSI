@@ -27,7 +27,7 @@
  * }
  */
 
-import { getUserTier, requireTier, createGateResponse } from '../_feature-gate';
+import { getUserTier as _getUserTier, requireTier, createGateResponse } from '../_feature-gate';
 
 interface Env {
   DB: D1Database;

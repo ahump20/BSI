@@ -133,7 +133,7 @@ export class ConferenceStrengthModel {
    */
   static calculateRPI(teams) {
     // Create a map for quick team lookup
-    const teamMap = new Map(teams.map((t) => [t.teamId, t]));
+    const _teamMap = new Map(teams.map((t) => [t.teamId, t]));
     // Calculate adjusted records
     const adjustedRecords = new Map();
     for (const team of teams) {

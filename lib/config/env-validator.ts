@@ -181,13 +181,17 @@ export function validateEnvironmentOnStartup(): void {
   if (!result.valid) {
     console.error('❌ Environment validation failed:');
     result.errors?.forEach((error) => console.error(`  - ${error}`));
-    process.exit(1);
+    if (typeof process !== 'undefined' && typeof process.exit === 'function') {
+      process.exit(1);
+    }
+    return;
   }
 
   console.log('✅ Environment validation passed');
 
   // Check for weak secrets in production
-  if (process.env.NODE_ENV === 'production') {
+  const nodeEnv = typeof process !== 'undefined' ? process.env?.NODE_ENV : undefined;
+  if (nodeEnv === 'production') {
     const warnings = checkForWeakSecrets();
 
     if (warnings.length > 0) {
@@ -196,7 +200,9 @@ export function validateEnvironmentOnStartup(): void {
 
       // In production, exit if weak secrets are detected
       console.error('❌ Production deployment blocked due to weak secrets');
-      process.exit(1);
+      if (typeof process !== 'undefined' && typeof process.exit === 'function') {
+        process.exit(1);
+      }
     }
   }
 }

@@ -165,7 +165,7 @@ class NILCalculator {
 
   static calculateTrackScore(metrics) {
     // Normalized scoring based on event times/distances
-    const { event, performance } = metrics;
+    const { event: _event, performance: _performance } = metrics;
     // Simplified - would need comprehensive standards database
     return 75; // Placeholder
   }

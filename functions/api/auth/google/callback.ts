@@ -240,7 +240,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     );
 
     // Redirect to dashboard with token
-    const response = Response.redirect(`${origin}/dashboard?login=success`, 302);
+    const _response = Response.redirect(`${origin}/dashboard?login=success`, 302);
 
     // Set cookie (note: Response.redirect creates immutable headers, so we need to create a new response)
     return new Response(null, {

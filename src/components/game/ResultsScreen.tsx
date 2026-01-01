@@ -44,7 +44,7 @@ interface CelebrationHeaderProps {
 
 const CelebrationHeader: React.FC<CelebrationHeaderProps> = ({ outcome, homeScore, awayScore }) => {
   const scaleAnim = useRef(new Animated.Value(0)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const _rotateAnim = useRef(new Animated.Value(0)).current;
   const confettiAnims = useRef(
     Array(12)
       .fill(0)

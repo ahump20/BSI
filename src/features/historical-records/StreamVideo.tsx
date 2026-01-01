@@ -10,7 +10,7 @@
  * - Ember (accent): #FF6B35
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef as _useRef, useEffect } from 'react';
 
 // Configuration - set once for all components
 const STREAM_CUSTOMER_CODE = 'mpdvoybjqct2pzls'; // BSI Cloudflare Stream customer code

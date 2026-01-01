@@ -452,8 +452,8 @@ async function getPlayersFromDB(
     position,
     team,
     conference,
-    minValue,
-    maxValue,
+    minValue: _minValue,
+    maxValue: _maxValue,
     minStars,
     maxStars,
     state,
@@ -1161,7 +1161,7 @@ async function handleOpportunityCost(
 // ============================================================================
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  const { request, env, params } = context;
+  const { request, env, params: _params } = context;
   const url = new URL(request.url);
   const requestId = generateRequestId();
   const kv = env.NIL_CACHE || env.KV;

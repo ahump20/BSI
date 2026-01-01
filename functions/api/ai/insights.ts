@@ -10,7 +10,7 @@ export interface Env {
 
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
-  const url = new URL(request.url);
+  const _url = new URL(request.url);
 
   const headers = {
     'Access-Control-Allow-Origin': '*',

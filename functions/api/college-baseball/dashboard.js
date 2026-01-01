@@ -10,7 +10,7 @@
  * Caching: 15 minutes for rankings, 5 minutes for standings
  */
 
-import { fetchStandings, fetchTeams } from './_ncaa-adapter.js';
+import { fetchStandings, fetchTeams as _fetchTeams } from './_ncaa-adapter.js';
 
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball';
 const USER_AGENT = 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)';
@@ -83,7 +83,7 @@ function calculateBubbleWatch(rankings, standings) {
   const bubbleCandidates = rankings.slice(14, 40);
 
   // Also include teams with good records from power conferences
-  const powerConferences = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
+  const _powerConferences = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
 
   for (const team of bubbleCandidates) {
     let status = 'bubble';

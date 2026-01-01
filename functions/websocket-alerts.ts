@@ -28,7 +28,7 @@
 import { DurableObject } from 'cloudflare:workers';
 import type { GameState, WinProbability, Alert, AlertPreferences } from '../lib/types';
 import { LiveWinProbabilityEngine } from '../lib/analytics/baseball/win-probability-engine';
-import { alertEngine } from '../lib/notifications/smart-alert-engine';
+import { alertEngine as _alertEngine } from '../lib/notifications/smart-alert-engine';
 
 // ============================================================================
 // Type Definitions

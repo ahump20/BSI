@@ -158,9 +158,9 @@ const QUERY_PATTERNS: QueryPattern[] = [
     handler: async (match, env) => {
       const team = match[1].trim();
       const year1 = match[2];
-      const category = match[3].toLowerCase(); // offense, pitching, defense
+      const _category = match[3].toLowerCase(); // offense, pitching, defense
       const year2 = match[4];
-      const tournament = match[5] || 'cws';
+      const _tournament = match[5] || 'cws';
 
       // Fetch games from both seasons
       const season1Games = await env.DB.prepare(

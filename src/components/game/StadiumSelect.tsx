@@ -13,7 +13,7 @@
  * @lastUpdated 2025-11-26
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState as _useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,

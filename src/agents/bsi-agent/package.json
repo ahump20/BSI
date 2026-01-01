@@ -1,0 +1,39 @@
+{
+  "name": "bsi-agent",
+  "version": "1.0.0",
+  "description": "BSI Portal Intelligence Agent - Automated transfer portal tracking for college baseball",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node --loader ts-node/esm src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --loader ts-node/esm src/test-twitter.ts",
+    "dev": "node --watch --loader ts-node/esm src/index.ts"
+  },
+  "keywords": [
+    "claude",
+    "agent",
+    "baseball",
+    "transfer-portal",
+    "sports-intel"
+  ],
+  "author": "Austin Humphrey <austin@blazesportsintel.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "optionalDependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

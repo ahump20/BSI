@@ -438,7 +438,7 @@ function analyzePitchCount(metrics, riskFactors) {
  */
 function analyzeVelocityDrop(metrics, riskFactors) {
   const last7Velocity = metrics.last_7_days.avg_velocity || 0;
-  const last14Velocity = metrics.last_14_days.avg_velocity || 0;
+  const _last14Velocity = metrics.last_14_days.avg_velocity || 0;
   const seasonVelocity = metrics.season_total.avg_velocity || 0;
 
   if (seasonVelocity === 0) return 0;

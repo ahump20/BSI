@@ -34,7 +34,7 @@ function getTodayCST(): string {
 
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env, params } = context;
-  const url = new URL(request.url);
+  const _url = new URL(request.url);
   const route = (params.route as string[])?.join('/') || '';
 
   if (request.method === 'OPTIONS') {

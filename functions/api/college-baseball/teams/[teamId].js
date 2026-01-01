@@ -3923,7 +3923,7 @@ const ACC_TEAMS = {
 };
 
 // Merge all conferences into single lookup
-const ALL_TEAMS = { ...SEC_TEAMS, ...BIG_TEN_TEAMS, ...BIG_12_TEAMS, ...ACC_TEAMS };
+const _ALL_TEAMS = { ...SEC_TEAMS, ...BIG_TEN_TEAMS, ...BIG_12_TEAMS, ...ACC_TEAMS };
 
 // Get current season info
 function getCurrentSeason() {
@@ -4014,7 +4014,7 @@ async function fetchTeamSchedule(espnId) {
 }
 
 export async function onRequest(context) {
-  const { request, env, params } = context;
+  const { request, env: _env, params } = context;
 
   // Handle CORS
   if (request.method === 'OPTIONS') {
@@ -4100,8 +4100,8 @@ export async function onRequest(context) {
 
 // Generate preseason schedule placeholder
 function generatePreseasonSchedule(team) {
-  const games = [];
-  const opponents = Object.values(SEC_TEAMS).filter((t) => t.slug !== team.slug);
+  const _games = [];
+  const _opponents = Object.values(SEC_TEAMS).filter((t) => t.slug !== team.slug);
 
   // Sample schedule format for preseason
   return [

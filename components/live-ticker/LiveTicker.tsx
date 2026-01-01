@@ -1,0 +1,295 @@
+'use client';
+
+/**
+ * BSI Live Sports Ticker
+ *
+ * Real-time breaking news and score ticker with WebSocket connection.
+ * Integrates with Three.js hero headers for visual effects.
+ */
+
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Types (matching worker types)
+type TickerType = 'score' | 'news' | 'injury' | 'trade' | 'weather';
+type League = 'MLB' | 'NFL' | 'NCAAF' | 'NBA' | 'NCAABB';
+type Priority = 1 | 2 | 3;
+
+interface TickerItem {
+  id: string;
+  type: TickerType;
+  league: League;
+  headline: string;
+  timestamp: number;
+  priority: Priority;
+  metadata?: {
+    teamIds?: string[];
+    gameId?: string;
+    playerId?: string;
+    link?: string;
+  };
+}
+
+interface WSMessage {
+  type: string;
+  payload?: unknown;
+  timestamp: number;
+}
+
+interface LiveTickerProps {
+  /** WebSocket URL (defaults to production) */
+  wsUrl?: string;
+  /** Filter by leagues */
+  leagues?: League[];
+  /** Filter by types */
+  types?: TickerType[];
+  /** Minimum priority (1=breaking, 2=important, 3=all) */
+  minPriority?: Priority;
+  /** Max items to display */
+  maxItems?: number;
+  /** Auto-scroll speed in ms per item */
+  scrollSpeed?: number;
+  /** Custom class name */
+  className?: string;
+  /** Compact mode for hero headers */
+  compact?: boolean;
+  /** Callback when new item arrives */
+  onNewItem?: (item: TickerItem) => void;
+}
+
+const PRIORITY_COLORS: Record<Priority, string> = {
+  1: 'bg-red-600', // Breaking
+  2: 'bg-amber-500', // Important
+  3: 'bg-charcoal', // Standard
+};
+
+const LEAGUE_ICONS: Record<League, string> = {
+  MLB: '⚾',
+  NFL: '🏈',
+  NCAAF: '🏈',
+  NBA: '🏀',
+  NCAABB: '🏀',
+};
+
+const TYPE_LABELS: Record<TickerType, string> = {
+  score: 'SCORE',
+  news: 'NEWS',
+  injury: 'INJURY',
+  trade: 'TRADE',
+  weather: 'WEATHER',
+};
+
+export function LiveTicker({
+  wsUrl = 'wss://ticker.blazesportsintel.com/ws',
+  leagues,
+  types,
+  minPriority = 3,
+  maxItems = 10,
+  scrollSpeed = 5000,
+  className = '',
+  compact = false,
+  onNewItem,
+}: LiveTickerProps) {
+  const [items, setItems] = useState<TickerItem[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Connect to WebSocket
+  const connect = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+
+    try {
+      wsRef.current = new WebSocket(wsUrl);
+
+      wsRef.current.onopen = () => {
+        setIsConnected(true);
+
+        // Subscribe with filters
+        const subscription: WSMessage = {
+          type: 'subscribe',
+          payload: {
+            ...(leagues && { leagues }),
+            ...(types && { types }),
+            minPriority,
+          },
+          timestamp: Date.now(),
+        };
+        wsRef.current?.send(JSON.stringify(subscription));
+
+        // Start heartbeat
+        heartbeatIntervalRef.current = setInterval(() => {
+          if (wsRef.current?.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({ type: 'heartbeat', timestamp: Date.now() }));
+          }
+        }, 25000);
+      };
+
+      wsRef.current.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data) as WSMessage;
+
+          if (message.type === 'ticker_batch') {
+            setItems(message.payload as TickerItem[]);
+          } else if (message.type === 'ticker_item') {
+            const newItem = message.payload as TickerItem;
+            setItems((prev) => [newItem, ...prev.slice(0, maxItems - 1)]);
+            onNewItem?.(newItem);
+          }
+        } catch (e) {
+          console.error('Failed to parse ticker message:', e);
+        }
+      };
+
+      wsRef.current.onclose = () => {
+        setIsConnected(false);
+        if (heartbeatIntervalRef.current) {
+          clearInterval(heartbeatIntervalRef.current);
+        }
+
+        // Reconnect after 3 seconds
+        reconnectTimeoutRef.current = setTimeout(connect, 3000);
+      };
+
+      wsRef.current.onerror = (error) => {
+        console.error('Ticker WebSocket error:', error);
+      };
+    } catch (error) {
+      console.error('Failed to connect to ticker:', error);
+      reconnectTimeoutRef.current = setTimeout(connect, 3000);
+    }
+  }, [wsUrl, leagues, types, minPriority, maxItems, onNewItem]);
+
+  // Connect on mount
+  useEffect(() => {
+    connect();
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+      }
+    };
+  }, [connect]);
+
+  // Auto-scroll through items
+  useEffect(() => {
+    if (items.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, scrollSpeed);
+
+    return () => clearInterval(interval);
+  }, [items.length, scrollSpeed]);
+
+  // Render fallback for no items
+  if (items.length === 0) {
+    return (
+      <div className={`flex items-center justify-center ${className}`}>
+        <div className="flex items-center gap-2 text-cream/50">
+          <div
+            className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'} animate-pulse`}
+          />
+          <span className="text-sm">
+            {isConnected ? 'Waiting for updates...' : 'Connecting...'}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  const currentItem = items[currentIndex];
+
+  if (compact) {
+    return (
+      <div className={`overflow-hidden ${className}`}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentItem.id}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-2"
+          >
+            <span className="text-lg">{LEAGUE_ICONS[currentItem.league]}</span>
+            <span
+              className={`px-1.5 py-0.5 text-[10px] font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
+            >
+              {TYPE_LABELS[currentItem.type]}
+            </span>
+            <span className="text-sm text-cream truncate">{currentItem.headline}</span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`bg-midnight/90 backdrop-blur-sm border border-charcoal/50 rounded-lg ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-charcoal/50">
+        <div className="flex items-center gap-2">
+          <div
+            className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'} animate-pulse`}
+          />
+          <span className="text-xs font-semibold text-ember uppercase tracking-wider">
+            Live Ticker
+          </span>
+        </div>
+        <div className="flex items-center gap-1">
+          {items.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                idx === currentIndex ? 'bg-ember' : 'bg-charcoal'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Ticker Content */}
+      <div className="p-3 min-h-[60px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentItem.id}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xl">{LEAGUE_ICONS[currentItem.league]}</span>
+              <span
+                className={`px-2 py-0.5 text-xs font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
+              >
+                {currentItem.priority === 1 ? '🔴 BREAKING' : TYPE_LABELS[currentItem.type]}
+              </span>
+              <span className="text-xs text-cream/50">{currentItem.league}</span>
+            </div>
+            <p className="text-cream font-medium leading-snug">{currentItem.headline}</p>
+            <p className="text-xs text-cream/40 mt-1">
+              {new Date(currentItem.timestamp).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                timeZone: 'America/Chicago',
+              })}{' '}
+              CT
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+export default LiveTicker;

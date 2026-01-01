@@ -1,0 +1,26 @@
+name = "bsi-cfb-ai"
+main = "index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+[ai]
+binding = "AI"
+
+[[kv_namespaces]]
+binding = "CFB_CACHE"
+id = "8a7b3c4d5e6f7890abcdef1234567890"
+preview_id = "preview_8a7b3c4d5e6f7890abcdef1234567890"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-cfb-db"
+database_id = "placeholder-update-after-migration"
+
+# Cron triggers:
+# - 6 AM CT: Pre-generate AI content for today's games
+# - Every 4 hours: Fetch coded content from SportsDataIO
+[triggers]
+crons = ["0 6 * * *", "0 */4 * * *"]

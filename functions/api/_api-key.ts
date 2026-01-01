@@ -76,7 +76,7 @@ export async function validateApiKey(request: Request, env: ApiKeyEnv): Promise<
     };
   }
 
-  const keyPrefix = apiKey.substring(0, 8);
+  const _keyPrefix = apiKey.substring(0, 8);
   const keyHash = await hashApiKey(apiKey);
 
   // Check KV cache first

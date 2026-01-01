@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, BarChart, X, TrendingUp, Database, Cpu, Zap, Activity } from 'lucide-react';
+import { LineChart, BarChart, TrendingUp, Database, Cpu, Zap, Activity } from 'lucide-react';
 
 // Advanced MLB Analytics Engine for blazesportsintel.com
 // Powered by Cloudflare Workers + D1 + KV + Workers AI
@@ -7,13 +7,12 @@ import { LineChart, BarChart, X, TrendingUp, Database, Cpu, Zap, Activity } from
 const MLBAnalyticsEngine = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [teamData, setTeamData] = useState(null);
-  const [predictions, setPredictions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [aiInsight, setAIInsight] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('STL'); // Cardinals
 
   // Simulated API endpoint (replace with your Cloudflare Worker URL)
-  const API_BASE = '/api';
+  const _API_BASE = '/api';
 
   // Mock data structure (in production, this comes from D1)
   const mockTeamData = {

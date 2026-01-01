@@ -13,8 +13,8 @@ import type {
   StatcastPlayerSummary,
   StatcastLeaderboardEntry,
   BattedBallEvent,
-  StatcastApiResponse,
-  StatcastQueryParams,
+  StatcastApiResponse as _StatcastApiResponse,
+  StatcastQueryParams as _StatcastQueryParams,
 } from '../../../../lib/types/statcast';
 
 interface Env {
@@ -29,7 +29,7 @@ const corsHeaders = {
 
 // MLB Stats API and Baseball Savant URLs
 const MLB_STATS_API = 'https://statsapi.mlb.com/api/v1';
-const BASEBALL_SAVANT_API = 'https://baseballsavant.mlb.com/statcast_search';
+const _BASEBALL_SAVANT_API = 'https://baseballsavant.mlb.com/statcast_search';
 
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env, params } = context;

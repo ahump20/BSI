@@ -76,7 +76,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const adapter = new CFBDAdapter(apiKey, env.CACHE);
 
     // Parse query parameters
-    const url = new URL(request.url);
+    const _url = new URL(request.url);
 
     // If no game ID, return games for a week
     if (!gameId || gameId === 'undefined') {

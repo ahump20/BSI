@@ -9,7 +9,7 @@
 
 import type {
   StartMonitoringRequest,
-  StartMonitoringResponse,
+  StartMonitoringResponse as _StartMonitoringResponse,
 } from '../../../lib/reconstruction/types';
 import { LiveMonitor } from '../../../lib/reconstruction/live-monitor';
 

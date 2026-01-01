@@ -24,13 +24,17 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+// Helper to safely access process.env in both Node.js and Workers
+const getNodeEnv = () =>
+  typeof process !== 'undefined' ? process.env?.NODE_ENV : undefined;
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log: getNodeEnv() === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (getNodeEnv() !== 'production') globalForPrisma.prisma = prisma;
 
 /**
  * Gracefully disconnect from database
