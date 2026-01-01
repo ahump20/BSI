@@ -11,7 +11,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef, forwardRef, type ReactNode, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from './hooks';
-import { fadeInUp, cardHover, cardRest, easing } from './variants';
+import { fadeInUp, cardHover, easing } from './variants';
 
 export interface AnimatedCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   children: ReactNode;

@@ -143,7 +143,7 @@ const navItems = [
 // HELPERS
 // ============================================================================
 
-function formatTimestamp(isoString?: string): string {
+function _formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
   return (
     date.toLocaleString('en-US', {

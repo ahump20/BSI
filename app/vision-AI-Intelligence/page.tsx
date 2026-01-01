@@ -358,7 +358,7 @@ export default function VisionAIIntelligencePage() {
   const [mode, setMode] = useState<'sports' | 'body'>('sports');
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState('Initializing...');
-  const [modelLoaded, setModelLoaded] = useState(false);
+  const [_modelLoaded, setModelLoaded] = useState(false);
   const [fps, setFps] = useState(0);
 
   // Permission state (for mobile Safari)
@@ -455,6 +455,7 @@ export default function VisionAIIntelligencePage() {
         // Check camera permission
         if ('permissions' in navigator) {
           try {
+            // eslint-disable-next-line no-undef -- PermissionName is a valid DOM type
             const camera = await navigator.permissions.query({ name: 'camera' as PermissionName });
             setCameraPermission(camera.state as PermissionStatus);
             camera.onchange = () => setCameraPermission(camera.state as PermissionStatus);
@@ -464,6 +465,7 @@ export default function VisionAIIntelligencePage() {
           }
 
           try {
+            // eslint-disable-next-line no-undef -- PermissionName is a valid DOM type
             const mic = await navigator.permissions.query({ name: 'microphone' as PermissionName });
             setMicPermission(mic.state as PermissionStatus);
             mic.onchange = () => setMicPermission(mic.state as PermissionStatus);

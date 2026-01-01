@@ -1173,9 +1173,8 @@ const springInterp = (
 // AUDIO SYSTEM - Web Audio API for Miniclip-style game feel
 // ============================================================================
 
-interface AudioContextType extends AudioContext {
-  webkitAudioContext?: typeof AudioContext;
-}
+// Web Audio API type definitions for ESLint compatibility
+type OscillatorType = 'sine' | 'square' | 'sawtooth' | 'triangle' | 'custom';
 
 declare global {
   interface Window {
@@ -3269,7 +3268,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({
     setTimeout(() => throwPitch(), 500);
   };
 
-  const triggerGameOver = () => {
+  const _triggerGameOver = () => {
     const isNewHigh = score > highScore;
     if (isNewHigh) onUpdateHighScore(score);
     sounds.gameOver();
@@ -5180,9 +5179,9 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
   };
 
   // Handle game completion with achievement checking
-  const handleGameComplete = useCallback(
-    (gameId: string, stats: HotDogStats | SluggerStats | FootballStats) => {
-      recordGamePlayed(gameId, stats.finalScore);
+  const _handleGameComplete = useCallback(
+    (_gameId: string, stats: HotDogStats | SluggerStats | FootballStats) => {
+      recordGamePlayed(_gameId, stats.finalScore);
       checkAchievements(stats);
 
       // Check for team defeated in football

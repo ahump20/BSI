@@ -11,6 +11,7 @@
 
 import { useEffect, useState, useRef, useMemo, Suspense } from 'react';
 import dynamic from 'next/dynamic';
+import type * as THREE from 'three';
 
 // Lazy load Three.js components to reduce bundle size
 const Canvas = dynamic(() => import('@react-three/fiber').then((mod) => mod.Canvas), {
@@ -93,8 +94,10 @@ function EmberParticles({ count = 200 }: { count?: number }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
   // Import Three.js dynamically
+  // eslint-disable-next-line @typescript-eslint/no-var-requires -- dynamic import for SSR
   const THREE = useMemo(() => {
     if (typeof window === 'undefined') return null;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require('three');
   }, []);
 
@@ -163,6 +166,7 @@ function EmberParticles({ count = 200 }: { count?: number }) {
   }, [particles, count, THREE]);
 
   // Animation with useFrame from r3f
+  // eslint-disable-next-line @typescript-eslint/no-var-requires -- dynamic import for R3F hook
   const { useFrame } = require('@react-three/fiber');
 
   useFrame((state: { clock: { elapsedTime: number } }, delta: number) => {
@@ -201,8 +205,11 @@ function EmberParticles({ count = 200 }: { count?: number }) {
   if (!THREE) return null;
 
   return (
+    // eslint-disable-next-line react/no-unknown-property -- R3F props
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]} frustumCulled={false}>
+      {/* eslint-disable-next-line react/no-unknown-property -- R3F props */}
       <circleGeometry args={[1, 8]} />
+      {/* eslint-disable react/no-unknown-property -- R3F material props */}
       <meshBasicMaterial
         transparent
         opacity={0.6}
@@ -210,6 +217,7 @@ function EmberParticles({ count = 200 }: { count?: number }) {
         blending={THREE.AdditiveBlending}
         depthWrite={false}
       />
+      {/* eslint-enable react/no-unknown-property */}
     </instancedMesh>
   );
 }

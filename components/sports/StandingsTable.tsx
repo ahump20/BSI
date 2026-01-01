@@ -72,7 +72,7 @@ function parseNFLStandings(rawData: NFLTeamRaw[]): TeamStanding[] {
       wins: team.Wins || 0,
       losses: team.Losses || 0,
       pct: team.Percentage ? team.Percentage.toFixed(3).replace(/^0/, '') : '.000',
-      streak: team.Streak || '-',
+      streak: String(team.Streak || '-'),
     }));
 }
 
@@ -88,8 +88,9 @@ function parseNBAStandings(conferences: NBAConference[]): TeamStanding[] {
       // Get wins/losses from direct properties or nested record
       const wins = team.wins ?? team.record?.wins ?? 0;
       const losses = team.losses ?? team.record?.losses ?? 0;
-      // Get streak from direct property or nested standings
-      const streak = team.streak || team.standings?.streak || '-';
+      // Get streak from direct property or nested standings - coerce to string for .startsWith() calls
+      const rawStreak = team.streak || team.standings?.streak || '-';
+      const streak = typeof rawStreak === 'string' ? rawStreak : String(rawStreak);
       // Calculate PCT or use provided value
       const pct = team.record?.winningPercentage
         ? team.record.winningPercentage.replace(/^0/, '')

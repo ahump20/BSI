@@ -11,7 +11,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef, Children, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from './hooks';
-import { staggerContainer, staggerItem, easing } from './variants';
+import { staggerItem, easing } from './variants';
 
 export interface StaggerGridProps {
   children: ReactNode;

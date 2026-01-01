@@ -1,15 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-import { Skeleton } from '@/components/ui/Skeleton';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -105,7 +104,7 @@ const mlbTeams: Team[] = [
 
 export default function MLBTeamsPage() {
   const [teams, setTeams] = useState<Team[]>(mlbTeams);
-  const [loading, setLoading] = useState(false);
+  const [_loading, _setLoading] = useState(false);
   const [meta, setMeta] = useState<DataMeta | null>(null);
   const [selectedLeague, setSelectedLeague] = useState<'all' | 'AL' | 'NL'>('all');
 

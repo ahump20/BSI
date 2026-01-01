@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import type { TabNavigationProps } from '../GameDetailModal.types';
-import type { GameDetailTab, GAME_DETAIL_TABS } from '@/lib/types/adapters';
+import type { GameDetailTab } from '@/lib/types/adapters';
 
 const TAB_LABELS: Record<GameDetailTab, string> = {
   gamecast: 'Gamecast',

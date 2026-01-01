@@ -12,7 +12,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import type { Game, BoxScore } from '@/lib/college-baseball/types';
+import type { Game } from '@/lib/college-baseball/types';
 
 interface GameCenterProps {
   initialGames?: Game[];

@@ -53,7 +53,7 @@ export function ParallaxImage({
   const imageRef = useRef<HTMLDivElement>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
-  const rafId = useRef<number | null>(null);
+  const _rafId = useRef<number | null>(null);
 
   // Check reduced motion preference
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import type { VideoHighlight, VideoSource } from '@/lib/types/adapters';
+import type { VideoHighlight } from '@/lib/types/adapters';
 import { InlineClip } from '@/components/StreamVideo';
 
 export interface VideoPlayerProps {

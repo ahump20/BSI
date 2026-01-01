@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { GameStatusBadge, type GameStatus, LiveBadge } from '@/components/ui/Badge';
+import { type GameStatus } from '@/components/ui/Badge';
 
 // Sport-specific color theming
 const sportThemes = {

@@ -34,3 +34,27 @@ export const footerNavItems: NavItem[] = [
   { label: 'Privacy', href: '/privacy' },
   { label: 'Terms', href: '/terms' },
 ];
+
+/**
+ * College Football navigation items
+ */
+export const cfbNavItems: NavItem[] = [
+  { label: 'CFB Home', href: '/cfb' },
+  { label: 'Transfer Portal', href: '/cfb/transfer-portal' },
+  { label: 'Rankings', href: '/cfb/rankings' },
+  { label: 'Schedules', href: '/cfb/schedules' },
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Home', href: '/' },
+];
+
+/**
+ * College Baseball navigation items
+ */
+export const collegeBaseballNavItems: NavItem[] = [
+  { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
+  { label: 'Rankings', href: '/college-baseball/rankings' },
+  { label: 'Schedules', href: '/college-baseball/schedules' },
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Home', href: '/' },
+];

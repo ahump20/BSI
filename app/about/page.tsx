@@ -32,8 +32,8 @@ const chapters = [
 
 export default function AboutPage() {
   const [activeChapter, setActiveChapter] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const chapterRefs = useRef<(HTMLElement | null)[]>([]);
+  const [_isTransitioning, setIsTransitioning] = useState(false);
+  const _chapterRefs = useRef<(HTMLElement | null)[]>([]);
 
   // Smooth chapter transition with fade effect
   const handleChapterChange = useCallback((index: number) => {

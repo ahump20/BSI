@@ -21,7 +21,6 @@ import {
   BattedBallData,
   ExpectedMetrics,
   StuffRating,
-  PitchData,
 } from '../../lib/analytics/baseball/expected-metrics-calculator';
 
 interface ProAnalyticsTabProps {
