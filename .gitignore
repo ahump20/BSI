@@ -93,7 +93,7 @@ deprecated/
 *-v2/
 *-new/
 
-# Netlify/Vercel
+# External deployment platforms
 .netlify/
 .vercel/
 
