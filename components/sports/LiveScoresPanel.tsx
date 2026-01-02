@@ -10,6 +10,14 @@ import type { UnifiedSportKey } from '@/lib/types/adapters';
 
 const API_BASE = 'https://blazesportsintel.com/api';
 
+// Sport key mapping for the unified live-scores endpoint
+const SPORT_QUERY_MAP: Record<Sport, string> = {
+  mlb: 'mlb',
+  nfl: 'nfl',
+  nba: 'nba',
+  ncaa: 'ncaa-baseball', // Default NCAA to baseball
+};
+
 interface Game {
   id: string;
   homeTeam: {
@@ -30,212 +38,179 @@ interface Game {
   period?: string;
 }
 
-// NFL API game structure
-interface NFLGameRaw {
-  GlobalGameID?: number;
-  GameID?: number;
-  AwayTeam: string;
-  HomeTeam: string;
-  AwayTeamName?: string;
-  HomeTeamName?: string;
-  AwayScore?: number;
-  HomeScore?: number;
-  Status?: string;
-  DateTime?: string;
-  StadiumDetails?: { Name?: string };
-  Quarter?: string;
-  TimeRemaining?: string;
-  IsInProgress?: boolean;
-  IsOver?: boolean;
-}
-
-// NBA API game structure - handles both flat and nested team structures
-interface NBATeamRaw {
+// ESPN API response types from unified live-scores endpoint
+interface ESPNCompetitor {
   id?: string;
-  teamName?: string;
-  teamTricode?: string;
-  name?: string;
-  team?: string;
-  abbreviation?: string;
-  score?: string | number;
-  record?: string;
+  order?: number;
+  homeAway?: string;
+  score?: string;
+  winner?: boolean;
+  team?: {
+    id?: string;
+    displayName?: string;
+    abbreviation?: string;
+    logos?: Array<{ href?: string }>;
+    rank?: number;
+  };
+  records?: Array<{ summary?: string }>;
 }
 
-interface NBAGameRaw {
-  id: string;
-  homeTeam?: NBATeamRaw;
-  awayTeam?: NBATeamRaw;
-  // ESPN API uses nested teams structure
-  teams?: {
-    away?: NBATeamRaw;
-    home?: NBATeamRaw;
+interface ESPNGameStatus {
+  type?: {
+    name?: string;
+    detail?: string;
+    shortDetail?: string;
+    completed?: boolean;
+    state?: string;
   };
-  status: string | { state?: string; isLive?: boolean; isFinal?: boolean; detail?: string };
-  gameTime?: string;
-  gameStatusText?: string;
-  venue?: { name?: string };
-  arenaName?: string;
   period?: number;
+  displayClock?: string;
+  balls?: number;
+  strikes?: number;
+  outs?: number;
 }
 
-// NFL nested games structure
-interface NFLGamesResponse {
-  games?: {
-    live?: NFLGameRaw[];
-    final?: NFLGameRaw[];
-    scheduled?: NFLGameRaw[];
+interface ESPNGame {
+  id?: string;
+  name?: string;
+  startTime?: string;
+  status?: ESPNGameStatus;
+  competitors?: ESPNCompetitor[];
+  venue?: { name?: string };
+}
+
+interface LiveScoresResponse {
+  sports?: {
+    mlb?: { games?: ESPNGame[] };
+    nfl?: { games?: ESPNGame[]; week?: number };
+    nba?: { games?: ESPNGame[] };
+    ncaa?: { football?: { games?: ESPNGame[] } };
+    ncaaBaseball?: { games?: ESPNGame[] };
   };
 }
 
-function parseNFLGames(data: NFLGamesResponse): Game[] {
-  const gamesObj = data.games || {};
-  const allGames: NFLGameRaw[] = [
-    ...(gamesObj.live || []),
-    ...(gamesObj.final || []),
-    ...(gamesObj.scheduled || []),
-  ];
+/**
+ * Transform ESPN game format to our standard Game interface
+ */
+function transformESPNGame(
+  game: ESPNGame,
+  sportType: 'baseball' | 'football' | 'basketball'
+): Game {
+  const competitors = game.competitors || [];
+  const homeCompetitor = competitors.find((c) => c.homeAway === 'home');
+  const awayCompetitor = competitors.find((c) => c.homeAway === 'away');
 
-  return allGames.slice(0, 9).map((game) => ({
-    id: String(game.GlobalGameID || game.GameID || Math.random()),
+  // Map ESPN status to our status
+  const statusType = game.status?.type?.name?.toLowerCase() || '';
+  const statusState = game.status?.type?.state?.toLowerCase() || '';
+  let status: Game['status'] = 'scheduled';
+
+  if (game.status?.type?.completed) {
+    status = 'final';
+  } else if (statusType.includes('in') || statusState === 'in') {
+    status = 'live';
+  } else if (statusType.includes('delayed') || statusType.includes('delay')) {
+    status = 'delayed';
+  } else if (statusType.includes('postponed')) {
+    status = 'postponed';
+  } else if (
+    statusType.includes('scheduled') ||
+    statusType.includes('pre') ||
+    statusState === 'pre'
+  ) {
+    status = 'scheduled';
+  } else if (statusType.includes('final') || statusState === 'post') {
+    status = 'final';
+  }
+
+  // Build game time string
+  let gameTime = game.status?.type?.shortDetail || game.status?.type?.detail;
+  if (!gameTime && game.startTime) {
+    gameTime = new Date(game.startTime).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: 'America/Chicago',
+    });
+  }
+
+  // Build period/inning/quarter string based on sport
+  const periodInfo: { inning?: string; quarter?: string; period?: string } = {};
+  if (sportType === 'baseball' && game.status?.period) {
+    periodInfo.inning = `${game.status.period}${game.status.type?.state === 'in' ? ' - Live' : ''}`;
+  } else if (sportType === 'football' && game.status?.period) {
+    periodInfo.quarter = game.status.displayClock
+      ? `Q${game.status.period} - ${game.status.displayClock}`
+      : `Q${game.status.period}`;
+  } else if (sportType === 'basketball' && game.status?.period) {
+    periodInfo.period = game.status.displayClock
+      ? `${game.status.period}Q - ${game.status.displayClock}`
+      : `${game.status.period}Q`;
+  }
+
+  return {
+    id: game.id || String(Math.random()),
     homeTeam: {
-      name: game.HomeTeamName || game.HomeTeam,
-      abbreviation: game.HomeTeam,
-      score: game.HomeScore || 0,
+      name: homeCompetitor?.team?.displayName || 'Home',
+      abbreviation: homeCompetitor?.team?.abbreviation || 'HOM',
+      score: parseInt(homeCompetitor?.score || '0', 10) || 0,
     },
     awayTeam: {
-      name: game.AwayTeamName || game.AwayTeam,
-      abbreviation: game.AwayTeam,
-      score: game.AwayScore || 0,
+      name: awayCompetitor?.team?.displayName || 'Away',
+      abbreviation: awayCompetitor?.team?.abbreviation || 'AWY',
+      score: parseInt(awayCompetitor?.score || '0', 10) || 0,
     },
-    status: game.IsInProgress ? 'live' : game.IsOver ? 'final' : 'scheduled',
-    gameTime: game.DateTime
-      ? new Date(game.DateTime).toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          timeZone: 'America/Chicago',
-        })
-      : undefined,
-    venue: game.StadiumDetails?.Name,
-    quarter: game.Quarter ? `${game.Quarter} - ${game.TimeRemaining || ''}` : undefined,
-  }));
-}
-
-function parseNBAGames(games: NBAGameRaw[]): Game[] {
-  return games
-    .filter((game) => {
-      if (!game) return false;
-      // Support both flat (homeTeam/awayTeam) and nested (teams.home/teams.away) structures
-      const hasFlat = game.homeTeam && game.awayTeam;
-      const hasNested = game.teams?.home && game.teams?.away;
-      return hasFlat || hasNested;
-    })
-    .slice(0, 9)
-    .map((game) => {
-      // Extract teams from either structure
-      const homeTeam = game.homeTeam || game.teams?.home;
-      const awayTeam = game.awayTeam || game.teams?.away;
-
-      // Get team name - API uses 'team' field for full name
-      const homeName = homeTeam?.teamName || homeTeam?.team || homeTeam?.name || 'Home';
-      const awayName = awayTeam?.teamName || awayTeam?.team || awayTeam?.name || 'Away';
-
-      // Get abbreviation
-      const homeAbbr = homeTeam?.teamTricode || homeTeam?.abbreviation || 'HOM';
-      const awayAbbr = awayTeam?.teamTricode || awayTeam?.abbreviation || 'AWY';
-
-      // Get score (can be string or number)
-      const homeScore =
-        typeof homeTeam?.score === 'string'
-          ? parseInt(homeTeam.score, 10) || 0
-          : homeTeam?.score || 0;
-      const awayScore =
-        typeof awayTeam?.score === 'string'
-          ? parseInt(awayTeam.score, 10) || 0
-          : awayTeam?.score || 0;
-
-      // Parse status - can be string or object
-      let gameStatus: Game['status'] = 'scheduled';
-      if (typeof game.status === 'object') {
-        if (game.status.isLive) gameStatus = 'live';
-        else if (game.status.isFinal) gameStatus = 'final';
-        else if (game.status.state === 'pre') gameStatus = 'scheduled';
-        else if (game.status.state === 'in') gameStatus = 'live';
-        else if (game.status.state === 'post') gameStatus = 'final';
-      } else {
-        if (game.status === 'pre') gameStatus = 'scheduled';
-        else if (game.status === 'in') gameStatus = 'live';
-        else if (game.status === 'post') gameStatus = 'final';
-        else gameStatus = (game.status as Game['status']) || 'scheduled';
-      }
-
-      // Get game time from status detail or other fields
-      const statusDetail = typeof game.status === 'object' ? game.status.detail : undefined;
-      const gameTime = game.gameTime || game.gameStatusText || statusDetail;
-
-      return {
-        id: game.id || String(Math.random()),
-        homeTeam: {
-          name: homeName,
-          abbreviation: homeAbbr,
-          score: homeScore,
-        },
-        awayTeam: {
-          name: awayName,
-          abbreviation: awayAbbr,
-          score: awayScore,
-        },
-        status: gameStatus,
-        gameTime,
-        venue: game.venue?.name || game.arenaName,
-        period: game.period ? `${game.period}Q` : undefined,
-      };
-    });
+    status,
+    gameTime,
+    venue: game.venue?.name,
+    ...periodInfo,
+  };
 }
 
 async function fetchScores(sport: Sport): Promise<Game[]> {
-  const endpoints: Record<Sport, string> = {
-    mlb: `${API_BASE}/mlb/scores`,
-    nfl: `${API_BASE}/nfl/scores`,
-    nba: `${API_BASE}/nba/scores`,
-    ncaa: `${API_BASE}/ncaa/scores`,
-  };
+  const sportQuery = SPORT_QUERY_MAP[sport];
+  const endpoint = `${API_BASE}/live-scores?sport=${sportQuery}`;
 
   try {
-    const res = await fetch(endpoints[sport]);
+    const res = await fetch(endpoint);
     if (!res.ok) {
-      // Return mock data for development
       return getMockGames(sport);
     }
-    const data = await res.json();
 
-    // Handle NFL nested structure
-    if (
-      sport === 'nfl' &&
-      data.games &&
-      typeof data.games === 'object' &&
-      !Array.isArray(data.games)
-    ) {
-      return parseNFLGames(data as NFLGamesResponse);
+    const data = (await res.json()) as LiveScoresResponse;
+
+    // Extract games based on sport type
+    let games: ESPNGame[] = [];
+    let sportType: 'baseball' | 'football' | 'basketball' = 'baseball';
+
+    switch (sport) {
+      case 'mlb':
+        games = data.sports?.mlb?.games || [];
+        sportType = 'baseball';
+        break;
+      case 'nfl':
+        games = data.sports?.nfl?.games || [];
+        sportType = 'football';
+        break;
+      case 'nba':
+        games = data.sports?.nba?.games || [];
+        sportType = 'basketball';
+        break;
+      case 'ncaa':
+        // Default NCAA to baseball (college baseball)
+        games = data.sports?.ncaaBaseball?.games || [];
+        sportType = 'baseball';
+        break;
     }
 
-    // Handle NBA array structure
-    if (sport === 'nba' && data.games && Array.isArray(data.games)) {
-      return parseNBAGames(data.games as NBAGameRaw[]);
+    if (games.length === 0) {
+      return getMockGames(sport);
     }
 
-    // Fallback for flat arrays (MLB, NCAA)
-    if (data.games && Array.isArray(data.games)) {
-      return data.games as Game[];
-    }
-    if (data.data && Array.isArray(data.data)) {
-      return data.data as Game[];
-    }
-
-    return getMockGames(sport);
+    // Transform ESPN format to our Game interface
+    return games.slice(0, 9).map((game) => transformESPNGame(game, sportType));
   } catch {
-    // Return mock data if API fails
     return getMockGames(sport);
   }
 }
