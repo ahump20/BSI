@@ -44,5 +44,5 @@ export { Marquee } from './Marquee';
 // Quote Block
 export { QuoteBlock } from './QuoteBlock';
 
-// Live ticker
-export { LiveTicker } from './LiveTicker';
+// Live ticker (re-exported from dedicated module)
+export { LiveTicker } from '../live-ticker/LiveTicker';

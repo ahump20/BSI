@@ -46,6 +46,13 @@ interface Game {
   situation?: string;
 }
 
+interface ScheduleApiResponse {
+  success: boolean;
+  data?: Game[];
+  timestamp?: string;
+  message?: string;
+}
+
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
 
 export default function CollegeBaseballGamesPage() {
@@ -61,7 +68,7 @@ export default function CollegeBaseballGamesPage() {
         setLoading(true);
         const confParam = selectedConference !== 'All' ? '&conference=' + selectedConference : '';
         const response = await fetch('/api/college-baseball/schedule?' + confParam);
-        const result = await response.json();
+        const result = (await response.json()) as ScheduleApiResponse;
 
         if (result.success && result.data) {
           setGames(result.data);

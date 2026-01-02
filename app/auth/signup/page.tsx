@@ -48,7 +48,7 @@ export default function SignupPage() {
         }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         throw new Error(data.error || 'Signup failed');

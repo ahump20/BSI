@@ -336,7 +336,7 @@ export default function ForCoachesPage() {
                     <Link href="/pricing">
                       <Button
                         className="w-full"
-                        variant={tier.popular ? 'default' : 'outline'}
+                        variant={tier.popular ? 'primary' : 'outline'}
                         style={tier.popular ? { backgroundColor: colors.burntOrange } : {}}
                       >
                         {tier.cta}

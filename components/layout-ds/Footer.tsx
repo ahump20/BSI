@@ -16,15 +16,17 @@ export interface FooterSection {
   links: FooterLink[];
 }
 
+export interface SocialLink {
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
 export interface FooterProps {
   /** Footer link sections */
   sections?: FooterSection[];
   /** Social links */
-  socials?: Array<{
-    label: string;
-    href: string;
-    icon: React.ReactNode;
-  }>;
+  socials?: SocialLink[];
   /** Show newsletter signup */
   showNewsletter?: boolean;
   /** Additional class names */

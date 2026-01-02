@@ -89,7 +89,7 @@ export default function MLBStatsPage() {
     try {
       const res = await fetch(`/api/mlb/stats/leaders?category=${category}&stat=${selectedStat}`);
       if (!res.ok) throw new Error('Failed to fetch leaders');
-      const data = await res.json();
+      const data = (await res.json()) as { leaders?: StatLeader[]; meta?: DataMeta };
 
       if (data.leaders) {
         setLeaders((prev) => ({ ...prev, [`${category}-${selectedStat}`]: data.leaders }));

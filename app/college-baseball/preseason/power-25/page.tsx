@@ -563,7 +563,9 @@ export default function Power25Page() {
                             </h3>
                             <Badge variant="secondary">{team.conference}</Badge>
                             {team.isTexas && (
-                              <MapPin className="w-4 h-4 text-burnt-orange" title="Texas" />
+                              <span title="Texas">
+                                <MapPin className="w-4 h-4 text-burnt-orange" />
+                              </span>
                             )}
                           </div>
 

@@ -95,6 +95,7 @@ const CelebrationHeader: React.FC<CelebrationHeaderProps> = ({ outcome, homeScor
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- confettiAnims refs are stable Animated.Values
   }, [outcome]);
 
   const outcomeConfig = {
@@ -267,6 +268,7 @@ const StatRow: React.FC<StatRowProps> = ({ label, value, highlight = false, dela
         }),
       ]),
     ]).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- slideAnim and opacityAnim are stable Animated.Value refs
   }, [delay]);
 
   return (
@@ -444,6 +446,7 @@ const Rewards: React.FC<RewardsProps> = ({ xpEarned, coinsEarned }) => {
       clearInterval(xpInterval);
       clearInterval(coinsInterval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- scaleAnim is stable Animated.Value, state setters are stable
   }, [xpEarned, coinsEarned]);
 
   return (

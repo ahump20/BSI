@@ -14,6 +14,11 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { StatusBadge } from '@/components/portal';
 import { collegeBaseballNavItems } from '@/lib/navigation';
 
+interface PlayerApiResponse {
+  player?: PlayerProfile;
+  data?: PlayerProfile;
+}
+
 interface PlayerProfile {
   id: string;
   player_name: string;
@@ -92,8 +97,8 @@ export function PlayerDetailClient() {
         if (!response.ok) {
           throw new Error('Player not found');
         }
-        const data = await response.json();
-        setPlayer(data.player || data.data);
+        const data = (await response.json()) as PlayerApiResponse;
+        setPlayer(data.player || data.data || null);
       } catch {
         // Use mock data for development
         setPlayer(getMockPlayer(playerId));

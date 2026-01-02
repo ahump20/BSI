@@ -241,6 +241,7 @@ function BlazeSportsCommandCenterInner() {
     );
   }, [players, searchTerm]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- debounce creates stable function, setSearchTerm is stable setter
   const debouncedSearch = useCallback(
     debounce((value: string) => setSearchTerm(value), 300),
     []

@@ -350,6 +350,10 @@ interface Baseline {
   userId?: string;
 }
 
+interface BaselineResponse {
+  baseline?: Baseline;
+}
+
 interface LogEntry {
   t: string;
   tag: string;
@@ -542,7 +546,7 @@ export default function VisionAIIntelligencePage() {
       try {
         const res = await fetch('/api/v1/vision/baselines');
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as BaselineResponse;
           if (data.baseline) {
             setBaseline(data.baseline);
             setCalibrated(true);

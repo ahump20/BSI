@@ -18,6 +18,11 @@ interface AITeamPreviewProps {
   teamName: string;
 }
 
+interface PreviewResponse {
+  preview: PreviewResult;
+  cached?: boolean;
+}
+
 const outlookConfig: Record<
   PreviewResult['outlook'],
   { variant: 'primary' | 'secondary' | 'success' | 'warning' | 'error'; label: string }
@@ -52,7 +57,7 @@ export function AITeamPreview({ teamId, teamName }: AITeamPreviewProps) {
         throw new Error(`Failed to fetch preview: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as PreviewResponse;
       setPreview(data.preview);
       setCached(data.cached || false);
     } catch (err) {
@@ -65,6 +70,7 @@ export function AITeamPreview({ teamId, teamName }: AITeamPreviewProps) {
 
   useEffect(() => {
     fetchPreview();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPreview is intentionally not a dependency to prevent infinite loops
   }, [teamId]);
 
   if (loading) {

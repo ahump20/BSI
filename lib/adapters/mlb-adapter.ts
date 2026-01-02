@@ -365,7 +365,7 @@ export class MlbAdapter {
     }
   }
 
-  private async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
+  protected async fetchWithCache<T>(url: string, cacheKey: string, ttl: number): Promise<T> {
     // Try cache first
     const cached = await this.getCached<T>(cacheKey);
     if (cached) {
@@ -856,13 +856,37 @@ export interface ScheduleGame {
 
 // Add live game methods to MlbAdapter class
 MlbAdapter.prototype.fetchLiveGameData = async function (
+  this: MlbAdapter,
   gamePk: number
 ): Promise<LiveGameData | null> {
   const url = `${MLB_STATS_API_BASE}.1/game/${gamePk}/feed/live`;
   const cacheKey = `mlb:live:${gamePk}`;
 
   try {
-    const response = await this.fetchWithCache<any>(url, cacheKey, 15); // 15 second cache for live data
+    const response = await this.fetchWithCache<{
+      liveData?: {
+        linescore?: {
+          currentInning?: number;
+          isTopInning?: boolean;
+          outs?: number;
+          offense?: { first?: unknown; second?: unknown; third?: unknown };
+          teams?: { home?: { runs?: number }; away?: { runs?: number } };
+        };
+        plays?: {
+          currentPlay?: {
+            count?: { balls?: number; strikes?: number };
+            matchup?: {
+              batter?: { id: number; fullName: string };
+              pitcher?: { id: number; fullName: string };
+              batterStats?: { avg?: string };
+              pitcherStats?: { era?: string; numberOfPitches?: number };
+            };
+          };
+          allPlays?: { result?: { description?: string } }[];
+        };
+      };
+      gameData?: { status?: { detailedState?: string } };
+    }>(url, cacheKey, 15); // 15 second cache for live data
 
     const liveData = response.liveData;
     const gameData = response.gameData;
@@ -911,12 +935,39 @@ MlbAdapter.prototype.fetchLiveGameData = async function (
   }
 };
 
-MlbAdapter.prototype.fetchPitchByPitch = async function (gamePk: number): Promise<AtBatData[]> {
+MlbAdapter.prototype.fetchPitchByPitch = async function (
+  this: MlbAdapter,
+  gamePk: number
+): Promise<AtBatData[]> {
   const url = `${MLB_STATS_API_BASE}.1/game/${gamePk}/feed/live`;
   const cacheKey = `mlb:pbp:${gamePk}`;
 
   try {
-    const response = await this.fetchWithCache<any>(url, cacheKey, 30); // 30 second cache
+    const response = await this.fetchWithCache<{
+      liveData?: {
+        plays?: {
+          allPlays?: {
+            matchup?: {
+              batter?: { id: number; fullName: string };
+              pitcher?: { id: number; fullName: string };
+            };
+            result?: { type?: string; description?: string; rbi?: number };
+            about?: { isScoringPlay?: boolean };
+            playEvents?: {
+              isPitch?: boolean;
+              playId?: string;
+              details?: { type?: { description?: string }; description?: string };
+              pitchData?: {
+                startSpeed?: number;
+                zone?: number;
+                coordinates?: { pX?: number; pZ?: number };
+                breaks?: { spinRate?: number; breakAngle?: number; breakLength?: number };
+              };
+            }[];
+          }[];
+        };
+      };
+    }>(url, cacheKey, 30); // 30 second cache
 
     const allPlays = response.liveData?.plays?.allPlays || [];
 
@@ -960,6 +1011,7 @@ MlbAdapter.prototype.fetchPitchByPitch = async function (gamePk: number): Promis
 };
 
 MlbAdapter.prototype.fetchSchedule = async function (
+  this: MlbAdapter,
   date: string,
   teamId?: number
 ): Promise<ScheduleGame[]> {
@@ -970,7 +1022,23 @@ MlbAdapter.prototype.fetchSchedule = async function (
   const cacheKey = `mlb:schedule:${date}:${teamId || 'all'}`;
 
   try {
-    const response = await this.fetchWithCache<any>(url, cacheKey, CACHE_TTLS.schedule);
+    const response = await this.fetchWithCache<{
+      dates?: {
+        games: {
+          gamePk: number;
+          officialDate: string;
+          gameDate: string;
+          status?: { abstractGameState?: string; detailedState?: string };
+          teams?: {
+            home?: { team?: { id: number; name: string; abbreviation: string }; score?: number };
+            away?: { team?: { id: number; name: string; abbreviation: string }; score?: number };
+          };
+          venue?: { id: number; name: string };
+          seriesDescription?: string;
+          seriesGameNumber?: number;
+        }[];
+      }[];
+    }>(url, cacheKey, CACHE_TTLS.schedule);
 
     const dates = response.dates || [];
     if (dates.length === 0) return [];

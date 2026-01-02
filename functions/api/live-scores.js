@@ -79,7 +79,7 @@ async function getLiveScores(sport, date, env) {
     }
   }
 
-  // Generate live scores data
+  // Fetch live scores from real APIs
   const scores = {
     timestamp: new Date().toISOString(),
     date,
@@ -87,118 +87,118 @@ async function getLiveScores(sport, date, env) {
     sports: {},
   };
 
+  // Parallel fetch for all requested sports
+  const fetchPromises = [];
+
   if (sport === 'all' || sport === 'mlb') {
-    scores.sports.mlb = {
-      games: [
-        {
-          game_id: 'STL_CHC_2025_09_26',
-          status: 'Final',
-          inning: 9,
-          home: { team: 'Cardinals', score: 5, hits: 9, errors: 0 },
-          away: { team: 'Cubs', score: 3, hits: 7, errors: 1 },
-          winning_pitcher: 'Sonny Gray (12-8)',
-          losing_pitcher: 'Justin Steele (16-6)',
-          save: 'Ryan Helsley (48)',
-        },
-        {
-          game_id: 'HOU_TEX_2025_09_26',
-          status: 'In Progress',
-          inning: 6,
-          home: { team: 'Rangers', score: 2, hits: 5, errors: 0 },
-          away: { team: 'Astros', score: 4, hits: 8, errors: 0 },
-          current_pitcher: 'Framber Valdez',
-          current_batter: 'Corey Seager',
-        },
-      ],
-    };
+    fetchPromises.push(
+      fetchMLBScoreboard(date)
+        .then((data) => {
+          scores.sports.mlb = data;
+        })
+        .catch((error) => {
+          scores.sports.mlb = {
+            games: [],
+            meta: {
+              sport: 'baseball',
+              league: 'MLB',
+              dataSource: 'ESPN MLB API',
+              lastUpdated: new Date().toISOString(),
+              error: error instanceof Error ? error.message : 'Unknown error',
+            },
+          };
+        })
+    );
   }
 
   if (sport === 'all' || sport === 'nfl') {
-    scores.sports.nfl = {
-      week: 4,
-      games: [
-        {
-          game_id: 'TEN_HOU_2025_09_29',
-          status: 'Scheduled',
-          kickoff: '2025-09-29T18:00:00Z',
-          home: { team: 'Texans', spread: -7.5, total: 42.5 },
-          away: { team: 'Titans', spread: 7.5, total: 42.5 },
-          broadcast: 'CBS',
-        },
-        {
-          game_id: 'DAL_NO_2025_09_29',
-          status: 'Scheduled',
-          kickoff: '2025-09-29T20:20:00Z',
-          home: { team: 'Saints', spread: -3, total: 46.5 },
-          away: { team: 'Cowboys', spread: 3, total: 46.5 },
-          broadcast: 'NBC',
-        },
-      ],
-    };
+    fetchPromises.push(
+      fetchNFLScoreboard(date)
+        .then((data) => {
+          scores.sports.nfl = data;
+        })
+        .catch((error) => {
+          scores.sports.nfl = {
+            games: [],
+            meta: {
+              sport: 'football',
+              league: 'NFL',
+              dataSource: 'ESPN NFL API',
+              lastUpdated: new Date().toISOString(),
+              error: error instanceof Error ? error.message : 'Unknown error',
+            },
+          };
+        })
+    );
   }
 
   if (sport === 'all' || sport === 'nba') {
-    scores.sports.nba = {
-      games: [
-        {
-          game_id: 'MEM_DAL_2025_09_26',
-          status: 'Preseason',
-          quarter: 'Final',
-          home: { team: 'Mavericks', score: 118 },
-          away: { team: 'Grizzlies', score: 110 },
-          top_performers: {
-            grizzlies: { player: 'Ja Morant', pts: 22, ast: 7, reb: 4 },
-            mavericks: { player: 'Luka Doncic', pts: 28, ast: 9, reb: 8 },
-          },
-        },
-      ],
-    };
+    fetchPromises.push(
+      fetchNBAScoreboard(date)
+        .then((data) => {
+          scores.sports.nba = data;
+        })
+        .catch((error) => {
+          scores.sports.nba = {
+            games: [],
+            meta: {
+              sport: 'basketball',
+              league: 'NBA',
+              dataSource: 'ESPN NBA API',
+              lastUpdated: new Date().toISOString(),
+              error: error instanceof Error ? error.message : 'Unknown error',
+            },
+          };
+        })
+    );
   }
 
   if (sport === 'all' || sport === 'ncaa') {
-    scores.sports.ncaa = {
-      football: {
-        week: 5,
-        games: [
-          {
-            game_id: 'TEX_OU_2025_09_28',
-            status: 'Scheduled',
-            kickoff: '2025-09-28T15:30:00Z',
-            venue: 'Cotton Bowl',
-            home: { team: 'Oklahoma', rank: 15, spread: 7.5 },
-            away: { team: 'Texas', rank: 3, spread: -7.5 },
-            broadcast: 'ABC',
-            series: 'Red River Rivalry',
-          },
-          {
-            game_id: 'ALA_UGA_2025_09_28',
-            status: 'Scheduled',
-            kickoff: '2025-09-28T19:30:00Z',
-            venue: 'Bryant-Denny Stadium',
-            home: { team: 'Alabama', rank: 4, spread: -2.5 },
-            away: { team: 'Georgia', rank: 2, spread: 2.5 },
-            broadcast: 'CBS',
-          },
-        ],
-      },
-    };
+    fetchPromises.push(
+      fetchNCAAFootballScoreboard(date)
+        .then((data) => {
+          scores.sports.ncaa = { football: data };
+        })
+        .catch((error) => {
+          scores.sports.ncaa = {
+            football: {
+              games: [],
+              meta: {
+                sport: 'football',
+                league: 'NCAA',
+                dataSource: 'ESPN College Football API',
+                lastUpdated: new Date().toISOString(),
+                error: error instanceof Error ? error.message : 'Unknown error',
+              },
+            },
+          };
+        })
+    );
   }
 
   if (sport === 'all' || sport === 'ncaa-baseball') {
-    try {
-      scores.sports.ncaaBaseball = await fetchCollegeBaseballScoreboard(date);
-    } catch (error) {
-      scores.sports.ncaaBaseball = {
-        games: [],
-        meta: {
-          sport: 'baseball',
-          dataSource: 'ESPN College Baseball API',
-          lastUpdated: new Date().toISOString(),
-          error: error instanceof Error ? error.message : 'Unknown error',
-        },
-      };
-    }
+    fetchPromises.push(
+      fetchCollegeBaseballScoreboard(date)
+        .then((data) => {
+          scores.sports.ncaaBaseball = data;
+        })
+        .catch((error) => {
+          scores.sports.ncaaBaseball = {
+            games: [],
+            meta: {
+              sport: 'baseball',
+              league: 'NCAA',
+              dataSource: 'ESPN College Baseball API',
+              lastUpdated: new Date().toISOString(),
+              error: error instanceof Error ? error.message : 'Unknown error',
+            },
+          };
+        })
+    );
   }
+
+  // Wait for all fetches to complete
+  await Promise.allSettled(fetchPromises);
 
   // Cache the results
   if (env.CACHE) {
@@ -240,7 +240,136 @@ async function fetchCollegeBaseballScoreboard(date) {
     games: events.map(mapBaseballEvent),
     meta: {
       sport: 'baseball',
+      league: 'NCAA',
       dataSource: 'ESPN College Baseball API',
+      lastUpdated: new Date().toISOString(),
+      date: date || null,
+    },
+  };
+}
+
+/**
+ * Fetch MLB scores from ESPN API
+ */
+async function fetchMLBScoreboard(date) {
+  const sanitizedDate = date ? date.replace(/-/g, '') : '';
+  const url = sanitizedDate
+    ? `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?dates=${sanitizedDate}`
+    : 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard';
+
+  const signal = getTimeoutSignal(FETCH_TIMEOUT_MS);
+  const response = await fetch(url, { headers: espnHeaders, signal });
+
+  if (!response.ok) {
+    throw new Error(`ESPN MLB scoreboard failed with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  const events = Array.isArray(data?.events) ? data.events : [];
+
+  return {
+    games: events.map(mapBaseballEvent),
+    meta: {
+      sport: 'baseball',
+      league: 'MLB',
+      dataSource: 'ESPN MLB API',
+      lastUpdated: new Date().toISOString(),
+      date: date || null,
+    },
+  };
+}
+
+/**
+ * Fetch NFL scores from ESPN API
+ */
+async function fetchNFLScoreboard(date) {
+  const sanitizedDate = date ? date.replace(/-/g, '') : '';
+  const url = sanitizedDate
+    ? `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=${sanitizedDate}`
+    : 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
+
+  const signal = getTimeoutSignal(FETCH_TIMEOUT_MS);
+  const response = await fetch(url, { headers: espnHeaders, signal });
+
+  if (!response.ok) {
+    throw new Error(`ESPN NFL scoreboard failed with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  const events = Array.isArray(data?.events) ? data.events : [];
+  const week = data?.week?.number ?? null;
+
+  return {
+    week,
+    games: events.map(mapFootballEvent),
+    meta: {
+      sport: 'football',
+      league: 'NFL',
+      dataSource: 'ESPN NFL API',
+      lastUpdated: new Date().toISOString(),
+      date: date || null,
+    },
+  };
+}
+
+/**
+ * Fetch NBA scores from ESPN API
+ */
+async function fetchNBAScoreboard(date) {
+  const sanitizedDate = date ? date.replace(/-/g, '') : '';
+  const url = sanitizedDate
+    ? `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${sanitizedDate}`
+    : 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard';
+
+  const signal = getTimeoutSignal(FETCH_TIMEOUT_MS);
+  const response = await fetch(url, { headers: espnHeaders, signal });
+
+  if (!response.ok) {
+    throw new Error(`ESPN NBA scoreboard failed with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  const events = Array.isArray(data?.events) ? data.events : [];
+
+  return {
+    games: events.map(mapBasketballEvent),
+    meta: {
+      sport: 'basketball',
+      league: 'NBA',
+      dataSource: 'ESPN NBA API',
+      lastUpdated: new Date().toISOString(),
+      date: date || null,
+    },
+  };
+}
+
+/**
+ * Fetch NCAA Football scores from ESPN API
+ */
+async function fetchNCAAFootballScoreboard(date) {
+  const sanitizedDate = date ? date.replace(/-/g, '') : '';
+  const url = sanitizedDate
+    ? `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${sanitizedDate}&groups=80`
+    : 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80';
+
+  const signal = getTimeoutSignal(FETCH_TIMEOUT_MS);
+  const response = await fetch(url, { headers: espnHeaders, signal });
+
+  if (!response.ok) {
+    throw new Error(`ESPN College Football scoreboard failed with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  const events = Array.isArray(data?.events) ? data.events : [];
+  const week = data?.week?.number ?? null;
+
+  return {
+    week,
+    games: events.map(mapFootballEvent),
+    meta: {
+      sport: 'football',
+      league: 'NCAA',
+      dataSource: 'ESPN College Football API',
       lastUpdated: new Date().toISOString(),
       date: date || null,
     },
@@ -283,6 +412,91 @@ function mapBaseballEvent(event) {
     })),
     venue: competition?.venue ?? null,
     broadcasts: competition?.broadcasts ?? [],
+    links: event?.links ?? [],
+  };
+}
+
+function mapFootballEvent(event) {
+  const competition = Array.isArray(event?.competitions) ? event.competitions[0] : null;
+  const competitors = Array.isArray(competition?.competitors) ? competition.competitors : [];
+  const status = competition?.status ?? event?.status ?? {};
+  const situation = competition?.situation ?? {};
+
+  return {
+    id: event?.id ?? null,
+    name: event?.name ?? null,
+    startTime: event?.date ?? null,
+    status: {
+      type: status?.type?.name ?? null,
+      description: status?.type?.detail ?? status?.type?.description ?? null,
+      shortDetail: status?.type?.shortDetail ?? null,
+      completed: Boolean(status?.type?.completed),
+      quarter: status?.period ?? null,
+      clock: status?.displayClock ?? null,
+      down: situation?.down ?? null,
+      distance: situation?.distance ?? null,
+      yardLine: situation?.yardLine ?? null,
+      possession: situation?.possession ?? null,
+      isRedZone: Boolean(situation?.isRedZone),
+    },
+    competitors: competitors.map((team) => ({
+      id: team?.id ?? null,
+      order: team?.order ?? null,
+      homeAway: team?.homeAway ?? null,
+      score: team?.score ?? null,
+      winner: Boolean(team?.winner),
+      team: {
+        id: team?.team?.id ?? null,
+        name: team?.team?.displayName ?? null,
+        abbreviation: team?.team?.abbreviation ?? null,
+        logo: team?.team?.logos?.[0]?.href ?? null,
+        rank: team?.curatedRank?.current ?? null,
+      },
+      records: team?.records ?? [],
+      linescores: team?.linescores ?? [],
+    })),
+    venue: competition?.venue ?? null,
+    broadcasts: competition?.broadcasts ?? [],
+    odds: competition?.odds?.[0] ?? null,
+    links: event?.links ?? [],
+  };
+}
+
+function mapBasketballEvent(event) {
+  const competition = Array.isArray(event?.competitions) ? event.competitions[0] : null;
+  const competitors = Array.isArray(competition?.competitors) ? competition.competitors : [];
+  const status = competition?.status ?? event?.status ?? {};
+
+  return {
+    id: event?.id ?? null,
+    name: event?.name ?? null,
+    startTime: event?.date ?? null,
+    status: {
+      type: status?.type?.name ?? null,
+      description: status?.type?.detail ?? status?.type?.description ?? null,
+      shortDetail: status?.type?.shortDetail ?? null,
+      completed: Boolean(status?.type?.completed),
+      period: status?.period ?? null,
+      clock: status?.displayClock ?? null,
+    },
+    competitors: competitors.map((team) => ({
+      id: team?.id ?? null,
+      order: team?.order ?? null,
+      homeAway: team?.homeAway ?? null,
+      score: team?.score ?? null,
+      winner: Boolean(team?.winner),
+      team: {
+        id: team?.team?.id ?? null,
+        name: team?.team?.displayName ?? null,
+        abbreviation: team?.team?.abbreviation ?? null,
+        logo: team?.team?.logos?.[0]?.href ?? null,
+      },
+      records: team?.records ?? [],
+      linescores: team?.linescores ?? [],
+    })),
+    venue: competition?.venue ?? null,
+    broadcasts: competition?.broadcasts ?? [],
+    odds: competition?.odds?.[0] ?? null,
     links: event?.links ?? [],
   };
 }

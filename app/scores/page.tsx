@@ -87,7 +87,9 @@ export default function ScoresHubPage() {
         // Fetch MLB live count
         const mlbRes = await fetch('/api/mlb/scores');
         if (mlbRes.ok) {
-          const mlbData = await mlbRes.json();
+          const mlbData = (await mlbRes.json()) as {
+            games?: Array<{ status?: { isLive?: boolean } }>;
+          };
           const mlbLive =
             mlbData.games?.filter((g: { status?: { isLive?: boolean } }) => g.status?.isLive)
               .length || 0;
@@ -110,7 +112,10 @@ export default function ScoresHubPage() {
         // Fetch College Baseball count
         const cbRes = await fetch('/api/college-baseball/schedule');
         if (cbRes.ok) {
-          const cbData = await cbRes.json();
+          const cbData = (await cbRes.json()) as {
+            data?: Array<{ status?: string }>;
+            games?: Array<{ status?: string }>;
+          };
           const games = cbData.data || cbData.games || [];
           const cbLive = games.filter((g: { status?: string }) => g.status === 'live').length;
           const cbTotal = games.length;

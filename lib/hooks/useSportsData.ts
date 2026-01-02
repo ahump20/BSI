@@ -99,8 +99,58 @@ export function useData<T>(
 // LIVE SCORES HOOK
 // ============================================================================
 
+// Sport key mapping for unified /api/live-scores endpoint
+const UNIFIED_SPORT_QUERY: Record<string, string> = {
+  mlb: 'mlb',
+  nfl: 'nfl',
+  nba: 'nba',
+  cbb: 'ncaa-baseball',
+  ncaaf: 'ncaa',
+  ncaab: 'nba', // College basketball uses NBA-style data
+  wnba: 'nba',
+  wcbb: 'nba',
+  nhl: 'nhl',
+};
+
+// Response structure from unified /api/live-scores
+interface LiveScoresAPIResponse {
+  timestamp: string;
+  date: string;
+  sports: {
+    mlb?: { games?: unknown[] };
+    nfl?: { games?: unknown[] };
+    nba?: { games?: unknown[] };
+    ncaa?: { football?: { games?: unknown[] } };
+    ncaaBaseball?: { games?: unknown[] };
+  };
+}
+
+/**
+ * Extract games array from unified API response based on sport
+ */
+function extractGamesFromResponse(data: LiveScoresAPIResponse, sport: UnifiedSportKey): unknown[] {
+  switch (sport) {
+    case 'mlb':
+      return data.sports?.mlb?.games ?? [];
+    case 'nfl':
+      return data.sports?.nfl?.games ?? [];
+    case 'nba':
+    case 'ncaab':
+    case 'wnba':
+    case 'wcbb':
+      return data.sports?.nba?.games ?? [];
+    case 'cbb':
+      return data.sports?.ncaaBaseball?.games ?? [];
+    case 'ncaaf':
+      return data.sports?.ncaa?.football?.games ?? [];
+    default:
+      return [];
+  }
+}
+
 /**
  * Hook for fetching live scores with automatic polling
+ * Uses unified /api/live-scores endpoint with sport query parameter
  */
 export function useLiveScores(
   sport: UnifiedSportKey,
@@ -125,13 +175,16 @@ export function useLiveScores(
     setState((prev) => ({ ...prev, loading: prev.data === null }));
 
     try {
-      // This would call the actual API endpoint
-      const response = await fetch(`/api/scores/${sport}/live`);
+      // Use unified /api/live-scores endpoint with sport query parameter
+      const sportQuery = UNIFIED_SPORT_QUERY[sport] ?? sport;
+      const response = await fetch(`/api/live-scores?sport=${sportQuery}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = (await response.json()) as { games?: UnifiedGame[] };
+      const data = (await response.json()) as LiveScoresAPIResponse;
+      const games = extractGamesFromResponse(data, sport) as UnifiedGame[];
+
       setState({
-        data: data.games ?? [],
+        data: games,
         loading: false,
         error: null,
         lastUpdated: new Date(),
@@ -586,7 +639,10 @@ export function useGameDetail(
       const summaryRes = await fetch(`/api/game/${gameId}/summary?sport=${sport}`);
       if (!summaryRes.ok) throw new Error(`HTTP ${summaryRes.status}`);
 
-      const summary = await summaryRes.json();
+      const summary = (await summaryRes.json()) as {
+        game?: UnifiedGame | null;
+        boxScore?: UnifiedBoxScore | null;
+      };
 
       setState((prev) => ({
         ...prev,
@@ -619,7 +675,7 @@ export function useGameDetail(
       const res = await fetch(`/api/game/${gameId}/plays?sport=${sport}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const data = await res.json();
+      const data = (await res.json()) as { plays?: NormalizedPlay[] };
       const plays = data.plays || [];
 
       // Group plays into sections by period
@@ -675,7 +731,7 @@ export function useGameDetail(
       const res = await fetch(`/api/game/${gameId}/recap?sport=${sport}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const data = await res.json();
+      const data = (await res.json()) as { recap?: GameRecap | null };
       setState((prev) => ({
         ...prev,
         recap: data.recap || null,
@@ -776,7 +832,7 @@ export function usePlayByPlay(
       const res = await fetch(`/api/game/${gameId}/plays?sport=${sport}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const data = await res.json();
+      const data = (await res.json()) as { plays?: NormalizedPlay[] };
       let plays: NormalizedPlay[] = data.plays || [];
 
       // Apply filter

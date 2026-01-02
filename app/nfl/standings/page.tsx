@@ -571,7 +571,7 @@ export default function NFLStandingsPage() {
       try {
         const res = await fetch('/api/nfl/standings');
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as { standings?: Conference[] };
           if (data.standings && data.standings.length > 0) {
             setStandings(data.standings);
             setIsOffSeason(false);

@@ -42,6 +42,70 @@ import React, { useState, useCallback } from 'react';
  * - Optimal: 1-2 per roster at designated closer positions
  */
 
+// Type definitions for Monte Carlo simulation
+interface OptimalRange {
+  min: number;
+  max: number;
+  peak: number;
+}
+
+interface Synergy {
+  pair: [string, string];
+  bonus: number;
+  reason: string;
+}
+
+interface Conflict {
+  pair: [string, string];
+  threshold: number;
+  penalty: number;
+  reason: string;
+}
+
+interface CriticalPosition {
+  archetype: string;
+  minPct: number;
+  reason: string;
+}
+
+interface LeagueParams {
+  name: string;
+  rosterSize: number;
+  starterCount: number;
+  optimalRanges: Record<string, OptimalRange>;
+  synergies: Synergy[];
+  conflicts: Conflict[];
+  criticalPositions: CriticalPosition[];
+}
+
+type Composition = Record<string, number>;
+
+interface SimulationEntry {
+  composition: Composition;
+  score: number;
+}
+
+interface SimulationResult {
+  optimal: Composition;
+  bestScore: number;
+  bestComposition: Composition;
+  mean: number;
+  stdDev: number;
+  topPct: number;
+  distribution: number[];
+  allResults: SimulationEntry[];
+}
+
+interface CompositionBarProps {
+  composition: Composition;
+  height?: number;
+}
+
+interface DistributionChartProps {
+  distribution: number[];
+  maxHeight?: number;
+}
+
 const tokens = {
   colors: {
     midnight: '#0D0D0D',
@@ -190,14 +254,14 @@ const leagueParams = {
 };
 
 // Scoring function based on research
-const scoreComposition = (composition, params) => {
+const scoreComposition = (composition: Composition, params: LeagueParams): number => {
   let score = 50; // Base score
-  const total = Object.values(composition).reduce((a, b) => a + b, 0);
-  const pcts = {};
+  const total = Object.values(composition).reduce((a: number, b: number) => a + b, 0);
+  const pcts: Record<string, number> = {};
   Object.keys(composition).forEach((k) => (pcts[k] = composition[k] / total));
 
   // 1. Optimal range scoring (Gaussian penalty for deviation from peak)
-  Object.entries(params.optimalRanges).forEach(([archetype, range]) => {
+  Object.entries(params.optimalRanges).forEach(([archetype, range]: [string, OptimalRange]) => {
     const pct = pcts[archetype] || 0;
     const deviation = Math.abs(pct - range.peak);
     const rangeWidth = (range.max - range.min) / 2;
@@ -264,14 +328,14 @@ const scoreComposition = (composition, params) => {
 };
 
 // Monte Carlo simulation
-const runSimulation = (league, iterations) => {
+const runSimulation = (league: string, iterations: number): SimulationResult => {
   const params = leagueParams[league];
   const archetypes = Object.keys(archetypeConfig);
-  const results = [];
+  const results: SimulationEntry[] = [];
 
   // Generate random compositions
   for (let i = 0; i < iterations; i++) {
-    const composition = {};
+    const composition: Composition = {};
     const _remaining = 100; // Used for composition validation
 
     // Generate random percentages that sum to 100
@@ -300,7 +364,7 @@ const runSimulation = (league, iterations) => {
   const optimal = results.slice(0, topPct);
 
   // Average the top compositions
-  const avgOptimal = {};
+  const avgOptimal: Composition = {};
   archetypes.forEach((arch) => {
     avgOptimal[arch] = optimal.reduce((sum, r) => sum + r.composition[arch], 0) / optimal.length;
   });
@@ -325,7 +389,7 @@ const runSimulation = (league, iterations) => {
 };
 
 // Components
-const CompositionBar = ({ composition, height = 12 }) => {
+const CompositionBar = ({ composition, height = 12 }: CompositionBarProps) => {
   const total = Object.values(composition).reduce((a, b) => a + b, 0);
   return (
     <div
@@ -370,7 +434,7 @@ const StatCard = ({ label, value, subtext, color }: StatCardProps) => (
   </div>
 );
 
-const DistributionChart = ({ distribution, maxHeight = 80 }) => {
+const DistributionChart = ({ distribution, maxHeight = 80 }: DistributionChartProps) => {
   const max = Math.max(...distribution);
   return (
     <div className="flex items-end gap-0.5" style={{ height: maxHeight }}>
@@ -397,7 +461,7 @@ const DistributionChart = ({ distribution, maxHeight = 80 }) => {
 export default function MonteCarloOptimizer() {
   const [league, setLeague] = useState('nfl');
   const [iterations, setIterations] = useState(10000);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<SimulationResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
 
   const runSim = useCallback(() => {
@@ -531,7 +595,7 @@ export default function MonteCarloOptimizer() {
             bonus, and (6) variance risk adjustment.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-3">
-            {Object.entries(params.optimalRanges).map(([arch, range]) => (
+            {Object.entries(params.optimalRanges).map(([arch, range]: [string, OptimalRange]) => (
               <div key={arch} className="flex items-center gap-2 text-xs">
                 <div
                   className="w-3 h-3 rounded"

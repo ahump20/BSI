@@ -111,6 +111,10 @@ const classYears = [
   { value: 'Sr', label: 'Senior' },
 ];
 
+interface PlayersApiResponse {
+  players?: Player[];
+}
+
 const sortOptions = [
   { value: 'mlbRank', label: 'MLB Draft Rank' },
   { value: 'avg', label: 'Batting Average' },
@@ -153,7 +157,7 @@ export default function CollegeBaseballPlayersPage() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as PlayersApiResponse;
       setPlayers(data.players || []);
     } catch (err) {
       console.error('Error loading players:', err);

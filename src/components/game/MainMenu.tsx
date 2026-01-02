@@ -163,6 +163,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       glowLoop.stop();
       bobLoop.stop();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- animation refs are stable, mount-only effect
   }, []);
 
   const glowOpacity = glowAnim.interpolate({

@@ -30,6 +30,10 @@ interface NewsItem {
   team?: string;
 }
 
+interface NewsApiResponse {
+  articles?: NewsItem[];
+}
+
 function formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
   return (
@@ -79,7 +83,7 @@ export default function MLBNewsPage() {
       try {
         const res = await fetch('/api/mlb/news');
         if (!res.ok) throw new Error('Failed to fetch news');
-        const data = await res.json();
+        const data = (await res.json()) as NewsApiResponse;
         setNews(data.articles || []);
         setLoading(false);
       } catch (err) {

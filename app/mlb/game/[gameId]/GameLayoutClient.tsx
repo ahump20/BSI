@@ -101,6 +101,11 @@ interface DataMeta {
   timezone: string;
 }
 
+interface GameApiResponse {
+  game?: GameData;
+  meta?: DataMeta;
+}
+
 interface GameContextValue {
   game: GameData | null;
   loading: boolean;
@@ -178,7 +183,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
     try {
       const res = await fetch(`/api/mlb/game/${gameId}`);
       if (!res.ok) throw new Error('Failed to fetch game data');
-      const data = await res.json();
+      const data = (await res.json()) as GameApiResponse;
 
       if (data.game) {
         setGame(data.game);

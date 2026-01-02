@@ -82,7 +82,7 @@ export default function NFLNewsPage() {
       try {
         const res = await fetch('/api/nfl/news');
         if (!res.ok) throw new Error('Failed to fetch news');
-        const data = await res.json();
+        const data = (await res.json()) as { articles?: NewsItem[] };
         setNews(data.articles || []);
         setLoading(false);
       } catch (err) {

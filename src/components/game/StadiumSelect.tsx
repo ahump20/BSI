@@ -174,6 +174,7 @@ const StadiumCard: React.FC<StadiumCardProps> = ({ stadium, isSelected, onPress 
       duration: 200,
       useNativeDriver: false,
     }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- borderAnim is stable Animated.Value ref
   }, [isSelected]);
 
   const handlePressIn = () => {

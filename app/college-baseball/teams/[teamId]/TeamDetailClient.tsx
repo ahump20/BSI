@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
+import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -87,6 +88,10 @@ interface TeamDetailClientProps {
   teamId: string;
 }
 
+interface TeamApiResponse {
+  team?: Team;
+}
+
 export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
@@ -108,8 +113,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        setTeam(data.team || data);
+        const data = (await response.json()) as TeamApiResponse;
+        setTeam(data.team || (data as unknown as Team));
       } catch (err) {
         console.error('Error loading team:', err);
         setError(err instanceof Error ? err.message : 'Failed to load team');
@@ -348,102 +353,111 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         <Section padding="lg">
           <Container>
             {activeTab === 'overview' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Team Stats */}
-                <ScrollReveal direction="up">
-                  <Card padding="lg">
-                    <h2 className="font-display text-xl font-bold text-white mb-6">
-                      Season Statistics
-                    </h2>
-                    {team.stats ? (
-                      <div className="grid grid-cols-2 gap-6">
-                        <div>
-                          <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                            Runs Scored
-                          </span>
-                          <p className="font-display text-2xl font-bold text-burnt-orange">
-                            {team.stats.runsScored}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                            Runs Allowed
-                          </span>
-                          <p className="font-display text-2xl font-bold text-white">
-                            {team.stats.runsAllowed}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                            Team AVG
-                          </span>
-                          <p className="font-display text-2xl font-bold text-burnt-orange">
-                            {team.stats.battingAvg.toFixed(3)}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                            Team ERA
-                          </span>
-                          <p className="font-display text-2xl font-bold text-white">
-                            {team.stats.era.toFixed(2)}
-                          </p>
-                        </div>
-                        {team.stats.streak && (
-                          <div className="col-span-2">
+              <>
+                {/* AI Season Preview */}
+                <ScrollReveal direction="up" className="mb-8">
+                  <AITeamPreview teamId={teamId} teamName={team.name} />
+                </ScrollReveal>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Team Stats */}
+                  <ScrollReveal direction="up">
+                    <Card padding="lg">
+                      <h2 className="font-display text-xl font-bold text-white mb-6">
+                        Season Statistics
+                      </h2>
+                      {team.stats ? (
+                        <div className="grid grid-cols-2 gap-6">
+                          <div>
                             <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                              Current Streak
+                              Runs Scored
                             </span>
-                            <p className="font-display text-2xl font-bold text-success">
-                              {team.stats.streak}
+                            <p className="font-display text-2xl font-bold text-burnt-orange">
+                              {team.stats.runsScored}
                             </p>
+                          </div>
+                          <div>
+                            <span className="text-text-tertiary text-xs uppercase tracking-wider">
+                              Runs Allowed
+                            </span>
+                            <p className="font-display text-2xl font-bold text-white">
+                              {team.stats.runsAllowed}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-text-tertiary text-xs uppercase tracking-wider">
+                              Team AVG
+                            </span>
+                            <p className="font-display text-2xl font-bold text-burnt-orange">
+                              {team.stats.battingAvg.toFixed(3)}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-text-tertiary text-xs uppercase tracking-wider">
+                              Team ERA
+                            </span>
+                            <p className="font-display text-2xl font-bold text-white">
+                              {team.stats.era.toFixed(2)}
+                            </p>
+                          </div>
+                          {team.stats.streak && (
+                            <div className="col-span-2">
+                              <span className="text-text-tertiary text-xs uppercase tracking-wider">
+                                Current Streak
+                              </span>
+                              <p className="font-display text-2xl font-bold text-success">
+                                {team.stats.streak}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-text-tertiary">
+                          Season stats populate once conference play starts. Check back when the
+                          schedule heats up.
+                        </p>
+                      )}
+                    </Card>
+                  </ScrollReveal>
+
+                  {/* Quick Info */}
+                  <ScrollReveal direction="up" delay={100}>
+                    <Card padding="lg">
+                      <h2 className="font-display text-xl font-bold text-white mb-6">
+                        Team Information
+                      </h2>
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <span className="text-text-tertiary">Conference</span>
+                          <span className="text-white font-semibold">
+                            {team.conference || 'Independent'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-text-tertiary">Division</span>
+                          <span className="text-white font-semibold">{team.division || 'D1'}</span>
+                        </div>
+                        {team.location?.stadium && (
+                          <div className="flex justify-between">
+                            <span className="text-text-tertiary">Stadium</span>
+                            <span className="text-white font-semibold">
+                              {team.location.stadium}
+                            </span>
+                          </div>
+                        )}
+                        {team.location?.capacity && (
+                          <div className="flex justify-between">
+                            <span className="text-text-tertiary">Capacity</span>
+                            <span className="text-white font-semibold">
+                              {team.location.capacity.toLocaleString()}
+                            </span>
                           </div>
                         )}
                       </div>
-                    ) : (
-                      <p className="text-text-tertiary">
-                        Season stats populate once conference play starts. Check back when the
-                        schedule heats up.
-                      </p>
-                    )}
-                  </Card>
-                </ScrollReveal>
-
-                {/* Quick Info */}
-                <ScrollReveal direction="up" delay={100}>
-                  <Card padding="lg">
-                    <h2 className="font-display text-xl font-bold text-white mb-6">
-                      Team Information
-                    </h2>
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <span className="text-text-tertiary">Conference</span>
-                        <span className="text-white font-semibold">
-                          {team.conference || 'Independent'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-text-tertiary">Division</span>
-                        <span className="text-white font-semibold">{team.division || 'D1'}</span>
-                      </div>
-                      {team.location?.stadium && (
-                        <div className="flex justify-between">
-                          <span className="text-text-tertiary">Stadium</span>
-                          <span className="text-white font-semibold">{team.location.stadium}</span>
-                        </div>
-                      )}
-                      {team.location?.capacity && (
-                        <div className="flex justify-between">
-                          <span className="text-text-tertiary">Capacity</span>
-                          <span className="text-white font-semibold">
-                            {team.location.capacity.toLocaleString()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </Card>
-                </ScrollReveal>
-              </div>
+                    </Card>
+                  </ScrollReveal>
+                </div>
+              </>
             )}
 
             {activeTab === 'roster' && (

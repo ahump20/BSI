@@ -114,12 +114,15 @@ export default function MLBTeamsPage() {
       try {
         const res = await fetch('/api/mlb/standings');
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as {
+            standings?: Array<{ teamName: string; wins?: number; losses?: number }>;
+            meta?: DataMeta;
+          };
           if (data.standings) {
             // Merge records into teams
             setTeams((prev) =>
               prev.map((team) => {
-                const standing = data.standings.find((s: { teamName: string }) =>
+                const standing = data.standings?.find((s) =>
                   s.teamName.includes(team.name.split(' ').pop() || '')
                 );
                 if (standing) {

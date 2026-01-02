@@ -45,6 +45,10 @@ const pollOptions = [
   { value: 'rpi', label: 'NCAA RPI' },
 ];
 
+interface RankingsApiResponse {
+  poll?: RankingPoll;
+}
+
 export default function CollegeBaseballRankingsPage() {
   const [rankings, setRankings] = useState<RankingPoll | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,8 +66,8 @@ export default function CollegeBaseballRankingsPage() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      setRankings(data.poll || data);
+      const data = (await response.json()) as RankingsApiResponse;
+      setRankings(data.poll || (data as unknown as RankingPoll));
     } catch (err) {
       console.error('Error loading rankings:', err);
       setError(err instanceof Error ? err.message : 'Failed to load rankings');

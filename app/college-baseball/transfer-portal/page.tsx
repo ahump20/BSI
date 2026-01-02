@@ -18,6 +18,11 @@ import {
   type PortalEntry,
   type FilterState,
 } from '@/components/portal';
+
+interface PortalApiResponse {
+  data?: PortalEntry[];
+  entries?: PortalEntry[];
+}
 import { collegeBaseballNavItems } from '@/lib/navigation';
 
 // Mock data for UI development (will be replaced by API)
@@ -277,7 +282,7 @@ export default function TransferPortalPage() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as PortalApiResponse;
       const entries = data.data || data.entries || [];
       if (entries.length > 0) {
         setEntries(entries);

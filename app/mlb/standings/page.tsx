@@ -77,7 +77,7 @@ export default function MLBStandingsPage() {
     try {
       const res = await fetch('/api/mlb/standings');
       if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json();
+      const data = (await res.json()) as { standings?: Team[]; meta?: DataMeta };
 
       if (data.standings) {
         setStandings(data.standings);

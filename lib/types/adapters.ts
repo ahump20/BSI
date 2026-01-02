@@ -575,7 +575,13 @@ export type HeadlineSource =
   | 'D1BASEBALL'
   | 'PERFECT_GAME'
   | 'BLEACHER_REPORT'
-  | 'AP';
+  | 'AP'
+  | 'ATHLETIC'
+  | 'MLB'
+  | 'NFL'
+  | 'NCAA'
+  | 'BSI'
+  | 'CUSTOM';
 
 export type HeadlineCategory =
   | 'BREAKING'
@@ -591,6 +597,9 @@ export interface Headline {
   id: string;
   title: string;
   description?: string;
+  summary?: string; // Longer description for preview cards
+  url?: string; // Display URL (alias for sourceUrl)
+  author?: string; // Author attribution
   source: HeadlineSource;
   sourceUrl: string;
   imageUrl?: string;

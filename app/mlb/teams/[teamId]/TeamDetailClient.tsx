@@ -136,7 +136,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     try {
       const res = await fetch(`/api/mlb/teams/${teamId}`);
       if (!res.ok) throw new Error('Failed to fetch team data');
-      const data = await res.json();
+      const data = (await res.json()) as { team?: TeamData; meta?: DataMeta };
 
       if (data.team) {
         setTeam(data.team);

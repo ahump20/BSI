@@ -437,7 +437,7 @@ export default function NBAStandingsPage() {
       try {
         const res = await fetch('/api/nba/standings');
         if (res.ok) {
-          const data = await res.json();
+          const data = (await res.json()) as { standings?: Conference[] };
           if (data.standings && data.standings.length > 0) {
             setStandings(data.standings);
             setDataFresh(true);

@@ -402,6 +402,7 @@ const PowerUpSlot: React.FC<PowerUpSlotProps> = ({ powerUp, onUse, index }) => {
       pulse.start();
       return () => pulse.stop();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pulseAnim is stable Animated.Value ref
   }, [powerUp]);
 
   if (!powerUp) {

@@ -72,6 +72,25 @@ interface UsePitchDataOptions {
 
 const MLB_LIVE_API = 'https://statsapi.mlb.com/api/v1.1/game';
 
+interface MLBLiveFeedResponse {
+  liveData?: {
+    linescore?: {
+      currentInning?: number;
+      isTopInning?: boolean;
+      outs?: number;
+      offense?: { first?: unknown; second?: unknown; third?: unknown };
+      teams?: { home?: { runs?: number }; away?: { runs?: number } };
+    };
+    plays?: {
+      allPlays?: unknown[];
+      currentPlay?: { atBatIndex?: number; count?: { balls?: number; strikes?: number } };
+    };
+  };
+  gameData?: {
+    status?: { abstractGameState?: string };
+  };
+}
+
 export function usePitchData(
   gamePk: number | null,
   options: UsePitchDataOptions = {}
@@ -116,7 +135,7 @@ export function usePitchData(
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as MLBLiveFeedResponse;
       const liveData = data.liveData;
       const gameData = data.gameData;
 

@@ -370,7 +370,18 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
       // Try to fetch from standings API
       const response = await fetch('/api/nfl/standings');
       if (response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as {
+          success?: boolean;
+          rawData?: Array<{
+            Team: string;
+            Wins?: number;
+            Losses?: number;
+            Ties?: number;
+            PointsFor?: number;
+            PointsAgainst?: number;
+            Streak?: number;
+          }>;
+        };
         if (data.success && data.rawData) {
           const teamData = data.rawData.find(
             (t: { Team: string }) => t.Team?.toUpperCase() === team.abbreviation.toUpperCase()

@@ -16,7 +16,7 @@ const COLORS = {
   midnight: colors.background.midnight,
   ember: colors.brand.ember,
   mustard: '#FFD700',
-  ketchup: colors.sports.cardinals,
+  ketchup: colors.teams.cardinals.primary,
   grass: '#228B22',
   sky: '#87CEEB',
   dirt: '#8B7355',
@@ -996,13 +996,14 @@ const FOOTBALL_DIFFICULTIES: Record<DifficultyLevel, FootballDifficulty> = {
 
 // Difficulty selector component
 interface DifficultySelectorProps {
-  selected: DifficultyLevel;
+  game?: string;
+  difficulty: DifficultyLevel;
   onSelect: (d: DifficultyLevel) => void;
   difficulties: Record<DifficultyLevel, { name: string; color: string }>;
 }
 
 const DifficultySelector: React.FC<DifficultySelectorProps> = ({
-  selected,
+  difficulty,
   onSelect,
   difficulties,
 }) => (
@@ -1017,7 +1018,7 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({
   >
     {(Object.keys(difficulties) as DifficultyLevel[]).map((level) => {
       const diff = difficulties[level];
-      const isSelected = selected === level;
+      const isSelected = difficulty === level;
       return (
         <button
           key={level}
@@ -2638,6 +2639,7 @@ const HotDogDashGame: React.FC<GameProps> = ({
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- refs (frameRef, blazeXRef, statsRef) and state setters are stable
   }, [gamePhase, chonkFactor, activePowerUps, combo, screenShake]);
 
   useEffect(() => {
@@ -2668,6 +2670,7 @@ const HotDogDashGame: React.FC<GameProps> = ({
       ]);
     }, interval);
     return () => clearInterval(spawn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- diffSettings is stable prop, rngRef is stable ref, setHotDogs is stable setter
   }, [gamePhase, score]);
 
   useEffect(() => {
@@ -2698,6 +2701,7 @@ const HotDogDashGame: React.FC<GameProps> = ({
       });
     }, 1000);
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- onGameComplete is stable callback, statsRef is stable ref
   }, [gamePhase, timeLeft, score, highScore, onUpdateHighScore, sounds]);
 
   const initiateGame = () => {
@@ -2868,7 +2872,7 @@ const HotDogDashGame: React.FC<GameProps> = ({
             Catch hot dogs! Watch Blaze get chonky!
           </p>
           <DifficultySelector
-            selected={difficulty}
+            difficulty={difficulty}
             onSelect={setDifficulty}
             difficulties={HOTDOG_DIFFICULTIES}
           />
@@ -3039,6 +3043,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- refs (frameRef, statsRef, rngRef) and state setters are stable
   }, [
     gameState,
     pitch,
@@ -3213,6 +3218,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({
         setSwingPhase('ready');
       }, 2000);
     }, 150);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- diffSettings is stable prop, refs (statsRef, rngRef) and state setters are stable
   }, [
     gameState,
     pitch,
@@ -3837,6 +3843,7 @@ const GridironBlitzGame: React.FC<GameProps> = ({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- onGameComplete is stable callback, refs (timerRef, statsRef) are stable
   }, [
     gamePhase,
     quarter,

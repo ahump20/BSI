@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { HeroSectionWrapper } from '@/components/hero/HeroSectionWrapper';
+import { HomeLiveScores } from '@/components/home';
 
 export const metadata = {
   title: 'Blaze Sports Intel | Real-Time Sports Analytics',
@@ -87,6 +88,13 @@ export default function HomePage() {
             </span>
             <span className="text-white/50 text-sm">Data streaming from official sources</span>
           </div>
+        </div>
+      </section>
+
+      {/* Live Scores Hub - Defaults to College Baseball */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-charcoal/50">
+        <div className="max-w-7xl mx-auto">
+          <HomeLiveScores />
         </div>
       </section>
 

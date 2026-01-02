@@ -109,7 +109,7 @@ export default function MLBScoresPage() {
     try {
       const res = await fetch(`/api/mlb/scores?date=${date}`);
       if (!res.ok) throw new Error('Failed to fetch scores');
-      const data = await res.json();
+      const data = (await res.json()) as { games?: Game[]; live?: boolean; meta?: DataMeta };
 
       if (data.games) {
         setGames(data.games);

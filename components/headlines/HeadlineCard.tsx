@@ -20,6 +20,11 @@ const SOURCE_COLORS: Record<HeadlineSource, string> = {
   BSI: 'text-burnt-orange',
   AP: 'text-white/60',
   CUSTOM: 'text-white/50',
+  MLB_COM: 'text-blue-500',
+  BASEBALL_AMERICA: 'text-red-500',
+  D1BASEBALL: 'text-yellow-400',
+  PERFECT_GAME: 'text-cyan-400',
+  BLEACHER_REPORT: 'text-orange-500',
 };
 
 const CATEGORY_BADGES: Record<HeadlineCategory, { label: string; color: string }> = {

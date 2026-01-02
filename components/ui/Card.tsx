@@ -43,13 +43,19 @@ export function CardHeader({ className = '', children, ...props }: HTMLAttribute
 }
 
 // Card Title subcomponent
-export function CardTitle({
-  className = '',
-  children,
-  ...props
-}: HTMLAttributes<HTMLHeadingElement>) {
+export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const titleSizeStyles = {
+  sm: 'text-base font-semibold',
+  md: 'text-lg font-semibold',
+  lg: 'text-xl font-bold',
+};
+
+export function CardTitle({ className = '', size = 'md', children, ...props }: CardTitleProps) {
   return (
-    <h3 className={`text-lg font-semibold text-white ${className}`} {...props}>
+    <h3 className={`${titleSizeStyles[size]} text-white ${className}`} {...props}>
       {children}
     </h3>
   );

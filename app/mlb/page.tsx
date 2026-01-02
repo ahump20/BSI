@@ -182,13 +182,13 @@ export default function MLBPage() {
     try {
       const res = await fetch('/api/mlb/standings');
       if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json();
+      const data = (await res.json()) as { standings?: unknown; meta?: unknown };
 
       if (data.standings) {
-        setStandings(data.standings);
+        setStandings(data.standings as typeof standings);
       }
       if (data.meta) {
-        setMeta(data.meta);
+        setMeta(data.meta as typeof meta);
       }
       setLoading(false);
     } catch (err: unknown) {
@@ -205,14 +205,14 @@ export default function MLBPage() {
       // Fetch today's games
       const res = await fetch('/api/mlb/scores');
       if (!res.ok) throw new Error('Failed to fetch scores');
-      const data = await res.json();
+      const data = (await res.json()) as { games?: unknown; live?: boolean; meta?: unknown };
 
       if (data.games) {
-        setSchedule(data.games);
+        setSchedule(data.games as typeof schedule);
         setHasLiveGames(data.live || false);
       }
       if (data.meta) {
-        setMeta(data.meta);
+        setMeta(data.meta as typeof meta);
       }
       setLoading(false);
     } catch (err: unknown) {

@@ -32,6 +32,16 @@ interface AIGameCardProps {
   game: CFBGame;
 }
 
+interface ArticlesResponse {
+  articles?: CFBArticle[];
+  previews?: CFBArticle[];
+  recaps?: CFBArticle[];
+}
+
+interface GamesResponse {
+  games?: CFBGame[];
+}
+
 export function AIGameCard({ game }: AIGameCardProps) {
   const gameDate = new Date(game.date);
   const formattedDate = gameDate.toLocaleDateString('en-US', {
@@ -257,7 +267,7 @@ export function CFBArticleList({ type, limit = 6, showEmpty = true }: CFBArticle
         const response = await fetch(url);
         if (!response.ok) throw new Error('Failed to fetch articles');
 
-        const data = await response.json();
+        const data = (await response.json()) as ArticlesResponse;
         const articleList = data.articles || data.previews || data.recaps || [];
         setArticles(Array.isArray(articleList) ? articleList.slice(0, limit) : []);
         setError(null);
@@ -353,7 +363,7 @@ export function CFBGamesList({ date, limit = 6 }: CFBGamesListProps) {
         const response = await fetch(`/api/cfb/games?${params}`);
         if (!response.ok) throw new Error('Failed to fetch games');
 
-        const data = await response.json();
+        const data = (await response.json()) as GamesResponse;
         setGames(data.games || []);
         setError(null);
       } catch (err) {

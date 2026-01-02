@@ -7,6 +7,8 @@ interface CitationFooterProps {
   fetchedAt: string;
   /** Timezone abbreviation (defaults to CT for Central Time) */
   timezone?: string;
+  /** Optional className for custom styling */
+  className?: string;
 }
 
 /**
@@ -15,7 +17,12 @@ interface CitationFooterProps {
  * BSI policy: Every data view must cite its source with timestamp.
  * This builds credibility and helps users understand data freshness.
  */
-export function CitationFooter({ source, fetchedAt, timezone = 'CT' }: CitationFooterProps) {
+export function CitationFooter({
+  source,
+  fetchedAt,
+  timezone = 'CT',
+  className = '',
+}: CitationFooterProps) {
   const formatted = new Date(fetchedAt).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -30,7 +37,9 @@ export function CitationFooter({ source, fetchedAt, timezone = 'CT' }: CitationF
   });
 
   return (
-    <footer className="p-4 text-center text-[11px] text-gray-500 border-t border-gray-700">
+    <footer
+      className={`p-4 text-center text-[11px] text-gray-500 border-t border-gray-700 ${className}`.trim()}
+    >
       Data: {source} | {formatted} {time} {timezone}
     </footer>
   );

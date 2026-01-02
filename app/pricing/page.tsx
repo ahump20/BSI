@@ -72,7 +72,7 @@ export default function PricingPage() {
         body: JSON.stringify({ tier }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as { error?: string; clientSecret?: string };
 
       if (data.error) {
         alert(data.error);

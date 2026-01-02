@@ -43,6 +43,14 @@ interface TeamStanding {
   streak?: string;
 }
 
+interface StandingsApiResponse {
+  success: boolean;
+  data?: TeamStanding[];
+  timestamp?: string;
+  cacheTime?: string;
+  message?: string;
+}
+
 export default function CollegeBaseballStandingsPage() {
   const [selectedConference, setSelectedConference] = useState('SEC');
   const [standings, setStandings] = useState<TeamStanding[]>([]);
@@ -57,7 +65,7 @@ export default function CollegeBaseballStandingsPage() {
         const response = await fetch(
           '/api/college-baseball/standings?conference=' + encodeURIComponent(selectedConference)
         );
-        const result = await response.json();
+        const result = (await response.json()) as StandingsApiResponse;
 
         if (result.success && result.data) {
           setStandings(result.data);

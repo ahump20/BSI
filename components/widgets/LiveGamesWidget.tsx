@@ -39,6 +39,10 @@ interface LiveGamesData {
   nba: Game[];
 }
 
+interface ScoresResponse {
+  data?: { games?: unknown[] };
+}
+
 function LiveBadge({ league }: { league: string }) {
   const colors: Record<string, string> = {
     MLB: 'bg-red-500/20 text-red-400',
@@ -99,7 +103,7 @@ export function LiveGamesWidget() {
           league: string
         ): Promise<Game[]> => {
           if (res.status === 'rejected') return [];
-          const data = await res.value.json();
+          const data = (await res.value.json()) as ScoresResponse;
           if (!data.data?.games) return [];
 
           return data.data.games

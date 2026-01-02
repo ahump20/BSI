@@ -35,7 +35,7 @@ interface WSMessage {
   timestamp: number;
 }
 
-interface UseTickerOptions {
+export interface UseTickerOptions {
   /** WebSocket URL */
   url?: string;
   /** Filter by leagues */

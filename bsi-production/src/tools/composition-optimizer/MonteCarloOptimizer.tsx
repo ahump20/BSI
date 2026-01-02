@@ -1,5 +1,78 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
+// Type definitions for Monte Carlo simulation
+interface OptimalRange {
+  min: number;
+  max: number;
+  peak: number;
+}
+
+interface Synergy {
+  pair: [string, string];
+  bonus: number;
+  reason: string;
+}
+
+interface Conflict {
+  pair: [string, string];
+  threshold: number;
+  penalty: number;
+  reason: string;
+}
+
+interface CriticalPosition {
+  archetype: string;
+  minPct: number;
+  reason: string;
+}
+
+interface LeagueParams {
+  name: string;
+  rosterSize: number;
+  starterCount: number;
+  optimalRanges: Record<string, OptimalRange>;
+  synergies: Synergy[];
+  conflicts: Conflict[];
+  criticalPositions: CriticalPosition[];
+}
+
+interface Composition {
+  [archetype: string]: number;
+}
+
+interface SimulationEntry {
+  composition: Composition;
+  score: number;
+}
+
+interface SimulationResult {
+  optimal: Composition;
+  bestScore: number;
+  bestComposition: Composition;
+  mean: number;
+  stdDev: number;
+  topPct: number;
+  distribution: number[];
+  allResults: SimulationEntry[];
+}
+
+interface CompositionBarProps {
+  composition: Composition;
+  height?: number;
+}
+
+interface StatCardProps {
+  label: string;
+  value: string | number;
+  subtext?: string;
+  color?: string;
+}
+
+interface DistributionChartProps {
+  distribution: number[];
+  maxHeight?: number;
+}
+
 // Analytics tracking
 const trackEvent = (eventName: string, properties?: Record<string, any>) => {
   try {
@@ -183,10 +256,10 @@ const leagueParams = {
 };
 
 // Scoring function based on research
-const scoreComposition = (composition, params) => {
+const scoreComposition = (composition: Composition, params: LeagueParams): number => {
   let score = 50; // Base score
-  const total = Object.values(composition).reduce((a, b) => a + b, 0);
-  const pcts = {};
+  const total = Object.values(composition).reduce((a: number, b: number) => a + b, 0);
+  const pcts: Composition = {};
   Object.keys(composition).forEach(k => pcts[k] = composition[k] / total);
 
   // 1. Optimal range scoring (Gaussian penalty for deviation from peak)
@@ -257,19 +330,19 @@ const scoreComposition = (composition, params) => {
 };
 
 // Monte Carlo simulation
-const runSimulation = (league, iterations) => {
+const runSimulation = (league: keyof typeof leagueParams, iterations: number): SimulationResult => {
   const params = leagueParams[league];
   const archetypes = Object.keys(archetypeConfig);
-  const results = [];
-  
+  const results: SimulationEntry[] = [];
+
   // Generate random compositions
   for (let i = 0; i < iterations; i++) {
-    const composition = {};
+    const composition: Composition = {};
     let remaining = 100;
-    
+
     // Generate random percentages that sum to 100
     const randoms = archetypes.map(() => Math.random());
-    const sum = randoms.reduce((a, b) => a + b, 0);
+    const sum = randoms.reduce((a: number, b: number) => a + b, 0);
     
     archetypes.forEach((arch, idx) => {
       composition[arch] = (randoms[idx] / sum) * 100;
@@ -284,8 +357,8 @@ const runSimulation = (league, iterations) => {
   
   // Calculate statistics
   const scores = results.map(r => r.score);
-  const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
-  const variance = scores.reduce((sum, s) => sum + Math.pow(s - mean, 2), 0) / scores.length;
+  const mean = scores.reduce((a: number, b: number) => a + b, 0) / scores.length;
+  const variance = scores.reduce((sum: number, s: number) => sum + Math.pow(s - mean, 2), 0) / scores.length;
   const stdDev = Math.sqrt(variance);
   
   // Get optimal (top 1%)
@@ -293,9 +366,9 @@ const runSimulation = (league, iterations) => {
   const optimal = results.slice(0, topPct);
   
   // Average the top compositions
-  const avgOptimal = {};
+  const avgOptimal: Composition = {};
   archetypes.forEach(arch => {
-    avgOptimal[arch] = optimal.reduce((sum, r) => sum + r.composition[arch], 0) / optimal.length;
+    avgOptimal[arch] = optimal.reduce((sum: number, r: SimulationEntry) => sum + r.composition[arch], 0) / optimal.length;
   });
   
   // Score distribution for histogram
@@ -318,8 +391,8 @@ const runSimulation = (league, iterations) => {
 };
 
 // Components
-const CompositionBar = ({ composition, height = 12 }) => {
-  const total = Object.values(composition).reduce((a, b) => a + b, 0);
+const CompositionBar = ({ composition, height = 12 }: CompositionBarProps) => {
+  const total = Object.values(composition).reduce((a: number, b: number) => a + b, 0);
   return (
     <div className="flex rounded overflow-hidden" style={{ height, backgroundColor: tokens.colors.midnight }}>
       {Object.entries(composition).map(([arch, value]) => (
@@ -333,7 +406,7 @@ const CompositionBar = ({ composition, height = 12 }) => {
   );
 };
 
-const StatCard = ({ label, value, subtext, color }) => (
+const StatCard = ({ label, value, subtext, color }: StatCardProps) => (
   <div className="rounded-lg p-3" style={{ backgroundColor: tokens.colors.charcoal }}>
     <div className="text-xs uppercase tracking-wider mb-1" style={{ color: tokens.colors.subtle }}>{label}</div>
     <div className="text-2xl font-bold" style={{ color: color || tokens.colors.bone }}>{value}</div>
@@ -341,7 +414,7 @@ const StatCard = ({ label, value, subtext, color }) => (
   </div>
 );
 
-const DistributionChart = ({ distribution, maxHeight = 80 }) => {
+const DistributionChart = ({ distribution, maxHeight = 80 }: DistributionChartProps) => {
   const max = Math.max(...distribution);
   return (
     <div className="flex items-end gap-0.5" style={{ height: maxHeight }}>
@@ -382,7 +455,7 @@ const handleUpgrade = async () => {
       return;
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as { url?: string; error?: string };
     if (data.url) {
       window.location.href = data.url;
     } else if (data.error) {
@@ -395,9 +468,9 @@ const handleUpgrade = async () => {
 };
 
 export default function MonteCarloOptimizer() {
-  const [league, setLeague] = useState('nfl');
+  const [league, setLeague] = useState<keyof typeof leagueParams>('nfl');
   const [iterations, setIterations] = useState(1000);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<SimulationResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
 
   const userTier = getUserTier();

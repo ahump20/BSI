@@ -52,6 +52,16 @@ interface DataMeta {
   timezone: string;
 }
 
+interface ScoresApiResponse {
+  success?: boolean;
+  data?: Game[];
+  games?: Game[];
+  live?: boolean;
+  meta?: DataMeta;
+  message?: string;
+  timestamp?: string;
+}
+
 function formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
   return (
@@ -105,7 +115,7 @@ export default function CollegeBaseballScoresPage() {
         throw new Error('Failed to fetch scores');
       }
 
-      const data = await res.json();
+      const data = (await res.json()) as ScoresApiResponse;
 
       if (data.success && data.data) {
         setGames(data.data);
