@@ -34,7 +34,7 @@ NFL_API_BASE = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
 # KV Namespace for caching
 [[kv_namespaces]]
 binding = "TICKER_CACHE"
-id = "bsi-ticker-cache"
+id = "5d01a9493aaa4b29866bf7a1f411a984"
 
 # Cron triggers for news refresh
 [triggers]
