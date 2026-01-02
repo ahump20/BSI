@@ -41,6 +41,6 @@ id = "bsi-ticker-cache"
 crons = ["*/5 * * * *"]
 
 # Custom domain route
-# routes = [
-#   { pattern = "ticker.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
-# ]
+routes = [
+  { pattern = "ticker.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
+]
