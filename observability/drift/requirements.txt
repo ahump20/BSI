@@ -6,6 +6,7 @@
 # =====================================================
 urllib3>=2.3.0  # CVE fixes for compressed data handling
 filelock>=3.18.0  # CVE fix for TOCTOU race condition
+marshmallow>=3.26.1  # CVE-2024-48923: DoS in Schema.load (transitive from great-expectations)
 
 # Core Data Processing
 pandas>=2.1.0
