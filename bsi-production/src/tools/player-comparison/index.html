@@ -211,6 +211,19 @@
             <p class="subtitle">Compare baseball players head-to-head</p>
         </header>
 
+        <!-- Live NCAA Rankings Section -->
+        <div style="background: var(--charcoal); border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid rgba(191, 87, 0, 0.2);">
+            <h3 style="color: var(--ember); margin-bottom: 12px; font-size: 1rem;">Live D1Baseball Top 25</h3>
+            <div id="liveRankings" style="display: flex; gap: 12px; overflow-x: auto; padding: 8px 0;">
+                <div style="color: #666; padding: 8px;">Loading live rankings...</div>
+            </div>
+            <div id="rankingsSource" style="font-size: 0.75rem; color: #666; margin-top: 8px;"></div>
+        </div>
+
+        <div style="background: rgba(191, 87, 0, 0.1); padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; color: var(--gold);">
+            <strong>Data Source:</strong> Curated 2024 MLB &amp; NCAA player statistics from official league sources
+        </div>
+
         <div class="player-selectors">
             <div class="player-select player1">
                 <div class="player-label p1">Player 1</div>
@@ -534,6 +547,64 @@
         document.getElementById('player2Select').addEventListener('change', compare);
 
         populateSelects();
+
+        // Load live NCAA baseball rankings
+        function loadLiveRankings() {
+            fetch('/api/ncaa/baseball/rankings')
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var container = document.getElementById('liveRankings');
+                    while (container.firstChild) { container.removeChild(container.firstChild); }
+
+                    if (data.rankings && data.rankings.length > 0) {
+                        for (var i = 0; i < Math.min(data.rankings.length, 15); i++) {
+                            var team = data.rankings[i];
+
+                            var card = document.createElement('div');
+                            card.style.cssText = 'flex-shrink: 0; background: var(--midnight); border-radius: 8px; padding: 10px; min-width: 100px; text-align: center; border: 1px solid #333;';
+
+                            var rankBadge = document.createElement('div');
+                            rankBadge.style.cssText = 'font-size: 0.7rem; color: var(--gold); font-weight: 700; margin-bottom: 4px;';
+                            rankBadge.textContent = '#' + team.rank;
+                            card.appendChild(rankBadge);
+
+                            if (team.logo) {
+                                var logo = document.createElement('img');
+                                logo.src = team.logo;
+                                logo.alt = team.abbreviation || team.school;
+                                logo.style.cssText = 'width: 32px; height: 32px; object-fit: contain; margin-bottom: 4px;';
+                                logo.onerror = function() { this.style.display = 'none'; };
+                                card.appendChild(logo);
+                            }
+
+                            var teamName = document.createElement('div');
+                            teamName.style.cssText = 'font-size: 0.75rem; font-weight: 600; color: var(--cream);';
+                            teamName.textContent = team.abbreviation || team.school;
+                            card.appendChild(teamName);
+
+                            var record = document.createElement('div');
+                            record.style.cssText = 'font-size: 0.7rem; color: #666;';
+                            record.textContent = team.record || '';
+                            card.appendChild(record);
+
+                            container.appendChild(card);
+                        }
+
+                        document.getElementById('rankingsSource').textContent = 'Source: ' + (data.source || 'D1Baseball') + ' | Updated: ' + (data.lastUpdated || new Date().toISOString());
+                    }
+                })
+                .catch(function(err) {
+                    var container = document.getElementById('liveRankings');
+                    while (container.firstChild) { container.removeChild(container.firstChild); }
+                    var errDiv = document.createElement('div');
+                    errDiv.style.cssText = 'color: #666; padding: 8px;';
+                    errDiv.textContent = 'Unable to load live rankings';
+                    container.appendChild(errDiv);
+                    console.error('Rankings API error:', err);
+                });
+        }
+
+        loadLiveRankings();
     </script>
 </body>
 </html>
