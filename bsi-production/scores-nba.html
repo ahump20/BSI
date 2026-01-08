@@ -70,6 +70,21 @@
         .loading-spinner { width: 48px; height: 48px; border: 3px solid rgba(191, 87, 0, 0.2); border-top-color: var(--bsi-burnt-orange); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading-text { color: rgba(250, 248, 245, 0.5); font-size: 0.875rem; }
+        /* Skeleton Cards */
+        .skeleton-card { background: var(--bsi-charcoal); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; overflow: hidden; min-height: 180px; }
+        .skeleton-status { height: 30px; background: rgba(0, 0, 0, 0.3); }
+        .skeleton-teams { padding: 1rem; }
+        .skeleton-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+        .skeleton-row:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .skeleton-bar { height: 20px; background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+        .skeleton-abbr { width: 40px; }
+        .skeleton-name { width: 100px; margin-left: 10px; }
+        .skeleton-score { width: 30px; height: 28px; }
+        .skeleton-footer { height: 36px; background: rgba(0, 0, 0, 0.2); }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        /* Data Source */
+        .data-source { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.75rem; background: rgba(255, 255, 255, 0.05); border-radius: 100px; font-size: 0.6875rem; color: rgba(250, 248, 245, 0.5); text-transform: uppercase; letter-spacing: 0.05em; }
+        .data-source.espn { color: var(--bsi-ember); border: 1px solid rgba(255, 107, 53, 0.3); }
         .empty-state { text-align: center; padding: 4rem; color: rgba(250, 248, 245, 0.5); }
         .empty-state h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--bsi-cream); }
         .mobile-menu-btn { display: flex; flex-direction: column; gap: 4px; padding: 0.5rem; background: none; border: none; cursor: pointer; }
@@ -109,14 +124,19 @@
                 <h1>NBA Scores</h1>
                 <span class="sport-badge">Basketball</span>
             </div>
-            <div class="last-updated" id="lastUpdated">Updating...</div>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <span id="dataSource" class="data-source" style="display: none;"></span>
+                <div class="last-updated" id="lastUpdated">Updating...</div>
+            </div>
         </div>
 
         <div id="gamesContainer" class="games-grid">
-            <div class="loading-state">
-                <div class="loading-spinner"></div>
-                <div class="loading-text">Loading today's games...</div>
-            </div>
+            <div class="skeleton-card"><div class="skeleton-status"></div><div class="skeleton-teams"><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div></div><div class="skeleton-footer"></div></div>
+            <div class="skeleton-card"><div class="skeleton-status"></div><div class="skeleton-teams"><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div></div><div class="skeleton-footer"></div></div>
+            <div class="skeleton-card"><div class="skeleton-status"></div><div class="skeleton-teams"><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div></div><div class="skeleton-footer"></div></div>
+            <div class="skeleton-card"><div class="skeleton-status"></div><div class="skeleton-teams"><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div></div><div class="skeleton-footer"></div></div>
+            <div class="skeleton-card"><div class="skeleton-status"></div><div class="skeleton-teams"><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div></div><div class="skeleton-footer"></div></div>
+            <div class="skeleton-card"><div class="skeleton-status"></div><div class="skeleton-teams"><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div><div class="skeleton-row"><div style="display:flex;gap:10px"><div class="skeleton-bar skeleton-abbr"></div><div class="skeleton-bar skeleton-name"></div></div><div class="skeleton-bar skeleton-score"></div></div></div><div class="skeleton-footer"></div></div>
         </div>
     </main>
 
@@ -142,12 +162,15 @@
         }
 
         function createGameCard(game) {
-            const isLive = game.status?.isLive;
-            const isFinal = game.status?.isFinal || game.status?.type === 'final';
-            const awayName = game.awayTeam?.name || game.away?.team || 'Away';
-            const homeName = game.homeTeam?.name || game.home?.team || 'Home';
-            const awayScore = game.awayTeam?.score ?? game.away?.score ?? 0;
-            const homeScore = game.homeTeam?.score ?? game.home?.score ?? 0;
+            const isLive = game.status?.isLive || game.status?.state === 'STATUS_IN_PROGRESS';
+            const isFinal = game.status?.isFinal || game.status?.type === 'final' || game.status?.state === 'STATUS_FINAL';
+            // Handle both SportsDataIO and ESPN formats
+            const awayName = game.awayTeam?.name || game.teams?.away?.name || game.away?.team || 'Away';
+            const homeName = game.homeTeam?.name || game.teams?.home?.name || game.home?.team || 'Home';
+            const awayScore = game.awayTeam?.score ?? game.teams?.away?.score ?? game.away?.score ?? 0;
+            const homeScore = game.homeTeam?.score ?? game.teams?.home?.score ?? game.home?.score ?? 0;
+            const awayAbbr = game.awayTeam?.abbreviation || game.teams?.away?.abbreviation || getAbbr(awayName);
+            const homeAbbr = game.homeTeam?.abbreviation || game.teams?.home?.abbreviation || getAbbr(homeName);
             const venue = game.venue || game.stadium || '';
 
             const card = document.createElement('article');
@@ -169,20 +192,22 @@
             } else if (isFinal) {
                 statusDiv.textContent = 'Final';
             } else {
-                statusDiv.textContent = formatTime(game.startTime || game.status?.startTime);
+                const gameTime = game.startTime || game.status?.startTime || game.dateTime;
+                const detailedState = game.status?.detailedState || '';
+                statusDiv.textContent = detailedState || formatTime(gameTime);
             }
 
             const teamsDiv = document.createElement('div');
             teamsDiv.className = 'game-teams';
 
-            [{ name: awayName, score: awayScore, isAway: true }, { name: homeName, score: homeScore, isAway: false }].forEach(team => {
+            [{ name: awayName, score: awayScore, abbr: awayAbbr, isAway: true }, { name: homeName, score: homeScore, abbr: homeAbbr, isAway: false }].forEach(team => {
                 const row = document.createElement('div');
                 row.className = 'team-row';
                 const info = document.createElement('div');
                 info.className = 'team-info';
                 const abbr = document.createElement('span');
                 abbr.className = 'team-abbr';
-                abbr.textContent = getAbbr(team.name);
+                abbr.textContent = team.abbr;
                 const name = document.createElement('span');
                 name.className = 'team-name';
                 name.textContent = team.name;
@@ -241,6 +266,16 @@
 
                 document.getElementById('lastUpdated').textContent =
                     `Updated ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+
+                // Show data source indicator
+                const sourceEl = document.getElementById('dataSource');
+                if (data.source) {
+                    sourceEl.textContent = `via ${data.source}`;
+                    sourceEl.className = 'data-source' + (data.fallback ? ' espn' : '');
+                    sourceEl.style.display = 'inline-flex';
+                } else {
+                    sourceEl.style.display = 'none';
+                }
             } catch (error) {
                 console.error('Failed to load games:', error);
                 container.replaceChildren();
