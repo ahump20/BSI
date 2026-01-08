@@ -19,7 +19,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useUserSettings } from '@/lib/hooks';
-import { getTeamBySlug, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
+import { getTeamBySlug } from '@/lib/utils/mlb-teams';
 
 interface Player {
   id: string;
@@ -78,7 +78,7 @@ interface TeamDetailClientProps {
 }
 
 export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
-  const [teamData, setTeamData] = useState<TeamData | null>(null);
+  const [_teamData, setTeamData] = useState<TeamData | null>(null);
   const [roster, setRoster] = useState<Player[]>([]);
   const [quickStats, setQuickStats] = useState<QuickStats | null>(null);
   const [loading, setLoading] = useState(true);

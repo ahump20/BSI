@@ -212,7 +212,7 @@ export function DataSourcePanel({
   className = '',
 }: DataSourcePanelProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  const { status } = getDataFreshness(lastUpdated);
+  const { status: _status } = getDataFreshness(lastUpdated);
 
   return (
     <div className={`border border-border-subtle rounded-lg overflow-hidden ${className}`}>

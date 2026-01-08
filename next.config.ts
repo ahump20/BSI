@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
 
-  // Trailing slashes for Cloudflare Pages compatibility
+  // Use trailing slashes - Cloudflare Pages reliably serves index.html from directories
   trailingSlash: true,
 
   // Skip TypeScript errors during build (handled by CI separately)

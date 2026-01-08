@@ -25,7 +25,7 @@
  */
 
 import { MLBTeamsAdapter } from '../../../../lib/adapters/mlb-teams-adapter';
-import { getTeamIdFromSlug, getTeamBySlug } from '../../../../lib/utils/mlb-teams';
+import { getTeamIdFromSlug } from '../../../../lib/utils/mlb-teams';
 
 interface Env {
   CACHE: KVNamespace;

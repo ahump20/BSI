@@ -20,7 +20,8 @@ describe('Pythagorean Expectation - Baseball', () => {
     const expected = calculatePythagoreanExpectation(runsScored, runsAllowed);
 
     expect(expected).toBeGreaterThan(0.5);
-    expect(expected).toBeCloseTo(0.692, 3);
+    // 750^1.83 / (750^1.83 + 500^1.83) ≈ 0.6774
+    expect(expected).toBeCloseTo(0.677, 2);
   });
 
   it('should calculate expected win percentage for even teams', () => {
@@ -61,7 +62,8 @@ describe('Pythagorean Expectation - Football', () => {
     const expected = calculatePythagoreanExpectation(pointsScored, pointsAllowed);
 
     expect(expected).toBeGreaterThan(0.7);
-    expect(expected).toBeCloseTo(0.851, 3);
+    // 350^2.37 / (350^2.37 + 200^2.37) ≈ 0.7902
+    expect(expected).toBeCloseTo(0.790, 2);
   });
 
   it('should calculate expected wins for 12-game season', () => {

@@ -131,7 +131,7 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
 
-  const [query, setQuery] = useState(initialQuery);
+  const [_query, setQuery] = useState(initialQuery);
   const [teams, setTeams] = useState<TeamResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -18,7 +18,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
-import { getTeamById, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
+// Team lookup utilities available if needed: getTeamById, MLBTeamInfo
 
 interface PlayerData {
   // FanGraphs player data shape

@@ -11,7 +11,7 @@
  * Last Updated: 2025-01-07
  */
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { SportTabs, SportTabsCompact, type Sport } from '@/components/sports/SportTabs';
@@ -167,7 +167,7 @@ export default function DashboardPage() {
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
 
   // Format timestamp
-  const displayTimestamp = (isoString?: string): string => {
+  const _displayTimestamp = (isoString?: string): string => {
     const date = isoString ? new Date(isoString) : new Date();
     if (timezoneLoaded) {
       return formatDateTime(date);

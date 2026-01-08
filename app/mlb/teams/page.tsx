@@ -18,12 +18,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
-import {
-  MLB_TEAMS,
-  getTeamsGroupedByDivision,
-  DIVISION_ORDER,
-  type MLBTeamInfo,
-} from '@/lib/utils/mlb-teams';
+import { MLB_TEAMS, DIVISION_ORDER, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
 
 interface TeamWithRecord extends MLBTeamInfo {
   wins?: number;
