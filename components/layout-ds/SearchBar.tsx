@@ -285,11 +285,7 @@ export function SearchBar({
   return (
     <div
       ref={containerRef}
-      className={cn(
-        'relative',
-        isNavbar ? 'w-full max-w-xs lg:max-w-sm' : 'w-full',
-        className
-      )}
+      className={cn('relative', isNavbar ? 'w-full max-w-xs lg:max-w-sm' : 'w-full', className)}
     >
       {/* Search Input */}
       <div className="relative">
@@ -367,9 +363,8 @@ export function SearchBar({
                   {/* Group Results */}
                   {group.results.map((result, resultIndex) => {
                     const flatIndex =
-                      results
-                        .slice(0, groupIndex)
-                        .reduce((acc, g) => acc + g.results.length, 0) + resultIndex;
+                      results.slice(0, groupIndex).reduce((acc, g) => acc + g.results.length, 0) +
+                      resultIndex;
                     const isSelected = flatIndex === selectedIndex;
 
                     return (
@@ -510,14 +505,7 @@ function CloseIcon({ className }: { className?: string }) {
 function LoadingSpinner({ className }: { className?: string }) {
   return (
     <svg className={cn('animate-spin', className)} viewBox="0 0 24 24" fill="none">
-      <circle
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeOpacity="0.25"
-      />
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.25" />
       <path
         d="M12 2a10 10 0 019.33 6.33"
         stroke="currentColor"

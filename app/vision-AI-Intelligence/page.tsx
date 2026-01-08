@@ -1402,7 +1402,11 @@ export default function VisionAIIntelligencePage() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger shortcuts when typing in inputs
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
         return;
       }
 
@@ -1448,7 +1452,17 @@ export default function VisionAIIntelligencePage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [running, calibrating, isRecording, playbackSession, start, stop, startCalibration, toggleRecording, announce]);
+  }, [
+    running,
+    calibrating,
+    isRecording,
+    playbackSession,
+    start,
+    stop,
+    startCalibration,
+    toggleRecording,
+    announce,
+  ]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // METRIC HELP DEFINITIONS
@@ -1456,32 +1470,38 @@ export default function VisionAIIntelligencePage() {
   const METRIC_HELP: Record<string, { title: string; description: string; ideal: string }> = {
     shoulderSym: {
       title: 'Shoulder Symmetry',
-      description: 'Measures the height difference between your left and right shoulders. Higher scores indicate more balanced posture.',
+      description:
+        'Measures the height difference between your left and right shoulders. Higher scores indicate more balanced posture.',
       ideal: '90+ for optimal alignment',
     },
     hipSym: {
       title: 'Hip Symmetry',
-      description: 'Measures the evenness of your hip positioning. Uneven hips can indicate weight distribution issues.',
+      description:
+        'Measures the evenness of your hip positioning. Uneven hips can indicate weight distribution issues.',
       ideal: '85+ for stable stance',
     },
     spineLean: {
       title: 'Spine Lean',
-      description: 'The angle of your spine from vertical. 0° is perfectly upright, positive values lean right, negative lean left.',
+      description:
+        'The angle of your spine from vertical. 0° is perfectly upright, positive values lean right, negative lean left.',
       ideal: '-5° to +5° for neutral posture',
     },
     stability: {
       title: 'Stability Score',
-      description: 'Measures how much your body sways over time. Calculated from hip center movement variance over 3 seconds.',
+      description:
+        'Measures how much your body sways over time. Calculated from hip center movement variance over 3 seconds.',
       ideal: '80+ for solid foundation',
     },
     energy: {
       title: 'Voice Energy',
-      description: 'Measures the volume and intensity of your voice. Based on audio RMS (root mean square) amplitude.',
+      description:
+        'Measures the volume and intensity of your voice. Based on audio RMS (root mean square) amplitude.',
       ideal: '40-70 for engaged, clear delivery',
     },
     steadiness: {
       title: 'Voice Steadiness',
-      description: 'Measures consistency of your voice energy over time. Lower variance means more steady delivery.',
+      description:
+        'Measures consistency of your voice energy over time. Lower variance means more steady delivery.',
       ideal: '70+ for confident, even tone',
     },
   };
@@ -1489,7 +1509,13 @@ export default function VisionAIIntelligencePage() {
   // ─────────────────────────────────────────────────────────────────────────
   // TOOLTIP COMPONENT
   // ─────────────────────────────────────────────────────────────────────────
-  const MetricTooltip = ({ metricKey, children }: { metricKey: string; children: React.ReactNode }) => {
+  const MetricTooltip = ({
+    metricKey,
+    children,
+  }: {
+    metricKey: string;
+    children: React.ReactNode;
+  }) => {
     const help = METRIC_HELP[metricKey];
     if (!help) return <>{children}</>;
 
@@ -1577,12 +1603,7 @@ export default function VisionAIIntelligencePage() {
       </a>
 
       {/* ARIA live region for screen reader announcements */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </div>
 
@@ -1599,743 +1620,759 @@ export default function VisionAIIntelligencePage() {
           }}
         />
 
-      {/* Permission Prompt Modal (Mobile Safari) */}
-      {showPermissionPrompt && (
-        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
-          <div className="bg-charcoal border border-primary/30 rounded-xl max-w-md w-full p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Smartphone className="text-primary" size={24} />
-              <h2 className="font-display text-lg font-medium tracking-wider uppercase">
-                Camera Access Required
-              </h2>
-            </div>
-
-            <p className="text-white/70 text-sm mb-4">
-              Vision AI needs access to your camera and microphone to analyze your form. All
-              processing happens locally on your device—no data leaves your phone.
-            </p>
-
-            <div className="flex flex-col gap-2 mb-6">
-              <div className="flex items-center gap-2 text-sm">
-                <Camera
-                  size={16}
-                  className={cameraPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
-                />
-                <span className={cameraPermission === 'granted' ? 'text-green-500' : ''}>
-                  Camera: {cameraPermission === 'granted' ? 'Granted' : 'Required'}
-                </span>
+        {/* Permission Prompt Modal (Mobile Safari) */}
+        {showPermissionPrompt && (
+          <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
+            <div className="bg-charcoal border border-primary/30 rounded-xl max-w-md w-full p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Smartphone className="text-primary" size={24} />
+                <h2 className="font-display text-lg font-medium tracking-wider uppercase">
+                  Camera Access Required
+                </h2>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Mic
-                  size={16}
-                  className={micPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
-                />
-                <span className={micPermission === 'granted' ? 'text-green-500' : ''}>
-                  Microphone: {micPermission === 'granted' ? 'Granted' : 'Required'}
-                </span>
+
+              <p className="text-white/70 text-sm mb-4">
+                Vision AI needs access to your camera and microphone to analyze your form. All
+                processing happens locally on your device—no data leaves your phone.
+              </p>
+
+              <div className="flex flex-col gap-2 mb-6">
+                <div className="flex items-center gap-2 text-sm">
+                  <Camera
+                    size={16}
+                    className={cameraPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
+                  />
+                  <span className={cameraPermission === 'granted' ? 'text-green-500' : ''}>
+                    Camera: {cameraPermission === 'granted' ? 'Granted' : 'Required'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Mic
+                    size={16}
+                    className={micPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
+                  />
+                  <span className={micPermission === 'granted' ? 'text-green-500' : ''}>
+                    Microphone: {micPermission === 'granted' ? 'Granted' : 'Required'}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            {(cameraPermission === 'denied' || micPermission === 'denied') && (
-              <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
-                <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-400">
-                  Permissions were denied. Please enable camera and microphone access in your device
-                  settings, then reload this page.
-                </p>
-              </div>
-            )}
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowPermissionPrompt(false)}
-                className="flex-1 px-4 py-2.5 text-sm font-medium text-white/70 bg-midnight border border-white/20 rounded-lg hover:bg-white/5"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={requestPermissions}
-                disabled={cameraPermission === 'denied'}
-                className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Allow Access
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Sub-header */}
-      <header className="sticky top-16 md:top-20 z-50 flex justify-between items-center gap-4 px-4 md:px-6 py-3.5 border-b border-primary/15 bg-midnight/75 backdrop-blur-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 grid place-items-center border border-primary/25 rounded-lg bg-gradient-to-b from-primary/20 to-midnight/30 text-xl">
-            🔥
-          </div>
-          <div>
-            <h1 className="font-display text-sm font-medium tracking-[0.28em] uppercase">
-              Vision AI Intelligence
-            </h1>
-            <p className="text-sm text-white/65">
-              {playbackSession
-                ? 'Reviewing recorded session'
-                : 'Signals, not mind-reading — All processing runs locally'}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-2 flex-wrap justify-end">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
-            <span
-              className={`w-1.5 h-1.5 rounded-full ${
-                running
-                  ? 'bg-green-500 animate-pulse'
-                  : playbackSession
-                    ? 'bg-blue-500'
-                    : 'bg-gray-500'
-              }`}
-            />
-            {status}
-          </div>
-          {!playbackSession && (
-            <div className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
-              FPS: {fps}
-            </div>
-          )}
-          {isRecording && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-red-500 bg-red-500/10 border border-red-500/30 rounded-full animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-              REC
-            </div>
-          )}
-          {calibrated && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
-              <CheckCircle2 size={12} className="text-primary" />
-              Baseline Set
-            </div>
-          )}
-        </div>
-      </header>
-
-      {/* Getting Started Instructions Panel */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-6 relative z-10">
-        <section
-          className="bg-gradient-to-r from-primary/10 via-midnight/80 to-midnight/80 border border-primary/20 rounded-lg backdrop-blur-xl overflow-hidden"
-          aria-labelledby="instructions-heading"
-        >
-          <button
-            onClick={() => setShowInstructions(!showInstructions)}
-            className="w-full flex items-center justify-between px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-inset"
-            aria-expanded={showInstructions}
-            aria-controls="instructions-content"
-          >
-            <div className="flex items-center gap-2.5">
-              <Info size={16} className="text-primary" />
-              <span id="instructions-heading" className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
-                Getting Started
-              </span>
-              <span className="px-2 py-0.5 text-[10px] font-medium bg-primary/20 text-primary rounded-full">
-                {showInstructions ? 'Click to collapse' : 'Click to expand'}
-              </span>
-            </div>
-            {showInstructions ? (
-              <ChevronUp size={16} className="text-white/50" />
-            ) : (
-              <ChevronDown size={16} className="text-white/50" />
-            )}
-          </button>
-
-          {showInstructions && (
-            <div id="instructions-content" className="px-4 pb-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Step 1 */}
-                <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
-                      1
-                    </div>
-                    <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
-                      Position Yourself
-                    </h3>
-                  </div>
-                  <p className="text-xs text-white/60 leading-relaxed">
-                    Stand 6-8 feet from your camera with your full body visible. Ensure good lighting from the front—avoid backlighting.
+              {(cameraPermission === 'denied' || micPermission === 'denied') && (
+                <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
+                  <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-red-400">
+                    Permissions were denied. Please enable camera and microphone access in your
+                    device settings, then reload this page.
                   </p>
                 </div>
+              )}
 
-                {/* Step 2 */}
-                <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
-                      2
-                    </div>
-                    <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
-                      Calibrate Baseline
-                    </h3>
-                  </div>
-                  <p className="text-xs text-white/60 leading-relaxed">
-                    Start a session, then click "Calibrate" and hold still for 5 seconds. This sets your personal baseline for tracking improvements.
-                  </p>
-                </div>
-
-                {/* Step 3 */}
-                <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
-                      3
-                    </div>
-                    <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
-                      Compare to Pros
-                    </h3>
-                  </div>
-                  <p className="text-xs text-white/60 leading-relaxed">
-                    Enable "Pro Form" to overlay ideal positioning. Match your skeleton to the green reference for optimal form.
-                  </p>
-                </div>
-              </div>
-
-              {/* Quick tips */}
-              <div className="mt-4 p-3 bg-charcoal/30 rounded-lg border border-white/5">
-                <div className="flex items-start gap-2">
-                  <HelpCircle size={14} className="text-primary mt-0.5 flex-shrink-0" />
-                  <div className="text-xs text-white/50">
-                    <strong className="text-white/70">Keyboard shortcuts:</strong>{' '}
-                    Press <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">Space</kbd> to start/stop,{' '}
-                    <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">C</kbd> to calibrate,{' '}
-                    <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">R</kbd> to record,{' '}
-                    <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">P</kbd> to toggle pro overlay.
-                    Click the <HelpCircle size={10} className="inline" /> icons next to metrics for detailed explanations.
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
-      </div>
-
-      {/* Main content */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 relative z-10">
-        {/* Left column */}
-        <div className="flex flex-col gap-4">
-          {/* Controls panel */}
-          <section
-            className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl"
-            aria-labelledby="controls-heading"
-          >
-            <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-              <span className="font-display text-xs tracking-[0.2em] text-white/50">01</span>
-              <span id="controls-heading" className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
-                Controls
-              </span>
-            </div>
-
-            <div className="p-4">
-              <div className="flex gap-3 flex-wrap mb-4">
-                <div className="flex-1 min-w-[150px]">
-                  <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
-                    Mode
-                  </label>
-                  <select
-                    value={mode}
-                    onChange={(e) => setMode(e.target.value as 'sports' | 'body')}
-                    disabled={running || !!playbackSession}
-                    className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40 disabled:opacity-50"
-                  >
-                    <option value="sports">Sports Performance</option>
-                    <option value="body">Body Language</option>
-                  </select>
-                </div>
-
-                {/* Pro Form Overlay Select */}
-                <div className="flex-1 min-w-[150px]">
-                  <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
-                    Reference Form
-                  </label>
-                  <select
-                    value={selectedProForm}
-                    onChange={(e) => setSelectedProForm(e.target.value)}
-                    className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40"
-                  >
-                    {Object.entries(PRO_FORMS).map(([key, form]) => (
-                      <option key={key} value={key}>
-                        {form.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex gap-2.5 flex-wrap">
-                {!playbackSession ? (
-                  <>
-                    <button
-                      onClick={start}
-                      disabled={running}
-                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/30 to-midnight/50 border border-primary/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-primary/40 transition-all"
-                    >
-                      <Play size={14} />
-                      Start Session
-                    </button>
-
-                    <button
-                      onClick={stop}
-                      disabled={!running}
-                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-900/20 transition-all"
-                    >
-                      <StopCircle size={14} />
-                      Stop
-                    </button>
-
-                    <button
-                      onClick={startCalibration}
-                      disabled={!running || calibrating}
-                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-[#8b4513]/30 to-midnight/50 border border-[#8b4513]/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-[#8b4513]/40 transition-all"
-                    >
-                      <Target size={14} />
-                      {calibrated ? 'Re-Calibrate' : 'Calibrate'}
-                    </button>
-
-                    <button
-                      onClick={toggleRecording}
-                      disabled={!running}
-                      className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all ${
-                        isRecording
-                          ? 'text-red-500 bg-red-500/10 border border-red-500/40'
-                          : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
-                      }`}
-                    >
-                      {isRecording ? <StopCircle size={14} /> : <Download size={14} />}
-                      {isRecording ? 'Stop Recording' : 'Record'}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => setIsPlaying(!isPlaying)}
-                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-blue-500/30 to-midnight/50 border border-blue-500/40 rounded-md hover:from-blue-500/40 transition-all"
-                    >
-                      {isPlaying ? <StopCircle size={14} /> : <Play size={14} />}
-                      {isPlaying ? 'Pause' : 'Play'}
-                    </button>
-
-                    <button
-                      onClick={() => setPlaybackIndex(0)}
-                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-primary/15 rounded-md hover:border-primary/40 transition-all"
-                    >
-                      <RotateCcw size={14} />
-                      Restart
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setPlaybackSession(null);
-                        setPlaybackFrames([]);
-                        setPoseSignals(null);
-                        setAudioSignals(null);
-                      }}
-                      className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md hover:bg-red-900/20 transition-all"
-                    >
-                      <StopCircle size={14} />
-                      Exit Playback
-                    </button>
-                  </>
-                )}
-
-                {/* Pro overlay toggle */}
+              <div className="flex gap-3">
                 <button
-                  onClick={() => setShowProOverlay(!showProOverlay)}
-                  className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md transition-all ${
-                    showProOverlay
-                      ? 'text-green-500 bg-green-500/10 border border-green-500/40'
-                      : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
-                  }`}
+                  onClick={() => setShowPermissionPrompt(false)}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-white/70 bg-midnight border border-white/20 rounded-lg hover:bg-white/5"
                 >
-                  {showProOverlay ? <Eye size={14} /> : <EyeOff size={14} />}
-                  Pro Form
+                  Cancel
+                </button>
+                <button
+                  onClick={requestPermissions}
+                  disabled={cameraPermission === 'denied'}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Allow Access
                 </button>
               </div>
+            </div>
+          </div>
+        )}
 
-              {/* Pro overlay opacity slider */}
-              {showProOverlay && (
-                <div className="mt-4 flex items-center gap-3">
-                  <span className="text-xs text-white/50">Overlay Opacity:</span>
-                  <input
-                    type="range"
-                    min="0.1"
-                    max="1"
-                    step="0.1"
-                    value={proOverlayOpacity}
-                    onChange={(e) => setProOverlayOpacity(parseFloat(e.target.value))}
-                    className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
-                  />
-                  <span className="text-xs text-white/50">
-                    {Math.round(proOverlayOpacity * 100)}%
-                  </span>
-                </div>
+        {/* Sub-header */}
+        <header className="sticky top-16 md:top-20 z-50 flex justify-between items-center gap-4 px-4 md:px-6 py-3.5 border-b border-primary/15 bg-midnight/75 backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 grid place-items-center border border-primary/25 rounded-lg bg-gradient-to-b from-primary/20 to-midnight/30 text-xl">
+              🔥
+            </div>
+            <div>
+              <h1 className="font-display text-sm font-medium tracking-[0.28em] uppercase">
+                Vision AI Intelligence
+              </h1>
+              <p className="text-sm text-white/65">
+                {playbackSession
+                  ? 'Reviewing recorded session'
+                  : 'Signals, not mind-reading — All processing runs locally'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-2 flex-wrap justify-end">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  running
+                    ? 'bg-green-500 animate-pulse'
+                    : playbackSession
+                      ? 'bg-blue-500'
+                      : 'bg-gray-500'
+                }`}
+              />
+              {status}
+            </div>
+            {!playbackSession && (
+              <div className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
+                FPS: {fps}
+              </div>
+            )}
+            {isRecording && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-red-500 bg-red-500/10 border border-red-500/30 rounded-full animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                REC
+              </div>
+            )}
+            {calibrated && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
+                <CheckCircle2 size={12} className="text-primary" />
+                Baseline Set
+              </div>
+            )}
+          </div>
+        </header>
+
+        {/* Getting Started Instructions Panel */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 pt-6 relative z-10">
+          <section
+            className="bg-gradient-to-r from-primary/10 via-midnight/80 to-midnight/80 border border-primary/20 rounded-lg backdrop-blur-xl overflow-hidden"
+            aria-labelledby="instructions-heading"
+          >
+            <button
+              onClick={() => setShowInstructions(!showInstructions)}
+              className="w-full flex items-center justify-between px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-inset"
+              aria-expanded={showInstructions}
+              aria-controls="instructions-content"
+            >
+              <div className="flex items-center gap-2.5">
+                <Info size={16} className="text-primary" />
+                <span
+                  id="instructions-heading"
+                  className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85"
+                >
+                  Getting Started
+                </span>
+                <span className="px-2 py-0.5 text-[10px] font-medium bg-primary/20 text-primary rounded-full">
+                  {showInstructions ? 'Click to collapse' : 'Click to expand'}
+                </span>
+              </div>
+              {showInstructions ? (
+                <ChevronUp size={16} className="text-white/50" />
+              ) : (
+                <ChevronDown size={16} className="text-white/50" />
               )}
+            </button>
 
-              {/* Playback scrubber */}
-              {playbackSession && playbackFrames.length > 0 && (
-                <div className="mt-4">
-                  <div className="flex items-center justify-between text-xs text-white/50 mb-1">
-                    <span>
-                      Frame {playbackIndex + 1} / {playbackFrames.length}
-                    </span>
-                    <span>{playbackFrames[playbackIndex]?.timestamp.toFixed(1)}s</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max={playbackFrames.length - 1}
-                    value={playbackIndex}
-                    onChange={(e) => setPlaybackIndex(parseInt(e.target.value))}
-                    className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
-                  />
-                </div>
-              )}
-
-              {/* Video stage */}
-              <div className="mt-4 relative border border-primary/15 rounded-lg overflow-hidden bg-black">
-                <video
-                  ref={videoRef}
-                  playsInline
-                  muted
-                  className={`block w-full h-auto min-h-[300px] max-h-[400px] object-contain bg-black ${playbackSession ? 'hidden' : ''}`}
-                />
-                <canvas
-                  ref={canvasRef}
-                  className={`${playbackSession ? 'relative' : 'absolute inset-0'} w-full h-full ${playbackSession ? 'min-h-[300px] max-h-[400px]' : ''} pointer-events-none`}
-                />
-
-                {/* Status badge */}
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-white/85 bg-midnight/80 border border-white/15 rounded-full backdrop-blur-sm">
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${
-                      running ? 'bg-green-500' : playbackSession ? 'bg-blue-500' : 'bg-red-500'
-                    }`}
-                  />
-                  {running ? 'LIVE' : playbackSession ? 'PLAYBACK' : 'STANDBY'}
-                </div>
-
-                {/* Pro form legend */}
-                {showProOverlay && (
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-green-500 bg-midnight/80 border border-green-500/30 rounded-full backdrop-blur-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                    {PRO_FORMS[selectedProForm]?.name}
-                  </div>
-                )}
-
-                {/* Calibration overlay */}
-                {calibrating && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 text-[#f5f2eb] text-center z-10">
-                    <h3 className="font-display text-lg tracking-[0.25em] uppercase mb-3 text-primary">
-                      Calibrating
-                    </h3>
-                    <p className="text-sm text-white/75 max-w-xs">
-                      Hold still in your neutral position. This sets your baseline for delta
-                      tracking.
+            {showInstructions && (
+              <div id="instructions-content" className="px-4 pb-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Step 1 */}
+                  <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
+                        1
+                      </div>
+                      <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                        Position Yourself
+                      </h3>
+                    </div>
+                    <p className="text-xs text-white/60 leading-relaxed">
+                      Stand 6-8 feet from your camera with your full body visible. Ensure good
+                      lighting from the front—avoid backlighting.
                     </p>
-                    <div className="mt-5 w-48 h-1 bg-white/10 rounded-sm overflow-hidden">
-                      <div
-                        className="h-full bg-primary transition-[width] duration-100"
-                        style={{ width: `${calibProgress}%` }}
-                      />
+                  </div>
+
+                  {/* Step 2 */}
+                  <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
+                        2
+                      </div>
+                      <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                        Calibrate Baseline
+                      </h3>
+                    </div>
+                    <p className="text-xs text-white/60 leading-relaxed">
+                      Start a session, then click "Calibrate" and hold still for 5 seconds. This
+                      sets your personal baseline for tracking improvements.
+                    </p>
+                  </div>
+
+                  {/* Step 3 */}
+                  <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
+                        3
+                      </div>
+                      <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                        Compare to Pros
+                      </h3>
+                    </div>
+                    <p className="text-xs text-white/60 leading-relaxed">
+                      Enable "Pro Form" to overlay ideal positioning. Match your skeleton to the
+                      green reference for optimal form.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quick tips */}
+                <div className="mt-4 p-3 bg-charcoal/30 rounded-lg border border-white/5">
+                  <div className="flex items-start gap-2">
+                    <HelpCircle size={14} className="text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-xs text-white/50">
+                      <strong className="text-white/70">Keyboard shortcuts:</strong> Press{' '}
+                      <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">Space</kbd> to
+                      start/stop,{' '}
+                      <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">C</kbd> to
+                      calibrate,{' '}
+                      <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">R</kbd> to
+                      record, <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">P</kbd>{' '}
+                      to toggle pro overlay. Click the <HelpCircle size={10} className="inline" />{' '}
+                      icons next to metrics for detailed explanations.
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {/* Recorded Sessions */}
-          {recordedSessions.length > 0 && !playbackSession && (
-            <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between px-4 py-3.5 border-b border-primary/15">
-                <div className="flex items-center gap-2.5">
-                  <span className="font-display text-xs tracking-[0.2em] text-white/50">02</span>
-                  <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
-                    Recorded Sessions
-                  </span>
                 </div>
-                <span className="text-xs text-white/50">{recordedSessions.length} sessions</span>
+              </div>
+            )}
+          </section>
+        </div>
+
+        {/* Main content */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 relative z-10">
+          {/* Left column */}
+          <div className="flex flex-col gap-4">
+            {/* Controls panel */}
+            <section
+              className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl"
+              aria-labelledby="controls-heading"
+            >
+              <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
+                <span className="font-display text-xs tracking-[0.2em] text-white/50">01</span>
+                <span
+                  id="controls-heading"
+                  className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85"
+                >
+                  Controls
+                </span>
+              </div>
+
+              <div className="p-4">
+                <div className="flex gap-3 flex-wrap mb-4">
+                  <div className="flex-1 min-w-[150px]">
+                    <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
+                      Mode
+                    </label>
+                    <select
+                      value={mode}
+                      onChange={(e) => setMode(e.target.value as 'sports' | 'body')}
+                      disabled={running || !!playbackSession}
+                      className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40 disabled:opacity-50"
+                    >
+                      <option value="sports">Sports Performance</option>
+                      <option value="body">Body Language</option>
+                    </select>
+                  </div>
+
+                  {/* Pro Form Overlay Select */}
+                  <div className="flex-1 min-w-[150px]">
+                    <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
+                      Reference Form
+                    </label>
+                    <select
+                      value={selectedProForm}
+                      onChange={(e) => setSelectedProForm(e.target.value)}
+                      className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40"
+                    >
+                      {Object.entries(PRO_FORMS).map(([key, form]) => (
+                        <option key={key} value={key}>
+                          {form.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex gap-2.5 flex-wrap">
+                  {!playbackSession ? (
+                    <>
+                      <button
+                        onClick={start}
+                        disabled={running}
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/30 to-midnight/50 border border-primary/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-primary/40 transition-all"
+                      >
+                        <Play size={14} />
+                        Start Session
+                      </button>
+
+                      <button
+                        onClick={stop}
+                        disabled={!running}
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-900/20 transition-all"
+                      >
+                        <StopCircle size={14} />
+                        Stop
+                      </button>
+
+                      <button
+                        onClick={startCalibration}
+                        disabled={!running || calibrating}
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-[#8b4513]/30 to-midnight/50 border border-[#8b4513]/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-[#8b4513]/40 transition-all"
+                      >
+                        <Target size={14} />
+                        {calibrated ? 'Re-Calibrate' : 'Calibrate'}
+                      </button>
+
+                      <button
+                        onClick={toggleRecording}
+                        disabled={!running}
+                        className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all ${
+                          isRecording
+                            ? 'text-red-500 bg-red-500/10 border border-red-500/40'
+                            : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
+                        }`}
+                      >
+                        {isRecording ? <StopCircle size={14} /> : <Download size={14} />}
+                        {isRecording ? 'Stop Recording' : 'Record'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-blue-500/30 to-midnight/50 border border-blue-500/40 rounded-md hover:from-blue-500/40 transition-all"
+                      >
+                        {isPlaying ? <StopCircle size={14} /> : <Play size={14} />}
+                        {isPlaying ? 'Pause' : 'Play'}
+                      </button>
+
+                      <button
+                        onClick={() => setPlaybackIndex(0)}
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-primary/15 rounded-md hover:border-primary/40 transition-all"
+                      >
+                        <RotateCcw size={14} />
+                        Restart
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setPlaybackSession(null);
+                          setPlaybackFrames([]);
+                          setPoseSignals(null);
+                          setAudioSignals(null);
+                        }}
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md hover:bg-red-900/20 transition-all"
+                      >
+                        <StopCircle size={14} />
+                        Exit Playback
+                      </button>
+                    </>
+                  )}
+
+                  {/* Pro overlay toggle */}
+                  <button
+                    onClick={() => setShowProOverlay(!showProOverlay)}
+                    className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md transition-all ${
+                      showProOverlay
+                        ? 'text-green-500 bg-green-500/10 border border-green-500/40'
+                        : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
+                    }`}
+                  >
+                    {showProOverlay ? <Eye size={14} /> : <EyeOff size={14} />}
+                    Pro Form
+                  </button>
+                </div>
+
+                {/* Pro overlay opacity slider */}
+                {showProOverlay && (
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="text-xs text-white/50">Overlay Opacity:</span>
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="1"
+                      step="0.1"
+                      value={proOverlayOpacity}
+                      onChange={(e) => setProOverlayOpacity(parseFloat(e.target.value))}
+                      className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+                    />
+                    <span className="text-xs text-white/50">
+                      {Math.round(proOverlayOpacity * 100)}%
+                    </span>
+                  </div>
+                )}
+
+                {/* Playback scrubber */}
+                {playbackSession && playbackFrames.length > 0 && (
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between text-xs text-white/50 mb-1">
+                      <span>
+                        Frame {playbackIndex + 1} / {playbackFrames.length}
+                      </span>
+                      <span>{playbackFrames[playbackIndex]?.timestamp.toFixed(1)}s</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max={playbackFrames.length - 1}
+                      value={playbackIndex}
+                      onChange={(e) => setPlaybackIndex(parseInt(e.target.value))}
+                      className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    />
+                  </div>
+                )}
+
+                {/* Video stage */}
+                <div className="mt-4 relative border border-primary/15 rounded-lg overflow-hidden bg-black">
+                  <video
+                    ref={videoRef}
+                    playsInline
+                    muted
+                    className={`block w-full h-auto min-h-[300px] max-h-[400px] object-contain bg-black ${playbackSession ? 'hidden' : ''}`}
+                  />
+                  <canvas
+                    ref={canvasRef}
+                    className={`${playbackSession ? 'relative' : 'absolute inset-0'} w-full h-full ${playbackSession ? 'min-h-[300px] max-h-[400px]' : ''} pointer-events-none`}
+                  />
+
+                  {/* Status badge */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-white/85 bg-midnight/80 border border-white/15 rounded-full backdrop-blur-sm">
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        running ? 'bg-green-500' : playbackSession ? 'bg-blue-500' : 'bg-red-500'
+                      }`}
+                    />
+                    {running ? 'LIVE' : playbackSession ? 'PLAYBACK' : 'STANDBY'}
+                  </div>
+
+                  {/* Pro form legend */}
+                  {showProOverlay && (
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-green-500 bg-midnight/80 border border-green-500/30 rounded-full backdrop-blur-sm">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      {PRO_FORMS[selectedProForm]?.name}
+                    </div>
+                  )}
+
+                  {/* Calibration overlay */}
+                  {calibrating && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 text-[#f5f2eb] text-center z-10">
+                      <h3 className="font-display text-lg tracking-[0.25em] uppercase mb-3 text-primary">
+                        Calibrating
+                      </h3>
+                      <p className="text-sm text-white/75 max-w-xs">
+                        Hold still in your neutral position. This sets your baseline for delta
+                        tracking.
+                      </p>
+                      <div className="mt-5 w-48 h-1 bg-white/10 rounded-sm overflow-hidden">
+                        <div
+                          className="h-full bg-primary transition-[width] duration-100"
+                          style={{ width: `${calibProgress}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Recorded Sessions */}
+            {recordedSessions.length > 0 && !playbackSession && (
+              <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+                <div className="flex items-center justify-between px-4 py-3.5 border-b border-primary/15">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-display text-xs tracking-[0.2em] text-white/50">02</span>
+                    <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                      Recorded Sessions
+                    </span>
+                  </div>
+                  <span className="text-xs text-white/50">{recordedSessions.length} sessions</span>
+                </div>
+
+                <div className="p-4 max-h-44 overflow-y-auto">
+                  {recordedSessions.slice(0, 5).map((session) => (
+                    <button
+                      key={session.id}
+                      onClick={() => loadPlaybackSession(session)}
+                      className="w-full flex items-center justify-between p-3 mb-2 bg-midnight/50 border border-primary/10 rounded-md hover:border-primary/30 transition-colors text-left"
+                    >
+                      <div>
+                        <div className="text-sm text-white/90">
+                          {new Date(session.createdAt).toLocaleDateString()} —{' '}
+                          {session.mode.toUpperCase()}
+                        </div>
+                        <div className="text-xs text-white/50">
+                          {session.frameCount} frames • {session.duration.toFixed(1)}s
+                        </div>
+                      </div>
+                      <Upload size={14} className="text-white/40" />
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Logs panel */}
+            <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+              <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
+                <span className="font-display text-xs tracking-[0.2em] text-white/50">
+                  {recordedSessions.length > 0 && !playbackSession ? '03' : '02'}
+                </span>
+                <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                  Coaching Log
+                </span>
               </div>
 
               <div className="p-4 max-h-44 overflow-y-auto">
-                {recordedSessions.slice(0, 5).map((session) => (
-                  <button
-                    key={session.id}
-                    onClick={() => loadPlaybackSession(session)}
-                    className="w-full flex items-center justify-between p-3 mb-2 bg-midnight/50 border border-primary/10 rounded-md hover:border-primary/30 transition-colors text-left"
-                  >
-                    <div>
-                      <div className="text-sm text-white/90">
-                        {new Date(session.createdAt).toLocaleDateString()} —{' '}
-                        {session.mode.toUpperCase()}
-                      </div>
-                      <div className="text-xs text-white/50">
-                        {session.frameCount} frames • {session.duration.toFixed(1)}s
-                      </div>
+                {logs.length === 0 ? (
+                  <div className="text-white/40 italic text-sm">
+                    Logs will appear here during analysis...
+                  </div>
+                ) : (
+                  logs.map((log) => (
+                    <div
+                      key={log.id}
+                      className="flex gap-3 py-2 border-l-2 border-primary/15 pl-3 ml-1 mb-1"
+                    >
+                      <span className="font-mono text-xs text-white/40 min-w-[42px]">{log.t}s</span>
+                      <span className="font-display text-[10px] tracking-[0.15em] uppercase text-primary min-w-[80px]">
+                        {log.tag}
+                      </span>
+                      <span className="text-sm text-white/80 flex-1">{log.msg}</span>
                     </div>
-                    <Upload size={14} className="text-white/40" />
-                  </button>
-                ))}
+                  ))
+                )}
               </div>
             </section>
-          )}
-
-          {/* Logs panel */}
-          <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
-            <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-              <span className="font-display text-xs tracking-[0.2em] text-white/50">
-                {recordedSessions.length > 0 && !playbackSession ? '03' : '02'}
-              </span>
-              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
-                Coaching Log
-              </span>
-            </div>
-
-            <div className="p-4 max-h-44 overflow-y-auto">
-              {logs.length === 0 ? (
-                <div className="text-white/40 italic text-sm">
-                  Logs will appear here during analysis...
-                </div>
-              ) : (
-                logs.map((log) => (
-                  <div
-                    key={log.id}
-                    className="flex gap-3 py-2 border-l-2 border-primary/15 pl-3 ml-1 mb-1"
-                  >
-                    <span className="font-mono text-xs text-white/40 min-w-[42px]">{log.t}s</span>
-                    <span className="font-display text-[10px] tracking-[0.15em] uppercase text-primary min-w-[80px]">
-                      {log.tag}
-                    </span>
-                    <span className="text-sm text-white/80 flex-1">{log.msg}</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
-        </div>
-
-        {/* Right column - Signals */}
-        <aside className="flex flex-col gap-4">
-          <section className="flex-1 bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
-            <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-              <span className="font-display text-xs tracking-[0.2em] text-white/50">
-                {recordedSessions.length > 0 && !playbackSession ? '04' : '03'}
-              </span>
-              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
-                Live Signals
-              </span>
-            </div>
-
-            <div className="p-4">
-              {/* Pose Card */}
-              <div className="bg-midnight/50 border border-primary/15 rounded-md p-3 mb-3">
-                <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-primary/12">
-                  <span className="flex items-center gap-1.5 font-display text-xs tracking-[0.2em] uppercase text-primary">
-                    <Activity size={14} />
-                    Posture & Balance
-                  </span>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                      poseSignals?.confidence === 'High'
-                        ? 'bg-green-500/20 text-green-500'
-                        : poseSignals?.confidence === 'Medium'
-                          ? 'bg-yellow-500/20 text-yellow-500'
-                          : poseSignals?.confidence === 'Playback'
-                            ? 'bg-blue-500/20 text-blue-500'
-                            : 'bg-white/10 text-white/50'
-                    }`}
-                  >
-                    {poseSignals?.confidence || 'Low'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
-                  <MetricTooltip metricKey="shoulderSym">
-                    <span className="text-white/65">Shoulder Symmetry</span>
-                  </MetricTooltip>
-                  <span className="text-white/90 text-right">
-                    {poseSignals?.shoulderSym ?? '—'}/100
-                    {renderDelta(poseSignals?.shoulderSym, 'shoulderSym')}
-                  </span>
-
-                  <MetricTooltip metricKey="hipSym">
-                    <span className="text-white/65">Hip Symmetry</span>
-                  </MetricTooltip>
-                  <span className="text-white/90 text-right">
-                    {poseSignals?.hipSym ?? '—'}/100
-                    {renderDelta(poseSignals?.hipSym, 'hipSym')}
-                  </span>
-
-                  <MetricTooltip metricKey="spineLean">
-                    <span className="text-white/65">Spine Lean</span>
-                  </MetricTooltip>
-                  <span className="text-white/90 text-right">{poseSignals?.spineLean ?? '—'}°</span>
-
-                  <MetricTooltip metricKey="stability">
-                    <span className="text-white/65">Stability Score</span>
-                  </MetricTooltip>
-                  <span className="text-white/90 font-semibold text-right">
-                    {poseSignals?.stability ?? '—'}
-                    {renderDelta(poseSignals?.stability, 'stability')}
-                  </span>
-                </div>
-              </div>
-
-              {/* Audio Card */}
-              <div className="bg-midnight/50 border border-primary/15 rounded-md p-3 mb-3">
-                <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-primary/12">
-                  <span className="flex items-center gap-1.5 font-display text-xs tracking-[0.2em] uppercase text-primary">
-                    <Mic size={14} />
-                    Voice Signals
-                  </span>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                      audioSignals?.confidence === 'High'
-                        ? 'bg-green-500/20 text-green-500'
-                        : audioSignals?.confidence === 'Medium'
-                          ? 'bg-yellow-500/20 text-yellow-500'
-                          : audioSignals?.confidence === 'Playback'
-                            ? 'bg-blue-500/20 text-blue-500'
-                            : 'bg-white/10 text-white/50'
-                    }`}
-                  >
-                    {audioSignals?.confidence || 'Low'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
-                  <MetricTooltip metricKey="energy">
-                    <span className="text-white/65">Energy</span>
-                  </MetricTooltip>
-                  <span className="text-white/90 text-right">
-                    {audioSignals?.energy ?? '—'}/100
-                    {renderDelta(audioSignals?.energy, 'energy')}
-                  </span>
-
-                  <MetricTooltip metricKey="steadiness">
-                    <span className="text-white/65">Steadiness</span>
-                  </MetricTooltip>
-                  <span className="text-white/90 font-semibold text-right">
-                    {audioSignals?.steadiness ?? '—'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Save Baseline Button */}
-              {calibrated && baseline && (
-                <button
-                  onClick={saveBaselineToCloud}
-                  disabled={savingBaseline}
-                  className="w-full inline-flex items-center justify-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/20 to-midnight/50 border border-primary/30 rounded-md hover:from-primary/30 disabled:opacity-50 transition-all mb-3"
-                >
-                  {savingBaseline ? (
-                    <>Saving...</>
-                  ) : (
-                    <>
-                      <Save size={14} />
-                      <User size={14} />
-                      Save to Profile
-                    </>
-                  )}
-                </button>
-              )}
-
-              {/* Simple Chart */}
-              <div className="bg-midnight/50 border border-primary/15 rounded-md p-3">
-                <div className="flex items-center gap-1.5 mb-2.5 pb-2 border-b border-primary/12">
-                  <span className="font-display text-xs tracking-[0.2em] uppercase text-primary">
-                    Signal History
-                  </span>
-                </div>
-
-                {/* SVG Chart */}
-                <svg
-                  width="100%"
-                  height="100"
-                  viewBox="0 0 300 100"
-                  preserveAspectRatio="none"
-                  className="block"
-                >
-                  {/* Grid */}
-                  <line
-                    x1="0"
-                    y1="25"
-                    x2="300"
-                    y2="25"
-                    stroke="rgba(255,255,255,0.05)"
-                    strokeWidth="1"
-                  />
-                  <line
-                    x1="0"
-                    y1="50"
-                    x2="300"
-                    y2="50"
-                    stroke="rgba(255,255,255,0.05)"
-                    strokeWidth="1"
-                  />
-                  <line
-                    x1="0"
-                    y1="75"
-                    x2="300"
-                    y2="75"
-                    stroke="rgba(255,255,255,0.05)"
-                    strokeWidth="1"
-                  />
-
-                  {/* Stability line */}
-                  {chartData.length > 1 && (
-                    <polyline
-                      fill="none"
-                      stroke={COLORS.orange}
-                      strokeWidth="2"
-                      points={chartData
-                        .map((d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.stability}`)
-                        .join(' ')}
-                    />
-                  )}
-
-                  {/* Energy line */}
-                  {chartData.length > 1 && (
-                    <polyline
-                      fill="none"
-                      stroke={COLORS.dust}
-                      strokeWidth="2"
-                      strokeDasharray="4,2"
-                      points={chartData
-                        .map((d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.energy}`)
-                        .join(' ')}
-                    />
-                  )}
-                </svg>
-
-                <div className="flex gap-4 mt-2 justify-center">
-                  <span className="flex items-center gap-1 text-[10px] text-white/60">
-                    <span className="w-3 h-0.5" style={{ background: COLORS.orange }} />
-                    Stability
-                  </span>
-                  <span className="flex items-center gap-1 text-[10px] text-white/60">
-                    <span
-                      className="w-3 h-0.5 border-dashed border-b"
-                      style={{ borderColor: COLORS.dust }}
-                    />
-                    Energy
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Privacy note */}
-          <div className="p-3 text-xs leading-relaxed text-white/65 bg-charcoal/40 border border-primary/15 rounded-md">
-            <strong className="text-white/85">Privacy:</strong> All processing runs locally in your
-            browser. No video or audio leaves your device. This tool reports observable
-            signals—posture geometry, voice energy—not emotion, intent, or truthfulness.
           </div>
-        </aside>
-      </div>
-    </main>
+
+          {/* Right column - Signals */}
+          <aside className="flex flex-col gap-4">
+            <section className="flex-1 bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+              <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
+                <span className="font-display text-xs tracking-[0.2em] text-white/50">
+                  {recordedSessions.length > 0 && !playbackSession ? '04' : '03'}
+                </span>
+                <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                  Live Signals
+                </span>
+              </div>
+
+              <div className="p-4">
+                {/* Pose Card */}
+                <div className="bg-midnight/50 border border-primary/15 rounded-md p-3 mb-3">
+                  <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-primary/12">
+                    <span className="flex items-center gap-1.5 font-display text-xs tracking-[0.2em] uppercase text-primary">
+                      <Activity size={14} />
+                      Posture & Balance
+                    </span>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        poseSignals?.confidence === 'High'
+                          ? 'bg-green-500/20 text-green-500'
+                          : poseSignals?.confidence === 'Medium'
+                            ? 'bg-yellow-500/20 text-yellow-500'
+                            : poseSignals?.confidence === 'Playback'
+                              ? 'bg-blue-500/20 text-blue-500'
+                              : 'bg-white/10 text-white/50'
+                      }`}
+                    >
+                      {poseSignals?.confidence || 'Low'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
+                    <MetricTooltip metricKey="shoulderSym">
+                      <span className="text-white/65">Shoulder Symmetry</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 text-right">
+                      {poseSignals?.shoulderSym ?? '—'}/100
+                      {renderDelta(poseSignals?.shoulderSym, 'shoulderSym')}
+                    </span>
+
+                    <MetricTooltip metricKey="hipSym">
+                      <span className="text-white/65">Hip Symmetry</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 text-right">
+                      {poseSignals?.hipSym ?? '—'}/100
+                      {renderDelta(poseSignals?.hipSym, 'hipSym')}
+                    </span>
+
+                    <MetricTooltip metricKey="spineLean">
+                      <span className="text-white/65">Spine Lean</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 text-right">
+                      {poseSignals?.spineLean ?? '—'}°
+                    </span>
+
+                    <MetricTooltip metricKey="stability">
+                      <span className="text-white/65">Stability Score</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 font-semibold text-right">
+                      {poseSignals?.stability ?? '—'}
+                      {renderDelta(poseSignals?.stability, 'stability')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Audio Card */}
+                <div className="bg-midnight/50 border border-primary/15 rounded-md p-3 mb-3">
+                  <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-primary/12">
+                    <span className="flex items-center gap-1.5 font-display text-xs tracking-[0.2em] uppercase text-primary">
+                      <Mic size={14} />
+                      Voice Signals
+                    </span>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        audioSignals?.confidence === 'High'
+                          ? 'bg-green-500/20 text-green-500'
+                          : audioSignals?.confidence === 'Medium'
+                            ? 'bg-yellow-500/20 text-yellow-500'
+                            : audioSignals?.confidence === 'Playback'
+                              ? 'bg-blue-500/20 text-blue-500'
+                              : 'bg-white/10 text-white/50'
+                      }`}
+                    >
+                      {audioSignals?.confidence || 'Low'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
+                    <MetricTooltip metricKey="energy">
+                      <span className="text-white/65">Energy</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 text-right">
+                      {audioSignals?.energy ?? '—'}/100
+                      {renderDelta(audioSignals?.energy, 'energy')}
+                    </span>
+
+                    <MetricTooltip metricKey="steadiness">
+                      <span className="text-white/65">Steadiness</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 font-semibold text-right">
+                      {audioSignals?.steadiness ?? '—'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Save Baseline Button */}
+                {calibrated && baseline && (
+                  <button
+                    onClick={saveBaselineToCloud}
+                    disabled={savingBaseline}
+                    className="w-full inline-flex items-center justify-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/20 to-midnight/50 border border-primary/30 rounded-md hover:from-primary/30 disabled:opacity-50 transition-all mb-3"
+                  >
+                    {savingBaseline ? (
+                      <>Saving...</>
+                    ) : (
+                      <>
+                        <Save size={14} />
+                        <User size={14} />
+                        Save to Profile
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {/* Simple Chart */}
+                <div className="bg-midnight/50 border border-primary/15 rounded-md p-3">
+                  <div className="flex items-center gap-1.5 mb-2.5 pb-2 border-b border-primary/12">
+                    <span className="font-display text-xs tracking-[0.2em] uppercase text-primary">
+                      Signal History
+                    </span>
+                  </div>
+
+                  {/* SVG Chart */}
+                  <svg
+                    width="100%"
+                    height="100"
+                    viewBox="0 0 300 100"
+                    preserveAspectRatio="none"
+                    className="block"
+                  >
+                    {/* Grid */}
+                    <line
+                      x1="0"
+                      y1="25"
+                      x2="300"
+                      y2="25"
+                      stroke="rgba(255,255,255,0.05)"
+                      strokeWidth="1"
+                    />
+                    <line
+                      x1="0"
+                      y1="50"
+                      x2="300"
+                      y2="50"
+                      stroke="rgba(255,255,255,0.05)"
+                      strokeWidth="1"
+                    />
+                    <line
+                      x1="0"
+                      y1="75"
+                      x2="300"
+                      y2="75"
+                      stroke="rgba(255,255,255,0.05)"
+                      strokeWidth="1"
+                    />
+
+                    {/* Stability line */}
+                    {chartData.length > 1 && (
+                      <polyline
+                        fill="none"
+                        stroke={COLORS.orange}
+                        strokeWidth="2"
+                        points={chartData
+                          .map(
+                            (d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.stability}`
+                          )
+                          .join(' ')}
+                      />
+                    )}
+
+                    {/* Energy line */}
+                    {chartData.length > 1 && (
+                      <polyline
+                        fill="none"
+                        stroke={COLORS.dust}
+                        strokeWidth="2"
+                        strokeDasharray="4,2"
+                        points={chartData
+                          .map((d, i) => `${(i / (chartData.length - 1)) * 300},${100 - d.energy}`)
+                          .join(' ')}
+                      />
+                    )}
+                  </svg>
+
+                  <div className="flex gap-4 mt-2 justify-center">
+                    <span className="flex items-center gap-1 text-[10px] text-white/60">
+                      <span className="w-3 h-0.5" style={{ background: COLORS.orange }} />
+                      Stability
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px] text-white/60">
+                      <span
+                        className="w-3 h-0.5 border-dashed border-b"
+                        style={{ borderColor: COLORS.dust }}
+                      />
+                      Energy
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Privacy note */}
+            <div className="p-3 text-xs leading-relaxed text-white/65 bg-charcoal/40 border border-primary/15 rounded-md">
+              <strong className="text-white/85">Privacy:</strong> All processing runs locally in
+              your browser. No video or audio leaves your device. This tool reports observable
+              signals—posture geometry, voice energy—not emotion, intent, or truthfulness.
+            </div>
+          </aside>
+        </div>
+      </main>
     </>
   );
 }

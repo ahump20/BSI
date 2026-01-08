@@ -9,7 +9,10 @@
  */
 
 import { TimezoneSelector, TimezoneBadge } from '@/components/settings/TimezoneSelector';
-import { TeamPreferenceSelector, FavoriteTeamsBadge } from '@/components/settings/TeamPreferenceSelector';
+import {
+  TeamPreferenceSelector,
+  FavoriteTeamsBadge,
+} from '@/components/settings/TeamPreferenceSelector';
 import { useUserSettings } from '@/lib/hooks';
 import { useTeamPreferences } from '@/lib/hooks';
 
@@ -52,8 +55,8 @@ export default function SettingsPage() {
           </h2>
           <TimezoneSelector showSaveButton={false} />
           <p className="text-xs text-white/40 mt-3">
-            All game times and timestamps will be displayed in your selected timezone.
-            BSI API data is stored in America/Chicago (Central Time).
+            All game times and timestamps will be displayed in your selected timezone. BSI API data
+            is stored in America/Chicago (Central Time).
           </p>
         </section>
 

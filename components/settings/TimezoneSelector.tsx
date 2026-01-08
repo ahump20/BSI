@@ -127,13 +127,8 @@ export function TimezoneSelector({
   showSaveButton = true,
   className,
 }: TimezoneSelectorProps) {
-  const {
-    settings,
-    isLoaded,
-    setTimezone,
-    enableAutoTimezone,
-    isNonCentralTimezone,
-  } = useUserSettings();
+  const { settings, isLoaded, setTimezone, enableAutoTimezone, isNonCentralTimezone } =
+    useUserSettings();
 
   const [showAllTimezones, setShowAllTimezones] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -177,9 +172,7 @@ export function TimezoneSelector({
           <span className="text-2xl">🕐</span>
           Timezone
         </CardTitle>
-        {settings.useAutoTimezone && (
-          <span className="text-xs text-green-400">Auto-detected</span>
-        )}
+        {settings.useAutoTimezone && <span className="text-xs text-green-400">Auto-detected</span>}
       </CardHeader>
 
       <div className={cn('px-4 pb-4', compact && 'px-3 pb-3')}>
@@ -187,17 +180,15 @@ export function TimezoneSelector({
         <div className="mb-4 p-3 rounded-lg bg-gradient-to-r from-burnt-orange/10 to-transparent border border-burnt-orange/20">
           <p className="text-xs text-white/50 uppercase tracking-wider">Current Time</p>
           <p className="text-xl font-semibold text-white mt-1">{previewTime}</p>
-          <p className="text-xs text-white/60 mt-1">
-            {getTimezoneLabel(settings.timezone)}
-          </p>
+          <p className="text-xs text-white/60 mt-1">{getTimezoneLabel(settings.timezone)}</p>
         </div>
 
         {/* Auto-detect notice for non-Central users */}
         {isNonCentralTimezone && settings.timezone === BSI_TIMEZONE && (
           <div className="mb-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
             <p className="text-xs text-blue-400">
-              Tip: Your device is in {getTimezoneLabel(settings.detectedTimezone!)}.
-              Want to switch from Central Time?
+              Tip: Your device is in {getTimezoneLabel(settings.detectedTimezone!)}. Want to switch
+              from Central Time?
             </p>
             <button
               onClick={handleAutoDetect}
@@ -248,19 +239,19 @@ export function TimezoneSelector({
               International
             </h4>
             <div className="grid grid-cols-1 gap-2">
-              {ALL_TIMEZONES.filter(
-                (tz) => !US_TIMEZONES.some((us) => us.value === tz.value)
-              ).map((tz) => (
-                <TimezoneOption
-                  key={tz.value}
-                  value={tz.value}
-                  label={tz.label}
-                  abbr={tz.abbr}
-                  isSelected={settings.timezone === tz.value}
-                  onSelect={() => handleSelect(tz.value)}
-                  isDetected={tz.value === settings.detectedTimezone}
-                />
-              ))}
+              {ALL_TIMEZONES.filter((tz) => !US_TIMEZONES.some((us) => us.value === tz.value)).map(
+                (tz) => (
+                  <TimezoneOption
+                    key={tz.value}
+                    value={tz.value}
+                    label={tz.label}
+                    abbr={tz.abbr}
+                    isSelected={settings.timezone === tz.value}
+                    onSelect={() => handleSelect(tz.value)}
+                    isDetected={tz.value === settings.detectedTimezone}
+                  />
+                )
+              )}
             </div>
           </div>
         )}
@@ -300,10 +291,7 @@ export function TimezoneBadge({ className }: TimezoneBadgeProps) {
 
   return (
     <span
-      className={cn(
-        'text-xs px-2 py-0.5 rounded bg-white/10 text-white/70',
-        className
-      )}
+      className={cn('text-xs px-2 py-0.5 rounded bg-white/10 text-white/70', className)}
       title={getTimezoneLabel(settings.timezone)}
     >
       {abbr}

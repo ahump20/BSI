@@ -135,7 +135,8 @@ function CheckoutReturnContent() {
                       Welcome to <span className="text-gradient-blaze">BSI</span>
                     </h1>
                     <p className="text-text-secondary mb-2">
-                      Your {tier === 'enterprise' ? 'Enterprise' : 'Pro'} subscription is now active.
+                      Your {tier === 'enterprise' ? 'Enterprise' : 'Pro'} subscription is now
+                      active.
                     </p>
                     {customerEmail && (
                       <p className="text-text-tertiary text-sm mb-8">
@@ -145,7 +146,8 @@ function CheckoutReturnContent() {
                     {tier === 'pro' && (
                       <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-8">
                         <p className="text-burnt-orange text-sm">
-                          Your 14-day free trial has started. You won't be charged until the trial ends.
+                          Your 14-day free trial has started. You won't be charged until the trial
+                          ends.
                         </p>
                       </div>
                     )}
@@ -219,7 +221,7 @@ function CheckoutReturnContent() {
                       Something <span className="text-error">Went Wrong</span>
                     </h1>
                     <p className="text-text-secondary mb-4">
-                      {errorMessage || 'We couldn\'t verify your subscription.'}
+                      {errorMessage || "We couldn't verify your subscription."}
                     </p>
                     <p className="text-text-tertiary text-sm mb-8">
                       If you were charged, please contact{' '}

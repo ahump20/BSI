@@ -164,7 +164,10 @@ export default function MLBPlayersPage() {
         lg: league,
         qual: qualified ? 'y' : 'n',
         sortby: sortBy,
-        sortdir: sortBy === 'ERA' || sortBy === 'FIP' || sortBy === 'xFIP' || sortBy === 'WHIP' ? 'asc' : 'desc',
+        sortdir:
+          sortBy === 'ERA' || sortBy === 'FIP' || sortBy === 'xFIP' || sortBy === 'WHIP'
+            ? 'asc'
+            : 'desc',
         limit: '50',
         page: page.toString(),
       });
@@ -356,7 +359,8 @@ export default function MLBPlayersPage() {
               <ScrollReveal direction="up" delay={75}>
                 <p className="text-sm text-text-tertiary mb-4">
                   Showing {players.length} of {pagination.totalResults} players
-                  {pagination.totalPages > 1 && ` (Page ${pagination.page} of ${pagination.totalPages})`}
+                  {pagination.totalPages > 1 &&
+                    ` (Page ${pagination.page} of ${pagination.totalPages})`}
                 </p>
               </ScrollReveal>
             )}

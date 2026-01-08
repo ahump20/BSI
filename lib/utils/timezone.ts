@@ -120,10 +120,7 @@ export interface FormatOptions {
  * formatInTimezone('2025-01-07T19:00:00', { timezone: 'America/New_York' })
  * // => "Jan 7, 2025, 8:00 PM ET"
  */
-export function formatInTimezone(
-  input: string | Date,
-  options: FormatOptions = {}
-): string {
+export function formatInTimezone(input: string | Date, options: FormatOptions = {}): string {
   const {
     timezone = BSI_TIMEZONE,
     includeTime = true,
@@ -234,10 +231,7 @@ export function formatDateInTimezone(
  * formatGameTime('2025-01-07T19:05:00', 'America/New_York')
  * // => "8:05 PM ET"
  */
-export function formatGameTime(
-  input: string | Date,
-  timezone: string = BSI_TIMEZONE
-): string {
+export function formatGameTime(input: string | Date, timezone: string = BSI_TIMEZONE): string {
   const date = typeof input === 'string' ? new Date(input) : input;
 
   if (isNaN(date.getTime())) {
@@ -261,10 +255,7 @@ export function formatGameTime(
 /**
  * Get relative time description (e.g., "in 2 hours", "yesterday")
  */
-export function getRelativeTime(
-  input: string | Date,
-  timezone: string = BSI_TIMEZONE
-): string {
+export function getRelativeTime(input: string | Date, timezone: string = BSI_TIMEZONE): string {
   const date = typeof input === 'string' ? new Date(input) : input;
   const now = new Date();
 

@@ -160,252 +160,251 @@ export function PlayerDetailClient() {
     <>
       <main id="main-content" className="min-h-screen bg-midnight">
         {/* Breadcrumb */}
-      <Section className="pt-24 pb-4">
-        <Container>
-          <div className="flex items-center gap-2 text-sm text-text-tertiary">
-            <Link href="/college-baseball" className="hover:text-burnt-orange transition-colors">
-              College Baseball
-            </Link>
-            <span>/</span>
-            <Link
-              href="/college-baseball/transfer-portal"
-              className="hover:text-burnt-orange transition-colors"
-            >
-              Transfer Portal
-            </Link>
-            <span>/</span>
-            <span className="text-text-primary">{player.player_name}</span>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Player Header */}
-      <Section className="pb-8">
-        <Container>
-          <ScrollReveal>
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-              <div>
-                <div className="flex items-center gap-4 mb-2">
-                  <h1 className="font-display text-4xl md:text-5xl font-bold text-text-primary">
-                    {player.player_name}
-                  </h1>
-                  <StatusBadge status={player.status} size="lg" />
-                </div>
-                <p className="text-xl text-text-secondary">
-                  {player.position} • {player.class_year} • {player.conference}
-                </p>
-              </div>
-
-              {player.verified && (
-                <Badge variant="success" className="self-start">
-                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Verified
-                </Badge>
-              )}
+        <Section className="pt-24 pb-4">
+          <Container>
+            <div className="flex items-center gap-2 text-sm text-text-tertiary">
+              <Link href="/college-baseball" className="hover:text-burnt-orange transition-colors">
+                College Baseball
+              </Link>
+              <span>/</span>
+              <Link
+                href="/college-baseball/transfer-portal"
+                className="hover:text-burnt-orange transition-colors"
+              >
+                Transfer Portal
+              </Link>
+              <span>/</span>
+              <span className="text-text-primary">{player.player_name}</span>
             </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
+          </Container>
+        </Section>
 
-      {/* Transfer Path */}
-      <Section className="py-8">
-        <Container>
-          <ScrollReveal delay={0.1}>
-            <Card
-              padding="lg"
-              className="bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80"
-            >
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
-                <div className="text-center">
-                  <p className="text-sm text-text-muted mb-2">FROM</p>
-                  <p className="text-2xl font-display font-bold text-burnt-orange">
-                    {player.school_from}
+        {/* Player Header */}
+        <Section className="pb-8">
+          <Container>
+            <ScrollReveal>
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-4 mb-2">
+                    <h1 className="font-display text-4xl md:text-5xl font-bold text-text-primary">
+                      {player.player_name}
+                    </h1>
+                    <StatusBadge status={player.status} size="lg" />
+                  </div>
+                  <p className="text-xl text-text-secondary">
+                    {player.position} • {player.class_year} • {player.conference}
                   </p>
-                  <p className="text-sm text-text-tertiary">{player.conference}</p>
                 </div>
 
-                <div className="flex items-center">
+                {player.verified && (
+                  <Badge variant="success" className="self-start">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Verified
+                  </Badge>
+                )}
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Transfer Path */}
+        <Section className="py-8">
+          <Container>
+            <ScrollReveal delay={0.1}>
+              <Card
+                padding="lg"
+                className="bg-gradient-to-br from-charcoal-800/80 to-charcoal-900/80"
+              >
+                <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
+                  <div className="text-center">
+                    <p className="text-sm text-text-muted mb-2">FROM</p>
+                    <p className="text-2xl font-display font-bold text-burnt-orange">
+                      {player.school_from}
+                    </p>
+                    <p className="text-sm text-text-tertiary">{player.conference}</p>
+                  </div>
+
+                  <div className="flex items-center">
+                    <svg
+                      className="w-8 h-8 text-burnt-orange"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" />
+                    </svg>
+                  </div>
+
+                  <div className="text-center">
+                    <p className="text-sm text-text-muted mb-2">TO</p>
+                    {player.school_to ? (
+                      <>
+                        <p className="text-2xl font-display font-bold text-success-light">
+                          {player.school_to}
+                        </p>
+                        <p className="text-sm text-text-tertiary">Committed</p>
+                      </>
+                    ) : (
+                      <p className="text-2xl font-display font-bold text-dust italic">TBD</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-border-subtle text-center text-sm text-text-muted">
+                  Entered portal on{' '}
+                  {new Date(player.portal_date).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Stats Grid */}
+        {player.stats && (
+          <Section className="py-8">
+            <Container>
+              <ScrollReveal delay={0.2}>
+                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
+                  2025 Season Stats
+                </h2>
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                  {isPitcher ? (
+                    <>
+                      {player.stats.era !== undefined && (
+                        <StatItem label="ERA" value={player.stats.era.toFixed(2)} highlight />
+                      )}
+                      {player.stats.wins !== undefined && (
+                        <StatItem label="Wins" value={player.stats.wins} />
+                      )}
+                      {player.stats.losses !== undefined && (
+                        <StatItem label="Losses" value={player.stats.losses} />
+                      )}
+                      {player.stats.strikeouts !== undefined && (
+                        <StatItem label="K" value={player.stats.strikeouts} highlight />
+                      )}
+                      {player.stats.ip !== undefined && (
+                        <StatItem label="IP" value={player.stats.ip.toFixed(1)} />
+                      )}
+                      {player.stats.games !== undefined && (
+                        <StatItem label="Games" value={player.stats.games} />
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {player.stats.avg !== undefined && (
+                        <StatItem label="AVG" value={player.stats.avg.toFixed(3)} highlight />
+                      )}
+                      {player.stats.hr !== undefined && (
+                        <StatItem label="HR" value={player.stats.hr} />
+                      )}
+                      {player.stats.rbi !== undefined && (
+                        <StatItem label="RBI" value={player.stats.rbi} highlight />
+                      )}
+                      {player.stats.obp !== undefined && (
+                        <StatItem label="OBP" value={player.stats.obp.toFixed(3)} />
+                      )}
+                      {player.stats.slg !== undefined && (
+                        <StatItem label="SLG" value={player.stats.slg.toFixed(3)} />
+                      )}
+                      {player.stats.sb !== undefined && (
+                        <StatItem label="SB" value={player.stats.sb} />
+                      )}
+                    </>
+                  )}
+                </div>
+              </ScrollReveal>
+            </Container>
+          </Section>
+        )}
+
+        {/* Bio Section */}
+        {player.bio && (
+          <Section className="py-8">
+            <Container>
+              <ScrollReveal delay={0.3}>
+                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
+                  Player Info
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {player.bio.height && (
+                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                      <p className="text-xs text-text-muted uppercase mb-1">Height</p>
+                      <p className="text-text-primary font-medium">{player.bio.height}</p>
+                    </div>
+                  )}
+                  {player.bio.weight && (
+                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                      <p className="text-xs text-text-muted uppercase mb-1">Weight</p>
+                      <p className="text-text-primary font-medium">{player.bio.weight}</p>
+                    </div>
+                  )}
+                  {player.bio.bats && (
+                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                      <p className="text-xs text-text-muted uppercase mb-1">Bats</p>
+                      <p className="text-text-primary font-medium">{player.bio.bats}</p>
+                    </div>
+                  )}
+                  {player.bio.throws && (
+                    <div className="p-4 rounded-lg bg-charcoal-800/30">
+                      <p className="text-xs text-text-muted uppercase mb-1">Throws</p>
+                      <p className="text-text-primary font-medium">{player.bio.throws}</p>
+                    </div>
+                  )}
+                  {player.bio.hometown && (
+                    <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
+                      <p className="text-xs text-text-muted uppercase mb-1">Hometown</p>
+                      <p className="text-text-primary font-medium">{player.bio.hometown}</p>
+                    </div>
+                  )}
+                  {player.bio.high_school && (
+                    <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
+                      <p className="text-xs text-text-muted uppercase mb-1">High School</p>
+                      <p className="text-text-primary font-medium">{player.bio.high_school}</p>
+                    </div>
+                  )}
+                </div>
+              </ScrollReveal>
+            </Container>
+          </Section>
+        )}
+
+        {/* Back Button */}
+        <Section className="py-8 pb-16">
+          <Container>
+            <div className="text-center">
+              <Link href="/college-baseball/transfer-portal">
+                <Button variant="secondary" size="lg">
                   <svg
-                    className="w-8 h-8 text-burnt-orange"
                     viewBox="0 0 24 24"
+                    className="w-4 h-4 mr-2"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
                   >
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" />
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" />
                   </svg>
-                </div>
-
-                <div className="text-center">
-                  <p className="text-sm text-text-muted mb-2">TO</p>
-                  {player.school_to ? (
-                    <>
-                      <p className="text-2xl font-display font-bold text-success-light">
-                        {player.school_to}
-                      </p>
-                      <p className="text-sm text-text-tertiary">Committed</p>
-                    </>
-                  ) : (
-                    <p className="text-2xl font-display font-bold text-dust italic">TBD</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-border-subtle text-center text-sm text-text-muted">
-                Entered portal on{' '}
-                {new Date(player.portal_date).toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </div>
-            </Card>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* Stats Grid */}
-      {player.stats && (
-        <Section className="py-8">
-          <Container>
-            <ScrollReveal delay={0.2}>
-              <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
-                2025 Season Stats
-              </h2>
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                {isPitcher ? (
-                  <>
-                    {player.stats.era !== undefined && (
-                      <StatItem label="ERA" value={player.stats.era.toFixed(2)} highlight />
-                    )}
-                    {player.stats.wins !== undefined && (
-                      <StatItem label="Wins" value={player.stats.wins} />
-                    )}
-                    {player.stats.losses !== undefined && (
-                      <StatItem label="Losses" value={player.stats.losses} />
-                    )}
-                    {player.stats.strikeouts !== undefined && (
-                      <StatItem label="K" value={player.stats.strikeouts} highlight />
-                    )}
-                    {player.stats.ip !== undefined && (
-                      <StatItem label="IP" value={player.stats.ip.toFixed(1)} />
-                    )}
-                    {player.stats.games !== undefined && (
-                      <StatItem label="Games" value={player.stats.games} />
-                    )}
-                  </>
-                ) : (
-                  <>
-                    {player.stats.avg !== undefined && (
-                      <StatItem label="AVG" value={player.stats.avg.toFixed(3)} highlight />
-                    )}
-                    {player.stats.hr !== undefined && (
-                      <StatItem label="HR" value={player.stats.hr} />
-                    )}
-                    {player.stats.rbi !== undefined && (
-                      <StatItem label="RBI" value={player.stats.rbi} highlight />
-                    )}
-                    {player.stats.obp !== undefined && (
-                      <StatItem label="OBP" value={player.stats.obp.toFixed(3)} />
-                    )}
-                    {player.stats.slg !== undefined && (
-                      <StatItem label="SLG" value={player.stats.slg.toFixed(3)} />
-                    )}
-                    {player.stats.sb !== undefined && (
-                      <StatItem label="SB" value={player.stats.sb} />
-                    )}
-                  </>
-                )}
-              </div>
-            </ScrollReveal>
+                  Back to Portal Tracker
+                </Button>
+              </Link>
+            </div>
           </Container>
         </Section>
-      )}
+      </main>
 
-      {/* Bio Section */}
-      {player.bio && (
-        <Section className="py-8">
-          <Container>
-            <ScrollReveal delay={0.3}>
-              <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
-                Player Info
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {player.bio.height && (
-                  <div className="p-4 rounded-lg bg-charcoal-800/30">
-                    <p className="text-xs text-text-muted uppercase mb-1">Height</p>
-                    <p className="text-text-primary font-medium">{player.bio.height}</p>
-                  </div>
-                )}
-                {player.bio.weight && (
-                  <div className="p-4 rounded-lg bg-charcoal-800/30">
-                    <p className="text-xs text-text-muted uppercase mb-1">Weight</p>
-                    <p className="text-text-primary font-medium">{player.bio.weight}</p>
-                  </div>
-                )}
-                {player.bio.bats && (
-                  <div className="p-4 rounded-lg bg-charcoal-800/30">
-                    <p className="text-xs text-text-muted uppercase mb-1">Bats</p>
-                    <p className="text-text-primary font-medium">{player.bio.bats}</p>
-                  </div>
-                )}
-                {player.bio.throws && (
-                  <div className="p-4 rounded-lg bg-charcoal-800/30">
-                    <p className="text-xs text-text-muted uppercase mb-1">Throws</p>
-                    <p className="text-text-primary font-medium">{player.bio.throws}</p>
-                  </div>
-                )}
-                {player.bio.hometown && (
-                  <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
-                    <p className="text-xs text-text-muted uppercase mb-1">Hometown</p>
-                    <p className="text-text-primary font-medium">{player.bio.hometown}</p>
-                  </div>
-                )}
-                {player.bio.high_school && (
-                  <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
-                    <p className="text-xs text-text-muted uppercase mb-1">High School</p>
-                    <p className="text-text-primary font-medium">{player.bio.high_school}</p>
-                  </div>
-                )}
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
-      )}
-
-      {/* Back Button */}
-      <Section className="py-8 pb-16">
-        <Container>
-          <div className="text-center">
-            <Link href="/college-baseball/transfer-portal">
-              <Button variant="secondary" size="lg">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M19 12H5M5 12L12 19M5 12L12 5" />
-                </svg>
-                Back to Portal Tracker
-              </Button>
-            </Link>
-          </div>
-        </Container>
-      </Section>
-
-    </main>
-
-    <Footer />
-  </>
-);
+      <Footer />
+    </>
+  );
 }
 
 // Mock player data for development

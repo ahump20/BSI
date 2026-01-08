@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 
+const BASE_URL = process.env.API_BASE_URL || 'https://blazesportsintel.com';
+
 /**
  * Schema Validation Tests
  *

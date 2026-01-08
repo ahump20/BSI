@@ -108,8 +108,7 @@ export function useUserSettings() {
           ...parsed,
           detectedTimezone: detected,
           // If using auto timezone, update to current detected
-          timezone:
-            parsed.useAutoTimezone !== false ? detected : (parsed.timezone ?? BSI_TIMEZONE),
+          timezone: parsed.useAutoTimezone !== false ? detected : (parsed.timezone ?? BSI_TIMEZONE),
         }));
       } else {
         // First visit - use detected timezone

@@ -13,10 +13,7 @@ import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { loadStripe } from '@stripe/stripe-js';
-import {
-  EmbeddedCheckoutProvider,
-  EmbeddedCheckout,
-} from '@stripe/react-stripe-js';
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -25,9 +22,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
 // Initialize Stripe outside component to avoid recreating on re-renders
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
-);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 // ============================================================================
 // Loading State
@@ -155,9 +150,7 @@ function CheckoutContent() {
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mb-2">
                     Complete Your <span className="text-gradient-blaze">Subscription</span>
                   </h1>
-                  <p className="text-text-secondary">
-                    Secure checkout powered by Stripe
-                  </p>
+                  <p className="text-text-secondary">Secure checkout powered by Stripe</p>
                 </div>
 
                 {/* Stripe Embedded Checkout */}
@@ -174,7 +167,8 @@ function CheckoutContent() {
 
                 {/* Security Note */}
                 <p className="text-text-tertiary text-xs text-center mt-6">
-                  Your payment information is encrypted and secure. We never store your card details.
+                  Your payment information is encrypted and secure. We never store your card
+                  details.
                 </p>
 
                 {/* Back Link */}

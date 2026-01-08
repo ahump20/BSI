@@ -169,12 +169,19 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   const filterRoster = (players: Player[]) => {
     if (positionFilter === 'all') return players;
     if (positionFilter === 'pitchers')
-      return players.filter((p) => ['P', 'SP', 'RP', 'CL'].includes(p.primaryPosition.abbreviation));
-    if (positionFilter === 'catchers') return players.filter((p) => p.primaryPosition.abbreviation === 'C');
+      return players.filter((p) =>
+        ['P', 'SP', 'RP', 'CL'].includes(p.primaryPosition.abbreviation)
+      );
+    if (positionFilter === 'catchers')
+      return players.filter((p) => p.primaryPosition.abbreviation === 'C');
     if (positionFilter === 'infielders')
-      return players.filter((p) => ['1B', '2B', '3B', 'SS'].includes(p.primaryPosition.abbreviation));
+      return players.filter((p) =>
+        ['1B', '2B', '3B', 'SS'].includes(p.primaryPosition.abbreviation)
+      );
     if (positionFilter === 'outfielders')
-      return players.filter((p) => ['LF', 'CF', 'RF', 'OF', 'DH'].includes(p.primaryPosition.abbreviation));
+      return players.filter((p) =>
+        ['LF', 'CF', 'RF', 'OF', 'DH'].includes(p.primaryPosition.abbreviation)
+      );
     return players;
   };
 
@@ -290,7 +297,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               {positions.map((pos) => {
-                const players = roster.filter((p) => p.primaryPosition.abbreviation === pos.position);
+                const players = roster.filter(
+                  (p) => p.primaryPosition.abbreviation === pos.position
+                );
                 return (
                   <div key={pos.position} className="bg-graphite rounded-lg p-4">
                     <p className="text-xs text-text-tertiary uppercase tracking-wide mb-2">
@@ -362,7 +371,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                                 <span className="text-xs text-burnt-orange font-mono w-6">
                                   {player.primaryNumber}
                                 </span>
-                                <span className="text-sm text-text-secondary">{player.fullName}</span>
+                                <span className="text-sm text-text-secondary">
+                                  {player.fullName}
+                                </span>
                               </div>
                             </div>
                           ))}
@@ -397,7 +408,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </svg>
         <p className="text-text-secondary">Schedule drops when Opening Day gets closer.</p>
         <p className="text-text-tertiary text-sm mt-2 mb-4">
-          MLB releases the full slate in late January. We&apos;ll have it the minute it&apos;s official.
+          MLB releases the full slate in late January. We&apos;ll have it the minute it&apos;s
+          official.
         </p>
         <Link
           href="/mlb/scores"

@@ -284,9 +284,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                             #{player.primaryNumber}
                           </Badge>
                         )}
-                        <Badge variant="secondary">
-                          {player.primaryPosition.abbreviation}
-                        </Badge>
+                        <Badge variant="secondary">{player.primaryPosition.abbreviation}</Badge>
                         {isPitcher ? (
                           <Badge variant="info">Pitcher</Badge>
                         ) : (
@@ -423,7 +421,10 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
             </Section>
 
             {/* Tabs */}
-            <Section padding="none" className="border-b border-border-subtle sticky top-0 bg-charcoal z-10">
+            <Section
+              padding="none"
+              className="border-b border-border-subtle sticky top-0 bg-charcoal z-10"
+            >
               <Container>
                 <div className="flex gap-1 overflow-x-auto">
                   {tabs.map((tab) => (
@@ -588,14 +589,25 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           </CardHeader>
                           <CardContent>
                             <div className="grid grid-cols-3 gap-4">
-                              {Object.entries(stats.splits.vsLeft).slice(0, 9).map(([key, value]) => (
-                                <div key={key} className="text-center">
-                                  <div className="text-white font-mono font-semibold">
-                                    {formatStat(value, key.includes('avg') || key.includes('obp') || key.includes('slg') ? 3 : 0)}
+                              {Object.entries(stats.splits.vsLeft)
+                                .slice(0, 9)
+                                .map(([key, value]) => (
+                                  <div key={key} className="text-center">
+                                    <div className="text-white font-mono font-semibold">
+                                      {formatStat(
+                                        value,
+                                        key.includes('avg') ||
+                                          key.includes('obp') ||
+                                          key.includes('slg')
+                                          ? 3
+                                          : 0
+                                      )}
+                                    </div>
+                                    <div className="text-text-tertiary text-xs uppercase">
+                                      {key}
+                                    </div>
                                   </div>
-                                  <div className="text-text-tertiary text-xs uppercase">{key}</div>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           </CardContent>
                         </Card>
@@ -607,14 +619,25 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           </CardHeader>
                           <CardContent>
                             <div className="grid grid-cols-3 gap-4">
-                              {Object.entries(stats.splits.vsRight).slice(0, 9).map(([key, value]) => (
-                                <div key={key} className="text-center">
-                                  <div className="text-white font-mono font-semibold">
-                                    {formatStat(value, key.includes('avg') || key.includes('obp') || key.includes('slg') ? 3 : 0)}
+                              {Object.entries(stats.splits.vsRight)
+                                .slice(0, 9)
+                                .map(([key, value]) => (
+                                  <div key={key} className="text-center">
+                                    <div className="text-white font-mono font-semibold">
+                                      {formatStat(
+                                        value,
+                                        key.includes('avg') ||
+                                          key.includes('obp') ||
+                                          key.includes('slg')
+                                          ? 3
+                                          : 0
+                                      )}
+                                    </div>
+                                    <div className="text-text-tertiary text-xs uppercase">
+                                      {key}
+                                    </div>
                                   </div>
-                                  <div className="text-text-tertiary text-xs uppercase">{key}</div>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           </CardContent>
                         </Card>
@@ -626,14 +649,25 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           </CardHeader>
                           <CardContent>
                             <div className="grid grid-cols-3 gap-4">
-                              {Object.entries(stats.splits.home).slice(0, 9).map(([key, value]) => (
-                                <div key={key} className="text-center">
-                                  <div className="text-white font-mono font-semibold">
-                                    {formatStat(value, key.includes('avg') || key.includes('obp') || key.includes('slg') ? 3 : 0)}
+                              {Object.entries(stats.splits.home)
+                                .slice(0, 9)
+                                .map(([key, value]) => (
+                                  <div key={key} className="text-center">
+                                    <div className="text-white font-mono font-semibold">
+                                      {formatStat(
+                                        value,
+                                        key.includes('avg') ||
+                                          key.includes('obp') ||
+                                          key.includes('slg')
+                                          ? 3
+                                          : 0
+                                      )}
+                                    </div>
+                                    <div className="text-text-tertiary text-xs uppercase">
+                                      {key}
+                                    </div>
                                   </div>
-                                  <div className="text-text-tertiary text-xs uppercase">{key}</div>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           </CardContent>
                         </Card>
@@ -645,14 +679,25 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           </CardHeader>
                           <CardContent>
                             <div className="grid grid-cols-3 gap-4">
-                              {Object.entries(stats.splits.away).slice(0, 9).map(([key, value]) => (
-                                <div key={key} className="text-center">
-                                  <div className="text-white font-mono font-semibold">
-                                    {formatStat(value, key.includes('avg') || key.includes('obp') || key.includes('slg') ? 3 : 0)}
+                              {Object.entries(stats.splits.away)
+                                .slice(0, 9)
+                                .map(([key, value]) => (
+                                  <div key={key} className="text-center">
+                                    <div className="text-white font-mono font-semibold">
+                                      {formatStat(
+                                        value,
+                                        key.includes('avg') ||
+                                          key.includes('obp') ||
+                                          key.includes('slg')
+                                          ? 3
+                                          : 0
+                                      )}
+                                    </div>
+                                    <div className="text-text-tertiary text-xs uppercase">
+                                      {key}
+                                    </div>
                                   </div>
-                                  <div className="text-text-tertiary text-xs uppercase">{key}</div>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           </CardContent>
                         </Card>

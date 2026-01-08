@@ -246,7 +246,10 @@ export function DataSourcePanel({
             </span>
             {refreshInterval && (
               <span className="text-text-tertiary/70">
-                Refreshes every {refreshInterval < 60 ? `${refreshInterval}s` : `${Math.floor(refreshInterval / 60)}m`}
+                Refreshes every{' '}
+                {refreshInterval < 60
+                  ? `${refreshInterval}s`
+                  : `${Math.floor(refreshInterval / 60)}m`}
               </span>
             )}
           </div>
@@ -254,7 +257,10 @@ export function DataSourcePanel({
           {/* Sources List */}
           <div className="space-y-3">
             {sources.map((source, index) => (
-              <div key={index} className="flex items-start gap-3 pl-2 border-l-2 border-border-subtle">
+              <div
+                key={index}
+                className="flex items-start gap-3 pl-2 border-l-2 border-border-subtle"
+              >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     {source.url ? (
@@ -285,7 +291,8 @@ export function DataSourcePanel({
 
           {/* Methodology Note */}
           <p className="text-xs text-text-tertiary/70 pt-2 border-t border-border-subtle">
-            BSI verifies data from multiple sources. Statistics updated per official league schedules.
+            BSI verifies data from multiple sources. Statistics updated per official league
+            schedules.
           </p>
         </div>
       )}
@@ -374,8 +381,8 @@ interface DataDisclaimerProps {
 export function DataDisclaimer({ className = '' }: DataDisclaimerProps) {
   return (
     <p className={`text-xs text-text-tertiary/70 text-center ${className}`}>
-      Statistics compiled from official league sources. Projections and analytics are for informational
-      purposes only. Past performance does not guarantee future results.
+      Statistics compiled from official league sources. Projections and analytics are for
+      informational purposes only. Past performance does not guarantee future results.
     </p>
   );
 }
