@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spray Chart Analyzer | Blaze Sports Intel</title>
+    <meta name="description" content="Visualize batted ball distributions across the field. Analyze pull, center, and opposite field tendencies.">
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        :root {
+            --burnt-orange: #BF5700;
+            --texas-soil: #8B4513;
+            --ember: #FF6B35;
+            --charcoal: #1A1A1A;
+            --midnight: #0D0D0D;
+            --cream: #FAF8F5;
+            --gold: #C9A227;
+            --single: #43A047;
+            --double: #1E88E5;
+            --triple: #7B1FA2;
+            --homerun: #E53935;
+            --out: #616161;
+            --field-green: #2E5A1C;
+            --dirt: #8B5A2B;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--midnight);
+            color: var(--cream);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--burnt-orange);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 2rem; color: var(--burnt-orange); margin-bottom: 8px; }
+        .subtitle { color: #999; font-size: 1rem; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .badge.free {
+            background: rgba(46, 125, 50, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        select, input {
+            padding: 12px 16px;
+            background: var(--charcoal);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--cream);
+            font-size: 1rem;
+            min-width: 180px;
+        }
+        select:focus, input:focus { outline: none; border-color: var(--burnt-orange); }
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--burnt-orange), var(--ember));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(191, 87, 0, 0.3);
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+        }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            #sprayCanvas { max-width: 100%; height: auto; }
+            .field-container { min-height: 350px; }
+        }
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            h1 { font-size: 1.5rem; }
+            .controls { flex-direction: column; }
+            select, input { width: 100%; min-width: unset; }
+            .btn { width: 100%; }
+            header { padding: 20px 0; }
+        }
+        .field-panel {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #333;
+        }
+        .field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .field-title { font-size: 1.25rem; font-weight: 600; }
+        .field-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 450px;
+        }
+        #sprayCanvas {
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+        .stats-panel {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #333;
+        }
+        .stats-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--burnt-orange);
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--midnight);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--ember);
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        .zone-breakdown { margin-top: 20px; }
+        .zone-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--midnight);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .zone-name { font-weight: 500; }
+        .zone-stats {
+            display: flex;
+            gap: 16px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .zone-stat { text-align: right; }
+        .zone-stat-label { font-size: 0.65rem; color: #888; }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #333;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--burnt-orange);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .tooltip {
+            position: fixed;
+            background: var(--charcoal);
+            border: 1px solid var(--burnt-orange);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+        .tooltip-title { font-weight: 700; margin-bottom: 6px; }
+        .tooltip-line { color: #aaa; margin: 2px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/tools" class="back-link">&larr; Back to Tools</a>
+
+        <header>
+            <h1>Spray Chart Analyzer<span class="badge free">Free</span></h1>
+            <p class="subtitle">Visualize batted ball distribution and field tendencies</p>
+        </header>
+
+        <div class="controls">
+            <input type="text" id="batterInput" placeholder="Batter name...">
+            <select id="hitTypeSelect">
+                <option value="">All Hit Types</option>
+                <option value="single">Singles</option>
+                <option value="double">Doubles</option>
+                <option value="triple">Triples</option>
+                <option value="home_run">Home Runs</option>
+                <option value="groundout">Ground Outs</option>
+                <option value="flyout">Fly Outs</option>
+                <option value="lineout">Line Outs</option>
+            </select>
+            <select id="seasonSelect">
+                <option value="2024">2024 Season</option>
+                <option value="2023">2023 Season</option>
+                <option value="2022">2022 Season</option>
+            </select>
+            <button class="btn" id="loadBtn">Load Data</button>
+        </div>
+
+        <div class="main-grid">
+            <div class="field-panel">
+                <div class="field-header">
+                    <span class="field-title">Field View</span>
+                    <span id="batterLabel" style="color:#888;">Sample Batter</span>
+                </div>
+                <div class="field-container">
+                    <canvas id="sprayCanvas" width="500" height="450"></canvas>
+                </div>
+                <div class="legend" id="legend"></div>
+            </div>
+
+            <div class="stats-panel">
+                <h3 class="stats-title">Batted Ball Summary</h3>
+                <div class="summary-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalBalls">--</div>
+                        <div class="stat-label">Batted Balls</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="battingAvg">.---</div>
+                        <div class="stat-label">BABIP</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgExitVelo">--</div>
+                        <div class="stat-label">Avg Exit Velo</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgLaunchAngle">--</div>
+                        <div class="stat-label">Avg Launch Angle</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom:12px;">Zone Breakdown</h4>
+                <div class="zone-breakdown" id="zoneBreakdown">
+                    <div class="zone-item">
+                        <span class="zone-name">Pull (Left)</span>
+                        <div class="zone-stats">
+                            <div class="zone-stat"><div id="leftCount">--</div><div class="zone-stat-label">Hits</div></div>
+                            <div class="zone-stat"><div id="leftAvg">.---</div><div class="zone-stat-label">AVG</div></div>
+                        </div>
+                    </div>
+                    <div class="zone-item">
+                        <span class="zone-name">Center</span>
+                        <div class="zone-stats">
+                            <div class="zone-stat"><div id="centerCount">--</div><div class="zone-stat-label">Hits</div></div>
+                            <div class="zone-stat"><div id="centerAvg">.---</div><div class="zone-stat-label">AVG</div></div>
+                        </div>
+                    </div>
+                    <div class="zone-item">
+                        <span class="zone-name">Oppo (Right)</span>
+                        <div class="zone-stats">
+                            <div class="zone-stat"><div id="rightCount">--</div><div class="zone-stat-label">Hits</div></div>
+                            <div class="zone-stat"><div id="rightAvg">.---</div><div class="zone-stat-label">AVG</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltipTitle"></div>
+        <div class="tooltip-line" id="tooltipDist"></div>
+        <div class="tooltip-line" id="tooltipVelo"></div>
+        <div class="tooltip-line" id="tooltipAngle"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('sprayCanvas');
+        const ctx = canvas.getContext('2d');
+        const tooltip = document.getElementById('tooltip');
+        const tooltipTitle = document.getElementById('tooltipTitle');
+        const tooltipDist = document.getElementById('tooltipDist');
+        const tooltipVelo = document.getElementById('tooltipVelo');
+        const tooltipAngle = document.getElementById('tooltipAngle');
+
+        const hitColors = {
+            'single': '#43A047',
+            'double': '#1E88E5',
+            'triple': '#7B1FA2',
+            'home_run': '#E53935',
+            'groundout': '#616161',
+            'flyout': '#9E9E9E',
+            'lineout': '#757575'
+        };
+
+        let currentData = null;
+
+        // Field scale: home plate at bottom center, max 450ft outfield
+        const homePlateX = canvas.width / 2;
+        const homePlateY = canvas.height - 30;
+        const scale = 0.85; // pixels per foot
+
+        function fieldToCanvas(x, y) {
+            // x is lateral (negative = left field), y is distance from home
+            return {
+                cx: homePlateX + (x * scale),
+                cy: homePlateY - (y * scale)
+            };
+        }
+
+        function drawField() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Background - outfield grass
+            ctx.fillStyle = '#1A3A0F';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw outfield arc (warning track)
+            ctx.strokeStyle = '#8B5A2B';
+            ctx.lineWidth = 12;
+            ctx.beginPath();
+            ctx.arc(homePlateX, homePlateY, 380 * scale, Math.PI * 1.25, Math.PI * 1.75, false);
+            ctx.stroke();
+
+            // Draw fence arc
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(homePlateX, homePlateY, 400 * scale, Math.PI * 1.25, Math.PI * 1.75, false);
+            ctx.stroke();
+
+            // Infield dirt
+            ctx.fillStyle = '#5D3A1F';
+            ctx.beginPath();
+            ctx.arc(homePlateX, homePlateY, 95 * scale, Math.PI * 1.25, Math.PI * 1.75, false);
+            ctx.lineTo(homePlateX, homePlateY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Infield grass
+            ctx.fillStyle = '#2E5A1C';
+            ctx.beginPath();
+            ctx.arc(homePlateX, homePlateY, 70 * scale, Math.PI * 1.25, Math.PI * 1.75, false);
+            ctx.lineTo(homePlateX, homePlateY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Foul lines
+            ctx.strokeStyle = '#FAF8F5';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(homePlateX, homePlateY);
+            ctx.lineTo(homePlateX - 330 * scale * Math.sin(Math.PI / 4), homePlateY - 330 * scale * Math.cos(Math.PI / 4));
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(homePlateX, homePlateY);
+            ctx.lineTo(homePlateX + 330 * scale * Math.sin(Math.PI / 4), homePlateY - 330 * scale * Math.cos(Math.PI / 4));
+            ctx.stroke();
+
+            // Home plate
+            ctx.fillStyle = '#FAF8F5';
+            ctx.beginPath();
+            ctx.moveTo(homePlateX, homePlateY);
+            ctx.lineTo(homePlateX - 8, homePlateY + 8);
+            ctx.lineTo(homePlateX - 5, homePlateY + 14);
+            ctx.lineTo(homePlateX + 5, homePlateY + 14);
+            ctx.lineTo(homePlateX + 8, homePlateY + 8);
+            ctx.closePath();
+            ctx.fill();
+
+            // Base positions
+            const bases = [
+                { x: 63, y: 63 },   // 1B
+                { x: 0, y: 90 },    // 2B
+                { x: -63, y: 63 }   // 3B
+            ];
+
+            ctx.fillStyle = '#FAF8F5';
+            bases.forEach(function(base) {
+                const pos = fieldToCanvas(base.x, base.y);
+                ctx.save();
+                ctx.translate(pos.cx, pos.cy);
+                ctx.rotate(Math.PI / 4);
+                ctx.fillRect(-6, -6, 12, 12);
+                ctx.restore();
+            });
+
+            // Distance markers
+            ctx.fillStyle = '#666';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            var markers = [200, 300, 400];
+            markers.forEach(function(dist) {
+                var pos = fieldToCanvas(0, dist);
+                ctx.fillText(dist + "'", pos.cx, pos.cy + 4);
+            });
+
+            // Zone labels
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fillText('LF', homePlateX - 180, homePlateY - 200);
+            ctx.fillText('CF', homePlateX, homePlateY - 280);
+            ctx.fillText('RF', homePlateX + 180, homePlateY - 200);
+        }
+
+        function drawBattedBalls(balls) {
+            balls.forEach(function(ball) {
+                const pos = fieldToCanvas(ball.x, ball.y);
+                const color = hitColors[ball.type] || '#888';
+
+                ctx.beginPath();
+                ctx.arc(pos.cx, pos.cy, ball.isHit ? 7 : 5, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.globalAlpha = 0.75;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = ball.isHit ? '#fff' : '#444';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+        }
+
+        function formatAvg(num) {
+            if (num === 0) return '.000';
+            return num.toFixed(3).replace('0.', '.');
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalBalls').textContent = data.summary.totalBattedBalls;
+            document.getElementById('battingAvg').textContent = formatAvg(data.summary.battingAvg);
+            document.getElementById('avgExitVelo').textContent = data.summary.avgExitVelo + ' mph';
+            document.getElementById('avgLaunchAngle').textContent = data.summary.avgLaunchAngle + '\u00B0';
+            document.getElementById('batterLabel').textContent = data.player;
+
+            // Zone breakdown
+            var zb = data.zoneBreakdown;
+            document.getElementById('leftCount').textContent = zb.left.hits;
+            document.getElementById('leftAvg').textContent = formatAvg(zb.left.avg);
+            document.getElementById('centerCount').textContent = zb.center.hits;
+            document.getElementById('centerAvg').textContent = formatAvg(zb.center.avg);
+            document.getElementById('rightCount').textContent = zb.right.hits;
+            document.getElementById('rightAvg').textContent = formatAvg(zb.right.avg);
+
+            // Legend
+            var legendEl = document.getElementById('legend');
+            legendEl.textContent = '';
+            var legendItems = [
+                { type: 'single', label: 'Single' },
+                { type: 'double', label: 'Double' },
+                { type: 'triple', label: 'Triple' },
+                { type: 'home_run', label: 'Home Run' },
+                { type: 'groundout', label: 'Ground Out' },
+                { type: 'flyout', label: 'Fly Out' }
+            ];
+            legendItems.forEach(function(item) {
+                var legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                var dot = document.createElement('div');
+                dot.className = 'legend-dot';
+                dot.style.background = hitColors[item.type];
+                var label = document.createElement('span');
+                label.textContent = item.label;
+                legendItem.appendChild(dot);
+                legendItem.appendChild(label);
+                legendEl.appendChild(legendItem);
+            });
+        }
+
+        async function loadData() {
+            var batter = document.getElementById('batterInput').value;
+            var hitType = document.getElementById('hitTypeSelect').value;
+            var season = document.getElementById('seasonSelect').value;
+
+            var url = '/api/tools/spray-chart?season=' + encodeURIComponent(season);
+            if (batter) url += '&batter=' + encodeURIComponent(batter);
+            if (hitType) url += '&type=' + encodeURIComponent(hitType);
+
+            try {
+                var response = await fetch(url);
+                var data = await response.json();
+                currentData = data;
+
+                drawField();
+                drawBattedBalls(data.battedBalls);
+                updateStats(data);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Canvas tooltip on hover
+        canvas.addEventListener('mousemove', function(e) {
+            if (!currentData) return;
+
+            var rect = canvas.getBoundingClientRect();
+            var mouseX = e.clientX - rect.left;
+            var mouseY = e.clientY - rect.top;
+
+            var hoveredBall = null;
+            currentData.battedBalls.forEach(function(ball) {
+                var pos = fieldToCanvas(ball.x, ball.y);
+                var dist = Math.sqrt(Math.pow(mouseX - pos.cx, 2) + Math.pow(mouseY - pos.cy, 2));
+                if (dist < 10) hoveredBall = ball;
+            });
+
+            if (hoveredBall) {
+                tooltip.style.display = 'block';
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+                tooltipTitle.textContent = hoveredBall.typeName;
+                tooltipDist.textContent = 'Distance: ' + hoveredBall.distance + ' ft';
+                tooltipVelo.textContent = 'Exit Velo: ' + hoveredBall.exitVelo + ' mph';
+                tooltipAngle.textContent = 'Launch Angle: ' + hoveredBall.launchAngle + '\u00B0';
+            } else {
+                tooltip.style.display = 'none';
+            }
+        });
+
+        canvas.addEventListener('mouseleave', function() {
+            tooltip.style.display = 'none';
+        });
+
+        // Touch support for mobile
+        canvas.addEventListener('touchstart', function(e) {
+            if (!currentData) return;
+            e.preventDefault();
+            var touch = e.touches[0];
+            var rect = canvas.getBoundingClientRect();
+            var touchX = touch.clientX - rect.left;
+            var touchY = touch.clientY - rect.top;
+
+            var hoveredBall = null;
+            currentData.battedBalls.forEach(function(ball) {
+                var pos = fieldToCanvas(ball.x, ball.y);
+                var dist = Math.sqrt(Math.pow(touchX - pos.cx, 2) + Math.pow(touchY - pos.cy, 2));
+                if (dist < 15) hoveredBall = ball; // Larger touch target
+            });
+
+            if (hoveredBall) {
+                tooltip.style.display = 'block';
+                tooltip.style.left = Math.min(touch.clientX + 15, window.innerWidth - 200) + 'px';
+                tooltip.style.top = (touch.clientY - 100) + 'px';
+                tooltipTitle.textContent = hoveredBall.typeName;
+                tooltipDist.textContent = 'Distance: ' + hoveredBall.distance + ' ft';
+                tooltipVelo.textContent = 'Exit Velo: ' + hoveredBall.exitVelo + ' mph';
+                tooltipAngle.textContent = 'Launch Angle: ' + hoveredBall.launchAngle + '\u00B0';
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', function() {
+            setTimeout(function() { tooltip.style.display = 'none'; }, 1500);
+        });
+
+        document.getElementById('loadBtn').addEventListener('click', loadData);
+
+        // Initial load
+        drawField();
+        loadData();
+    </script>
+</body>
+</html>

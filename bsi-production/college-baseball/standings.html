@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College baseball conference standings. Track every D1 conference race from Blaze Sports Intel.">
+  <title>Conference Standings | College Baseball | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(191, 87, 0, 0.2) 0%, transparent 70%);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 1rem;
+    }
+    .page-header h1 span {
+      display: block;
+      color: var(--bsi-burnt-orange);
+    }
+    .page-header p {
+      color: rgba(250, 248, 245, 0.7);
+      font-size: 1.125rem;
+      max-width: 600px;
+    }
+
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.7);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 2rem;
+      background: var(--bsi-midnight);
+      min-height: 60vh;
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .controls label {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.7);
+    }
+    .controls select {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.3);
+      color: var(--bsi-cream);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .controls select:hover {
+      border-color: var(--bsi-burnt-orange);
+    }
+    .last-updated {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+
+    .conferences-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .conference-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .conference-header {
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.3), rgba(191, 87, 0, 0.1));
+      border-bottom: 1px solid rgba(191, 87, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .conference-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .conference-abbr {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.2);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+    }
+
+    .teams-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .teams-table th,
+    .teams-table td {
+      padding: 0.875rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .teams-table th {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(250, 248, 245, 0.5);
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .teams-table td {
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+    }
+    .teams-table tr:hover {
+      background: rgba(191, 87, 0, 0.05);
+    }
+    .teams-table tr:last-child td {
+      border-bottom: none;
+    }
+    .team-name {
+      font-weight: 500;
+    }
+    .team-name.featured {
+      color: var(--bsi-burnt-orange);
+    }
+    .stat-cell {
+      font-family: var(--font-mono);
+      text-align: center;
+    }
+    .stat-cell.pending {
+      color: rgba(250, 248, 245, 0.4);
+      font-style: italic;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.6);
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(191, 87, 0, 0.3);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #C62828;
+      background: rgba(198, 40, 40, 0.1);
+      border-radius: 8px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+
+    .season-note {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.7);
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .page-header { padding: 6rem 1rem 2rem; }
+      .content { padding: 1.5rem 1rem; }
+      .sub-nav { top: 52px; padding: 1rem; }
+      .controls { flex-direction: column; align-items: flex-start; }
+      .last-updated { margin-left: 0; margin-top: 0.5rem; }
+      .teams-table th:nth-child(n+4),
+      .teams-table td:nth-child(n+4) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball" class="active">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>
+          Conference Standings
+          <span>2025 Season</span>
+        </h1>
+        <p>Track every D1 conference race. Win-loss records, conference records, and RPI rankings updated daily during the season.</p>
+      </div>
+    </section>
+
+    <nav class="sub-nav">
+      <div class="sub-nav-inner">
+        <a href="/college-baseball">Overview</a>
+        <a href="/college-baseball/scores">Scores</a>
+        <a href="/college-baseball/standings" class="active">Standings</a>
+        <a href="/college-baseball/rankings">Rankings</a>
+        <a href="/college-baseball/teams">Teams</a>
+        <a href="/college-baseball/players">Players</a>
+        <a href="/college-baseball/transfer-portal">Portal</a>
+        <a href="/college-baseball/news">News</a>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="content-inner">
+        <div class="controls">
+          <label for="conference-select">Conference:</label>
+          <select id="conference-select">
+            <option value="all">All Conferences</option>
+            <option value="sec">SEC</option>
+            <option value="acc">ACC</option>
+            <option value="big12">Big 12</option>
+            <option value="bigten">Big Ten</option>
+            <option value="pac12">Pac-12</option>
+            <option value="american">American</option>
+          </select>
+          <span class="last-updated" id="last-updated"></span>
+        </div>
+
+        <div id="standings-container">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading standings...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to blaze the path less beaten.</p>
+  </footer>
+
+  <script>
+    const container = document.getElementById('standings-container');
+    const conferenceSelect = document.getElementById('conference-select');
+    const lastUpdatedEl = document.getElementById('last-updated');
+
+    // Featured team for highlighting
+    const FEATURED_TEAM = 'Texas';
+
+    function showLoading() {
+      container.textContent = '';
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'loading';
+
+      const spinner = document.createElement('div');
+      spinner.className = 'loading-spinner';
+      loadingDiv.appendChild(spinner);
+
+      const text = document.createElement('p');
+      text.textContent = 'Loading standings...';
+      loadingDiv.appendChild(text);
+
+      container.appendChild(loadingDiv);
+    }
+
+    function showError(message) {
+      container.textContent = '';
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error';
+      errorDiv.textContent = message;
+      container.appendChild(errorDiv);
+    }
+
+    function showEmpty() {
+      container.textContent = '';
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'empty';
+      emptyDiv.textContent = 'No standings data available for this conference.';
+      container.appendChild(emptyDiv);
+    }
+
+    function createConferenceCard(conference) {
+      const card = document.createElement('div');
+      card.className = 'conference-card';
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'conference-header';
+
+      const name = document.createElement('span');
+      name.className = 'conference-name';
+      name.textContent = conference.name;
+      header.appendChild(name);
+
+      const abbr = document.createElement('span');
+      abbr.className = 'conference-abbr';
+      abbr.textContent = conference.abbreviation;
+      header.appendChild(abbr);
+
+      card.appendChild(header);
+
+      // Table
+      const table = document.createElement('table');
+      table.className = 'teams-table';
+
+      // Header row
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      ['Team', 'Conf', 'Overall', 'Pct', 'Strk'].forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        if (col !== 'Team') th.style.textAlign = 'center';
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // Body rows
+      const tbody = document.createElement('tbody');
+      conference.teams.forEach(teamName => {
+        const row = document.createElement('tr');
+
+        // Team name
+        const teamCell = document.createElement('td');
+        teamCell.className = 'team-name';
+        if (teamName === FEATURED_TEAM) {
+          teamCell.classList.add('featured');
+        }
+        teamCell.textContent = teamName;
+        row.appendChild(teamCell);
+
+        // Placeholder stats (will be populated when season starts)
+        ['--', '--', '--', '--'].forEach(val => {
+          const cell = document.createElement('td');
+          cell.className = 'stat-cell pending';
+          cell.textContent = val;
+          row.appendChild(cell);
+        });
+
+        tbody.appendChild(row);
+      });
+      table.appendChild(tbody);
+
+      card.appendChild(table);
+      return card;
+    }
+
+    async function fetchStandings(conference = 'all') {
+      showLoading();
+
+      try {
+        let url = '/api/ncaa/baseball/standings';
+        if (conference !== 'all') {
+          url += '?conference=' + encodeURIComponent(conference);
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Failed to fetch standings');
+        }
+
+        const data = await response.json();
+
+        if (data.fetchedAt) {
+          lastUpdatedEl.textContent = 'Updated: ' + data.fetchedAt;
+        }
+
+        if (!data.conferences || data.conferences.length === 0) {
+          showEmpty();
+          return;
+        }
+
+        // Clear and render
+        container.textContent = '';
+
+        const grid = document.createElement('div');
+        grid.className = 'conferences-grid';
+
+        data.conferences.forEach(conf => {
+          const card = createConferenceCard(conf);
+          grid.appendChild(card);
+        });
+
+        container.appendChild(grid);
+
+        // Add season note
+        const note = document.createElement('div');
+        note.className = 'season-note';
+        note.textContent = 'Live conference records will update daily once the 2025 season begins. Source: ' + (data.source || 'D1Baseball Reference');
+        container.appendChild(note);
+
+      } catch (error) {
+        console.error('Error fetching standings:', error);
+        showError('Unable to load standings. Please try again later.');
+      }
+    }
+
+    // Conference filter change
+    conferenceSelect.addEventListener('change', function() {
+      fetchStandings(this.value);
+    });
+
+    // Initial load
+    fetchStandings();
+  </script>
+</body>
+</html>

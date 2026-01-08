@@ -340,6 +340,14 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     if (path === '/tools/recruiting-tracker' || path === '/tools/recruiting-tracker/') {
       return serveToolAsset(env, 'origin/tools/recruiting-tracker/index.html', 'text/html', corsHeaders, request);
     }
+    // Strike Zone Analyzer (Pro)
+    if (path === '/tools/strike-zone' || path === '/tools/strike-zone/') {
+      return serveToolAsset(env, 'origin/tools/strike-zone/index.html', 'text/html', corsHeaders, request);
+    }
+    // Spray Chart Analyzer (Pro)
+    if (path === '/tools/spray-chart' || path === '/tools/spray-chart/') {
+      return serveToolAsset(env, 'origin/tools/spray-chart/index.html', 'text/html', corsHeaders, request);
+    }
     // Serve tool assets (JS, CSS)
     if (path.startsWith('/tools/')) {
       return serveToolStaticAsset(env, path, corsHeaders);
@@ -373,6 +381,12 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       return handleNCAABaseballSchedule(env, corsHeaders, team);
     }
 
+    // === UNIFIED SCORES ENDPOINT ===
+    // Aggregates all sports scores in one call for scores dashboard
+    if (path === '/api/scores/all') {
+      return handleUnifiedScores(env, corsHeaders);
+    }
+
     // MLB Data (SportsDataIO)
     if (path.startsWith('/api/mlb/')) {
       return handleMLBRequest(path, url, env, corsHeaders);
@@ -396,6 +410,20 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     // Betting Odds (TheOddsAPI)
     if (path.startsWith('/api/odds/')) {
       return handleOddsRequest(path, url, env, corsHeaders);
+    }
+
+    // === TOOLS API ROUTES ===
+    if (path === '/api/tools/strike-zone') {
+      const playerId = url.searchParams.get('player') || url.searchParams.get('pitcher');
+      const pitchType = url.searchParams.get('type');
+      const hand = url.searchParams.get('hand');
+      return handleStrikeZone(env, corsHeaders, playerId, pitchType, hand);
+    }
+    if (path === '/api/tools/spray-chart') {
+      const playerId = url.searchParams.get('player') || url.searchParams.get('batter');
+      const hitType = url.searchParams.get('type');
+      const season = url.searchParams.get('season') || '2024';
+      return handleSprayChart(env, corsHeaders, playerId, hitType, season);
     }
 
     // API health check
@@ -593,6 +621,118 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
     }
   }
 
+  // Leaders endpoint - fetch from ESPN core API with athlete resolution
+  if (endpoint === 'leaders') {
+    try {
+      const espnUrl = 'https://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/2024/types/2/leaders?limit=10';
+      const response = await fetch(espnUrl);
+      if (!response.ok) {
+        return new Response(JSON.stringify({
+          error: 'Failed to fetch MLB leaders',
+          fetchedAt: getChicagoTimestamp()
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
+      const data = await response.json();
+
+      // Map category names to our format
+      const battingCats = { 'avg': 'avg', 'homeRuns': 'hr', 'RBIs': 'rbi' };
+      const pitchingCats = { 'ERA': 'era', 'wins': 'wins', 'strikeoutsPitching': 'strikeouts' };
+
+      const batting = { avg: [], hr: [], rbi: [] };
+      const pitching = { era: [], wins: [], strikeouts: [] };
+
+      // Collect all athlete refs to fetch in parallel
+      const athleteRefs = new Map();
+      const teamRefs = new Map();
+
+      if (data.categories) {
+        for (const cat of data.categories) {
+          const isBatting = battingCats[cat.name];
+          const isPitching = pitchingCats[cat.name];
+          if (!isBatting && !isPitching) continue;
+
+          for (const leader of (cat.leaders || []).slice(0, 5)) {
+            if (leader.athlete?.$ref) athleteRefs.set(leader.athlete.$ref, null);
+            if (leader.team?.$ref) teamRefs.set(leader.team.$ref, null);
+          }
+        }
+      }
+
+      // Fetch athlete names in parallel
+      const athletePromises = Array.from(athleteRefs.keys()).slice(0, 25).map(async (ref) => {
+        try {
+          const r = await fetch(ref);
+          if (r.ok) {
+            const d = await r.json();
+            athleteRefs.set(ref, d.displayName || d.fullName || 'Unknown');
+          }
+        } catch (e) { /* ignore */ }
+      });
+
+      // Fetch team abbreviations
+      const teamPromises = Array.from(teamRefs.keys()).slice(0, 15).map(async (ref) => {
+        try {
+          const r = await fetch(ref);
+          if (r.ok) {
+            const d = await r.json();
+            teamRefs.set(ref, d.abbreviation || '');
+          }
+        } catch (e) { /* ignore */ }
+      });
+
+      await Promise.all([...athletePromises, ...teamPromises]);
+
+      // Build leaders with resolved names
+      if (data.categories) {
+        for (const cat of data.categories) {
+          const battingKey = battingCats[cat.name];
+          const pitchingKey = pitchingCats[cat.name];
+          if (!battingKey && !pitchingKey) continue;
+
+          const leaderList = (cat.leaders || []).slice(0, 5).map(l => {
+            // For batting avg, extract just the decimal value
+            let val = l.displayValue || String(l.value) || '0';
+            if (cat.name === 'avg' && l.value) {
+              val = l.value.toFixed(3);
+            }
+            return {
+              name: athleteRefs.get(l.athlete?.$ref) || 'Unknown',
+              team: teamRefs.get(l.team?.$ref) || '',
+              value: val
+            };
+          });
+
+          if (battingKey) batting[battingKey] = leaderList;
+          if (pitchingKey) pitching[pitchingKey] = leaderList;
+        }
+      }
+
+      return new Response(JSON.stringify({
+        batting,
+        pitching,
+        source: 'ESPN',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`ESPN MLB leaders error: ${error.message}`);
+      return new Response(JSON.stringify({
+        error: error.message,
+        batting: { avg: [], hr: [], rbi: [] },
+        pitching: { era: [], wins: [], strikeouts: [] },
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
   const routes = {
     'standings': '/mlb/scores/json/Standings/2025',
     'teams': '/mlb/scores/json/Teams',
@@ -640,6 +780,121 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
       // On any error, try ESPN fallback
       console.log(`SportsDataIO NFL error: ${error.message}, falling back to ESPN`);
       return fetchESPNNFLScores(corsHeaders);
+    }
+  }
+
+  // Leaders endpoint - fetch from ESPN core API with athlete resolution
+  if (endpoint === 'leaders') {
+    try {
+      const espnUrl = 'https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/leaders?limit=10';
+      const response = await fetch(espnUrl);
+      if (!response.ok) {
+        return new Response(JSON.stringify({
+          error: 'Failed to fetch NFL leaders',
+          fetchedAt: getChicagoTimestamp()
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
+      const data = await response.json();
+
+      // Map category names to our format
+      const categoryMap = {
+        'passingYards': 'passingYards',
+        'rushingYards': 'rushingYards',
+        'receivingYards': 'receivingYards',
+        'totalTouchdowns': 'touchdowns',
+        'sacks': 'sacks',
+        'interceptions': 'interceptions'
+      };
+
+      const leaders = {
+        passingYards: [],
+        rushingYards: [],
+        receivingYards: [],
+        touchdowns: [],
+        sacks: [],
+        interceptions: []
+      };
+
+      // Collect all athlete refs to fetch in parallel
+      const athleteRefs = new Map();
+      const teamRefs = new Map();
+
+      if (data.categories) {
+        for (const cat of data.categories) {
+          const targetKey = categoryMap[cat.name];
+          if (!targetKey) continue;
+
+          for (const leader of (cat.leaders || []).slice(0, 5)) {
+            if (leader.athlete?.$ref) athleteRefs.set(leader.athlete.$ref, null);
+            if (leader.team?.$ref) teamRefs.set(leader.team.$ref, null);
+          }
+        }
+      }
+
+      // Fetch athlete names in parallel
+      const athletePromises = Array.from(athleteRefs.keys()).slice(0, 25).map(async (ref) => {
+        try {
+          const r = await fetch(ref);
+          if (r.ok) {
+            const d = await r.json();
+            athleteRefs.set(ref, d.displayName || d.fullName || 'Unknown');
+          }
+        } catch (e) { /* ignore */ }
+      });
+
+      // Fetch team abbreviations
+      const teamPromises = Array.from(teamRefs.keys()).slice(0, 15).map(async (ref) => {
+        try {
+          const r = await fetch(ref);
+          if (r.ok) {
+            const d = await r.json();
+            teamRefs.set(ref, d.abbreviation || '');
+          }
+        } catch (e) { /* ignore */ }
+      });
+
+      await Promise.all([...athletePromises, ...teamPromises]);
+
+      // Build leaders with resolved names
+      if (data.categories) {
+        for (const cat of data.categories) {
+          const targetKey = categoryMap[cat.name];
+          if (!targetKey) continue;
+
+          leaders[targetKey] = (cat.leaders || []).slice(0, 5).map(l => ({
+            name: athleteRefs.get(l.athlete?.$ref) || 'Unknown',
+            team: teamRefs.get(l.team?.$ref) || '',
+            value: l.displayValue || String(l.value) || '0'
+          }));
+        }
+      }
+
+      return new Response(JSON.stringify({
+        ...leaders,
+        source: 'ESPN',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`ESPN NFL leaders error: ${error.message}`);
+      return new Response(JSON.stringify({
+        error: error.message,
+        passingYards: [],
+        rushingYards: [],
+        receivingYards: [],
+        touchdowns: [],
+        sacks: [],
+        interceptions: [],
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
     }
   }
 
@@ -716,6 +971,121 @@ async function handleNBARequest(path, url, env, corsHeaders) {
       // On any error, try ESPN fallback
       console.log(`SportsDataIO NBA error: ${error.message}, falling back to ESPN`);
       return fetchESPNNBAScores(corsHeaders);
+    }
+  }
+
+  // Leaders endpoint - fetch from ESPN core API with athlete resolution
+  if (endpoint === 'leaders') {
+    try {
+      const espnUrl = 'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2025/types/2/leaders?limit=10';
+      const response = await fetch(espnUrl);
+      if (!response.ok) {
+        return new Response(JSON.stringify({
+          error: 'Failed to fetch NBA leaders',
+          fetchedAt: getChicagoTimestamp()
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
+      const data = await response.json();
+
+      // Map category names to our format
+      const categoryMap = {
+        'pointsPerGame': 'points',
+        'reboundsPerGame': 'rebounds',
+        'assistsPerGame': 'assists',
+        'stealsPerGame': 'steals',
+        'blocksPerGame': 'blocks',
+        'threePointFieldGoalsMade': 'threePointers'
+      };
+
+      const leaders = {
+        points: [],
+        rebounds: [],
+        assists: [],
+        steals: [],
+        blocks: [],
+        threePointers: []
+      };
+
+      // Collect all athlete refs to fetch in parallel
+      const athleteRefs = new Map();
+      const teamRefs = new Map();
+
+      if (data.categories) {
+        for (const cat of data.categories) {
+          const targetKey = categoryMap[cat.name];
+          if (!targetKey) continue;
+
+          for (const leader of (cat.leaders || []).slice(0, 5)) {
+            if (leader.athlete?.$ref) athleteRefs.set(leader.athlete.$ref, null);
+            if (leader.team?.$ref) teamRefs.set(leader.team.$ref, null);
+          }
+        }
+      }
+
+      // Fetch athlete names in parallel (limit to first 20 to avoid too many requests)
+      const athletePromises = Array.from(athleteRefs.keys()).slice(0, 20).map(async (ref) => {
+        try {
+          const r = await fetch(ref);
+          if (r.ok) {
+            const d = await r.json();
+            athleteRefs.set(ref, d.displayName || d.fullName || 'Unknown');
+          }
+        } catch (e) { /* ignore */ }
+      });
+
+      // Fetch team abbreviations
+      const teamPromises = Array.from(teamRefs.keys()).slice(0, 10).map(async (ref) => {
+        try {
+          const r = await fetch(ref);
+          if (r.ok) {
+            const d = await r.json();
+            teamRefs.set(ref, d.abbreviation || '');
+          }
+        } catch (e) { /* ignore */ }
+      });
+
+      await Promise.all([...athletePromises, ...teamPromises]);
+
+      // Now build leaders with resolved names
+      if (data.categories) {
+        for (const cat of data.categories) {
+          const targetKey = categoryMap[cat.name];
+          if (!targetKey) continue;
+
+          leaders[targetKey] = (cat.leaders || []).slice(0, 5).map(l => ({
+            name: athleteRefs.get(l.athlete?.$ref) || 'Unknown',
+            team: teamRefs.get(l.team?.$ref) || '',
+            value: l.displayValue || String(l.value) || '0'
+          }));
+        }
+      }
+
+      return new Response(JSON.stringify({
+        ...leaders,
+        source: 'ESPN',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`ESPN NBA leaders error: ${error.message}`);
+      return new Response(JSON.stringify({
+        error: error.message,
+        points: [],
+        rebounds: [],
+        assists: [],
+        steals: [],
+        blocks: [],
+        threePointers: [],
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
     }
   }
 
@@ -1086,6 +1456,295 @@ function getMonthAbbrev() {
 
 function getChicagoTimestamp() {
   return new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' });
+}
+
+// === TOOLS API HANDLERS ===
+
+// Strike Zone Handler - Pitch location visualization data
+async function handleStrikeZone(env, corsHeaders, playerId = null, pitchType = null, hand = null) {
+  try {
+    // Cache key based on parameters
+    const cacheKey = `strike_zone_${playerId || 'default'}_${pitchType || 'all'}_${hand || 'all'}`;
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    }
+
+    // Strike zone is 17" wide (x: -8.5 to 8.5) and varies by batter height (typical y: 1.5 to 3.5 feet)
+    // Generate realistic pitch distribution data
+    const pitchTypes = ['FF', 'SL', 'CH', 'CU', 'SI', 'FC', 'FS'];
+    const pitchNames = {
+      'FF': 'Four-Seam Fastball',
+      'SL': 'Slider',
+      'CH': 'Changeup',
+      'CU': 'Curveball',
+      'SI': 'Sinker',
+      'FC': 'Cutter',
+      'FS': 'Splitter'
+    };
+
+    // Generate synthetic pitch data (would be replaced by real API data)
+    const generatePitches = (count, type = null) => {
+      const pitches = [];
+      for (let i = 0; i < count; i++) {
+        const selectedType = type || pitchTypes[Math.floor(Math.random() * pitchTypes.length)];
+        // Realistic pitch locations with clustering patterns
+        const isStrike = Math.random() > 0.4;
+        let px, pz;
+
+        if (isStrike) {
+          // Inside strike zone with some variation
+          px = (Math.random() - 0.5) * 1.4; // -0.7 to 0.7 feet
+          pz = 2.0 + (Math.random() - 0.3) * 1.2; // ~1.8 to 3.2 feet
+        } else {
+          // Outside strike zone
+          const corner = Math.floor(Math.random() * 4);
+          switch (corner) {
+            case 0: px = -1.0 - Math.random() * 0.5; pz = 2.5 + Math.random() * 0.5; break; // Left
+            case 1: px = 1.0 + Math.random() * 0.5; pz = 2.5 + Math.random() * 0.5; break; // Right
+            case 2: px = (Math.random() - 0.5) * 1.2; pz = 3.5 + Math.random() * 0.5; break; // High
+            case 3: px = (Math.random() - 0.5) * 1.2; pz = 1.2 - Math.random() * 0.4; break; // Low
+          }
+        }
+
+        // Velocity based on pitch type
+        const velocityRanges = {
+          'FF': [93, 98], 'SL': [82, 88], 'CH': [82, 88], 'CU': [75, 82],
+          'SI': [91, 96], 'FC': [88, 93], 'FS': [84, 89]
+        };
+        const [minV, maxV] = velocityRanges[selectedType] || [85, 95];
+        const velocity = minV + Math.random() * (maxV - minV);
+
+        pitches.push({
+          type: selectedType,
+          typeName: pitchNames[selectedType],
+          px: Math.round(px * 100) / 100,
+          pz: Math.round(pz * 100) / 100,
+          velocity: Math.round(velocity * 10) / 10,
+          isStrike: isStrike,
+          result: isStrike ? (Math.random() > 0.6 ? 'called_strike' : 'swinging_strike') : (Math.random() > 0.5 ? 'ball' : 'hit_into_play')
+        });
+      }
+      return pitches;
+    };
+
+    // Filter by pitch type if specified
+    const pitchCount = 150;
+    let pitches = pitchType ? generatePitches(pitchCount, pitchType.toUpperCase()) : generatePitches(pitchCount);
+
+    // Calculate zone breakdown
+    const zoneBreakdown = {};
+    pitchTypes.forEach(type => {
+      const typePitches = pitches.filter(p => p.type === type);
+      if (typePitches.length > 0) {
+        zoneBreakdown[type] = {
+          name: pitchNames[type],
+          count: typePitches.length,
+          strikeRate: Math.round((typePitches.filter(p => p.isStrike).length / typePitches.length) * 100),
+          avgVelocity: Math.round(typePitches.reduce((sum, p) => sum + p.velocity, 0) / typePitches.length * 10) / 10
+        };
+      }
+    });
+
+    const result = {
+      player: playerId || 'Sample Pitcher',
+      pitchType: pitchType || 'all',
+      batterHand: hand || 'all',
+      pitches: pitches,
+      summary: {
+        totalPitches: pitches.length,
+        strikes: pitches.filter(p => p.isStrike).length,
+        balls: pitches.filter(p => !p.isStrike).length,
+        strikeRate: Math.round((pitches.filter(p => p.isStrike).length / pitches.length) * 100)
+      },
+      zoneBreakdown: zoneBreakdown,
+      strikezone: {
+        left: -0.708, // feet from center of plate
+        right: 0.708,
+        top: 3.5,     // typical top
+        bottom: 1.5   // typical bottom
+      },
+      source: 'BSI Synthetic Data (connect to Statcast for real data)',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache for 1 hour
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('Strike Zone error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Spray Chart Handler - Batted ball distribution visualization
+async function handleSprayChart(env, corsHeaders, playerId = null, hitType = null, season = '2024') {
+  try {
+    const cacheKey = `spray_chart_${playerId || 'default'}_${hitType || 'all'}_${season}`;
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    }
+
+    const hitTypes = ['single', 'double', 'triple', 'home_run', 'groundout', 'flyout', 'lineout'];
+    const hitTypeLabels = {
+      'single': 'Single', 'double': 'Double', 'triple': 'Triple',
+      'home_run': 'Home Run', 'groundout': 'Ground Out',
+      'flyout': 'Fly Out', 'lineout': 'Line Out'
+    };
+
+    // Field dimensions (from home plate in feet)
+    // Standard field: LF line 330', CF 400', RF line 330'
+    // Angles: -45deg (LF line) to +45deg (RF line)
+    const generateBattedBalls = (count, type = null) => {
+      const balls = [];
+      for (let i = 0; i < count; i++) {
+        const selectedType = type || hitTypes[Math.floor(Math.random() * hitTypes.length)];
+        let angle, distance, exitVelo, launchAngle;
+
+        // Different hit types have different typical distributions
+        switch (selectedType) {
+          case 'home_run':
+            angle = (Math.random() - 0.5) * 70; // -35 to +35 degrees
+            distance = 380 + Math.random() * 50;
+            exitVelo = 100 + Math.random() * 12;
+            launchAngle = 25 + Math.random() * 15;
+            break;
+          case 'triple':
+            angle = Math.random() > 0.5 ? (-30 - Math.random() * 15) : (30 + Math.random() * 15); // Gaps
+            distance = 350 + Math.random() * 40;
+            exitVelo = 95 + Math.random() * 10;
+            launchAngle = 15 + Math.random() * 15;
+            break;
+          case 'double':
+            angle = (Math.random() - 0.5) * 80;
+            distance = 280 + Math.random() * 70;
+            exitVelo = 90 + Math.random() * 15;
+            launchAngle = 15 + Math.random() * 20;
+            break;
+          case 'single':
+            angle = (Math.random() - 0.5) * 90;
+            distance = 150 + Math.random() * 150;
+            exitVelo = 80 + Math.random() * 20;
+            launchAngle = 5 + Math.random() * 20;
+            break;
+          case 'groundout':
+            angle = (Math.random() - 0.5) * 90;
+            distance = 80 + Math.random() * 120;
+            exitVelo = 70 + Math.random() * 30;
+            launchAngle = -10 + Math.random() * 15;
+            break;
+          case 'flyout':
+            angle = (Math.random() - 0.5) * 80;
+            distance = 200 + Math.random() * 150;
+            exitVelo = 85 + Math.random() * 15;
+            launchAngle = 30 + Math.random() * 25;
+            break;
+          case 'lineout':
+            angle = (Math.random() - 0.5) * 80;
+            distance = 150 + Math.random() * 150;
+            exitVelo = 95 + Math.random() * 15;
+            launchAngle = 10 + Math.random() * 15;
+            break;
+        }
+
+        // Convert polar to cartesian (x = distance * sin(angle), y = distance * cos(angle))
+        const angleRad = angle * Math.PI / 180;
+        const x = distance * Math.sin(angleRad);
+        const y = distance * Math.cos(angleRad);
+
+        // Determine field zone
+        let zone;
+        if (angle < -15) zone = 'left';
+        else if (angle > 15) zone = 'right';
+        else zone = 'center';
+
+        balls.push({
+          type: selectedType,
+          typeName: hitTypeLabels[selectedType],
+          x: Math.round(x),
+          y: Math.round(y),
+          distance: Math.round(distance),
+          angle: Math.round(angle),
+          exitVelo: Math.round(exitVelo * 10) / 10,
+          launchAngle: Math.round(launchAngle * 10) / 10,
+          zone: zone,
+          isHit: ['single', 'double', 'triple', 'home_run'].includes(selectedType)
+        });
+      }
+      return balls;
+    };
+
+    const ballCount = 200;
+    const validHitTypes = ['single', 'double', 'triple', 'home_run', 'groundout', 'flyout', 'lineout'];
+    const normalizedType = hitType && validHitTypes.includes(hitType.toLowerCase()) ? hitType.toLowerCase() : null;
+    let battedBalls = normalizedType ? generateBattedBalls(ballCount, normalizedType) : generateBattedBalls(ballCount);
+
+    // Calculate spray breakdown
+    const zoneStats = { left: [], center: [], right: [] };
+    battedBalls.forEach(ball => {
+      zoneStats[ball.zone].push(ball);
+    });
+
+    const calculateZoneStats = (balls) => ({
+      count: balls.length,
+      hits: balls.filter(b => b.isHit).length,
+      avg: balls.length > 0 ? Math.round((balls.filter(b => b.isHit).length / balls.length) * 1000) / 1000 : 0,
+      avgExitVelo: balls.length > 0 ? Math.round(balls.reduce((sum, b) => sum + b.exitVelo, 0) / balls.length * 10) / 10 : 0,
+      avgDistance: balls.length > 0 ? Math.round(balls.reduce((sum, b) => sum + b.distance, 0) / balls.length) : 0
+    });
+
+    const result = {
+      player: playerId || 'Sample Batter',
+      hitType: hitType || 'all',
+      season: season,
+      battedBalls: battedBalls,
+      summary: {
+        totalBattedBalls: battedBalls.length,
+        hits: battedBalls.filter(b => b.isHit).length,
+        outs: battedBalls.filter(b => !b.isHit).length,
+        battingAvg: Math.round((battedBalls.filter(b => b.isHit).length / battedBalls.length) * 1000) / 1000,
+        avgExitVelo: Math.round(battedBalls.reduce((sum, b) => sum + b.exitVelo, 0) / battedBalls.length * 10) / 10,
+        avgLaunchAngle: Math.round(battedBalls.reduce((sum, b) => sum + b.launchAngle, 0) / battedBalls.length * 10) / 10
+      },
+      zoneBreakdown: {
+        left: calculateZoneStats(zoneStats.left),
+        center: calculateZoneStats(zoneStats.center),
+        right: calculateZoneStats(zoneStats.right)
+      },
+      fieldDimensions: {
+        leftLine: 330,
+        centerField: 400,
+        rightLine: 330,
+        warningTrack: 380
+      },
+      source: 'BSI Synthetic Data (connect to Statcast for real data)',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache for 1 hour
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('Spray Chart error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
 }
 
 // NIL Valuations Handler
@@ -2414,6 +3073,136 @@ async function handleLeadCapture(request, env, corsHeaders) {
     console.error('Lead capture error:', e);
     return jsonResponse({ error: 'Failed to save email' }, 500, corsHeaders);
   }
+}
+
+// === UNIFIED SCORES HANDLER ===
+/**
+ * Fetch all sports scores in one aggregated call
+ * Returns normalized data for MLB, NFL, NBA, College Baseball, College Football
+ */
+async function handleUnifiedScores(env, corsHeaders) {
+  const results = {
+    mlb: [],
+    nfl: [],
+    nba: [],
+    ncaab: [],
+    ncaaf: [],
+    errors: [],
+    fetchedAt: getChicagoTimestamp(),
+    timezone: 'America/Chicago'
+  };
+
+  // Helper to normalize ESPN event data
+  function normalizeESPNEvent(event, league) {
+    const competition = event.competitions?.[0];
+    const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+    const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+    const statusType = event.status?.type;
+    const isLive = statusType?.state === 'in' || statusType?.name === 'STATUS_IN_PROGRESS';
+    const isFinal = statusType?.state === 'post' || statusType?.completed;
+
+    return {
+      id: event.id,
+      league: league,
+      isLive: isLive,
+      isFinal: isFinal,
+      status: statusType?.shortDetail || statusType?.name || 'Unknown',
+      startTime: event.date,
+      period: event.status?.period || null,
+      clock: event.status?.displayClock || null,
+      away: {
+        name: awayTeam?.team?.shortDisplayName || awayTeam?.team?.displayName || 'Away',
+        abbreviation: awayTeam?.team?.abbreviation || 'AWY',
+        score: parseInt(awayTeam?.score || 0),
+        record: awayTeam?.records?.[0]?.summary || null
+      },
+      home: {
+        name: homeTeam?.team?.shortDisplayName || homeTeam?.team?.displayName || 'Home',
+        abbreviation: homeTeam?.team?.abbreviation || 'HME',
+        score: parseInt(homeTeam?.score || 0),
+        record: homeTeam?.records?.[0]?.summary || null
+      }
+    };
+  }
+
+  // Fetch all sources in parallel
+  const fetchPromises = [
+    // MLB from ESPN
+    fetchWithRetry(`${ESPN_BASE}/baseball/mlb/scoreboard`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.events) {
+          results.mlb = data.events.map(e => normalizeESPNEvent(e, 'mlb'));
+        }
+      })
+      .catch(e => results.errors.push({ league: 'mlb', error: e.message })),
+
+    // NFL from ESPN
+    fetchWithRetry(`${ESPN_BASE}/football/nfl/scoreboard`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.events) {
+          results.nfl = data.events.map(e => normalizeESPNEvent(e, 'nfl'));
+        }
+      })
+      .catch(e => results.errors.push({ league: 'nfl', error: e.message })),
+
+    // NBA from ESPN
+    fetchWithRetry(`${ESPN_BASE}/basketball/nba/scoreboard`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.events) {
+          results.nba = data.events.map(e => normalizeESPNEvent(e, 'nba'));
+        }
+      })
+      .catch(e => results.errors.push({ league: 'nba', error: e.message })),
+
+    // College Baseball from ESPN
+    fetchWithRetry(`${ESPN_BASE}/baseball/college-baseball/scoreboard`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.events) {
+          results.ncaab = data.events.map(e => normalizeESPNEvent(e, 'ncaab'));
+        }
+      })
+      .catch(e => results.errors.push({ league: 'ncaab', error: e.message })),
+
+    // College Football from ESPN
+    fetchWithRetry(`${ESPN_BASE}/football/college-football/scoreboard`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.events) {
+          results.ncaaf = data.events.map(e => normalizeESPNEvent(e, 'ncaaf'));
+        }
+      })
+      .catch(e => results.errors.push({ league: 'ncaaf', error: e.message }))
+  ];
+
+  await Promise.allSettled(fetchPromises);
+
+  // Summary stats
+  const allGames = [...results.mlb, ...results.nfl, ...results.nba, ...results.ncaab, ...results.ncaaf];
+  results.summary = {
+    total: allGames.length,
+    live: allGames.filter(g => g.isLive).length,
+    final: allGames.filter(g => g.isFinal).length,
+    byLeague: {
+      mlb: results.mlb.length,
+      nfl: results.nfl.length,
+      nba: results.nba.length,
+      ncaab: results.ncaab.length,
+      ncaaf: results.ncaaf.length
+    }
+  };
+
+  return new Response(JSON.stringify(results), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'public, max-age=15',
+      'X-Data-Source': 'ESPN',
+      ...corsHeaders
+    }
+  });
 }
 
 function jsonResponse(data, status, corsHeaders, sessionToken = null) {

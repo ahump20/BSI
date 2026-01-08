@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College baseball rankings from D1Baseball, coaches poll, and more. Updated weekly.">
+  <title>College Baseball Rankings | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Oswald', sans-serif;
+      --font-body: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 7rem 2rem 2rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .page-header h1 span { color: var(--bsi-burnt-orange); }
+
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(250, 248, 245, 0.7);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 2rem;
+      background: var(--bsi-midnight);
+      min-height: 60vh;
+    }
+    .content-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .poll-selector {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .poll-btn {
+      padding: 0.75rem 1.5rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: rgba(250, 248, 245, 0.8);
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .poll-btn:hover { border-color: var(--bsi-burnt-orange); }
+    .poll-btn.active {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+      color: white;
+    }
+
+    .rankings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.5);
+    }
+
+    .ranking-row {
+      display: grid;
+      grid-template-columns: 50px 1fr auto auto;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s;
+    }
+    .ranking-row:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateX(4px);
+    }
+
+    .rank {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--bsi-burnt-orange);
+      text-align: center;
+    }
+    .rank.top-5 { color: var(--bsi-gold); }
+
+    .team-info-rank {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .team-logo-rank {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .team-logo-rank img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .team-details h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.125rem;
+    }
+    .team-details .conference {
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+
+    .team-record {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.7);
+      text-align: right;
+      min-width: 60px;
+    }
+
+    .team-change {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: right;
+    }
+    .team-change.up { color: #22c55e; }
+    .team-change.down { color: #ef4444; }
+    .team-change.same { color: rgba(250, 248, 245, 0.3); }
+
+    .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+    .empty-state h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: rgba(250, 248, 245, 0.7);
+    }
+
+    .last-updated {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.4);
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .page-header { padding: 5rem 1rem 1.5rem; }
+      .content { padding: 1rem; }
+      .sub-nav { top: 52px; padding: 0.75rem 1rem; }
+      .ranking-row { grid-template-columns: 40px 1fr auto; }
+      .team-change { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball" class="active">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>College Baseball <span>Rankings</span></h1>
+      </div>
+    </section>
+
+    <nav class="sub-nav">
+      <div class="sub-nav-inner">
+        <a href="/college-baseball">Overview</a>
+        <a href="/college-baseball/scores">Scores</a>
+        <a href="/college-baseball/standings">Standings</a>
+        <a href="/college-baseball/rankings" class="active">Rankings</a>
+        <a href="/college-baseball/teams">Teams</a>
+        <a href="/college-baseball/players">Players</a>
+        <a href="/college-baseball/transfer-portal">Portal</a>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="content-inner">
+        <div class="poll-selector">
+          <button class="poll-btn active" data-poll="d1baseball">D1Baseball Top 25</button>
+          <button class="poll-btn" data-poll="coaches">Coaches Poll</button>
+        </div>
+
+        <div id="rankingsContainer">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading rankings...</p>
+          </div>
+        </div>
+
+        <p class="last-updated" id="lastUpdated"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to blaze the path less beaten.</p>
+  </footer>
+
+  <script>
+    var currentPoll = 'd1baseball';
+    var rankingsData = null;
+
+    // Show loading state safely
+    function showLoading(container) {
+      container.replaceChildren();
+      var loading = document.createElement('div');
+      loading.className = 'loading';
+      var spinner = document.createElement('div');
+      spinner.className = 'loading-spinner';
+      loading.appendChild(spinner);
+      var text = document.createElement('p');
+      text.textContent = 'Loading rankings...';
+      loading.appendChild(text);
+      container.appendChild(loading);
+    }
+
+    // Create ranking row safely
+    function createRankingRow(team, index) {
+      var row = document.createElement('div');
+      row.className = 'ranking-row';
+
+      // Rank
+      var rankDiv = document.createElement('div');
+      rankDiv.className = 'rank' + (index < 5 ? ' top-5' : '');
+      rankDiv.textContent = index + 1;
+      row.appendChild(rankDiv);
+
+      // Team info
+      var infoDiv = document.createElement('div');
+      infoDiv.className = 'team-info-rank';
+
+      var logoDiv = document.createElement('div');
+      logoDiv.className = 'team-logo-rank';
+      if (team.team?.logos?.[0]?.href) {
+        var img = document.createElement('img');
+        img.src = team.team.logos[0].href;
+        img.alt = team.team.displayName || '';
+        img.onerror = function() { this.style.display = 'none'; };
+        logoDiv.appendChild(img);
+      }
+      infoDiv.appendChild(logoDiv);
+
+      var detailsDiv = document.createElement('div');
+      detailsDiv.className = 'team-details';
+      var nameH3 = document.createElement('h3');
+      nameH3.textContent = team.team?.displayName || team.team?.name || 'Unknown';
+      detailsDiv.appendChild(nameH3);
+      var confSpan = document.createElement('span');
+      confSpan.className = 'conference';
+      confSpan.textContent = team.team?.conferenceId || '';
+      detailsDiv.appendChild(confSpan);
+      infoDiv.appendChild(detailsDiv);
+      row.appendChild(infoDiv);
+
+      // Record
+      var recordDiv = document.createElement('div');
+      recordDiv.className = 'team-record';
+      recordDiv.textContent = team.recordSummary || '';
+      row.appendChild(recordDiv);
+
+      // Change
+      var changeDiv = document.createElement('div');
+      changeDiv.className = 'team-change';
+      var prev = team.previousRank || (index + 1);
+      var curr = team.current || (index + 1);
+      var diff = prev - curr;
+      if (diff > 0) {
+        changeDiv.classList.add('up');
+        changeDiv.textContent = '+' + diff;
+      } else if (diff < 0) {
+        changeDiv.classList.add('down');
+        changeDiv.textContent = diff;
+      } else {
+        changeDiv.classList.add('same');
+        changeDiv.textContent = '-';
+      }
+      row.appendChild(changeDiv);
+
+      return row;
+    }
+
+    // Render rankings
+    function renderRankings(teams) {
+      var container = document.getElementById('rankingsContainer');
+      container.replaceChildren();
+
+      if (!teams || teams.length === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        var h3 = document.createElement('h3');
+        h3.textContent = 'Rankings Not Available';
+        empty.appendChild(h3);
+        var p = document.createElement('p');
+        p.textContent = 'Check back during the season for updated rankings.';
+        empty.appendChild(p);
+        container.appendChild(empty);
+        return;
+      }
+
+      var header = document.createElement('div');
+      header.className = 'rankings-header';
+      var rankLabel = document.createElement('span');
+      rankLabel.textContent = 'Rank';
+      header.appendChild(rankLabel);
+      var teamLabel = document.createElement('span');
+      teamLabel.textContent = 'Team';
+      header.appendChild(teamLabel);
+      var recordLabel = document.createElement('span');
+      recordLabel.textContent = 'Record';
+      header.appendChild(recordLabel);
+      var changeLabel = document.createElement('span');
+      changeLabel.textContent = '+/-';
+      header.appendChild(changeLabel);
+      container.appendChild(header);
+
+      teams.slice(0, 25).forEach(function(team, i) {
+        container.appendChild(createRankingRow(team, i));
+      });
+    }
+
+    // Load rankings
+    async function loadRankings() {
+      var container = document.getElementById('rankingsContainer');
+      showLoading(container);
+
+      try {
+        var response = await fetch('/api/ncaa/baseball/rankings');
+        var data = await response.json();
+
+        rankingsData = data;
+
+        // ESPN returns rankings in data.rankings array
+        var rankings = data.rankings || [];
+        var pollRankings = rankings.find(function(r) {
+          if (currentPoll === 'd1baseball') {
+            return r.name?.toLowerCase().includes('d1baseball') || r.type === 'd1baseball';
+          }
+          return r.name?.toLowerCase().includes('coaches') || r.type === 'coaches';
+        }) || rankings[0];
+
+        var teams = pollRankings?.ranks || pollRankings?.teams || [];
+
+        renderRankings(teams);
+
+        document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleDateString('en-US', {
+          timeZone: 'America/Chicago',
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+      } catch (error) {
+        console.error('Failed to load rankings:', error);
+        container.replaceChildren();
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        var h3 = document.createElement('h3');
+        h3.textContent = 'Unable to Load Rankings';
+        empty.appendChild(h3);
+        var p = document.createElement('p');
+        p.textContent = 'Please try again later.';
+        empty.appendChild(p);
+        container.appendChild(empty);
+      }
+    }
+
+    // Poll selector
+    document.querySelectorAll('.poll-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.poll-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        currentPoll = this.getAttribute('data-poll');
+        loadRankings();
+      });
+    });
+
+    // Initialize
+    loadRankings();
+  </script>
+</body>
+</html>
