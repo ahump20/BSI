@@ -116,6 +116,11 @@ export default {
       return handleAnalyticsEvent(request, env, corsHeaders);
     }
 
+    // Tool Launch Analytics (dedicated endpoint for Pro/Free tool tracking)
+    if (path === '/api/analytics/tool-launch' && request.method === 'POST') {
+      return handleToolLaunchAnalytics(request, env, corsHeaders);
+    }
+
     // === EMAIL CAPTURE (paywall leads) ===
     if (path === '/api/leads/capture' && request.method === 'POST') {
       return handleLeadCapture(request, env, corsHeaders);
@@ -2322,6 +2327,53 @@ async function handleAnalyticsEvent(request, env, corsHeaders) {
     return jsonResponse({ success: true }, 200, corsHeaders);
   } catch (e) {
     // Fail silently for analytics - return success anyway
+    return jsonResponse({ success: true }, 200, corsHeaders);
+  }
+}
+
+// === TOOL LAUNCH ANALYTICS HANDLER ===
+async function handleToolLaunchAnalytics(request, env, corsHeaders) {
+  try {
+    var body = await request.text();
+    var data = JSON.parse(body);
+
+    // Validate required fields
+    if (!data.tool) {
+      return jsonResponse({ error: 'Missing tool name' }, 400, corsHeaders);
+    }
+
+    var toolEvent = {
+      event: 'tool_launch',
+      tool: data.tool,
+      tier: data.tier || 'unknown',
+      timestamp: data.timestamp || new Date().toISOString(),
+      serverTimestamp: new Date().toISOString(),
+      userAgent: request.headers.get('User-Agent'),
+      ip: request.headers.get('CF-Connecting-IP'),
+      country: request.headers.get('CF-IPCountry'),
+      ray: request.headers.get('CF-Ray'),
+    };
+
+    // Store in KV for analysis
+    if (env.ANALYTICS_KV) {
+      var key = 'tool:' + Date.now() + ':' + crypto.randomUUID();
+      await env.ANALYTICS_KV.put(key, JSON.stringify(toolEvent), {
+        expirationTtl: 86400 * 30 // 30 days for tool analytics
+      });
+    }
+
+    // Log to Analytics Engine with tool-specific indexing
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: ['tool_launch', data.tool, data.tier || 'unknown', toolEvent.country || 'unknown'],
+        doubles: [1],
+        indexes: ['tool_launch', data.tool]
+      });
+    }
+
+    return jsonResponse({ success: true }, 200, corsHeaders);
+  } catch (e) {
+    // Fail silently
     return jsonResponse({ success: true }, 200, corsHeaders);
   }
 }
