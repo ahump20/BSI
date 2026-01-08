@@ -3,7 +3,8 @@
  * Cloudflare Worker for blazesportsintel.com
  *
  * Sports Data APIs:
- * - SportsDataIO: MLB, NFL, NBA
+ * - SportsDataIO: MLB, NFL, NBA (primary)
+ * - ESPN: MLB, NFL, NBA (free fallback when quota exceeded)
  * - SportsRadar: Advanced stats
  * - College Football Data: NCAA Football
  * - TheOddsAPI: Betting odds
@@ -17,8 +18,8 @@
  * Migration: Functions are being extracted to modules for better
  * maintainability. Import from './src/workers/api/index.js' when ready.
  *
- * @version 2.0.0
- * @updated 2025-01-07
+ * @version 2.1.0
+ * @updated 2025-01-08
  */
 
 // API base URLs
@@ -27,6 +28,9 @@ const COLLEGEFOOTBALL_BASE = 'https://api.collegefootballdata.com';
 const SPORTSRADAR_BASE = 'https://api.sportradar.com';
 const THEODDS_BASE = 'https://api.the-odds-api.com/v4';
 const STRIPE_API_BASE = 'https://api.stripe.com/v1';
+
+// ESPN API (free fallback - no API key required)
+const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports';
 
 // Stripe Price IDs
 const STRIPE_PRICES = {
@@ -336,8 +340,13 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
         status: 'ok',
         timestamp: new Date().toISOString(),
         timezone: 'America/Chicago',
-        version: '2.0.0',
+        version: '2.1.0',
         apis: ['mlb', 'nfl', 'nba', 'cfb', 'odds', 'analytics'],
+        fallback: {
+          espn: true,
+          sports: ['mlb', 'nfl', 'nba'],
+          note: 'ESPN used automatically when SportsDataIO quota exceeded'
+        },
         tools: toolsHealth,
         keysConfigured: {
           sportsdataio: !!env.SPORTSDATAIO_API_KEY,
@@ -446,18 +455,30 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
       const response = await fetch(apiUrl, {
         headers: { 'Ocp-Apim-Subscription-Key': apiKey }
       });
+
+      // Fallback to ESPN on 403 (quota exceeded) or other errors
+      if (response.status === 403 || !response.ok) {
+        console.log(`SportsDataIO MLB returned ${response.status}, falling back to ESPN`);
+        return fetchESPNMLBScores(corsHeaders);
+      }
+
       const rawData = await response.json();
 
       // Handle API errors (SportsDataIO returns object with Message on error)
       if (!Array.isArray(rawData)) {
+        // Check for quota error and fallback
+        if ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403) {
+          console.log('SportsDataIO MLB quota exceeded, falling back to ESPN');
+          return fetchESPNMLBScores(corsHeaders);
+        }
         return new Response(JSON.stringify({
-          error: rawData.Message || 'Invalid API response',
+          error: rawData.Message || rawData.message || 'Invalid API response',
           games: [],
           apiResponse: rawData,
           source: 'SportsDataIO',
           fetchedAt: getChicagoTimestamp()
         }), {
-          status: response.ok ? 200 : 500,
+          status: 200,
           headers: { 'Content-Type': 'application/json', ...corsHeaders }
         });
       }
@@ -491,9 +512,9 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
-      return new Response(JSON.stringify({ error: error.message, games: [] }), {
-        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
+      // On any error, try ESPN fallback
+      console.log(`SportsDataIO MLB error: ${error.message}, falling back to ESPN`);
+      return fetchESPNMLBScores(corsHeaders);
     }
   }
 
@@ -522,15 +543,28 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
       const response = await fetch(apiUrl, {
         headers: { 'Ocp-Apim-Subscription-Key': apiKey }
       });
+
+      // Fallback to ESPN on 403 (quota exceeded) or other errors
+      if (response.status === 403 || !response.ok) {
+        console.log(`SportsDataIO NFL returned ${response.status}, falling back to ESPN`);
+        return fetchESPNNFLScores(corsHeaders);
+      }
+
       const rawData = await response.json();
+
+      // Check for quota error in response body
+      if (!Array.isArray(rawData) && ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403)) {
+        console.log('SportsDataIO NFL quota exceeded, falling back to ESPN');
+        return fetchESPNNFLScores(corsHeaders);
+      }
 
       return new Response(JSON.stringify({ rawData, source: 'SportsDataIO', fetchedAt: getChicagoTimestamp() }), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
-      return new Response(JSON.stringify({ error: error.message, rawData: [] }), {
-        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
+      // On any error, try ESPN fallback
+      console.log(`SportsDataIO NFL error: ${error.message}, falling back to ESPN`);
+      return fetchESPNNFLScores(corsHeaders);
     }
   }
 
@@ -559,18 +593,30 @@ async function handleNBARequest(path, url, env, corsHeaders) {
       const response = await fetch(apiUrl, {
         headers: { 'Ocp-Apim-Subscription-Key': apiKey }
       });
+
+      // Fallback to ESPN on 403 (quota exceeded) or other errors
+      if (response.status === 403 || !response.ok) {
+        console.log(`SportsDataIO NBA returned ${response.status}, falling back to ESPN`);
+        return fetchESPNNBAScores(corsHeaders);
+      }
+
       const rawData = await response.json();
 
       // Handle API errors (SportsDataIO returns object with Message on error)
       if (!Array.isArray(rawData)) {
+        // Check for quota error and fallback
+        if ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403) {
+          console.log('SportsDataIO NBA quota exceeded, falling back to ESPN');
+          return fetchESPNNBAScores(corsHeaders);
+        }
         return new Response(JSON.stringify({
-          error: rawData.Message || 'Invalid API response',
+          error: rawData.Message || rawData.message || 'Invalid API response',
           games: [],
           apiResponse: rawData,
           source: 'SportsDataIO',
           fetchedAt: getChicagoTimestamp()
         }), {
-          status: response.ok ? 200 : 500,
+          status: 200,
           headers: { 'Content-Type': 'application/json', ...corsHeaders }
         });
       }
@@ -592,9 +638,9 @@ async function handleNBARequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
-      return new Response(JSON.stringify({ error: error.message, games: [] }), {
-        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
+      // On any error, try ESPN fallback
+      console.log(`SportsDataIO NBA error: ${error.message}, falling back to ESPN`);
+      return fetchESPNNBAScores(corsHeaders);
     }
   }
 
@@ -734,6 +780,217 @@ async function fetchCFBData(url, apiKey, corsHeaders, cacheTTL = 600) {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
     });
   }
+}
+
+// === ESPN API FALLBACK FUNCTIONS ===
+
+/**
+ * Fetch MLB scores from ESPN (fallback when SportsDataIO quota exceeded)
+ * ESPN endpoint: /baseball/mlb/scoreboard
+ */
+async function fetchESPNMLBScores(corsHeaders) {
+  try {
+    const response = await fetch(`${ESPN_BASE}/baseball/mlb/scoreboard`);
+    if (!response.ok) {
+      throw new Error(`ESPN API returned ${response.status}`);
+    }
+    const data = await response.json();
+    const games = transformESPNMLBGames(data);
+
+    return new Response(JSON.stringify({
+      games,
+      source: 'ESPN',
+      fallback: true,
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=60',
+        'X-Data-Source': 'ESPN (fallback)',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: error.message,
+      games: [],
+      source: 'ESPN',
+      fallback: true
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+/**
+ * Transform ESPN MLB response to match our standardized format
+ */
+function transformESPNMLBGames(espnData) {
+  if (!espnData?.events) return [];
+
+  return espnData.events.map(event => {
+    const competition = event.competitions?.[0];
+    const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+    const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+    const situation = competition?.situation;
+
+    return {
+      id: event.id,
+      status: {
+        state: event.status?.type?.name || 'Unknown',
+        isLive: event.status?.type?.state === 'in',
+        inning: situation?.inning || null,
+        inningState: situation?.inningHalf === 1 ? 'Top' : situation?.inningHalf === 2 ? 'Bottom' : null,
+        detailedState: event.status?.type?.detail || event.status?.type?.shortDetail || ''
+      },
+      teams: {
+        away: {
+          name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'Away',
+          abbreviation: awayTeam?.team?.abbreviation || 'AWY',
+          score: parseInt(awayTeam?.score || 0)
+        },
+        home: {
+          name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'Home',
+          abbreviation: homeTeam?.team?.abbreviation || 'HME',
+          score: parseInt(homeTeam?.score || 0)
+        }
+      },
+      dateTime: event.date
+    };
+  });
+}
+
+/**
+ * Fetch NFL scores from ESPN (fallback when SportsDataIO quota exceeded)
+ * ESPN endpoint: /football/nfl/scoreboard
+ */
+async function fetchESPNNFLScores(corsHeaders) {
+  try {
+    const response = await fetch(`${ESPN_BASE}/football/nfl/scoreboard`);
+    if (!response.ok) {
+      throw new Error(`ESPN API returned ${response.status}`);
+    }
+    const data = await response.json();
+    const games = transformESPNNFLGames(data);
+
+    return new Response(JSON.stringify({
+      rawData: games,
+      source: 'ESPN',
+      fallback: true,
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=60',
+        'X-Data-Source': 'ESPN (fallback)',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: error.message,
+      rawData: [],
+      source: 'ESPN',
+      fallback: true
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+/**
+ * Transform ESPN NFL response to match our format
+ */
+function transformESPNNFLGames(espnData) {
+  if (!espnData?.events) return [];
+
+  return espnData.events.map(event => {
+    const competition = event.competitions?.[0];
+    const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+    const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+
+    return {
+      GameID: event.id,
+      Status: event.status?.type?.name || 'Unknown',
+      AwayTeam: awayTeam?.team?.abbreviation || 'AWY',
+      HomeTeam: homeTeam?.team?.abbreviation || 'HME',
+      AwayScore: parseInt(awayTeam?.score || 0),
+      HomeScore: parseInt(homeTeam?.score || 0),
+      Quarter: event.status?.period || null,
+      TimeRemaining: event.status?.displayClock || '',
+      DateTime: event.date,
+      AwayTeamName: awayTeam?.team?.displayName || '',
+      HomeTeamName: homeTeam?.team?.displayName || ''
+    };
+  });
+}
+
+/**
+ * Fetch NBA scores from ESPN (fallback when SportsDataIO quota exceeded)
+ * ESPN endpoint: /basketball/nba/scoreboard
+ */
+async function fetchESPNNBAScores(corsHeaders) {
+  try {
+    const response = await fetch(`${ESPN_BASE}/basketball/nba/scoreboard`);
+    if (!response.ok) {
+      throw new Error(`ESPN API returned ${response.status}`);
+    }
+    const data = await response.json();
+    const games = transformESPNNBAGames(data);
+
+    return new Response(JSON.stringify({
+      games,
+      source: 'ESPN',
+      fallback: true,
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=60',
+        'X-Data-Source': 'ESPN (fallback)',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: error.message,
+      games: [],
+      source: 'ESPN',
+      fallback: true
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+/**
+ * Transform ESPN NBA response to match our format
+ */
+function transformESPNNBAGames(espnData) {
+  if (!espnData?.events) return [];
+
+  return espnData.events.map(event => {
+    const competition = event.competitions?.[0];
+    const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+    const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+
+    return {
+      id: event.id,
+      Status: event.status?.type?.name || 'Unknown',
+      AwayTeam: awayTeam?.team?.abbreviation || 'AWY',
+      HomeTeam: homeTeam?.team?.abbreviation || 'HME',
+      AwayTeamScore: parseInt(awayTeam?.score || 0),
+      HomeTeamScore: parseInt(homeTeam?.score || 0),
+      Quarter: event.status?.period || null,
+      TimeRemaining: event.status?.displayClock || '',
+      DateTime: event.date,
+      AwayTeamName: awayTeam?.team?.displayName || '',
+      HomeTeamName: homeTeam?.team?.displayName || ''
+    };
+  });
 }
 
 function getTodayDate() {
