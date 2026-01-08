@@ -1,7 +1,7 @@
 /**
- * Cloudflare Workers Ingest Layer
+ * BSI Data Ingest Worker
  *
- * Scheduled worker for data ingestion with provider failover.
+ * Scheduled worker for sports data ingestion with provider failover.
  *
  * Cron Triggers:
  * - Every 5 minutes: Live games
@@ -19,34 +19,40 @@
  * - Historical: R2 archival (immutable)
  */
 
-import { Prisma, PrismaClient } from '@prisma/client';
-import { ProviderManager } from '../../lib/adapters/provider-manager';
-import { runQCPipeline } from '../../lib/skills/sports-data-qc/scripts/qc_analysis';
-import { saveReportToKV, formatReportConsole } from '../../lib/skills/sports-data-qc/scripts/qc_reporting';
-import type { GameData, PlayerStats } from '../../lib/skills/sports-data-qc/scripts/qc_core';
-import type { Env } from './types';
+interface Env {
+  CACHE: KVNamespace;
+  R2_BUCKET: R2Bucket;
+  ANALYTICS?: AnalyticsEngineDataset;
+  INGEST_SECRET: string;
+  SPORTSDATAIO_KEY?: string;
+  ESPN_API_BASE?: string;
+}
 
-const prisma = new PrismaClient();
+interface GameData {
+  id: string;
+  sport: string;
+  division: string;
+  season: number;
+  scheduledAt: string;
+  status: string;
+  homeTeamId: string;
+  awayTeamId: string;
+  homeScore: number | null;
+  awayScore: number | null;
+  venueId?: string;
+  currentInning?: number;
+  currentInningHalf?: string;
+  providerName?: string;
+}
 
-async function executeWithConstraintGuard<T>(
-  operation: () => Promise<T>,
-  context: string
-): Promise<T> {
-  try {
-    return await operation();
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-      const target = Array.isArray(error.meta?.target)
-        ? error.meta?.target.join(', ')
-        : error.meta?.target;
-      const diagnostic = target ? ` (${target})` : '';
-      const message = `[Ingest] Unique constraint violation${diagnostic} while processing ${context}`;
-      console.error(message, error);
-      throw new Error(message);
-    }
-
-    throw error;
-  }
+interface TeamStats {
+  teamId: string;
+  season: number;
+  wins: number;
+  losses: number;
+  runsScored: number;
+  runsAllowed: number;
+  winPct: number;
 }
 
 export default {
@@ -59,21 +65,20 @@ export default {
     ctx: ExecutionContext
   ): Promise<void> {
     const cron = event.cron;
-
     console.log(`[Ingest Worker] Cron triggered: ${cron}`);
 
     try {
       switch (cron) {
-        case '*/5 * * * *': // Every 5 minutes - live games
+        case '*/5 * * * *':
           await ingestLiveGames(env, ctx);
           break;
 
-        case '0 * * * *': // Hourly - team stats
+        case '0 * * * *':
           await ingestTeamStats(env, ctx);
           break;
 
-        case '0 2 * * *': // Daily 2am - historical aggregations
-          await ingestHistoricalData(env, ctx);
+        case '0 2 * * *':
+          await archiveHistoricalData(env, ctx);
           break;
 
         default:
@@ -82,7 +87,6 @@ export default {
     } catch (error) {
       console.error(`[Ingest Worker] Cron execution failed:`, error);
 
-      // Track error in Analytics Engine
       if (env.ANALYTICS) {
         env.ANALYTICS.writeDataPoint({
           blobs: ['ingest_error', cron],
@@ -91,7 +95,6 @@ export default {
         });
       }
 
-      // Re-throw to mark execution as failed
       throw error;
     }
   },
@@ -104,13 +107,11 @@ export default {
 
     // Health check
     if (url.pathname === '/health') {
-      return new Response(JSON.stringify({
+      return Response.json({
         status: 'ok',
         timestamp: new Date().toISOString(),
-        service: 'ingest-worker'
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
+        service: 'bsi-ingest-worker',
+        version: '2.0.0'
       });
     }
 
@@ -124,204 +125,86 @@ export default {
       switch (url.pathname) {
         case '/ingest/live':
           ctx.waitUntil(ingestLiveGames(env, ctx));
-          return new Response(JSON.stringify({ message: 'Live games ingestion started' }), {
-            status: 202,
-            headers: { 'Content-Type': 'application/json' }
-          });
+          return Response.json({ message: 'Live games ingestion started' }, { status: 202 });
 
         case '/ingest/stats':
           ctx.waitUntil(ingestTeamStats(env, ctx));
-          return new Response(JSON.stringify({ message: 'Team stats ingestion started' }), {
-            status: 202,
-            headers: { 'Content-Type': 'application/json' }
-          });
+          return Response.json({ message: 'Team stats ingestion started' }, { status: 202 });
 
-        case '/ingest/historical':
-          ctx.waitUntil(ingestHistoricalData(env, ctx));
-          return new Response(JSON.stringify({ message: 'Historical data ingestion started' }), {
-            status: 202,
-            headers: { 'Content-Type': 'application/json' }
-          });
+        case '/ingest/archive':
+          ctx.waitUntil(archiveHistoricalData(env, ctx));
+          return Response.json({ message: 'Historical archival started' }, { status: 202 });
 
         default:
           return new Response('Not Found', { status: 404 });
       }
     } catch (error) {
       console.error(`[Ingest Worker] Manual trigger failed:`, error);
-      return new Response(JSON.stringify({
+      return Response.json({
         error: error instanceof Error ? error.message : 'Unknown error'
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      }, { status: 500 });
     }
   }
 };
 
 /**
- * Ingest live games (every 5 minutes)
+ * Ingest live games from ESPN API
  */
 async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting live games ingestion...');
 
-  const providerManager = new ProviderManager(env);
-  const currentDate = new Date();
-  const season = currentDate.getFullYear();
+  const espnBase = env.ESPN_API_BASE || 'https://site.api.espn.com/apis/site/v2/sports';
+  const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+  const season = new Date().getFullYear();
 
   try {
-    // Fetch live games for college baseball
-    const games = await providerManager.getGames({
-      sport: 'baseball',
-      division: 'D1',
-      date: currentDate,
-      status: ['SCHEDULED', 'LIVE', 'FINAL']
-    });
+    // Fetch MLB games
+    const mlbUrl = `${espnBase}/baseball/mlb/scoreboard?dates=${today}`;
+    const mlbResponse = await fetch(mlbUrl);
 
-    console.log(`[Ingest] Fetched ${games.length} games from provider`);
-
-    // ========================================================================
-    // QC VALIDATION - Filter bad data before ingestion
-    // ========================================================================
-    console.log('[Ingest] Running QC validation on scraped data...');
-
-    // Transform provider games to QC format
-    const qcGames: GameData[] = games.map(game => ({
-      game_id: game.id,
-      timestamp: game.scheduledAt,
-      season,
-      home_team: game.homeTeamId,
-      away_team: game.awayTeamId,
-      home_score: game.homeScore ?? 0,
-      away_score: game.awayScore ?? 0,
-      status: game.status,
-      venue: game.venueId,
-      metadata: {
-        source_url: `https://api.provider/${game.id}`,
-        scrape_timestamp: new Date().toISOString(),
-        confidence_score: game.feedPrecision === 'PITCH' ? 0.95 : 0.8,
-        provider_name: game.providerName as any
-      }
-    }));
-
-    // Run QC pipeline
-    const { report, filtered_data } = await runQCPipeline({
-      games: qcGames,
-      data_source: `${games[0]?.providerName || 'UNKNOWN'}_API`
-    }, {
-      auto_reject_failures: true,
-      auto_reject_outliers: false,
-      mad_threshold: 5.0,
-      include_flagged: true,
-      min_confidence_score: 0.7
-    });
-
-    // Log QC report
-    console.log(formatReportConsole(report));
-
-    // Save QC report to KV
-    await saveReportToKV(report, env.CACHE, 86400); // 24hr TTL
-
-    // Check for high failure rate
-    const failureRate = report.records_rejected / report.total_records;
-    if (failureRate > 0.2) {
-      console.error(`[Ingest] QC failure rate too high: ${(failureRate * 100).toFixed(1)}%`);
-      console.error(`[Ingest] Rejecting batch. Review QC report: ${report.report_id}`);
-
-      // Track QC rejection in Analytics
-      if (env.ANALYTICS) {
-        env.ANALYTICS.writeDataPoint({
-          blobs: ['qc_rejection', 'live_games'],
-          doubles: [failureRate],
-          indexes: [report.report_id]
-        });
-      }
-
-      throw new Error(`QC validation failed: ${report.records_rejected}/${report.total_records} records rejected`);
+    if (!mlbResponse.ok) {
+      console.error(`[Ingest] ESPN MLB API error: ${mlbResponse.status}`);
+      throw new Error(`ESPN API returned ${mlbResponse.status}`);
     }
 
-    // Filter to only use validated game IDs
-    const validatedGameIds = new Set(filtered_data.games?.map(g => g.game_id) || []);
-    const validatedGames = games.filter(game => validatedGameIds.has(game.id));
+    const mlbData = await mlbResponse.json() as any;
+    const games: GameData[] = (mlbData.events || []).map((event: any) => ({
+      id: event.id,
+      sport: 'baseball',
+      division: 'MLB',
+      season,
+      scheduledAt: event.date,
+      status: event.status?.type?.name || 'SCHEDULED',
+      homeTeamId: event.competitions?.[0]?.competitors?.find((c: any) => c.homeAway === 'home')?.team?.id || '',
+      awayTeamId: event.competitions?.[0]?.competitors?.find((c: any) => c.homeAway === 'away')?.team?.id || '',
+      homeScore: parseInt(event.competitions?.[0]?.competitors?.find((c: any) => c.homeAway === 'home')?.score || '0'),
+      awayScore: parseInt(event.competitions?.[0]?.competitors?.find((c: any) => c.homeAway === 'away')?.score || '0'),
+      venueId: event.competitions?.[0]?.venue?.id,
+      providerName: 'ESPN'
+    }));
 
-    console.log(`[Ingest] QC passed: ${validatedGames.length}/${games.length} games validated`);
-    console.log(`[Ingest] QC Report ID: ${report.report_id}`);
-
-    // Use validated games for ingestion
-    const gamesToIngest = validatedGames;
-
-    // Batch upsert games
-    const upsertPromises = gamesToIngest.map((game) =>
-      executeWithConstraintGuard(
-        () =>
-          prisma.game.upsert({
-            where: { externalId: game.id },
-            update: {
-              status: game.status,
-              homeScore: game.homeScore,
-              awayScore: game.awayScore,
-              currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
-              balls: game.balls,
-              strikes: game.strikes,
-              outs: game.outs,
-              lastUpdated: new Date()
-            },
-            create: {
-              externalId: game.id,
-              sport: 'BASEBALL',
-              division: 'D1',
-              season,
-              seasonType: 'REGULAR',
-              scheduledAt: new Date(game.scheduledAt),
-              status: game.status,
-              homeTeamId: game.homeTeamId,
-              awayTeamId: game.awayTeamId,
-              homeScore: game.homeScore,
-              awayScore: game.awayScore,
-              venueId: game.venueId,
-              currentInning: game.currentInning,
-              currentInningHalf: game.currentInningHalf,
-              balls: game.balls,
-              strikes: game.strikes,
-              outs: game.outs,
-              providerName: game.providerName,
-              feedPrecision: game.feedPrecision
-            }
-          }),
-        `game upsert ${game.id}`
-      )
-    );
-
-    await Promise.all(upsertPromises);
-
-    console.log(`[Ingest] Successfully upserted ${gamesToIngest.length} games`);
+    console.log(`[Ingest] Fetched ${games.length} MLB games`);
 
     // Cache live games in KV (60s TTL)
-    const cacheKey = `live:games:${season}:${currentDate.toISOString().split('T')[0]}`;
-    await env.CACHE.put(cacheKey, JSON.stringify(gamesToIngest), {
+    const cacheKey = `live:games:mlb:${today}`;
+    await env.CACHE.put(cacheKey, JSON.stringify({
+      games,
+      fetchedAt: new Date().toISOString(),
+      source: 'ESPN'
+    }), {
       expirationTtl: 60
     });
 
-    // Track success in Analytics Engine (with QC metrics)
+    // Track success
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
         blobs: ['ingest_success', 'live_games'],
-        doubles: [gamesToIngest.length],
-        indexes: [season.toString(), report.report_id]
-      });
-
-      // Track QC metrics
-      env.ANALYTICS.writeDataPoint({
-        blobs: ['qc_metrics', 'live_games'],
-        doubles: [
-          report.records_passed,
-          report.records_flagged,
-          report.records_rejected,
-          report.total_records
-        ],
-        indexes: [season.toString(), report.report_id]
+        doubles: [games.length],
+        indexes: [season.toString()]
       });
     }
+
+    console.log(`[Ingest] Cached ${games.length} live games`);
   } catch (error) {
     console.error('[Ingest] Live games ingestion failed:', error);
     throw error;
@@ -329,148 +212,70 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 }
 
 /**
- * Ingest team stats (hourly)
+ * Ingest team standings and stats
  */
 async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
   console.log('[Ingest] Starting team stats ingestion...');
 
-  const providerManager = new ProviderManager(env);
+  const espnBase = env.ESPN_API_BASE || 'https://site.api.espn.com/apis/site/v2/sports';
   const season = new Date().getFullYear();
 
   try {
-    // Get all D1 teams
-    const teams = await prisma.team.findMany({
-      where: {
-        sport: 'BASEBALL',
-        division: 'D1'
-      },
-      select: {
-        id: true,
-        externalId: true
-      }
-    });
+    // Fetch MLB standings
+    const standingsUrl = `${espnBase}/baseball/mlb/standings`;
+    const response = await fetch(standingsUrl);
 
-    console.log(`[Ingest] Fetching stats for ${teams.length} teams`);
+    if (!response.ok) {
+      throw new Error(`ESPN standings API returned ${response.status}`);
+    }
 
-    // Fetch stats with rate limiting (10 concurrent)
-    const batchSize = 10;
-    for (let i = 0; i < teams.length; i += batchSize) {
-      const batch = teams.slice(i, i + batchSize);
+    const data = await response.json() as any;
+    const standings: TeamStats[] = [];
 
-      const statsPromises = batch.map(async (team) => {
-        try {
-          const stats = await providerManager.getTeamStats({
-            teamId: team.externalId,
-            season
+    // Parse standings from ESPN response
+    for (const group of (data.children || [])) {
+      for (const division of (group.children || [])) {
+        for (const team of (division.standings?.entries || [])) {
+          const stats = team.stats || [];
+          const getStatValue = (name: string) => {
+            const stat = stats.find((s: any) => s.name === name);
+            return stat?.value ?? 0;
+          };
+
+          standings.push({
+            teamId: team.team?.id || '',
+            season,
+            wins: getStatValue('wins'),
+            losses: getStatValue('losses'),
+            runsScored: getStatValue('pointsFor'),
+            runsAllowed: getStatValue('pointsAgainst'),
+            winPct: getStatValue('winPercent')
           });
-
-          // Upsert team stats
-          return executeWithConstraintGuard(
-            () =>
-              prisma.teamStats.upsert({
-                where: {
-                  teamId_season: {
-                    teamId: team.id,
-                    season
-                  }
-                },
-                update: {
-                  wins: stats.wins,
-                  losses: stats.losses,
-                  confWins: stats.confWins,
-                  confLosses: stats.confLosses,
-                  homeWins: stats.homeWins,
-                  homeLosses: stats.homeLosses,
-                  awayWins: stats.awayWins,
-                  awayLosses: stats.awayLosses,
-                  runsScored: stats.runsScored,
-                  runsAllowed: stats.runsAllowed,
-                  battingAvg: stats.battingAvg,
-                  era: stats.era,
-                  fieldingPct: stats.fieldingPct,
-                  rpi: stats.rpi,
-                  strengthOfSched: stats.strengthOfSched,
-                  pythagWins: stats.pythagWins,
-                  lastUpdated: new Date()
-                },
-                create: {
-                  teamId: team.id,
-                  season,
-                  wins: stats.wins,
-                  losses: stats.losses,
-                  confWins: stats.confWins,
-                  confLosses: stats.confLosses,
-                  homeWins: stats.homeWins,
-                  homeLosses: stats.homeLosses,
-                  awayWins: stats.awayWins,
-                  awayLosses: stats.awayLosses,
-                  runsScored: stats.runsScored,
-                  runsAllowed: stats.runsAllowed,
-                  battingAvg: stats.battingAvg,
-                  era: stats.era,
-                  fieldingPct: stats.fieldingPct,
-                  rpi: stats.rpi,
-                  strengthOfSched: stats.strengthOfSched,
-                  pythagWins: stats.pythagWins
-                }
-              }),
-            `team stats upsert ${team.id}`
-          );
-        } catch (error) {
-          console.error(`[Ingest] Failed to fetch stats for team ${team.id}:`, error);
-          return null;
         }
-      });
-
-      await Promise.all(statsPromises);
-
-      // Rate limit pause between batches
-      if (i + batchSize < teams.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 
-    console.log(`[Ingest] Successfully ingested stats for ${teams.length} teams`);
+    console.log(`[Ingest] Fetched standings for ${standings.length} teams`);
 
     // Cache standings in KV (4hr TTL)
-    const standings = await prisma.teamStats.findMany({
-      where: { season },
-      include: {
-        team: {
-          select: {
-            id: true,
-            name: true,
-            school: true,
-            abbreviation: true,
-            conference: {
-              select: {
-                id: true,
-                name: true,
-                slug: true
-              }
-            }
-          }
-        }
-      },
-      orderBy: [
-        { wins: 'desc' },
-        { losses: 'asc' }
-      ]
+    const cacheKey = `standings:mlb:${season}`;
+    await env.CACHE.put(cacheKey, JSON.stringify({
+      standings,
+      fetchedAt: new Date().toISOString(),
+      source: 'ESPN'
+    }), {
+      expirationTtl: 14400
     });
 
-    const cacheKey = `standings:${season}`;
-    await env.CACHE.put(cacheKey, JSON.stringify(standings), {
-      expirationTtl: 14400 // 4 hours
-    });
-
-    // Track success in Analytics Engine
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
         blobs: ['ingest_success', 'team_stats'],
-        doubles: [teams.length],
+        doubles: [standings.length],
         indexes: [season.toString()]
       });
     }
+
+    console.log(`[Ingest] Cached standings for ${standings.length} teams`);
   } catch (error) {
     console.error('[Ingest] Team stats ingestion failed:', error);
     throw error;
@@ -478,252 +283,66 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
 }
 
 /**
- * Ingest historical data (daily 2am)
+ * Archive completed games to R2
  */
-async function ingestHistoricalData(env: Env, ctx: ExecutionContext): Promise<void> {
-  console.log('[Ingest] Starting historical data ingestion...');
+async function archiveHistoricalData(env: Env, ctx: ExecutionContext): Promise<void> {
+  console.log('[Ingest] Starting historical data archival...');
 
-  const providerManager = new ProviderManager(env);
-  const season = new Date().getFullYear();
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const dateStr = yesterday.toISOString().split('T')[0];
+  const season = yesterday.getFullYear();
 
   try {
-    // Aggregate completed games for archival
-    const completedGames = await prisma.game.findMany({
-      where: {
-        season,
-        status: 'FINAL',
-        archived: false
-      },
-      include: {
-        homeTeam: true,
-        awayTeam: true,
-        events: true,
-        boxLines: true
+    // Get yesterday's cached games
+    const cacheKey = `live:games:mlb:${dateStr.replace(/-/g, '')}`;
+    const cachedData = await env.CACHE.get(cacheKey);
+
+    if (!cachedData) {
+      console.log(`[Ingest] No cached data found for ${dateStr}, skipping archive`);
+      return;
+    }
+
+    const { games } = JSON.parse(cachedData);
+    const completedGames = games.filter((g: GameData) =>
+      g.status === 'STATUS_FINAL' || g.status === 'FINAL'
+    );
+
+    if (completedGames.length === 0) {
+      console.log(`[Ingest] No completed games to archive for ${dateStr}`);
+      return;
+    }
+
+    // Archive to R2
+    const archiveKey = `archives/mlb/${season}/${dateStr}.json`;
+    const archiveData = {
+      date: dateStr,
+      season,
+      archivedAt: new Date().toISOString(),
+      gameCount: completedGames.length,
+      games: completedGames
+    };
+
+    await env.R2_BUCKET.put(archiveKey, JSON.stringify(archiveData, null, 2), {
+      customMetadata: {
+        season: season.toString(),
+        date: dateStr,
+        gameCount: completedGames.length.toString()
       }
     });
 
-    console.log(`[Ingest] Archiving ${completedGames.length} completed games`);
+    console.log(`[Ingest] Archived ${completedGames.length} games to R2: ${archiveKey}`);
 
-    // Archive to R2 (immutable storage)
-    if (completedGames.length > 0) {
-      const archiveData = {
-        season,
-        archivedAt: new Date().toISOString(),
-        games: completedGames
-      };
-
-      const archiveKey = `archives/${season}/${new Date().toISOString().split('T')[0]}.json`;
-      await env.R2_BUCKET.put(archiveKey, JSON.stringify(archiveData), {
-        customMetadata: {
-          season: season.toString(),
-          gameCount: completedGames.length.toString(),
-          archivedAt: new Date().toISOString()
-        }
-      });
-
-      // Mark games as archived
-      await executeWithConstraintGuard(
-        () =>
-          prisma.game.updateMany({
-            where: {
-              id: { in: completedGames.map(g => g.id) }
-            },
-            data: {
-              archived: true,
-              archivedAt: new Date()
-            }
-          }),
-        'game archive flag update'
-      );
-
-      console.log(`[Ingest] Archived ${completedGames.length} games to R2: ${archiveKey}`);
-    }
-
-    // Recalculate advanced stats
-    console.log('[Ingest] Recalculating advanced statistics...');
-
-    // Update RPI calculations
-    await recalculateRPI(season);
-
-    // Update strength of schedule
-    await recalculateStrengthOfSchedule(season);
-
-    // Update Pythagorean win expectations
-    await recalculatePythagoreanWins(season);
-
-    console.log('[Ingest] Historical data ingestion complete');
-
-    // Track success in Analytics Engine
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
-        blobs: ['ingest_success', 'historical'],
+        blobs: ['ingest_success', 'historical_archive'],
         doubles: [completedGames.length],
-        indexes: [season.toString()]
+        indexes: [season.toString(), dateStr]
       });
     }
   } catch (error) {
-    console.error('[Ingest] Historical data ingestion failed:', error);
+    console.error('[Ingest] Historical archival failed:', error);
     throw error;
-  }
-}
-
-/**
- * Recalculate RPI (Rating Percentage Index)
- */
-async function recalculateRPI(season: number): Promise<void> {
-  // Get all teams with their records
-  const teams = await prisma.teamStats.findMany({
-    where: { season },
-    include: {
-      team: {
-        include: {
-          homeGames: {
-            where: {
-              season,
-              status: 'FINAL'
-            }
-          },
-          awayGames: {
-            where: {
-              season,
-              status: 'FINAL'
-            }
-          }
-        }
-      }
-    }
-  });
-
-  // RPI formula: (WP * 0.25) + (OWP * 0.50) + (OOWP * 0.25)
-  // WP = Winning Percentage
-  // OWP = Opponents' Winning Percentage
-  // OOWP = Opponents' Opponents' Winning Percentage
-
-  // This is a simplified implementation - full RPI requires complex opponent tracking
-  for (const teamStat of teams) {
-    const totalGames = teamStat.wins + teamStat.losses;
-    const wp = totalGames > 0 ? teamStat.wins / totalGames : 0;
-
-    // For now, use a placeholder OWP/OOWP calculation
-    // In production, this would require tracking all opponent relationships
-    const rpi = wp * 0.25 + wp * 0.50 + wp * 0.25; // Simplified
-
-    await executeWithConstraintGuard(
-      () =>
-        prisma.teamStats.update({
-          where: {
-            teamId_season: {
-              teamId: teamStat.teamId,
-              season
-            }
-          },
-          data: { rpi }
-        }),
-      `team stats rpi ${teamStat.teamId}`
-    );
-  }
-}
-
-/**
- * Recalculate Strength of Schedule
- */
-async function recalculateStrengthOfSchedule(season: number): Promise<void> {
-  const teams = await prisma.teamStats.findMany({
-    where: { season },
-    include: {
-      team: {
-        include: {
-          homeGames: {
-            where: { season, status: 'FINAL' },
-            include: { awayTeam: { include: { teamStats: true } } }
-          },
-          awayGames: {
-            where: { season, status: 'FINAL' },
-            include: { homeTeam: { include: { teamStats: true } } }
-          }
-        }
-      }
-    }
-  });
-
-  for (const teamStat of teams) {
-    const opponents: number[] = [];
-
-    // Collect opponent win percentages
-    teamStat.team.homeGames.forEach(game => {
-      const oppStats = game.awayTeam.teamStats.find(s => s.season === season);
-      if (oppStats) {
-        const oppGames = oppStats.wins + oppStats.losses;
-        if (oppGames > 0) {
-          opponents.push(oppStats.wins / oppGames);
-        }
-      }
-    });
-
-    teamStat.team.awayGames.forEach(game => {
-      const oppStats = game.homeTeam.teamStats.find(s => s.season === season);
-      if (oppStats) {
-        const oppGames = oppStats.wins + oppStats.losses;
-        if (oppGames > 0) {
-          opponents.push(oppStats.wins / oppGames);
-        }
-      }
-    });
-
-    // Average opponent win percentage
-    const sos = opponents.length > 0
-      ? opponents.reduce((sum, wp) => sum + wp, 0) / opponents.length
-      : 0;
-
-    await executeWithConstraintGuard(
-      () =>
-        prisma.teamStats.update({
-          where: {
-            teamId_season: {
-              teamId: teamStat.teamId,
-              season
-            }
-          },
-          data: { strengthOfSched: sos }
-        }),
-      `team stats sos ${teamStat.teamId}`
-    );
-  }
-}
-
-/**
- * Recalculate Pythagorean Win Expectation
- */
-async function recalculatePythagoreanWins(season: number): Promise<void> {
-  const teams = await prisma.teamStats.findMany({
-    where: { season }
-  });
-
-  // Baseball exponent: typically 1.83
-  const exponent = 1.83;
-
-  for (const teamStat of teams) {
-    if (teamStat.runsScored > 0 || teamStat.runsAllowed > 0) {
-      const pythagPct =
-        Math.pow(teamStat.runsScored, exponent) /
-        (Math.pow(teamStat.runsScored, exponent) + Math.pow(teamStat.runsAllowed, exponent));
-
-      const totalGames = teamStat.wins + teamStat.losses;
-      const pythagWins = pythagPct * totalGames;
-
-      await executeWithConstraintGuard(
-        () =>
-          prisma.teamStats.update({
-            where: {
-              teamId_season: {
-                teamId: teamStat.teamId,
-                season
-              }
-            },
-            data: { pythagWins }
-          }),
-        `team stats pythag ${teamStat.teamId}`
-      );
-    }
   }
 }
