@@ -19,6 +19,17 @@ import {
   type GameResult,
 } from '../../lib/prediction';
 
+import {
+  AuthMiddleware,
+  type UserPayload,
+  type ApiKeyPayload,
+} from '../../lib/security/auth';
+
+import {
+  RateLimiter,
+  RATE_LIMIT_TIERS,
+} from '../../lib/security/rate-limiter';
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -55,20 +66,44 @@ export default {
     const startTime = Date.now();
     const url = new URL(request.url);
 
-    // CORS headers
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+    // Security headers (restrictive CORS + CSP + security headers)
+    const securityHeaders = {
+      'Access-Control-Allow-Origin': 'https://blazesportsintel.com',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-ID, X-User-Tier',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+      'Content-Security-Policy': [
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: https:",
+        "connect-src 'self' https://api.blazesportsintel.com https://blazesportsintel.com",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ].join('; '),
     };
+
+    // Alias for backwards compatibility
+    const corsHeaders = securityHeaders;
 
     // Handle preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Extract tier from auth header (simplified)
-    const tier = extractTier(request);
+    // Rate limiting - check before processing request
+    const rateLimitResult = await RateLimiter.check(request, env);
+    if (!rateLimitResult.allowed) {
+      return RateLimiter.createRateLimitResponse(rateLimitResult);
+    }
+
+    // Extract and validate tier from auth header
+    const tier = await extractAndValidateTier(request, env);
 
     const context: RequestContext = {
       env,
@@ -559,16 +594,58 @@ async function handleTeamState(
 // Helpers
 // ============================================================================
 
-function extractTier(request: Request): SubscriptionTier {
+/**
+ * Extract and validate subscription tier from authenticated request
+ *
+ * Uses proper JWT/API key validation instead of spoofable string matching.
+ * Maps authenticated user roles to subscription tiers:
+ * - ADMIN, ANALYST → enterprise
+ * - USER, API → pro
+ * - READONLY or unauthenticated → free
+ */
+async function extractAndValidateTier(
+  request: Request,
+  env: CloudflareEnv
+): Promise<SubscriptionTier> {
   const authHeader = request.headers.get('Authorization');
 
-  if (!authHeader) return 'free';
+  // No auth header = free tier (anonymous access)
+  if (!authHeader) {
+    return 'free';
+  }
 
-  // Simplified tier extraction - in production would validate JWT
-  if (authHeader.includes('enterprise')) return 'enterprise';
-  if (authHeader.includes('pro')) return 'pro';
+  try {
+    // Initialize auth middleware and validate token
+    const auth = new AuthMiddleware(env);
+    await auth.init();
+    const result = await auth.authenticate(request);
 
-  return 'free';
+    // Authentication failed = free tier
+    if (!result.authenticated || !result.user) {
+      return 'free';
+    }
+
+    // Map user role to subscription tier
+    const user = result.user;
+    const role = user.role;
+
+    // Admin and Analyst roles get enterprise access
+    if (role === 'admin' || role === 'analyst') {
+      return 'enterprise';
+    }
+
+    // Standard user and API roles get pro access
+    if (role === 'user' || role === 'api') {
+      return 'pro';
+    }
+
+    // Readonly and any other role = free tier
+    return 'free';
+  } catch (error) {
+    // Auth errors default to free tier (fail-safe)
+    console.error('Auth validation error:', error);
+    return 'free';
+  }
 }
 
 async function fetchTeamState(
