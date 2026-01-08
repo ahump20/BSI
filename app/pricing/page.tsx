@@ -7,19 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
 
 const tiers = [
   {
@@ -96,8 +84,6 @@ export default function PricingPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero */}
         <Section padding="lg" className="pt-24 relative overflow-hidden">

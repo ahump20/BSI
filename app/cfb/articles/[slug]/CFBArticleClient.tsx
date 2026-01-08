@@ -8,9 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-import { cfbNavItems } from '@/lib/navigation';
 
 interface Article {
   id: number;
@@ -88,9 +86,7 @@ export function CFBArticleClient() {
 
   return (
     <>
-      <Navbar items={cfbNavItems} />
-
-      <main className="min-h-screen bg-midnight">
+      <main id="main-content" className="min-h-screen bg-midnight">
         {/* Hero Section */}
         <Section
           padding="lg"

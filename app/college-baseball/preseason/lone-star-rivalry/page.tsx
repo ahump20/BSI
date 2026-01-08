@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import {
   Trophy,
@@ -17,13 +16,6 @@ import {
   Star as _Star,
   ArrowRight,
 } from 'lucide-react';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Preseason', href: '/college-baseball/preseason' },
-  { label: 'Lone Star Rivalry', href: '/college-baseball/preseason/lone-star-rivalry' },
-];
 
 const texasStats = {
   ranking: 1,
@@ -75,8 +67,6 @@ export default function LoneStarRivalryPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero */}
         <Section padding="none" className="relative">

@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
@@ -28,17 +27,6 @@ export const metadata: Metadata = {
       'NCAA Division I baseball coverage. Real-time scores and analytics for 300+ D1 programs.',
   },
 };
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
 
 const features = [
   {
@@ -153,8 +141,6 @@ const conferences = [
 export default function CollegeBaseballPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero Section */}
         <Section padding="lg" className="relative overflow-hidden">

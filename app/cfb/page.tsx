@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
@@ -25,15 +24,6 @@ export const metadata: Metadata = {
     description: 'NCAA Division I FBS football coverage with standings and analytics.',
   },
 };
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'CFB', href: '/cfb' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
 
 const plannedFeatures = [
   {
@@ -127,8 +117,6 @@ const conferences = [
 export default function CFBPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero Section */}
         <Section padding="lg" className="relative overflow-hidden">

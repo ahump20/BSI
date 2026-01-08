@@ -1,5 +1,14 @@
 'use client';
 
+/**
+ * MLB Team Detail Client
+ *
+ * Displays comprehensive team information including roster, depth chart,
+ * schedule, and statistics. Uses centralized team data and user timezone.
+ *
+ * Last Updated: 2025-01-07
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
@@ -7,47 +16,35 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
+import { useUserSettings } from '@/lib/hooks';
+import { getTeamBySlug, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
 
 interface Player {
   id: string;
-  name: string;
-  number: string;
-  position: string;
-  bats: string;
-  throws: string;
-  age: number;
-  height: string;
-  weight: number;
-  stats?: {
-    avg?: string;
-    hr?: number;
-    rbi?: number;
-    era?: string;
-    wins?: number;
-    saves?: number;
+  fullName: string;
+  primaryNumber?: string;
+  primaryPosition: {
+    abbreviation: string;
   };
+  batSide: {
+    code: string;
+  };
+  pitchHand?: {
+    code: string;
+  };
+  currentAge?: number;
+  height?: string;
+  weight?: number;
 }
 
 interface TeamData {
-  id: string;
+  id: number;
   name: string;
-  abbreviation: string;
-  division: string;
-  league: string;
-  venue: string;
-  record?: { wins: number; losses: number };
-  roster?: Player[];
+  venue?: {
+    name: string;
+  };
 }
 
 interface DataMeta {
@@ -56,76 +53,63 @@ interface DataMeta {
   timezone: string;
 }
 
-type TabType = 'roster' | 'depthchart' | 'schedule' | 'stats';
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
+interface QuickStats {
+  record?: string;
+  winPct?: string;
+  gamesBack?: string;
+  streak?: string;
+  divisionRank?: string;
+  runDifferential?: number;
 }
 
-const teamNames: Record<
-  string,
-  { name: string; abbreviation: string; division: string; league: string }
-> = {
-  bal: { name: 'Baltimore Orioles', abbreviation: 'BAL', division: 'East', league: 'AL' },
-  bos: { name: 'Boston Red Sox', abbreviation: 'BOS', division: 'East', league: 'AL' },
-  nyy: { name: 'New York Yankees', abbreviation: 'NYY', division: 'East', league: 'AL' },
-  tb: { name: 'Tampa Bay Rays', abbreviation: 'TB', division: 'East', league: 'AL' },
-  tor: { name: 'Toronto Blue Jays', abbreviation: 'TOR', division: 'East', league: 'AL' },
-  cws: { name: 'Chicago White Sox', abbreviation: 'CWS', division: 'Central', league: 'AL' },
-  cle: { name: 'Cleveland Guardians', abbreviation: 'CLE', division: 'Central', league: 'AL' },
-  det: { name: 'Detroit Tigers', abbreviation: 'DET', division: 'Central', league: 'AL' },
-  kc: { name: 'Kansas City Royals', abbreviation: 'KC', division: 'Central', league: 'AL' },
-  min: { name: 'Minnesota Twins', abbreviation: 'MIN', division: 'Central', league: 'AL' },
-  hou: { name: 'Houston Astros', abbreviation: 'HOU', division: 'West', league: 'AL' },
-  laa: { name: 'Los Angeles Angels', abbreviation: 'LAA', division: 'West', league: 'AL' },
-  oak: { name: 'Oakland Athletics', abbreviation: 'OAK', division: 'West', league: 'AL' },
-  sea: { name: 'Seattle Mariners', abbreviation: 'SEA', division: 'West', league: 'AL' },
-  tex: { name: 'Texas Rangers', abbreviation: 'TEX', division: 'West', league: 'AL' },
-  atl: { name: 'Atlanta Braves', abbreviation: 'ATL', division: 'East', league: 'NL' },
-  mia: { name: 'Miami Marlins', abbreviation: 'MIA', division: 'East', league: 'NL' },
-  nym: { name: 'New York Mets', abbreviation: 'NYM', division: 'East', league: 'NL' },
-  phi: { name: 'Philadelphia Phillies', abbreviation: 'PHI', division: 'East', league: 'NL' },
-  wsh: { name: 'Washington Nationals', abbreviation: 'WSH', division: 'East', league: 'NL' },
-  chc: { name: 'Chicago Cubs', abbreviation: 'CHC', division: 'Central', league: 'NL' },
-  cin: { name: 'Cincinnati Reds', abbreviation: 'CIN', division: 'Central', league: 'NL' },
-  mil: { name: 'Milwaukee Brewers', abbreviation: 'MIL', division: 'Central', league: 'NL' },
-  pit: { name: 'Pittsburgh Pirates', abbreviation: 'PIT', division: 'Central', league: 'NL' },
-  stl: { name: 'St. Louis Cardinals', abbreviation: 'STL', division: 'Central', league: 'NL' },
-  ari: { name: 'Arizona Diamondbacks', abbreviation: 'ARI', division: 'West', league: 'NL' },
-  col: { name: 'Colorado Rockies', abbreviation: 'COL', division: 'West', league: 'NL' },
-  lad: { name: 'Los Angeles Dodgers', abbreviation: 'LAD', division: 'West', league: 'NL' },
-  sd: { name: 'San Diego Padres', abbreviation: 'SD', division: 'West', league: 'NL' },
-  sf: { name: 'San Francisco Giants', abbreviation: 'SF', division: 'West', league: 'NL' },
-};
+type TabType = 'roster' | 'depthchart' | 'schedule' | 'stats';
+
+interface APIResponse {
+  team?: TeamData;
+  roster?: { roster: Player[] };
+  quickStats?: QuickStats;
+  meta?: DataMeta;
+  error?: string;
+  message?: string;
+}
 
 interface TeamDetailClientProps {
   teamId: string;
 }
 
 export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
-  const [team, setTeam] = useState<TeamData | null>(null);
+  const [teamData, setTeamData] = useState<TeamData | null>(null);
+  const [roster, setRoster] = useState<Player[]>([]);
+  const [quickStats, setQuickStats] = useState<QuickStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<DataMeta | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('roster');
   const [positionFilter, setPositionFilter] = useState<string>('all');
 
-  const teamInfo = teamNames[teamId] || {
-    name: teamId,
-    abbreviation: teamId.toUpperCase(),
-    division: '',
-    league: '',
+  // User timezone for formatting
+  const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
+
+  // Get team info from centralized data
+  const teamInfo = getTeamBySlug(teamId);
+
+  // Format timestamp with user's timezone or fallback
+  const displayTimestamp = (isoString?: string): string => {
+    const date = isoString ? new Date(isoString) : new Date();
+    if (timezoneLoaded) {
+      return formatDateTime(date);
+    }
+    return (
+      date.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }) + ' CT'
+    );
   };
 
   const fetchTeam = useCallback(async () => {
@@ -134,20 +118,31 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     setLoading(true);
     setError(null);
     try {
+      // Use the slug - API now accepts both numeric IDs and slugs
       const res = await fetch(`/api/mlb/teams/${teamId}`);
-      if (!res.ok) throw new Error('Failed to fetch team data');
-      const data = (await res.json()) as { team?: TeamData; meta?: DataMeta };
+      if (!res.ok) {
+        const errorData: APIResponse = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to fetch team data');
+      }
+
+      const data: APIResponse = await res.json();
 
       if (data.team) {
-        setTeam(data.team);
+        setTeamData(data.team);
+      }
+      if (data.roster?.roster) {
+        setRoster(data.roster.roster);
+      }
+      if (data.quickStats) {
+        setQuickStats(data.quickStats);
       }
       if (data.meta) {
         setMeta(data.meta);
       }
-      setLoading(false);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
+    } finally {
       setLoading(false);
     }
   }, [teamId]);
@@ -174,17 +169,17 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   const filterRoster = (players: Player[]) => {
     if (positionFilter === 'all') return players;
     if (positionFilter === 'pitchers')
-      return players.filter((p) => ['P', 'SP', 'RP', 'CL'].includes(p.position));
-    if (positionFilter === 'catchers') return players.filter((p) => p.position === 'C');
+      return players.filter((p) => ['P', 'SP', 'RP', 'CL'].includes(p.primaryPosition.abbreviation));
+    if (positionFilter === 'catchers') return players.filter((p) => p.primaryPosition.abbreviation === 'C');
     if (positionFilter === 'infielders')
-      return players.filter((p) => ['1B', '2B', '3B', 'SS'].includes(p.position));
+      return players.filter((p) => ['1B', '2B', '3B', 'SS'].includes(p.primaryPosition.abbreviation));
     if (positionFilter === 'outfielders')
-      return players.filter((p) => ['LF', 'CF', 'RF', 'OF', 'DH'].includes(p.position));
+      return players.filter((p) => ['LF', 'CF', 'RF', 'OF', 'DH'].includes(p.primaryPosition.abbreviation));
     return players;
   };
 
   const RosterContent = () => {
-    if (!team?.roster?.length) {
+    if (!roster.length) {
       return (
         <Card variant="default" padding="lg">
           <div className="text-center py-8">
@@ -198,7 +193,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
       );
     }
 
-    const filteredRoster = filterRoster(team.roster);
+    const filteredRoster = filterRoster(roster);
 
     return (
       <>
@@ -227,21 +222,24 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               className="hover:border-burnt-orange transition-all"
             >
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 bg-charcoal rounded-lg flex items-center justify-center text-xl font-bold text-burnt-orange flex-shrink-0">
-                  {player.number || '-'}
+                <div
+                  className="w-14 h-14 rounded-lg flex items-center justify-center text-xl font-bold text-white flex-shrink-0"
+                  style={{ backgroundColor: teamInfo?.primaryColor || '#BF5700' }}
+                >
+                  {player.primaryNumber || '-'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white truncate">{player.name}</p>
+                  <p className="font-semibold text-white truncate">{player.fullName}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="secondary" className="text-xs">
-                      {player.position}
+                      {player.primaryPosition.abbreviation}
                     </Badge>
                     <span className="text-xs text-text-tertiary">
-                      {player.bats}/{player.throws}
+                      {player.batSide.code}/{player.pitchHand?.code || '-'}
                     </span>
                   </div>
                   <p className="text-xs text-text-tertiary mt-1">
-                    {player.height} | {player.weight} lbs | Age {player.age}
+                    {player.height} | {player.weight} lbs | Age {player.currentAge}
                   </p>
                 </div>
               </div>
@@ -292,7 +290,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               {positions.map((pos) => {
-                const players = team?.roster?.filter((p) => p.position === pos.position) || [];
+                const players = roster.filter((p) => p.primaryPosition.abbreviation === pos.position);
                 return (
                   <div key={pos.position} className="bg-graphite rounded-lg p-4">
                     <p className="text-xs text-text-tertiary uppercase tracking-wide mb-2">
@@ -306,9 +304,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                             className={`flex items-center gap-2 ${idx === 0 ? 'text-white' : 'text-text-secondary'}`}
                           >
                             <span className="text-xs text-burnt-orange font-mono w-6">
-                              {player.number}
+                              {player.primaryNumber}
                             </span>
-                            <span className="text-sm truncate">{player.name}</span>
+                            <span className="text-sm truncate">{player.fullName}</span>
                           </div>
                         ))}
                       </div>
@@ -341,14 +339,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <CardContent>
             <div className="grid gap-6 md:grid-cols-3">
               {pitchingRoles.map((role) => {
-                const pitchers =
-                  team?.roster?.filter((p) =>
-                    role.role === 'SP'
-                      ? p.position === 'SP' || p.position === 'P'
-                      : role.role === 'CL'
-                        ? p.position === 'CL'
-                        : p.position === 'RP'
-                  ) || [];
+                const pitchers = roster.filter((p) =>
+                  role.role === 'SP'
+                    ? ['SP', 'P'].includes(p.primaryPosition.abbreviation)
+                    : role.role === 'CL'
+                      ? p.primaryPosition.abbreviation === 'CL'
+                      : p.primaryPosition.abbreviation === 'RP'
+                );
                 return (
                   <div key={role.role}>
                     <p className="text-sm font-semibold text-white mb-3">{role.label}</p>
@@ -363,9 +360,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                             >
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-burnt-orange font-mono w-6">
-                                  {player.number}
+                                  {player.primaryNumber}
                                 </span>
-                                <span className="text-sm text-text-secondary">{player.name}</span>
+                                <span className="text-sm text-text-secondary">{player.fullName}</span>
                               </div>
                             </div>
                           ))}
@@ -400,7 +397,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </svg>
         <p className="text-text-secondary">Schedule drops when Opening Day gets closer.</p>
         <p className="text-text-tertiary text-sm mt-2 mb-4">
-          MLB releases the full slate in late January. We'll have it the minute it's official.
+          MLB releases the full slate in late January. We&apos;ll have it the minute it&apos;s official.
         </p>
         <Link
           href="/mlb/scores"
@@ -447,10 +444,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     </div>
   );
 
+  // Fallback if team not found in centralized data
+  const displayName = teamInfo?.name || teamId.toUpperCase();
+  const displayAbbrev = teamInfo?.abbrev || teamId.toUpperCase();
+  const displayLeague = teamInfo?.league || '';
+  const displayDivision = teamInfo?.division || '';
+
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -469,7 +470,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 Teams
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">{teamInfo.name}</span>
+              <span className="text-white font-medium">{displayName}</span>
             </nav>
           </Container>
         </Section>
@@ -479,20 +480,36 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <Container>
             <ScrollReveal>
               <div className="flex items-center gap-6">
-                <div className="w-24 h-24 bg-charcoal rounded-xl flex items-center justify-center text-3xl font-bold text-burnt-orange">
-                  {teamInfo.abbreviation}
+                <div
+                  className="w-24 h-24 rounded-xl flex items-center justify-center text-3xl font-bold text-white"
+                  style={{ backgroundColor: teamInfo?.primaryColor || '#BF5700' }}
+                >
+                  {displayAbbrev}
                 </div>
                 <div>
                   <Badge variant="secondary" className="mb-2">
-                    {teamInfo.league} {teamInfo.division}
+                    {displayLeague} {displayDivision}
                   </Badge>
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
-                    {teamInfo.name}
+                    {displayName}
                   </h1>
-                  {team?.record && (
-                    <p className="text-text-secondary mt-2 text-lg font-mono">
-                      {team.record.wins}-{team.record.losses}
-                    </p>
+                  {quickStats?.record && (
+                    <div className="flex items-center gap-4 mt-2">
+                      <p className="text-text-secondary text-lg font-mono">{quickStats.record}</p>
+                      {quickStats.streak && (
+                        <Badge variant={quickStats.streak.startsWith('W') ? 'success' : 'error'}>
+                          {quickStats.streak}
+                        </Badge>
+                      )}
+                      {quickStats.divisionRank && (
+                        <span className="text-sm text-text-tertiary">
+                          {quickStats.divisionRank} in {displayDivision}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  {teamInfo?.venue && (
+                    <p className="text-text-tertiary text-sm mt-1">{teamInfo.venue}</p>
                   )}
                 </div>
               </div>
@@ -551,7 +568,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge
                 source={meta?.dataSource || 'MLB Stats API'}
-                timestamp={formatTimestamp(meta?.lastUpdated)}
+                timestamp={displayTimestamp(meta?.lastUpdated)}
               />
             </div>
           </Container>

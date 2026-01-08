@@ -1,5 +1,4 @@
 'use client';
-// Force sync fix: 2025-12-18
 
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
@@ -7,16 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
 
 const divisions = [
   {
@@ -42,8 +32,6 @@ const divisions = [
 export default function NFLPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero Section */}
         <Section padding="xl" className="relative overflow-hidden pt-24">

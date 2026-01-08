@@ -7,15 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Games', href: '/college-baseball/games' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-];
 
 const conferences = [
   { id: 'SEC', name: 'SEC', fullName: 'Southeastern Conference' },
@@ -88,8 +80,6 @@ export default function CollegeBaseballStandingsPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         <Section padding="lg" className="pt-24">
           <Container>

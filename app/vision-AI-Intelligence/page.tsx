@@ -1,5 +1,20 @@
 'use client';
 
+/**
+ * Vision AI Intelligence Page
+ *
+ * Real-time pose estimation and body language analysis using TensorFlow.js MoveNet.
+ * Features session recording, pro form overlays, and voice signal analysis.
+ *
+ * Accessibility: WCAG AA compliant with:
+ * - Full keyboard navigation (Tab, Enter, Space, Escape)
+ * - ARIA labels and live regions for screen readers
+ * - High contrast focus indicators
+ * - Skip link to main content
+ *
+ * Last Updated: 2025-01-07
+ */
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Play,
@@ -18,17 +33,50 @@ import {
   Smartphone,
   Camera,
   AlertCircle,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  X,
 } from 'lucide-react';
 
 // TensorFlow.js type declarations for CDN loading
+// Minimal type definition for TensorFlow.js API used in this component
+interface TFGraphModel {
+  predict: (inputs: TFTensor) => TFTensor;
+  execute: (inputs: TFTensor | Record<string, TFTensor>) => TFTensor | TFTensor[];
+  dispose: () => void;
+}
+
+interface TensorFlowAPI {
+  ready: () => Promise<void>;
+  tensor: (data: number[] | number[][] | number[][][]) => TFTensor;
+  tensor2d: (data: number[][] | number[], shape?: [number, number]) => TFTensor;
+  tidy: <T>(fn: () => T) => T;
+  dispose: () => void;
+  backend: () => string;
+  setBackend: (backendName: string) => Promise<boolean>;
+  getBackend: () => string;
+  memory: () => { numTensors: number; numBytes: number };
+  loadGraphModel: (modelUrl: string, options?: { fromTFHub?: boolean }) => Promise<TFGraphModel>;
+}
+
+interface TFTensor {
+  dataSync: () => Float32Array | Int32Array;
+  data: () => Promise<Float32Array | Int32Array>;
+  arraySync: () => number[] | number[][] | number[][][];
+  dispose: () => void;
+  shape: number[];
+}
+
 declare global {
   interface Window {
-    tf: typeof import('@tensorflow/tfjs');
+    tf: TensorFlowAPI;
   }
 }
 
 // Load TensorFlow.js from CDN
-const loadTensorFlow = (): Promise<typeof import('@tensorflow/tfjs')> => {
+const loadTensorFlow = (): Promise<TensorFlowAPI> => {
   return new Promise((resolve, reject) => {
     if (typeof window !== 'undefined' && window.tf) {
       resolve(window.tf);
@@ -434,6 +482,13 @@ export default function VisionAIIntelligencePage() {
   const [selectedProForm, setSelectedProForm] = useState<string>('pitchingStance');
   const [proOverlayOpacity, setProOverlayOpacity] = useState(0.5);
 
+  // Instructions and help
+  const [showInstructions, setShowInstructions] = useState(true);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  // Live region for screen reader announcements
+  const [announcement, setAnnouncement] = useState('');
+
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -561,13 +616,28 @@ export default function VisionAIIntelligencePage() {
   }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
+  // SCREEN READER ANNOUNCEMENTS
+  // ─────────────────────────────────────────────────────────────────────────
+  const announce = useCallback((message: string) => {
+    setAnnouncement(message);
+    // Clear after announcement is read
+    setTimeout(() => setAnnouncement(''), 1000);
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────────
   // LOGGING
   // ─────────────────────────────────────────────────────────────────────────
-  const addLog = useCallback((tag: string, msg: string) => {
+  const addLog = useCallback((tag: string, msg: string, shouldAnnounce = false) => {
     const t = startTimeRef.current
       ? ((performance.now() - startTimeRef.current) / 1000).toFixed(1)
       : '0.0';
     setLogs((prev) => [{ t, tag, msg, id: Date.now() }, ...prev].slice(0, 50));
+
+    // Announce important events to screen readers
+    if (shouldAnnounce) {
+      setAnnouncement(`${tag}: ${msg}`);
+      setTimeout(() => setAnnouncement(''), 1000);
+    }
   }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1327,6 +1397,151 @@ export default function VisionAIIntelligencePage() {
   }, [baseline, addLog]);
 
   // ─────────────────────────────────────────────────────────────────────────
+  // KEYBOARD SHORTCUTS
+  // ─────────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts when typing in inputs
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) {
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case ' ':
+          e.preventDefault();
+          if (running) {
+            stop();
+            announce('Session stopped');
+          } else if (!playbackSession) {
+            start();
+            announce('Session started');
+          }
+          break;
+        case 'c':
+          if (running && !calibrating) {
+            startCalibration();
+            announce('Calibration started. Hold still for 5 seconds.');
+          }
+          break;
+        case 'r':
+          if (running) {
+            toggleRecording();
+            announce(isRecording ? 'Recording stopped' : 'Recording started');
+          }
+          break;
+        case 'p':
+          setShowProOverlay((prev) => {
+            announce(prev ? 'Pro form overlay hidden' : 'Pro form overlay shown');
+            return !prev;
+          });
+          break;
+        case 'escape':
+          setActiveTooltip(null);
+          if (playbackSession) {
+            setPlaybackSession(null);
+            setPlaybackFrames([]);
+            announce('Playback closed');
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [running, calibrating, isRecording, playbackSession, start, stop, startCalibration, toggleRecording, announce]);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // METRIC HELP DEFINITIONS
+  // ─────────────────────────────────────────────────────────────────────────
+  const METRIC_HELP: Record<string, { title: string; description: string; ideal: string }> = {
+    shoulderSym: {
+      title: 'Shoulder Symmetry',
+      description: 'Measures the height difference between your left and right shoulders. Higher scores indicate more balanced posture.',
+      ideal: '90+ for optimal alignment',
+    },
+    hipSym: {
+      title: 'Hip Symmetry',
+      description: 'Measures the evenness of your hip positioning. Uneven hips can indicate weight distribution issues.',
+      ideal: '85+ for stable stance',
+    },
+    spineLean: {
+      title: 'Spine Lean',
+      description: 'The angle of your spine from vertical. 0° is perfectly upright, positive values lean right, negative lean left.',
+      ideal: '-5° to +5° for neutral posture',
+    },
+    stability: {
+      title: 'Stability Score',
+      description: 'Measures how much your body sways over time. Calculated from hip center movement variance over 3 seconds.',
+      ideal: '80+ for solid foundation',
+    },
+    energy: {
+      title: 'Voice Energy',
+      description: 'Measures the volume and intensity of your voice. Based on audio RMS (root mean square) amplitude.',
+      ideal: '40-70 for engaged, clear delivery',
+    },
+    steadiness: {
+      title: 'Voice Steadiness',
+      description: 'Measures consistency of your voice energy over time. Lower variance means more steady delivery.',
+      ideal: '70+ for confident, even tone',
+    },
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // TOOLTIP COMPONENT
+  // ─────────────────────────────────────────────────────────────────────────
+  const MetricTooltip = ({ metricKey, children }: { metricKey: string; children: React.ReactNode }) => {
+    const help = METRIC_HELP[metricKey];
+    if (!help) return <>{children}</>;
+
+    const isActive = activeTooltip === metricKey;
+
+    return (
+      <span className="relative inline-flex items-center gap-1.5">
+        {children}
+        <button
+          type="button"
+          onClick={() => setActiveTooltip(isActive ? null : metricKey)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setActiveTooltip(null);
+          }}
+          className="p-0.5 text-white/40 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
+          aria-label={`Help for ${help.title}`}
+          aria-expanded={isActive}
+          aria-describedby={isActive ? `tooltip-${metricKey}` : undefined}
+        >
+          <HelpCircle size={12} />
+        </button>
+
+        {isActive && (
+          <div
+            id={`tooltip-${metricKey}`}
+            role="tooltip"
+            className="absolute z-50 left-0 top-full mt-2 w-64 p-3 bg-charcoal border border-primary/30 rounded-lg shadow-xl"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-display text-xs tracking-wider uppercase text-primary">
+                {help.title}
+              </span>
+              <button
+                onClick={() => setActiveTooltip(null)}
+                className="p-0.5 text-white/40 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
+                aria-label="Close tooltip"
+              >
+                <X size={12} />
+              </button>
+            </div>
+            <p className="text-xs text-white/70 leading-relaxed mb-2">{help.description}</p>
+            <div className="flex items-center gap-1.5 text-[10px] text-green-500">
+              <CheckCircle2 size={10} />
+              Ideal: {help.ideal}
+            </div>
+          </div>
+        )}
+      </span>
+    );
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
   // RENDER HELPERS
   // ─────────────────────────────────────────────────────────────────────────
   const renderDelta = (current: string | undefined, baselineKey: keyof Baseline) => {
@@ -1352,17 +1567,37 @@ export default function VisionAIIntelligencePage() {
   // RENDER
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <main
-      id="main-content"
-      className="min-h-screen font-body text-base text-[#f5f2eb] bg-gradient-to-b from-[#050505] via-midnight to-[#080808] pt-16 md:pt-20"
-    >
-      {/* Radial glow */}
+    <>
+      {/* Skip link for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
+      {/* ARIA live region for screen reader announcements */}
       <div
-        className="fixed -top-48 -left-24 w-[800px] h-[600px] pointer-events-none z-0"
-        style={{
-          background: 'radial-gradient(ellipse, rgba(191, 87, 0, 0.12) 0%, transparent 60%)',
-        }}
-      />
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
+      </div>
+
+      <main
+        id="main-content"
+        className="min-h-screen font-body text-base text-[#f5f2eb] bg-gradient-to-b from-[#050505] via-midnight to-[#080808] pt-16 md:pt-20"
+        tabIndex={-1}
+      >
+        {/* Radial glow */}
+        <div
+          className="fixed -top-48 -left-24 w-[800px] h-[600px] pointer-events-none z-0"
+          style={{
+            background: 'radial-gradient(ellipse, rgba(191, 87, 0, 0.12) 0%, transparent 60%)',
+          }}
+        />
 
       {/* Permission Prompt Modal (Mobile Safari) */}
       {showPermissionPrompt && (
@@ -1481,15 +1716,114 @@ export default function VisionAIIntelligencePage() {
         </div>
       </header>
 
+      {/* Getting Started Instructions Panel */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-6 relative z-10">
+        <section
+          className="bg-gradient-to-r from-primary/10 via-midnight/80 to-midnight/80 border border-primary/20 rounded-lg backdrop-blur-xl overflow-hidden"
+          aria-labelledby="instructions-heading"
+        >
+          <button
+            onClick={() => setShowInstructions(!showInstructions)}
+            className="w-full flex items-center justify-between px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-inset"
+            aria-expanded={showInstructions}
+            aria-controls="instructions-content"
+          >
+            <div className="flex items-center gap-2.5">
+              <Info size={16} className="text-primary" />
+              <span id="instructions-heading" className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                Getting Started
+              </span>
+              <span className="px-2 py-0.5 text-[10px] font-medium bg-primary/20 text-primary rounded-full">
+                {showInstructions ? 'Click to collapse' : 'Click to expand'}
+              </span>
+            </div>
+            {showInstructions ? (
+              <ChevronUp size={16} className="text-white/50" />
+            ) : (
+              <ChevronDown size={16} className="text-white/50" />
+            )}
+          </button>
+
+          {showInstructions && (
+            <div id="instructions-content" className="px-4 pb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Step 1 */}
+                <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
+                      1
+                    </div>
+                    <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                      Position Yourself
+                    </h3>
+                  </div>
+                  <p className="text-xs text-white/60 leading-relaxed">
+                    Stand 6-8 feet from your camera with your full body visible. Ensure good lighting from the front—avoid backlighting.
+                  </p>
+                </div>
+
+                {/* Step 2 */}
+                <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
+                      2
+                    </div>
+                    <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                      Calibrate Baseline
+                    </h3>
+                  </div>
+                  <p className="text-xs text-white/60 leading-relaxed">
+                    Start a session, then click "Calibrate" and hold still for 5 seconds. This sets your personal baseline for tracking improvements.
+                  </p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
+                      3
+                    </div>
+                    <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                      Compare to Pros
+                    </h3>
+                  </div>
+                  <p className="text-xs text-white/60 leading-relaxed">
+                    Enable "Pro Form" to overlay ideal positioning. Match your skeleton to the green reference for optimal form.
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick tips */}
+              <div className="mt-4 p-3 bg-charcoal/30 rounded-lg border border-white/5">
+                <div className="flex items-start gap-2">
+                  <HelpCircle size={14} className="text-primary mt-0.5 flex-shrink-0" />
+                  <div className="text-xs text-white/50">
+                    <strong className="text-white/70">Keyboard shortcuts:</strong>{' '}
+                    Press <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">Space</kbd> to start/stop,{' '}
+                    <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">C</kbd> to calibrate,{' '}
+                    <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">R</kbd> to record,{' '}
+                    <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">P</kbd> to toggle pro overlay.
+                    Click the <HelpCircle size={10} className="inline" /> icons next to metrics for detailed explanations.
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 relative z-10">
         {/* Left column */}
         <div className="flex flex-col gap-4">
           {/* Controls panel */}
-          <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+          <section
+            className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl"
+            aria-labelledby="controls-heading"
+          >
             <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
               <span className="font-display text-xs tracking-[0.2em] text-white/50">01</span>
-              <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+              <span id="controls-heading" className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
                 Controls
               </span>
             </div>
@@ -1818,22 +2152,30 @@ export default function VisionAIIntelligencePage() {
                 </div>
 
                 <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
-                  <span className="text-white/65">Shoulder Symmetry</span>
+                  <MetricTooltip metricKey="shoulderSym">
+                    <span className="text-white/65">Shoulder Symmetry</span>
+                  </MetricTooltip>
                   <span className="text-white/90 text-right">
                     {poseSignals?.shoulderSym ?? '—'}/100
                     {renderDelta(poseSignals?.shoulderSym, 'shoulderSym')}
                   </span>
 
-                  <span className="text-white/65">Hip Symmetry</span>
+                  <MetricTooltip metricKey="hipSym">
+                    <span className="text-white/65">Hip Symmetry</span>
+                  </MetricTooltip>
                   <span className="text-white/90 text-right">
                     {poseSignals?.hipSym ?? '—'}/100
                     {renderDelta(poseSignals?.hipSym, 'hipSym')}
                   </span>
 
-                  <span className="text-white/65">Spine Lean</span>
+                  <MetricTooltip metricKey="spineLean">
+                    <span className="text-white/65">Spine Lean</span>
+                  </MetricTooltip>
                   <span className="text-white/90 text-right">{poseSignals?.spineLean ?? '—'}°</span>
 
-                  <span className="text-white/65">Stability Score</span>
+                  <MetricTooltip metricKey="stability">
+                    <span className="text-white/65">Stability Score</span>
+                  </MetricTooltip>
                   <span className="text-white/90 font-semibold text-right">
                     {poseSignals?.stability ?? '—'}
                     {renderDelta(poseSignals?.stability, 'stability')}
@@ -1864,13 +2206,17 @@ export default function VisionAIIntelligencePage() {
                 </div>
 
                 <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
-                  <span className="text-white/65">Energy</span>
+                  <MetricTooltip metricKey="energy">
+                    <span className="text-white/65">Energy</span>
+                  </MetricTooltip>
                   <span className="text-white/90 text-right">
                     {audioSignals?.energy ?? '—'}/100
                     {renderDelta(audioSignals?.energy, 'energy')}
                   </span>
 
-                  <span className="text-white/65">Steadiness</span>
+                  <MetricTooltip metricKey="steadiness">
+                    <span className="text-white/65">Steadiness</span>
+                  </MetricTooltip>
                   <span className="text-white/90 font-semibold text-right">
                     {audioSignals?.steadiness ?? '—'}
                   </span>
@@ -1990,5 +2336,6 @@ export default function VisionAIIntelligencePage() {
         </aside>
       </div>
     </main>
+    </>
   );
 }

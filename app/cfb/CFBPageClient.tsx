@@ -7,10 +7,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { CFBGamesList, CFBArticleList } from '@/components/cfb';
-import { cfbNavItems } from '@/lib/navigation';
 
 const plannedFeatures = [
   {
@@ -104,8 +102,6 @@ const conferences = [
 export default function CFBPageClient() {
   return (
     <>
-      <Navbar items={cfbNavItems} />
-
       <main id="main-content">
         {/* Hero Section */}
         <Section padding="lg" className="relative overflow-hidden">

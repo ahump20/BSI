@@ -7,7 +7,6 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 const colors = {
@@ -19,16 +18,6 @@ const colors = {
   cream: '#FAF8F5',
   gold: '#C9A227',
 };
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
 
 const features = [
   {
@@ -113,8 +102,6 @@ const pricingTiers = [
 export default function ForCoachesPage() {
   return (
     <main className="min-h-screen bg-midnight text-cream">
-      <Navbar items={navItems} />
-
       {/* Hero Section */}
       <Section className="pt-32 pb-16 bg-gradient-to-b from-charcoal to-midnight">
         <Container>

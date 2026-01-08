@@ -6,15 +6,8 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Star, TrendingUp, Calendar, Users, ChevronRight } from 'lucide-react';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Preseason', href: '/college-baseball/preseason' },
-];
 
 const featuredStories = [
   {
@@ -65,8 +58,6 @@ const quickStats = [
 export default function PreseasonHubPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero Section */}
         <Section padding="lg" className="pt-24 pb-12">

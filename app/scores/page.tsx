@@ -7,16 +7,8 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
+import { CitationFooter, DataDisclaimer } from '@/components/sports';
 
 interface SportSection {
   id: string;
@@ -147,8 +139,6 @@ export default function ScoresHubPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Header */}
         <Section padding="lg" className="relative overflow-hidden pt-24">
@@ -292,10 +282,14 @@ export default function ScoresHubPage() {
             </ScrollReveal>
 
             {/* Data Attribution */}
-            <div className="mt-8 text-center text-xs text-text-tertiary">
-              <p>Data sourced from official league APIs: MLB Stats API, ESPN, NCAA.org</p>
-              <p className="mt-1">Updated every 30 seconds during live games</p>
-            </div>
+            <CitationFooter
+              source="MLB Stats API"
+              fetchedAt={new Date().toISOString()}
+              additionalSources={['ESPN', 'NCAA.org', 'D1Baseball']}
+              showFreshness={false}
+              className="mt-8"
+            />
+            <DataDisclaimer className="mt-4" />
           </Container>
         </Section>
       </main>

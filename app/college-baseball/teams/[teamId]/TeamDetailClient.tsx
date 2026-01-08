@@ -7,15 +7,8 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Teams', href: '/college-baseball/teams' },
-];
 
 interface Team {
   id: string;
@@ -131,7 +124,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (loading) {
     return (
       <>
-        <Navbar items={navItems} />
         <main className="min-h-screen pt-24">
           <Container>
             <div className="text-center py-16">
@@ -148,7 +140,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (error || !team) {
     return (
       <>
-        <Navbar items={navItems} />
         <main className="min-h-screen pt-24">
           <Container>
             <Card padding="lg" className="text-center">
@@ -176,8 +167,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero Section */}
         <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-midnight">

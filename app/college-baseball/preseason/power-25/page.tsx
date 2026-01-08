@@ -6,7 +6,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import {
   Trophy,
@@ -18,13 +17,6 @@ import {
   MapPin,
   ChevronRight,
 } from 'lucide-react';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Preseason', href: '/college-baseball/preseason' },
-  { label: 'Power 25', href: '/college-baseball/preseason/power-25' },
-];
 
 interface RankedTeam {
   rank: number;
@@ -438,8 +430,6 @@ export default function Power25Page() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Hero */}
         <Section padding="none" className="relative">

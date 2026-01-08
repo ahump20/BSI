@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 // Import shared portal components
@@ -23,7 +22,6 @@ interface PortalApiResponse {
   data?: PortalEntry[];
   entries?: PortalEntry[];
 }
-import { collegeBaseballNavItems } from '@/lib/navigation';
 
 // Mock data for UI development (will be replaced by API)
 const MOCK_ENTRIES: PortalEntry[] = [
@@ -319,10 +317,9 @@ export default function TransferPortalPage() {
   };
 
   return (
-    <main className="min-h-screen bg-midnight">
-      <Navbar items={collegeBaseballNavItems} variant="sticky" />
-
-      {/* Hero section */}
+    <>
+      <main id="main-content" className="min-h-screen bg-midnight">
+        {/* Hero section */}
       <Section className="relative pt-24 pb-16 overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent opacity-50" />
@@ -803,7 +800,9 @@ export default function TransferPortalPage() {
         </Container>
       </Section>
 
+      </main>
+
       <Footer />
-    </main>
+    </>
   );
 }

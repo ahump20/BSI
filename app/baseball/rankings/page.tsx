@@ -5,7 +5,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
@@ -13,13 +12,6 @@ export const metadata: Metadata = {
   description:
     'Official D1Baseball Top 25 college baseball rankings. Complete 1-25 with conference affiliations, record, and movement. Updated every Monday during the season.',
 };
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Rankings', href: '/baseball/rankings' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-];
 
 // 2026 Preseason Top 25 - D1Baseball
 const top25Rankings = [
@@ -53,8 +45,6 @@ const top25Rankings = [
 export default function BaseballRankingsPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         <Section padding="lg" className="pt-24">
           <Container>

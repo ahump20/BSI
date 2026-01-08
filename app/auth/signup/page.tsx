@@ -8,13 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Pricing', href: '/pricing' },
-];
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -64,7 +58,6 @@ export default function SignupPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
       <main id="main-content">
         <Section padding="lg" className="pt-24 min-h-screen">
           <Container>

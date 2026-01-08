@@ -7,15 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NIL Valuation', href: '/nil-valuation' },
-];
 
 const tools = [
   {
@@ -70,8 +62,6 @@ const tools = [
 export default function NILToolsPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">

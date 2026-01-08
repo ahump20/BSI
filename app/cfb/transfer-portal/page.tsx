@@ -6,9 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-import { cfbNavItems } from '@/lib/navigation';
 
 // Import shared portal components
 import {
@@ -193,10 +191,9 @@ export default function CFBTransferPortalPage() {
   };
 
   return (
-    <main className="min-h-screen bg-midnight">
-      <Navbar items={cfbNavItems} variant="sticky" />
-
-      {/* Hero section */}
+    <>
+      <main id="main-content" className="min-h-screen bg-midnight">
+        {/* Hero section */}
       <Section className="relative pt-24 pb-16 overflow-hidden">
         {/* Background gradient - football brown tones */}
         <div className="absolute inset-0 bg-gradient-radial from-football/10 via-transparent to-transparent opacity-50" />
@@ -347,7 +344,9 @@ export default function CFBTransferPortalPage() {
         </Container>
       </Section>
 
+      </main>
+
       <Footer />
-    </main>
+    </>
   );
 }

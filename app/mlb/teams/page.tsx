@@ -1,5 +1,14 @@
 'use client';
 
+/**
+ * MLB Teams Page
+ *
+ * Browse all 30 MLB teams with league filtering.
+ * Uses centralized team data utility and user timezone preferences.
+ *
+ * Last Updated: 2025-01-07
+ */
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
@@ -7,26 +16,18 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useUserSettings } from '@/lib/hooks';
+import {
+  MLB_TEAMS,
+  getTeamsGroupedByDivision,
+  DIVISION_ORDER,
+  type MLBTeamInfo,
+} from '@/lib/utils/mlb-teams';
 
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
-
-interface Team {
-  id: string;
-  name: string;
-  abbreviation: string;
-  division: string;
-  league: string;
+interface TeamWithRecord extends MLBTeamInfo {
   wins?: number;
   losses?: number;
-  venue?: string;
 }
 
 interface DataMeta {
@@ -35,80 +36,34 @@ interface DataMeta {
   timezone: string;
 }
 
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
-
-// MLB Teams data (static, doesn't need API call)
-const mlbTeams: Team[] = [
-  // AL East
-  { id: 'bal', name: 'Baltimore Orioles', abbreviation: 'BAL', division: 'East', league: 'AL' },
-  { id: 'bos', name: 'Boston Red Sox', abbreviation: 'BOS', division: 'East', league: 'AL' },
-  { id: 'nyy', name: 'New York Yankees', abbreviation: 'NYY', division: 'East', league: 'AL' },
-  { id: 'tb', name: 'Tampa Bay Rays', abbreviation: 'TB', division: 'East', league: 'AL' },
-  { id: 'tor', name: 'Toronto Blue Jays', abbreviation: 'TOR', division: 'East', league: 'AL' },
-  // AL Central
-  { id: 'cws', name: 'Chicago White Sox', abbreviation: 'CWS', division: 'Central', league: 'AL' },
-  {
-    id: 'cle',
-    name: 'Cleveland Guardians',
-    abbreviation: 'CLE',
-    division: 'Central',
-    league: 'AL',
-  },
-  { id: 'det', name: 'Detroit Tigers', abbreviation: 'DET', division: 'Central', league: 'AL' },
-  { id: 'kc', name: 'Kansas City Royals', abbreviation: 'KC', division: 'Central', league: 'AL' },
-  { id: 'min', name: 'Minnesota Twins', abbreviation: 'MIN', division: 'Central', league: 'AL' },
-  // AL West
-  { id: 'hou', name: 'Houston Astros', abbreviation: 'HOU', division: 'West', league: 'AL' },
-  { id: 'laa', name: 'Los Angeles Angels', abbreviation: 'LAA', division: 'West', league: 'AL' },
-  { id: 'oak', name: 'Oakland Athletics', abbreviation: 'OAK', division: 'West', league: 'AL' },
-  { id: 'sea', name: 'Seattle Mariners', abbreviation: 'SEA', division: 'West', league: 'AL' },
-  { id: 'tex', name: 'Texas Rangers', abbreviation: 'TEX', division: 'West', league: 'AL' },
-  // NL East
-  { id: 'atl', name: 'Atlanta Braves', abbreviation: 'ATL', division: 'East', league: 'NL' },
-  { id: 'mia', name: 'Miami Marlins', abbreviation: 'MIA', division: 'East', league: 'NL' },
-  { id: 'nym', name: 'New York Mets', abbreviation: 'NYM', division: 'East', league: 'NL' },
-  { id: 'phi', name: 'Philadelphia Phillies', abbreviation: 'PHI', division: 'East', league: 'NL' },
-  { id: 'wsh', name: 'Washington Nationals', abbreviation: 'WSH', division: 'East', league: 'NL' },
-  // NL Central
-  { id: 'chc', name: 'Chicago Cubs', abbreviation: 'CHC', division: 'Central', league: 'NL' },
-  { id: 'cin', name: 'Cincinnati Reds', abbreviation: 'CIN', division: 'Central', league: 'NL' },
-  { id: 'mil', name: 'Milwaukee Brewers', abbreviation: 'MIL', division: 'Central', league: 'NL' },
-  { id: 'pit', name: 'Pittsburgh Pirates', abbreviation: 'PIT', division: 'Central', league: 'NL' },
-  {
-    id: 'stl',
-    name: 'St. Louis Cardinals',
-    abbreviation: 'STL',
-    division: 'Central',
-    league: 'NL',
-  },
-  // NL West
-  { id: 'ari', name: 'Arizona Diamondbacks', abbreviation: 'ARI', division: 'West', league: 'NL' },
-  { id: 'col', name: 'Colorado Rockies', abbreviation: 'COL', division: 'West', league: 'NL' },
-  { id: 'lad', name: 'Los Angeles Dodgers', abbreviation: 'LAD', division: 'West', league: 'NL' },
-  { id: 'sd', name: 'San Diego Padres', abbreviation: 'SD', division: 'West', league: 'NL' },
-  { id: 'sf', name: 'San Francisco Giants', abbreviation: 'SF', division: 'West', league: 'NL' },
-];
-
 export default function MLBTeamsPage() {
-  const [teams, setTeams] = useState<Team[]>(mlbTeams);
-  const [_loading, _setLoading] = useState(false);
+  const [teams, setTeams] = useState<TeamWithRecord[]>(MLB_TEAMS);
   const [meta, setMeta] = useState<DataMeta | null>(null);
   const [selectedLeague, setSelectedLeague] = useState<'all' | 'AL' | 'NL'>('all');
 
-  // Optionally fetch team records
+  // User timezone for formatting
+  const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
+
+  // Format timestamp with user's timezone or fallback
+  const displayTimestamp = (isoString?: string): string => {
+    const date = isoString ? new Date(isoString) : new Date();
+    if (timezoneLoaded) {
+      return formatDateTime(date);
+    }
+    return (
+      date.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }) + ' CT'
+    );
+  };
+
+  // Fetch team records from standings API
   useEffect(() => {
     async function fetchRecords() {
       try {
@@ -119,11 +74,12 @@ export default function MLBTeamsPage() {
             meta?: DataMeta;
           };
           if (data.standings) {
-            // Merge records into teams
             setTeams((prev) =>
               prev.map((team) => {
-                const standing = data.standings?.find((s) =>
-                  s.teamName.includes(team.name.split(' ').pop() || '')
+                const standing = data.standings?.find(
+                  (s) =>
+                    s.teamName.toLowerCase().includes(team.shortName.toLowerCase()) ||
+                    team.name.toLowerCase().includes(s.teamName.toLowerCase())
                 );
                 if (standing) {
                   return {
@@ -141,7 +97,7 @@ export default function MLBTeamsPage() {
           }
         }
       } catch {
-        // Silently fail, records are optional
+        // Silently fail, records are optional enhancement
       }
     }
     fetchRecords();
@@ -151,31 +107,35 @@ export default function MLBTeamsPage() {
     selectedLeague === 'all' ? teams : teams.filter((t) => t.league === selectedLeague);
 
   // Group by division
-  const teamsByDivision: Record<string, Team[]> = {};
+  const teamsByDivision: Record<string, TeamWithRecord[]> = {};
   filteredTeams.forEach((team) => {
     const key = `${team.league} ${team.division}`;
     if (!teamsByDivision[key]) teamsByDivision[key] = [];
     teamsByDivision[key].push(team);
   });
 
+  // Filter division order based on selected league
   const divisionOrder =
     selectedLeague === 'NL'
-      ? ['NL East', 'NL Central', 'NL West']
+      ? DIVISION_ORDER.filter((d) => d.startsWith('NL'))
       : selectedLeague === 'AL'
-        ? ['AL East', 'AL Central', 'AL West']
-        : ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
+        ? DIVISION_ORDER.filter((d) => d.startsWith('AL'))
+        : DIVISION_ORDER;
 
-  const TeamCard = ({ team }: { team: Team }) => (
-    <Link href={`/mlb/teams/${team.id}`} className="block group">
+  const TeamCard = ({ team }: { team: TeamWithRecord }) => (
+    <Link href={`/mlb/teams/${team.slug}`} className="block group">
       <Card
         variant="default"
         padding="md"
         className="h-full transition-all group-hover:border-burnt-orange"
       >
         <div className="flex items-center gap-4">
-          {/* Team Logo Placeholder */}
-          <div className="w-16 h-16 bg-charcoal rounded-lg flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
-            {team.abbreviation}
+          {/* Team Logo Placeholder with primary color */}
+          <div
+            className="w-16 h-16 rounded-lg flex items-center justify-center text-xl font-bold text-white group-hover:scale-105 transition-transform"
+            style={{ backgroundColor: team.primaryColor }}
+          >
+            {team.abbrev}
           </div>
 
           <div className="flex-1 min-w-0">
@@ -208,8 +168,6 @@ export default function MLBTeamsPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
@@ -309,7 +267,7 @@ export default function MLBTeamsPage() {
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge
                 source={meta?.dataSource || 'MLB Stats API'}
-                timestamp={formatTimestamp(meta?.lastUpdated)}
+                timestamp={displayTimestamp(meta?.lastUpdated)}
               />
             </div>
           </Container>

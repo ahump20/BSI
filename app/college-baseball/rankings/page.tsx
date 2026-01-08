@@ -7,16 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Rankings', href: '/college-baseball/rankings' },
-  { label: 'Games', href: '/college-baseball/games' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-];
 
 interface RankedTeam {
   rank: number;
@@ -96,8 +87,6 @@ export default function CollegeBaseballRankingsPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         <Section padding="lg" className="pt-24">
           <Container>

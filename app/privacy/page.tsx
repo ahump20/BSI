@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
@@ -10,16 +9,9 @@ export const metadata: Metadata = {
   description: 'Privacy Policy for Blaze Sports Intel. How we handle your data.',
 };
 
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Privacy', href: '/privacy' },
-  { label: 'Terms', href: '/terms' },
-];
-
 export default function PrivacyPage() {
   return (
     <>
-      <Navbar items={navItems} />
       <main id="main-content">
         <Section padding="lg" className="pt-24">
           <Container>

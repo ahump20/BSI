@@ -2,19 +2,11 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'About', href: '/about' },
-];
 
 export default function NotFound() {
   return (
     <>
-      <Navbar items={navItems} />
       <main id="main-content">
         <Section padding="lg" className="pt-24 min-h-[70vh] flex items-center">
           <Container center>

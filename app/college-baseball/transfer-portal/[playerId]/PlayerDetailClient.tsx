@@ -9,10 +9,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { StatusBadge } from '@/components/portal';
-import { collegeBaseballNavItems } from '@/lib/navigation';
 
 interface PlayerApiResponse {
   player?: PlayerProfile;
@@ -117,50 +115,51 @@ export function PlayerDetailClient() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-midnight">
-        <Navbar items={collegeBaseballNavItems} />
-        <Section className="pt-24 pb-16">
-          <Container>
-            <div className="text-center py-16">
-              <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
-              <p className="text-text-secondary">Loading player profile...</p>
-            </div>
-          </Container>
-        </Section>
+      <>
+        <main id="main-content" className="min-h-screen bg-midnight">
+          <Section className="pt-24 pb-16">
+            <Container>
+              <div className="text-center py-16">
+                <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
+                <p className="text-text-secondary">Loading player profile...</p>
+              </div>
+            </Container>
+          </Section>
+        </main>
         <Footer />
-      </main>
+      </>
     );
   }
 
   if (!player) {
     return (
-      <main className="min-h-screen bg-midnight">
-        <Navbar items={collegeBaseballNavItems} />
-        <Section className="pt-24 pb-16">
-          <Container>
-            <div className="text-center py-16">
-              <h1 className="text-2xl font-display font-bold text-text-primary mb-4">
-                Player Not Found
-              </h1>
-              <p className="text-text-secondary mb-8">
-                The player profile you&apos;re looking for doesn&apos;t exist.
-              </p>
-              <Link href="/college-baseball/transfer-portal">
-                <Button variant="primary">Back to Portal Tracker</Button>
-              </Link>
-            </div>
-          </Container>
-        </Section>
+      <>
+        <main id="main-content" className="min-h-screen bg-midnight">
+          <Section className="pt-24 pb-16">
+            <Container>
+              <div className="text-center py-16">
+                <h1 className="text-2xl font-display font-bold text-text-primary mb-4">
+                  Player Not Found
+                </h1>
+                <p className="text-text-secondary mb-8">
+                  The player profile you&apos;re looking for doesn&apos;t exist.
+                </p>
+                <Link href="/college-baseball/transfer-portal">
+                  <Button variant="primary">Back to Portal Tracker</Button>
+                </Link>
+              </div>
+            </Container>
+          </Section>
+        </main>
         <Footer />
-      </main>
+      </>
     );
   }
 
   return (
-    <main className="min-h-screen bg-midnight">
-      <Navbar items={collegeBaseballNavItems} />
-
-      {/* Breadcrumb */}
+    <>
+      <main id="main-content" className="min-h-screen bg-midnight">
+        {/* Breadcrumb */}
       <Section className="pt-24 pb-4">
         <Container>
           <div className="flex items-center gap-2 text-sm text-text-tertiary">
@@ -402,9 +401,11 @@ export function PlayerDetailClient() {
         </Container>
       </Section>
 
-      <Footer />
     </main>
-  );
+
+    <Footer />
+  </>
+);
 }
 
 // Mock player data for development

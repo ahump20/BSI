@@ -5,7 +5,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
@@ -17,13 +16,6 @@ export const metadata: Metadata = {
     description: 'Browse all D1 college baseball teams by conference.',
   },
 };
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-  { label: 'Rankings', href: '/baseball/rankings' },
-];
 
 const conferences = [
   {
@@ -127,7 +119,6 @@ const conferences = [
 export default function TeamsPage() {
   return (
     <>
-      <Navbar items={navItems} />
       <main id="main-content">
         <Section padding="lg" className="pt-24">
           <Container>

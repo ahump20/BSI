@@ -7,20 +7,8 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
 
 // All 32 NFL teams with full data
 export const NFL_TEAMS: Record<
@@ -412,7 +400,6 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
   if (!team) {
     return (
       <>
-        <Navbar items={navItems} />
         <main id="main-content">
           <Section padding="lg" background="charcoal">
             <Container>
@@ -449,8 +436,6 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
 
   return (
     <>
-      <Navbar items={navItems} />
-
       <main id="main-content">
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
