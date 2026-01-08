@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Container } from '../ui/Container';
 import { MobileMenu } from './MobileMenu';
+import { SearchBar } from './SearchBar';
 
 export interface NavItem {
   label: string;
@@ -109,6 +110,11 @@ export function Navbar({ items, logo, actions, variant = 'sticky', className }: 
               {items.map((item) => (
                 <NavLink key={item.href} item={item} isActive={isActive(item.href)} />
               ))}
+            </div>
+
+            {/* Search Bar - Desktop */}
+            <div className="hidden md:block">
+              <SearchBar variant="navbar" placeholder="Search teams, players..." />
             </div>
 
             {/* Actions */}

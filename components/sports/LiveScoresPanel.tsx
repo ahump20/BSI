@@ -1,10 +1,19 @@
 'use client';
 
+/**
+ * Live Scores Panel
+ *
+ * Displays live, scheduled, and final game scores with user timezone support.
+ *
+ * Last Updated: 2025-01-07
+ */
+
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ScoreCard, ScoreCardSkeleton } from './ScoreCard';
 import { LiveBadge } from '@/components/ui/Badge';
 import { GameDetailModal } from '@/components/game-detail';
+import { useUserSettings } from '@/lib/hooks';
 import type { Sport } from './SportTabs';
 import type { UnifiedSportKey } from '@/lib/types/adapters';
 
@@ -32,6 +41,8 @@ interface Game {
   };
   status: 'scheduled' | 'live' | 'final' | 'delayed' | 'postponed';
   gameTime?: string;
+  /** Raw ISO datetime for timezone-aware formatting */
+  startTime?: string;
   venue?: string;
   inning?: string;
   quarter?: string;
@@ -123,17 +134,9 @@ function transformESPNGame(
     status = 'final';
   }
 
-  // Build game time string
-  let gameTime = game.status?.type?.shortDetail || game.status?.type?.detail;
-  if (!gameTime && game.startTime) {
-    gameTime = new Date(game.startTime).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: 'America/Chicago',
-    });
-  }
+  // Build game time string - ESPN detail already includes formatted time
+  // We also pass raw startTime for components that want to reformat with user timezone
+  const gameTime = game.status?.type?.shortDetail || game.status?.type?.detail;
 
   // Build period/inning/quarter string based on sport
   const periodInfo: { inning?: string; quarter?: string; period?: string } = {};
@@ -163,6 +166,7 @@ function transformESPNGame(
     },
     status,
     gameTime,
+    startTime: game.startTime, // Raw ISO datetime for timezone formatting
     venue: game.venue?.name,
     ...periodInfo,
   };
@@ -294,6 +298,9 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Get user's timezone preference for formatting
+  const { formatTime, isLoaded: timezoneLoaded } = useUserSettings();
+
   const handleGameClick = (gameId: string) => {
     setSelectedGameId(gameId);
     setIsModalOpen(true);
@@ -330,12 +337,12 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
         {dataUpdatedAt && (
           <span className="text-xs text-white/40">
             Updated{' '}
-            {new Date(dataUpdatedAt).toLocaleTimeString('en-US', {
-              hour: 'numeric',
-              minute: '2-digit',
-              timeZone: 'America/Chicago',
-            })}{' '}
-            CT
+            {timezoneLoaded
+              ? formatTime(new Date(dataUpdatedAt))
+              : new Date(dataUpdatedAt).toLocaleTimeString('en-US', {
+                  hour: 'numeric',
+                  minute: '2-digit',
+                })}
           </span>
         )}
       </div>
@@ -362,6 +369,7 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
               awayTeam={game.awayTeam}
               status={game.status}
               gameTime={game.gameTime}
+              startTime={game.startTime}
               venue={game.venue}
               inning={game.inning}
               quarter={game.quarter}

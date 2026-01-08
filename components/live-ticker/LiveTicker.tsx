@@ -5,10 +5,14 @@
  *
  * Real-time breaking news and score ticker with WebSocket connection.
  * Integrates with Three.js hero headers for visual effects.
+ * Uses user's timezone preference for time display.
+ *
+ * Last Updated: 2025-01-07
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useUserSettings } from '@/lib/hooks';
 
 // Types (matching worker types)
 type TickerType = 'score' | 'news' | 'injury' | 'trade' | 'weather';
@@ -96,6 +100,9 @@ export function LiveTicker({
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Get user's timezone preference for formatting
+  const { formatTime, isLoaded: timezoneLoaded } = useUserSettings();
 
   // Connect to WebSocket
   const connect = useCallback(() => {
@@ -280,12 +287,12 @@ export function LiveTicker({
             </div>
             <p className="text-cream font-medium leading-snug">{currentItem.headline}</p>
             <p className="text-xs text-cream/40 mt-1">
-              {new Date(currentItem.timestamp).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                timeZone: 'America/Chicago',
-              })}{' '}
-              CT
+              {timezoneLoaded
+                ? formatTime(new Date(currentItem.timestamp))
+                : new Date(currentItem.timestamp).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
             </p>
           </motion.div>
         </AnimatePresence>

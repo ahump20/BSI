@@ -1,7 +1,17 @@
 'use client';
 
+/**
+ * ESPN-style ScoreCard Component
+ *
+ * Displays game scores with team info, status, and optional linescore.
+ * Supports timezone-aware game time display via useUserSettings hook.
+ *
+ * Last Updated: 2025-01-07
+ */
+
 import Link from 'next/link';
 import { type GameStatus } from '@/components/ui/Badge';
+import { useUserSettings } from '@/lib/hooks';
 
 // Sport-specific color theming
 const sportThemes = {
@@ -78,6 +88,8 @@ export interface ScoreCardProps {
   awayTeam: Team;
   status: GameStatus;
   gameTime?: string;
+  /** Raw ISO datetime for timezone-aware formatting (optional) */
+  startTime?: string;
   venue?: string;
   inning?: string;
   inningState?: string;
@@ -104,6 +116,7 @@ export function ScoreCard({
   awayTeam,
   status,
   gameTime,
+  startTime,
   venue,
   inning,
   inningState,
@@ -119,6 +132,23 @@ export function ScoreCard({
 }: ScoreCardProps) {
   // Get sport-specific theme
   const theme = sportThemes[sport] || sportThemes.mlb;
+
+  // Get user's timezone preference for formatting
+  const { formatGame, isLoaded: timezoneLoaded } = useUserSettings();
+
+  // Format game time with user's timezone if we have raw startTime
+  const displayTime = (() => {
+    // If we have gameTime from ESPN (already formatted), use it
+    if (gameTime) return gameTime;
+
+    // If we have raw startTime, format it with user's timezone
+    if (startTime && timezoneLoaded) {
+      return formatGame(startTime);
+    }
+
+    // Fallback
+    return 'TBD';
+  })();
 
   // Defensive null checks - ensure team objects have required properties
   const safeHomeTeam = {
@@ -192,7 +222,7 @@ export function ScoreCard({
                 isFinal ? 'text-text-tertiary' : theme.accent
               }`}
             >
-              {isFinal ? 'FINAL' : gameTime || 'TBD'}
+              {isFinal ? 'FINAL' : displayTime}
             </span>
           )}
         </div>

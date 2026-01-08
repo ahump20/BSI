@@ -53,3 +53,21 @@ export { useSwipeGesture, useSwipeRef } from './useSwipeGesture';
 
 // Pitch tracking hooks
 export { usePitchData, useAtBatPitches } from './usePitchData';
+
+// User preferences hooks
+export {
+  useTeamPreferences,
+  TEAMS,
+  TEAMS_BY_LEAGUE,
+  type Team,
+  type League,
+  type TeamPreferences,
+} from './useTeamPreferences';
+
+export {
+  useUserSettings,
+  type UserSettings,
+  type DateFormat,
+  type DateStyle,
+  type Theme,
+} from './useUserSettings';

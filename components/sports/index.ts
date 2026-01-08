@@ -10,4 +10,14 @@ export { Tabs, type Tab, type TabsProps } from './Tabs';
 export { StatTable, type Column, type StatTableProps } from './StatTable';
 export { ScoreHeader, type ScoreHeaderGame, type TeamInfo, type GameStatus } from './ScoreHeader';
 export { BottomNav, DEFAULT_NAV_ITEMS, type NavItem } from './BottomNav';
-export { CitationFooter } from './CitationFooter';
+
+// Data transparency and citation system
+export {
+  CitationFooter,
+  DataFreshnessIndicator,
+  DataSourceBadgeInline,
+  DataSourcePanel,
+  DataDisclaimer,
+  type DataSource,
+  type DataMeta,
+} from './DataTransparency';

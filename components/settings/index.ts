@@ -5,4 +5,5 @@
  */
 
 export { TeamPreferenceSelector, FavoriteTeamsBadge } from './TeamPreferenceSelector';
+export { TimezoneSelector, TimezoneBadge } from './TimezoneSelector';
 export { default } from './TeamPreferenceSelector';
