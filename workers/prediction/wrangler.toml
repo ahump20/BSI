@@ -6,6 +6,7 @@
 name = "bsi-prediction-api"
 main = "index.ts"
 compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
 
 # Account settings
 account_id = "a12cb329d84130460eed99b816e4d0d3"
@@ -48,6 +49,18 @@ zone_name = "blazesportsintel.com"
 pattern = "api.blazesportsintel.com/v1/calibration/*"
 zone_name = "blazesportsintel.com"
 
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/health"
+zone_name = "blazesportsintel.com"
+
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/webhook/*"
+zone_name = "blazesportsintel.com"
+
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/state/*"
+zone_name = "blazesportsintel.com"
+
 # Development settings
 [dev]
 port = 8788
@@ -64,3 +77,26 @@ cpu_ms = 50
 # Placement hints for low latency
 [placement]
 mode = "smart"
+
+# Staging environment
+[env.staging]
+name = "bsi-prediction-api-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"
+MODEL_VERSION = "1.0.0-staging"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/predict/*"
+zone_name = "blazesportsintel.com"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/explain/*"
+zone_name = "blazesportsintel.com"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/calibration/*"
+zone_name = "blazesportsintel.com"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/health"
+zone_name = "blazesportsintel.com"
