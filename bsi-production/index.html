@@ -28,6 +28,7 @@
     <meta name="view-transition" content="same-origin">
 
     <!-- Preload critical resources for faster LCP -->
+    <link rel="preload" as="image" href="./images/texas-soil.webp" type="image/webp" fetchpriority="high">
     <link rel="preload" as="image" href="./images/texas-soil.jpg" fetchpriority="high">
     <link rel="preload" as="image" href="./images/bsi-logo-nav.png">
 
@@ -573,7 +574,10 @@
                 </div>
                 <div class="hero-visual">
                     <div class="hero-image-wrapper">
-                        <img src="./images/texas-soil.jpg" alt="The original Texas soil from West Columbia and newspaper clipping from 1995" class="hero-image" width="768" height="1024" fetchpriority="high">
+                        <picture>
+                            <source srcset="./images/texas-soil.webp" type="image/webp">
+                            <img src="./images/texas-soil.jpg" alt="The original Texas soil from West Columbia and newspaper clipping from 1995" class="hero-image" width="768" height="1024" fetchpriority="high">
+                        </picture>
                         <div class="hero-stats">
                             <div class="hero-stat">
                                 <div class="hero-stat-value">300+</div>
