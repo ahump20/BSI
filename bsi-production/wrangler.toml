@@ -2,18 +2,26 @@ name = "bsi-home"
 main = "worker.js"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
+account_id = "a12cb329d84130460eed99b816e4d0d3"
 
 # Route configuration
 routes = [
-  { pattern = "blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
+  { pattern = "blazesportsintel.com/*", zone_name = "blazesportsintel.com" },
+  { pattern = "www.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
 ]
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+TIMEZONE = "America/Chicago"
+R2_PREFIX = "origin/"
 
 # R2 bucket for static assets
 [[r2_buckets]]
 binding = "ASSETS"
 bucket_name = "blazesports-assets"
 
-# D1 database
+# D1 database for users, subscriptions, sessions
 [[d1_databases]]
 binding = "DB"
 database_name = "bsi-game-db"
@@ -24,15 +32,10 @@ database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
 binding = "SESSIONS"
 id = "b03e0651b4a34078a3e031bc5bc14ad7"
 
-# Analytics Engine
+# Analytics Engine for time-series metrics
 [[analytics_engine_datasets]]
 binding = "ANALYTICS"
 dataset = "bsi_home_analytics"
-
-# Environment variables
-[vars]
-ENVIRONMENT = "production"
-R2_PREFIX = "origin/"
 
 # Staging environment
 [env.staging]
@@ -53,3 +56,12 @@ head_sampling_rate = 1
 [dev]
 port = 8788
 local_protocol = "http"
+
+# Secrets (set via wrangler secret put):
+# - SPORTSDATAIO_API_KEY
+# - COLLEGEFOOTBALLDATA_API_KEY
+# - SPORTSRADAR_MASTER_API_KEY
+# - THEODDSAPI_KEY
+# - STRIPE_SECRET_KEY
+# - STRIPE_WEBHOOK_SECRET
+# - SESSION_SECRET
