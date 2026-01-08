@@ -18,7 +18,7 @@
  * Migration: Functions are being extracted to modules for better
  * maintainability. Import from './src/workers/api/index.js' when ready.
  *
- * @version 2.3.0
+ * @version 2.4.0
  * @updated 2025-01-08
  */
 
@@ -1648,7 +1648,7 @@ async function serveAsset(env, key, contentType, corsHeaders) {
   });
 }
 
-// Serve tool HTML with subscription check
+// Serve tool HTML with subscription check and soft paywall
 async function serveToolAsset(env, key, contentType, corsHeaders, request) {
   const asset = await env.ASSETS.get(key);
   if (!asset) {
@@ -1658,20 +1658,28 @@ async function serveToolAsset(env, key, contentType, corsHeaders, request) {
   // Get user session for subscription check (tools may have tiered access)
   const session = await getSession(request, env);
   let subscriptionTier = 'free';
+  let isLoggedIn = false;
 
   if (session) {
+    isLoggedIn = true;
     const user = await env.DB.prepare(
       'SELECT subscription_tier FROM users WHERE id = ?'
     ).bind(session.userId).first();
     subscriptionTier = user?.subscription_tier || 'free';
   }
 
-  // Inject subscription tier into HTML for client-side feature gating
+  // Determine if this is a Pro tool
+  const proTools = ['composition-optimizer', '3d-showcase'];
+  const toolName = key.split('/').slice(-2, -1)[0] || '';
+  const isProTool = proTools.includes(toolName);
+  const hasProAccess = subscriptionTier === 'pro' || subscriptionTier === 'enterprise';
+
+  // Generate soft paywall script (all values are server-controlled, no user input)
+  const paywallScript = generatePaywallScript(subscriptionTier, isLoggedIn, isProTool, hasProAccess);
+
+  // Inject subscription tier and paywall system into HTML
   let html = await asset.text();
-  html = html.replace(
-    '</head>',
-    `<script>window.BSI_USER_TIER = "${subscriptionTier}";</script></head>`
-  );
+  html = html.replace('</head>', paywallScript + '</head>');
 
   return new Response(html, {
     headers: {
@@ -1680,6 +1688,130 @@ async function serveToolAsset(env, key, contentType, corsHeaders, request) {
       ...corsHeaders
     }
   });
+}
+
+// Generate soft paywall script with server-controlled values only
+function generatePaywallScript(tier, loggedIn, isProTool, hasAccess) {
+  return `
+<script>
+window.BSI_USER_TIER = "${tier}";
+window.BSI_LOGGED_IN = ${loggedIn};
+window.BSI_IS_PRO_TOOL = ${isProTool};
+window.BSI_HAS_PRO_ACCESS = ${hasAccess};
+
+(function() {
+  var FREE_USES = 3;
+  var STORAGE_KEY = 'bsi_tool_uses';
+  if (window.BSI_HAS_PRO_ACCESS || !window.BSI_IS_PRO_TOOL) return;
+  var uses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  var toolKey = window.location.pathname;
+  uses[toolKey] = (uses[toolKey] || 0) + 1;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(uses));
+  var currentUses = uses[toolKey];
+  var remaining = Math.max(0, FREE_USES - currentUses);
+  if (currentUses > FREE_USES) {
+    setTimeout(function() { BSI.showPaywall(window.BSI_LOGGED_IN); }, 1500);
+  } else if (remaining <= 2 && remaining > 0) {
+    BSI.showNotice(remaining);
+  }
+})();
+
+window.BSI = window.BSI || {};
+BSI.showNotice = function(remaining) {
+  var notice = document.createElement('div');
+  notice.id = 'bsi-notice';
+  notice.style.cssText = 'position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,#1A1A1A,#2A2A2A);border:1px solid rgba(191,87,0,0.3);border-radius:12px;padding:16px 20px;max-width:320px;z-index:9998;font-family:-apple-system,sans-serif;animation:bsiSlide 0.3s ease';
+  var style = document.createElement('style');
+  style.textContent = '@keyframes bsiSlide{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';
+  document.head.appendChild(style);
+  var p = document.createElement('p');
+  p.style.cssText = 'color:#F5F5F0;font-size:14px;margin:0 0 12px';
+  p.appendChild(document.createElement('strong')).textContent = remaining + ' free use' + (remaining === 1 ? '' : 's') + ' remaining.';
+  p.appendChild(document.createTextNode(' Upgrade to Pro for unlimited access.'));
+  var a = document.createElement('a');
+  a.href = '/pricing';
+  a.style.cssText = 'display:inline-block;padding:8px 16px;background:linear-gradient(135deg,#BF5700,#FF6B35);border-radius:6px;color:white;text-decoration:none;font-size:13px;font-weight:600';
+  a.textContent = 'View Plans →';
+  var btn = document.createElement('button');
+  btn.style.cssText = 'position:absolute;top:8px;right:12px;background:none;border:none;color:#6B7280;cursor:pointer;font-size:18px';
+  btn.textContent = '×';
+  btn.onclick = function() { notice.remove(); };
+  notice.appendChild(btn);
+  notice.appendChild(p);
+  notice.appendChild(a);
+  document.body.appendChild(notice);
+  setTimeout(function() { if (notice.parentNode) notice.remove(); }, 10000);
+};
+
+BSI.showPaywall = function(loggedIn) {
+  var overlay = document.createElement('div');
+  overlay.id = 'bsi-paywall';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;animation:bsiFade 0.3s ease';
+  var style = document.createElement('style');
+  style.textContent = '@keyframes bsiFade{from{opacity:0}to{opacity:1}}';
+  document.head.appendChild(style);
+  var content = document.createElement('div');
+  content.style.cssText = 'background:linear-gradient(135deg,#1A1A1A,#0D0D0D);border:1px solid rgba(191,87,0,0.4);border-radius:16px;padding:40px;max-width:480px;text-align:center;font-family:-apple-system,sans-serif';
+  var icon = document.createElement('div');
+  icon.style.cssText = 'font-size:48px;margin-bottom:20px';
+  icon.textContent = '🔐';
+  var title = document.createElement('h2');
+  title.style.cssText = 'color:#F5F5F0;font-size:24px;font-weight:700;margin:0 0 12px';
+  title.textContent = 'Unlock Pro Tools';
+  var desc = document.createElement('p');
+  desc.style.cssText = 'color:#9CA3AF;font-size:15px;line-height:1.6;margin:0 0 24px';
+  desc.textContent = "You've used your 3 free sessions. Upgrade to Pro for unlimited access.";
+  var price = document.createElement('div');
+  price.style.cssText = 'color:#BF5700;font-size:32px;font-weight:700;margin-bottom:4px';
+  price.textContent = '$29';
+  var perMonth = document.createElement('span');
+  perMonth.style.cssText = 'font-size:16px;color:#6B7280;font-weight:400';
+  perMonth.textContent = '/month';
+  price.appendChild(perMonth);
+  var features = ['Unlimited Monte Carlo simulations','100,000 iteration limit (vs 1,000 free)','Advanced 3D visualizations','Priority data access','Export & share capabilities'];
+  var ul = document.createElement('ul');
+  ul.style.cssText = 'text-align:left;margin:0 0 28px;padding:0;list-style:none';
+  features.forEach(function(f) {
+    var li = document.createElement('li');
+    li.style.cssText = 'color:#D1D5DB;font-size:14px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px';
+    var check = document.createElement('span');
+    check.style.cssText = 'color:#10B981;font-weight:bold';
+    check.textContent = '✓';
+    li.appendChild(check);
+    li.appendChild(document.createTextNode(f));
+    ul.appendChild(li);
+  });
+  var cta = document.createElement('a');
+  cta.href = '/pricing';
+  cta.style.cssText = 'display:block;width:100%;padding:14px 24px;background:linear-gradient(135deg,#BF5700,#FF6B35);border:none;border-radius:10px;color:white;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;text-decoration:none;box-sizing:border-box';
+  cta.textContent = 'Upgrade to Pro';
+  var secondary = document.createElement('p');
+  secondary.style.cssText = 'color:#6B7280;font-size:13px;margin:0';
+  if (!loggedIn) {
+    var signin = document.createElement('a');
+    signin.href = '/login';
+    signin.style.cssText = 'color:#FF6B35;text-decoration:none';
+    signin.textContent = 'Sign in';
+    secondary.appendChild(signin);
+    secondary.appendChild(document.createTextNode(' if you have a subscription. '));
+  }
+  var home = document.createElement('a');
+  home.href = '/';
+  home.style.cssText = 'color:#FF6B35;text-decoration:none';
+  home.textContent = 'Return to home';
+  secondary.appendChild(home);
+  content.appendChild(icon);
+  content.appendChild(title);
+  content.appendChild(desc);
+  content.appendChild(price);
+  content.appendChild(ul);
+  content.appendChild(cta);
+  content.appendChild(secondary);
+  overlay.appendChild(content);
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+};
+</script>`;
 }
 
 // Serve tool static assets (JS, CSS, etc.)
