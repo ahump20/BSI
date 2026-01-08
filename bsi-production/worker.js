@@ -18,7 +18,7 @@
  * Migration: Functions are being extracted to modules for better
  * maintainability. Import from './src/workers/api/index.js' when ready.
  *
- * @version 2.1.0
+ * @version 2.2.0
  * @updated 2025-01-08
  */
 
@@ -31,6 +31,36 @@ const STRIPE_API_BASE = 'https://api.stripe.com/v1';
 
 // ESPN API (free fallback - no API key required)
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports';
+
+/**
+ * Fetch with exponential backoff retry
+ * @param {string} url - URL to fetch
+ * @param {Object} options - Fetch options
+ * @param {number} maxRetries - Maximum retry attempts (default: 3)
+ * @param {number} baseDelay - Base delay in ms (default: 1000)
+ * @returns {Promise<Response>}
+ */
+async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelay = 1000) {
+  let lastError;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      // Return on success or client error (4xx) - don't retry those
+      if (response.ok || (response.status >= 400 && response.status < 500)) {
+        return response;
+      }
+      // Server error (5xx) - will retry
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+    // Exponential backoff: 1s, 2s, 4s...
+    if (attempt < maxRetries - 1) {
+      await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt)));
+    }
+  }
+  throw lastError;
+}
 
 // Stripe Price IDs
 const STRIPE_PRICES = {
@@ -790,7 +820,7 @@ async function fetchCFBData(url, apiKey, corsHeaders, cacheTTL = 600) {
  */
 async function fetchESPNMLBScores(corsHeaders) {
   try {
-    const response = await fetch(`${ESPN_BASE}/baseball/mlb/scoreboard`);
+    const response = await fetchWithRetry(`${ESPN_BASE}/baseball/mlb/scoreboard`);
     if (!response.ok) {
       throw new Error(`ESPN API returned ${response.status}`);
     }
@@ -867,7 +897,7 @@ function transformESPNMLBGames(espnData) {
  */
 async function fetchESPNNFLScores(corsHeaders) {
   try {
-    const response = await fetch(`${ESPN_BASE}/football/nfl/scoreboard`);
+    const response = await fetchWithRetry(`${ESPN_BASE}/football/nfl/scoreboard`);
     if (!response.ok) {
       throw new Error(`ESPN API returned ${response.status}`);
     }
@@ -933,7 +963,7 @@ function transformESPNNFLGames(espnData) {
  */
 async function fetchESPNNBAScores(corsHeaders) {
   try {
-    const response = await fetch(`${ESPN_BASE}/basketball/nba/scoreboard`);
+    const response = await fetchWithRetry(`${ESPN_BASE}/basketball/nba/scoreboard`);
     if (!response.ok) {
       throw new Error(`ESPN API returned ${response.status}`);
     }
