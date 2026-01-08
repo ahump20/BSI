@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Intelligence | Blaze Sports Intel</title>
+    <meta name="description" content="Live NBA scores, standings, player stats, and analytics. Real-time basketball intelligence for every game.">
+    <meta property="og:title" content="NBA Intelligence | Blaze Sports Intel">
+    <meta property="og:description" content="Live NBA scores, standings, and advanced analytics.">
+    <meta property="og:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/nba/">
+    <link rel="canonical" href="https://blazesportsintel.com/nba/">
+    <meta name="theme-color" content="#BF5700">
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-ember: #FF6B35;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-gold: #C9A227;
+            --bsi-success: #10B981;
+            --bsi-muted: #6B7280;
+            --sport-primary: #1D428A;
+            --sport-secondary: #C8102E;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0.75rem 0;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+        }
+
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--bsi-cream);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .logo span { color: var(--bsi-ember); }
+        .logo-img { height: 44px; width: auto; }
+
+        .nav-links { display: flex; gap: 1.5rem; list-style: none; font-size: 0.875rem; font-weight: 500; }
+        .nav-links a { color: var(--bsi-cream); text-decoration: none; opacity: 0.8; transition: opacity 0.2s; }
+        .nav-links a:hover { opacity: 1; }
+        .nav-links a.active { color: var(--bsi-ember); opacity: 1; }
+
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(29, 66, 138, 0.15), rgba(200, 16, 46, 0.1));
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--sport-primary), var(--sport-secondary));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 1rem; }
+        .hero h1 span { color: var(--sport-primary); }
+        .hero p { font-size: 1.125rem; color: var(--bsi-muted); max-width: 600px; margin: 0 auto 2rem; }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 3rem 0;
+        }
+
+        .stat-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--bsi-ember);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label { font-size: 0.875rem; color: var(--bsi-muted); margin-top: 0.5rem; }
+
+        .section-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 3rem 0;
+        }
+
+        .section-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--bsi-cream);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .section-card:hover { transform: translateY(-4px); border-color: var(--bsi-burnt-orange); }
+        .section-card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .section-card p { font-size: 0.9rem; color: var(--bsi-muted); }
+
+        .live-scores { padding: 3rem 0; }
+        .live-scores h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+        #scores-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .loading { text-align: center; padding: 2rem; color: var(--bsi-muted); }
+
+        .game-card { background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 12px; padding: 1.5rem; }
+        .game-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .game-team { font-weight: 600; }
+        .game-score { font-family: 'JetBrains Mono', monospace; }
+        .game-status { margin-top: 0.75rem; font-size: 0.75rem; color: var(--bsi-muted); }
+        .game-status.live { color: var(--bsi-success); }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--bsi-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid rgba(191, 87, 0, 0.1);
+            margin-top: 4rem;
+        }
+
+        footer a { color: var(--bsi-ember); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 6rem 0 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="/" class="logo">
+                <img src="/images/bsi-logo-nav.png" alt="BSI" class="logo-img">
+                <span>Blaze</span> Sports Intel
+            </a>
+            <ul class="nav-links">
+                <li><a href="/scores/nba" class="active">Scores</a></li>
+                <li><a href="/analytics">Analytics</a></li>
+                <li><a href="/tools">Tools</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <span class="hero-badge">National Basketball Association</span>
+            <h1><span>NBA</span> Intelligence</h1>
+            <p>Live scores, standings, player stats, and advanced analytics for every NBA game.</p>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="quick-stats" id="quick-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="games-today">--</div>
+                <div class="stat-label">Games Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="live-now">--</div>
+                <div class="stat-label">Live Now</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">30</div>
+                <div class="stat-label">Teams Tracked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2025</div>
+                <div class="stat-label">Season</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="section-links">
+            <a href="/scores/nba" class="section-card">
+                <h3>Live Scores</h3>
+                <p>Real-time game updates with quarter-by-quarter scoring.</p>
+            </a>
+            <a href="/analytics" class="section-card">
+                <h3>Standings</h3>
+                <p>Conference standings with playoff seeding tracker.</p>
+            </a>
+            <a href="/analytics" class="section-card">
+                <h3>Scoring Leaders</h3>
+                <p>Top performers in points, assists, and rebounds.</p>
+            </a>
+            <a href="/analytics" class="section-card">
+                <h3>Advanced Stats</h3>
+                <p>PER, true shooting, and efficiency metrics.</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="live-scores">
+        <div class="container">
+            <h2>Today's Games</h2>
+            <div id="scores-container">
+                <div class="loading">Loading scores...</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p><a href="/">Blaze Sports Intel</a> &mdash; NBA Intelligence</p>
+            <p style="margin-top: 0.5rem;">Updated January 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        const NBA_TEAMS = {
+            'Atlanta Hawks': 'ATL', 'Boston Celtics': 'BOS', 'Brooklyn Nets': 'BKN',
+            'Charlotte Hornets': 'CHA', 'Chicago Bulls': 'CHI', 'Cleveland Cavaliers': 'CLE',
+            'Dallas Mavericks': 'DAL', 'Denver Nuggets': 'DEN', 'Detroit Pistons': 'DET',
+            'Golden State Warriors': 'GSW', 'Houston Rockets': 'HOU', 'Indiana Pacers': 'IND',
+            'Los Angeles Clippers': 'LAC', 'Los Angeles Lakers': 'LAL', 'Memphis Grizzlies': 'MEM',
+            'Miami Heat': 'MIA', 'Milwaukee Bucks': 'MIL', 'Minnesota Timberwolves': 'MIN',
+            'New Orleans Pelicans': 'NOP', 'New York Knicks': 'NYK', 'Oklahoma City Thunder': 'OKC',
+            'Orlando Magic': 'ORL', 'Philadelphia 76ers': 'PHI', 'Phoenix Suns': 'PHX',
+            'Portland Trail Blazers': 'POR', 'Sacramento Kings': 'SAC', 'San Antonio Spurs': 'SAS',
+            'Toronto Raptors': 'TOR', 'Utah Jazz': 'UTA', 'Washington Wizards': 'WAS'
+        };
+
+        function getAbbrev(name) {
+            return NBA_TEAMS[name] || (name ? name.substring(0, 3).toUpperCase() : 'TBD');
+        }
+
+        function createGameCard(game) {
+            const isLive = game.Status === 'InProgress' || game.Status === 'Live' || game.IsInProgress;
+
+            const card = document.createElement('div');
+            card.className = 'game-card';
+
+            const awayRow = document.createElement('div');
+            awayRow.className = 'game-row';
+            const awayTeam = document.createElement('span');
+            awayTeam.className = 'game-team';
+            awayTeam.textContent = getAbbrev(game.AwayTeam);
+            const awayScore = document.createElement('span');
+            awayScore.className = 'game-score';
+            awayScore.textContent = game.AwayScore !== undefined ? game.AwayScore : '-';
+            awayRow.appendChild(awayTeam);
+            awayRow.appendChild(awayScore);
+
+            const homeRow = document.createElement('div');
+            homeRow.className = 'game-row';
+            const homeTeam = document.createElement('span');
+            homeTeam.className = 'game-team';
+            homeTeam.textContent = getAbbrev(game.HomeTeam);
+            const homeScore = document.createElement('span');
+            homeScore.className = 'game-score';
+            homeScore.textContent = game.HomeScore !== undefined ? game.HomeScore : '-';
+            homeRow.appendChild(homeTeam);
+            homeRow.appendChild(homeScore);
+
+            const status = document.createElement('div');
+            status.className = 'game-status' + (isLive ? ' live' : '');
+            status.textContent = isLive ? 'LIVE' : (game.Status || 'Scheduled');
+
+            card.appendChild(awayRow);
+            card.appendChild(homeRow);
+            card.appendChild(status);
+
+            return card;
+        }
+
+        async function loadScores() {
+            const container = document.getElementById('scores-container');
+            try {
+                const response = await fetch('/api/nba/scores');
+                const data = await response.json();
+                const games = data.games || data || [];
+
+                if (games.length === 0) {
+                    container.textContent = 'No games scheduled today.';
+                    return;
+                }
+
+                let liveCount = 0;
+                container.replaceChildren();
+
+                games.slice(0, 8).forEach(game => {
+                    const isLive = game.Status === 'InProgress' || game.Status === 'Live' || game.IsInProgress;
+                    if (isLive) liveCount++;
+                    container.appendChild(createGameCard(game));
+                });
+
+                document.getElementById('games-today').textContent = games.length;
+                document.getElementById('live-now').textContent = liveCount;
+
+            } catch (error) {
+                container.textContent = 'Unable to load scores.';
+                console.error('Scores error:', error);
+            }
+        }
+
+        loadScores();
+        setInterval(loadScores, 60000);
+    </script>
+</body>
+</html>

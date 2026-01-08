@@ -1,0 +1,71 @@
+{
+  "name": "Blaze Sports Intel",
+  "short_name": "BSI",
+  "description": "Sports analytics for the games big media ignores. Born in Memphis, rooted in Texas soil.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D0D0D",
+  "theme_color": "#BF5700",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/images/bsi-logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/bsi-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/screenshot-mobile.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/images/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["sports", "news"],
+  "shortcuts": [
+    {
+      "name": "MLB Scores",
+      "url": "/scores/mlb",
+      "description": "Live MLB game scores"
+    },
+    {
+      "name": "NFL Scores",
+      "url": "/scores/nfl",
+      "description": "Live NFL game scores"
+    },
+    {
+      "name": "NBA Scores",
+      "url": "/scores/nba",
+      "description": "Live NBA game scores"
+    },
+    {
+      "name": "Analytics",
+      "url": "/analytics",
+      "description": "Sports analytics and leaderboards"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

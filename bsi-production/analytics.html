@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Blaze Sports Intel</title>
+    <meta name="description" content="Deep dive into sports analytics. View leaderboards, standings, and advanced metrics across MLB, NFL, and NBA.">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-ember: #FF6B35;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-success: #10B981;
+            --bsi-warning: #F59E0B;
+            --bsi-error: #DC2626;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Serif 4', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-ui);
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-left { display: flex; align-items: center; gap: 2rem; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--bsi-cream);
+        }
+        .logo img { height: 40px; width: auto; }
+        .logo span { font-family: var(--font-display); font-weight: 700; font-size: 1.125rem; }
+        .nav-links {
+            display: none;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        .nav-links a {
+            color: rgba(250, 248, 245, 0.7);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--bsi-cream); }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .page-header p {
+            color: rgba(250, 248, 245, 0.6);
+            font-size: 1rem;
+        }
+
+        /* Sport Tabs */
+        .sport-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 0.5rem;
+        }
+        .sport-tabs::-webkit-scrollbar { display: none; }
+        .sport-tab {
+            padding: 0.625rem 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(250, 248, 245, 0.7);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .sport-tab:hover { background: rgba(255, 255, 255, 0.08); color: var(--bsi-cream); }
+        .sport-tab.active {
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            border-color: transparent;
+            color: white;
+        }
+
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) { .analytics-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .analytics-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .analytics-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .analytics-card.wide {
+            grid-column: 1 / -1;
+        }
+        @media (min-width: 768px) {
+            .analytics-card.wide { grid-column: span 2; }
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .card-title {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-badge {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(191, 87, 0, 0.2);
+            color: var(--bsi-ember);
+            text-transform: uppercase;
+        }
+
+        /* Leaderboard Table */
+        .leaderboard {
+            width: 100%;
+        }
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.2s;
+        }
+        .leaderboard-row:hover { background: rgba(255, 255, 255, 0.03); }
+        .leaderboard-row:last-child { border-bottom: none; }
+        .leaderboard-rank {
+            width: 32px;
+            font-weight: 700;
+            color: rgba(250, 248, 245, 0.4);
+            font-size: 0.875rem;
+        }
+        .leaderboard-rank.top-3 { color: var(--bsi-gold); }
+        .leaderboard-player {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+        .leaderboard-name {
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+        .leaderboard-team {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.5);
+        }
+        .leaderboard-stat {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--bsi-ember);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Standings Table */
+        .standings {
+            width: 100%;
+        }
+        .standings-header {
+            display: grid;
+            grid-template-columns: 1fr 50px 50px 60px;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(250, 248, 245, 0.5);
+        }
+        .standings-row {
+            display: grid;
+            grid-template-columns: 1fr 50px 50px 60px;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.875rem;
+            align-items: center;
+        }
+        .standings-row:last-child { border-bottom: none; }
+        .standings-team {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .team-rank {
+            width: 20px;
+            font-weight: 600;
+            color: rgba(250, 248, 245, 0.4);
+            font-size: 0.75rem;
+        }
+        .standings-w, .standings-l { text-align: center; }
+        .standings-pct {
+            text-align: right;
+            font-weight: 600;
+            color: var(--bsi-ember);
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+        }
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(191, 87, 0, 0.2);
+            border-top-color: var(--bsi-burnt-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(250, 248, 245, 0.5);
+        }
+        .empty-state p {
+            font-size: 0.875rem;
+        }
+
+        /* Stat Highlight */
+        .stat-highlight {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding: 1.25rem;
+        }
+        @media (min-width: 640px) { .stat-highlight { grid-template-columns: repeat(4, 1fr); } }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bsi-ember);
+        }
+        .stat-label {
+            font-size: 0.6875rem;
+            color: rgba(250, 248, 245, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        /* Content Sections (for sport-specific content) */
+        .sport-content { display: none; }
+        .sport-content.active { display: block; }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .mobile-menu-btn span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--bsi-cream);
+        }
+        @media (min-width: 768px) { .mobile-menu-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-left">
+                <a href="/" class="logo">
+                    <img src="/images/bsi-logo-nav.png" alt="BSI">
+                    <span>Blaze Sports Intel</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/#live-scores">Live Scores</a></li>
+                    <li><a href="/tools">Tools</a></li>
+                    <li><a href="/analytics" class="active">Analytics</a></li>
+                </ul>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="page-header">
+            <h1>Sports Analytics</h1>
+            <p>Deep dive into player statistics, standings, and advanced metrics</p>
+        </div>
+
+        <div class="sport-tabs" id="sportTabs">
+            <button class="sport-tab active" data-sport="mlb">MLB</button>
+            <button class="sport-tab" data-sport="nfl">NFL</button>
+            <button class="sport-tab" data-sport="nba">NBA</button>
+        </div>
+
+        <!-- MLB Content -->
+        <div class="sport-content active" id="mlb-content">
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Batting Average Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="mlbBattingAvg">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Home Run Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="mlbHomeRuns">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">RBI Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="mlbRBI">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">ERA Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="mlbERA">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Wins Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="mlbWins">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Strikeout Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="mlbStrikeouts">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">AL Standings</h3>
+                    </div>
+                    <div class="standings" id="mlbALStandings">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">NL Standings</h3>
+                    </div>
+                    <div class="standings" id="mlbNLStandings">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NFL Content -->
+        <div class="sport-content" id="nfl-content">
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Passing Yards Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nflPassingYards">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Rushing Yards Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nflRushingYards">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Receiving Yards Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nflReceivingYards">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Touchdowns Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nflTouchdowns">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sacks Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nflSacks">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Interceptions Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nflInterceptions">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">AFC Standings</h3>
+                    </div>
+                    <div class="standings" id="nflAFCStandings">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">NFC Standings</h3>
+                    </div>
+                    <div class="standings" id="nflNFCStandings">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NBA Content -->
+        <div class="sport-content" id="nba-content">
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Points Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nbaPoints">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Rebounds Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nbaRebounds">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Assists Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nbaAssists">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Steals Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nbaSteals">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Blocks Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nbaBlocks">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">3-Pointers Leaders</h3>
+                        <span class="card-badge">Top 5</span>
+                    </div>
+                    <div class="leaderboard" id="nbaThreePointers">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">Eastern Conference Standings</h3>
+                    </div>
+                    <div class="standings" id="nbaEastStandings">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">Western Conference Standings</h3>
+                    </div>
+                    <div class="standings" id="nbaWestStandings">
+                        <div class="loading-state"><div class="loading-spinner"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sport tab switching
+        const sportTabs = document.querySelectorAll('.sport-tab');
+        const sportContents = document.querySelectorAll('.sport-content');
+
+        sportTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const sport = tab.dataset.sport;
+
+                // Update tabs
+                sportTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update content
+                sportContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${sport}-content`) {
+                        content.classList.add('active');
+                    }
+                });
+
+                // Load data for selected sport
+                loadSportData(sport);
+            });
+        });
+
+        // Helper to build leaderboard rows (XSS-safe DOM methods)
+        function buildLeaderboardRow(rank, name, team, stat) {
+            const row = document.createElement('div');
+            row.className = 'leaderboard-row';
+
+            const rankDiv = document.createElement('div');
+            rankDiv.className = 'leaderboard-rank' + (rank <= 3 ? ' top-3' : '');
+            rankDiv.textContent = rank;
+
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'leaderboard-player';
+
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'leaderboard-name';
+            nameDiv.textContent = name;
+
+            const teamDiv = document.createElement('div');
+            teamDiv.className = 'leaderboard-team';
+            teamDiv.textContent = team;
+
+            playerDiv.appendChild(nameDiv);
+            playerDiv.appendChild(teamDiv);
+
+            const statDiv = document.createElement('div');
+            statDiv.className = 'leaderboard-stat';
+            statDiv.textContent = stat;
+
+            row.appendChild(rankDiv);
+            row.appendChild(playerDiv);
+            row.appendChild(statDiv);
+
+            return row;
+        }
+
+        // Helper to build standings (XSS-safe)
+        function buildStandings(container, teams) {
+            container.replaceChildren();
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'standings-header';
+            ['Team', 'W', 'L', 'PCT'].forEach(text => {
+                const span = document.createElement('span');
+                span.textContent = text;
+                header.appendChild(span);
+            });
+            container.appendChild(header);
+
+            teams.forEach((team, i) => {
+                const row = document.createElement('div');
+                row.className = 'standings-row';
+
+                const teamDiv = document.createElement('div');
+                teamDiv.className = 'standings-team';
+
+                const rankSpan = document.createElement('span');
+                rankSpan.className = 'team-rank';
+                rankSpan.textContent = i + 1;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = team.name;
+
+                teamDiv.appendChild(rankSpan);
+                teamDiv.appendChild(nameSpan);
+
+                const winsDiv = document.createElement('div');
+                winsDiv.className = 'standings-w';
+                winsDiv.textContent = team.wins;
+
+                const lossesDiv = document.createElement('div');
+                lossesDiv.className = 'standings-l';
+                lossesDiv.textContent = team.losses;
+
+                const pctDiv = document.createElement('div');
+                pctDiv.className = 'standings-pct';
+                pctDiv.textContent = team.pct || '.000';
+
+                row.appendChild(teamDiv);
+                row.appendChild(winsDiv);
+                row.appendChild(lossesDiv);
+                row.appendChild(pctDiv);
+                container.appendChild(row);
+            });
+        }
+
+        // Show empty state
+        function showEmptyState(container, message) {
+            container.replaceChildren();
+            const empty = document.createElement('div');
+            empty.className = 'empty-state';
+            const p = document.createElement('p');
+            p.textContent = message || 'No data available';
+            empty.appendChild(p);
+            container.appendChild(empty);
+        }
+
+        // Load MLB data
+        async function loadMLBData() {
+            try {
+                const response = await fetch('/api/mlb/leaders');
+                const data = await response.json();
+
+                // Batting Average
+                const avgContainer = document.getElementById('mlbBattingAvg');
+                if (data.batting?.avg?.length) {
+                    avgContainer.replaceChildren();
+                    data.batting.avg.slice(0, 5).forEach((p, i) => {
+                        avgContainer.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                    });
+                } else {
+                    showEmptyState(avgContainer, 'Stats loading...');
+                }
+
+                // Home Runs
+                const hrContainer = document.getElementById('mlbHomeRuns');
+                if (data.batting?.hr?.length) {
+                    hrContainer.replaceChildren();
+                    data.batting.hr.slice(0, 5).forEach((p, i) => {
+                        hrContainer.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                    });
+                } else {
+                    showEmptyState(hrContainer, 'Stats loading...');
+                }
+
+                // RBI
+                const rbiContainer = document.getElementById('mlbRBI');
+                if (data.batting?.rbi?.length) {
+                    rbiContainer.replaceChildren();
+                    data.batting.rbi.slice(0, 5).forEach((p, i) => {
+                        rbiContainer.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                    });
+                } else {
+                    showEmptyState(rbiContainer, 'Stats loading...');
+                }
+
+                // ERA
+                const eraContainer = document.getElementById('mlbERA');
+                if (data.pitching?.era?.length) {
+                    eraContainer.replaceChildren();
+                    data.pitching.era.slice(0, 5).forEach((p, i) => {
+                        eraContainer.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                    });
+                } else {
+                    showEmptyState(eraContainer, 'Stats loading...');
+                }
+
+                // Wins
+                const winsContainer = document.getElementById('mlbWins');
+                if (data.pitching?.wins?.length) {
+                    winsContainer.replaceChildren();
+                    data.pitching.wins.slice(0, 5).forEach((p, i) => {
+                        winsContainer.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                    });
+                } else {
+                    showEmptyState(winsContainer, 'Stats loading...');
+                }
+
+                // Strikeouts
+                const soContainer = document.getElementById('mlbStrikeouts');
+                if (data.pitching?.strikeouts?.length) {
+                    soContainer.replaceChildren();
+                    data.pitching.strikeouts.slice(0, 5).forEach((p, i) => {
+                        soContainer.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                    });
+                } else {
+                    showEmptyState(soContainer, 'Stats loading...');
+                }
+
+            } catch (error) {
+                console.error('Failed to load MLB leaders:', error);
+                ['mlbBattingAvg', 'mlbHomeRuns', 'mlbRBI', 'mlbERA', 'mlbWins', 'mlbStrikeouts'].forEach(id => {
+                    showEmptyState(document.getElementById(id), 'Failed to load data');
+                });
+            }
+
+            // Load standings
+            try {
+                const standingsRes = await fetch('/api/mlb/standings');
+                const standingsData = await standingsRes.json();
+
+                if (standingsData.AL) {
+                    buildStandings(document.getElementById('mlbALStandings'), standingsData.AL.slice(0, 8));
+                } else {
+                    showEmptyState(document.getElementById('mlbALStandings'), 'Standings unavailable');
+                }
+
+                if (standingsData.NL) {
+                    buildStandings(document.getElementById('mlbNLStandings'), standingsData.NL.slice(0, 8));
+                } else {
+                    showEmptyState(document.getElementById('mlbNLStandings'), 'Standings unavailable');
+                }
+            } catch (error) {
+                console.error('Failed to load MLB standings:', error);
+                showEmptyState(document.getElementById('mlbALStandings'), 'Standings unavailable');
+                showEmptyState(document.getElementById('mlbNLStandings'), 'Standings unavailable');
+            }
+        }
+
+        // Load NFL data
+        async function loadNFLData() {
+            try {
+                const response = await fetch('/api/nfl/leaders');
+                const data = await response.json();
+
+                const categories = [
+                    { id: 'nflPassingYards', key: 'passingYards' },
+                    { id: 'nflRushingYards', key: 'rushingYards' },
+                    { id: 'nflReceivingYards', key: 'receivingYards' },
+                    { id: 'nflTouchdowns', key: 'touchdowns' },
+                    { id: 'nflSacks', key: 'sacks' },
+                    { id: 'nflInterceptions', key: 'interceptions' }
+                ];
+
+                categories.forEach(({ id, key }) => {
+                    const container = document.getElementById(id);
+                    if (data[key]?.length) {
+                        container.replaceChildren();
+                        data[key].slice(0, 5).forEach((p, i) => {
+                            container.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                        });
+                    } else {
+                        showEmptyState(container, 'Stats loading...');
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load NFL leaders:', error);
+                ['nflPassingYards', 'nflRushingYards', 'nflReceivingYards', 'nflTouchdowns', 'nflSacks', 'nflInterceptions'].forEach(id => {
+                    showEmptyState(document.getElementById(id), 'Failed to load data');
+                });
+            }
+
+            // Load standings
+            try {
+                const standingsRes = await fetch('/api/nfl/standings');
+                const standingsData = await standingsRes.json();
+
+                if (standingsData.AFC) {
+                    buildStandings(document.getElementById('nflAFCStandings'), standingsData.AFC.slice(0, 8));
+                } else {
+                    showEmptyState(document.getElementById('nflAFCStandings'), 'Standings unavailable');
+                }
+
+                if (standingsData.NFC) {
+                    buildStandings(document.getElementById('nflNFCStandings'), standingsData.NFC.slice(0, 8));
+                } else {
+                    showEmptyState(document.getElementById('nflNFCStandings'), 'Standings unavailable');
+                }
+            } catch (error) {
+                console.error('Failed to load NFL standings:', error);
+                showEmptyState(document.getElementById('nflAFCStandings'), 'Standings unavailable');
+                showEmptyState(document.getElementById('nflNFCStandings'), 'Standings unavailable');
+            }
+        }
+
+        // Load NBA data
+        async function loadNBAData() {
+            try {
+                const response = await fetch('/api/nba/leaders');
+                const data = await response.json();
+
+                const categories = [
+                    { id: 'nbaPoints', key: 'points' },
+                    { id: 'nbaRebounds', key: 'rebounds' },
+                    { id: 'nbaAssists', key: 'assists' },
+                    { id: 'nbaSteals', key: 'steals' },
+                    { id: 'nbaBlocks', key: 'blocks' },
+                    { id: 'nbaThreePointers', key: 'threePointers' }
+                ];
+
+                categories.forEach(({ id, key }) => {
+                    const container = document.getElementById(id);
+                    if (data[key]?.length) {
+                        container.replaceChildren();
+                        data[key].slice(0, 5).forEach((p, i) => {
+                            container.appendChild(buildLeaderboardRow(i + 1, p.name, p.team, p.value));
+                        });
+                    } else {
+                        showEmptyState(container, 'Stats loading...');
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load NBA leaders:', error);
+                ['nbaPoints', 'nbaRebounds', 'nbaAssists', 'nbaSteals', 'nbaBlocks', 'nbaThreePointers'].forEach(id => {
+                    showEmptyState(document.getElementById(id), 'Failed to load data');
+                });
+            }
+
+            // Load standings
+            try {
+                const standingsRes = await fetch('/api/nba/standings');
+                const standingsData = await standingsRes.json();
+
+                if (standingsData.East) {
+                    buildStandings(document.getElementById('nbaEastStandings'), standingsData.East.slice(0, 8));
+                } else {
+                    showEmptyState(document.getElementById('nbaEastStandings'), 'Standings unavailable');
+                }
+
+                if (standingsData.West) {
+                    buildStandings(document.getElementById('nbaWestStandings'), standingsData.West.slice(0, 8));
+                } else {
+                    showEmptyState(document.getElementById('nbaWestStandings'), 'Standings unavailable');
+                }
+            } catch (error) {
+                console.error('Failed to load NBA standings:', error);
+                showEmptyState(document.getElementById('nbaEastStandings'), 'Standings unavailable');
+                showEmptyState(document.getElementById('nbaWestStandings'), 'Standings unavailable');
+            }
+        }
+
+        // Load data for sport
+        function loadSportData(sport) {
+            switch (sport) {
+                case 'mlb':
+                    loadMLBData();
+                    break;
+                case 'nfl':
+                    loadNFLData();
+                    break;
+                case 'nba':
+                    loadNBAData();
+                    break;
+            }
+        }
+
+        // Initial load
+        loadMLBData();
+    </script>
+</body>
+</html>

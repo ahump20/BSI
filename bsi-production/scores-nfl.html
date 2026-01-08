@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Scores - Blaze Sports Intel</title>
+    <meta name="description" content="Live NFL scores, game updates, and box scores. Real-time football coverage across all 32 teams.">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-ember: #FF6B35;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-success: #10B981;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-ui); background: var(--bsi-midnight); color: var(--bsi-cream); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        .nav { position: sticky; top: 0; z-index: 100; padding: 1rem 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-left { display: flex; align-items: center; gap: 2rem; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--bsi-cream); }
+        .logo img { height: 40px; width: auto; }
+        .logo span { font-family: var(--font-display); font-weight: 700; font-size: 1.125rem; }
+        .nav-links { display: none; list-style: none; gap: 1.5rem; }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        .nav-links a { color: rgba(250, 248, 245, 0.7); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--bsi-cream); }
+        .main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .page-header { margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+        .page-title { display: flex; align-items: center; gap: 0.75rem; }
+        .page-title h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 700; }
+        .sport-badge { padding: 0.25rem 0.75rem; background: linear-gradient(135deg, #013369, #003087); border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .last-updated { font-size: 0.75rem; color: rgba(250, 248, 245, 0.5); }
+        .sport-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 0.5rem; }
+        .sport-nav::-webkit-scrollbar { display: none; }
+        .sport-pill { padding: 0.5rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 100px; color: rgba(250, 248, 245, 0.7); font-size: 0.8125rem; font-weight: 500; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
+        .sport-pill:hover { background: rgba(255, 255, 255, 0.08); color: var(--bsi-cream); }
+        .sport-pill.active { background: linear-gradient(135deg, #013369, #003087); border-color: transparent; color: white; }
+        .games-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 640px) { .games-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .games-grid { grid-template-columns: repeat(3, 1fr); } }
+        .game-card { background: var(--bsi-charcoal); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; overflow: hidden; transition: all 0.2s; }
+        .game-card:hover { border-color: rgba(191, 87, 0, 0.3); transform: translateY(-2px); }
+        .game-card.live { border-color: var(--bsi-success); box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); }
+        .game-status { display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 1rem; background: rgba(0, 0, 0, 0.3); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .game-status.live { color: var(--bsi-success); font-weight: 600; }
+        .game-status.final { color: rgba(250, 248, 245, 0.5); }
+        .game-status.scheduled { color: var(--bsi-ember); }
+        .live-indicator { display: flex; align-items: center; gap: 0.375rem; }
+        .live-dot { width: 6px; height: 6px; background: var(--bsi-success); border-radius: 50%; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .game-teams { padding: 1rem; }
+        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+        .team-row:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .team-info { display: flex; align-items: center; gap: 0.625rem; }
+        .team-abbr { font-weight: 700; font-size: 1rem; min-width: 40px; }
+        .team-name { font-size: 0.8125rem; color: rgba(250, 248, 245, 0.7); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .team-score { font-size: 1.5rem; font-weight: 700; font-family: var(--font-display); }
+        .team-score.winning { color: var(--bsi-ember); }
+        .game-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 1rem; background: rgba(0, 0, 0, 0.2); font-size: 0.75rem; color: rgba(250, 248, 245, 0.5); }
+        .game-venue { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+        .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem; gap: 1rem; }
+        .loading-spinner { width: 48px; height: 48px; border: 3px solid rgba(191, 87, 0, 0.2); border-top-color: var(--bsi-burnt-orange); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: rgba(250, 248, 245, 0.5); font-size: 0.875rem; }
+        .empty-state { text-align: center; padding: 4rem; color: rgba(250, 248, 245, 0.5); }
+        .empty-state h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--bsi-cream); }
+        .mobile-menu-btn { display: flex; flex-direction: column; gap: 4px; padding: 0.5rem; background: none; border: none; cursor: pointer; }
+        .mobile-menu-btn span { display: block; width: 20px; height: 2px; background: var(--bsi-cream); }
+        @media (min-width: 768px) { .mobile-menu-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-left">
+                <a href="/" class="logo">
+                    <img src="/images/bsi-logo-nav.png" alt="BSI">
+                    <span>Blaze Sports Intel</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/#live-scores">Live Scores</a></li>
+                    <li><a href="/tools">Tools</a></li>
+                    <li><a href="/analytics">Analytics</a></li>
+                </ul>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="sport-nav">
+            <a href="/scores/mlb" class="sport-pill">MLB</a>
+            <a href="/scores/nfl" class="sport-pill active">NFL</a>
+            <a href="/scores/nba" class="sport-pill">NBA</a>
+            <a href="/#live-scores" class="sport-pill">All Sports</a>
+        </div>
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>NFL Scores</h1>
+                <span class="sport-badge">Football</span>
+            </div>
+            <div class="last-updated" id="lastUpdated">Updating...</div>
+        </div>
+
+        <div id="gamesContainer" class="games-grid">
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading this week's games...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const teamAbbr = {
+            'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL',
+            'Buffalo Bills': 'BUF', 'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI',
+            'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE', 'Dallas Cowboys': 'DAL',
+            'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',
+            'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX',
+            'Kansas City Chiefs': 'KC', 'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC',
+            'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA', 'Minnesota Vikings': 'MIN',
+            'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',
+            'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT',
+            'San Francisco 49ers': 'SF', 'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB',
+            'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS'
+        };
+
+        function getAbbr(name) { return teamAbbr[name] || name?.substring(0, 3).toUpperCase() || '???'; }
+        function formatTime(dateStr) {
+            if (!dateStr) return 'TBD';
+            const date = new Date(dateStr);
+            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        }
+
+        function createGameCard(game) {
+            const isLive = game.status?.isLive;
+            const isFinal = game.status?.isFinal || game.status?.type === 'final';
+            const awayName = game.awayTeam?.name || game.away?.team || 'Away';
+            const homeName = game.homeTeam?.name || game.home?.team || 'Home';
+            const awayScore = game.awayTeam?.score ?? game.away?.score ?? 0;
+            const homeScore = game.homeTeam?.score ?? game.home?.score ?? 0;
+            const venue = game.venue || game.stadium || '';
+
+            const card = document.createElement('article');
+            card.className = 'game-card' + (isLive ? ' live' : '');
+
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'game-status' + (isLive ? ' live' : isFinal ? ' final' : ' scheduled');
+
+            if (isLive) {
+                const liveIndicator = document.createElement('span');
+                liveIndicator.className = 'live-indicator';
+                const dot = document.createElement('span');
+                dot.className = 'live-dot';
+                liveIndicator.appendChild(dot);
+                const qtrText = document.createElement('span');
+                qtrText.textContent = `Q${game.status?.quarter || '?'} ${game.status?.timeRemaining || ''}`;
+                liveIndicator.appendChild(qtrText);
+                statusDiv.appendChild(liveIndicator);
+            } else if (isFinal) {
+                statusDiv.textContent = 'Final';
+            } else {
+                statusDiv.textContent = formatTime(game.startTime || game.status?.startTime);
+            }
+
+            const teamsDiv = document.createElement('div');
+            teamsDiv.className = 'game-teams';
+
+            [{ name: awayName, score: awayScore, isAway: true }, { name: homeName, score: homeScore, isAway: false }].forEach(team => {
+                const row = document.createElement('div');
+                row.className = 'team-row';
+                const info = document.createElement('div');
+                info.className = 'team-info';
+                const abbr = document.createElement('span');
+                abbr.className = 'team-abbr';
+                abbr.textContent = getAbbr(team.name);
+                const name = document.createElement('span');
+                name.className = 'team-name';
+                name.textContent = team.name;
+                info.appendChild(abbr);
+                info.appendChild(name);
+                const score = document.createElement('span');
+                const isWinning = (isLive || isFinal) && team.score > (team.isAway ? homeScore : awayScore);
+                score.className = 'team-score' + (isWinning ? ' winning' : '');
+                score.textContent = (isLive || isFinal) ? team.score : '–';
+                row.appendChild(info);
+                row.appendChild(score);
+                teamsDiv.appendChild(row);
+            });
+
+            const footerDiv = document.createElement('div');
+            footerDiv.className = 'game-footer';
+            const venueSpan = document.createElement('span');
+            venueSpan.className = 'game-venue';
+            venueSpan.textContent = venue || 'TBD';
+            footerDiv.appendChild(venueSpan);
+
+            card.appendChild(statusDiv);
+            card.appendChild(teamsDiv);
+            card.appendChild(footerDiv);
+
+            return card;
+        }
+
+        async function loadGames() {
+            const container = document.getElementById('gamesContainer');
+            try {
+                const response = await fetch('/api/nfl/scores');
+                const data = await response.json();
+                const games = data.games || [];
+
+                container.replaceChildren();
+
+                if (games.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-state';
+                    const h3 = document.createElement('h3');
+                    h3.textContent = 'No games scheduled this week';
+                    const p = document.createElement('p');
+                    p.textContent = 'Check back during the regular season.';
+                    empty.appendChild(h3);
+                    empty.appendChild(p);
+                    container.appendChild(empty);
+                } else {
+                    games.sort((a, b) => {
+                        const aLive = a.status?.isLive ? 2 : a.status?.isFinal ? 0 : 1;
+                        const bLive = b.status?.isLive ? 2 : b.status?.isFinal ? 0 : 1;
+                        return bLive - aLive;
+                    });
+                    games.forEach(game => container.appendChild(createGameCard(game)));
+                }
+
+                document.getElementById('lastUpdated').textContent =
+                    `Updated ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+            } catch (error) {
+                console.error('Failed to load games:', error);
+                container.replaceChildren();
+                const empty = document.createElement('div');
+                empty.className = 'empty-state';
+                const h3 = document.createElement('h3');
+                h3.textContent = 'Unable to load games';
+                const p = document.createElement('p');
+                p.textContent = 'Please try again later.';
+                empty.appendChild(h3);
+                empty.appendChild(p);
+                container.appendChild(empty);
+            }
+        }
+
+        loadGames();
+        setInterval(loadGames, 30000);
+    </script>
+</body>
+</html>
