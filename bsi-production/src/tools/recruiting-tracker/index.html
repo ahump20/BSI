@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiting Tracker | Blaze Sports Intel</title>
+    <meta name="description" content="Track college football and baseball recruiting with real-time commits, rankings, and class analysis.">
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        :root {
+            --burnt-orange: #BF5700;
+            --texas-soil: #8B4513;
+            --ember: #FF6B35;
+            --charcoal: #1A1A1A;
+            --midnight: #0D0D0D;
+            --cream: #FAF8F5;
+            --gold: #C9A227;
+            --success: #2E7D32;
+            --warning: #F9A825;
+            --error: #C62828;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--midnight);
+            color: var(--cream);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--burnt-orange);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 2rem; color: var(--burnt-orange); margin-bottom: 8px; }
+        .subtitle { color: #999; font-size: 1rem; }
+        .pro-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), var(--burnt-orange));
+            color: var(--midnight);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: var(--charcoal);
+            padding: 4px;
+            border-radius: 8px;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: #999;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab:hover { color: var(--cream); }
+        .tab.active {
+            background: var(--burnt-orange);
+            color: white;
+            font-weight: 600;
+        }
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        select, input {
+            padding: 12px 16px;
+            background: var(--charcoal);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--cream);
+            font-size: 0.95rem;
+            min-width: 150px;
+        }
+        select:focus, input:focus { outline: none; border-color: var(--burnt-orange); }
+        input { flex: 1; min-width: 200px; }
+        .class-rankings {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--ember);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        .rankings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .rankings-table th {
+            text-align: left;
+            padding: 12px;
+            color: #666;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
+        }
+        .rankings-table td {
+            padding: 12px;
+            border-bottom: 1px solid #222;
+        }
+        .rankings-table tr:hover { background: rgba(191, 87, 0, 0.1); }
+        .rank-cell {
+            font-weight: 700;
+            color: var(--gold);
+            width: 50px;
+        }
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .team-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--midnight);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--ember);
+        }
+        .team-name { font-weight: 500; }
+        .commits-count { color: var(--success); font-weight: 600; }
+        .avg-rating { color: var(--gold); }
+        .five-stars { color: var(--gold); font-weight: 600; }
+        .points { font-weight: 600; }
+        .recent-commits {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .commit-list { display: flex; flex-direction: column; gap: 12px; }
+        .commit-card {
+            background: var(--midnight);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--success);
+            transition: transform 0.2s;
+        }
+        .commit-card:hover { transform: translateX(4px); }
+        .commit-card.decommit { border-left-color: var(--error); }
+        .commit-card.flip { border-left-color: var(--warning); }
+        .commit-info { display: flex; align-items: center; gap: 16px; }
+        .commit-rank {
+            background: var(--charcoal);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 60px;
+        }
+        .commit-rank-num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .commit-rank-label {
+            font-size: 0.65rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .commit-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .commit-name {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .commit-meta {
+            color: #999;
+            font-size: 0.85rem;
+        }
+        .commit-school {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .school-name {
+            font-weight: 600;
+            color: var(--burnt-orange);
+        }
+        .commit-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .commit-type {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .type-commit { background: var(--success); color: white; }
+        .type-decommit { background: var(--error); color: white; }
+        .type-flip { background: var(--warning); color: var(--midnight); }
+        .star-rating {
+            display: flex;
+            gap: 2px;
+        }
+        .star {
+            width: 14px;
+            height: 14px;
+            background: var(--gold);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+        .star.empty { background: #444; }
+        .portal-section { margin-top: 24px; }
+        .portal-card {
+            background: var(--midnight);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--info, #1976D2);
+        }
+        .portal-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-portal { background: #1976D2; color: white; }
+        .status-committed { background: var(--success); color: white; }
+        .hidden { display: none; }
+        @media (max-width: 700px) {
+            .commit-card { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .rankings-table { font-size: 0.85rem; }
+            .filters { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Recruiting Tracker <span class="pro-badge">PRO</span></h1>
+            <p class="subtitle">Track college recruiting in real-time</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="football">Football</button>
+            <button class="tab" data-tab="baseball">Baseball</button>
+            <button class="tab" data-tab="portal">Transfer Portal</button>
+        </div>
+
+        <div class="filters">
+            <select id="classYear">
+                <option value="2025">Class of 2025</option>
+                <option value="2026">Class of 2026</option>
+                <option value="2027">Class of 2027</option>
+            </select>
+            <select id="conference">
+                <option value="">All Conferences</option>
+                <option value="sec">SEC</option>
+                <option value="big10">Big Ten</option>
+                <option value="big12">Big 12</option>
+                <option value="acc">ACC</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="Search players or schools...">
+        </div>
+
+        <div id="footballContent">
+            <div class="class-rankings">
+                <div class="section-title">2025 Team Recruiting Rankings</div>
+                <table class="rankings-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Team</th>
+                            <th>Commits</th>
+                            <th>Avg</th>
+                            <th>5-Stars</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingsBody"></tbody>
+                </table>
+            </div>
+
+            <div class="recent-commits">
+                <div class="section-title">Recent Commits & News</div>
+                <div class="commit-list" id="commitList"></div>
+            </div>
+        </div>
+
+        <div id="baseballContent" class="hidden">
+            <div class="class-rankings">
+                <div class="section-title">2025 Baseball Recruiting Rankings</div>
+                <table class="rankings-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Team</th>
+                            <th>Commits</th>
+                            <th>Avg</th>
+                            <th>Top 100</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody id="baseballRankingsBody"></tbody>
+                </table>
+            </div>
+
+            <div class="recent-commits">
+                <div class="section-title">Recent Baseball Commits</div>
+                <div class="commit-list" id="baseballCommitList"></div>
+            </div>
+        </div>
+
+        <div id="portalContent" class="hidden">
+            <div class="recent-commits portal-section">
+                <div class="section-title">Transfer Portal Activity</div>
+                <div class="commit-list" id="portalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var footballRankings = [
+            { rank: 1, team: 'Ohio State', conf: 'big10', commits: 24, avg: 94.12, fiveStars: 7, points: 318.45 },
+            { rank: 2, team: 'Georgia', conf: 'sec', commits: 22, avg: 93.86, fiveStars: 6, points: 312.18 },
+            { rank: 3, team: 'Texas', conf: 'sec', commits: 23, avg: 93.42, fiveStars: 5, points: 308.92 },
+            { rank: 4, team: 'Alabama', conf: 'sec', commits: 21, avg: 93.18, fiveStars: 4, points: 302.45 },
+            { rank: 5, team: 'LSU', conf: 'sec', commits: 20, avg: 92.84, fiveStars: 4, points: 298.12 },
+            { rank: 6, team: 'Notre Dame', conf: 'acc', commits: 22, avg: 92.56, fiveStars: 3, points: 295.68 },
+            { rank: 7, team: 'Oregon', conf: 'big10', commits: 19, avg: 92.42, fiveStars: 3, points: 291.24 },
+            { rank: 8, team: 'Penn State', conf: 'big10', commits: 21, avg: 91.86, fiveStars: 2, points: 286.45 },
+            { rank: 9, team: 'Texas A&M', conf: 'sec', commits: 20, avg: 91.68, fiveStars: 2, points: 282.18 },
+            { rank: 10, team: 'Tennessee', conf: 'sec', commits: 19, avg: 91.42, fiveStars: 2, points: 278.92 }
+        ];
+
+        var baseballRankings = [
+            { rank: 1, team: 'Texas', conf: 'big12', commits: 18, avg: 9.42, top100: 6, points: 245.82 },
+            { rank: 2, team: 'LSU', conf: 'sec', commits: 16, avg: 9.38, top100: 5, points: 238.45 },
+            { rank: 3, team: 'Vanderbilt', conf: 'sec', commits: 15, avg: 9.32, top100: 5, points: 232.18 },
+            { rank: 4, team: 'Florida', conf: 'sec', commits: 17, avg: 9.18, top100: 4, points: 228.62 },
+            { rank: 5, team: 'Texas A&M', conf: 'sec', commits: 14, avg: 9.24, top100: 4, points: 224.45 },
+            { rank: 6, team: 'Arkansas', conf: 'sec', commits: 16, avg: 9.08, top100: 3, points: 218.92 },
+            { rank: 7, team: 'Wake Forest', conf: 'acc', commits: 13, avg: 9.12, top100: 3, points: 212.68 },
+            { rank: 8, team: 'Florida State', conf: 'acc', commits: 15, avg: 8.96, top100: 2, points: 208.24 }
+        ];
+
+        var recentCommits = [
+            { name: 'K. Williams', position: 'WR', stars: 5, rank: 8, state: 'TX', school: 'Texas', type: 'commit', date: 'Jan 6, 2025' },
+            { name: 'M. Johnson', position: 'DL', stars: 5, rank: 12, state: 'GA', school: 'Georgia', type: 'commit', date: 'Jan 5, 2025' },
+            { name: 'T. Davis', position: 'QB', stars: 4, rank: 45, state: 'CA', school: 'USC', type: 'flip', from: 'Oregon', date: 'Jan 4, 2025' },
+            { name: 'J. Brown', position: 'CB', stars: 4, rank: 52, state: 'FL', school: 'Miami', type: 'decommit', date: 'Jan 3, 2025' },
+            { name: 'R. Anderson', position: 'LB', stars: 5, rank: 15, state: 'OH', school: 'Ohio State', type: 'commit', date: 'Jan 2, 2025' },
+            { name: 'C. Wilson', position: 'OT', stars: 4, rank: 38, state: 'TX', school: 'Texas A&M', type: 'commit', date: 'Jan 1, 2025' }
+        ];
+
+        var baseballCommits = [
+            { name: 'J. Martinez', position: 'RHP', stars: 5, rank: 5, state: 'TX', school: 'Texas', type: 'commit', date: 'Jan 5, 2025' },
+            { name: 'T. Lee', position: 'SS', stars: 4, rank: 18, state: 'FL', school: 'Vanderbilt', type: 'commit', date: 'Jan 4, 2025' },
+            { name: 'M. Garcia', position: 'OF', stars: 4, rank: 32, state: 'CA', school: 'LSU', type: 'commit', date: 'Jan 3, 2025' },
+            { name: 'B. Thompson', position: 'LHP', stars: 5, rank: 8, state: 'GA', school: 'Florida', type: 'flip', from: 'Georgia', date: 'Jan 2, 2025' }
+        ];
+
+        var portalEntries = [
+            { name: 'D. Mitchell', position: 'WR', from: 'Texas', stars: 4, status: 'portal', year: 'Jr' },
+            { name: 'J. Cooper', position: 'QB', from: 'Ohio State', to: 'Colorado', stars: 4, status: 'committed', year: 'Sr' },
+            { name: 'R. White', position: 'RB', from: 'Alabama', stars: 3, status: 'portal', year: 'So' },
+            { name: 'K. Jackson', position: 'CB', from: 'LSU', to: 'Miami', stars: 4, status: 'committed', year: 'Jr' },
+            { name: 'T. Robinson', position: 'LB', from: 'Penn State', stars: 3, status: 'portal', year: 'Sr' }
+        ];
+
+        function createStarRating(count) {
+            var container = document.createElement('div');
+            container.className = 'star-rating';
+            for (var i = 0; i < 5; i++) {
+                var star = document.createElement('div');
+                star.className = 'star' + (i >= count ? ' empty' : '');
+                container.appendChild(star);
+            }
+            return container;
+        }
+
+        function renderRankings(data, containerId, isBaseball) {
+            var tbody = document.getElementById(containerId);
+            while (tbody.firstChild) { tbody.removeChild(tbody.firstChild); }
+
+            for (var i = 0; i < data.length; i++) {
+                var team = data[i];
+                var row = document.createElement('tr');
+
+                var rankCell = document.createElement('td');
+                rankCell.className = 'rank-cell';
+                rankCell.textContent = team.rank;
+
+                var teamCell = document.createElement('td');
+                var teamDiv = document.createElement('div');
+                teamDiv.className = 'team-cell';
+                var logo = document.createElement('div');
+                logo.className = 'team-logo';
+                logo.textContent = team.team.substring(0, 2).toUpperCase();
+                var name = document.createElement('span');
+                name.className = 'team-name';
+                name.textContent = team.team;
+                teamDiv.appendChild(logo);
+                teamDiv.appendChild(name);
+                teamCell.appendChild(teamDiv);
+
+                var commitsCell = document.createElement('td');
+                commitsCell.className = 'commits-count';
+                commitsCell.textContent = team.commits;
+
+                var avgCell = document.createElement('td');
+                avgCell.className = 'avg-rating';
+                avgCell.textContent = team.avg.toFixed(2);
+
+                var specialCell = document.createElement('td');
+                specialCell.className = 'five-stars';
+                specialCell.textContent = isBaseball ? team.top100 : team.fiveStars;
+
+                var pointsCell = document.createElement('td');
+                pointsCell.className = 'points';
+                pointsCell.textContent = team.points.toFixed(2);
+
+                row.appendChild(rankCell);
+                row.appendChild(teamCell);
+                row.appendChild(commitsCell);
+                row.appendChild(avgCell);
+                row.appendChild(specialCell);
+                row.appendChild(pointsCell);
+
+                tbody.appendChild(row);
+            }
+        }
+
+        function renderCommits(data, containerId) {
+            var container = document.getElementById(containerId);
+            while (container.firstChild) { container.removeChild(container.firstChild); }
+
+            for (var i = 0; i < data.length; i++) {
+                var commit = data[i];
+                var card = document.createElement('div');
+                card.className = 'commit-card' + (commit.type === 'decommit' ? ' decommit' : (commit.type === 'flip' ? ' flip' : ''));
+
+                var info = document.createElement('div');
+                info.className = 'commit-info';
+
+                var rankDiv = document.createElement('div');
+                rankDiv.className = 'commit-rank';
+                var rankNum = document.createElement('div');
+                rankNum.className = 'commit-rank-num';
+                rankNum.textContent = '#' + commit.rank;
+                var rankLabel = document.createElement('div');
+                rankLabel.className = 'commit-rank-label';
+                rankLabel.textContent = 'National';
+                rankDiv.appendChild(rankNum);
+                rankDiv.appendChild(rankLabel);
+
+                var details = document.createElement('div');
+                details.className = 'commit-details';
+                var nameDiv = document.createElement('div');
+                nameDiv.className = 'commit-name';
+                nameDiv.textContent = commit.name;
+                var meta = document.createElement('div');
+                meta.className = 'commit-meta';
+                meta.textContent = commit.position + ' | ' + commit.state;
+                details.appendChild(nameDiv);
+                details.appendChild(createStarRating(commit.stars));
+                details.appendChild(meta);
+
+                info.appendChild(rankDiv);
+                info.appendChild(details);
+
+                var schoolDiv = document.createElement('div');
+                schoolDiv.className = 'commit-school';
+
+                var schoolInfo = document.createElement('div');
+                var schoolName = document.createElement('div');
+                schoolName.className = 'school-name';
+                if (commit.type === 'flip') {
+                    schoolName.textContent = commit.from + ' → ' + commit.school;
+                } else if (commit.type === 'decommit') {
+                    schoolName.textContent = 'From: ' + commit.school;
+                } else {
+                    schoolName.textContent = commit.school;
+                }
+                var dateDiv = document.createElement('div');
+                dateDiv.className = 'commit-date';
+                dateDiv.textContent = commit.date;
+                schoolInfo.appendChild(schoolName);
+                schoolInfo.appendChild(dateDiv);
+
+                var typeSpan = document.createElement('span');
+                typeSpan.className = 'commit-type type-' + commit.type;
+                typeSpan.textContent = commit.type;
+
+                schoolDiv.appendChild(schoolInfo);
+                schoolDiv.appendChild(typeSpan);
+
+                card.appendChild(info);
+                card.appendChild(schoolDiv);
+                container.appendChild(card);
+            }
+        }
+
+        function renderPortal(data, containerId) {
+            var container = document.getElementById(containerId);
+            while (container.firstChild) { container.removeChild(container.firstChild); }
+
+            for (var i = 0; i < data.length; i++) {
+                var entry = data[i];
+                var card = document.createElement('div');
+                card.className = 'portal-card';
+
+                var info = document.createElement('div');
+                info.className = 'commit-info';
+
+                var details = document.createElement('div');
+                details.className = 'commit-details';
+                var nameDiv = document.createElement('div');
+                nameDiv.className = 'commit-name';
+                nameDiv.textContent = entry.name;
+                var meta = document.createElement('div');
+                meta.className = 'commit-meta';
+                meta.textContent = entry.position + ' | ' + entry.year + ' | From: ' + entry.from;
+                details.appendChild(nameDiv);
+                details.appendChild(createStarRating(entry.stars));
+                details.appendChild(meta);
+
+                info.appendChild(details);
+
+                var statusDiv = document.createElement('div');
+                statusDiv.className = 'commit-school';
+
+                if (entry.status === 'committed' && entry.to) {
+                    var toSchool = document.createElement('div');
+                    toSchool.className = 'school-name';
+                    toSchool.textContent = 'To: ' + entry.to;
+                    statusDiv.appendChild(toSchool);
+                }
+
+                var statusSpan = document.createElement('span');
+                statusSpan.className = 'portal-status status-' + entry.status;
+                statusSpan.textContent = entry.status === 'portal' ? 'In Portal' : 'Committed';
+                statusDiv.appendChild(statusSpan);
+
+                card.appendChild(info);
+                card.appendChild(statusDiv);
+                container.appendChild(card);
+            }
+        }
+
+        function showTab(tabName) {
+            document.getElementById('footballContent').classList.add('hidden');
+            document.getElementById('baseballContent').classList.add('hidden');
+            document.getElementById('portalContent').classList.add('hidden');
+
+            if (tabName === 'football') {
+                document.getElementById('footballContent').classList.remove('hidden');
+            } else if (tabName === 'baseball') {
+                document.getElementById('baseballContent').classList.remove('hidden');
+            } else if (tabName === 'portal') {
+                document.getElementById('portalContent').classList.remove('hidden');
+            }
+        }
+
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+                this.classList.add('active');
+                showTab(this.getAttribute('data-tab'));
+            });
+        });
+
+        renderRankings(footballRankings, 'rankingsBody', false);
+        renderRankings(baseballRankings, 'baseballRankingsBody', true);
+        renderCommits(recentCommits, 'commitList');
+        renderCommits(baseballCommits, 'baseballCommitList');
+        renderPortal(portalEntries, 'portalList');
+    </script>
+</body>
+</html>

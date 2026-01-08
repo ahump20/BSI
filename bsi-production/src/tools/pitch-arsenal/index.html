@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch Arsenal Analyzer | Blaze Sports Intel</title>
+    <meta name="description" content="Analyze pitcher arsenals with velocity, movement, and effectiveness metrics for every pitch type.">
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        :root {
+            --burnt-orange: #BF5700;
+            --texas-soil: #8B4513;
+            --ember: #FF6B35;
+            --charcoal: #1A1A1A;
+            --midnight: #0D0D0D;
+            --cream: #FAF8F5;
+            --gold: #C9A227;
+            --success: #2E7D32;
+            --warning: #F9A825;
+            --fastball: #E53935;
+            --slider: #1E88E5;
+            --curveball: #7B1FA2;
+            --changeup: #43A047;
+            --cutter: #FB8C00;
+            --sinker: #6D4C41;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--midnight);
+            color: var(--cream);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--burnt-orange);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 2rem; color: var(--burnt-orange); margin-bottom: 8px; }
+        .subtitle { color: #999; font-size: 1rem; }
+        .pro-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), var(--burnt-orange));
+            color: var(--midnight);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .pitcher-select-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        select {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 16px;
+            background: var(--charcoal);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--cream);
+            font-size: 1rem;
+        }
+        select:focus { outline: none; border-color: var(--burnt-orange); }
+        .pitcher-header {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #333;
+        }
+        .pitcher-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--burnt-orange);
+            margin-bottom: 8px;
+        }
+        .pitcher-meta { color: #999; font-size: 0.95rem; }
+        .pitcher-stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .pitcher-stat {
+            text-align: center;
+        }
+        .pitcher-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cream);
+        }
+        .pitcher-stat-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .arsenal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .pitch-card {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #666;
+        }
+        .pitch-card.fastball { border-left-color: var(--fastball); }
+        .pitch-card.slider { border-left-color: var(--slider); }
+        .pitch-card.curveball { border-left-color: var(--curveball); }
+        .pitch-card.changeup { border-left-color: var(--changeup); }
+        .pitch-card.cutter { border-left-color: var(--cutter); }
+        .pitch-card.sinker { border-left-color: var(--sinker); }
+        .pitch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .pitch-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .pitch-grade {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .grade-plus-plus { background: var(--gold); color: var(--midnight); }
+        .grade-plus { background: var(--success); color: white; }
+        .grade-avg { background: #666; color: white; }
+        .grade-below { background: #444; color: #aaa; }
+        .pitch-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .metric {
+            background: var(--midnight);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--cream);
+        }
+        .metric-label {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        .usage-bar {
+            margin-top: 16px;
+        }
+        .usage-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+        .usage-track {
+            height: 8px;
+            background: var(--midnight);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .usage-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .movement-chart {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .chart-title {
+            font-size: 1.1rem;
+            color: var(--ember);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .movement-grid {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            margin: 0 auto;
+            background: var(--midnight);
+            border-radius: 8px;
+        }
+        .movement-axis {
+            position: absolute;
+            background: #333;
+        }
+        .movement-axis.x { width: 100%; height: 1px; top: 50%; left: 0; }
+        .movement-axis.y { width: 1px; height: 100%; left: 50%; top: 0; }
+        .pitch-dot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: white;
+            transition: transform 0.2s;
+        }
+        .pitch-dot:hover { transform: translate(-50%, -50%) scale(1.3); }
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #999;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .axis-labels {
+            position: absolute;
+            font-size: 0.7rem;
+            color: #666;
+        }
+        .axis-labels.top { top: 5px; left: 50%; transform: translateX(-50%); }
+        .axis-labels.bottom { bottom: 5px; left: 50%; transform: translateX(-50%); }
+        .axis-labels.left { left: 5px; top: 50%; transform: translateY(-50%); }
+        .axis-labels.right { right: 5px; top: 50%; transform: translateY(-50%); }
+        .effectiveness-section {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .effectiveness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .eff-card {
+            background: var(--midnight);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .eff-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .eff-value.elite { color: var(--gold); }
+        .eff-value.good { color: var(--success); }
+        .eff-value.avg { color: var(--cream); }
+        .eff-value.below { color: var(--warning); }
+        .eff-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        .eff-rank {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 8px;
+        }
+        .hidden { display: none; }
+        @media (max-width: 600px) {
+            .pitcher-stats { gap: 16px; }
+            .pitch-metrics { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pitch Arsenal Analyzer <span class="pro-badge">PRO</span></h1>
+            <p class="subtitle">Break down pitcher arsenals with advanced metrics</p>
+        </header>
+
+        <div class="pitcher-select-bar">
+            <select id="pitcherSelect">
+                <option value="">Select a pitcher...</option>
+            </select>
+        </div>
+
+        <div id="pitcherContent" class="hidden">
+            <div class="pitcher-header" id="pitcherHeader"></div>
+            <div class="arsenal-grid" id="arsenalGrid"></div>
+            <div class="movement-chart" id="movementChart">
+                <div class="chart-title">Pitch Movement Profile</div>
+                <div class="movement-grid" id="movementGrid">
+                    <div class="movement-axis x"></div>
+                    <div class="movement-axis y"></div>
+                    <div class="axis-labels top">Rise</div>
+                    <div class="axis-labels bottom">Drop</div>
+                    <div class="axis-labels left">Arm-side</div>
+                    <div class="axis-labels right">Glove-side</div>
+                </div>
+                <div class="chart-legend" id="chartLegend"></div>
+            </div>
+            <div class="effectiveness-section">
+                <div class="chart-title">Overall Effectiveness</div>
+                <div class="effectiveness-grid" id="effectivenessGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var pitchers = [
+            {
+                id: 1, name: 'Spencer Strider', team: 'ATL Braves', throws: 'R',
+                stats: { era: 3.86, whip: 1.02, k9: 13.8, bb9: 2.4, ip: '186.2' },
+                arsenal: [
+                    { type: 'fastball', name: '4-Seam Fastball', velo: 97.2, spin: 2478, hMove: -2.1, vMove: 14.8, usage: 62, whiff: 32.4, grade: 'plus-plus' },
+                    { type: 'slider', name: 'Slider', velo: 87.4, spin: 2612, hMove: 3.8, vMove: 1.2, usage: 34, whiff: 42.1, grade: 'plus-plus' },
+                    { type: 'changeup', name: 'Changeup', velo: 89.1, spin: 1654, hMove: -6.2, vMove: 6.4, usage: 4, whiff: 28.6, grade: 'avg' }
+                ],
+                effectiveness: { stuffPlus: 142, locPlus: 108, pitchingPlus: 128, xEra: 3.12, csw: 34.2 }
+            },
+            {
+                id: 2, name: 'Zack Wheeler', team: 'PHI Phillies', throws: 'R',
+                stats: { era: 3.07, whip: 1.02, k9: 10.2, bb9: 1.8, ip: '192.0' },
+                arsenal: [
+                    { type: 'fastball', name: '4-Seam Fastball', velo: 96.8, spin: 2356, hMove: -3.4, vMove: 13.2, usage: 38, whiff: 24.8, grade: 'plus' },
+                    { type: 'sinker', name: 'Sinker', velo: 96.2, spin: 2198, hMove: -8.6, vMove: 6.2, usage: 18, whiff: 18.2, grade: 'plus' },
+                    { type: 'slider', name: 'Slider', velo: 89.4, spin: 2534, hMove: 4.2, vMove: 2.8, usage: 26, whiff: 38.6, grade: 'plus-plus' },
+                    { type: 'curveball', name: 'Curveball', velo: 82.1, spin: 2876, hMove: 6.4, vMove: -8.4, usage: 12, whiff: 34.2, grade: 'plus' },
+                    { type: 'changeup', name: 'Changeup', velo: 88.6, spin: 1712, hMove: -7.8, vMove: 4.2, usage: 6, whiff: 32.1, grade: 'avg' }
+                ],
+                effectiveness: { stuffPlus: 124, locPlus: 118, pitchingPlus: 122, xEra: 2.98, csw: 32.8 }
+            },
+            {
+                id: 3, name: 'Skenes', team: 'PIT Pirates', throws: 'R',
+                stats: { era: 1.96, whip: 0.96, k9: 11.5, bb9: 2.1, ip: '133.0' },
+                arsenal: [
+                    { type: 'fastball', name: '4-Seam Fastball', velo: 100.1, spin: 2612, hMove: -1.8, vMove: 16.2, usage: 52, whiff: 34.8, grade: 'plus-plus' },
+                    { type: 'sinker', name: 'Sinker', velo: 98.4, spin: 2234, hMove: -9.2, vMove: 8.4, usage: 8, whiff: 22.4, grade: 'plus' },
+                    { type: 'curveball', name: 'Splinker', velo: 84.6, spin: 2956, hMove: 8.2, vMove: -12.4, usage: 28, whiff: 42.6, grade: 'plus-plus' },
+                    { type: 'changeup', name: 'Changeup', velo: 90.2, spin: 1534, hMove: -8.4, vMove: 5.6, usage: 12, whiff: 36.2, grade: 'plus' }
+                ],
+                effectiveness: { stuffPlus: 168, locPlus: 112, pitchingPlus: 145, xEra: 2.24, csw: 36.4 }
+            },
+            {
+                id: 4, name: 'Drew Rasmussen', team: 'TB Rays', throws: 'R',
+                stats: { era: 3.42, whip: 1.08, k9: 8.6, bb9: 2.2, ip: '94.2' },
+                arsenal: [
+                    { type: 'fastball', name: '4-Seam Fastball', velo: 95.8, spin: 2412, hMove: -2.8, vMove: 14.4, usage: 45, whiff: 26.2, grade: 'plus' },
+                    { type: 'slider', name: 'Slider', velo: 86.2, spin: 2678, hMove: 4.6, vMove: 0.8, usage: 32, whiff: 36.4, grade: 'plus' },
+                    { type: 'curveball', name: 'Curveball', velo: 78.4, spin: 2812, hMove: 8.2, vMove: -10.2, usage: 18, whiff: 32.8, grade: 'plus' },
+                    { type: 'changeup', name: 'Changeup', velo: 86.8, spin: 1624, hMove: -6.4, vMove: 5.2, usage: 5, whiff: 24.6, grade: 'avg' }
+                ],
+                effectiveness: { stuffPlus: 112, locPlus: 106, pitchingPlus: 110, xEra: 3.56, csw: 30.2 }
+            },
+            {
+                id: 5, name: 'Rhett Lowder', team: 'Wake Forest', throws: 'R',
+                stats: { era: 2.18, whip: 0.88, k9: 12.4, bb9: 1.6, ip: '112.0' },
+                arsenal: [
+                    { type: 'fastball', name: '4-Seam Fastball', velo: 93.2, spin: 2356, hMove: -3.2, vMove: 13.8, usage: 42, whiff: 28.4, grade: 'plus' },
+                    { type: 'slider', name: 'Slider', velo: 84.6, spin: 2712, hMove: 5.2, vMove: 1.4, usage: 28, whiff: 38.2, grade: 'plus-plus' },
+                    { type: 'changeup', name: 'Changeup', velo: 84.2, spin: 1586, hMove: -7.6, vMove: 4.8, usage: 22, whiff: 34.6, grade: 'plus' },
+                    { type: 'curveball', name: 'Curveball', velo: 78.8, spin: 2924, hMove: 7.4, vMove: -9.6, usage: 8, whiff: 30.2, grade: 'avg' }
+                ],
+                effectiveness: { stuffPlus: 128, locPlus: 124, pitchingPlus: 126, xEra: 2.42, csw: 33.8 }
+            },
+            {
+                id: 6, name: 'Hagen Smith', team: 'Arkansas', throws: 'L',
+                stats: { era: 2.04, whip: 0.92, k9: 15.2, bb9: 2.8, ip: '102.0' },
+                arsenal: [
+                    { type: 'fastball', name: '4-Seam Fastball', velo: 95.8, spin: 2512, hMove: 4.2, vMove: 15.2, usage: 48, whiff: 32.6, grade: 'plus-plus' },
+                    { type: 'slider', name: 'Slider', velo: 86.4, spin: 2634, hMove: -3.8, vMove: 2.2, usage: 32, whiff: 44.8, grade: 'plus-plus' },
+                    { type: 'changeup', name: 'Changeup', velo: 86.2, spin: 1712, hMove: 8.2, vMove: 5.6, usage: 20, whiff: 36.4, grade: 'plus' }
+                ],
+                effectiveness: { stuffPlus: 156, locPlus: 102, pitchingPlus: 132, xEra: 2.18, csw: 38.2 }
+            }
+        ];
+
+        var pitchColors = {
+            fastball: '#E53935', slider: '#1E88E5', curveball: '#7B1FA2',
+            changeup: '#43A047', cutter: '#FB8C00', sinker: '#6D4C41'
+        };
+
+        function populatePitcherSelect() {
+            var select = document.getElementById('pitcherSelect');
+            for (var i = 0; i < pitchers.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = pitchers[i].id;
+                opt.textContent = pitchers[i].name + ' (' + pitchers[i].team + ')';
+                select.appendChild(opt);
+            }
+        }
+
+        function getPitcher(id) {
+            for (var i = 0; i < pitchers.length; i++) {
+                if (pitchers[i].id === parseInt(id)) return pitchers[i];
+            }
+            return null;
+        }
+
+        function renderPitcherHeader(pitcher) {
+            var header = document.getElementById('pitcherHeader');
+            while (header.firstChild) { header.removeChild(header.firstChild); }
+
+            var name = document.createElement('div');
+            name.className = 'pitcher-name';
+            name.textContent = pitcher.name;
+            header.appendChild(name);
+
+            var meta = document.createElement('div');
+            meta.className = 'pitcher-meta';
+            meta.textContent = pitcher.team + ' | ' + (pitcher.throws === 'R' ? 'Right-handed' : 'Left-handed');
+            header.appendChild(meta);
+
+            var stats = document.createElement('div');
+            stats.className = 'pitcher-stats';
+
+            var statItems = [
+                { label: 'ERA', value: pitcher.stats.era },
+                { label: 'WHIP', value: pitcher.stats.whip },
+                { label: 'K/9', value: pitcher.stats.k9 },
+                { label: 'BB/9', value: pitcher.stats.bb9 },
+                { label: 'IP', value: pitcher.stats.ip }
+            ];
+
+            for (var i = 0; i < statItems.length; i++) {
+                var stat = document.createElement('div');
+                stat.className = 'pitcher-stat';
+                var value = document.createElement('div');
+                value.className = 'pitcher-stat-value';
+                value.textContent = statItems[i].value;
+                var label = document.createElement('div');
+                label.className = 'pitcher-stat-label';
+                label.textContent = statItems[i].label;
+                stat.appendChild(value);
+                stat.appendChild(label);
+                stats.appendChild(stat);
+            }
+
+            header.appendChild(stats);
+        }
+
+        function renderArsenal(pitcher) {
+            var grid = document.getElementById('arsenalGrid');
+            while (grid.firstChild) { grid.removeChild(grid.firstChild); }
+
+            for (var i = 0; i < pitcher.arsenal.length; i++) {
+                var pitch = pitcher.arsenal[i];
+                var card = document.createElement('div');
+                card.className = 'pitch-card ' + pitch.type;
+
+                var cardHeader = document.createElement('div');
+                cardHeader.className = 'pitch-header';
+                var pitchName = document.createElement('div');
+                pitchName.className = 'pitch-name';
+                pitchName.textContent = pitch.name;
+                var grade = document.createElement('div');
+                grade.className = 'pitch-grade grade-' + pitch.grade;
+                grade.textContent = pitch.grade === 'plus-plus' ? '++' : (pitch.grade === 'plus' ? '+' : (pitch.grade === 'avg' ? 'AVG' : '-'));
+                cardHeader.appendChild(pitchName);
+                cardHeader.appendChild(grade);
+                card.appendChild(cardHeader);
+
+                var metrics = document.createElement('div');
+                metrics.className = 'pitch-metrics';
+
+                var metricItems = [
+                    { label: 'Velocity', value: pitch.velo + ' mph' },
+                    { label: 'Spin Rate', value: pitch.spin + ' rpm' },
+                    { label: 'H-Move', value: pitch.hMove + '"' },
+                    { label: 'Whiff%', value: pitch.whiff + '%' }
+                ];
+
+                for (var j = 0; j < metricItems.length; j++) {
+                    var metric = document.createElement('div');
+                    metric.className = 'metric';
+                    var metricValue = document.createElement('div');
+                    metricValue.className = 'metric-value';
+                    metricValue.textContent = metricItems[j].value;
+                    var metricLabel = document.createElement('div');
+                    metricLabel.className = 'metric-label';
+                    metricLabel.textContent = metricItems[j].label;
+                    metric.appendChild(metricValue);
+                    metric.appendChild(metricLabel);
+                    metrics.appendChild(metric);
+                }
+
+                card.appendChild(metrics);
+
+                var usageBar = document.createElement('div');
+                usageBar.className = 'usage-bar';
+                var usageLabel = document.createElement('div');
+                usageLabel.className = 'usage-label';
+                var usageText = document.createElement('span');
+                usageText.textContent = 'Usage';
+                var usagePct = document.createElement('span');
+                usagePct.textContent = pitch.usage + '%';
+                usageLabel.appendChild(usageText);
+                usageLabel.appendChild(usagePct);
+
+                var usageTrack = document.createElement('div');
+                usageTrack.className = 'usage-track';
+                var usageFill = document.createElement('div');
+                usageFill.className = 'usage-fill';
+                usageFill.style.width = pitch.usage + '%';
+                usageFill.style.backgroundColor = pitchColors[pitch.type];
+                usageTrack.appendChild(usageFill);
+
+                usageBar.appendChild(usageLabel);
+                usageBar.appendChild(usageTrack);
+                card.appendChild(usageBar);
+
+                grid.appendChild(card);
+            }
+        }
+
+        function renderMovementChart(pitcher) {
+            var grid = document.getElementById('movementGrid');
+            var existingDots = grid.querySelectorAll('.pitch-dot');
+            for (var d = 0; d < existingDots.length; d++) {
+                existingDots[d].parentNode.removeChild(existingDots[d]);
+            }
+
+            var legend = document.getElementById('chartLegend');
+            while (legend.firstChild) { legend.removeChild(legend.firstChild); }
+
+            for (var i = 0; i < pitcher.arsenal.length; i++) {
+                var pitch = pitcher.arsenal[i];
+
+                var xPct = 50 + (pitch.hMove * 3);
+                var yPct = 50 - (pitch.vMove * 2.5);
+
+                var dot = document.createElement('div');
+                dot.className = 'pitch-dot';
+                dot.style.backgroundColor = pitchColors[pitch.type];
+                dot.style.left = xPct + '%';
+                dot.style.top = yPct + '%';
+                dot.textContent = pitch.type.substring(0, 2).toUpperCase();
+                dot.title = pitch.name + ': ' + pitch.hMove + '" H / ' + pitch.vMove + '" V';
+                grid.appendChild(dot);
+
+                var legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                var legendDot = document.createElement('div');
+                legendDot.className = 'legend-dot';
+                legendDot.style.backgroundColor = pitchColors[pitch.type];
+                var legendText = document.createElement('span');
+                legendText.textContent = pitch.name;
+                legendItem.appendChild(legendDot);
+                legendItem.appendChild(legendText);
+                legend.appendChild(legendItem);
+            }
+        }
+
+        function renderEffectiveness(pitcher) {
+            var grid = document.getElementById('effectivenessGrid');
+            while (grid.firstChild) { grid.removeChild(grid.firstChild); }
+
+            var eff = pitcher.effectiveness;
+            var items = [
+                { label: 'Stuff+', value: eff.stuffPlus, elite: 130, good: 110 },
+                { label: 'Location+', value: eff.locPlus, elite: 115, good: 105 },
+                { label: 'Pitching+', value: eff.pitchingPlus, elite: 125, good: 110 },
+                { label: 'xERA', value: eff.xEra, elite: 2.5, good: 3.5, lower: true },
+                { label: 'CSW%', value: eff.csw, elite: 33, good: 30 }
+            ];
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var card = document.createElement('div');
+                card.className = 'eff-card';
+
+                var value = document.createElement('div');
+                value.className = 'eff-value';
+                var valueClass = 'avg';
+                if (item.lower) {
+                    if (item.value <= item.elite) valueClass = 'elite';
+                    else if (item.value <= item.good) valueClass = 'good';
+                    else if (item.value > 4.5) valueClass = 'below';
+                } else {
+                    if (item.value >= item.elite) valueClass = 'elite';
+                    else if (item.value >= item.good) valueClass = 'good';
+                    else if (item.value < 95) valueClass = 'below';
+                }
+                value.classList.add(valueClass);
+                value.textContent = item.label === 'xERA' ? item.value.toFixed(2) : (item.label === 'CSW%' ? item.value + '%' : item.value);
+
+                var label = document.createElement('div');
+                label.className = 'eff-label';
+                label.textContent = item.label;
+
+                var rank = document.createElement('div');
+                rank.className = 'eff-rank';
+                if (valueClass === 'elite') rank.textContent = 'Elite';
+                else if (valueClass === 'good') rank.textContent = 'Above Avg';
+                else if (valueClass === 'below') rank.textContent = 'Below Avg';
+                else rank.textContent = 'Average';
+
+                card.appendChild(value);
+                card.appendChild(label);
+                card.appendChild(rank);
+                grid.appendChild(card);
+            }
+        }
+
+        function showPitcher(id) {
+            var pitcher = getPitcher(id);
+            if (!pitcher) {
+                document.getElementById('pitcherContent').classList.add('hidden');
+                return;
+            }
+
+            renderPitcherHeader(pitcher);
+            renderArsenal(pitcher);
+            renderMovementChart(pitcher);
+            renderEffectiveness(pitcher);
+
+            document.getElementById('pitcherContent').classList.remove('hidden');
+        }
+
+        document.getElementById('pitcherSelect').addEventListener('change', function() {
+            showPitcher(this.value);
+        });
+
+        populatePitcherSelect();
+    </script>
+</body>
+</html>

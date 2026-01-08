@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prospect Tracker | Blaze Sports Intel</title>
+    <meta name="description" content="Track baseball prospects from youth through college and into professional baseball with comprehensive scouting grades.">
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        :root {
+            --burnt-orange: #BF5700;
+            --texas-soil: #8B4513;
+            --ember: #FF6B35;
+            --charcoal: #1A1A1A;
+            --midnight: #0D0D0D;
+            --cream: #FAF8F5;
+            --gold: #C9A227;
+            --success: #2E7D32;
+            --warning: #F9A825;
+            --info: #1976D2;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--midnight);
+            color: var(--cream);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--burnt-orange);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 2rem; color: var(--burnt-orange); margin-bottom: 8px; }
+        .subtitle { color: #999; font-size: 1rem; }
+        .pro-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), var(--burnt-orange));
+            color: var(--midnight);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 14px 20px;
+            background: var(--charcoal);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--cream);
+            font-size: 1rem;
+        }
+        .search-bar input:focus { outline: none; border-color: var(--burnt-orange); }
+        .search-bar select {
+            padding: 14px 16px;
+            background: var(--charcoal);
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: var(--cream);
+            font-size: 1rem;
+            min-width: 150px;
+        }
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--charcoal);
+            border: 1px solid #444;
+            border-radius: 20px;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { border-color: var(--ember); color: var(--ember); }
+        .filter-btn.active {
+            background: var(--burnt-orange);
+            border-color: var(--burnt-orange);
+            color: white;
+        }
+        .prospect-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+        .prospect-card {
+            background: var(--charcoal);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #333;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .prospect-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(191, 87, 0, 0.2);
+            border-color: var(--burnt-orange);
+        }
+        .prospect-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .prospect-name { font-size: 1.2rem; font-weight: 600; color: var(--cream); }
+        .prospect-position {
+            background: var(--midnight);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: var(--ember);
+        }
+        .prospect-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 16px;
+        }
+        .prospect-school { color: var(--burnt-orange); font-weight: 500; }
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .grade-item { text-align: center; }
+        .grade-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 50%;
+            margin: 0 auto 4px;
+        }
+        .grade-80 { background: var(--gold); color: var(--midnight); }
+        .grade-70 { background: #2E7D32; color: white; }
+        .grade-60 { background: var(--burnt-orange); color: white; }
+        .grade-55 { background: #666; color: white; }
+        .grade-50 { background: #444; color: #ccc; }
+        .grade-45 { background: #333; color: #888; }
+        .grade-label { font-size: 0.7rem; color: #777; }
+        .prospect-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid #333;
+            font-size: 0.85rem;
+        }
+        .stat-item { text-align: center; }
+        .stat-value { font-weight: 600; color: var(--cream); }
+        .stat-label { color: #666; font-size: 0.75rem; }
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .rank-top10 { background: var(--gold); color: var(--midnight); }
+        .rank-top50 { background: var(--burnt-orange); color: white; }
+        .rank-top100 { background: #2E7D32; color: white; }
+        .rank-top250 { background: #666; color: white; }
+        .detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .detail-modal.active { display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; }
+        .modal-content {
+            background: var(--charcoal);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            border: 2px solid var(--burnt-orange);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .modal-close:hover { color: var(--ember); }
+        .scouting-report { margin-top: 20px; }
+        .report-section { margin-bottom: 20px; }
+        .report-title { color: var(--ember); font-size: 1rem; margin-bottom: 10px; font-weight: 600; }
+        .report-text { color: #bbb; line-height: 1.6; }
+        .timeline { margin-top: 20px; }
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px 0;
+            border-left: 2px solid var(--burnt-orange);
+            padding-left: 20px;
+            margin-left: 10px;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            background: var(--burnt-orange);
+            border-radius: 50%;
+        }
+        .timeline-date { color: #666; min-width: 80px; }
+        .timeline-event { color: var(--cream); }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        @media (max-width: 600px) {
+            .search-bar { flex-direction: column; }
+            .prospect-grid { grid-template-columns: 1fr; }
+            .grades-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prospect Tracker <span class="pro-badge">PRO</span></h1>
+            <p class="subtitle">Track baseball prospects from youth to the pros</p>
+        </header>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by name, school, or state...">
+            <select id="classFilter">
+                <option value="">All Classes</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+            </select>
+            <select id="positionFilter">
+                <option value="">All Positions</option>
+                <option value="RHP">RHP</option>
+                <option value="LHP">LHP</option>
+                <option value="C">C</option>
+                <option value="1B">1B</option>
+                <option value="2B">2B</option>
+                <option value="SS">SS</option>
+                <option value="3B">3B</option>
+                <option value="OF">OF</option>
+                <option value="UTL">UTL</option>
+            </select>
+        </div>
+
+        <div class="filter-row">
+            <button class="filter-btn active" data-filter="all">All Prospects</button>
+            <button class="filter-btn" data-filter="top50">Top 50</button>
+            <button class="filter-btn" data-filter="texas">Texas</button>
+            <button class="filter-btn" data-filter="sec">SEC Commits</button>
+            <button class="filter-btn" data-filter="big12">Big 12 Commits</button>
+            <button class="filter-btn" data-filter="uncommitted">Uncommitted</button>
+        </div>
+
+        <div class="prospect-grid" id="prospectGrid"></div>
+        <div class="empty-state hidden" id="emptyState">No prospects match your search criteria.</div>
+    </div>
+
+    <div class="detail-modal" id="detailModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        var prospects = [
+            {
+                id: 1, name: 'Jace L.', position: 'RHP', classYear: '2025', state: 'TX', school: 'Lake Travis HS',
+                commit: 'Texas', conference: 'big12', rank: 3, nationalRank: 12,
+                grades: { fb: 70, cb: 60, sl: 55, ch: 50, cmd: 60 },
+                stats: { era: '0.89', so: 142, ip: '78.2' },
+                height: "6'3\"", weight: 195, bats: 'R', throws: 'R',
+                report: 'Elite arm strength with a fastball that touches 97 mph. Advanced feel for a plus curveball. Command continues to improve. Projects as a Friday night starter at the D1 level.',
+                timeline: [
+                    { date: 'Nov 2024', event: 'Committed to Texas Longhorns' },
+                    { date: 'Aug 2024', event: 'Perfect Game All-American Selection' },
+                    { date: 'Jun 2024', event: 'USA Baseball 18U National Team' }
+                ]
+            },
+            {
+                id: 2, name: 'Marcus W.', position: 'SS', classYear: '2025', state: 'FL', school: 'IMG Academy',
+                commit: 'Vanderbilt', conference: 'sec', rank: 1, nationalRank: 5,
+                grades: { hit: 65, pwr: 60, spd: 70, fld: 70, arm: 65 },
+                stats: { avg: '.412', hr: 12, sb: 34 },
+                height: "6'1\"", weight: 185, bats: 'R', throws: 'R',
+                report: 'Premium athlete with elite defensive tools at shortstop. Plus-plus speed makes him a threat on the bases. Line-drive approach with growing power. Could be a top-10 pick in 3 years.',
+                timeline: [
+                    { date: 'Sep 2024', event: 'Committed to Vanderbilt Commodores' },
+                    { date: 'Jul 2024', event: '#1 Overall at PG National Showcase' },
+                    { date: 'Jun 2024', event: 'Team USA 18U Selection' }
+                ]
+            },
+            {
+                id: 3, name: 'Tyler R.', position: 'C', classYear: '2025', state: 'TX', school: 'Keller HS',
+                commit: 'Texas A&M', conference: 'sec', rank: 8, nationalRank: 28,
+                grades: { hit: 55, pwr: 60, spd: 45, fld: 65, arm: 70 },
+                stats: { avg: '.367', hr: 8, rbi: 45 },
+                height: "6'2\"", weight: 210, bats: 'R', throws: 'R',
+                report: 'Premium defensive catcher with a cannon arm. Controls the running game with consistent 1.85 pop times. Bat is developing with raw power to all fields.',
+                timeline: [
+                    { date: 'Oct 2024', event: 'Committed to Texas A&M' },
+                    { date: 'Aug 2024', event: 'All-American Game Selection' }
+                ]
+            },
+            {
+                id: 4, name: 'Derek S.', position: 'LHP', classYear: '2026', state: 'CA', school: 'Orange Lutheran',
+                commit: null, conference: null, rank: 5, nationalRank: 18,
+                grades: { fb: 65, cb: 65, sl: 50, ch: 60, cmd: 55 },
+                stats: { era: '1.24', so: 118, ip: '65.1' },
+                height: "6'4\"", weight: 200, bats: 'L', throws: 'L',
+                report: 'Projectable lefty with a loose arm and easy velocity. Fastball sits 91-93 with sink. Curveball is a plus pitch already. High ceiling arm.',
+                timeline: [
+                    { date: 'Jul 2024', event: 'PG Top Prospect Games Selection' },
+                    { date: 'Jun 2024', event: 'Area Code Games Invite' }
+                ]
+            },
+            {
+                id: 5, name: 'Austin M.', position: 'OF', classYear: '2025', state: 'GA', school: 'Parkview HS',
+                commit: 'Georgia', conference: 'sec', rank: 12, nationalRank: 42,
+                grades: { hit: 60, pwr: 55, spd: 65, fld: 60, arm: 55 },
+                stats: { avg: '.389', hr: 9, sb: 28 },
+                height: "6'0\"", weight: 180, bats: 'L', throws: 'L',
+                report: 'Athletic outfielder with a sweet left-handed swing. Gap-to-gap approach with plus speed. Defensively versatile across all three outfield positions.',
+                timeline: [
+                    { date: 'Aug 2024', event: 'Committed to Georgia Bulldogs' },
+                    { date: 'Jun 2024', event: 'Under Armour All-American' }
+                ]
+            },
+            {
+                id: 6, name: 'Brandon C.', position: 'RHP', classYear: '2025', state: 'TX', school: 'Southlake Carroll',
+                commit: 'TCU', conference: 'big12', rank: 15, nationalRank: 55,
+                grades: { fb: 60, cb: 55, sl: 60, ch: 55, cmd: 60 },
+                stats: { era: '1.52', so: 98, ip: '71.0' },
+                height: "6'2\"", weight: 185, bats: 'R', throws: 'R',
+                report: 'Polished right-hander who pounds the zone. Three-pitch mix plays up with advanced command. Potential weekend starter immediately at the college level.',
+                timeline: [
+                    { date: 'Jul 2024', event: 'Committed to TCU Horned Frogs' }
+                ]
+            },
+            {
+                id: 7, name: 'Jake T.', position: '3B', classYear: '2026', state: 'AZ', school: 'Hamilton HS',
+                commit: null, conference: null, rank: 7, nationalRank: 24,
+                grades: { hit: 60, pwr: 65, spd: 50, fld: 55, arm: 60 },
+                stats: { avg: '.398', hr: 14, rbi: 52 },
+                height: "6'3\"", weight: 215, bats: 'R', throws: 'R',
+                report: 'Big, physical corner infielder with plus raw power. Ball jumps off his bat. Solid defender at third with a strong arm. High-end offensive upside.',
+                timeline: [
+                    { date: 'Aug 2024', event: 'PG National Showcase MVP' }
+                ]
+            },
+            {
+                id: 8, name: 'Ethan H.', position: 'SS', classYear: '2025', state: 'TX', school: 'The Woodlands',
+                commit: 'LSU', conference: 'sec', rank: 4, nationalRank: 15,
+                grades: { hit: 60, pwr: 55, spd: 60, fld: 65, arm: 60 },
+                stats: { avg: '.402', hr: 7, sb: 22 },
+                height: "6'0\"", weight: 175, bats: 'S', throws: 'R',
+                report: 'Switch-hitting shortstop with advanced feel for the barrel. Smooth defender with soft hands and plus range. High baseball IQ player.',
+                timeline: [
+                    { date: 'Oct 2024', event: 'Committed to LSU Tigers' },
+                    { date: 'Aug 2024', event: 'All-American Game MVP' }
+                ]
+            },
+            {
+                id: 9, name: 'Ryan P.', position: 'RHP', classYear: '2027', state: 'FL', school: 'Jesuit Tampa',
+                commit: null, conference: null, rank: 2, nationalRank: 8,
+                grades: { fb: 65, cb: 60, sl: 55, ch: 50, cmd: 55 },
+                stats: { era: '1.08', so: 89, ip: '52.0' },
+                height: "6'5\"", weight: 210, bats: 'R', throws: 'R',
+                report: 'Premium arm for the 2027 class. Already touching 95 mph as a sophomore. Projectable frame with room to add velocity. Elite prospect.',
+                timeline: [
+                    { date: 'Sep 2024', event: 'PG Underclass All-American' }
+                ]
+            },
+            {
+                id: 10, name: 'Chris B.', position: '1B', classYear: '2025', state: 'OK', school: 'Owasso HS',
+                commit: 'Oklahoma', conference: 'big12', rank: 22, nationalRank: 78,
+                grades: { hit: 55, pwr: 70, spd: 40, fld: 50, arm: 50 },
+                stats: { avg: '.345', hr: 18, rbi: 58 },
+                height: "6'4\"", weight: 225, bats: 'L', throws: 'L',
+                report: 'Power-over-hit profile with plus-plus raw power. Ball carries to all fields. Below average runner limits defensive value. Bat will play.',
+                timeline: [
+                    { date: 'Sep 2024', event: 'Committed to Oklahoma Sooners' }
+                ]
+            }
+        ];
+
+        function getGradeClass(grade) {
+            if (grade >= 80) return 'grade-80';
+            if (grade >= 70) return 'grade-70';
+            if (grade >= 60) return 'grade-60';
+            if (grade >= 55) return 'grade-55';
+            if (grade >= 50) return 'grade-50';
+            return 'grade-45';
+        }
+
+        function getRankClass(rank) {
+            if (rank <= 10) return 'rank-top10';
+            if (rank <= 50) return 'rank-top50';
+            if (rank <= 100) return 'rank-top100';
+            return 'rank-top250';
+        }
+
+        function isPitcher(position) {
+            return position === 'RHP' || position === 'LHP';
+        }
+
+        function renderProspectCard(prospect) {
+            var card = document.createElement('div');
+            card.className = 'prospect-card';
+            card.setAttribute('data-id', prospect.id);
+
+            var header = document.createElement('div');
+            header.className = 'prospect-header';
+
+            var nameDiv = document.createElement('div');
+            var nameSpan = document.createElement('span');
+            nameSpan.className = 'prospect-name';
+            nameSpan.textContent = prospect.name;
+            nameDiv.appendChild(nameSpan);
+
+            var rankBadge = document.createElement('span');
+            rankBadge.className = 'rank-badge ' + getRankClass(prospect.nationalRank);
+            rankBadge.textContent = '#' + prospect.nationalRank;
+            nameDiv.appendChild(rankBadge);
+
+            var posSpan = document.createElement('span');
+            posSpan.className = 'prospect-position';
+            posSpan.textContent = prospect.position;
+
+            header.appendChild(nameDiv);
+            header.appendChild(posSpan);
+
+            var meta = document.createElement('div');
+            meta.className = 'prospect-meta';
+
+            var schoolSpan = document.createElement('span');
+            schoolSpan.className = 'prospect-school';
+            schoolSpan.textContent = prospect.school;
+            meta.appendChild(schoolSpan);
+
+            var classSpan = document.createElement('span');
+            classSpan.textContent = 'Class of ' + prospect.classYear;
+            meta.appendChild(classSpan);
+
+            var stateSpan = document.createElement('span');
+            stateSpan.textContent = prospect.state;
+            meta.appendChild(stateSpan);
+
+            var gradesDiv = document.createElement('div');
+            gradesDiv.className = 'grades-grid';
+
+            var gradeLabels = isPitcher(prospect.position)
+                ? [['fb', 'FB'], ['cb', 'CB'], ['sl', 'SL'], ['ch', 'CH'], ['cmd', 'CMD']]
+                : [['hit', 'HIT'], ['pwr', 'PWR'], ['spd', 'SPD'], ['fld', 'FLD'], ['arm', 'ARM']];
+
+            for (var i = 0; i < gradeLabels.length; i++) {
+                var key = gradeLabels[i][0];
+                var label = gradeLabels[i][1];
+                var grade = prospect.grades[key];
+
+                var gradeItem = document.createElement('div');
+                gradeItem.className = 'grade-item';
+
+                var gradeValue = document.createElement('div');
+                gradeValue.className = 'grade-value ' + getGradeClass(grade);
+                gradeValue.textContent = grade;
+
+                var gradeLabel = document.createElement('div');
+                gradeLabel.className = 'grade-label';
+                gradeLabel.textContent = label;
+
+                gradeItem.appendChild(gradeValue);
+                gradeItem.appendChild(gradeLabel);
+                gradesDiv.appendChild(gradeItem);
+            }
+
+            var statsDiv = document.createElement('div');
+            statsDiv.className = 'prospect-stats';
+
+            var statLabels = isPitcher(prospect.position)
+                ? [['era', 'ERA'], ['so', 'K'], ['ip', 'IP']]
+                : [['avg', 'AVG'], ['hr', 'HR'], ['sb', 'SB']];
+
+            for (var j = 0; j < statLabels.length; j++) {
+                var sKey = statLabels[j][0];
+                var sLabel = statLabels[j][1];
+
+                var statItem = document.createElement('div');
+                statItem.className = 'stat-item';
+
+                var statValue = document.createElement('div');
+                statValue.className = 'stat-value';
+                statValue.textContent = prospect.stats[sKey];
+
+                var statLabel = document.createElement('div');
+                statLabel.className = 'stat-label';
+                statLabel.textContent = sLabel;
+
+                statItem.appendChild(statValue);
+                statItem.appendChild(statLabel);
+                statsDiv.appendChild(statItem);
+            }
+
+            var commitDiv = document.createElement('div');
+            commitDiv.className = 'stat-item';
+            var commitValue = document.createElement('div');
+            commitValue.className = 'stat-value';
+            commitValue.textContent = prospect.commit || 'Open';
+            commitValue.style.color = prospect.commit ? '#2E7D32' : '#F9A825';
+            var commitLabel = document.createElement('div');
+            commitLabel.className = 'stat-label';
+            commitLabel.textContent = 'COMMIT';
+            commitDiv.appendChild(commitValue);
+            commitDiv.appendChild(commitLabel);
+            statsDiv.appendChild(commitDiv);
+
+            card.appendChild(header);
+            card.appendChild(meta);
+            card.appendChild(gradesDiv);
+            card.appendChild(statsDiv);
+
+            card.addEventListener('click', function() { showDetail(prospect); });
+
+            return card;
+        }
+
+        function showDetail(prospect) {
+            var modal = document.getElementById('detailModal');
+            var body = document.getElementById('modalBody');
+
+            while (body.firstChild) { body.removeChild(body.firstChild); }
+
+            var header = document.createElement('div');
+            header.className = 'prospect-header';
+
+            var nameDiv = document.createElement('div');
+            var name = document.createElement('span');
+            name.className = 'prospect-name';
+            name.style.fontSize = '1.5rem';
+            name.textContent = prospect.name;
+            nameDiv.appendChild(name);
+
+            var rank = document.createElement('span');
+            rank.className = 'rank-badge ' + getRankClass(prospect.nationalRank);
+            rank.textContent = '#' + prospect.nationalRank + ' National';
+            nameDiv.appendChild(rank);
+
+            var pos = document.createElement('span');
+            pos.className = 'prospect-position';
+            pos.textContent = prospect.position;
+
+            header.appendChild(nameDiv);
+            header.appendChild(pos);
+            body.appendChild(header);
+
+            var meta = document.createElement('div');
+            meta.className = 'prospect-meta';
+            meta.style.marginTop = '12px';
+
+            var infoItems = [
+                prospect.school, 'Class of ' + prospect.classYear, prospect.state,
+                prospect.height + ' / ' + prospect.weight + ' lbs',
+                'B/T: ' + prospect.bats + '/' + prospect.throws
+            ];
+            for (var i = 0; i < infoItems.length; i++) {
+                var span = document.createElement('span');
+                span.textContent = infoItems[i];
+                if (i === 0) span.className = 'prospect-school';
+                meta.appendChild(span);
+            }
+            body.appendChild(meta);
+
+            var report = document.createElement('div');
+            report.className = 'scouting-report';
+
+            var reportSection = document.createElement('div');
+            reportSection.className = 'report-section';
+            var reportTitle = document.createElement('div');
+            reportTitle.className = 'report-title';
+            reportTitle.textContent = 'Scouting Report';
+            var reportText = document.createElement('div');
+            reportText.className = 'report-text';
+            reportText.textContent = prospect.report;
+            reportSection.appendChild(reportTitle);
+            reportSection.appendChild(reportText);
+            report.appendChild(reportSection);
+
+            if (prospect.commit) {
+                var commitSection = document.createElement('div');
+                commitSection.className = 'report-section';
+                var commitTitle = document.createElement('div');
+                commitTitle.className = 'report-title';
+                commitTitle.textContent = 'Commitment';
+                var commitText = document.createElement('div');
+                commitText.className = 'report-text';
+                commitText.textContent = 'Committed to ' + prospect.commit + (prospect.conference ? ' (' + prospect.conference.toUpperCase() + ')' : '');
+                commitSection.appendChild(commitTitle);
+                commitSection.appendChild(commitText);
+                report.appendChild(commitSection);
+            }
+
+            body.appendChild(report);
+
+            var timeline = document.createElement('div');
+            timeline.className = 'timeline';
+            var timelineTitle = document.createElement('div');
+            timelineTitle.className = 'report-title';
+            timelineTitle.textContent = 'Timeline';
+            timeline.appendChild(timelineTitle);
+
+            for (var t = 0; t < prospect.timeline.length; t++) {
+                var item = document.createElement('div');
+                item.className = 'timeline-item';
+                var date = document.createElement('span');
+                date.className = 'timeline-date';
+                date.textContent = prospect.timeline[t].date;
+                var event = document.createElement('span');
+                event.className = 'timeline-event';
+                event.textContent = prospect.timeline[t].event;
+                item.appendChild(date);
+                item.appendChild(event);
+                timeline.appendChild(item);
+            }
+            body.appendChild(timeline);
+
+            modal.classList.add('active');
+        }
+
+        function filterProspects() {
+            var search = document.getElementById('searchInput').value.toLowerCase();
+            var classFilter = document.getElementById('classFilter').value;
+            var positionFilter = document.getElementById('positionFilter').value;
+            var activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+
+            var filtered = prospects.filter(function(p) {
+                var matchesSearch = !search ||
+                    p.name.toLowerCase().indexOf(search) !== -1 ||
+                    p.school.toLowerCase().indexOf(search) !== -1 ||
+                    p.state.toLowerCase().indexOf(search) !== -1;
+                var matchesClass = !classFilter || p.classYear === classFilter;
+                var matchesPosition = !positionFilter || p.position === positionFilter;
+
+                var matchesFilter = true;
+                if (activeFilter === 'top50') matchesFilter = p.nationalRank <= 50;
+                else if (activeFilter === 'texas') matchesFilter = p.state === 'TX';
+                else if (activeFilter === 'sec') matchesFilter = p.conference === 'sec';
+                else if (activeFilter === 'big12') matchesFilter = p.conference === 'big12';
+                else if (activeFilter === 'uncommitted') matchesFilter = !p.commit;
+
+                return matchesSearch && matchesClass && matchesPosition && matchesFilter;
+            });
+
+            var grid = document.getElementById('prospectGrid');
+            var empty = document.getElementById('emptyState');
+
+            while (grid.firstChild) { grid.removeChild(grid.firstChild); }
+
+            if (filtered.length === 0) {
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                filtered.sort(function(a, b) { return a.nationalRank - b.nationalRank; });
+                for (var i = 0; i < filtered.length; i++) {
+                    grid.appendChild(renderProspectCard(filtered[i]));
+                }
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterProspects);
+        document.getElementById('classFilter').addEventListener('change', filterProspects);
+        document.getElementById('positionFilter').addEventListener('change', filterProspects);
+
+        document.querySelectorAll('.filter-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                filterProspects();
+            });
+        });
+
+        document.getElementById('modalClose').addEventListener('click', function() {
+            document.getElementById('detailModal').classList.remove('active');
+        });
+
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+
+        filterProspects();
+    </script>
+</body>
+</html>

@@ -307,9 +307,9 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     if (path === '/tools/win-probability' || path === '/tools/win-probability/') {
       return serveAsset(env, 'origin/tools/win-probability.html', 'text/html', corsHeaders);
     }
-    // Player Comparison
+    // Player Comparison (Pro)
     if (path === '/tools/player-comparison' || path === '/tools/player-comparison/') {
-      return serveAsset(env, 'origin/tools/player-comparison.html', 'text/html', corsHeaders);
+      return serveToolAsset(env, 'origin/tools/player-comparison/index.html', 'text/html', corsHeaders, request);
     }
     // Draft Pick Value Calculator (Pro)
     if (path === '/tools/draft-value' || path === '/tools/draft-value/') {
@@ -318,6 +318,22 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     // Schedule Strength Analyzer (Pro)
     if (path === '/tools/schedule-strength' || path === '/tools/schedule-strength/') {
       return serveToolAsset(env, 'origin/tools/schedule-strength/index.html', 'text/html', corsHeaders, request);
+    }
+    // NIL Valuation Calculator (Pro)
+    if (path === '/tools/nil-valuation' || path === '/tools/nil-valuation/') {
+      return serveToolAsset(env, 'origin/tools/nil-valuation/index.html', 'text/html', corsHeaders, request);
+    }
+    // Prospect Tracker (Pro)
+    if (path === '/tools/prospect-tracker' || path === '/tools/prospect-tracker/') {
+      return serveToolAsset(env, 'origin/tools/prospect-tracker/index.html', 'text/html', corsHeaders, request);
+    }
+    // Pitch Arsenal Analyzer (Pro)
+    if (path === '/tools/pitch-arsenal' || path === '/tools/pitch-arsenal/') {
+      return serveToolAsset(env, 'origin/tools/pitch-arsenal/index.html', 'text/html', corsHeaders, request);
+    }
+    // Recruiting Tracker (Pro)
+    if (path === '/tools/recruiting-tracker' || path === '/tools/recruiting-tracker/') {
+      return serveToolAsset(env, 'origin/tools/recruiting-tracker/index.html', 'text/html', corsHeaders, request);
     }
     // Serve tool assets (JS, CSS)
     if (path.startsWith('/tools/')) {
