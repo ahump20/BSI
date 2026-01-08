@@ -18,7 +18,7 @@
  * Migration: Functions are being extracted to modules for better
  * maintainability. Import from './src/workers/api/index.js' when ready.
  *
- * @version 2.2.0
+ * @version 2.3.0
  * @updated 2025-01-08
  */
 
@@ -130,6 +130,9 @@ export default {
     // === STATIC PAGES ===
     if (path === '/about' || path === '/about.html') {
       return serveAsset(env, 'origin/about.html', 'text/html', corsHeaders);
+    }
+    if (path === '/pricing' || path === '/pricing.html') {
+      return serveAsset(env, 'origin/pricing.html', 'text/html', corsHeaders);
     }
     if (path === '/scores' || path === '/scores.html') {
       return serveAsset(env, 'origin/scores.html', 'text/html', corsHeaders);
@@ -1717,11 +1720,6 @@ async function serveToolStaticAsset(env, path, corsHeaders) {
 
 // === ANALYTICS HANDLER ===
 async function handleAnalyticsEvent(request, env, corsHeaders) {
-  // #region agent log
-  const bindingsStatus = {hasAnalyticsKV:!!env.ANALYTICS_KV,hasAnalytics:!!env.ANALYTICS,analyticsKVType:typeof env.ANALYTICS_KV,analyticsType:typeof env.ANALYTICS};
-  console.log('[DEBUG] handleAnalyticsEvent entry - bindings:', bindingsStatus);
-  fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1252',message:'handleAnalyticsEvent entry',data:bindingsStatus,timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   try {
     const body = await request.text();
     const event = JSON.parse(body);
@@ -1742,66 +1740,26 @@ async function handleAnalyticsEvent(request, env, corsHeaders) {
     };
 
     // Store in KV for batch processing (if KV is bound)
-    // #region agent log
-    console.log('[DEBUG] Before ANALYTICS_KV check:', {checkResult:!!env.ANALYTICS_KV,eventName:event.event});
-    fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1275',message:'Before ANALYTICS_KV check',data:{checkResult:!!env.ANALYTICS_KV,eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{});
-    // #endregion
     if (env.ANALYTICS_KV) {
-      // #region agent log
-      console.log('[DEBUG] ANALYTICS_KV write attempted:', {eventName:event.event});
-      fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1281',message:'ANALYTICS_KV write attempted',data:{eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{});
-      // #endregion
       const key = `event:${Date.now()}:${crypto.randomUUID()}`;
       await env.ANALYTICS_KV.put(key, JSON.stringify(enrichedEvent), {
         expirationTtl: 86400 * 7 // 7 days
       });
-      // #region agent log
-      console.log('[DEBUG] ANALYTICS_KV write completed:', {key,eventName:event.event});
-      fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1288',message:'ANALYTICS_KV write completed',data:{key,eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{});
-      // #endregion
-    } else {
-      // #region agent log
-      console.log('[DEBUG] ANALYTICS_KV skipped - binding not available:', {eventName:event.event});
-      fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1292',message:'ANALYTICS_KV skipped - binding not available',data:{eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{});
-      // #endregion
     }
 
     // Log to Cloudflare Analytics Engine (if bound)
-    // #region agent log
-    console.log('[DEBUG] Before ANALYTICS check:', {checkResult:!!env.ANALYTICS,eventName:event.event});
-    fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1298',message:'Before ANALYTICS check',data:{checkResult:!!env.ANALYTICS,eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{});
-    // #endregion
     if (env.ANALYTICS) {
-      // #region agent log
-      console.log('[DEBUG] ANALYTICS write attempted:', {eventName:event.event});
-      fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1302',message:'ANALYTICS write attempted',data:{eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{});
-      // #endregion
       env.ANALYTICS.writeDataPoint({
         blobs: [event.event, event.properties?.tool || 'unknown', enrichedEvent.country || 'unknown'],
         doubles: [1], // event count
         indexes: [event.event]
       });
-      // #region agent log
-      console.log('[DEBUG] ANALYTICS write completed:', {eventName:event.event});
-      fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1310',message:'ANALYTICS write completed',data:{eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H2'})}).catch(()=>{});
-      // #endregion
-    } else {
-      // #region agent log
-      console.log('[DEBUG] ANALYTICS skipped - binding not available:', {eventName:event.event});
-      fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1314',message:'ANALYTICS skipped - binding not available',data:{eventName:event.event},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H1'})}).catch(()=>{});
-      // #endregion
     }
 
     // Always return success (analytics should never block)
-    // #region agent log
-    const finalStatus = {eventName:event.event,kvSkipped:!env.ANALYTICS_KV,analyticsSkipped:!env.ANALYTICS};
-    console.log('[DEBUG] handleAnalyticsEvent returning success:', finalStatus);
-    fetch('http://127.0.0.1:7242/ingest/c7de4ae1-6da5-40ba-af46-1bd4e8490c58',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'worker.js:1320',message:'handleAnalyticsEvent returning success',data:finalStatus,timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'H3'})}).catch(()=>{});
-    // #endregion
     return jsonResponse({ success: true }, 200, corsHeaders);
   } catch (e) {
     // Fail silently for analytics - return success anyway
-    console.error('Analytics error:', e);
     return jsonResponse({ success: true }, 200, corsHeaders);
   }
 }
