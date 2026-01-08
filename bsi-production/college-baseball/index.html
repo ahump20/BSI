@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College baseball coverage from Blaze Sports Intel. The D1 coverage ESPN should have built. Live scores, rankings, and analytics for every program.">
+  <title>College Baseball | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(191, 87, 0, 0.2) 0%, transparent 70%);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-bottom: 1rem;
+    }
+    .page-header h1 span {
+      display: block;
+      color: var(--bsi-burnt-orange);
+    }
+    .page-header p {
+      color: rgba(250, 248, 245, 0.7);
+      font-size: 1.125rem;
+      max-width: 600px;
+    }
+
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.7);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 4rem 2rem;
+      background: var(--bsi-midnight);
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .featured-team {
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), var(--bsi-charcoal));
+      border: 1px solid var(--bsi-burnt-orange);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+    .featured-team h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 0.5rem;
+    }
+    .featured-team p {
+      color: rgba(250, 248, 245, 0.8);
+      margin-bottom: 1.5rem;
+    }
+    .featured-team .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+    .featured-team .stat {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+    .featured-team .stat-value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--bsi-cream);
+    }
+    .featured-team .stat-label {
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .quick-link {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+    }
+    .quick-link:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-2px);
+    }
+    .quick-link h4 {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .quick-link p {
+      color: rgba(250, 248, 245, 0.6);
+      font-size: 0.875rem;
+    }
+
+    .conference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+    .conference-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .conference-card:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-2px);
+    }
+    .conference-card h4 {
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .page-header { padding: 6rem 1rem 2rem; }
+      .content { padding: 2rem 1rem; }
+      .sub-nav { top: 52px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball" class="active">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>
+          College Baseball
+          <span>The Coverage ESPN Should Have Built</span>
+        </h1>
+        <p>Live scores, rankings, and analytics for every D1 program. Real coverage for the sport that deserves better.</p>
+      </div>
+    </section>
+
+    <nav class="sub-nav">
+      <div class="sub-nav-inner">
+        <a href="/college-baseball" class="active">Overview</a>
+        <a href="/college-baseball/scores">Scores</a>
+        <a href="/college-baseball/standings">Standings</a>
+        <a href="/college-baseball/rankings">Rankings</a>
+        <a href="/college-baseball/teams">Teams</a>
+        <a href="/college-baseball/players">Players</a>
+        <a href="/college-baseball/transfer-portal">Portal</a>
+        <a href="/college-baseball/news">News</a>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="content-inner">
+
+        <div class="featured-team">
+          <h3>Texas Longhorns</h3>
+          <p>Your featured team. In-depth analytics, roster breakdowns, and game-by-game projections.</p>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value">--</div>
+              <div class="stat-label">Wins</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">--</div>
+              <div class="stat-label">Losses</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">--</div>
+              <div class="stat-label">RPI</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">--</div>
+              <div class="stat-label">Rank</div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="section-title">Quick Access</h2>
+        <div class="quick-links">
+          <a href="/college-baseball/scores" class="quick-link">
+            <h4>Live Scores</h4>
+            <p>Today's games</p>
+          </a>
+          <a href="/college-baseball/rankings" class="quick-link">
+            <h4>Rankings</h4>
+            <p>D1Baseball, coaches poll</p>
+          </a>
+          <a href="/college-baseball/transfer-portal" class="quick-link">
+            <h4>Transfer Portal</h4>
+            <p>Portal tracker &amp; intel</p>
+          </a>
+          <a href="/nil-valuation" class="quick-link">
+            <h4>NIL Valuation</h4>
+            <p>Player value estimates</p>
+          </a>
+        </div>
+
+        <h2 class="section-title">Conferences</h2>
+        <div class="conference-grid">
+          <a href="/college-baseball/conferences/sec" class="conference-card"><h4>SEC</h4></a>
+          <a href="/college-baseball/conferences/acc" class="conference-card"><h4>ACC</h4></a>
+          <a href="/college-baseball/conferences/big-12" class="conference-card"><h4>Big 12</h4></a>
+          <a href="/college-baseball/conferences/big-ten" class="conference-card"><h4>Big Ten</h4></a>
+          <a href="/college-baseball/conferences/pac-12" class="conference-card"><h4>Pac-12</h4></a>
+          <a href="/college-baseball/conferences" class="conference-card"><h4>All Conferences</h4></a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to blaze the path less beaten.</p>
+  </footer>
+</body>
+</html>

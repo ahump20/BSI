@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sports intelligence tools from Blaze Sports Intel. NIL valuation, Monte Carlo projections, and analytics built for fans and scouts.">
+  <title>Tools | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(201, 162, 39, 0.15) 0%, transparent 70%);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-bottom: 1rem;
+    }
+    .page-header p {
+      color: rgba(250, 248, 245, 0.7);
+      font-size: 1.125rem;
+      max-width: 600px;
+    }
+
+    .content {
+      padding: 4rem 2rem;
+      background: var(--bsi-midnight);
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .tool-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s;
+    }
+    .tool-card:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    .tool-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .tool-card .tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(191, 87, 0, 0.2);
+      color: var(--bsi-burnt-orange);
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    .tool-card p {
+      color: rgba(250, 248, 245, 0.7);
+      font-size: 0.9375rem;
+      margin-bottom: 1.5rem;
+    }
+    .tool-card .action {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+    }
+    .tool-card .action:hover {
+      color: var(--bsi-ember);
+    }
+    .tool-card.coming-soon {
+      opacity: 0.6;
+    }
+    .tool-card.coming-soon:hover {
+      transform: none;
+      border-color: rgba(191, 87, 0, 0.2);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      margin-top: 3rem;
+    }
+    .section-title:first-child {
+      margin-top: 0;
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .page-header { padding: 6rem 1rem 2rem; }
+      .content { padding: 2rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools" class="active">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>Tools</h1>
+        <p>Analytics and intelligence tools built for fans, scouts, and coaches. Real insights, not gimmicks.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="content-inner">
+
+        <h2 class="section-title">Analytics</h2>
+        <div class="tools-grid">
+          <a href="/nil-valuation" class="tool-card">
+            <h3>NIL Valuation</h3>
+            <span class="tag">College Sports</span>
+            <p>Estimate player market value based on performance metrics, social following, and market factors.</p>
+            <span class="action">Open Tool &rarr;</span>
+          </a>
+          <a href="/monte-carlo" class="tool-card">
+            <h3>Monte Carlo Projections</h3>
+            <span class="tag">Predictions</span>
+            <p>Run thousands of simulations to project game outcomes, playoff odds, and championship probabilities.</p>
+            <span class="action">Open Tool &rarr;</span>
+          </a>
+          <div class="tool-card coming-soon">
+            <h3>Player Comparisons</h3>
+            <span class="tag">Coming Soon</span>
+            <p>Compare players across eras and leagues with normalized statistics and advanced metrics.</p>
+            <span class="action">Coming Soon</span>
+          </div>
+        </div>
+
+        <h2 class="section-title">Data & Research</h2>
+        <div class="tools-grid">
+          <a href="/transfer-portal" class="tool-card">
+            <h3>Transfer Portal Tracker</h3>
+            <span class="tag">College Baseball</span>
+            <p>Track portal entries, commitments, and player movements across D1 baseball.</p>
+            <span class="action">Open Tool &rarr;</span>
+          </a>
+          <div class="tool-card coming-soon">
+            <h3>Draft Board</h3>
+            <span class="tag">Coming Soon</span>
+            <p>MLB draft prospects with scouting grades, projections, and historical comparisons.</p>
+            <span class="action">Coming Soon</span>
+          </div>
+          <div class="tool-card coming-soon">
+            <h3>API Access</h3>
+            <span class="tag">Enterprise</span>
+            <p>Programmatic access to BSI data for media companies, researchers, and developers.</p>
+            <span class="action">Coming Soon</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to blaze the path less beaten.</p>
+  </footer>
+</body>
+</html>

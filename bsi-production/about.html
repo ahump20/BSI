@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="About Blaze Sports Intel. Born in Memphis on Texas soil. Built because ESPN forgot college baseball matters.">
+  <title>About | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--bsi-burnt-orange); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--bsi-ember); }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.8);
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+
+    .hero {
+      padding: 10rem 2rem 6rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(191, 87, 0, 0.1) 0%, transparent 60%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+    }
+    .hero .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 4rem 2rem;
+      background: var(--bsi-midnight);
+    }
+    .content-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .section {
+      margin-bottom: 4rem;
+    }
+    .section h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--bsi-cream);
+    }
+    .section p {
+      color: rgba(250, 248, 245, 0.85);
+      margin-bottom: 1.25rem;
+    }
+
+    .origin-story {
+      background: var(--bsi-charcoal);
+      border-left: 4px solid var(--bsi-burnt-orange);
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 0 12px 12px 0;
+    }
+    .origin-story p {
+      font-style: italic;
+      color: rgba(250, 248, 245, 0.9);
+    }
+    .origin-story .attribution {
+      margin-top: 1rem;
+      font-style: normal;
+      font-size: 0.9rem;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .value-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .value-card h3 {
+      font-family: var(--font-ui);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--bsi-ember);
+    }
+    .value-card p {
+      font-size: 0.95rem;
+      color: rgba(250, 248, 245, 0.7);
+      margin-bottom: 0;
+    }
+
+    .teams-section {
+      background: var(--bsi-charcoal);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    .teams-section h3 {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.5);
+      margin-bottom: 1rem;
+    }
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .team-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+    .team-item .league {
+      font-size: 0.75rem;
+      color: var(--bsi-burnt-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .team-item .name {
+      font-family: var(--font-ui);
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .cta-section {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, var(--bsi-charcoal), var(--bsi-midnight));
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .cta-section p {
+      color: rgba(250, 248, 245, 0.7);
+      margin-bottom: 2rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn-cta {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      color: white;
+      border-radius: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(191, 87, 0, 0.4);
+      color: white;
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .hero { padding: 7rem 1rem 3rem; }
+      .content { padding: 2rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <h1>Born on Texas Soil</h1>
+        <p class="tagline">Born to blaze the path less beaten.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="content-inner">
+
+        <div class="section">
+          <h2>The Origin</h2>
+          <p>I was born August 17, 1995—same day as Davy Crockett—in a Memphis hospital, but my dad put Texas soil under that bed. The soil came from West Columbia, birthplace of the Republic of Texas. The doctor told my parents, "You know you ain't the first to do this—but they've ALL been from Texas."</p>
+          <p>The news made the local paper in El Campo—my father's hometown, where my grandad Bill founded banks after growing up dirt poor in West Texas and meeting my grandma Helen at Hardin-Simmons following his service in WWII.</p>
+
+          <div class="origin-story">
+            <p>"Texas isn't just a place—it's a covenant. Treat people right. Never let anyone stop dreaming beyond the horizon. Root for underdogs."</p>
+            <div class="attribution">— The Blaze Philosophy</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Why This Exists</h2>
+          <p>ESPN treats college baseball like an afterthought. Fans deserve better. So I built it myself.</p>
+          <p>After graduating from UT Austin and Full Sail, I spent time at Northwestern Mutual—top 10% nationally—but I got tired of waiting for someone else to fix sports coverage. The platforms that should serve fans instead serve networks. We're here to change that.</p>
+          <p>The name "Blaze Sports Intel" comes from my dog—a dachshund named Blaze after the first baseball team I played on: the Bartlett Blaze.</p>
+        </div>
+
+        <div class="section">
+          <h2>What We Believe</h2>
+          <div class="values-grid">
+            <div class="value-card">
+              <h3>Authenticity Over Polish</h3>
+              <p>Real insights from real analysis. No corporate speak, no filler.</p>
+            </div>
+            <div class="value-card">
+              <h3>Fans First</h3>
+              <p>Coverage designed for people who care, not broadcast schedules.</p>
+            </div>
+            <div class="value-card">
+              <h3>Grit Over Flash</h3>
+              <p>Substance matters more than style. Results over aesthetics.</p>
+            </div>
+            <div class="value-card">
+              <h3>Question Everything</h3>
+              <p>Especially institutions that ignore what matters.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="teams-section">
+          <h3>Our Teams</h3>
+          <div class="teams-grid">
+            <div class="team-item">
+              <div class="league">MLB</div>
+              <div class="name">St. Louis Cardinals</div>
+            </div>
+            <div class="team-item">
+              <div class="league">NFL</div>
+              <div class="name">Tennessee Titans</div>
+            </div>
+            <div class="team-item">
+              <div class="league">NBA</div>
+              <div class="name">Memphis Grizzlies</div>
+            </div>
+            <div class="team-item">
+              <div class="league">NCAA</div>
+              <div class="name">Texas Longhorns</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>The Athletic Background</h2>
+          <p>First time at RB in 7th grade: 70 yards to the house, first play of the season. At Boerne Champion High School, I scored the first touchdown against our big rival Kerrville Tivy. Against Marble Falls, I scored on the first play via screen pass—the play landed on ESPN.</p>
+          <p>In baseball, I pitched a perfect game. 27 up, 27 down. With the South Texas Sliders, I toured Texas Tech and started that day against the #1 team in the country on Tech's field.</p>
+          <p>My family has held the same four season tickets to Longhorn football for 40-50 years. I was at the Ricky Williams record-breaking game against A&M.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <h2>Ready to Join?</h2>
+      <p>Get access to analytics that ESPN won't give you. Coverage that actually matters.</p>
+      <a href="/signup" class="btn-cta">Start Your Free Trial</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to blaze the path less beaten.</p>
+  </footer>
+</body>
+</html>

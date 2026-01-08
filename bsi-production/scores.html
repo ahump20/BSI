@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Live scores from MLB, NFL, NBA, and College Baseball. Real-time updates from Blaze Sports Intel.">
+  <title>Live Scores | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --bsi-success: #2E7D32;
+      --bsi-live: #C62828;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 8rem 2rem 3rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 0.5rem;
+    }
+    .page-header p {
+      color: rgba(250, 248, 245, 0.6);
+    }
+
+    .league-tabs {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .league-tabs-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+    }
+    .league-tab {
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: rgba(250, 248, 245, 0.7);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .league-tab:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-cream);
+    }
+    .league-tab.active {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+      color: white;
+    }
+
+    .content {
+      padding: 3rem 2rem;
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .scores-section {
+      margin-bottom: 3rem;
+    }
+    .scores-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--bsi-live);
+      border-radius: 4px;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .live-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+
+    .score-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.2s;
+    }
+    .score-card:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-2px);
+    }
+    .score-card.live {
+      border-color: var(--bsi-live);
+      box-shadow: 0 0 20px rgba(198, 40, 40, 0.2);
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+    .score-status {
+      padding: 0.2rem 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    .score-status.live {
+      background: var(--bsi-live);
+      color: white;
+    }
+    .score-status.final {
+      background: var(--bsi-success);
+      color: white;
+    }
+
+    .score-teams {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .score-team {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .team-name {
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .team-score {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .team-score.winner {
+      color: var(--bsi-gold);
+    }
+
+    .no-games {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+    .no-games h3 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: rgba(250, 248, 245, 0.7);
+    }
+
+    .loading-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      color: rgba(250, 248, 245, 0.5);
+      font-family: var(--font-ui);
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .page-header { padding: 6rem 1rem 2rem; }
+      .content { padding: 2rem 1rem; }
+      .league-tabs { top: 52px; }
+      .scores-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>Live Scores</h1>
+        <p>Real-time updates across all leagues</p>
+      </div>
+    </section>
+
+    <nav class="league-tabs">
+      <div class="league-tabs-inner">
+        <button class="league-tab active" data-league="all">All Sports</button>
+        <button class="league-tab" data-league="mlb">MLB</button>
+        <button class="league-tab" data-league="nfl">NFL</button>
+        <button class="league-tab" data-league="nba">NBA</button>
+        <button class="league-tab" data-league="ncaa">College</button>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="content-inner">
+
+        <div class="scores-section" id="live-games">
+          <h2>
+            Live Now
+            <span class="live-badge">Live</span>
+          </h2>
+          <div class="scores-grid" id="live-scores">
+            <div class="loading-card">Checking for live games...</div>
+          </div>
+        </div>
+
+        <div class="scores-section" id="recent-games">
+          <h2>Recent Games</h2>
+          <div class="scores-grid" id="recent-scores">
+            <div class="loading-card">Loading recent scores...</div>
+          </div>
+        </div>
+
+        <div class="no-games" id="no-games-message" style="display: none;">
+          <h3>No Games Right Now</h3>
+          <p>Check back during game time for live scores and updates.</p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to blaze the path less beaten.</p>
+  </footer>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.league-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.league-tab').forEach(function(t) {
+          t.classList.remove('active');
+        });
+        tab.classList.add('active');
+        filterGames(tab.dataset.league);
+      });
+    });
+
+    function filterGames(league) {
+      console.log('Filtering to:', league);
+    }
+
+    function createScoreCard(game) {
+      var card = document.createElement('div');
+      card.className = 'score-card' + (game.isLive ? ' live' : '');
+
+      var header = document.createElement('div');
+      header.className = 'score-header';
+
+      var time = document.createElement('span');
+      time.textContent = game.time;
+      header.appendChild(time);
+
+      var status = document.createElement('span');
+      status.className = 'score-status' + (game.isLive ? ' live' : game.isFinal ? ' final' : '');
+      status.textContent = game.status;
+      header.appendChild(status);
+
+      card.appendChild(header);
+
+      var teams = document.createElement('div');
+      teams.className = 'score-teams';
+
+      [game.away, game.home].forEach(function(team, idx) {
+        var teamRow = document.createElement('div');
+        teamRow.className = 'score-team';
+
+        var name = document.createElement('span');
+        name.className = 'team-name';
+        name.textContent = team.name;
+        teamRow.appendChild(name);
+
+        var score = document.createElement('span');
+        score.className = 'team-score' + (team.isWinner ? ' winner' : '');
+        score.textContent = team.score;
+        teamRow.appendChild(score);
+
+        teams.appendChild(teamRow);
+      });
+
+      card.appendChild(teams);
+      return card;
+    }
+
+    async function loadScores() {
+      // Scores will be fetched from API in production
+      console.log('Loading scores from API...');
+    }
+
+    loadScores();
+  </script>
+</body>
+</html>
