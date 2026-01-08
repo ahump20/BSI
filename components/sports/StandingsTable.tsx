@@ -53,9 +53,26 @@ interface NBAConference {
   teams?: NBATeamRaw[];
 }
 
+// MLB API response structure
+interface MLBTeamRaw {
+  teamName?: string;
+  teamAbbr?: string;
+  wins?: number;
+  losses?: number;
+  winPercentage?: number;
+  gamesBack?: number;
+  streakCode?: string;
+  division?: string;
+  league?: string;
+}
+
 // Generic API response that handles various structures
 interface APIResponse {
-  standings?: TeamStanding[] | Record<string, Record<string, NFLTeamRaw[]>> | NBAConference[];
+  standings?:
+    | TeamStanding[]
+    | Record<string, Record<string, NFLTeamRaw[]>>
+    | NBAConference[]
+    | MLBTeamRaw[];
   rawData?: NFLTeamRaw[];
   data?: TeamStanding[];
 }
@@ -74,6 +91,37 @@ function parseNFLStandings(rawData: NFLTeamRaw[]): TeamStanding[] {
       pct: team.Percentage ? team.Percentage.toFixed(3).replace(/^0/, '') : '.000',
       streak: String(team.Streak || '-'),
     }));
+}
+
+function parseMLBStandings(rawData: MLBTeamRaw[]): TeamStanding[] {
+  // Sort by wins descending (or winPercentage if available)
+  return rawData
+    .sort((a, b) => {
+      const pctA = a.winPercentage ?? (a.wins && a.losses ? a.wins / (a.wins + a.losses) : 0);
+      const pctB = b.winPercentage ?? (b.wins && b.losses ? b.wins / (b.wins + b.losses) : 0);
+      return pctB - pctA;
+    })
+    .slice(0, 10)
+    .map((team, index) => {
+      const wins = team.wins ?? 0;
+      const losses = team.losses ?? 0;
+      const pct = team.winPercentage
+        ? team.winPercentage.toFixed(3).replace(/^0/, '')
+        : wins + losses > 0
+          ? (wins / (wins + losses)).toFixed(3).replace(/^0/, '')
+          : '.000';
+
+      return {
+        rank: index + 1,
+        team: team.teamName || 'Unknown',
+        abbreviation: team.teamAbbr || (team.teamName?.substring(0, 3).toUpperCase() ?? 'UNK'),
+        wins,
+        losses,
+        pct,
+        gb: team.gamesBack !== undefined ? String(team.gamesBack) : '-',
+        streak: team.streakCode || '-',
+      };
+    });
 }
 
 function parseNBAStandings(conferences: NBAConference[]): TeamStanding[] {
@@ -146,7 +194,16 @@ async function fetchStandings(sport: Sport): Promise<TeamStanding[]> {
       }
     }
 
-    // Fallback to direct array (MLB, NCAA, or simple format)
+    // Handle MLB standings with different field names
+    if (sport === 'mlb' && data.standings && Array.isArray(data.standings)) {
+      const standings = data.standings as MLBTeamRaw[];
+      // Check if it looks like MLB raw format (has teamName or teamAbbr)
+      if (standings[0] && ('teamName' in standings[0] || 'teamAbbr' in standings[0])) {
+        return parseMLBStandings(standings);
+      }
+    }
+
+    // Fallback to direct array (NCAA or simple format that already matches TeamStanding)
     if (data.standings && Array.isArray(data.standings)) {
       return data.standings as TeamStanding[];
     }
