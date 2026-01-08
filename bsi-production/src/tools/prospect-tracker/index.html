@@ -288,6 +288,17 @@
             <button class="filter-btn" data-filter="uncommitted">Uncommitted</button>
         </div>
 
+        <!-- Live NCAA Rankings Section -->
+        <div style="background: var(--charcoal); border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #333;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="color: var(--ember); font-size: 1.1rem; margin: 0;">📊 Top College Programs (Live)</h3>
+                <span id="rankingsSource" style="color: #666; font-size: 0.8rem;"></span>
+            </div>
+            <div id="collegeRankings" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
+                <div style="text-align: center; color: #777; padding: 20px; width: 100%;">Loading rankings...</div>
+            </div>
+        </div>
+
         <div class="prospect-grid" id="prospectGrid"></div>
         <div class="empty-state hidden" id="emptyState">No prospects match your search criteria.</div>
     </div>
@@ -724,6 +735,61 @@
         });
 
         filterProspects();
+
+        // Load live NCAA baseball rankings using safe DOM methods
+        function loadCollegeRankings() {
+            fetch('/api/ncaa/baseball/rankings')
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var container = document.getElementById('collegeRankings');
+                    while (container.firstChild) { container.removeChild(container.firstChild); }
+
+                    if (data.rankings && data.rankings.length > 0) {
+                        for (var i = 0; i < Math.min(data.rankings.length, 10); i++) {
+                            var team = data.rankings[i];
+
+                            var card = document.createElement('div');
+                            card.style.cssText = 'flex-shrink: 0; background: var(--midnight); padding: 12px 16px; border-radius: 8px; text-align: center; min-width: 100px;';
+
+                            if (team.logo) {
+                                var img = document.createElement('img');
+                                img.src = team.logo;
+                                img.alt = team.team;
+                                img.style.cssText = 'width: 40px; height: 40px; object-fit: contain; margin-bottom: 6px;';
+                                card.appendChild(img);
+                            }
+
+                            var rankDiv = document.createElement('div');
+                            rankDiv.style.cssText = 'font-size: 0.75rem; color: var(--gold); font-weight: 700;';
+                            rankDiv.textContent = '#' + team.rank;
+                            card.appendChild(rankDiv);
+
+                            var nameDiv = document.createElement('div');
+                            nameDiv.style.cssText = 'font-size: 0.9rem; font-weight: 600; color: var(--cream);';
+                            nameDiv.textContent = team.abbreviation;
+                            card.appendChild(nameDiv);
+
+                            var recordDiv = document.createElement('div');
+                            recordDiv.style.cssText = 'font-size: 0.75rem; color: #888;';
+                            recordDiv.textContent = team.record;
+                            card.appendChild(recordDiv);
+
+                            container.appendChild(card);
+                        }
+                        document.getElementById('rankingsSource').textContent = data.poll + ' | ' + data.fetchedAt;
+                    }
+                })
+                .catch(function(err) {
+                    var container = document.getElementById('collegeRankings');
+                    while (container.firstChild) { container.removeChild(container.firstChild); }
+                    var msg = document.createElement('div');
+                    msg.style.cssText = 'text-align: center; color: #777; width: 100%;';
+                    msg.textContent = 'Unable to load rankings';
+                    container.appendChild(msg);
+                });
+        }
+
+        loadCollegeRankings();
     </script>
 </body>
 </html>

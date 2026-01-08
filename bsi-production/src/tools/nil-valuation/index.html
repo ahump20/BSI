@@ -360,6 +360,14 @@
 
         <button class="btn" id="calculateBtn">Calculate NIL Valuation</button>
 
+        <div class="card" id="programComparison">
+            <div class="card-title">📊 Top NIL Programs (Live Data)</div>
+            <div id="programData" style="display: grid; gap: 8px;">
+                <div style="text-align: center; color: #777; padding: 20px;">Loading program data...</div>
+            </div>
+            <p class="info-text" id="dataSource" style="margin-top: 12px;"></p>
+        </div>
+
         <div class="card result-card hidden" id="results">
             <div class="card-title">Estimated NIL Valuation</div>
             <div class="valuation-display">
@@ -578,6 +586,40 @@
                 positionSelect.appendChild(opt);
             }
         });
+
+        // Load real NIL program data from BSI API
+        function loadProgramData() {
+            fetch('/api/nil/valuations')
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var container = document.getElementById('programData');
+                    if (data.programs && data.programs.length > 0) {
+                        var html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">';
+                        for (var i = 0; i < Math.min(data.programs.length, 10); i++) {
+                            var p = data.programs[i];
+                            var changeClass = p.yearOverYearChange >= 0 ? 'positive' : 'negative';
+                            var changeSign = p.yearOverYearChange >= 0 ? '+' : '';
+                            html += '<div style="background: var(--midnight); padding: 12px; border-radius: 8px; border-left: 3px solid var(--burnt-orange);">';
+                            html += '<div style="display: flex; justify-content: space-between; align-items: center;">';
+                            html += '<span style="font-weight: 600;">#' + p.rank + ' ' + p.school + '</span>';
+                            html += '<span style="color: #999; font-size: 0.8rem;">' + p.conference + '</span>';
+                            html += '</div>';
+                            html += '<div style="font-size: 1.2rem; color: var(--gold); margin-top: 6px;">$' + (p.totalRosterValue / 1000000).toFixed(1) + 'M</div>';
+                            html += '<div style="font-size: 0.8rem; color: ' + (p.yearOverYearChange >= 0 ? '#2E7D32' : '#F9A825') + ';">' + changeSign + '$' + (p.yearOverYearChange / 1000000).toFixed(1) + 'M YoY</div>';
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                        container.innerHTML = html;
+                        document.getElementById('dataSource').textContent = 'Source: ' + data.source + ' | Updated: ' + data.lastUpdated;
+                    }
+                })
+                .catch(function(err) {
+                    document.getElementById('programData').innerHTML = '<div style="text-align: center; color: #777;">Unable to load program data</div>';
+                });
+        }
+
+        // Load program data on page load
+        loadProgramData();
     </script>
 </body>
 </html>

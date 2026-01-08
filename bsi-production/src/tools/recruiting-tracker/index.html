@@ -307,6 +307,17 @@
                 <div class="section-title">Recent Commits & News</div>
                 <div class="commit-list" id="commitList"></div>
             </div>
+
+            <!-- Live NIL Rankings Section -->
+            <div class="class-rankings" style="margin-top: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div class="section-title" style="margin: 0;">💰 NIL Program Values (Live)</div>
+                    <span id="nilSource" style="color: #666; font-size: 0.8rem;"></span>
+                </div>
+                <div id="nilRankings" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                    <div style="text-align: center; color: #777; padding: 20px; grid-column: 1 / -1;">Loading NIL data...</div>
+                </div>
+            </div>
         </div>
 
         <div id="baseballContent" class="hidden">
@@ -597,6 +608,68 @@
         renderCommits(recentCommits, 'commitList');
         renderCommits(baseballCommits, 'baseballCommitList');
         renderPortal(portalEntries, 'portalList');
+
+        // Load live NIL program data using safe DOM methods
+        function loadNILData() {
+            fetch('/api/nil/valuations')
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    var container = document.getElementById('nilRankings');
+                    while (container.firstChild) { container.removeChild(container.firstChild); }
+
+                    if (data.programs && data.programs.length > 0) {
+                        for (var i = 0; i < Math.min(data.programs.length, 10); i++) {
+                            var p = data.programs[i];
+
+                            var card = document.createElement('div');
+                            card.style.cssText = 'background: var(--midnight); padding: 14px; border-radius: 8px; border-left: 3px solid var(--gold);';
+
+                            var header = document.createElement('div');
+                            header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;';
+
+                            var rank = document.createElement('span');
+                            rank.style.cssText = 'color: var(--gold); font-weight: 700;';
+                            rank.textContent = '#' + p.rank;
+                            header.appendChild(rank);
+
+                            var conf = document.createElement('span');
+                            conf.style.cssText = 'color: #888; font-size: 0.75rem;';
+                            conf.textContent = p.conference;
+                            header.appendChild(conf);
+
+                            card.appendChild(header);
+
+                            var school = document.createElement('div');
+                            school.style.cssText = 'font-weight: 600; font-size: 1.05rem; margin-bottom: 6px;';
+                            school.textContent = p.school;
+                            card.appendChild(school);
+
+                            var value = document.createElement('div');
+                            value.style.cssText = 'font-size: 1.25rem; color: var(--gold); font-weight: 700;';
+                            value.textContent = '$' + (p.totalRosterValue / 1000000).toFixed(1) + 'M';
+                            card.appendChild(value);
+
+                            var change = document.createElement('div');
+                            change.style.cssText = 'font-size: 0.8rem; color: ' + (p.yearOverYearChange >= 0 ? '#2E7D32' : '#F9A825') + ';';
+                            change.textContent = (p.yearOverYearChange >= 0 ? '+' : '') + '$' + (p.yearOverYearChange / 1000000).toFixed(1) + 'M YoY';
+                            card.appendChild(change);
+
+                            container.appendChild(card);
+                        }
+                        document.getElementById('nilSource').textContent = data.source + ' | ' + data.lastUpdated;
+                    }
+                })
+                .catch(function(err) {
+                    var container = document.getElementById('nilRankings');
+                    while (container.firstChild) { container.removeChild(container.firstChild); }
+                    var msg = document.createElement('div');
+                    msg.style.cssText = 'text-align: center; color: #777; padding: 20px; grid-column: 1 / -1;';
+                    msg.textContent = 'Unable to load NIL data';
+                    container.appendChild(msg);
+                });
+        }
+
+        loadNILData();
     </script>
 </body>
 </html>
