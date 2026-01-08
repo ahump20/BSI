@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "openai": "^4.77.0"
   },
   "devDependencies": {
