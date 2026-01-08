@@ -36,9 +36,7 @@ export default function RecapClient() {
 
   const winningPitcher = allPitching.find((p) => p.decision === 'W');
   const losingPitcher = allPitching.find((p) => p.decision === 'L');
-  const qualityStarts = allPitching.filter(
-    (p) => parseFloat(p.ip) >= 6 && p.er <= 3
-  );
+  const qualityStarts = allPitching.filter((p) => parseFloat(p.ip) >= 6 && p.er <= 3);
 
   // Get batting stars (2+ hits or 2+ RBI)
   const allBatting = [
@@ -90,8 +88,15 @@ export default function RecapClient() {
             Live recap updates as the game unfolds. Currently in the{' '}
             <span className="text-white font-semibold">
               {game.status.inningState} of the {game.status.inning}
-              {game.status.inning === 1 ? 'st' : game.status.inning === 2 ? 'nd' : game.status.inning === 3 ? 'rd' : 'th'}
-            </span>.
+              {game.status.inning === 1
+                ? 'st'
+                : game.status.inning === 2
+                  ? 'nd'
+                  : game.status.inning === 3
+                    ? 'rd'
+                    : 'th'}
+            </span>
+            .
           </p>
         </Card>
 
@@ -145,11 +150,13 @@ export default function RecapClient() {
         <p className="text-text-secondary leading-relaxed">
           The {winner.name} came away with the victory over the {loser.name} at {game.venue?.name}.
           {winningPitcher && (
-            <> {winningPitcher.player.name} earned the win, going {winningPitcher.ip} innings with {winningPitcher.so} strikeouts.</>
+            <>
+              {' '}
+              {winningPitcher.player.name} earned the win, going {winningPitcher.ip} innings with{' '}
+              {winningPitcher.so} strikeouts.
+            </>
           )}
-          {losingPitcher && (
-            <> {losingPitcher.player.name} took the loss.</>
-          )}
+          {losingPitcher && <> {losingPitcher.player.name} took the loss.</>}
         </p>
       </Card>
 
@@ -238,7 +245,9 @@ export default function RecapClient() {
       {scoringPlays.length === 0 && (
         <Card variant="default" padding="lg">
           <div className="text-center py-4">
-            <p className="text-text-secondary">No runs crossed the plate yet—or the scoring data's still loading.</p>
+            <p className="text-text-secondary">
+              No runs crossed the plate yet—or the scoring data's still loading.
+            </p>
           </div>
         </Card>
       )}

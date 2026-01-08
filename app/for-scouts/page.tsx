@@ -34,49 +34,58 @@ const features = [
   {
     icon: '📊',
     title: 'Complete Player Database',
-    description: '300+ D1 programs tracked with comprehensive batting, pitching, and fielding stats updated daily.',
+    description:
+      '300+ D1 programs tracked with comprehensive batting, pitching, and fielding stats updated daily.',
   },
   {
     icon: '📈',
     title: 'Historical Data Access',
-    description: '5+ years of historical data for trend analysis, career arcs, and development tracking.',
+    description:
+      '5+ years of historical data for trend analysis, career arcs, and development tracking.',
   },
   {
     icon: '🔌',
     title: 'Enterprise API Access',
-    description: 'RESTful API with JSON exports. Integrate BSI data directly into your existing scouting systems.',
+    description:
+      'RESTful API with JSON exports. Integrate BSI data directly into your existing scouting systems.',
   },
   {
     icon: '📁',
     title: 'Custom Data Exports',
-    description: 'Export player lists, team rosters, and statistical summaries in CSV, JSON, or Excel formats.',
+    description:
+      'Export player lists, team rosters, and statistical summaries in CSV, JSON, or Excel formats.',
   },
   {
     icon: '🔔',
     title: 'Player Watchlists',
-    description: 'Track prospects across multiple programs. Get alerts for performance milestones and injuries.',
+    description:
+      'Track prospects across multiple programs. Get alerts for performance milestones and injuries.',
   },
   {
     icon: '⚡',
     title: 'Real-Time Updates',
-    description: 'Live score updates every 30 seconds during games. Box scores available within minutes of final out.',
+    description:
+      'Live score updates every 30 seconds during games. Box scores available within minutes of final out.',
   },
 ];
 
 const useCases = [
   {
     title: 'Pre-Draft Analysis',
-    description: 'Comprehensive statistical profiles for every draft-eligible player. Compare prospects across conferences with normalized metrics.',
+    description:
+      'Comprehensive statistical profiles for every draft-eligible player. Compare prospects across conferences with normalized metrics.',
     icon: '🎯',
   },
   {
     title: 'Area Scout Coverage',
-    description: 'Track all programs in your assigned territory. Never miss a breakout performer in your region.',
+    description:
+      'Track all programs in your assigned territory. Never miss a breakout performer in your region.',
     icon: '🗺️',
   },
   {
     title: 'Cross-Reference Reports',
-    description: 'Export data to your internal systems. Build custom reports that match your organizations evaluation framework.',
+    description:
+      'Export data to your internal systems. Build custom reports that match your organizations evaluation framework.',
     icon: '📋',
   },
 ];
@@ -91,15 +100,19 @@ export default function ForScoutsPage() {
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
-              <Badge variant="primary" className="mb-4">For Professional Scouts</Badge>
+              <Badge variant="primary" className="mb-4">
+                For Professional Scouts
+              </Badge>
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
                 style={{ fontFamily: 'Georgia, serif' }}
               >
-                The Data Your <span style={{ color: colors.burntOrange }}>Scouting Department</span> Deserves
+                The Data Your <span style={{ color: colors.burntOrange }}>Scouting Department</span>{' '}
+                Deserves
               </h1>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Enterprise-grade college baseball intelligence. API access, historical data, and the tracking tools professional scouts need to find the next big leaguer.
+                Enterprise-grade college baseball intelligence. API access, historical data, and the
+                tracking tools professional scouts need to find the next big leaguer.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">
@@ -124,25 +137,45 @@ export default function ForScoutsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>300+</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  300+
+                </div>
                 <p className="text-gray-400 mt-1">D1 Programs</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={100}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>5+</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  5+
+                </div>
                 <p className="text-gray-400 mt-1">Years Historical Data</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={200}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>30s</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  30s
+                </div>
                 <p className="text-gray-400 mt-1">Live Updates</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={300}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>API</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold"
+                  style={{ color: colors.burntOrange }}
+                >
+                  API
+                </div>
                 <p className="text-gray-400 mt-1">RESTful Access</p>
               </div>
             </ScrollReveal>
@@ -157,7 +190,8 @@ export default function ForScoutsPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-white mb-4">Enterprise Features</h2>
               <p className="text-gray-400 max-w-2xl mx-auto">
-                Built for professional scouting departments. Every feature designed to help you find, evaluate, and track prospects.
+                Built for professional scouting departments. Every feature designed to help you
+                find, evaluate, and track prospects.
               </p>
             </div>
           </ScrollReveal>
@@ -210,12 +244,15 @@ export default function ForScoutsPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <ScrollReveal>
               <div>
-                <Badge variant="secondary" className="mb-4">API Access</Badge>
+                <Badge variant="secondary" className="mb-4">
+                  API Access
+                </Badge>
                 <h2 className="text-3xl font-bold text-white mb-4">
                   Integrate BSI Into Your Systems
                 </h2>
                 <p className="text-gray-400 mb-6">
-                  RESTful API with comprehensive documentation. Pull player stats, game logs, and team data directly into your internal tools.
+                  RESTful API with comprehensive documentation. Pull player stats, game logs, and
+                  team data directly into your internal tools.
                 </p>
                 <ul className="space-y-3 text-gray-300">
                   <li className="flex items-center gap-2">
@@ -250,7 +287,7 @@ export default function ForScoutsPage() {
                 </div>
                 <CardContent className="p-4">
                   <pre className="text-sm text-gray-300 overflow-x-auto">
-{`GET /v1/players/stats
+                    {`GET /v1/players/stats
 {
   "player_id": "BSI-2025-TX-001",
   "name": "John Smith",
@@ -279,14 +316,19 @@ export default function ForScoutsPage() {
             <Card className="max-w-3xl mx-auto text-center overflow-hidden">
               <div
                 className="p-8 md:p-12"
-                style={{ background: `linear-gradient(135deg, ${colors.charcoal} 0%, ${colors.midnight} 100%)` }}
+                style={{
+                  background: `linear-gradient(135deg, ${colors.charcoal} 0%, ${colors.midnight} 100%)`,
+                }}
               >
-                <Badge variant="primary" className="mb-4">Enterprise Plan</Badge>
+                <Badge variant="primary" className="mb-4">
+                  Enterprise Plan
+                </Badge>
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                   <span style={{ color: colors.burntOrange }}>$199</span>/month
                 </h2>
                 <p className="text-gray-400 mb-6 max-w-xl mx-auto">
-                  Everything your scouting department needs. API access, historical data, custom exports, and priority support.
+                  Everything your scouting department needs. API access, historical data, custom
+                  exports, and priority support.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/pricing">

@@ -88,12 +88,16 @@ export default function ScoresHubPage() {
         const mlbRes = await fetch('/api/mlb/scores');
         if (mlbRes.ok) {
           const mlbData = await mlbRes.json();
-          const mlbLive = mlbData.games?.filter((g: { status?: { isLive?: boolean } }) => g.status?.isLive).length || 0;
+          const mlbLive =
+            mlbData.games?.filter((g: { status?: { isLive?: boolean } }) => g.status?.isLive)
+              .length || 0;
           const mlbTotal = mlbData.games?.length || 0;
 
           setSports((prev) =>
             prev.map((s) =>
-              s.id === 'mlb' ? { ...s, liveCount: mlbLive, todayCount: mlbTotal, isActive: mlbTotal > 0 } : s
+              s.id === 'mlb'
+                ? { ...s, liveCount: mlbLive, todayCount: mlbTotal, isActive: mlbTotal > 0 }
+                : s
             )
           );
           setTotalLive((prev) => prev + mlbLive);
@@ -161,8 +165,8 @@ export default function ScoresHubPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary mt-4 text-lg max-w-2xl">
-                Real-time scores across MLB, NFL, NBA, and 300+ college baseball programs.
-                The coverage ESPN won&apos;t give you.
+                Real-time scores across MLB, NFL, NBA, and 300+ college baseball programs. The
+                coverage ESPN won&apos;t give you.
               </p>
             </ScrollReveal>
 
@@ -197,7 +201,9 @@ export default function ScoresHubPage() {
                         <div className="flex items-center gap-3">
                           <span className="text-3xl">{sport.icon}</span>
                           <div>
-                            <h2 className="text-xl font-display font-bold text-white">{sport.name}</h2>
+                            <h2 className="text-xl font-display font-bold text-white">
+                              {sport.name}
+                            </h2>
                             <p className="text-xs text-text-tertiary">Season: {sport.season}</p>
                           </div>
                         </div>
@@ -282,9 +288,7 @@ export default function ScoresHubPage() {
 
             {/* Data Attribution */}
             <div className="mt-8 text-center text-xs text-text-tertiary">
-              <p>
-                Data sourced from official league APIs: MLB Stats API, ESPN, NCAA.org
-              </p>
+              <p>Data sourced from official league APIs: MLB Stats API, ESPN, NCAA.org</p>
               <p className="mt-1">Updated every 30 seconds during live games</p>
             </div>
           </Container>

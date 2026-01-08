@@ -3,7 +3,17 @@
 import type { HTMLAttributes } from 'react';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'default' | 'secondary' | 'outline' | 'accent';
+  variant?:
+    | 'primary'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'neutral'
+    | 'default'
+    | 'secondary'
+    | 'outline'
+    | 'accent';
   size?: 'sm' | 'md';
 }
 

@@ -115,9 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </a>
             <Navbar items={mainNavItems} />
             <KonamiCodeWrapper />
-            <PageTransition>
-              {children}
-            </PageTransition>
+            <PageTransition>{children}</PageTransition>
             {/* Mobile Bottom Navigation - hidden on desktop */}
             <BottomNav items={DEFAULT_NAV_ITEMS} className="md:hidden" />
           </MotionProvider>

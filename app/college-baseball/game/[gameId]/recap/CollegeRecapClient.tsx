@@ -36,9 +36,7 @@ export default function CollegeRecapClient() {
 
   const winningPitcher = allPitching.find((p) => p.decision === 'W');
   const losingPitcher = allPitching.find((p) => p.decision === 'L');
-  const qualityStarts = allPitching.filter(
-    (p) => parseFloat(p.ip) >= 6 && p.er <= 3
-  );
+  const qualityStarts = allPitching.filter((p) => parseFloat(p.ip) >= 6 && p.er <= 3);
 
   // Get batting stars (2+ hits or 2+ RBI)
   const allBatting = [
@@ -70,7 +68,8 @@ export default function CollegeRecapClient() {
           </svg>
           <p className="text-text-secondary">Game recap drops after the final out.</p>
           <p className="text-text-tertiary text-sm mt-2">
-            Not some AI-generated summary—actual game context, key moments, and the stuff ESPN won't tell you.
+            Not some AI-generated summary—actual game context, key moments, and the stuff ESPN won't
+            tell you.
           </p>
         </div>
       </Card>
@@ -90,8 +89,15 @@ export default function CollegeRecapClient() {
             Live updates as the game unfolds. Currently in the{' '}
             <span className="text-white font-semibold">
               {game.status.inningState} of the {game.status.inning}
-              {game.status.inning === 1 ? 'st' : game.status.inning === 2 ? 'nd' : game.status.inning === 3 ? 'rd' : 'th'}
-            </span>.
+              {game.status.inning === 1
+                ? 'st'
+                : game.status.inning === 2
+                  ? 'nd'
+                  : game.status.inning === 3
+                    ? 'rd'
+                    : 'th'}
+            </span>
+            .
           </p>
         </Card>
 
@@ -140,16 +146,20 @@ export default function CollegeRecapClient() {
       {/* Headline */}
       <Card variant="default" padding="lg">
         <h2 className="text-2xl font-display font-bold text-white mb-4">
-          {winner.ranking && `#${winner.ranking} `}{winner.name} defeat {loser.ranking && `#${loser.ranking} `}{loser.name}, {winner.score}-{loser.score}
+          {winner.ranking && `#${winner.ranking} `}
+          {winner.name} defeat {loser.ranking && `#${loser.ranking} `}
+          {loser.name}, {winner.score}-{loser.score}
         </h2>
         <p className="text-text-secondary leading-relaxed">
           The {winner.name} came away with the victory over the {loser.name} at {game.venue?.name}.
           {winningPitcher && (
-            <> {winningPitcher.player.name} earned the win, going {winningPitcher.ip} innings with {winningPitcher.so} strikeouts.</>
+            <>
+              {' '}
+              {winningPitcher.player.name} earned the win, going {winningPitcher.ip} innings with{' '}
+              {winningPitcher.so} strikeouts.
+            </>
           )}
-          {losingPitcher && (
-            <> {losingPitcher.player.name} took the loss.</>
-          )}
+          {losingPitcher && <> {losingPitcher.player.name} took the loss.</>}
         </p>
         {(winner.conference || loser.conference) && (
           <p className="text-text-tertiary text-sm mt-3">
@@ -177,7 +187,9 @@ export default function CollegeRecapClient() {
                     <p className="font-semibold text-white">
                       {player.player.name}
                       {player.player.year && (
-                        <span className="text-text-tertiary text-xs ml-2">({player.player.year})</span>
+                        <span className="text-text-tertiary text-xs ml-2">
+                          ({player.player.year})
+                        </span>
                       )}
                     </p>
                     <p className="text-text-secondary text-sm">
@@ -237,7 +249,9 @@ export default function CollegeRecapClient() {
                     <p className="font-semibold text-white">
                       {pitcher.player.name}
                       {pitcher.player.year && (
-                        <span className="text-text-tertiary text-xs ml-2">({pitcher.player.year})</span>
+                        <span className="text-text-tertiary text-xs ml-2">
+                          ({pitcher.player.year})
+                        </span>
                       )}
                     </p>
                     <p className="text-text-secondary text-sm">
@@ -255,7 +269,9 @@ export default function CollegeRecapClient() {
       {scoringPlays.length === 0 && (
         <Card variant="default" padding="lg">
           <div className="text-center py-4">
-            <p className="text-text-secondary">No runs crossed the plate—or the scoring data's still loading.</p>
+            <p className="text-text-secondary">
+              No runs crossed the plate—or the scoring data's still loading.
+            </p>
           </div>
         </Card>
       )}

@@ -39,15 +39,17 @@ interface Conference {
 
 function formatTimestamp(): string {
   const date = new Date();
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    date.toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 // Static data for display
@@ -55,41 +57,371 @@ const staticStandings: Conference[] = [
   {
     name: 'Eastern Conference',
     teams: [
-      { name: 'Boston Celtics', abbreviation: 'BOS', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Milwaukee Bucks', abbreviation: 'MIL', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Cleveland Cavaliers', abbreviation: 'CLE', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'New York Knicks', abbreviation: 'NYK', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Philadelphia 76ers', abbreviation: 'PHI', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Orlando Magic', abbreviation: 'ORL', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Indiana Pacers', abbreviation: 'IND', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Miami Heat', abbreviation: 'MIA', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Chicago Bulls', abbreviation: 'CHI', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Atlanta Hawks', abbreviation: 'ATL', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Brooklyn Nets', abbreviation: 'BKN', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Toronto Raptors', abbreviation: 'TOR', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Charlotte Hornets', abbreviation: 'CHA', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Washington Wizards', abbreviation: 'WAS', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Detroit Pistons', abbreviation: 'DET', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
+      {
+        name: 'Boston Celtics',
+        abbreviation: 'BOS',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Milwaukee Bucks',
+        abbreviation: 'MIL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Cleveland Cavaliers',
+        abbreviation: 'CLE',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'New York Knicks',
+        abbreviation: 'NYK',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Philadelphia 76ers',
+        abbreviation: 'PHI',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Orlando Magic',
+        abbreviation: 'ORL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Indiana Pacers',
+        abbreviation: 'IND',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Miami Heat',
+        abbreviation: 'MIA',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Chicago Bulls',
+        abbreviation: 'CHI',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Atlanta Hawks',
+        abbreviation: 'ATL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Brooklyn Nets',
+        abbreviation: 'BKN',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Toronto Raptors',
+        abbreviation: 'TOR',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Charlotte Hornets',
+        abbreviation: 'CHA',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Washington Wizards',
+        abbreviation: 'WAS',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Detroit Pistons',
+        abbreviation: 'DET',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
     ],
   },
   {
     name: 'Western Conference',
     teams: [
-      { name: 'Oklahoma City Thunder', abbreviation: 'OKC', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Denver Nuggets', abbreviation: 'DEN', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Minnesota Timberwolves', abbreviation: 'MIN', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Los Angeles Clippers', abbreviation: 'LAC', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Dallas Mavericks', abbreviation: 'DAL', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Phoenix Suns', abbreviation: 'PHX', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'New Orleans Pelicans', abbreviation: 'NOP', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Sacramento Kings', abbreviation: 'SAC', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Los Angeles Lakers', abbreviation: 'LAL', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Golden State Warriors', abbreviation: 'GSW', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Houston Rockets', abbreviation: 'HOU', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Memphis Grizzlies', abbreviation: 'MEM', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Utah Jazz', abbreviation: 'UTA', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'San Antonio Spurs', abbreviation: 'SAS', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
-      { name: 'Portland Trail Blazers', abbreviation: 'POR', wins: 0, losses: 0, pct: 0, gb: '-', home: '0-0', away: '0-0', last10: '0-0', streak: '-' },
+      {
+        name: 'Oklahoma City Thunder',
+        abbreviation: 'OKC',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Denver Nuggets',
+        abbreviation: 'DEN',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Minnesota Timberwolves',
+        abbreviation: 'MIN',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Los Angeles Clippers',
+        abbreviation: 'LAC',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Dallas Mavericks',
+        abbreviation: 'DAL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Phoenix Suns',
+        abbreviation: 'PHX',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'New Orleans Pelicans',
+        abbreviation: 'NOP',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Sacramento Kings',
+        abbreviation: 'SAC',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Los Angeles Lakers',
+        abbreviation: 'LAL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Golden State Warriors',
+        abbreviation: 'GSW',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Houston Rockets',
+        abbreviation: 'HOU',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Memphis Grizzlies',
+        abbreviation: 'MEM',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Utah Jazz',
+        abbreviation: 'UTA',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'San Antonio Spurs',
+        abbreviation: 'SAS',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Portland Trail Blazers',
+        abbreviation: 'POR',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
     ],
   },
 ];
@@ -121,7 +453,7 @@ export default function NBAStandingsPage() {
     fetchStandings();
   }, []);
 
-  const currentConference = standings.find(c => c.name === selectedConference);
+  const currentConference = standings.find((c) => c.name === selectedConference);
 
   return (
     <>
@@ -132,7 +464,10 @@ export default function NBAStandingsPage() {
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/nba" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link
+                href="/nba"
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+              >
                 NBA
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -147,7 +482,9 @@ export default function NBAStandingsPage() {
 
           <Container>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">2024-25 Season</Badge>
+              <Badge variant="primary" className="mb-4">
+                2024-25 Season
+              </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
@@ -216,16 +553,36 @@ export default function NBAStandingsPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-border-subtle">
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">#</th>
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold">Team</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">W</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">L</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">PCT</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">GB</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">HOME</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">AWAY</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">L10</th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">STRK</th>
+                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">
+                            #
+                          </th>
+                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                            Team
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                            W
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                            L
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                            PCT
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                            GB
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                            HOME
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                            AWAY
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                            L10
+                          </th>
+                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                            STRK
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -248,21 +605,41 @@ export default function NBAStandingsPage() {
                                   </span>
                                   <span className="font-semibold text-white">{team.name}</span>
                                   {isPlayoffSpot && (
-                                    <Badge variant="success" className="text-xs hidden sm:inline">Playoff</Badge>
+                                    <Badge variant="success" className="text-xs hidden sm:inline">
+                                      Playoff
+                                    </Badge>
                                   )}
                                   {isPlayIn && (
-                                    <Badge variant="warning" className="text-xs hidden sm:inline">Play-In</Badge>
+                                    <Badge variant="warning" className="text-xs hidden sm:inline">
+                                      Play-In
+                                    </Badge>
                                   )}
                                 </div>
                               </td>
-                              <td className="text-center py-3 px-2 text-white font-mono">{team.wins}</td>
-                              <td className="text-center py-3 px-2 text-white font-mono">{team.losses}</td>
-                              <td className="text-center py-3 px-2 text-white font-mono">{team.pct.toFixed(3)}</td>
-                              <td className="text-center py-3 px-2 text-text-secondary font-mono">{team.gb}</td>
-                              <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">{team.home}</td>
-                              <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">{team.away}</td>
-                              <td className="text-center py-3 px-2 text-text-secondary font-mono hidden lg:table-cell">{team.last10}</td>
-                              <td className="text-center py-3 px-2 text-text-secondary hidden lg:table-cell">{team.streak}</td>
+                              <td className="text-center py-3 px-2 text-white font-mono">
+                                {team.wins}
+                              </td>
+                              <td className="text-center py-3 px-2 text-white font-mono">
+                                {team.losses}
+                              </td>
+                              <td className="text-center py-3 px-2 text-white font-mono">
+                                {team.pct.toFixed(3)}
+                              </td>
+                              <td className="text-center py-3 px-2 text-text-secondary font-mono">
+                                {team.gb}
+                              </td>
+                              <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                {team.home}
+                              </td>
+                              <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
+                                {team.away}
+                              </td>
+                              <td className="text-center py-3 px-2 text-text-secondary font-mono hidden lg:table-cell">
+                                {team.last10}
+                              </td>
+                              <td className="text-center py-3 px-2 text-text-secondary hidden lg:table-cell">
+                                {team.streak}
+                              </td>
                             </tr>
                           );
                         })}
@@ -287,10 +664,7 @@ export default function NBAStandingsPage() {
 
             {/* Data Source Footer */}
             <div className="mt-8 pt-4 border-t border-border-subtle">
-              <DataSourceBadge
-                source="NBA.com / ESPN"
-                timestamp={formatTimestamp()}
-              />
+              <DataSourceBadge source="NBA.com / ESPN" timestamp={formatTimestamp()} />
             </div>
           </Container>
         </Section>

@@ -68,12 +68,7 @@ export function BottomNav({ items, className = '' }: BottomNavProps) {
             `}
             aria-current={active ? 'page' : undefined}
           >
-            <svg
-              className="w-6 h-6"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d={item.icon} />
             </svg>
             <span>{item.label}</span>

@@ -286,10 +286,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const playerId = route[1];
 
       if (!playerId) {
-        return new Response(
-          JSON.stringify({ error: 'Player ID required' }),
-          { status: 400, headers }
-        );
+        return new Response(JSON.stringify({ error: 'Player ID required' }), {
+          status: 400,
+          headers,
+        });
       }
 
       const cacheKey = `nba:player:${playerId}`;
@@ -332,32 +332,37 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             weight: athlete.displayWeight,
             age: athlete.age,
             birthDate: athlete.dateOfBirth,
-            birthPlace: athlete.birthPlace?.city ? `${athlete.birthPlace.city}, ${athlete.birthPlace.state}` : null,
+            birthPlace: athlete.birthPlace?.city
+              ? `${athlete.birthPlace.city}, ${athlete.birthPlace.state}`
+              : null,
             college: athlete.college?.name,
-            draft: athlete.draft ? {
-              year: athlete.draft.year,
-              round: athlete.draft.round,
-              pick: athlete.draft.selection,
-              team: athlete.draft.team?.displayName
-            } : null,
+            draft: athlete.draft
+              ? {
+                  year: athlete.draft.year,
+                  round: athlete.draft.round,
+                  pick: athlete.draft.selection,
+                  team: athlete.draft.team?.displayName,
+                }
+              : null,
             experience: athlete.experience?.years ? `${athlete.experience.years} yrs` : 'Rookie',
             headshot: athlete.headshot?.href,
             team: {
               id: athlete.team?.id,
               name: athlete.team?.displayName,
               abbreviation: athlete.team?.abbreviation,
-              logo: athlete.team?.logos?.[0]?.href
-            }
+              logo: athlete.team?.logos?.[0]?.href,
+            },
           },
           seasonStats: {
             season: '2024-25',
-            stats: athlete.statistics?.map((stat: any) => ({
-              name: stat.name,
-              abbreviation: stat.abbreviation,
-              value: stat.displayValue,
-              rank: stat.rank,
-              rankDisplay: stat.rankDisplayValue
-            })) || []
+            stats:
+              athlete.statistics?.map((stat: any) => ({
+                name: stat.name,
+                abbreviation: stat.abbreviation,
+                value: stat.displayValue,
+                rank: stat.rank,
+                rankDisplay: stat.rankDisplayValue,
+              })) || [],
           },
           meta: {
             dataSource: 'ESPN NBA API',
@@ -383,10 +388,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const gameId = route[1];
 
       if (!gameId) {
-        return new Response(
-          JSON.stringify({ error: 'Game ID required' }),
-          { status: 400, headers }
-        );
+        return new Response(JSON.stringify({ error: 'Game ID required' }), {
+          status: 400,
+          headers,
+        });
       }
 
       const cacheKey = `nba:game:${gameId}`;
@@ -424,35 +429,37 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               description: header?.competitions?.[0]?.status?.type?.description || 'Unknown',
               completed: header?.competitions?.[0]?.status?.type?.completed || false,
               period: header?.competitions?.[0]?.status?.period,
-              clock: header?.competitions?.[0]?.status?.displayClock
+              clock: header?.competitions?.[0]?.status?.displayClock,
             },
             venue: {
               name: header?.competitions?.[0]?.venue?.fullName,
-              city: header?.competitions?.[0]?.venue?.address?.city
-            }
-          },
-          competitors: header?.competitions?.[0]?.competitors?.map((comp: any) => ({
-            team: {
-              id: comp.team?.id,
-              name: comp.team?.displayName,
-              abbreviation: comp.team?.abbreviation,
-              logo: comp.team?.logos?.[0]?.href
+              city: header?.competitions?.[0]?.venue?.address?.city,
             },
-            homeAway: comp.homeAway,
-            score: comp.score,
-            winner: comp.winner,
-            linescores: comp.linescores?.map((ls: any) => ls.displayValue) || []
-          })) || [],
-          leaders: boxscore?.teams?.map((team: any) => ({
-            team: team.team?.displayName,
-            categories: team.statistics?.slice(0, 3)?.map((stat: any) => ({
-              category: stat.displayName,
-              leader: {
-                name: stat.leaders?.[0]?.athlete?.displayName,
-                value: stat.leaders?.[0]?.displayValue
-              }
-            }))
-          })) || [],
+          },
+          competitors:
+            header?.competitions?.[0]?.competitors?.map((comp: any) => ({
+              team: {
+                id: comp.team?.id,
+                name: comp.team?.displayName,
+                abbreviation: comp.team?.abbreviation,
+                logo: comp.team?.logos?.[0]?.href,
+              },
+              homeAway: comp.homeAway,
+              score: comp.score,
+              winner: comp.winner,
+              linescores: comp.linescores?.map((ls: any) => ls.displayValue) || [],
+            })) || [],
+          leaders:
+            boxscore?.teams?.map((team: any) => ({
+              team: team.team?.displayName,
+              categories: team.statistics?.slice(0, 3)?.map((stat: any) => ({
+                category: stat.displayName,
+                leader: {
+                  name: stat.leaders?.[0]?.athlete?.displayName,
+                  value: stat.leaders?.[0]?.displayValue,
+                },
+              })),
+            })) || [],
           meta: {
             dataSource: 'ESPN NBA API',
             lastUpdated: new Date().toISOString(),

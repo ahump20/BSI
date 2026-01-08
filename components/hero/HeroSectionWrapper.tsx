@@ -11,13 +11,10 @@
 
 import dynamic from 'next/dynamic';
 
-const HeroSection = dynamic(
-  () => import('./HeroSection').then((mod) => mod.HeroSection),
-  {
-    ssr: false,
-    loading: () => null,
-  }
-);
+const HeroSection = dynamic(() => import('./HeroSection').then((mod) => mod.HeroSection), {
+  ssr: false,
+  loading: () => null,
+});
 
 export function HeroSectionWrapper() {
   return <HeroSection />;

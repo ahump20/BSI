@@ -33,15 +33,17 @@ interface NewsItem {
 
 function formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    date.toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 function getRelativeTime(dateString: string): string {
@@ -92,9 +94,7 @@ export default function NFLNewsPage() {
     fetchNews();
   }, []);
 
-  const filteredNews = filter === 'all'
-    ? news
-    : news.filter(item => item.category === filter);
+  const filteredNews = filter === 'all' ? news : news.filter((item) => item.category === filter);
 
   const categories = [
     { id: 'all', label: 'All News' },
@@ -194,7 +194,8 @@ export default function NFLNewsPage() {
                   </svg>
                   <p className="text-text-secondary">No news in this category right now.</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Offseason NFL news comes in waves—free agency, draft, then the summer lull before training camp. Check back.
+                    Offseason NFL news comes in waves—free agency, draft, then the summer lull
+                    before training camp. Check back.
                   </p>
                 </div>
               </Card>
@@ -217,12 +218,8 @@ export default function NFLNewsPage() {
                             >
                               {item.category}
                             </Badge>
-                            {item.team && (
-                              <Badge variant="outline">{item.team}</Badge>
-                            )}
-                            {item.division && (
-                              <Badge variant="secondary">{item.division}</Badge>
-                            )}
+                            {item.team && <Badge variant="outline">{item.team}</Badge>}
+                            {item.division && <Badge variant="secondary">{item.division}</Badge>}
                             <span className="text-text-tertiary text-xs">
                               {getRelativeTime(item.publishedAt)}
                             </span>
@@ -240,9 +237,7 @@ export default function NFLNewsPage() {
                               {item.summary}
                             </p>
                           </a>
-                          <p className="text-text-tertiary text-xs mt-2">
-                            via {item.source}
-                          </p>
+                          <p className="text-text-tertiary text-xs mt-2">via {item.source}</p>
                         </div>
                       </div>
                     </Card>

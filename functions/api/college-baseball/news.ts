@@ -34,45 +34,86 @@ interface NewsItem {
 }
 
 // ESPN doesn't have a dedicated college baseball news endpoint, so we use the general college sports feed
-const ESPN_COLLEGE_SPORTS = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news';
+const ESPN_COLLEGE_SPORTS =
+  'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news';
 
-function categorizeArticle(article: ESPNArticle): 'recruiting' | 'transfer' | 'game' | 'rankings' | 'analysis' | 'general' {
+function categorizeArticle(
+  article: ESPNArticle
+): 'recruiting' | 'transfer' | 'game' | 'rankings' | 'analysis' | 'general' {
   const headline = (article.headline || article.title || '').toLowerCase();
   const description = (article.description || '').toLowerCase();
   const combined = `${headline} ${description}`;
 
   // Transfer portal detection
-  if (combined.includes('transfer') || combined.includes('portal') || combined.includes('commit') ||
-      combined.includes('decommit') || combined.includes('flip') || combined.includes('enters portal')) {
+  if (
+    combined.includes('transfer') ||
+    combined.includes('portal') ||
+    combined.includes('commit') ||
+    combined.includes('decommit') ||
+    combined.includes('flip') ||
+    combined.includes('enters portal')
+  ) {
     return 'transfer';
   }
 
   // Recruiting detection
-  if (combined.includes('recruit') || combined.includes('commit') || combined.includes('sign') ||
-      combined.includes('class of') || combined.includes('top prospect') || combined.includes('five-star') ||
-      combined.includes('four-star') || combined.includes('nli') || combined.includes('verbal')) {
+  if (
+    combined.includes('recruit') ||
+    combined.includes('commit') ||
+    combined.includes('sign') ||
+    combined.includes('class of') ||
+    combined.includes('top prospect') ||
+    combined.includes('five-star') ||
+    combined.includes('four-star') ||
+    combined.includes('nli') ||
+    combined.includes('verbal')
+  ) {
     return 'recruiting';
   }
 
   // Rankings detection
-  if (combined.includes('ranking') || combined.includes('poll') || combined.includes('top 25') ||
-      combined.includes('d1baseball') || combined.includes('coaches poll') || combined.includes('#1') ||
-      combined.includes('moves up') || combined.includes('drops') || combined.includes('ranked')) {
+  if (
+    combined.includes('ranking') ||
+    combined.includes('poll') ||
+    combined.includes('top 25') ||
+    combined.includes('d1baseball') ||
+    combined.includes('coaches poll') ||
+    combined.includes('#1') ||
+    combined.includes('moves up') ||
+    combined.includes('drops') ||
+    combined.includes('ranked')
+  ) {
     return 'rankings';
   }
 
   // Game recap/preview detection
-  if (combined.includes('recap') || combined.includes('preview') || combined.includes('beat') ||
-      combined.includes('defeat') || combined.includes('win') || combined.includes('walk-off') ||
-      combined.includes('shutout') || combined.includes('super regional') || combined.includes('cws') ||
-      combined.includes('college world series') || combined.includes('regional')) {
+  if (
+    combined.includes('recap') ||
+    combined.includes('preview') ||
+    combined.includes('beat') ||
+    combined.includes('defeat') ||
+    combined.includes('win') ||
+    combined.includes('walk-off') ||
+    combined.includes('shutout') ||
+    combined.includes('super regional') ||
+    combined.includes('cws') ||
+    combined.includes('college world series') ||
+    combined.includes('regional')
+  ) {
     return 'game';
   }
 
   // Analysis detection
-  if (combined.includes('analysis') || combined.includes('breakdown') || combined.includes('projection') ||
-      combined.includes('draft') || combined.includes('prospect') || combined.includes('outlook') ||
-      combined.includes('preview') || combined.includes('prediction')) {
+  if (
+    combined.includes('analysis') ||
+    combined.includes('breakdown') ||
+    combined.includes('projection') ||
+    combined.includes('draft') ||
+    combined.includes('prospect') ||
+    combined.includes('outlook') ||
+    combined.includes('preview') ||
+    combined.includes('prediction')
+  ) {
     return 'analysis';
   }
 
@@ -125,7 +166,7 @@ export async function onRequest(context: { request: Request }): Promise<Response
       throw new Error(`ESPN API returned ${response.status}`);
     }
 
-    const data = await response.json() as { articles?: ESPNArticle[] };
+    const data = (await response.json()) as { articles?: ESPNArticle[] };
     const espnArticles = data.articles || [];
 
     let articles: NewsItem[] = espnArticles.map((article, index) => {
@@ -145,21 +186,22 @@ export async function onRequest(context: { request: Request }): Promise<Response
 
     // Filter by category if specified
     if (categoryFilter && categoryFilter !== 'all') {
-      articles = articles.filter(a => a.category === categoryFilter);
+      articles = articles.filter((a) => a.category === categoryFilter);
     }
 
     // Limit results
     articles = articles.slice(0, limit);
 
-    const timestamp = new Date().toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT';
+    const timestamp =
+      new Date().toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }) + ' CT';
 
     return new Response(
       JSON.stringify({

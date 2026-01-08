@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tools — Blaze Sports Intel</title>
+    <meta name="description" content="Professional sports analytics tools. Team Archetype Builder, Composition Optimizer, Win Probability Calculator, and more. Free and premium tools for serious fans.">
+    <meta property="og:title" content="Interactive Tools — Blaze Sports Intel">
+    <meta property="og:description" content="Professional sports analytics tools for serious fans and analysts.">
+    <meta property="og:image" content="https://blazesportsintel.com/images/og-image.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/tools">
+    <link rel="canonical" href="https://blazesportsintel.com/tools">
+    <meta name="theme-color" content="#BF5700">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-ember: #FF6B35;
+            --bsi-success: #10B981;
+            --bsi-muted: #6B7280;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Serif 4', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+            --space-4: 1rem; --space-6: 1.5rem; --space-8: 2rem;
+            --space-12: 3rem; --space-16: 4rem; --space-24: 6rem;
+            --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+            --duration-normal: 300ms;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body { font-family: var(--font-body); background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        a { color: inherit; text-decoration: none; }
+        h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: var(--space-4) 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-weight: 700; font-size: 1.125rem; }
+        .logo-img { height: 44px; width: auto; }
+        .nav-links { display: flex; gap: var(--space-8); list-style: none; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; }
+        .nav-links a { color: var(--bsi-cream); opacity: 0.7; transition: opacity var(--duration-normal) var(--ease-out); }
+        .nav-links a:hover { opacity: 1; }
+        @media (max-width: 768px) { .nav-links { display: none; } }
+
+        /* Hero */
+        .hero { min-height: 50vh; display: flex; flex-direction: column; justify-content: center; padding-top: 120px; padding-bottom: var(--space-16); position: relative; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, rgba(191, 87, 0, 0.12) 0%, transparent 50%); pointer-events: none; }
+        .hero-content { position: relative; z-index: 1; text-align: center; max-width: 800px; margin: 0 auto; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(191, 87, 0, 0.1); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 100px; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); margin-bottom: var(--space-6); }
+        .hero-title { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: var(--space-6); }
+        .hero-title span { background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-desc { font-size: 1.125rem; color: rgba(250, 248, 245, 0.75); max-width: 600px; margin: 0 auto; }
+
+        /* Tools Grid */
+        .tools-section { padding: var(--space-16) 0 var(--space-24); }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); }
+        .tool-card { background: var(--bsi-charcoal); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: var(--space-8); transition: all var(--duration-normal) var(--ease-out); position: relative; overflow: hidden; }
+        .tool-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember)); opacity: 0; transition: opacity var(--duration-normal); }
+        .tool-card:hover { border-color: rgba(191, 87, 0, 0.3); transform: translateY(-4px); }
+        .tool-card:hover::before { opacity: 1; }
+        .tool-icon { width: 56px; height: 56px; background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), rgba(139, 69, 19, 0.1)); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-6); font-size: 1.5rem; }
+        .tool-card h3 { font-family: var(--font-ui); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; }
+        .tool-card p { font-size: 0.9375rem; color: rgba(250, 248, 245, 0.65); margin-bottom: var(--space-6); line-height: 1.6; }
+        .tool-tier { display: inline-block; font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.25rem 0.75rem; border-radius: 100px; margin-bottom: var(--space-4); }
+        .tier-free { background: rgba(16, 185, 129, 0.15); color: var(--bsi-success); }
+        .tier-pro { background: rgba(191, 87, 0, 0.15); color: var(--bsi-ember); }
+        .tool-link { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600; color: var(--bsi-burnt-orange); transition: color var(--duration-normal); }
+        .tool-link:hover { color: var(--bsi-ember); }
+        .tool-link svg { width: 16px; height: 16px; transition: transform var(--duration-normal); }
+        .tool-link:hover svg { transform: translateX(4px); }
+
+        /* Coming Soon */
+        .tool-card.coming-soon { opacity: 0.6; }
+        .tool-card.coming-soon:hover { transform: none; border-color: rgba(255, 255, 255, 0.06); }
+        .tool-card.coming-soon::before { display: none; }
+        .coming-badge { font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-muted); }
+
+        /* Footer */
+        .footer { background: var(--bsi-charcoal); padding: var(--space-12) 0; border-top: 1px solid rgba(191, 87, 0, 0.15); }
+        .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-6); }
+        .footer-copy { font-family: var(--font-ui); font-size: 0.875rem; color: rgba(250, 248, 245, 0.5); }
+        .footer-links { display: flex; gap: var(--space-6); }
+        .footer-links a { font-family: var(--font-ui); font-size: 0.875rem; color: rgba(250, 248, 245, 0.5); transition: color var(--duration-normal); }
+        .footer-links a:hover { color: var(--bsi-burnt-orange); }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="/" class="logo">
+                <img src="/images/bsi-logo-nav.png" alt="BSI" class="logo-img">
+                <span>Blaze Sports Intel</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/mlb">MLB</a></li>
+                <li><a href="/nfl">NFL</a></li>
+                <li><a href="/college-baseball">College Baseball</a></li>
+                <li><a href="/tools">Tools</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-badge">Analytics Toolkit</div>
+            <h1 class="hero-title">Interactive <span>Tools</span></h1>
+            <p class="hero-desc">Professional-grade analytics tools for roster construction, game prediction, and player evaluation. Built for fans who want more than surface-level stats.</p>
+        </div>
+    </section>
+
+    <section class="tools-section">
+        <div class="container">
+            <div class="tools-grid">
+                <article class="tool-card">
+                    <div class="tool-icon">🏗️</div>
+                    <span class="tool-tier tier-free">Free</span>
+                    <h3>Team Archetype Builder</h3>
+                    <p>Design your ideal roster composition using proven MLB archetypes. Balance power, speed, defense, and pitching to build a championship contender.</p>
+                    <a href="/tools/team-archetype-builder" class="tool-link">
+                        Launch Tool
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </article>
+
+                <article class="tool-card">
+                    <div class="tool-icon">🎲</div>
+                    <span class="tool-tier tier-pro">Pro</span>
+                    <h3>Composition Optimizer</h3>
+                    <p>Monte Carlo simulation engine for roster optimization. Run thousands of simulations to find the optimal lineup construction based on your priorities.</p>
+                    <a href="/tools/composition-optimizer" class="tool-link">
+                        Launch Tool
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </article>
+
+                <article class="tool-card coming-soon">
+                    <div class="tool-icon">📊</div>
+                    <span class="tool-tier tier-free">Free</span>
+                    <h3>Win Probability Calculator</h3>
+                    <p>Real-time win probability analysis based on game state, historical data, and team performance metrics.</p>
+                    <span class="coming-badge">Coming Soon</span>
+                </article>
+
+                <article class="tool-card coming-soon">
+                    <div class="tool-icon">⚖️</div>
+                    <span class="tool-tier tier-pro">Pro</span>
+                    <h3>Player Comparison</h3>
+                    <p>Head-to-head player analysis with advanced metrics, career trajectories, and similarity scores across eras.</p>
+                    <span class="coming-badge">Coming Soon</span>
+                </article>
+
+                <article class="tool-card coming-soon">
+                    <div class="tool-icon">🎯</div>
+                    <span class="tool-tier tier-pro">Pro</span>
+                    <h3>Draft Pick Value Calculator</h3>
+                    <p>Evaluate draft pick trades using historical surplus value data and projection models.</p>
+                    <span class="coming-badge">Coming Soon</span>
+                </article>
+
+                <article class="tool-card coming-soon">
+                    <div class="tool-icon">📅</div>
+                    <span class="tool-tier tier-free">Free</span>
+                    <h3>Schedule Strength Analyzer</h3>
+                    <p>Analyze strength of schedule for any team based on opponent quality, travel distance, and rest patterns.</p>
+                    <span class="coming-badge">Coming Soon</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p class="footer-copy">&copy; 2025 Blaze Sports Intel. Born to blaze the path less beaten.</p>
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/mlb">MLB</a>
+                <a href="/nfl">NFL</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

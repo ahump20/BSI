@@ -118,7 +118,7 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
   const { request, env } = context;
 
   try {
-    const body = await request.json() as { baseline: Baseline; userId?: string };
+    const body = (await request.json()) as { baseline: Baseline; userId?: string };
     const { baseline, userId = 'anonymous' } = body;
 
     // Validate baseline data

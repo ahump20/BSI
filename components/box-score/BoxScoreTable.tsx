@@ -119,11 +119,7 @@ export function BoxScoreTable({
       {/* Linescore */}
       {showLinescore && linescore && (
         <Card variant="default" padding="md">
-          <LinescoreDisplay
-            linescore={linescore}
-            awayTeam={awayTeam}
-            homeTeam={homeTeam}
-          />
+          <LinescoreDisplay linescore={linescore} awayTeam={awayTeam} homeTeam={homeTeam} />
         </Card>
       )}
 
@@ -156,32 +152,16 @@ export function BoxScoreTable({
           {/* Batting Tables */}
           {activeTab === 'batting' && (
             <div className="space-y-6">
-              <BattingTable
-                team={awayTeam}
-                batting={boxscore.away.batting}
-                variant={variant}
-              />
-              <BattingTable
-                team={homeTeam}
-                batting={boxscore.home.batting}
-                variant={variant}
-              />
+              <BattingTable team={awayTeam} batting={boxscore.away.batting} variant={variant} />
+              <BattingTable team={homeTeam} batting={boxscore.home.batting} variant={variant} />
             </div>
           )}
 
           {/* Pitching Tables */}
           {activeTab === 'pitching' && (
             <div className="space-y-6">
-              <PitchingTable
-                team={awayTeam}
-                pitching={boxscore.away.pitching}
-                variant={variant}
-              />
-              <PitchingTable
-                team={homeTeam}
-                pitching={boxscore.home.pitching}
-                variant={variant}
-              />
+              <PitchingTable team={awayTeam} pitching={boxscore.away.pitching} variant={variant} />
+              <PitchingTable team={homeTeam} pitching={boxscore.home.pitching} variant={variant} />
             </div>
           )}
         </>
@@ -247,7 +227,9 @@ function LinescoreDisplay({ linescore, awayTeam, homeTeam }: LinescoreDisplayPro
           {/* Away Team */}
           <tr className="border-b border-border-subtle">
             <td className="p-2">
-              <span className={`font-semibold ${awayTeam.isWinner ? 'text-white' : 'text-text-secondary'}`}>
+              <span
+                className={`font-semibold ${awayTeam.isWinner ? 'text-white' : 'text-text-secondary'}`}
+              >
                 {awayTeam.abbreviation}
               </span>
             </td>
@@ -269,7 +251,9 @@ function LinescoreDisplay({ linescore, awayTeam, homeTeam }: LinescoreDisplayPro
           {/* Home Team */}
           <tr>
             <td className="p-2">
-              <span className={`font-semibold ${homeTeam.isWinner ? 'text-white' : 'text-text-secondary'}`}>
+              <span
+                className={`font-semibold ${homeTeam.isWinner ? 'text-white' : 'text-text-secondary'}`}
+              >
                 {homeTeam.abbreviation}
               </span>
             </td>
@@ -305,9 +289,10 @@ interface BattingTableProps {
 }
 
 function BattingTable({ team, batting, variant }: BattingTableProps) {
-  const columns = variant === 'compact'
-    ? ['AB', 'R', 'H', 'RBI', 'BB', 'SO', 'AVG']
-    : ['AB', 'R', 'H', 'RBI', 'HR', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG'];
+  const columns =
+    variant === 'compact'
+      ? ['AB', 'R', 'H', 'RBI', 'BB', 'SO', 'AVG']
+      : ['AB', 'R', 'H', 'RBI', 'HR', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG'];
 
   // Calculate team totals
   const totals = batting.reduce(
@@ -364,31 +349,43 @@ function BattingTable({ team, batting, variant }: BattingTableProps) {
                         <span className="font-medium text-white">{line.player.name}</span>
                         <span className="text-text-tertiary text-xs">{line.player.position}</span>
                         {hasHR && (
-                          <Badge variant="warning" size="sm">HR</Badge>
+                          <Badge variant="warning" size="sm">
+                            HR
+                          </Badge>
                         )}
                       </div>
                     </td>
                     <td className="text-center p-2 text-text-secondary font-mono">{line.ab}</td>
                     <td className="text-center p-2 text-text-secondary font-mono">{line.r}</td>
-                    <td className={`text-center p-2 font-mono ${hasMultiHit ? 'text-success font-bold' : 'text-text-secondary'}`}>
+                    <td
+                      className={`text-center p-2 font-mono ${hasMultiHit ? 'text-success font-bold' : 'text-text-secondary'}`}
+                    >
                       {line.h}
                     </td>
                     <td className="text-center p-2 text-text-secondary font-mono">{line.rbi}</td>
                     {variant === 'full' && (
-                      <td className={`text-center p-2 font-mono ${hasHR ? 'text-warning font-bold' : 'text-text-secondary'}`}>
+                      <td
+                        className={`text-center p-2 font-mono ${hasHR ? 'text-warning font-bold' : 'text-text-secondary'}`}
+                      >
                         {line.hr || 0}
                       </td>
                     )}
                     <td className="text-center p-2 text-text-secondary font-mono">{line.bb}</td>
                     <td className="text-center p-2 text-text-secondary font-mono">{line.so}</td>
                     {variant === 'full' && (
-                      <td className="text-center p-2 text-text-secondary font-mono">{line.sb || 0}</td>
+                      <td className="text-center p-2 text-text-secondary font-mono">
+                        {line.sb || 0}
+                      </td>
                     )}
                     <td className="text-center p-2 text-text-secondary font-mono">{line.avg}</td>
                     {variant === 'full' && (
                       <>
-                        <td className="text-center p-2 text-text-secondary font-mono">{line.obp || '-'}</td>
-                        <td className="text-center p-2 text-text-secondary font-mono">{line.slg || '-'}</td>
+                        <td className="text-center p-2 text-text-secondary font-mono">
+                          {line.obp || '-'}
+                        </td>
+                        <td className="text-center p-2 text-text-secondary font-mono">
+                          {line.slg || '-'}
+                        </td>
                       </>
                     )}
                   </tr>
@@ -414,9 +411,7 @@ function BattingTable({ team, batting, variant }: BattingTableProps) {
                     <td className="text-center p-2 text-text-tertiary">-</td>
                   </>
                 )}
-                {variant === 'compact' && (
-                  <td className="text-center p-2 text-text-tertiary">-</td>
-                )}
+                {variant === 'compact' && <td className="text-center p-2 text-text-tertiary">-</td>}
               </tr>
             </tbody>
           </table>
@@ -437,9 +432,10 @@ interface PitchingTableProps {
 }
 
 function PitchingTable({ team, pitching, variant }: PitchingTableProps) {
-  const columns = variant === 'compact'
-    ? ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'ERA']
-    : ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'PC-ST', 'ERA', 'WHIP'];
+  const columns =
+    variant === 'compact'
+      ? ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'ERA']
+      : ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'PC-ST', 'ERA', 'WHIP'];
 
   return (
     <Card variant="default" padding="md">
@@ -498,9 +494,7 @@ function PitchingTable({ team, pitching, variant }: PitchingTableProps) {
                     <td className="text-center p-2 text-text-secondary font-mono">{line.so}</td>
                     {variant === 'full' && (
                       <td className="text-center p-2 text-text-secondary font-mono">
-                        {line.pitches && line.strikes
-                          ? `${line.pitches}-${line.strikes}`
-                          : '-'}
+                        {line.pitches && line.strikes ? `${line.pitches}-${line.strikes}` : '-'}
                       </td>
                     )}
                     <td className="text-center p-2 text-text-secondary font-mono">{line.era}</td>

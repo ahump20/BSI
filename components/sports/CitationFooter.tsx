@@ -15,11 +15,7 @@ interface CitationFooterProps {
  * BSI policy: Every data view must cite its source with timestamp.
  * This builds credibility and helps users understand data freshness.
  */
-export function CitationFooter({
-  source,
-  fetchedAt,
-  timezone = 'CT'
-}: CitationFooterProps) {
+export function CitationFooter({ source, fetchedAt, timezone = 'CT' }: CitationFooterProps) {
   const formatted = new Date(fetchedAt).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',

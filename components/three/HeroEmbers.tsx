@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable react/no-unknown-property */
+
 /**
  * BSI Hero Embers
  *
@@ -227,20 +229,14 @@ function CSSFallback({
   if (reducedMotion) {
     // Static version for reduced motion preference
     return (
-      <div
-        className={`absolute inset-0 -z-5 overflow-hidden ${className}`}
-        aria-hidden="true"
-      >
+      <div className={`absolute inset-0 -z-5 overflow-hidden ${className}`} aria-hidden="true">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-burnt-orange/20 rounded-full blur-[120px]" />
       </div>
     );
   }
 
   return (
-    <div
-      className={`absolute inset-0 -z-5 overflow-hidden ${className}`}
-      aria-hidden="true"
-    >
+    <div className={`absolute inset-0 -z-5 overflow-hidden ${className}`} aria-hidden="true">
       {/* Animated gradient glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-burnt-orange/20 rounded-full blur-[120px] animate-pulse-slow" />
 

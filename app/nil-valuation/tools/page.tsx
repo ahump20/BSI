@@ -20,35 +20,40 @@ const navItems = [
 const tools = [
   {
     title: 'FMNV Calculator',
-    description: 'Fair Market NIL Value calculator using our proprietary model. Input player stats, social following, and market factors to get an estimated valuation.',
+    description:
+      'Fair Market NIL Value calculator using our proprietary model. Input player stats, social following, and market factors to get an estimated valuation.',
     status: 'Live',
     statusVariant: 'success' as const,
     href: '/nil-valuation',
   },
   {
     title: 'WAR-to-NIL Converter',
-    description: 'Convert Wins Above Replacement metrics to NIL dollar values. See how on-field performance translates to market value.',
+    description:
+      'Convert Wins Above Replacement metrics to NIL dollar values. See how on-field performance translates to market value.',
     status: 'Live',
     statusVariant: 'success' as const,
     href: '/nil-valuation',
   },
   {
     title: 'Comparable Analysis',
-    description: 'Find similar players and their NIL valuations. Compare across sports, conferences, and market sizes.',
+    description:
+      'Find similar players and their NIL valuations. Compare across sports, conferences, and market sizes.',
     status: 'Coming Soon',
     statusVariant: 'warning' as const,
     href: '#',
   },
   {
     title: 'Market Trend Tracker',
-    description: 'Track NIL market trends by sport, position, and region. See where the money is flowing.',
+    description:
+      'Track NIL market trends by sport, position, and region. See where the money is flowing.',
     status: 'Coming Soon',
     statusVariant: 'warning' as const,
     href: '#',
   },
   {
     title: 'Brand Match Finder',
-    description: 'Match athletes with potential brand partners based on audience alignment and market fit.',
+    description:
+      'Match athletes with potential brand partners based on audience alignment and market fit.',
     status: 'Coming Soon',
     statusVariant: 'warning' as const,
     href: '#',
@@ -72,7 +77,10 @@ export default function NILToolsPage() {
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/nil-valuation" className="text-text-tertiary hover:text-burnt-orange transition-colors">
+              <Link
+                href="/nil-valuation"
+                className="text-text-tertiary hover:text-burnt-orange transition-colors"
+              >
                 NIL Valuation
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -86,7 +94,9 @@ export default function NILToolsPage() {
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
-              <Badge variant="primary" className="mb-4">NIL Intelligence</Badge>
+              <Badge variant="primary" className="mb-4">
+                NIL Intelligence
+              </Badge>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
@@ -97,7 +107,8 @@ export default function NILToolsPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary max-w-2xl">
-                Calculators, analyzers, and market intelligence tools to help athletes, agents, and programs make informed NIL decisions.
+                Calculators, analyzers, and market intelligence tools to help athletes, agents, and
+                programs make informed NIL decisions.
               </p>
             </ScrollReveal>
           </Container>
@@ -142,7 +153,8 @@ export default function NILToolsPage() {
                   Need a Custom Analysis?
                 </h3>
                 <p className="text-text-secondary mb-6 max-w-xl mx-auto">
-                  Our enterprise tier includes custom valuation reports, market analysis, and direct consultation with our NIL experts.
+                  Our enterprise tier includes custom valuation reports, market analysis, and direct
+                  consultation with our NIL experts.
                 </p>
                 <Link href="/nil-valuation">
                   <Button variant="primary">View Enterprise Options</Button>

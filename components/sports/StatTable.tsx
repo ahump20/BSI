@@ -110,10 +110,7 @@ export function StatTable<T extends Record<string, unknown>>({
   };
 
   return (
-    <div
-      className={`overflow-x-auto ${className}`}
-      style={{ WebkitOverflowScrolling: 'touch' }}
-    >
+    <div className={`overflow-x-auto ${className}`} style={{ WebkitOverflowScrolling: 'touch' }}>
       <table className="w-full border-collapse font-mono text-sm">
         <thead>
           <tr>
@@ -132,9 +129,7 @@ export function StatTable<T extends Record<string, unknown>>({
                 <span className="inline-flex items-center gap-1">
                   {col.label}
                   {sortCol === col.key && (
-                    <span className="text-burnt-orange">
-                      {sortDir === 'desc' ? '↓' : '↑'}
-                    </span>
+                    <span className="text-burnt-orange">{sortDir === 'desc' ? '↓' : '↑'}</span>
                   )}
                 </span>
               </th>
@@ -160,9 +155,10 @@ export function StatTable<T extends Record<string, unknown>>({
                     key={col.key}
                     className={`
                       px-3 py-2 whitespace-nowrap border-b border-gray-700
-                      ${colIndex === 0
-                        ? 'text-left sticky left-0 bg-charcoal group-hover:bg-gray-800 z-10 font-medium'
-                        : 'text-right'
+                      ${
+                        colIndex === 0
+                          ? 'text-left sticky left-0 bg-charcoal group-hover:bg-gray-800 z-10 font-medium'
+                          : 'text-right'
                       }
                       ${isHighlighted && colIndex === 0 ? 'text-burnt-orange' : ''}
                       ${col.width || ''}
@@ -178,9 +174,7 @@ export function StatTable<T extends Record<string, unknown>>({
       </table>
 
       {rows.length === 0 && (
-        <div className="py-8 text-center text-gray-500 text-sm">
-          No data available
-        </div>
+        <div className="py-8 text-center text-gray-500 text-sm">No data available</div>
       )}
     </div>
   );

@@ -351,8 +351,8 @@ export default function MLBPage() {
 
             <ScrollReveal direction="up" delay={200}>
               <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Live scores, division standings, and Statcast analytics for all 30 teams—pulled straight
-                from MLB's official API. No third-party garbage. No guesswork.
+                Live scores, division standings, and Statcast analytics for all 30 teams—pulled
+                straight from MLB's official API. No third-party garbage. No guesswork.
               </p>
             </ScrollReveal>
 
@@ -692,7 +692,8 @@ export default function MLBPage() {
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                     <p className="text-text-secondary">
-                      Exit velocity, launch angle, sprint speed—still wiring this up. Ping me if you need something specific.
+                      Exit velocity, launch angle, sprint speed—still wiring this up. Ping me if you
+                      need something specific.
                     </p>
                   </div>
                 </CardContent>
@@ -724,7 +725,8 @@ export default function MLBPage() {
                     <div className="text-center py-8">
                       <p className="text-text-secondary">No games today.</p>
                       <p className="text-text-tertiary text-sm mt-2">
-                        Off day across the league. Check back tomorrow—162 games don't play themselves.
+                        Off day across the league. Check back tomorrow—162 games don't play
+                        themselves.
                       </p>
                     </div>
                   </Card>

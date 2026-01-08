@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLB Coverage — Blaze Sports Intel</title>
+    <meta name="description" content="Real-time MLB scores, standings, and analytics. Cardinals coverage, league-wide stats, and professional baseball intelligence.">
+    <meta property="og:title" content="MLB Coverage — Blaze Sports Intel">
+    <meta property="og:description" content="Real-time MLB scores, standings, and professional baseball intelligence.">
+    <meta property="og:image" content="https://blazesportsintel.com/images/og-image.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/mlb">
+    <link rel="canonical" href="https://blazesportsintel.com/mlb">
+    <meta name="theme-color" content="#BF5700">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-ember: #FF6B35;
+            --bsi-success: #10B981;
+            --bsi-error: #EF4444;
+            --bsi-muted: #6B7280;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Serif 4', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+            --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+            --space-6: 1.5rem; --space-8: 2rem; --space-12: 3rem; --space-16: 4rem;
+            --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+            --duration-normal: 300ms;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body { font-family: var(--font-body); background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        a { color: inherit; text-decoration: none; }
+        h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: var(--space-4) 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-weight: 700; font-size: 1.125rem; }
+        .logo-img { height: 44px; width: auto; }
+        .nav-links { display: flex; gap: var(--space-8); list-style: none; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; }
+        .nav-links a { color: var(--bsi-cream); opacity: 0.7; transition: opacity var(--duration-normal) var(--ease-out); }
+        .nav-links a:hover, .nav-links a.active { opacity: 1; }
+        @media (max-width: 768px) { .nav-links { display: none; } }
+        .hero { min-height: 45vh; display: flex; flex-direction: column; justify-content: center; padding-top: 120px; padding-bottom: var(--space-12); position: relative; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 30%, rgba(191, 87, 0, 0.15) 0%, transparent 50%); pointer-events: none; }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(191, 87, 0, 0.1); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 100px; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bsi-ember); margin-bottom: var(--space-6); }
+        .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--bsi-success); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .hero-title { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: var(--space-4); }
+        .hero-title span { color: var(--bsi-burnt-orange); }
+        .hero-desc { font-size: 1.125rem; color: rgba(250, 248, 245, 0.75); max-width: 600px; }
+        .scores-section { padding: var(--space-8) 0 var(--space-16); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6); flex-wrap: wrap; gap: var(--space-4); }
+        .section-title { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: var(--bsi-burnt-orange); }
+        .last-updated { font-family: var(--font-mono); font-size: 0.75rem; color: var(--bsi-muted); }
+        .scores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
+        .game-card { background: var(--bsi-charcoal); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: var(--space-4); transition: border-color var(--duration-normal); }
+        .game-card:hover { border-color: rgba(191, 87, 0, 0.2); }
+        .game-card.live { border-color: rgba(16, 185, 129, 0.4); }
+        .game-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); }
+        .status-badge { font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 4px; }
+        .status-live { background: rgba(16, 185, 129, 0.15); color: var(--bsi-success); }
+        .status-final { background: rgba(107, 114, 128, 0.15); color: var(--bsi-muted); }
+        .status-scheduled { background: rgba(191, 87, 0, 0.1); color: var(--bsi-ember); }
+        .game-time { font-family: var(--font-mono); font-size: 0.75rem; color: var(--bsi-muted); }
+        .team-row { display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) 0; }
+        .team-name { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 500; }
+        .team-score { font-family: var(--font-mono); font-size: 1.125rem; font-weight: 600; }
+        .team-row.winner .team-name, .team-row.winner .team-score { color: var(--bsi-cream); }
+        .team-row.loser { opacity: 0.6; }
+        .loading-state, .error-state { text-align: center; padding: var(--space-12); }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(191, 87, 0, 0.2); border-top-color: var(--bsi-burnt-orange); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto var(--space-4); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-state { color: var(--bsi-error); }
+        .quick-links { display: flex; gap: var(--space-4); flex-wrap: wrap; margin-top: var(--space-8); padding-top: var(--space-8); border-top: 1px solid rgba(255, 255, 255, 0.06); }
+        .quick-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: var(--space-3) var(--space-4); background: rgba(191, 87, 0, 0.1); border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 8px; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; color: var(--bsi-cream); transition: all var(--duration-normal); }
+        .quick-link:hover { background: rgba(191, 87, 0, 0.2); border-color: rgba(191, 87, 0, 0.4); }
+        .footer { background: var(--bsi-charcoal); padding: var(--space-12) 0; border-top: 1px solid rgba(191, 87, 0, 0.15); margin-top: var(--space-16); }
+        .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-6); }
+        .footer-copy { font-family: var(--font-ui); font-size: 0.875rem; color: rgba(250, 248, 245, 0.5); }
+        .footer-links { display: flex; gap: var(--space-6); }
+        .footer-links a { font-family: var(--font-ui); font-size: 0.875rem; color: rgba(250, 248, 245, 0.5); transition: color var(--duration-normal); }
+        .footer-links a:hover { color: var(--bsi-burnt-orange); }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="/" class="logo">
+                <img src="/images/bsi-logo-nav.png" alt="BSI" class="logo-img">
+                <span>Blaze Sports Intel</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/mlb" class="active">MLB</a></li>
+                <li><a href="/nfl">NFL</a></li>
+                <li><a href="/college-baseball">College Baseball</a></li>
+                <li><a href="/tools">Tools</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-badge">Live Coverage</div>
+            <h1 class="hero-title">MLB <span>Baseball</span></h1>
+            <p class="hero-desc">Real-time scores, standings, and analytics across all 30 teams. Cardinals coverage you won't find anywhere else.</p>
+        </div>
+    </section>
+
+    <section class="scores-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-title">Today's Games</span>
+                <span class="last-updated" id="lastUpdated">Loading...</span>
+            </div>
+
+            <div id="scoresContainer" class="scores-grid">
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading scores...</p>
+                </div>
+            </div>
+
+            <div class="quick-links">
+                <a href="/api/mlb/standings" class="quick-link">Standings</a>
+                <a href="/api/mlb/cardinals" class="quick-link">Cardinals Stats</a>
+                <a href="/tools" class="quick-link">Analytics Tools</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p class="footer-copy">2025 Blaze Sports Intel. Data from MLB Stats API.</p>
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/nfl">NFL</a>
+                <a href="/tools">Tools</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Safe DOM creation functions to avoid XSS
+        function createGameCard(game) {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+
+            const isLive = game.status?.isLive || game.status?.state === 'InProgress';
+            const isFinal = game.status?.state === 'Final';
+            if (isLive) card.classList.add('live');
+
+            // Status row
+            const statusRow = document.createElement('div');
+            statusRow.className = 'game-status';
+
+            const badge = document.createElement('span');
+            badge.className = 'status-badge ' + (isLive ? 'status-live' : isFinal ? 'status-final' : 'status-scheduled');
+            badge.textContent = isLive ? 'LIVE' : isFinal ? 'FINAL' : 'SCHEDULED';
+
+            const time = document.createElement('span');
+            time.className = 'game-time';
+            time.textContent = isLive ? (game.status.detailedState || '') : isFinal ? 'Final' : formatTime(game.dateTime);
+
+            statusRow.appendChild(badge);
+            statusRow.appendChild(time);
+            card.appendChild(statusRow);
+
+            // Teams
+            const awayScore = game.teams?.away?.score || 0;
+            const homeScore = game.teams?.home?.score || 0;
+
+            card.appendChild(createTeamRow(
+                game.teams?.away?.abbreviation || game.teams?.away?.name || 'Away',
+                awayScore,
+                isFinal && awayScore > homeScore,
+                isFinal && awayScore < homeScore
+            ));
+            card.appendChild(createTeamRow(
+                game.teams?.home?.abbreviation || game.teams?.home?.name || 'Home',
+                homeScore,
+                isFinal && homeScore > awayScore,
+                isFinal && homeScore < awayScore
+            ));
+
+            return card;
+        }
+
+        function createTeamRow(name, score, isWinner, isLoser) {
+            const row = document.createElement('div');
+            row.className = 'team-row' + (isWinner ? ' winner' : '') + (isLoser ? ' loser' : '');
+
+            const nameEl = document.createElement('span');
+            nameEl.className = 'team-name';
+            nameEl.textContent = name;
+
+            const scoreEl = document.createElement('span');
+            scoreEl.className = 'team-score';
+            scoreEl.textContent = score;
+
+            row.appendChild(nameEl);
+            row.appendChild(scoreEl);
+            return row;
+        }
+
+        function formatTime(dateString) {
+            if (!dateString) return 'TBD';
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('en-US', {
+                timeZone: 'America/Chicago',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            }) + ' CT';
+        }
+
+        async function loadScores() {
+            const container = document.getElementById('scoresContainer');
+            const lastUpdated = document.getElementById('lastUpdated');
+
+            try {
+                const response = await fetch('/api/mlb/scores');
+                const data = await response.json();
+
+                if (data.error) {
+                    container.textContent = '';
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-state';
+                    errorDiv.textContent = 'Unable to load scores: ' + data.error;
+                    container.appendChild(errorDiv);
+                    return;
+                }
+
+                lastUpdated.textContent = 'Updated: ' + (data.fetchedAt || new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+
+                if (!data.games || data.games.length === 0) {
+                    container.textContent = '';
+                    const noGames = document.createElement('div');
+                    noGames.className = 'loading-state';
+                    noGames.textContent = 'No games scheduled today';
+                    container.appendChild(noGames);
+                    return;
+                }
+
+                container.textContent = '';
+                data.games.forEach(game => {
+                    container.appendChild(createGameCard(game));
+                });
+
+            } catch (error) {
+                container.textContent = '';
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-state';
+                errorDiv.textContent = 'Error loading scores. Please try again.';
+                container.appendChild(errorDiv);
+                console.error('Score load error:', error);
+            }
+        }
+
+        loadScores();
+        setInterval(loadScores, 60000);
+    </script>
+</body>
+</html>

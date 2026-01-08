@@ -146,8 +146,14 @@ function parseNBAGames(games: NBAGameRaw[]): Game[] {
       const awayAbbr = awayTeam?.teamTricode || awayTeam?.abbreviation || 'AWY';
 
       // Get score (can be string or number)
-      const homeScore = typeof homeTeam?.score === 'string' ? parseInt(homeTeam.score, 10) || 0 : homeTeam?.score || 0;
-      const awayScore = typeof awayTeam?.score === 'string' ? parseInt(awayTeam.score, 10) || 0 : awayTeam?.score || 0;
+      const homeScore =
+        typeof homeTeam?.score === 'string'
+          ? parseInt(homeTeam.score, 10) || 0
+          : homeTeam?.score || 0;
+      const awayScore =
+        typeof awayTeam?.score === 'string'
+          ? parseInt(awayTeam.score, 10) || 0
+          : awayTeam?.score || 0;
 
       // Parse status - can be string or object
       let gameStatus: Game['status'] = 'scheduled';
@@ -205,7 +211,12 @@ async function fetchScores(sport: Sport): Promise<Game[]> {
     const data = await res.json();
 
     // Handle NFL nested structure
-    if (sport === 'nfl' && data.games && typeof data.games === 'object' && !Array.isArray(data.games)) {
+    if (
+      sport === 'nfl' &&
+      data.games &&
+      typeof data.games === 'object' &&
+      !Array.isArray(data.games)
+    ) {
       return parseNFLGames(data as NFLGamesResponse);
     }
 
