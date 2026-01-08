@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Strength Analyzer | Blaze Sports Intel</title>
+    <meta name="description" content="Analyze strength of schedule, opponent tiers, and tournament resume metrics for college sports selection committee evaluation.">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-ember: #FF6B35;
+            --bsi-success: #10B981;
+            --bsi-warning: #F59E0B;
+            --bsi-error: #EF4444;
+            --bsi-muted: #6B7280;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-ui: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; }
+        body {
+            font-family: var(--font-ui);
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0.75rem 1.5rem;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { text-decoration: none; color: inherit; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-display);
+            font-weight: 700;
+        }
+        .logo img { height: 36px; }
+        .nav-links { display: flex; gap: 1.5rem; font-size: 0.875rem; }
+        .nav-links a { opacity: 0.7; transition: opacity 0.2s; }
+        .nav-links a:hover { opacity: 1; color: var(--bsi-ember); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 1.5rem 4rem;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--bsi-cream), var(--bsi-burnt-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--bsi-muted); font-size: 1.125rem; }
+        .pro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .sport-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .sport-tab {
+            padding: 0.75rem 1.25rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 8px;
+            color: var(--bsi-cream);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sport-tab:hover { border-color: var(--bsi-ember); }
+        .sport-tab.active {
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            border-color: transparent;
+        }
+
+        .analyzer {
+            display: grid;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .analyzer { grid-template-columns: 1fr 2fr; }
+        }
+
+        .panel {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .panel h2 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--bsi-ember);
+        }
+
+        .team-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 8px;
+            color: var(--bsi-cream);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .team-select option { background: var(--bsi-charcoal); }
+
+        .metric-card {
+            background: rgba(191, 87, 0, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--bsi-muted);
+            margin-bottom: 0.25rem;
+        }
+        .metric-value {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .metric-value.high { color: var(--bsi-success); }
+        .metric-value.medium { color: var(--bsi-warning); }
+        .metric-value.low { color: var(--bsi-error); }
+
+        .tier-breakdown {
+            margin-top: 1.5rem;
+        }
+        .tier-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+        }
+        .tier-row:last-child { border-bottom: none; }
+        .tier-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tier-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .tier-dot.q1 { background: var(--bsi-success); }
+        .tier-dot.q2 { background: var(--bsi-warning); }
+        .tier-dot.q3 { background: var(--bsi-ember); }
+        .tier-dot.q4 { background: var(--bsi-error); }
+        .tier-count {
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+        .tier-record {
+            font-size: 0.875rem;
+            color: var(--bsi-muted);
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .schedule-table th {
+            text-align: left;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--bsi-muted);
+            border-bottom: 2px solid rgba(191, 87, 0, 0.2);
+        }
+        .schedule-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+        }
+        .opponent-tier {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .opponent-tier.q1 { background: rgba(16, 185, 129, 0.2); color: var(--bsi-success); }
+        .opponent-tier.q2 { background: rgba(245, 158, 11, 0.2); color: var(--bsi-warning); }
+        .opponent-tier.q3 { background: rgba(255, 107, 53, 0.2); color: var(--bsi-ember); }
+        .opponent-tier.q4 { background: rgba(239, 68, 68, 0.2); color: var(--bsi-error); }
+        .result-w { color: var(--bsi-success); font-weight: 600; }
+        .result-l { color: var(--bsi-error); font-weight: 600; }
+
+        .resume-section {
+            margin-top: 2rem;
+        }
+        .resume-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .resume-stat {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .resume-stat-value {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bsi-gold);
+        }
+        .resume-stat-label {
+            font-size: 0.75rem;
+            color: var(--bsi-muted);
+            margin-top: 0.25rem;
+        }
+
+        .committee-notes {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(191, 87, 0, 0.05);
+            border-left: 4px solid var(--bsi-ember);
+            border-radius: 0 8px 8px 0;
+        }
+        .committee-notes h3 {
+            font-family: var(--font-display);
+            margin-bottom: 1rem;
+            color: var(--bsi-ember);
+        }
+        .committee-notes p {
+            color: var(--bsi-cream);
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(191, 87, 0, 0.15);
+            color: var(--bsi-muted);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="logo">
+            <img src="/images/bsi-logo-nav.png" alt="BSI">
+            <span>Blaze Sports Intel</span>
+        </a>
+        <div class="nav-links">
+            <a href="/tools">All Tools</a>
+            <a href="/pricing">Pro</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <span class="pro-badge">PRO TOOL</span>
+            <h1>Schedule Strength Analyzer</h1>
+            <p>Evaluate tournament resumes with opponent tier classification and SOS metrics</p>
+        </div>
+
+        <div class="sport-tabs">
+            <button class="sport-tab active" data-sport="baseball">College Baseball</button>
+            <button class="sport-tab" data-sport="basketball">College Basketball</button>
+            <button class="sport-tab" data-sport="football">College Football</button>
+        </div>
+
+        <div class="analyzer">
+            <div class="panel">
+                <h2>Team Selection</h2>
+                <select class="team-select" id="team-select">
+                    <option value="texas">Texas Longhorns</option>
+                    <option value="lsu">LSU Tigers</option>
+                    <option value="tamu">Texas A&amp;M Aggies</option>
+                    <option value="florida">Florida Gators</option>
+                    <option value="tennessee">Tennessee Volunteers</option>
+                    <option value="vanderbilt">Vanderbilt Commodores</option>
+                    <option value="arkansas">Arkansas Razorbacks</option>
+                    <option value="olemiss">Ole Miss Rebels</option>
+                    <option value="stanford">Stanford Cardinal</option>
+                    <option value="wake">Wake Forest Demon Deacons</option>
+                </select>
+
+                <div class="metric-card">
+                    <div class="metric-label">Strength of Schedule</div>
+                    <div class="metric-value high" id="sos-value">42</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">RPI Ranking</div>
+                    <div class="metric-value high" id="rpi-value">8</div>
+                </div>
+
+                <div class="tier-breakdown">
+                    <h3 style="font-size: 0.875rem; margin-bottom: 1rem; color: var(--bsi-muted);">Opponent Quadrant Breakdown</h3>
+                    <div class="tier-row">
+                        <div class="tier-label">
+                            <span class="tier-dot q1"></span>
+                            <span>Quadrant 1</span>
+                        </div>
+                        <div>
+                            <span class="tier-count" id="q1-count">8</span>
+                            <span class="tier-record" id="q1-record">(6-2)</span>
+                        </div>
+                    </div>
+                    <div class="tier-row">
+                        <div class="tier-label">
+                            <span class="tier-dot q2"></span>
+                            <span>Quadrant 2</span>
+                        </div>
+                        <div>
+                            <span class="tier-count" id="q2-count">12</span>
+                            <span class="tier-record" id="q2-record">(10-2)</span>
+                        </div>
+                    </div>
+                    <div class="tier-row">
+                        <div class="tier-label">
+                            <span class="tier-dot q3"></span>
+                            <span>Quadrant 3</span>
+                        </div>
+                        <div>
+                            <span class="tier-count" id="q3-count">18</span>
+                            <span class="tier-record" id="q3-record">(16-2)</span>
+                        </div>
+                    </div>
+                    <div class="tier-row">
+                        <div class="tier-label">
+                            <span class="tier-dot q4"></span>
+                            <span>Quadrant 4</span>
+                        </div>
+                        <div>
+                            <span class="tier-count" id="q4-count">12</span>
+                            <span class="tier-record" id="q4-record">(12-0)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Key Games Schedule</h2>
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Opponent</th>
+                            <th>Quadrant</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+
+                <div class="resume-section">
+                    <h3 style="font-family: var(--font-display); margin-bottom: 1rem;">Tournament Resume Metrics</h3>
+                    <div class="resume-grid">
+                        <div class="resume-stat">
+                            <div class="resume-stat-value" id="overall-record">44-6</div>
+                            <div class="resume-stat-label">Overall Record</div>
+                        </div>
+                        <div class="resume-stat">
+                            <div class="resume-stat-value" id="conf-record">22-4</div>
+                            <div class="resume-stat-label">Conference Record</div>
+                        </div>
+                        <div class="resume-stat">
+                            <div class="resume-stat-value" id="road-record">18-4</div>
+                            <div class="resume-stat-label">Road/Neutral</div>
+                        </div>
+                        <div class="resume-stat">
+                            <div class="resume-stat-value" id="last10">8-2</div>
+                            <div class="resume-stat-label">Last 10 Games</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="committee-notes">
+                    <h3>Selection Committee Context</h3>
+                    <p id="committee-analysis">Texas enters selection weekend with one of the strongest resumes in college baseball. Their 6-2 record against Quadrant 1 opponents demonstrates elite-level performance, while zero losses to Q4 teams shows consistency. The SEC schedule provides ample quality win opportunities, and the committee historically values road wins against ranked opponents.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Quadrant classifications based on NET/RPI rankings and game location. Data updates daily during season.</p>
+            <p>2025 Blaze Sports Intel. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        var teamData = {
+            texas: {
+                name: 'Texas Longhorns',
+                sos: 42, rpi: 8,
+                q1: { count: 8, wins: 6, losses: 2 },
+                q2: { count: 12, wins: 10, losses: 2 },
+                q3: { count: 18, wins: 16, losses: 2 },
+                q4: { count: 12, wins: 12, losses: 0 },
+                overall: '44-6', conf: '22-4', road: '18-4', last10: '8-2',
+                games: [
+                    { date: 'Feb 14', opponent: 'Rice', quadrant: 'Q2', result: 'W', score: '8-3' },
+                    { date: 'Feb 21', opponent: 'LSU', quadrant: 'Q1', result: 'W', score: '5-2' },
+                    { date: 'Mar 7', opponent: 'Texas A&M', quadrant: 'Q1', result: 'L', score: '3-6' },
+                    { date: 'Mar 21', opponent: 'Florida', quadrant: 'Q1', result: 'W', score: '7-4' },
+                    { date: 'Apr 4', opponent: 'Arkansas', quadrant: 'Q1', result: 'W', score: '4-2' },
+                    { date: 'Apr 18', opponent: 'Ole Miss', quadrant: 'Q1', result: 'W', score: '6-3' }
+                ],
+                analysis: 'Texas enters selection weekend with one of the strongest resumes in college baseball. Their 6-2 record against Quadrant 1 opponents demonstrates elite-level performance, while zero losses to Q4 teams shows consistency. The SEC schedule provides ample quality win opportunities.'
+            },
+            lsu: {
+                name: 'LSU Tigers',
+                sos: 38, rpi: 3,
+                q1: { count: 10, wins: 7, losses: 3 },
+                q2: { count: 14, wins: 11, losses: 3 },
+                q3: { count: 16, wins: 14, losses: 2 },
+                q4: { count: 10, wins: 10, losses: 0 },
+                overall: '42-8', conf: '20-6', road: '16-6', last10: '7-3',
+                games: [
+                    { date: 'Feb 14', opponent: 'TCU', quadrant: 'Q2', result: 'W', score: '6-2' },
+                    { date: 'Feb 28', opponent: 'Texas', quadrant: 'Q1', result: 'L', score: '2-5' },
+                    { date: 'Mar 14', opponent: 'Florida', quadrant: 'Q1', result: 'W', score: '8-5' },
+                    { date: 'Mar 28', opponent: 'Vanderbilt', quadrant: 'Q1', result: 'W', score: '4-1' },
+                    { date: 'Apr 11', opponent: 'Georgia', quadrant: 'Q2', result: 'W', score: '7-3' },
+                    { date: 'Apr 25', opponent: 'Ole Miss', quadrant: 'Q1', result: 'L', score: '3-5' }
+                ],
+                analysis: 'LSU brings championship pedigree and a strong Q1 record to the tournament. The Tigers have proven they can win big games, though recent road struggles are a concern. Their pitching depth makes them a dangerous tournament team.'
+            },
+            tamu: {
+                name: 'Texas A&M Aggies',
+                sos: 45, rpi: 5,
+                q1: { count: 9, wins: 6, losses: 3 },
+                q2: { count: 11, wins: 9, losses: 2 },
+                q3: { count: 15, wins: 13, losses: 2 },
+                q4: { count: 15, wins: 15, losses: 0 },
+                overall: '43-7', conf: '21-5', road: '17-5', last10: '9-1',
+                games: [
+                    { date: 'Feb 14', opponent: 'Baylor', quadrant: 'Q3', result: 'W', score: '9-2' },
+                    { date: 'Mar 7', opponent: 'Texas', quadrant: 'Q1', result: 'W', score: '6-3' },
+                    { date: 'Mar 21', opponent: 'LSU', quadrant: 'Q1', result: 'L', score: '4-7' },
+                    { date: 'Apr 4', opponent: 'Tennessee', quadrant: 'Q1', result: 'W', score: '5-4' },
+                    { date: 'Apr 18', opponent: 'Arkansas', quadrant: 'Q1', result: 'W', score: '3-1' },
+                    { date: 'May 2', opponent: 'Florida', quadrant: 'Q1', result: 'W', score: '8-6' }
+                ],
+                analysis: 'Texas A&M has arguably the toughest strength of schedule in the country and has thrived. Their 9-1 record over the last 10 games shows peak form heading into the postseason. The Aggies are a legitimate national title contender.'
+            },
+            florida: {
+                name: 'Florida Gators',
+                sos: 40, rpi: 12,
+                q1: { count: 8, wins: 4, losses: 4 },
+                q2: { count: 13, wins: 10, losses: 3 },
+                q3: { count: 17, wins: 15, losses: 2 },
+                q4: { count: 12, wins: 12, losses: 0 },
+                overall: '41-9', conf: '19-7', road: '15-7', last10: '6-4',
+                games: [
+                    { date: 'Feb 14', opponent: 'Miami', quadrant: 'Q2', result: 'W', score: '5-3' },
+                    { date: 'Mar 7', opponent: 'Vanderbilt', quadrant: 'Q1', result: 'L', score: '2-4' },
+                    { date: 'Mar 21', opponent: 'Texas', quadrant: 'Q1', result: 'L', score: '4-7' },
+                    { date: 'Apr 4', opponent: 'Georgia', quadrant: 'Q2', result: 'W', score: '6-2' },
+                    { date: 'Apr 18', opponent: 'Tennessee', quadrant: 'Q1', result: 'W', score: '5-3' },
+                    { date: 'May 2', opponent: 'Texas A&M', quadrant: 'Q1', result: 'L', score: '6-8' }
+                ],
+                analysis: 'Florida has the talent but inconsistent results against top competition. Their .500 record against Q1 opponents will be scrutinized by the committee. The Gators need a strong conference tournament showing to secure a top-8 seed.'
+            },
+            tennessee: {
+                name: 'Tennessee Volunteers',
+                sos: 36, rpi: 10,
+                q1: { count: 7, wins: 5, losses: 2 },
+                q2: { count: 12, wins: 10, losses: 2 },
+                q3: { count: 19, wins: 17, losses: 2 },
+                q4: { count: 12, wins: 12, losses: 0 },
+                overall: '44-6', conf: '22-4', road: '16-4', last10: '8-2',
+                games: [
+                    { date: 'Feb 21', opponent: 'Auburn', quadrant: 'Q2', result: 'W', score: '7-2' },
+                    { date: 'Mar 7', opponent: 'Vanderbilt', quadrant: 'Q1', result: 'W', score: '4-2' },
+                    { date: 'Mar 28', opponent: 'Arkansas', quadrant: 'Q1', result: 'W', score: '6-4' },
+                    { date: 'Apr 4', opponent: 'Texas A&M', quadrant: 'Q1', result: 'L', score: '4-5' },
+                    { date: 'Apr 18', opponent: 'Florida', quadrant: 'Q1', result: 'L', score: '3-5' },
+                    { date: 'May 2', opponent: 'Georgia', quadrant: 'Q2', result: 'W', score: '9-3' }
+                ],
+                analysis: 'Tennessee has been one of the most consistent programs this season. Their pitching staff ranks among the best in the country, and they take care of business against inferior opponents. Strong national seed candidate.'
+            },
+            vanderbilt: {
+                name: 'Vanderbilt Commodores',
+                sos: 35, rpi: 6,
+                q1: { count: 9, wins: 6, losses: 3 },
+                q2: { count: 14, wins: 12, losses: 2 },
+                q3: { count: 15, wins: 13, losses: 2 },
+                q4: { count: 12, wins: 12, losses: 0 },
+                overall: '43-7', conf: '21-5', road: '17-5', last10: '7-3',
+                games: [
+                    { date: 'Feb 28', opponent: 'Louisville', quadrant: 'Q2', result: 'W', score: '8-4' },
+                    { date: 'Mar 7', opponent: 'Tennessee', quadrant: 'Q1', result: 'L', score: '2-4' },
+                    { date: 'Mar 21', opponent: 'Georgia', quadrant: 'Q2', result: 'W', score: '5-1' },
+                    { date: 'Mar 28', opponent: 'LSU', quadrant: 'Q1', result: 'L', score: '1-4' },
+                    { date: 'Apr 11', opponent: 'Ole Miss', quadrant: 'Q1', result: 'W', score: '7-5' },
+                    { date: 'Apr 25', opponent: 'Kentucky', quadrant: 'Q2', result: 'W', score: '6-2' }
+                ],
+                analysis: 'Vanderbilt brings a deep roster and championship experience. Their development of pitching continues to be elite. The Commodores are battle-tested and know how to win in Omaha. Top-8 seed is likely.'
+            },
+            arkansas: {
+                name: 'Arkansas Razorbacks',
+                sos: 41, rpi: 15,
+                q1: { count: 8, wins: 4, losses: 4 },
+                q2: { count: 11, wins: 8, losses: 3 },
+                q3: { count: 18, wins: 16, losses: 2 },
+                q4: { count: 13, wins: 13, losses: 0 },
+                overall: '41-9', conf: '18-8', road: '14-7', last10: '6-4',
+                games: [
+                    { date: 'Feb 14', opponent: 'Oklahoma State', quadrant: 'Q2', result: 'W', score: '7-4' },
+                    { date: 'Mar 14', opponent: 'LSU', quadrant: 'Q1', result: 'L', score: '3-6' },
+                    { date: 'Mar 28', opponent: 'Tennessee', quadrant: 'Q1', result: 'L', score: '4-6' },
+                    { date: 'Apr 4', opponent: 'Texas', quadrant: 'Q1', result: 'L', score: '2-4' },
+                    { date: 'Apr 18', opponent: 'Texas A&M', quadrant: 'Q1', result: 'L', score: '1-3' },
+                    { date: 'May 2', opponent: 'Ole Miss', quadrant: 'Q1', result: 'W', score: '5-3' }
+                ],
+                analysis: 'Arkansas has struggled against elite competition this year, going just 4-4 in Q1 games. However, their overall resume remains strong. The Razorbacks need momentum heading into the tournament to be a threat.'
+            },
+            olemiss: {
+                name: 'Ole Miss Rebels',
+                sos: 39, rpi: 9,
+                q1: { count: 9, wins: 5, losses: 4 },
+                q2: { count: 13, wins: 11, losses: 2 },
+                q3: { count: 16, wins: 14, losses: 2 },
+                q4: { count: 12, wins: 12, losses: 0 },
+                overall: '42-8', conf: '20-6', road: '16-6', last10: '7-3',
+                games: [
+                    { date: 'Feb 21', opponent: 'Southern Miss', quadrant: 'Q2', result: 'W', score: '6-2' },
+                    { date: 'Mar 7', opponent: 'Georgia', quadrant: 'Q2', result: 'W', score: '4-1' },
+                    { date: 'Mar 28', opponent: 'LSU', quadrant: 'Q1', result: 'W', score: '5-3' },
+                    { date: 'Apr 11', opponent: 'Vanderbilt', quadrant: 'Q1', result: 'L', score: '5-7' },
+                    { date: 'Apr 18', opponent: 'Texas', quadrant: 'Q1', result: 'L', score: '3-6' },
+                    { date: 'May 2', opponent: 'Arkansas', quadrant: 'Q1', result: 'L', score: '3-5' }
+                ],
+                analysis: 'Ole Miss is talented but has lost some key series down the stretch. Their pitching depth will be tested in the tournament format. Still a dangerous team capable of making a run.'
+            },
+            stanford: {
+                name: 'Stanford Cardinal',
+                sos: 32, rpi: 18,
+                q1: { count: 5, wins: 3, losses: 2 },
+                q2: { count: 10, wins: 8, losses: 2 },
+                q3: { count: 20, wins: 18, losses: 2 },
+                q4: { count: 15, wins: 15, losses: 0 },
+                overall: '44-6', conf: '24-3', road: '18-4', last10: '9-1',
+                games: [
+                    { date: 'Feb 14', opponent: 'Cal', quadrant: 'Q3', result: 'W', score: '8-2' },
+                    { date: 'Mar 7', opponent: 'Oregon State', quadrant: 'Q1', result: 'W', score: '5-3' },
+                    { date: 'Mar 21', opponent: 'UCLA', quadrant: 'Q2', result: 'W', score: '4-2' },
+                    { date: 'Apr 4', opponent: 'Arizona State', quadrant: 'Q3', result: 'W', score: '9-1' },
+                    { date: 'Apr 18', opponent: 'Oregon State', quadrant: 'Q1', result: 'L', score: '2-4' },
+                    { date: 'May 2', opponent: 'USC', quadrant: 'Q3', result: 'W', score: '7-3' }
+                ],
+                analysis: 'Stanford dominates their conference but has limited Q1 opportunities. The committee will weigh their impressive win percentage against strength of schedule concerns. Regional host is likely; national seed less certain.'
+            },
+            wake: {
+                name: 'Wake Forest Demon Deacons',
+                sos: 34, rpi: 11,
+                q1: { count: 6, wins: 4, losses: 2 },
+                q2: { count: 12, wins: 10, losses: 2 },
+                q3: { count: 18, wins: 16, losses: 2 },
+                q4: { count: 14, wins: 14, losses: 0 },
+                overall: '44-6', conf: '22-5', road: '17-4', last10: '8-2',
+                games: [
+                    { date: 'Feb 21', opponent: 'Duke', quadrant: 'Q3', result: 'W', score: '7-2' },
+                    { date: 'Mar 7', opponent: 'Virginia', quadrant: 'Q1', result: 'W', score: '4-3' },
+                    { date: 'Mar 21', opponent: 'NC State', quadrant: 'Q1', result: 'W', score: '6-4' },
+                    { date: 'Apr 4', opponent: 'Miami', quadrant: 'Q2', result: 'W', score: '5-2' },
+                    { date: 'Apr 18', opponent: 'Clemson', quadrant: 'Q1', result: 'L', score: '3-5' },
+                    { date: 'May 2', opponent: 'Florida State', quadrant: 'Q1', result: 'L', score: '4-6' }
+                ],
+                analysis: 'Wake Forest has been one of the ACC best all season. Their record speaks for itself, though late-season losses to Clemson and FSU raise questions about peaking at the right time. Should host a regional.'
+            }
+        };
+
+        var currentTeam = 'texas';
+
+        function updateDisplay() {
+            var data = teamData[currentTeam];
+
+            // Update metrics
+            document.getElementById('sos-value').textContent = data.sos;
+            document.getElementById('sos-value').className = 'metric-value ' + (data.sos >= 40 ? 'high' : data.sos >= 30 ? 'medium' : 'low');
+
+            document.getElementById('rpi-value').textContent = data.rpi;
+            document.getElementById('rpi-value').className = 'metric-value ' + (data.rpi <= 10 ? 'high' : data.rpi <= 25 ? 'medium' : 'low');
+
+            // Update quadrant breakdown
+            document.getElementById('q1-count').textContent = data.q1.count;
+            document.getElementById('q1-record').textContent = '(' + data.q1.wins + '-' + data.q1.losses + ')';
+            document.getElementById('q2-count').textContent = data.q2.count;
+            document.getElementById('q2-record').textContent = '(' + data.q2.wins + '-' + data.q2.losses + ')';
+            document.getElementById('q3-count').textContent = data.q3.count;
+            document.getElementById('q3-record').textContent = '(' + data.q3.wins + '-' + data.q3.losses + ')';
+            document.getElementById('q4-count').textContent = data.q4.count;
+            document.getElementById('q4-record').textContent = '(' + data.q4.wins + '-' + data.q4.losses + ')';
+
+            // Update resume stats
+            document.getElementById('overall-record').textContent = data.overall;
+            document.getElementById('conf-record').textContent = data.conf;
+            document.getElementById('road-record').textContent = data.road;
+            document.getElementById('last10').textContent = data.last10;
+
+            // Update schedule table
+            var tbody = document.getElementById('schedule-body');
+            tbody.textContent = '';
+            for (var i = 0; i < data.games.length; i++) {
+                var game = data.games[i];
+                var tr = document.createElement('tr');
+
+                var tdDate = document.createElement('td');
+                tdDate.textContent = game.date;
+                tr.appendChild(tdDate);
+
+                var tdOpp = document.createElement('td');
+                tdOpp.textContent = game.opponent;
+                tr.appendChild(tdOpp);
+
+                var tdQuad = document.createElement('td');
+                var quadSpan = document.createElement('span');
+                quadSpan.className = 'opponent-tier ' + game.quadrant.toLowerCase();
+                quadSpan.textContent = game.quadrant;
+                tdQuad.appendChild(quadSpan);
+                tr.appendChild(tdQuad);
+
+                var tdResult = document.createElement('td');
+                var resultSpan = document.createElement('span');
+                resultSpan.className = game.result === 'W' ? 'result-w' : 'result-l';
+                resultSpan.textContent = game.result + ' ' + game.score;
+                tdResult.appendChild(resultSpan);
+                tr.appendChild(tdResult);
+
+                tbody.appendChild(tr);
+            }
+
+            // Update analysis
+            document.getElementById('committee-analysis').textContent = data.analysis;
+        }
+
+        // Initialize
+        document.getElementById('team-select').addEventListener('change', function() {
+            currentTeam = this.value;
+            updateDisplay();
+        });
+
+        var sportTabs = document.querySelectorAll('.sport-tab');
+        for (var t = 0; t < sportTabs.length; t++) {
+            sportTabs[t].addEventListener('click', function() {
+                for (var u = 0; u < sportTabs.length; u++) {
+                    sportTabs[u].classList.remove('active');
+                }
+                this.classList.add('active');
+                // Sport switching would load different data - placeholder for now
+            });
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>

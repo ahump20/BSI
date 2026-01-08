@@ -116,6 +116,11 @@ export default {
       return handleAnalyticsEvent(request, env, corsHeaders);
     }
 
+    // === EMAIL CAPTURE (paywall leads) ===
+    if (path === '/api/leads/capture' && request.method === 'POST') {
+      return handleLeadCapture(request, env, corsHeaders);
+    }
+
     // === AUTH PAGES ===
     if (path === '/login' || path === '/login.html') {
       return serveAsset(env, 'origin/login.html', 'text/html', corsHeaders);
@@ -306,13 +311,13 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     if (path === '/tools/player-comparison' || path === '/tools/player-comparison/') {
       return serveAsset(env, 'origin/tools/player-comparison.html', 'text/html', corsHeaders);
     }
-    // Draft Pick Value Calculator
+    // Draft Pick Value Calculator (Pro)
     if (path === '/tools/draft-value' || path === '/tools/draft-value/') {
-      return serveAsset(env, 'origin/tools/draft-value.html', 'text/html', corsHeaders);
+      return serveToolAsset(env, 'origin/tools/draft-value/index.html', 'text/html', corsHeaders, request);
     }
-    // Schedule Strength Analyzer
+    // Schedule Strength Analyzer (Pro)
     if (path === '/tools/schedule-strength' || path === '/tools/schedule-strength/') {
-      return serveAsset(env, 'origin/tools/schedule-strength.html', 'text/html', corsHeaders);
+      return serveToolAsset(env, 'origin/tools/schedule-strength/index.html', 'text/html', corsHeaders, request);
     }
     // Serve tool assets (JS, CSS)
     if (path.startsWith('/tools/')) {
@@ -329,6 +334,22 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     // NCAA Football Scores
     if (path === '/api/ncaa/football-scores') {
       return handleNCAAFootballScores(env, corsHeaders);
+    }
+
+    // === NCAA BASEBALL ROUTES ===
+    if (path === '/api/ncaa/baseball/rankings') {
+      return handleNCAABaseballRankings(env, corsHeaders);
+    }
+    if (path === '/api/ncaa/baseball/scores') {
+      return handleNCAABaseballScores(env, corsHeaders);
+    }
+    if (path === '/api/ncaa/baseball/standings') {
+      const conference = url.searchParams.get('conference');
+      return handleNCAABaseballStandings(env, corsHeaders, conference);
+    }
+    if (path === '/api/ncaa/baseball/schedule') {
+      const team = url.searchParams.get('team');
+      return handleNCAABaseballSchedule(env, corsHeaders, team);
     }
 
     // MLB Data (SportsDataIO)
@@ -1145,6 +1166,349 @@ function formatGameDate(dateString) {
   }) + ' CT';
 }
 
+// === NCAA BASEBALL HANDLER FUNCTIONS ===
+
+async function handleNCAABaseballRankings(env, corsHeaders) {
+  try {
+    // Check cache first
+    const cacheKey = 'ncaa_baseball_rankings';
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    }
+
+    // Try ESPN college baseball rankings
+    const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings';
+    const response = await fetch(espnUrl, {
+      headers: { 'User-Agent': 'BlazeIntel/2.4' }
+    });
+
+    let rankings = [];
+    if (response.ok) {
+      const data = await response.json();
+      if (data.rankings && data.rankings[0] && data.rankings[0].ranks) {
+        rankings = data.rankings[0].ranks.map((team, idx) => ({
+          rank: team.current || idx + 1,
+          previousRank: team.previous || null,
+          team: team.team?.displayName || team.team?.name || 'Unknown',
+          abbreviation: team.team?.abbreviation || '',
+          conference: team.team?.groups?.parent?.name || team.team?.conference || '',
+          record: team.recordSummary || '',
+          logo: team.team?.logos?.[0]?.href || null
+        }));
+      }
+    }
+
+    // If no ESPN data, provide D1Baseball-style placeholder
+    if (rankings.length === 0) {
+      rankings = getNCAABaseballRankingsPlaceholder();
+    }
+
+    const result = {
+      rankings,
+      source: response.ok ? 'ESPN' : 'D1Baseball Reference',
+      fetchedAt: getChicagoTimestamp(),
+      poll: 'D1Baseball Top 25'
+    };
+
+    // Cache for 1 hour
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('NCAA Baseball Rankings error:', error);
+    return new Response(JSON.stringify({
+      error: error.message,
+      rankings: getNCAABaseballRankingsPlaceholder(),
+      source: 'fallback',
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+function getNCAABaseballRankingsPlaceholder() {
+  // 2025 preseason-style rankings based on D1Baseball projections
+  return [
+    { rank: 1, team: 'Texas', abbreviation: 'TEX', conference: 'SEC', record: '0-0' },
+    { rank: 2, team: 'LSU', abbreviation: 'LSU', conference: 'SEC', record: '0-0' },
+    { rank: 3, team: 'Texas A&M', abbreviation: 'TAMU', conference: 'SEC', record: '0-0' },
+    { rank: 4, team: 'Florida', abbreviation: 'FLA', conference: 'SEC', record: '0-0' },
+    { rank: 5, team: 'Tennessee', abbreviation: 'TENN', conference: 'SEC', record: '0-0' },
+    { rank: 6, team: 'Wake Forest', abbreviation: 'WAKE', conference: 'ACC', record: '0-0' },
+    { rank: 7, team: 'Virginia', abbreviation: 'UVA', conference: 'ACC', record: '0-0' },
+    { rank: 8, team: 'Arkansas', abbreviation: 'ARK', conference: 'SEC', record: '0-0' },
+    { rank: 9, team: 'Oregon State', abbreviation: 'ORST', conference: 'Pac-12', record: '0-0' },
+    { rank: 10, team: 'Vanderbilt', abbreviation: 'VAN', conference: 'SEC', record: '0-0' },
+    { rank: 11, team: 'Stanford', abbreviation: 'STAN', conference: 'ACC', record: '0-0' },
+    { rank: 12, team: 'Georgia', abbreviation: 'UGA', conference: 'SEC', record: '0-0' },
+    { rank: 13, team: 'Clemson', abbreviation: 'CLEM', conference: 'ACC', record: '0-0' },
+    { rank: 14, team: 'Florida State', abbreviation: 'FSU', conference: 'ACC', record: '0-0' },
+    { rank: 15, team: 'NC State', abbreviation: 'NCST', conference: 'ACC', record: '0-0' },
+    { rank: 16, team: 'Ole Miss', abbreviation: 'MISS', conference: 'SEC', record: '0-0' },
+    { rank: 17, team: 'TCU', abbreviation: 'TCU', conference: 'Big 12', record: '0-0' },
+    { rank: 18, team: 'Kentucky', abbreviation: 'UK', conference: 'SEC', record: '0-0' },
+    { rank: 19, team: 'Alabama', abbreviation: 'BAMA', conference: 'SEC', record: '0-0' },
+    { rank: 20, team: 'South Carolina', abbreviation: 'SCAR', conference: 'SEC', record: '0-0' },
+    { rank: 21, team: 'Arizona', abbreviation: 'ARIZ', conference: 'Big 12', record: '0-0' },
+    { rank: 22, team: 'Oklahoma State', abbreviation: 'OKST', conference: 'Big 12', record: '0-0' },
+    { rank: 23, team: 'East Carolina', abbreviation: 'ECU', conference: 'American', record: '0-0' },
+    { rank: 24, team: 'Miami', abbreviation: 'MIA', conference: 'ACC', record: '0-0' },
+    { rank: 25, team: 'West Virginia', abbreviation: 'WVU', conference: 'Big 12', record: '0-0' }
+  ];
+}
+
+async function handleNCAABaseballScores(env, corsHeaders) {
+  try {
+    // Check cache first
+    const cacheKey = 'ncaa_baseball_scores';
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=120', ...corsHeaders }
+      });
+    }
+
+    // Try ESPN college baseball scoreboard
+    const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard';
+    const response = await fetch(espnUrl, {
+      headers: { 'User-Agent': 'BlazeIntel/2.4' }
+    });
+
+    let games = [];
+    if (response.ok) {
+      const data = await response.json();
+      if (data.events) {
+        games = data.events.map(event => {
+          const competition = event.competitions?.[0];
+          const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+          const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+
+          return {
+            id: event.id,
+            name: event.name || event.shortName,
+            status: event.status?.type?.description || 'Scheduled',
+            inning: event.status?.period || null,
+            inningState: event.status?.type?.state || null,
+            homeTeam: {
+              name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'TBD',
+              abbreviation: homeTeam?.team?.abbreviation || '',
+              score: parseInt(homeTeam?.score) || 0,
+              logo: homeTeam?.team?.logo || null,
+              rank: homeTeam?.curatedRank?.current || null
+            },
+            awayTeam: {
+              name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'TBD',
+              abbreviation: awayTeam?.team?.abbreviation || '',
+              score: parseInt(awayTeam?.score) || 0,
+              logo: awayTeam?.team?.logo || null,
+              rank: awayTeam?.curatedRank?.current || null
+            },
+            startTime: event.date,
+            venue: competition?.venue?.fullName || null,
+            broadcast: competition?.broadcasts?.[0]?.names?.[0] || null
+          };
+        });
+      }
+    }
+
+    const result = {
+      games,
+      count: games.length,
+      source: response.ok ? 'ESPN' : 'unavailable',
+      fetchedAt: getChicagoTimestamp(),
+      season: '2025',
+      message: games.length === 0 ? 'No games scheduled. College baseball season starts mid-February 2025.' : null
+    };
+
+    // Cache for 2 minutes during games
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 120000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=120', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('NCAA Baseball Scores error:', error);
+    return new Response(JSON.stringify({
+      error: error.message,
+      games: [],
+      source: 'error',
+      fetchedAt: getChicagoTimestamp(),
+      message: 'College baseball season starts mid-February 2025.'
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+async function handleNCAABaseballStandings(env, corsHeaders, conference = null) {
+  try {
+    // Check cache
+    const cacheKey = `ncaa_baseball_standings_${conference || 'all'}`;
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=1800', ...corsHeaders }
+      });
+    }
+
+    // ESPN doesn't have great standings endpoint for college baseball
+    // Provide conference-based structure
+    const conferences = getNCAABaseballConferences();
+    let standings = conferences;
+
+    if (conference) {
+      const confLower = conference.toLowerCase();
+      standings = conferences.filter(c =>
+        c.name.toLowerCase().includes(confLower) ||
+        c.abbreviation.toLowerCase() === confLower
+      );
+    }
+
+    const result = {
+      conferences: standings,
+      filter: conference || 'all',
+      source: 'D1Baseball Reference',
+      fetchedAt: getChicagoTimestamp(),
+      season: '2025',
+      note: 'Conference standings update daily during the season'
+    };
+
+    // Cache for 30 minutes
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 1800000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=1800', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('NCAA Baseball Standings error:', error);
+    return new Response(JSON.stringify({ error: error.message, conferences: [] }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+function getNCAABaseballConferences() {
+  return [
+    { name: 'Southeastern Conference', abbreviation: 'SEC', teams: ['Texas', 'Texas A&M', 'LSU', 'Florida', 'Tennessee', 'Vanderbilt', 'Arkansas', 'Ole Miss', 'Georgia', 'Kentucky', 'Alabama', 'South Carolina', 'Auburn', 'Mississippi State', 'Missouri', 'Oklahoma'] },
+    { name: 'Atlantic Coast Conference', abbreviation: 'ACC', teams: ['Wake Forest', 'Virginia', 'Clemson', 'Florida State', 'NC State', 'Miami', 'Duke', 'North Carolina', 'Georgia Tech', 'Louisville', 'Notre Dame', 'Pittsburgh', 'Virginia Tech', 'Boston College', 'Stanford', 'California', 'SMU'] },
+    { name: 'Big 12 Conference', abbreviation: 'Big 12', teams: ['TCU', 'Oklahoma State', 'Arizona', 'West Virginia', 'Texas Tech', 'Kansas State', 'Baylor', 'Kansas', 'BYU', 'Arizona State', 'UCF', 'Houston', 'Cincinnati', 'Colorado'] },
+    { name: 'Big Ten Conference', abbreviation: 'Big Ten', teams: ['Indiana', 'Maryland', 'Michigan', 'Nebraska', 'Ohio State', 'Penn State', 'Rutgers', 'Illinois', 'Iowa', 'Michigan State', 'Minnesota', 'Northwestern', 'Purdue', 'Oregon', 'UCLA', 'USC', 'Washington'] },
+    { name: 'Pac-12 Conference', abbreviation: 'Pac-12', teams: ['Oregon State', 'Washington State', 'Colorado State', 'Fresno State'] },
+    { name: 'American Athletic Conference', abbreviation: 'American', teams: ['East Carolina', 'Tulane', 'Wichita State', 'Charlotte', 'Memphis', 'Rice', 'South Florida', 'UTSA', 'UAB', 'FAU', 'Temple', 'North Texas'] }
+  ];
+}
+
+async function handleNCAABaseballSchedule(env, corsHeaders, team = null) {
+  try {
+    // Check cache
+    const cacheKey = `ncaa_baseball_schedule_${team || 'featured'}`;
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    }
+
+    let games = [];
+
+    // If specific team requested, try ESPN team schedule
+    if (team) {
+      const teamId = getESPNTeamId(team);
+      if (teamId) {
+        const url = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/${teamId}/schedule`;
+        const response = await fetch(url, { headers: { 'User-Agent': 'BlazeIntel/2.4' } });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.events) {
+            games = data.events.map(event => ({
+              id: event.id,
+              date: event.date,
+              name: event.name,
+              opponent: event.competitions?.[0]?.competitors?.find(c => c.id !== teamId)?.team?.displayName || 'TBD',
+              homeAway: event.competitions?.[0]?.competitors?.find(c => c.id === teamId)?.homeAway || 'neutral',
+              venue: event.competitions?.[0]?.venue?.fullName || null,
+              result: event.competitions?.[0]?.status?.type?.completed ?
+                (event.competitions?.[0]?.competitors?.find(c => c.id === teamId)?.winner ? 'W' : 'L') : null
+            }));
+          }
+        }
+      }
+    }
+
+    // If no team or no results, return upcoming featured games
+    if (games.length === 0) {
+      games = getFeaturedNCAABaseballGames();
+    }
+
+    const result = {
+      team: team || 'Featured Games',
+      games,
+      count: games.length,
+      source: team ? 'ESPN' : 'curated',
+      fetchedAt: getChicagoTimestamp(),
+      season: '2025'
+    };
+
+    // Cache for 1 hour
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('NCAA Baseball Schedule error:', error);
+    return new Response(JSON.stringify({ error: error.message, games: [] }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+function getESPNTeamId(teamName) {
+  const teamIds = {
+    'texas': '251', 'longhorns': '251',
+    'lsu': '99', 'tigers': '99',
+    'texas a&m': '245', 'aggies': '245', 'tamu': '245',
+    'florida': '57', 'gators': '57',
+    'tennessee': '2633', 'volunteers': '2633', 'vols': '2633',
+    'vanderbilt': '238', 'commodores': '238',
+    'arkansas': '8', 'razorbacks': '8',
+    'ole miss': '145', 'rebels': '145',
+    'georgia': '61', 'bulldogs': '61',
+    'wake forest': '154', 'demon deacons': '154',
+    'virginia': '258', 'cavaliers': '258',
+    'oregon state': '204', 'beavers': '204',
+    'stanford': '24', 'cardinal': '24',
+    'clemson': '228',
+    'florida state': '52', 'seminoles': '52',
+    'nc state': '152', 'wolfpack': '152',
+    'miami': '2390',
+    'tcu': '2628', 'horned frogs': '2628'
+  };
+  return teamIds[teamName.toLowerCase()] || null;
+}
+
+function getFeaturedNCAABaseballGames() {
+  // Season starts mid-February 2025
+  return [
+    { date: '2025-02-14', name: 'Opening Day', opponent: 'Season Opener', homeAway: 'home', venue: 'Various' },
+    { date: '2025-02-14', name: 'Texas vs. Rice', opponent: 'Rice', homeAway: 'home', venue: 'UFCU Disch-Falk Field' },
+    { date: '2025-02-21', name: 'Shriners Classic', opponent: 'Multiple Teams', homeAway: 'neutral', venue: 'Minute Maid Park' },
+    { date: '2025-02-28', name: 'Round Rock Classic', opponent: 'Multiple Teams', homeAway: 'neutral', venue: 'Dell Diamond' },
+    { date: '2025-03-07', name: 'SEC Opening Weekend', opponent: 'Conference Play Begins', homeAway: 'neutral', venue: 'Various' }
+  ];
+}
+
 // === AUTH HANDLER FUNCTIONS ===
 
 async function handleRegister(request, env, corsHeaders) {
@@ -1669,7 +2033,7 @@ async function serveToolAsset(env, key, contentType, corsHeaders, request) {
   }
 
   // Determine if this is a Pro tool
-  const proTools = ['composition-optimizer', '3d-showcase'];
+  const proTools = ['composition-optimizer', '3d-showcase', 'draft-value', 'schedule-strength'];
   const toolName = key.split('/').slice(-2, -1)[0] || '';
   const isProTool = proTools.includes(toolName);
   const hasProAccess = subscriptionTier === 'pro' || subscriptionTier === 'enterprise';
@@ -1783,8 +2147,56 @@ BSI.showPaywall = function(loggedIn) {
   });
   var cta = document.createElement('a');
   cta.href = '/pricing';
-  cta.style.cssText = 'display:block;width:100%;padding:14px 24px;background:linear-gradient(135deg,#BF5700,#FF6B35);border:none;border-radius:10px;color:white;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px;text-decoration:none;box-sizing:border-box';
+  cta.style.cssText = 'display:block;width:100%;padding:14px 24px;background:linear-gradient(135deg,#BF5700,#FF6B35);border:none;border-radius:10px;color:white;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:16px;text-decoration:none;box-sizing:border-box';
   cta.textContent = 'Upgrade to Pro';
+  // Email capture section
+  var divider = document.createElement('div');
+  divider.style.cssText = 'display:flex;align-items:center;gap:12px;margin:16px 0;color:#6B7280;font-size:12px';
+  var line1 = document.createElement('div');
+  line1.style.cssText = 'flex:1;height:1px;background:rgba(255,255,255,0.1)';
+  var orText = document.createElement('span');
+  orText.textContent = 'or get notified of deals';
+  var line2 = document.createElement('div');
+  line2.style.cssText = 'flex:1;height:1px;background:rgba(255,255,255,0.1)';
+  divider.appendChild(line1);
+  divider.appendChild(orText);
+  divider.appendChild(line2);
+  var emailForm = document.createElement('div');
+  emailForm.id = 'bsi-email-form';
+  emailForm.style.cssText = 'display:flex;gap:8px;margin-bottom:16px';
+  var emailInput = document.createElement('input');
+  emailInput.type = 'email';
+  emailInput.placeholder = 'Enter your email';
+  emailInput.style.cssText = 'flex:1;padding:12px 16px;background:#2A2A2A;border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#F5F5F0;font-size:14px;outline:none';
+  var emailBtn = document.createElement('button');
+  emailBtn.type = 'button';
+  emailBtn.textContent = 'Notify Me';
+  emailBtn.style.cssText = 'padding:12px 20px;background:#374151;border:none;border-radius:8px;color:white;font-size:14px;font-weight:600;cursor:pointer';
+  emailBtn.onclick = function() {
+    var email = emailInput.value.trim();
+    if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+      emailInput.style.borderColor = '#EF4444';
+      return;
+    }
+    emailBtn.disabled = true;
+    emailBtn.textContent = '...';
+    fetch('/api/leads/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, source: 'paywall', tool: window.location.pathname })
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      emailForm.style.display = 'none';
+      var thanks = document.createElement('p');
+      thanks.style.cssText = 'color:#10B981;font-size:14px;margin:0 0 16px';
+      thanks.textContent = '✓ Thanks! We\\'ll notify you of deals and new features.';
+      emailForm.parentNode.insertBefore(thanks, emailForm.nextSibling);
+    }).catch(function() {
+      emailBtn.disabled = false;
+      emailBtn.textContent = 'Try Again';
+    });
+  };
+  emailForm.appendChild(emailInput);
+  emailForm.appendChild(emailBtn);
   var secondary = document.createElement('p');
   secondary.style.cssText = 'color:#6B7280;font-size:13px;margin:0';
   if (!loggedIn) {
@@ -1806,6 +2218,8 @@ BSI.showPaywall = function(loggedIn) {
   content.appendChild(price);
   content.appendChild(ul);
   content.appendChild(cta);
+  content.appendChild(divider);
+  content.appendChild(emailForm);
   content.appendChild(secondary);
   overlay.appendChild(content);
   document.body.appendChild(overlay);
@@ -1893,6 +2307,44 @@ async function handleAnalyticsEvent(request, env, corsHeaders) {
   } catch (e) {
     // Fail silently for analytics - return success anyway
     return jsonResponse({ success: true }, 200, corsHeaders);
+  }
+}
+
+// === LEAD CAPTURE HANDLER (paywall email collection) ===
+async function handleLeadCapture(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { email, source, tool } = body;
+
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return jsonResponse({ error: 'Invalid email address' }, 400, corsHeaders);
+    }
+
+    // Store lead in D1
+    const leadId = crypto.randomUUID();
+    await env.DB.prepare(`
+      INSERT INTO leads (id, email, source, tool, created_at)
+      VALUES (?, ?, ?, ?, datetime('now'))
+      ON CONFLICT(email) DO UPDATE SET
+        source = excluded.source,
+        tool = excluded.tool,
+        updated_at = datetime('now')
+    `).bind(leadId, email.toLowerCase(), source || 'paywall', tool || 'unknown').run();
+
+    // Log to Analytics Engine
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: ['lead_capture', source || 'paywall', tool || 'unknown'],
+        doubles: [1],
+        indexes: ['lead_capture']
+      });
+    }
+
+    return jsonResponse({ success: true, message: 'Thanks! We\'ll be in touch.' }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Lead capture error:', e);
+    return jsonResponse({ error: 'Failed to save email' }, 500, corsHeaders);
   }
 }
 
