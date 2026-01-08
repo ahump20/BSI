@@ -36,8 +36,65 @@ const pollOptions = [
   { value: 'rpi', label: 'NCAA RPI' },
 ];
 
+// ESPN API response shape
+interface ESPNRankEntry {
+  current: number;
+  previous?: number;
+  points?: number;
+  firstPlaceVotes?: number;
+  team: {
+    id: string;
+    name: string;
+    abbreviation?: string;
+    logos?: Array<{ href: string }>;
+  };
+  recordSummary?: string;
+}
+
+interface ESPNRankingPoll {
+  name: string;
+  type?: string;
+  ranks: ESPNRankEntry[];
+}
+
 interface RankingsApiResponse {
+  timestamp?: string;
+  rankings?: ESPNRankingPoll[];
   poll?: RankingPoll;
+  meta?: {
+    dataSource: string;
+    lastUpdated: string;
+    sport: string;
+  };
+}
+
+// Transform ESPN rankings to our internal format
+function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
+  // If we have the old format with poll, use it directly
+  if (data.poll) {
+    return data.poll;
+  }
+
+  // Transform ESPN format
+  const firstPoll = data.rankings?.[0];
+  if (!firstPoll || !firstPoll.ranks) {
+    return null;
+  }
+
+  return {
+    id: 'espn',
+    name: firstPoll.name || 'ESPN Top 25',
+    lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
+    teams: firstPoll.ranks.map((entry) => ({
+      rank: entry.current,
+      previousRank: entry.previous,
+      team: entry.team?.name || 'Unknown',
+      conference: '', // ESPN doesn't include conference in rankings
+      record: entry.recordSummary || '',
+      points: entry.points,
+      firstPlace: entry.firstPlaceVotes,
+    })),
+  };
 }
 
 export default function CollegeBaseballRankingsPage() {
@@ -51,14 +108,16 @@ export default function CollegeBaseballRankingsPage() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/college-baseball/rankings?poll=${selectedPoll}`);
+      // Use the unified NCAA API with sport=baseball parameter
+      const response = await fetch(`/api/ncaa/rankings?sport=baseball`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as RankingsApiResponse;
-      setRankings(data.poll || (data as unknown as RankingPoll));
+      const transformed = transformESPNRankings(data);
+      setRankings(transformed);
     } catch (err) {
       console.error('Error loading rankings:', err);
       setError(err instanceof Error ? err.message : 'Failed to load rankings');
