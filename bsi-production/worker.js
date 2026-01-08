@@ -93,6 +93,14 @@ export default {
       return serveAsset(env, 'origin/dashboard.html', 'text/html', corsHeaders);
     }
 
+    // === STATIC PAGES ===
+    if (path === '/about' || path === '/about.html') {
+      return serveAsset(env, 'origin/about.html', 'text/html', corsHeaders);
+    }
+    if (path === '/scores' || path === '/scores.html') {
+      return serveAsset(env, 'origin/scores.html', 'text/html', corsHeaders);
+    }
+
     // API Documentation
     if (path === '/api-docs' || path === '/api-docs/') {
       return serveAsset(env, 'origin/api-docs.html', 'text/html', corsHeaders);
