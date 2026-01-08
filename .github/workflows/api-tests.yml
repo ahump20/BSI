@@ -57,8 +57,19 @@ jobs:
         run: npm run test -- tests/api/college-baseball.test.js --reporter=verbose
         continue-on-error: true
 
+      - name: Run Prediction API tests
+        run: npm run test -- tests/api/prediction-api.test.ts --reporter=verbose
+        env:
+          PREDICTION_API_URL: https://api.blazesportsintel.com
+          SPORTSDATAIO_API_KEY: ${{ secrets.SPORTSDATAIO_API_KEY }}
+
       - name: Run cache tests
         run: npm run test -- tests/integration/cache.test.ts --reporter=verbose
+
+      - name: Run API failure fallback tests
+        run: npm run test -- tests/integration/api-failure-fallback.test.ts --reporter=verbose
+        env:
+          PREDICTION_API_URL: https://api.blazesportsintel.com
 
       - name: Run schema validation tests
         run: npm run test -- tests/validation/schemas.test.ts --reporter=verbose
@@ -84,11 +95,16 @@ jobs:
         if: always()
         run: |
           echo "## API Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "✅ All API endpoint tests passed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All API endpoint tests completed" >> $GITHUB_STEP_SUMMARY
           echo "- MLB API: ✓" >> $GITHUB_STEP_SUMMARY
           echo "- NFL API: ✓" >> $GITHUB_STEP_SUMMARY
+          echo "- Prediction API: ✓" >> $GITHUB_STEP_SUMMARY
           echo "- Cache integration: ✓" >> $GITHUB_STEP_SUMMARY
+          echo "- API failure fallback: ✓" >> $GITHUB_STEP_SUMMARY
           echo "- Schema validation: ✓" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Born to blaze the path less beaten.*" >> $GITHUB_STEP_SUMMARY
 
   data-freshness:
     name: Check Data Freshness

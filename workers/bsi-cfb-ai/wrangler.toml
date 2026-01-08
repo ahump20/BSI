@@ -11,8 +11,7 @@ binding = "AI"
 
 [[kv_namespaces]]
 binding = "CFB_CACHE"
-id = "8a7b3c4d5e6f7890abcdef1234567890"
-preview_id = "preview_8a7b3c4d5e6f7890abcdef1234567890"
+id = "963541b67da84e36919914e914a1bb31"
 
 [[d1_databases]]
 binding = "DB"
@@ -24,3 +23,21 @@ database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 # - Every 4 hours: Fetch coded content from SportsDataIO
 [triggers]
 crons = ["0 6 * * *", "0 */4 * * *"]
+
+# Account ID
+account_id = "a12cb329d84130460eed99b816e4d0d3"
+
+# Observability
+[observability.logs]
+enabled = true
+
+# Development settings
+[dev]
+port = 8791
+local_protocol = "http"
+
+# Staging environment
+[env.staging]
+name = "bsi-cfb-ai-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"

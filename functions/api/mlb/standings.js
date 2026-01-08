@@ -128,7 +128,8 @@ function processMLBStandingsData(data, filterDivision, filterLeague) {
       const runsAllowed = teamRecord.runsAllowed || 0;
 
       const teamData = {
-        teamName: team.name || team.teamName,
+        teamName: team.name || team.teamName || 'Unknown Team',
+        teamAbbr: team.abbreviation || team.name?.slice(0, 3).toUpperCase() || 'UNK',
         wins,
         losses,
         winPercentage: winningPercentage,

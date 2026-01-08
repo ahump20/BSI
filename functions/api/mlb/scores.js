@@ -148,9 +148,9 @@ function processMLBScoresData(data, teamFilter) {
         },
         teams: {
           away: {
-            id: awayTeam.team?.id,
-            name: awayTeam.team?.name,
-            abbreviation: awayTeam.team?.abbreviation,
+            id: awayTeam.team?.id || 0,
+            name: awayTeam.team?.name || awayTeam.team?.teamName || 'Away Team',
+            abbreviation: awayTeam.team?.abbreviation || 'AWY',
             score: awayTeam.score || 0,
             isWinner: awayTeam.isWinner || false,
             leagueRecord: awayTeam.leagueRecord,
@@ -159,9 +159,9 @@ function processMLBScoresData(data, teamFilter) {
             leftOnBase: linescore.teams?.away?.leftOnBase || 0,
           },
           home: {
-            id: homeTeam.team?.id,
-            name: homeTeam.team?.name,
-            abbreviation: homeTeam.team?.abbreviation,
+            id: homeTeam.team?.id || 0,
+            name: homeTeam.team?.name || homeTeam.team?.teamName || 'Home Team',
+            abbreviation: homeTeam.team?.abbreviation || 'HME',
             score: homeTeam.score || 0,
             isWinner: homeTeam.isWinner || false,
             leagueRecord: homeTeam.leagueRecord,
@@ -171,8 +171,8 @@ function processMLBScoresData(data, teamFilter) {
           },
         },
         venue: {
-          id: game.venue?.id,
-          name: game.venue?.name,
+          id: game.venue?.id || 0,
+          name: game.venue?.name || 'TBD',
         },
         linescore: {
           innings: linescore.innings || [],

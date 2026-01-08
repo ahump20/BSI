@@ -44,3 +44,23 @@ crons = ["*/5 * * * *"]
 routes = [
   { pattern = "ticker.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
 ]
+
+# Observability
+[observability.logs]
+enabled = true
+
+# Development settings
+[dev]
+port = 8792
+local_protocol = "http"
+
+# Staging environment
+[env.staging]
+name = "bsi-news-ticker-staging"
+routes = [
+  { pattern = "staging-ticker.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
+]
+[env.staging.vars]
+ESPN_API_BASE = "https://site.api.espn.com/apis/site/v2/sports"
+MLB_API_BASE = "https://statsapi.mlb.com/api/v1"
+NFL_API_BASE = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"

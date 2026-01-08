@@ -25,6 +25,7 @@
  */
 
 import { MLBTeamsAdapter } from '../../../../lib/adapters/mlb-teams-adapter';
+import { getTeamIdFromSlug, getTeamBySlug } from '../../../../lib/utils/mlb-teams';
 
 interface Env {
   CACHE: KVNamespace;
@@ -63,7 +64,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       return new Response(
         JSON.stringify({
           error: 'Team ID is required',
-          message: 'Please provide a valid MLB team ID (e.g., 138 for Cardinals)',
+          message: 'Please provide a valid MLB team ID (e.g., 138 or "stl" for Cardinals)',
         }),
         {
           status: 400,
@@ -75,21 +76,28 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       );
     }
 
-    const teamIdNum = parseInt(teamId, 10);
+    // Support both numeric IDs (138) and slug abbreviations (stl)
+    let teamIdNum = parseInt(teamId, 10);
     if (isNaN(teamIdNum)) {
-      return new Response(
-        JSON.stringify({
-          error: 'Invalid team ID',
-          message: 'Team ID must be a number',
-        }),
-        {
-          status: 400,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      // Try to resolve slug to numeric ID
+      const resolvedId = getTeamIdFromSlug(teamId);
+      if (!resolvedId) {
+        return new Response(
+          JSON.stringify({
+            error: 'Invalid team ID',
+            message: `Team "${teamId}" not found. Use MLB numeric ID or team abbreviation (e.g., "stl" for Cardinals).`,
+            hint: 'Valid slugs: bal, bos, nyy, tb, tor, cws, cle, det, kc, min, hou, laa, oak, sea, tex, atl, mia, nym, phi, wsh, chc, cin, mil, pit, stl, ari, col, lad, sd, sf',
+          }),
+          {
+            status: 400,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+      }
+      teamIdNum = resolvedId;
     }
 
     // Parse query parameters

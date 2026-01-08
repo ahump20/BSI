@@ -1,40 +1,29 @@
-# Cloudflare Workers Configuration - Ingest Worker
+# BSI Data Ingest Worker
 # Purpose: Scheduled data ingestion with provider failover
-# Deployment: wrangler deploy (from workers/ingest/)
+# Deployment: wrangler deploy --config workers/ingest/wrangler.toml
 
 name = "blazesports-ingest"
-compatibility_date = "2025-01-01"
 main = "index.ts"
-
-# Worker Type
-workers_dev = true
-
-# Triggers
-[[triggers.crons]]
-# Live games - every 5 minutes
-crons = ["*/5 * * * *"]
-
-[[triggers.crons]]
-# Team stats refresh - hourly
-crons = ["0 * * * *"]
-
-[[triggers.crons]]
-# Historical aggregations - daily at 2am CST
-crons = ["0 2 * * *"]
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+account_id = "a12cb329d84130460eed99b816e4d0d3"
 
 # Environment Variables
 [vars]
-# These will be set via wrangler secret put
-# SPORTSDATA_API_KEY = ""
-# NCAA_API_KEY = ""
-# ESPN_API_KEY = ""
-# INGEST_SECRET = ""
-# DATABASE_URL = ""
+ENVIRONMENT = "production"
+
+# Cron Triggers
+[triggers]
+crons = [
+  "*/5 * * * *",   # Live games - every 5 minutes
+  "0 * * * *",     # Team stats refresh - hourly
+  "0 2 * * *"      # Historical aggregations - daily at 2am CST
+]
 
 # KV Namespace (Cache)
 [[kv_namespaces]]
 binding = "CACHE"
-id = "a53c3726fc3044be82e79d2d1e371d26"  # Production KV namespace
+id = "a53c3726fc3044be82e79d2d1e371d26"
 
 # R2 Bucket (Archives)
 [[r2_buckets]]
@@ -46,13 +35,17 @@ bucket_name = "blazesports-archives"
 binding = "ANALYTICS"
 dataset = "bsi_ingest_analytics"
 
-# Build Configuration
-[build]
-command = "npm run build"
+# Observability
+[observability.logs]
+enabled = true
 
-[build.upload]
-format = "service-worker"
+# Development settings
+[dev]
+port = 8789
+local_protocol = "http"
 
-# Compatibility Flags
-[compatibility_flags]
-nodejs_compat = true
+# Staging environment
+[env.staging]
+name = "blazesports-ingest-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"

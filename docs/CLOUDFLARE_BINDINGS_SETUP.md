@@ -52,7 +52,10 @@ wrangler kv:key get "test" --namespace-id=a53c3726fc3044be82e79d2d1e371d26
 **Purpose**: Store teams, games, and historical statistics
 
 **Binding Name**: `DB`
-**Database ID**: `612f6f42-226d-4345-bb1c-f0367292f55e`
+**Database Name**: `bsi-historical-db`
+**Database ID**: `9cecff0f-a3ab-433f-bf10-d2664d9542b0`
+
+> **Note:** The database was renamed from `blazesports-historical` to `bsi-historical-db` per BSI naming conventions. Ensure you select the correct database in the dashboard.
 
 #### Steps to Configure:
 
@@ -60,7 +63,7 @@ wrangler kv:key get "test" --namespace-id=a53c3726fc3044be82e79d2d1e371d26
 2. Click **Functions** → **D1 database bindings**
 3. Click **Add binding**
    - **Variable name**: `DB`
-   - **D1 database**: Select `blazesports-historical`
+   - **D1 database**: Select `bsi-historical-db`
 4. Click **Save**
 
 #### Test Binding:
@@ -339,5 +342,22 @@ echo "✅ Verification complete"
 
 ---
 
-**Last Updated**: 2025-11-02
+**Last Updated**: 2026-01-07
 **Next Review**: After any binding changes
+
+---
+
+## Appendix: Resource ID Quick Reference
+
+| Resource Type | Name | ID |
+|---------------|------|-----|
+| KV | CACHE | `a53c3726fc3044be82e79d2d1e371d26` |
+| KV | PREDICTION_CACHE | `eebf04d329c0419e92eec884f39a636d` |
+| KV | SPORTS_CACHE | `c912d983175e4a1480225cfd57ed3434` |
+| KV | CFB_CACHE | `963541b67da84e36919914e914a1bb31` |
+| D1 | bsi-historical-db | `9cecff0f-a3ab-433f-bf10-d2664d9542b0` |
+| D1 | bsi-game-db | `88eb676f-af0f-470c-a46a-b9429f5b51f3` |
+| R2 | blazesports-assets | N/A (use bucket name) |
+| R2 | blaze-sports-data-lake | N/A (use bucket name) |
+
+> See `docs/infrastructure/CLOUDFLARE-INFRASTRUCTURE-AUDIT-2025-01-07.md` for complete resource inventory.

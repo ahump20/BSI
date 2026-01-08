@@ -225,9 +225,9 @@ function normalizeESPNGame(event) {
     status: normalizeGameStatus(status?.type?.name),
     inning: status?.period || null,
     homeTeam: {
-      id: homeTeam?.team?.slug,
-      name: homeTeam?.team?.displayName,
-      shortName: homeTeam?.team?.abbreviation,
+      id: homeTeam?.team?.slug || 'unknown',
+      name: homeTeam?.team?.displayName || 'Home Team',
+      shortName: homeTeam?.team?.abbreviation || 'HME',
       conference: homeTeam?.team?.conferenceId
         ? getConferenceName(homeTeam.team.conferenceId)
         : 'Independent',
@@ -243,9 +243,9 @@ function normalizeESPNGame(event) {
       logo: homeTeam?.team?.logo,
     },
     awayTeam: {
-      id: awayTeam?.team?.slug,
-      name: awayTeam?.team?.displayName,
-      shortName: awayTeam?.team?.abbreviation,
+      id: awayTeam?.team?.slug || 'unknown',
+      name: awayTeam?.team?.displayName || 'Away Team',
+      shortName: awayTeam?.team?.abbreviation || 'AWY',
       conference: awayTeam?.team?.conferenceId
         ? getConferenceName(awayTeam.team.conferenceId)
         : 'Independent',
@@ -274,11 +274,11 @@ function normalizeESPNTeamStanding(team) {
 
   return {
     team: {
-      id: team.slug,
-      name: team.displayName,
-      shortName: team.abbreviation,
+      id: team.slug || 'unknown',
+      name: team.displayName || team.name || 'Unknown Team',
+      shortName: team.abbreviation || 'UNK',
       conference: team.conferenceId ? getConferenceName(team.conferenceId) : 'Independent',
-      logo: team.logos?.[0]?.href,
+      logo: team.logos?.[0]?.href || null,
     },
     overallRecord: {
       wins: overallRecord?.stats?.find((s) => s.name === 'wins')?.value || 0,
