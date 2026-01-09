@@ -412,6 +412,11 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       return handleOddsRequest(path, url, env, corsHeaders);
     }
 
+    // NCAA Football Data (FBS teams, transfer portal, schedule from D1)
+    if (path.startsWith('/api/ncaa-football/')) {
+      return handleNCAAFootballRequest(path, url, env, corsHeaders);
+    }
+
     // === TOOLS API ROUTES ===
     if (path === '/api/tools/strike-zone') {
       const playerId = url.searchParams.get('player') || url.searchParams.get('pitcher');
@@ -474,6 +479,28 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       if (!subPath.endsWith('.html') && !subPath.includes('.')) {
         // Try as directory index
         assetPath = `origin/college-baseball/${subPath}/index.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        const contentType = assetPath.endsWith('.js') ? 'application/javascript' :
+                           assetPath.endsWith('.css') ? 'text/css' : 'text/html';
+        return new Response(asset.body, {
+          headers: { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
+    // === COLLEGE FOOTBALL ROUTES ===
+    if (path === '/college-football' || path === '/college-football/') {
+      return serveAsset(env, 'origin/college-football/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/college-football/')) {
+      const subPath = path.replace('/college-football/', '');
+      // Try exact file match first
+      let assetPath = `origin/college-football/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        // Try as directory index
+        assetPath = `origin/college-football/${subPath}/index.html`;
       }
       const asset = await env.ASSETS.get(assetPath);
       if (asset) {
@@ -3203,6 +3230,863 @@ async function handleUnifiedScores(env, corsHeaders) {
       ...corsHeaders
     }
   });
+}
+
+// =============================================================================
+// NCAA FOOTBALL (FBS) API HANDLERS - D1 Database
+// =============================================================================
+
+async function handleNCAAFootballRequest(path, url, env, corsHeaders) {
+  const endpoint = path.replace('/api/ncaa-football/', '');
+  const searchParams = url.searchParams;
+
+  // Teams endpoints
+  if (endpoint.startsWith('teams/')) {
+    const teamSlug = endpoint.replace('teams/', '').replace('/', '');
+    return getFootballTeamFromD1(teamSlug, env, corsHeaders);
+  }
+
+  if (endpoint === 'teams') {
+    return getFootballTeamsFromD1(searchParams, env, corsHeaders);
+  }
+
+  // Transfer Portal endpoints
+  if (endpoint === 'transfer-portal/impact-leaders') {
+    return getFootballTransferImpactLeaders(searchParams, env, corsHeaders);
+  }
+
+  if (endpoint.startsWith('transfer-portal/player/')) {
+    const playerId = endpoint.replace('transfer-portal/player/', '');
+    return getFootballTransferPlayerDetail(playerId, env, corsHeaders);
+  }
+
+  if (endpoint === 'transfer-portal/conference-summary') {
+    return getFootballTransferConferenceSummary(searchParams, env, corsHeaders);
+  }
+
+  if (endpoint === 'transfer-portal' || endpoint.startsWith('transfer-portal')) {
+    return getFootballTransferPortal(searchParams, env, corsHeaders);
+  }
+
+  // Schedule/Games endpoints
+  if (endpoint.startsWith('schedule/')) {
+    const teamSlug = endpoint.replace('schedule/', '');
+    return getFootballTeamSchedule(teamSlug, searchParams, env, corsHeaders);
+  }
+
+  if (endpoint === 'schedule' || endpoint === 'games') {
+    return getFootballSchedule(searchParams, env, corsHeaders);
+  }
+
+  if (endpoint.startsWith('games/')) {
+    const gameId = endpoint.replace('games/', '');
+    return getFootballGameDetail(gameId, env, corsHeaders);
+  }
+
+  // Standings
+  if (endpoint === 'standings') {
+    return getFootballStandings(searchParams, env, corsHeaders);
+  }
+
+  // Rankings (CFP, AP, Coaches)
+  if (endpoint === 'rankings') {
+    return getFootballRankings(searchParams, env, corsHeaders);
+  }
+
+  return new Response(JSON.stringify({ error: 'NCAA Football endpoint not found' }), {
+    status: 404,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders }
+  });
+}
+
+// Get all FBS teams from D1
+async function getFootballTeamsFromD1(searchParams, env, corsHeaders) {
+  try {
+    const conference = searchParams.get('conference');
+    const state = searchParams.get('state');
+    const limit = Math.min(parseInt(searchParams.get('limit')) || 150, 200);
+    const offset = parseInt(searchParams.get('offset')) || 0;
+
+    let sql = `
+      SELECT
+        id, name, slug, mascot, conference, division,
+        city, state, stadium, stadium_capacity,
+        head_coach, primary_color, secondary_color,
+        espn_id, wins, losses, conf_wins, conf_losses,
+        ap_rank, cfp_rank
+      FROM football_teams
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (conference) {
+      sql += ` AND LOWER(conference) = LOWER(?)`;
+      params.push(conference);
+    }
+
+    if (state) {
+      sql += ` AND UPPER(state) = UPPER(?)`;
+      params.push(state);
+    }
+
+    sql += ` ORDER BY conference, name LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
+
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+    // Get total count
+    let countSql = `SELECT COUNT(*) as count FROM football_teams WHERE 1=1`;
+    const countParams = [];
+    if (conference) {
+      countSql += ` AND LOWER(conference) = LOWER(?)`;
+      countParams.push(conference);
+    }
+    if (state) {
+      countSql += ` AND UPPER(state) = UPPER(?)`;
+      countParams.push(state);
+    }
+    const countResult = await env.DB.prepare(countSql).bind(...countParams).first();
+
+    // Get conference summary
+    const confSummary = await env.DB.prepare(`
+      SELECT conference, COUNT(*) as count
+      FROM football_teams
+      GROUP BY conference
+      ORDER BY count DESC
+    `).all();
+
+    const teams = results.map(t => ({
+      id: t.id,
+      name: t.name,
+      slug: t.slug,
+      mascot: t.mascot,
+      conference: t.conference,
+      division: t.division || 'FBS',
+      city: t.city,
+      state: t.state,
+      stadium: t.stadium,
+      stadiumCapacity: t.stadium_capacity,
+      headCoach: t.head_coach,
+      colors: {
+        primary: t.primary_color,
+        secondary: t.secondary_color
+      },
+      logo: t.espn_id ? `https://a.espncdn.com/i/teamlogos/ncaa/500/${t.espn_id}.png` : null,
+      espnId: t.espn_id,
+      record: {
+        wins: t.wins || 0,
+        losses: t.losses || 0,
+        confWins: t.conf_wins || 0,
+        confLosses: t.conf_losses || 0
+      },
+      rankings: {
+        ap: t.ap_rank,
+        cfp: t.cfp_rank
+      }
+    }));
+
+    return new Response(JSON.stringify({
+      teams,
+      total: countResult?.count || teams.length,
+      conferences: confSummary.results,
+      pagination: {
+        limit,
+        offset,
+        hasMore: offset + teams.length < (countResult?.count || 0)
+      },
+      filters: {
+        conference: conference || 'all',
+        state: state || 'all'
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football - D1 Database'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600',
+        'X-Data-Source': 'BSI-D1-NCAAFootball',
+        'X-Fetched-At': getChicagoTimestamp(),
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching football teams from D1:', error);
+    return new Response(JSON.stringify({
+      error: 'Failed to fetch football teams',
+      message: error.message
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Get single FBS team by slug
+async function getFootballTeamFromD1(slug, env, corsHeaders) {
+  try {
+    const team = await env.DB.prepare(`
+      SELECT * FROM football_teams WHERE slug = ?
+    `).bind(slug).first();
+
+    if (!team) {
+      return new Response(JSON.stringify({ error: 'Team not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    // Get recent transfers for this team
+    const transfers = await env.DB.prepare(`
+      SELECT * FROM football_transfer_portal
+      WHERE LOWER(from_school) LIKE LOWER(?) OR LOWER(to_school) LIKE LOWER(?)
+      ORDER BY entry_date DESC
+      LIMIT 20
+    `).bind(`%${team.name.split(' ')[0]}%`, `%${team.name.split(' ')[0]}%`).all();
+
+    return new Response(JSON.stringify({
+      team: {
+        id: team.id,
+        name: team.name,
+        slug: team.slug,
+        mascot: team.mascot,
+        conference: team.conference,
+        division: team.division || 'FBS',
+        city: team.city,
+        state: team.state,
+        stadium: team.stadium,
+        stadiumCapacity: team.stadium_capacity,
+        headCoach: team.head_coach,
+        colors: {
+          primary: team.primary_color,
+          secondary: team.secondary_color
+        },
+        logo: team.espn_id ? `https://a.espncdn.com/i/teamlogos/ncaa/500/${team.espn_id}.png` : null,
+        espnId: team.espn_id,
+        record: {
+          wins: team.wins || 0,
+          losses: team.losses || 0,
+          confWins: team.conf_wins || 0,
+          confLosses: team.conf_losses || 0
+        },
+        rankings: {
+          ap: team.ap_rank,
+          cfp: team.cfp_rank
+        }
+      },
+      recentTransfers: transfers.results?.map(t => ({
+        id: t.id,
+        name: t.player_name,
+        position: t.position,
+        year: t.year,
+        fromSchool: t.from_school,
+        toSchool: t.to_school,
+        status: t.status,
+        date: t.entry_date
+      })) || [],
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football - D1 Database'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching football team:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch team' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Transfer Portal
+async function getFootballTransferPortal(searchParams, env, corsHeaders) {
+  const status = searchParams.get('status');
+  const position = searchParams.get('position');
+  const conference = searchParams.get('conference');
+  const stars = searchParams.get('stars');
+  const limit = parseInt(searchParams.get('limit')) || 100;
+
+  try {
+    let sql = `
+      SELECT * FROM football_transfer_portal
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (status && status !== 'all') {
+      sql += ' AND status = ?';
+      params.push(status);
+    }
+
+    if (position && position !== 'all') {
+      sql += ' AND position = ?';
+      params.push(position);
+    }
+
+    if (conference && conference !== 'all') {
+      sql += ' AND (from_conference = ? OR to_conference = ?)';
+      params.push(conference, conference);
+    }
+
+    if (stars) {
+      sql += ' AND stars >= ?';
+      params.push(parseInt(stars));
+    }
+
+    sql += ' ORDER BY impact_score DESC, entry_date DESC LIMIT ?';
+    params.push(limit);
+
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+    const players = results.map(row => ({
+      id: row.id,
+      name: row.player_name,
+      firstName: row.first_name,
+      lastName: row.last_name,
+      year: row.year,
+      position: row.position,
+      fromSchool: row.from_school,
+      fromConf: row.from_conference,
+      destination: row.to_school,
+      destConf: row.to_conference,
+      status: row.status,
+      date: row.entry_date,
+      commitDate: row.commit_date,
+      stars: row.stars,
+      impactScore: row.impact_score,
+      stats: {
+        passingYards: row.stats_passing_yards,
+        rushingYards: row.stats_rushing_yards,
+        receivingYards: row.stats_receiving_yards,
+        tackles: row.stats_tackles,
+        sacks: row.stats_sacks,
+        interceptions: row.stats_interceptions
+      },
+      notes: row.notes
+    }));
+
+    // Get summary stats
+    const summaryQuery = await env.DB.prepare(`
+      SELECT
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'in_portal' THEN 1 ELSE 0 END) as inPortal,
+        SUM(CASE WHEN status = 'committed' THEN 1 ELSE 0 END) as committed,
+        SUM(CASE WHEN status = 'declared' THEN 1 ELSE 0 END) as declared,
+        SUM(CASE WHEN status = 'withdrawn' THEN 1 ELSE 0 END) as withdrawn
+      FROM football_transfer_portal
+    `).first();
+
+    // Get position breakdown
+    const positionBreakdown = await env.DB.prepare(`
+      SELECT position, COUNT(*) as count
+      FROM football_transfer_portal
+      GROUP BY position
+      ORDER BY count DESC
+    `).all();
+
+    return new Response(JSON.stringify({
+      players,
+      total: summaryQuery?.total || 0,
+      summary: {
+        total: summaryQuery?.total || 0,
+        inPortal: summaryQuery?.inPortal || 0,
+        committed: summaryQuery?.committed || 0,
+        declared: summaryQuery?.declared || 0,
+        withdrawn: summaryQuery?.withdrawn || 0
+      },
+      positionBreakdown: positionBreakdown.results,
+      filters: {
+        status: status || 'all',
+        position: position || 'all',
+        conference: conference || 'all',
+        stars: stars || 'all'
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football Transfer Portal - D1 Database'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        'X-Data-Source': 'BSI-D1-FootballTransfer',
+        'X-Fetched-At': getChicagoTimestamp(),
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching football transfer portal:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch transfer portal' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Transfer Impact Leaders
+async function getFootballTransferImpactLeaders(searchParams, env, corsHeaders) {
+  const limit = parseInt(searchParams.get('limit')) || 25;
+  const position = searchParams.get('position');
+
+  try {
+    let sql = `
+      SELECT * FROM football_transfer_portal
+      WHERE impact_score IS NOT NULL
+    `;
+    const params = [];
+
+    if (position && position !== 'all') {
+      sql += ' AND position = ?';
+      params.push(position);
+    }
+
+    sql += ' ORDER BY impact_score DESC LIMIT ?';
+    params.push(limit);
+
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+    return new Response(JSON.stringify({
+      leaders: results.map((row, idx) => ({
+        rank: idx + 1,
+        id: row.id,
+        name: row.player_name,
+        position: row.position,
+        year: row.year,
+        fromSchool: row.from_school,
+        toSchool: row.to_school,
+        status: row.status,
+        stars: row.stars,
+        impactScore: row.impact_score,
+        stats: {
+          passingYards: row.stats_passing_yards,
+          rushingYards: row.stats_rushing_yards,
+          receivingYards: row.stats_receiving_yards,
+          tackles: row.stats_tackles,
+          sacks: row.stats_sacks,
+          interceptions: row.stats_interceptions
+        }
+      })),
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching impact leaders:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch impact leaders' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Transfer Player Detail
+async function getFootballTransferPlayerDetail(playerId, env, corsHeaders) {
+  try {
+    const player = await env.DB.prepare(`
+      SELECT * FROM football_transfer_portal WHERE id = ?
+    `).bind(playerId).first();
+
+    if (!player) {
+      return new Response(JSON.stringify({ error: 'Player not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    return new Response(JSON.stringify({
+      player: {
+        id: player.id,
+        name: player.player_name,
+        firstName: player.first_name,
+        lastName: player.last_name,
+        position: player.position,
+        year: player.year,
+        fromSchool: player.from_school,
+        fromConference: player.from_conference,
+        toSchool: player.to_school,
+        toConference: player.to_conference,
+        status: player.status,
+        entryDate: player.entry_date,
+        commitDate: player.commit_date,
+        stars: player.stars,
+        impactScore: player.impact_score,
+        stats: {
+          passingYards: player.stats_passing_yards,
+          rushingYards: player.stats_rushing_yards,
+          receivingYards: player.stats_receiving_yards,
+          tackles: player.stats_tackles,
+          sacks: player.stats_sacks,
+          interceptions: player.stats_interceptions
+        },
+        notes: player.notes
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching player detail:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch player' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Transfer Conference Summary
+async function getFootballTransferConferenceSummary(searchParams, env, corsHeaders) {
+  try {
+    const incoming = await env.DB.prepare(`
+      SELECT to_conference as conference, COUNT(*) as count
+      FROM football_transfer_portal
+      WHERE to_conference IS NOT NULL
+      GROUP BY to_conference
+      ORDER BY count DESC
+    `).all();
+
+    const outgoing = await env.DB.prepare(`
+      SELECT from_conference as conference, COUNT(*) as count
+      FROM football_transfer_portal
+      GROUP BY from_conference
+      ORDER BY count DESC
+    `).all();
+
+    const fiveStars = await env.DB.prepare(`
+      SELECT to_conference as conference, COUNT(*) as count
+      FROM football_transfer_portal
+      WHERE to_conference IS NOT NULL AND stars = 5
+      GROUP BY to_conference
+      ORDER BY count DESC
+    `).all();
+
+    return new Response(JSON.stringify({
+      incoming: incoming.results,
+      outgoing: outgoing.results,
+      fiveStarLandings: fiveStars.results,
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching conference summary:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch conference summary' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Schedule
+async function getFootballSchedule(searchParams, env, corsHeaders) {
+  const week = searchParams.get('week');
+  const conference = searchParams.get('conference');
+  const limit = parseInt(searchParams.get('limit')) || 50;
+
+  try {
+    let sql = `
+      SELECT * FROM football_games
+      WHERE season = 2025
+    `;
+    const params = [];
+
+    if (week) {
+      sql += ' AND week = ?';
+      params.push(parseInt(week));
+    }
+
+    if (conference) {
+      sql += ' AND (home_conference = ? OR away_conference = ?)';
+      params.push(conference, conference);
+    }
+
+    sql += ' ORDER BY game_date ASC, game_time ASC LIMIT ?';
+    params.push(limit);
+
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+    return new Response(JSON.stringify({
+      games: results.map(g => ({
+        id: g.id,
+        week: g.week,
+        date: g.game_date,
+        time: g.game_time,
+        venue: g.venue,
+        homeTeam: {
+          id: g.home_team_id,
+          name: g.home_team_name,
+          conference: g.home_conference,
+          score: g.home_score,
+          rank: g.home_rank
+        },
+        awayTeam: {
+          id: g.away_team_id,
+          name: g.away_team_name,
+          conference: g.away_conference,
+          score: g.away_score,
+          rank: g.away_rank
+        },
+        status: g.status,
+        tvNetwork: g.tv_network,
+        isConferenceGame: g.is_conference_game === 1
+      })),
+      filters: {
+        week: week || 'all',
+        conference: conference || 'all'
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching football schedule:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch schedule', games: [] }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Team Schedule
+async function getFootballTeamSchedule(teamSlug, searchParams, env, corsHeaders) {
+  try {
+    const team = await env.DB.prepare(`
+      SELECT * FROM football_teams WHERE slug = ?
+    `).bind(teamSlug).first();
+
+    if (!team) {
+      return new Response(JSON.stringify({ error: 'Team not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    const games = await env.DB.prepare(`
+      SELECT * FROM football_games
+      WHERE (home_team_id = ? OR away_team_id = ?) AND season = 2025
+      ORDER BY game_date ASC
+    `).bind(team.id, team.id).all();
+
+    return new Response(JSON.stringify({
+      team: {
+        id: team.id,
+        name: team.name,
+        slug: team.slug,
+        conference: team.conference
+      },
+      games: games.results?.map(g => ({
+        id: g.id,
+        week: g.week,
+        date: g.game_date,
+        time: g.game_time,
+        venue: g.venue,
+        opponent: g.home_team_id === team.id ? g.away_team_name : g.home_team_name,
+        isHome: g.home_team_id === team.id,
+        teamScore: g.home_team_id === team.id ? g.home_score : g.away_score,
+        oppScore: g.home_team_id === team.id ? g.away_score : g.home_score,
+        status: g.status,
+        tvNetwork: g.tv_network
+      })) || [],
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching team schedule:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch team schedule' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Game Detail
+async function getFootballGameDetail(gameId, env, corsHeaders) {
+  try {
+    const game = await env.DB.prepare(`
+      SELECT * FROM football_games WHERE id = ?
+    `).bind(gameId).first();
+
+    if (!game) {
+      return new Response(JSON.stringify({ error: 'Game not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    return new Response(JSON.stringify({
+      game: {
+        id: game.id,
+        season: game.season,
+        week: game.week,
+        date: game.game_date,
+        time: game.game_time,
+        venue: game.venue,
+        homeTeam: {
+          id: game.home_team_id,
+          name: game.home_team_name,
+          conference: game.home_conference,
+          score: game.home_score,
+          rank: game.home_rank
+        },
+        awayTeam: {
+          id: game.away_team_id,
+          name: game.away_team_name,
+          conference: game.away_conference,
+          score: game.away_score,
+          rank: game.away_rank
+        },
+        status: game.status,
+        tvNetwork: game.tv_network,
+        isConferenceGame: game.is_conference_game === 1,
+        attendance: game.attendance
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=60',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching game detail:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch game' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Standings
+async function getFootballStandings(searchParams, env, corsHeaders) {
+  const conference = searchParams.get('conference');
+
+  try {
+    let sql = `
+      SELECT * FROM football_teams
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (conference) {
+      sql += ' AND LOWER(conference) = LOWER(?)';
+      params.push(conference);
+    }
+
+    sql += ' ORDER BY conference, (wins - losses) DESC, wins DESC';
+
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+    // Group by conference
+    const standings = {};
+    results.forEach(team => {
+      if (!standings[team.conference]) {
+        standings[team.conference] = [];
+      }
+      standings[team.conference].push({
+        id: team.id,
+        name: team.name,
+        slug: team.slug,
+        wins: team.wins || 0,
+        losses: team.losses || 0,
+        confWins: team.conf_wins || 0,
+        confLosses: team.conf_losses || 0,
+        apRank: team.ap_rank,
+        cfpRank: team.cfp_rank,
+        logo: team.espn_id ? `https://a.espncdn.com/i/teamlogos/ncaa/500/${team.espn_id}.png` : null
+      });
+    });
+
+    return new Response(JSON.stringify({
+      standings,
+      conferences: Object.keys(standings),
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching standings:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch standings' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Football Rankings
+async function getFootballRankings(searchParams, env, corsHeaders) {
+  const poll = searchParams.get('poll') || 'cfp';
+
+  try {
+    let sql;
+    if (poll === 'cfp') {
+      sql = `SELECT * FROM football_teams WHERE cfp_rank IS NOT NULL ORDER BY cfp_rank ASC LIMIT 25`;
+    } else if (poll === 'ap') {
+      sql = `SELECT * FROM football_teams WHERE ap_rank IS NOT NULL ORDER BY ap_rank ASC LIMIT 25`;
+    } else {
+      sql = `SELECT * FROM football_teams WHERE ap_rank IS NOT NULL OR cfp_rank IS NOT NULL ORDER BY COALESCE(cfp_rank, ap_rank) ASC LIMIT 25`;
+    }
+
+    const { results } = await env.DB.prepare(sql).all();
+
+    return new Response(JSON.stringify({
+      poll,
+      rankings: results.map((team, idx) => ({
+        rank: poll === 'cfp' ? team.cfp_rank : (poll === 'ap' ? team.ap_rank : idx + 1),
+        team: team.name,
+        conference: team.conference,
+        record: `${team.wins || 0}-${team.losses || 0}`,
+        slug: team.slug,
+        logo: team.espn_id ? `https://a.espncdn.com/i/teamlogos/ncaa/500/${team.espn_id}.png` : null
+      })),
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA Football'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching rankings:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch rankings' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
 }
 
 function jsonResponse(data, status, corsHeaders, sessionToken = null) {

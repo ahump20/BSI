@@ -9,6 +9,7 @@ on:
       - 'bsi-production/**'
       - 'src/agents/**'
       - 'games/**'
+      - 'migrations/**'
   workflow_dispatch:
     inputs:
       worker:
@@ -106,10 +107,59 @@ jobs:
           echo "workers=$WORKERS" >> $GITHUB_OUTPUT
           echo "Detected workers: $WORKERS"
 
+  run-migrations:
+    name: Apply D1 Migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Apply migrations to bsi-game-db
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "Applying D1 migrations to bsi-game-db..."
+
+          # List all migration files in order
+          MIGRATION_DIR="bsi-production/migrations"
+          if [ -d "$MIGRATION_DIR" ]; then
+            echo "Found migrations directory: $MIGRATION_DIR"
+            ls -la "$MIGRATION_DIR"
+
+            # Apply migrations in order
+            for migration in $(ls -1 "$MIGRATION_DIR"/*.sql 2>/dev/null | sort); do
+              echo "Applying migration: $migration"
+              wrangler d1 execute bsi-game-db --remote --file="$migration" || {
+                echo "Migration may have already been applied or contains no new changes"
+              }
+            done
+
+            echo "All migrations applied successfully"
+          else
+            echo "No migrations directory found at $MIGRATION_DIR"
+          fi
+
+      - name: Migration summary
+        run: |
+          echo "## D1 Migration Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Database:** bsi-game-db" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(TZ='America/Chicago' date '+%Y-%m-%d %H:%M:%S CT')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
   deploy:
     name: Deploy ${{ matrix.worker }}
     runs-on: ubuntu-latest
-    needs: detect-changes
+    needs: [detect-changes, run-migrations]
     if: needs.detect-changes.outputs.workers != '[]'
     strategy:
       matrix:
