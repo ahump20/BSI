@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Advanced sports statistics for MLB, NFL, NBA, and NCAA. Deep analytics from Blaze Sports Intel.">
+  <title>Statistics | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0.75rem 0;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .nav.scrolled {
+      padding: 0.5rem 0;
+      background: rgba(13, 13, 13, 0.98);
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      text-decoration: none;
+      color: var(--bsi-cream);
+    }
+    .logo-img {
+      height: 44px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3));
+      transition: transform 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .logo:hover .logo-img { transform: scale(1.05); }
+    .logo-text { display: none; }
+    @media (min-width: 640px) {
+      .logo-text { display: block; }
+      .logo-img { height: 48px; }
+    }
+    .nav-links {
+      display: none;
+      gap: 2rem;
+      list-style: none;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .nav-links a {
+      color: var(--bsi-cream);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--bsi-ember);
+      transition: width 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .nav-links a:hover { opacity: 1; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { opacity: 1; color: var(--bsi-ember); }
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+    .nav-cta { display: none; }
+    .nav-cta .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+      border: none;
+      text-align: center;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      color: white;
+      box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
+    }
+    .nav-cta .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4);
+    }
+    @media (min-width: 1024px) { .nav-cta { display: block; } }
+    .mobile-menu-btn {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--bsi-cream);
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+    .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    @media (min-width: 768px) { .mobile-menu-btn { display: none; } }
+    .mobile-menu {
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 999;
+      background: var(--bsi-midnight);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 2rem;
+      transform: translateY(-100%);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+      pointer-events: none;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+      overflow-y: auto;
+    }
+    .mobile-menu.active {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .mobile-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .mobile-menu a {
+      font-family: var(--font-ui);
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--bsi-cream);
+      text-decoration: none;
+      display: block;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(250, 248, 245, 0.1);
+    }
+    .mobile-menu a:hover { color: var(--bsi-ember); }
+    @media (min-width: 768px) { .mobile-menu { display: none; } }
+
+    .page-header {
+      padding: 8rem 2rem 3rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 0.5rem;
+    }
+    .page-header p {
+      color: rgba(250, 248, 245, 0.6);
+    }
+
+    .content {
+      padding: 3rem 2rem;
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-category {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+    .stat-category:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-4px);
+    }
+    .stat-category h3 {
+      font-family: var(--font-ui);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--bsi-cream);
+      margin-bottom: 0.5rem;
+    }
+    .stat-category p {
+      color: rgba(250, 248, 245, 0.6);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-category .sport-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .stat-category a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--bsi-burnt-orange);
+      transition: color 0.2s;
+    }
+    .stat-category a:hover {
+      color: var(--bsi-ember);
+    }
+
+    .featured-stats {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.3);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .featured-stats h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      color: var(--bsi-cream);
+    }
+    .leader-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .leader-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .leader-label {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(250, 248, 245, 0.5);
+      margin-bottom: 0.5rem;
+    }
+    .leader-name {
+      font-family: var(--font-ui);
+      font-weight: 600;
+      color: var(--bsi-cream);
+      margin-bottom: 0.25rem;
+    }
+    .leader-value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--bsi-gold);
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .page-header { padding: 6rem 1rem 2rem; }
+      .content { padding: 2rem 1rem; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <!-- BSI Premium Enhancements - Micro-interactions & Visual Polish -->
+  <link rel="stylesheet" href="./css/bsi-enhancements.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <img src="/images/bsi-logo-nav.png" alt="BSI" class="logo-img">
+        <span class="logo-text">Blaze Sports Intel</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/analytics">Analytics</a></li>
+        <li><a href="/scores">Scores</a></li>
+        <li><a href="/college-baseball">College Baseball</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="/signup" class="btn-primary">Get Started</a>
+      </div>
+      <button class="mobile-menu-btn" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu">
+    <ul>
+      <li><a href="/analytics">Analytics</a></li>
+      <li><a href="/scores">Scores</a></li>
+      <li><a href="/college-baseball">College Baseball</a></li>
+      <li><a href="/tools">Tools</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/pricing">Pricing</a></li>
+      <li><a href="/signup">Get Started</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>Statistics Hub</h1>
+        <p>Advanced analytics and performance metrics across all sports</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="content-inner">
+
+        <div class="featured-stats" id="featured-stats">
+          <h2>League Leaders</h2>
+          <div class="leader-grid" id="leaders-grid">
+            <div class="leader-card">
+              <div class="leader-label">MLB Batting Average</div>
+              <div class="leader-name">Loading...</div>
+              <div class="leader-value">---</div>
+            </div>
+            <div class="leader-card">
+              <div class="leader-label">MLB Home Runs</div>
+              <div class="leader-name">Loading...</div>
+              <div class="leader-value">---</div>
+            </div>
+            <div class="leader-card">
+              <div class="leader-label">NFL Passing Yards</div>
+              <div class="leader-name">Loading...</div>
+              <div class="leader-value">---</div>
+            </div>
+            <div class="leader-card">
+              <div class="leader-label">NBA Points Per Game</div>
+              <div class="leader-name">Loading...</div>
+              <div class="leader-value">---</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-category">
+            <div class="sport-icon">&#9918;</div>
+            <h3>MLB Statistics</h3>
+            <p>Batting averages, ERA, WAR, and advanced sabermetrics for every team and player.</p>
+            <a href="/mlb">Explore MLB Stats &rarr;</a>
+          </div>
+
+          <div class="stat-category">
+            <div class="sport-icon">&#127944;</div>
+            <h3>NFL Statistics</h3>
+            <p>Passing, rushing, receiving yards, and defensive metrics across all 32 teams.</p>
+            <a href="/nfl">Explore NFL Stats &rarr;</a>
+          </div>
+
+          <div class="stat-category">
+            <div class="sport-icon">&#127936;</div>
+            <h3>NBA Statistics</h3>
+            <p>Points, rebounds, assists, and advanced efficiency metrics for the league.</p>
+            <a href="/nba">Explore NBA Stats &rarr;</a>
+          </div>
+
+          <div class="stat-category">
+            <div class="sport-icon">&#127891;</div>
+            <h3>College Baseball</h3>
+            <p>D1 rankings, conference standings, and player statistics across all conferences.</p>
+            <a href="/college-baseball">Explore College Stats &rarr;</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+          </a>
+          <p>Born in Memphis. Rooted in Texas soil. Built for fans who care.</p>
+          <div class="footer-values">
+            <span>Courage</span>
+            <span>•</span>
+            <span>Grit</span>
+            <span>•</span>
+            <span>Leadership</span>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="/analytics">Live Analytics</a></li>
+            <li><a href="/scores">Live Scores</a></li>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/tools">Tools</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Coverage</h4>
+          <ul>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/mlb">MLB</a></li>
+            <li><a href="/nfl">NFL</a></li>
+            <li><a href="/nba">NBA</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="mailto:austin@blazesportsintel.com">Email Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Blaze Sports Intel. Built on Cloudflare.</p>
+        <p class="footer-tagline">Born to Blaze the Path Less Beaten</p>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    var menuBtn = document.querySelector('.mobile-menu-btn');
+    var mobileMenu = document.querySelector('.mobile-menu');
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', function() {
+        menuBtn.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+      });
+      document.querySelectorAll('.mobile-menu a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          menuBtn.classList.remove('active');
+          mobileMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    }
+    // Scroll effect for nav
+    window.addEventListener('scroll', function() {
+      document.querySelector('.nav').classList.toggle('scrolled', window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>

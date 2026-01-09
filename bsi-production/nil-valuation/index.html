@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NIL Valuation Calculator - Estimate college athlete market value based on performance, social following, and market factors.">
+  <meta name="keywords" content="NIL calculator, college athlete valuation, NIL deals, name image likeness, college sports, athlete endorsements">
+  <meta name="author" content="Blaze Sports Intel">
+  <meta property="og:title" content="NIL Valuation Calculator | Blaze Sports Intel">
+  <meta property="og:description" content="Estimate college athlete market value based on performance, social media following, conference, and market factors.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://blazesportsintel.com/nil-valuation">
+  <meta property="og:image" content="https://blazesportsintel.com/images/og-nil-calculator.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NIL Valuation Calculator">
+  <meta name="twitter:description" content="Free tool to estimate college athlete NIL market value">
+  <link rel="canonical" href="https://blazesportsintel.com/nil-valuation">
+  <title>NIL Valuation Calculator | Blaze Sports Intel</title>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "NIL Valuation Calculator",
+    "url": "https://blazesportsintel.com/nil-valuation",
+    "description": "Estimate college athlete market value based on performance metrics, social media following, conference, position, and market factors.",
+    "applicationCategory": "SportsApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free to use. Pro subscription required for save and export features."
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Blaze Sports Intel",
+      "url": "https://blazesportsintel.com",
+      "logo": "https://blazesportsintel.com/images/bsi-logo.png"
+    },
+    "featureList": [
+      "Sport-specific valuations (Football, Basketball, Baseball, Softball, etc.)",
+      "Conference multipliers (SEC, Big Ten, Big 12, ACC, etc.)",
+      "Position-based value calculations",
+      "Social media value estimation",
+      "Performance score weighting",
+      "Market comparable analysis",
+      "Pro: Save valuations",
+      "Pro: Export CSV reports"
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 7rem 2rem 3rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+      text-align: center;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin-bottom: 0.5rem;
+    }
+    .page-header p {
+      color: rgba(250, 248, 245, 0.7);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .main-content {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .calculator-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-panel {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: var(--bsi-burnt-orange);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 1.25rem;
+      background: var(--bsi-burnt-orange);
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      display: block;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: rgba(250, 248, 245, 0.9);
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bsi-midnight);
+      border: 1px solid rgba(191, 87, 0, 0.3);
+      border-radius: 8px;
+      color: var(--bsi-warm-white);
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--bsi-burnt-orange);
+    }
+    .form-group select {
+      cursor: pointer;
+    }
+    .form-group small {
+      display: block;
+      margin-top: 0.25rem;
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.75rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .calculate-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 1rem;
+    }
+    .calculate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(191, 87, 0, 0.3);
+    }
+
+    .results-panel {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .valuation-display {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.1), rgba(201, 162, 39, 0.1));
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    .valuation-label {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    .valuation-amount {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-gold), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .valuation-range {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.6);
+      margin-top: 0.5rem;
+    }
+
+    .breakdown-section {
+      margin-bottom: 1.5rem;
+    }
+    .breakdown-title {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: rgba(250, 248, 245, 0.9);
+      margin-bottom: 1rem;
+    }
+
+    .factor-bar {
+      margin-bottom: 1rem;
+    }
+    .factor-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+    .factor-name {
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      color: rgba(250, 248, 245, 0.8);
+    }
+    .factor-value {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--bsi-gold);
+    }
+    .factor-track {
+      height: 6px;
+      background: rgba(250, 248, 245, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .factor-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-gold));
+      border-radius: 3px;
+      transition: width 0.5s ease-out;
+    }
+
+    .tier-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: rgba(201, 162, 39, 0.2);
+      border: 1px solid var(--bsi-gold);
+      border-radius: 20px;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--bsi-gold);
+      margin-top: 1rem;
+    }
+
+    .market-comps {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .comp-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(250, 248, 245, 0.1);
+    }
+    .comp-item:last-child {
+      border-bottom: none;
+    }
+    .comp-name {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.8);
+    }
+    .comp-value {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: var(--bsi-ember);
+    }
+
+    .pro-features {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(191, 87, 0, 0.15) 100%);
+      border: 1px solid rgba(201, 162, 39, 0.3);
+      border-radius: 12px;
+    }
+    .pro-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.9375rem;
+    }
+    .pro-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background: linear-gradient(135deg, var(--bsi-gold), var(--bsi-burnt-orange));
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--bsi-midnight);
+    }
+    .pro-buttons {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .pro-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: rgba(201, 162, 39, 0.2);
+      border: 1px solid rgba(201, 162, 39, 0.4);
+      border-radius: 8px;
+      color: var(--bsi-gold);
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pro-btn:hover:not(:disabled) {
+      background: var(--bsi-gold);
+      color: var(--bsi-midnight);
+    }
+    .pro-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pro-btn.active {
+      background: var(--bsi-gold);
+      color: var(--bsi-midnight);
+    }
+    .pro-cta {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.6);
+      text-align: center;
+    }
+    .pro-cta a {
+      color: var(--bsi-gold);
+      text-decoration: underline;
+    }
+    .pro-cta.hidden {
+      display: none;
+    }
+    .save-success {
+      padding: 0.75rem;
+      background: rgba(46, 125, 50, 0.2);
+      border: 1px solid rgba(46, 125, 50, 0.4);
+      border-radius: 8px;
+      color: #4caf50;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      text-align: center;
+      margin-top: 0.75rem;
+    }
+
+    .disclaimer {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(191, 87, 0, 0.1);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.6);
+      line-height: 1.5;
+    }
+
+    .footer {
+      padding: 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      margin-top: 3rem;
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .page-header { padding: 6rem 1rem 2rem; }
+      .main-content { padding: 1rem; }
+      .input-panel, .results-panel { padding: 1.5rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+  <!-- BSI Premium Enhancements - Micro-interactions & Visual Polish -->
+  <link rel="stylesheet" href="../css/bsi-enhancements.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <h1>NIL Valuation Calculator</h1>
+      <p>Estimate college athlete market value based on performance metrics, social following, and market factors.</p>
+    </section>
+
+    <section class="main-content">
+      <div class="calculator-grid">
+        <div class="input-panel">
+          <h2 class="section-title">Athlete Profile</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="sport">Sport</label>
+              <select id="sport">
+                <option value="football">Football</option>
+                <option value="basketball-m">Men's Basketball</option>
+                <option value="basketball-w">Women's Basketball</option>
+                <option value="baseball">Baseball</option>
+                <option value="softball">Softball</option>
+                <option value="volleyball">Volleyball</option>
+                <option value="gymnastics">Gymnastics</option>
+                <option value="track">Track & Field</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="position">Position</label>
+              <select id="position">
+                <option value="qb">Quarterback</option>
+                <option value="rb">Running Back</option>
+                <option value="wr">Wide Receiver</option>
+                <option value="ol">Offensive Line</option>
+                <option value="dl">Defensive Line</option>
+                <option value="lb">Linebacker</option>
+                <option value="db">Defensive Back</option>
+                <option value="guard">Guard</option>
+                <option value="forward">Forward</option>
+                <option value="center">Center</option>
+                <option value="pitcher">Pitcher</option>
+                <option value="catcher">Catcher</option>
+                <option value="infield">Infielder</option>
+                <option value="outfield">Outfielder</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="conference">Conference</label>
+              <select id="conference">
+                <option value="sec">SEC</option>
+                <option value="big10">Big Ten</option>
+                <option value="big12">Big 12</option>
+                <option value="acc">ACC</option>
+                <option value="pac12">Pac-12</option>
+                <option value="aac">AAC</option>
+                <option value="mwc">Mountain West</option>
+                <option value="sunbelt">Sun Belt</option>
+                <option value="cusa">C-USA</option>
+                <option value="mac">MAC</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="year">Year</label>
+              <select id="year">
+                <option value="freshman">Freshman</option>
+                <option value="sophomore">Sophomore</option>
+                <option value="junior">Junior</option>
+                <option value="senior">Senior</option>
+                <option value="grad">Grad Transfer</option>
+              </select>
+            </div>
+          </div>
+
+          <h2 class="section-title">Performance Metrics</h2>
+
+          <div class="form-group">
+            <label for="starRating">Recruiting Star Rating</label>
+            <select id="starRating">
+              <option value="5">5-Star</option>
+              <option value="4">4-Star</option>
+              <option value="3" selected>3-Star</option>
+              <option value="2">2-Star / Walk-on</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gamesPlayed">Games Started</label>
+              <input type="number" id="gamesPlayed" value="10" min="0" max="60">
+            </div>
+            <div class="form-group">
+              <label for="allConference">All-Conference?</label>
+              <select id="allConference">
+                <option value="none">No</option>
+                <option value="honorable">Honorable Mention</option>
+                <option value="second">Second Team</option>
+                <option value="first">First Team</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="performanceScore">Performance Score (1-100)</label>
+            <input type="number" id="performanceScore" value="65" min="1" max="100">
+            <small>Rate overall on-field performance relative to peers</small>
+          </div>
+
+          <h2 class="section-title">Social & Brand</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="instagram">Instagram Followers</label>
+              <input type="number" id="instagram" value="5000" min="0">
+            </div>
+            <div class="form-group">
+              <label for="twitter">X/Twitter Followers</label>
+              <input type="number" id="twitter" value="2000" min="0">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tiktok">TikTok Followers</label>
+              <input type="number" id="tiktok" value="0" min="0">
+            </div>
+            <div class="form-group">
+              <label for="engagementRate">Engagement Rate (%)</label>
+              <input type="number" id="engagementRate" value="3.5" min="0" max="100" step="0.1">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="mediaPresence">Media Presence</label>
+            <select id="mediaPresence">
+              <option value="none">None</option>
+              <option value="local">Local Coverage</option>
+              <option value="regional" selected>Regional Coverage</option>
+              <option value="national">National Coverage</option>
+              <option value="viral">Viral Moments</option>
+            </select>
+          </div>
+
+          <button class="calculate-btn" onclick="calculateNIL()">Calculate NIL Value</button>
+        </div>
+
+        <div class="results-panel">
+          <h2 class="section-title">Valuation Results</h2>
+
+          <div class="valuation-display">
+            <div class="valuation-label">Estimated Annual NIL Value</div>
+            <div class="valuation-amount" id="valuationAmount">$47,500</div>
+            <div class="valuation-range" id="valuationRange">Range: $35,000 - $65,000</div>
+          </div>
+
+          <div class="breakdown-section">
+            <div class="breakdown-title">Value Breakdown</div>
+
+            <div class="factor-bar">
+              <div class="factor-header">
+                <span class="factor-name">Performance Factor</span>
+                <span class="factor-value" id="perfValue">$22,000</span>
+              </div>
+              <div class="factor-track">
+                <div class="factor-fill" id="perfBar" style="width: 46%"></div>
+              </div>
+            </div>
+
+            <div class="factor-bar">
+              <div class="factor-header">
+                <span class="factor-name">Social Media Value</span>
+                <span class="factor-value" id="socialValue">$8,500</span>
+              </div>
+              <div class="factor-track">
+                <div class="factor-fill" id="socialBar" style="width: 18%"></div>
+              </div>
+            </div>
+
+            <div class="factor-bar">
+              <div class="factor-header">
+                <span class="factor-name">Market Premium</span>
+                <span class="factor-value" id="marketValue">$12,000</span>
+              </div>
+              <div class="factor-track">
+                <div class="factor-fill" id="marketBar" style="width: 25%"></div>
+              </div>
+            </div>
+
+            <div class="factor-bar">
+              <div class="factor-header">
+                <span class="factor-name">Brand Potential</span>
+                <span class="factor-value" id="brandValue">$5,000</span>
+              </div>
+              <div class="factor-track">
+                <div class="factor-fill" id="brandBar" style="width: 11%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center;">
+            <span class="tier-badge" id="tierBadge">Mid-Tier Athlete</span>
+          </div>
+
+          <div class="market-comps">
+            <div class="breakdown-title">Market Comparables</div>
+            <div class="comp-item">
+              <span class="comp-name">Similar Position Avg</span>
+              <span class="comp-value" id="positionAvg">$42,000</span>
+            </div>
+            <div class="comp-item">
+              <span class="comp-name">Conference Median</span>
+              <span class="comp-value" id="confMedian">$55,000</span>
+            </div>
+            <div class="comp-item">
+              <span class="comp-name">Sport-Wide P75</span>
+              <span class="comp-value" id="sportP75">$85,000</span>
+            </div>
+          </div>
+
+          <div class="pro-features" id="proFeatures">
+            <div class="pro-header">
+              <span class="pro-badge">PRO</span>
+              <span>Save & Export Features</span>
+            </div>
+            <div class="pro-buttons">
+              <button class="pro-btn" id="saveBtn" onclick="saveValuation()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Save Valuation
+              </button>
+              <button class="pro-btn" id="exportBtn" onclick="exportReport()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export Report
+              </button>
+            </div>
+            <p class="pro-cta" id="proCta">
+              <a href="/login">Sign in</a> or <a href="/signup">subscribe to Pro</a> to save valuations and export reports.
+            </p>
+          </div>
+
+          <div class="disclaimer">
+            <strong>Disclaimer:</strong> This calculator provides estimates based on publicly available NIL deal data and market analysis. Actual NIL values vary significantly based on individual circumstances, brand partnerships, and market conditions. This tool is for informational purposes only and should not be considered financial advice.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+          </a>
+          <p>Born in Memphis. Rooted in Texas soil. Built for fans who care.</p>
+          <div class="footer-values">
+            <span>Courage</span>
+            <span>•</span>
+            <span>Grit</span>
+            <span>•</span>
+            <span>Leadership</span>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="/analytics">Live Analytics</a></li>
+            <li><a href="/scores">Live Scores</a></li>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/tools">Tools</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Coverage</h4>
+          <ul>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/mlb">MLB</a></li>
+            <li><a href="/nfl">NFL</a></li>
+            <li><a href="/nba">NBA</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="mailto:austin@blazesportsintel.com">Email Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Blaze Sports Intel. Built on Cloudflare.</p>
+        <p class="footer-tagline">Born to Blaze the Path Less Beaten</p>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // NIL Valuation Model
+    var SPORT_MULTIPLIERS = {
+      'football': 1.8,
+      'basketball-m': 1.6,
+      'basketball-w': 1.4,
+      'baseball': 0.9,
+      'softball': 0.85,
+      'volleyball': 0.8,
+      'gymnastics': 1.1,
+      'track': 0.7,
+      'other': 0.6
+    };
+
+    var CONFERENCE_MULTIPLIERS = {
+      'sec': 1.5,
+      'big10': 1.4,
+      'big12': 1.3,
+      'acc': 1.25,
+      'pac12': 1.2,
+      'aac': 0.9,
+      'mwc': 0.8,
+      'sunbelt': 0.75,
+      'cusa': 0.7,
+      'mac': 0.65,
+      'other': 0.5
+    };
+
+    var POSITION_VALUES = {
+      'qb': 2.0,
+      'rb': 1.2,
+      'wr': 1.3,
+      'ol': 0.8,
+      'dl': 0.9,
+      'lb': 1.0,
+      'db': 1.1,
+      'guard': 1.4,
+      'forward': 1.3,
+      'center': 1.2,
+      'pitcher': 1.3,
+      'catcher': 1.0,
+      'infield': 0.9,
+      'outfield': 0.85,
+      'other': 0.7
+    };
+
+    var STAR_VALUES = {
+      '5': 50000,
+      '4': 25000,
+      '3': 10000,
+      '2': 3000
+    };
+
+    var ALL_CONF_VALUES = {
+      'none': 0,
+      'honorable': 5000,
+      'second': 15000,
+      'first': 35000
+    };
+
+    var MEDIA_VALUES = {
+      'none': 0,
+      'local': 2000,
+      'regional': 8000,
+      'national': 25000,
+      'viral': 50000
+    };
+
+    var YEAR_MULTIPLIERS = {
+      'freshman': 0.7,
+      'sophomore': 0.9,
+      'junior': 1.1,
+      'senior': 1.0,
+      'grad': 0.95
+    };
+
+    function formatCurrency(value) {
+      return '$' + Math.round(value).toLocaleString();
+    }
+
+    function calculateNIL() {
+      // Get all inputs
+      var sport = document.getElementById('sport').value;
+      var position = document.getElementById('position').value;
+      var conference = document.getElementById('conference').value;
+      var year = document.getElementById('year').value;
+      var starRating = document.getElementById('starRating').value;
+      var gamesPlayed = parseInt(document.getElementById('gamesPlayed').value) || 0;
+      var allConference = document.getElementById('allConference').value;
+      var performanceScore = parseInt(document.getElementById('performanceScore').value) || 50;
+      var instagram = parseInt(document.getElementById('instagram').value) || 0;
+      var twitter = parseInt(document.getElementById('twitter').value) || 0;
+      var tiktok = parseInt(document.getElementById('tiktok').value) || 0;
+      var engagementRate = parseFloat(document.getElementById('engagementRate').value) || 2;
+      var mediaPresence = document.getElementById('mediaPresence').value;
+
+      // Calculate Performance Value
+      var basePerformance = STAR_VALUES[starRating] || 10000;
+      var allConfBonus = ALL_CONF_VALUES[allConference] || 0;
+      var gamesBonus = gamesPlayed * 500;
+      var perfMultiplier = performanceScore / 50; // 50 = baseline
+      var performanceValue = (basePerformance + allConfBonus + gamesBonus) * perfMultiplier;
+
+      // Calculate Social Media Value
+      var totalFollowers = instagram + twitter + tiktok;
+      var engagementMultiplier = Math.min(engagementRate / 3, 2); // 3% is average
+      var socialBase = totalFollowers * 0.5; // $0.50 per follower base
+      var socialValue = socialBase * engagementMultiplier;
+
+      // Instagram worth more
+      var instaBonus = instagram * 0.2;
+      socialValue += instaBonus;
+
+      // Calculate Market Premium
+      var sportMult = SPORT_MULTIPLIERS[sport] || 1;
+      var confMult = CONFERENCE_MULTIPLIERS[conference] || 1;
+      var posMult = POSITION_VALUES[position] || 1;
+      var yearMult = YEAR_MULTIPLIERS[year] || 1;
+      var marketPremium = 15000 * sportMult * confMult * posMult * yearMult;
+
+      // Calculate Brand Potential
+      var mediaValue = MEDIA_VALUES[mediaPresence] || 0;
+      var brandPotential = mediaValue + (socialValue * 0.3);
+
+      // Calculate Total
+      var totalValue = performanceValue + socialValue + marketPremium + brandPotential;
+
+      // Apply final adjustments
+      totalValue = Math.max(totalValue, 1000); // Minimum $1,000
+      totalValue = Math.min(totalValue, 5000000); // Cap at $5M
+
+      // Calculate range (±30%)
+      var lowRange = totalValue * 0.7;
+      var highRange = totalValue * 1.3;
+
+      // Determine tier
+      var tier = 'Entry-Level';
+      if (totalValue >= 500000) tier = 'Elite Tier';
+      else if (totalValue >= 100000) tier = 'Top Tier';
+      else if (totalValue >= 50000) tier = 'Upper Mid-Tier';
+      else if (totalValue >= 20000) tier = 'Mid-Tier';
+      else if (totalValue >= 5000) tier = 'Emerging';
+
+      // Update display
+      document.getElementById('valuationAmount').textContent = formatCurrency(totalValue);
+      document.getElementById('valuationRange').textContent = 'Range: ' + formatCurrency(lowRange) + ' - ' + formatCurrency(highRange);
+
+      // Update breakdown
+      document.getElementById('perfValue').textContent = formatCurrency(performanceValue);
+      document.getElementById('socialValue').textContent = formatCurrency(socialValue);
+      document.getElementById('marketValue').textContent = formatCurrency(marketPremium);
+      document.getElementById('brandValue').textContent = formatCurrency(brandPotential);
+
+      // Update bars
+      var maxComponent = Math.max(performanceValue, socialValue, marketPremium, brandPotential, 1);
+      document.getElementById('perfBar').style.width = (performanceValue / totalValue * 100) + '%';
+      document.getElementById('socialBar').style.width = (socialValue / totalValue * 100) + '%';
+      document.getElementById('marketBar').style.width = (marketPremium / totalValue * 100) + '%';
+      document.getElementById('brandBar').style.width = (brandPotential / totalValue * 100) + '%';
+
+      // Update tier badge
+      document.getElementById('tierBadge').textContent = tier;
+
+      // Update comparables (simulated based on inputs)
+      var posAvg = marketPremium * 0.8;
+      var confMedian = marketPremium * confMult;
+      var sportP75 = totalValue * 1.8;
+
+      document.getElementById('positionAvg').textContent = formatCurrency(posAvg);
+      document.getElementById('confMedian').textContent = formatCurrency(confMedian);
+      document.getElementById('sportP75').textContent = formatCurrency(sportP75);
+    }
+
+    // Run initial calculation
+    calculateNIL();
+
+    // Auto-recalculate on input changes
+    document.querySelectorAll('input, select').forEach(function(el) {
+      el.addEventListener('change', calculateNIL);
+      el.addEventListener('input', calculateNIL);
+    });
+
+    // Pro Features - Auth & Stripe Integration
+    var currentUser = null;
+    var isPro = false;
+    var lastValuation = null;
+
+    function checkAuthStatus() {
+      fetch('/api/auth/me', { credentials: 'include' })
+        .then(function(response) {
+          if (!response.ok) throw new Error('Not authenticated');
+          return response.json();
+        })
+        .then(function(data) {
+          currentUser = data;
+          isPro = data.subscription === 'pro' || data.subscription === 'enterprise';
+          updateProUI();
+        })
+        .catch(function() {
+          currentUser = null;
+          isPro = false;
+          updateProUI();
+        });
+    }
+
+    function updateProUI() {
+      var saveBtn = document.getElementById('saveBtn');
+      var exportBtn = document.getElementById('exportBtn');
+      var proCta = document.getElementById('proCta');
+
+      if (isPro) {
+        saveBtn.disabled = false;
+        saveBtn.classList.remove('disabled');
+        exportBtn.disabled = false;
+        exportBtn.classList.remove('disabled');
+        proCta.style.display = 'none';
+      } else {
+        saveBtn.disabled = true;
+        saveBtn.classList.add('disabled');
+        exportBtn.disabled = true;
+        exportBtn.classList.add('disabled');
+        proCta.style.display = 'block';
+      }
+    }
+
+    function saveValuation() {
+      if (!isPro) {
+        alert('Pro subscription required. Subscribe at blazesportsintel.com/pricing');
+        return;
+      }
+
+      var saveBtn = document.getElementById('saveBtn');
+      var originalText = 'Save Valuation';
+      saveBtn.textContent = 'Saving...';
+      saveBtn.disabled = true;
+
+      lastValuation = {
+        sport: document.getElementById('sport').value,
+        conference: document.getElementById('conference').value,
+        division: document.getElementById('division').value,
+        position: document.getElementById('position').value,
+        year: document.getElementById('year').value,
+        allAmerican: document.getElementById('allAmerican').value,
+        allConference: document.getElementById('allConference').value,
+        performanceScore: parseInt(document.getElementById('performanceScore').value),
+        instagram: parseInt(document.getElementById('instagram').value),
+        twitter: parseInt(document.getElementById('twitter').value),
+        tiktok: parseInt(document.getElementById('tiktok').value),
+        engagementRate: parseFloat(document.getElementById('engagementRate').value),
+        mediaPresence: document.getElementById('mediaPresence').value,
+        estimatedValue: document.getElementById('valuationAmount').textContent,
+        valueRange: document.getElementById('valuationRange').textContent,
+        tier: document.getElementById('tierBadge').textContent
+      };
+
+      fetch('/api/nil/save-valuation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(lastValuation)
+      })
+        .then(function(response) {
+          if (!response.ok) throw new Error('Save failed');
+          return response.json();
+        })
+        .then(function(data) {
+          saveBtn.textContent = 'Saved!';
+          saveBtn.classList.add('save-success');
+          setTimeout(function() {
+            saveBtn.textContent = originalText;
+            saveBtn.classList.remove('save-success');
+            saveBtn.disabled = false;
+          }, 2000);
+        })
+        .catch(function(error) {
+          alert('Failed to save valuation. Please try again.');
+          saveBtn.textContent = originalText;
+          saveBtn.disabled = false;
+        });
+    }
+
+    function exportReport() {
+      if (!isPro) {
+        alert('Pro subscription required. Subscribe at blazesportsintel.com/pricing');
+        return;
+      }
+
+      var exportBtn = document.getElementById('exportBtn');
+      var originalText = 'Export Report';
+      exportBtn.textContent = 'Exporting...';
+
+      var data = {
+        'Report Type': 'NIL Valuation',
+        'Generated': new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
+        'Sport': document.getElementById('sport').options[document.getElementById('sport').selectedIndex].text,
+        'Conference': document.getElementById('conference').options[document.getElementById('conference').selectedIndex].text,
+        'Division': document.getElementById('division').options[document.getElementById('division').selectedIndex].text,
+        'Position': document.getElementById('position').options[document.getElementById('position').selectedIndex].text,
+        'Year': document.getElementById('year').options[document.getElementById('year').selectedIndex].text,
+        'All-American': document.getElementById('allAmerican').options[document.getElementById('allAmerican').selectedIndex].text,
+        'All-Conference': document.getElementById('allConference').options[document.getElementById('allConference').selectedIndex].text,
+        'Performance Score': document.getElementById('performanceScore').value,
+        'Instagram Followers': document.getElementById('instagram').value,
+        'Twitter Followers': document.getElementById('twitter').value,
+        'TikTok Followers': document.getElementById('tiktok').value,
+        'Engagement Rate': document.getElementById('engagementRate').value + '%',
+        'Media Presence': document.getElementById('mediaPresence').options[document.getElementById('mediaPresence').selectedIndex].text,
+        'Estimated Value': document.getElementById('valuationAmount').textContent,
+        'Value Range': document.getElementById('valuationRange').textContent,
+        'Tier': document.getElementById('tierBadge').textContent,
+        'Performance Factor': document.getElementById('perfValue').textContent,
+        'Social Media Value': document.getElementById('socialValue').textContent,
+        'Market Premium': document.getElementById('marketValue').textContent,
+        'Brand Potential': document.getElementById('brandValue').textContent
+      };
+
+      var csv = 'Field,Value\n';
+      for (var key in data) {
+        csv += '"' + key + '","' + data[key] + '"\n';
+      }
+
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var link = document.createElement('a');
+      var url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'nil-valuation-report-' + Date.now() + '.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      exportBtn.textContent = 'Downloaded!';
+      setTimeout(function() {
+        exportBtn.textContent = originalText;
+      }, 2000);
+    }
+
+    // Check auth status on page load
+    checkAuthStatus();
+  </script>
+</body>
+</html>

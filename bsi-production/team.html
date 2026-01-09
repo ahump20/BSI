@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Team dashboard and stats from Blaze Sports Intel">
+  <title>Team Dashboard | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --team-primary: #BF5700;
+      --team-secondary: #1A1A1A;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0.75rem 0;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .nav.scrolled {
+      padding: 0.5rem 0;
+      background: rgba(13, 13, 13, 0.98);
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      text-decoration: none;
+      color: var(--bsi-cream);
+    }
+    .logo-img {
+      height: 44px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3));
+      transition: transform 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .logo:hover .logo-img { transform: scale(1.05); }
+    .logo-text { display: none; }
+    @media (min-width: 640px) {
+      .logo-text { display: block; }
+      .logo-img { height: 48px; }
+    }
+    .nav-links {
+      display: none;
+      gap: 2rem;
+      list-style: none;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .nav-links a {
+      color: var(--bsi-cream);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--bsi-ember);
+      transition: width 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .nav-links a:hover { opacity: 1; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { opacity: 1; color: var(--bsi-ember); }
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+    .nav-cta { display: none; }
+    .nav-cta .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+      border: none;
+      text-align: center;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      color: white;
+      box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
+    }
+    .nav-cta .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4);
+    }
+    @media (min-width: 1024px) { .nav-cta { display: block; } }
+
+    .team-hero {
+      padding: 8rem 2rem 3rem;
+      background: linear-gradient(180deg, var(--team-primary) 0%, var(--bsi-charcoal) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .team-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    }
+    .team-hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .team-badge {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .team-abbr {
+      font-family: var(--font-ui);
+      font-size: 4rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .team-info h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: white;
+    }
+    .team-info .league {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      color: rgba(255,255,255,0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .content {
+      padding: 3rem 2rem;
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .stat-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .stat-card .value {
+      font-family: var(--font-mono);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--team-primary);
+    }
+    .stat-card .label {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.5rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--team-primary);
+      display: inline-block;
+    }
+
+    .games-section {
+      margin-bottom: 3rem;
+    }
+    .games-list {
+      display: grid;
+      gap: 1rem;
+    }
+    .game-row {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border-color 0.2s;
+    }
+    .game-row:hover {
+      border-color: var(--team-primary);
+    }
+    .game-teams {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .game-team {
+      font-family: var(--font-ui);
+      font-weight: 600;
+    }
+    .game-vs {
+      color: rgba(250, 248, 245, 0.4);
+      font-size: 0.875rem;
+    }
+    .game-score {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .game-date {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+    .game-result {
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .game-result.win { background: rgba(46, 125, 50, 0.2); color: #4CAF50; }
+    .game-result.loss { background: rgba(198, 40, 40, 0.2); color: #EF5350; }
+
+    .info-section {
+      margin-bottom: 3rem;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .info-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .info-card h3 {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--team-primary);
+      margin-bottom: 1rem;
+    }
+    .info-card p {
+      color: rgba(250, 248, 245, 0.8);
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+    .loading-state .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    .mobile-menu-btn {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--bsi-cream);
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+    .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+    .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    @media (min-width: 768px) { .mobile-menu-btn { display: none; } }
+    .mobile-menu {
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 999;
+      background: var(--bsi-midnight);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 2rem;
+      transform: translateY(-100%);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+      pointer-events: none;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+      overflow-y: auto;
+    }
+    .mobile-menu.active {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .mobile-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .mobile-menu a {
+      font-family: var(--font-ui);
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--bsi-cream);
+      text-decoration: none;
+      display: block;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(250, 248, 245, 0.1);
+    }
+    .mobile-menu a:hover { color: var(--bsi-ember); }
+    @media (min-width: 768px) { .mobile-menu { display: none; } }
+    @media (max-width: 768px) {
+      .team-hero { padding: 6rem 1rem 2rem; }
+      .team-abbr { font-size: 2.5rem; }
+      .content { padding: 2rem 1rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .game-row { flex-direction: column; gap: 0.75rem; text-align: center; }
+    }
+  </style>
+  <!-- BSI Premium Enhancements - Micro-interactions & Visual Polish -->
+  <link rel="stylesheet" href="./css/bsi-enhancements.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <img src="/images/bsi-logo-nav.png" alt="BSI" class="logo-img">
+        <span class="logo-text">Blaze Sports Intel</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/analytics">Analytics</a></li>
+        <li><a href="/scores">Scores</a></li>
+        <li><a href="/college-baseball">College Baseball</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="/signup" class="btn-primary">Get Started</a>
+      </div>
+      <button class="mobile-menu-btn" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu">
+    <ul>
+      <li><a href="/analytics">Analytics</a></li>
+      <li><a href="/scores">Scores</a></li>
+      <li><a href="/college-baseball">College Baseball</a></li>
+      <li><a href="/tools">Tools</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/pricing">Pricing</a></li>
+      <li><a href="/signup">Get Started</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <section class="team-hero">
+      <div class="team-hero-inner">
+        <div class="team-badge">
+          <span class="team-abbr" id="team-abbr">---</span>
+          <div class="team-info">
+            <p class="league" id="team-league">Loading...</p>
+            <h1 id="team-name">Team Dashboard</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="content-inner">
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="value" id="stat-wins">--</div>
+            <div class="label">Wins</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="stat-losses">--</div>
+            <div class="label">Losses</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="stat-pct">---</div>
+            <div class="label">Win %</div>
+          </div>
+          <div class="stat-card">
+            <div class="value" id="stat-rank">--</div>
+            <div class="label">Division Rank</div>
+          </div>
+        </div>
+
+        <section class="games-section">
+          <h2 class="section-title">Recent Games</h2>
+          <div class="games-list" id="games-list">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Loading games...</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="info-section">
+          <h2 class="section-title">Team Info</h2>
+          <div class="info-grid" id="info-grid">
+            <div class="info-card">
+              <h3>Division</h3>
+              <p id="info-division">--</p>
+            </div>
+            <div class="info-card">
+              <h3>Conference</h3>
+              <p id="info-conference">--</p>
+            </div>
+            <div class="info-card">
+              <h3>Venue</h3>
+              <p id="info-venue">--</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+          </a>
+          <p>Born in Memphis. Rooted in Texas soil. Built for fans who care.</p>
+          <div class="footer-values">
+            <span>Courage</span>
+            <span>•</span>
+            <span>Grit</span>
+            <span>•</span>
+            <span>Leadership</span>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="/analytics">Live Analytics</a></li>
+            <li><a href="/scores">Live Scores</a></li>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/tools">Tools</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Coverage</h4>
+          <ul>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/mlb">MLB</a></li>
+            <li><a href="/nfl">NFL</a></li>
+            <li><a href="/nba">NBA</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="mailto:austin@blazesportsintel.com">Email Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Blaze Sports Intel. Built on Cloudflare.</p>
+        <p class="footer-tagline">Born to Blaze the Path Less Beaten</p>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    var menuBtn = document.querySelector('.mobile-menu-btn');
+    var mobileMenu = document.querySelector('.mobile-menu');
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', function() {
+        menuBtn.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+      });
+      document.querySelectorAll('.mobile-menu a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          menuBtn.classList.remove('active');
+          mobileMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    }
+    // Scroll effect for nav
+    window.addEventListener('scroll', function() {
+      document.querySelector('.nav').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    var TEAM_DATA = {
+      mlb: {
+        cardinals: { name: 'St. Louis Cardinals', abbr: 'STL', primary: '#C41E3A', secondary: '#0C2340', division: 'NL Central', venue: 'Busch Stadium' },
+        yankees: { name: 'New York Yankees', abbr: 'NYY', primary: '#003087', secondary: '#E4002C', division: 'AL East', venue: 'Yankee Stadium' },
+        dodgers: { name: 'Los Angeles Dodgers', abbr: 'LAD', primary: '#005A9C', secondary: '#EF3E42', division: 'NL West', venue: 'Dodger Stadium' },
+        astros: { name: 'Houston Astros', abbr: 'HOU', primary: '#002D62', secondary: '#EB6E1F', division: 'AL West', venue: 'Minute Maid Park' },
+        braves: { name: 'Atlanta Braves', abbr: 'ATL', primary: '#CE1141', secondary: '#13274F', division: 'NL East', venue: 'Truist Park' },
+        phillies: { name: 'Philadelphia Phillies', abbr: 'PHI', primary: '#E81828', secondary: '#002D72', division: 'NL East', venue: 'Citizens Bank Park' },
+        mets: { name: 'New York Mets', abbr: 'NYM', primary: '#002D72', secondary: '#FF5910', division: 'NL East', venue: 'Citi Field' },
+        cubs: { name: 'Chicago Cubs', abbr: 'CHC', primary: '#0E3386', secondary: '#CC3433', division: 'NL Central', venue: 'Wrigley Field' },
+        redsox: { name: 'Boston Red Sox', abbr: 'BOS', primary: '#BD3039', secondary: '#0C2340', division: 'AL East', venue: 'Fenway Park' },
+        rangers: { name: 'Texas Rangers', abbr: 'TEX', primary: '#003278', secondary: '#C0111F', division: 'AL West', venue: 'Globe Life Field' },
+        giants: { name: 'San Francisco Giants', abbr: 'SF', primary: '#FD5A1E', secondary: '#27251F', division: 'NL West', venue: 'Oracle Park' },
+        padres: { name: 'San Diego Padres', abbr: 'SD', primary: '#2F241D', secondary: '#FFC425', division: 'NL West', venue: 'Petco Park' },
+        whitesox: { name: 'Chicago White Sox', abbr: 'CWS', primary: '#27251F', secondary: '#C4CED4', division: 'AL Central', venue: 'Guaranteed Rate Field' },
+        reds: { name: 'Cincinnati Reds', abbr: 'CIN', primary: '#C6011F', secondary: '#000000', division: 'NL Central', venue: 'Great American Ball Park' },
+        brewers: { name: 'Milwaukee Brewers', abbr: 'MIL', primary: '#12284B', secondary: '#B6922E', division: 'NL Central', venue: 'American Family Field' },
+        pirates: { name: 'Pittsburgh Pirates', abbr: 'PIT', primary: '#27251F', secondary: '#FDB827', division: 'NL Central', venue: 'PNC Park' },
+        guardians: { name: 'Cleveland Guardians', abbr: 'CLE', primary: '#00385D', secondary: '#E50022', division: 'AL Central', venue: 'Progressive Field' },
+        twins: { name: 'Minnesota Twins', abbr: 'MIN', primary: '#002B5C', secondary: '#D31145', division: 'AL Central', venue: 'Target Field' },
+        tigers: { name: 'Detroit Tigers', abbr: 'DET', primary: '#0C2340', secondary: '#FA4616', division: 'AL Central', venue: 'Comerica Park' },
+        royals: { name: 'Kansas City Royals', abbr: 'KC', primary: '#004687', secondary: '#BD9B60', division: 'AL Central', venue: 'Kauffman Stadium' },
+        orioles: { name: 'Baltimore Orioles', abbr: 'BAL', primary: '#DF4601', secondary: '#000000', division: 'AL East', venue: 'Camden Yards' },
+        rays: { name: 'Tampa Bay Rays', abbr: 'TB', primary: '#092C5C', secondary: '#8FBCE6', division: 'AL East', venue: 'Tropicana Field' },
+        bluejays: { name: 'Toronto Blue Jays', abbr: 'TOR', primary: '#134A8E', secondary: '#1D2D5C', division: 'AL East', venue: 'Rogers Centre' },
+        mariners: { name: 'Seattle Mariners', abbr: 'SEA', primary: '#0C2C56', secondary: '#005C5C', division: 'AL West', venue: 'T-Mobile Park' },
+        athletics: { name: 'Oakland Athletics', abbr: 'OAK', primary: '#003831', secondary: '#EFB21E', division: 'AL West', venue: 'Oakland Coliseum' },
+        angels: { name: 'Los Angeles Angels', abbr: 'LAA', primary: '#BA0021', secondary: '#003263', division: 'AL West', venue: 'Angel Stadium' },
+        marlins: { name: 'Miami Marlins', abbr: 'MIA', primary: '#00A3E0', secondary: '#EF3340', division: 'NL East', venue: 'loanDepot Park' },
+        nationals: { name: 'Washington Nationals', abbr: 'WSH', primary: '#AB0003', secondary: '#14225A', division: 'NL East', venue: 'Nationals Park' },
+        dbacks: { name: 'Arizona Diamondbacks', abbr: 'ARI', primary: '#A71930', secondary: '#E3D4AD', division: 'NL West', venue: 'Chase Field' },
+        rockies: { name: 'Colorado Rockies', abbr: 'COL', primary: '#33006F', secondary: '#C4CED4', division: 'NL West', venue: 'Coors Field' }
+      },
+      nfl: {
+        titans: { name: 'Tennessee Titans', abbr: 'TEN', primary: '#0C2340', secondary: '#4B92DB', division: 'AFC South', venue: 'Nissan Stadium' },
+        cowboys: { name: 'Dallas Cowboys', abbr: 'DAL', primary: '#003594', secondary: '#869397', division: 'NFC East', venue: 'AT&T Stadium' },
+        texans: { name: 'Houston Texans', abbr: 'HOU', primary: '#03202F', secondary: '#A71930', division: 'AFC South', venue: 'NRG Stadium' },
+        chiefs: { name: 'Kansas City Chiefs', abbr: 'KC', primary: '#E31837', secondary: '#FFB81C', division: 'AFC West', venue: 'Arrowhead Stadium' },
+        eagles: { name: 'Philadelphia Eagles', abbr: 'PHI', primary: '#004C54', secondary: '#A5ACAF', division: 'NFC East', venue: 'Lincoln Financial Field' },
+        bills: { name: 'Buffalo Bills', abbr: 'BUF', primary: '#00338D', secondary: '#C60C30', division: 'AFC East', venue: 'Highmark Stadium' },
+        ravens: { name: 'Baltimore Ravens', abbr: 'BAL', primary: '#241773', secondary: '#9E7C0C', division: 'AFC North', venue: 'M&T Bank Stadium' },
+        lions: { name: 'Detroit Lions', abbr: 'DET', primary: '#0076B6', secondary: '#B0B7BC', division: 'NFC North', venue: 'Ford Field' },
+        niners: { name: 'San Francisco 49ers', abbr: 'SF', primary: '#AA0000', secondary: '#B3995D', division: 'NFC West', venue: 'Levi\'s Stadium' },
+        packers: { name: 'Green Bay Packers', abbr: 'GB', primary: '#203731', secondary: '#FFB612', division: 'NFC North', venue: 'Lambeau Field' },
+        dolphins: { name: 'Miami Dolphins', abbr: 'MIA', primary: '#008E97', secondary: '#FC4C02', division: 'AFC East', venue: 'Hard Rock Stadium' },
+        bengals: { name: 'Cincinnati Bengals', abbr: 'CIN', primary: '#FB4F14', secondary: '#000000', division: 'AFC North', venue: 'Paycor Stadium' },
+        steelers: { name: 'Pittsburgh Steelers', abbr: 'PIT', primary: '#FFB612', secondary: '#101820', division: 'AFC North', venue: 'Acrisure Stadium' },
+        browns: { name: 'Cleveland Browns', abbr: 'CLE', primary: '#311D00', secondary: '#FF3C00', division: 'AFC North', venue: 'Cleveland Browns Stadium' },
+        colts: { name: 'Indianapolis Colts', abbr: 'IND', primary: '#002C5F', secondary: '#A2AAAD', division: 'AFC South', venue: 'Lucas Oil Stadium' },
+        jaguars: { name: 'Jacksonville Jaguars', abbr: 'JAX', primary: '#006778', secondary: '#D7A22A', division: 'AFC South', venue: 'EverBank Stadium' },
+        broncos: { name: 'Denver Broncos', abbr: 'DEN', primary: '#FB4F14', secondary: '#002244', division: 'AFC West', venue: 'Empower Field' },
+        raiders: { name: 'Las Vegas Raiders', abbr: 'LV', primary: '#000000', secondary: '#A5ACAF', division: 'AFC West', venue: 'Allegiant Stadium' },
+        chargers: { name: 'Los Angeles Chargers', abbr: 'LAC', primary: '#0080C6', secondary: '#FFC20E', division: 'AFC West', venue: 'SoFi Stadium' },
+        patriots: { name: 'New England Patriots', abbr: 'NE', primary: '#002244', secondary: '#C60C30', division: 'AFC East', venue: 'Gillette Stadium' },
+        jets: { name: 'New York Jets', abbr: 'NYJ', primary: '#125740', secondary: '#000000', division: 'AFC East', venue: 'MetLife Stadium' },
+        giants: { name: 'New York Giants', abbr: 'NYG', primary: '#0B2265', secondary: '#A71930', division: 'NFC East', venue: 'MetLife Stadium' },
+        commanders: { name: 'Washington Commanders', abbr: 'WAS', primary: '#5A1414', secondary: '#FFB612', division: 'NFC East', venue: 'Commanders Field' },
+        bears: { name: 'Chicago Bears', abbr: 'CHI', primary: '#0B162A', secondary: '#C83803', division: 'NFC North', venue: 'Soldier Field' },
+        vikings: { name: 'Minnesota Vikings', abbr: 'MIN', primary: '#4F2683', secondary: '#FFC62F', division: 'NFC North', venue: 'U.S. Bank Stadium' },
+        saints: { name: 'New Orleans Saints', abbr: 'NO', primary: '#D3BC8D', secondary: '#101820', division: 'NFC South', venue: 'Caesars Superdome' },
+        falcons: { name: 'Atlanta Falcons', abbr: 'ATL', primary: '#A71930', secondary: '#000000', division: 'NFC South', venue: 'Mercedes-Benz Stadium' },
+        panthers: { name: 'Carolina Panthers', abbr: 'CAR', primary: '#0085CA', secondary: '#101820', division: 'NFC South', venue: 'Bank of America Stadium' },
+        buccaneers: { name: 'Tampa Bay Buccaneers', abbr: 'TB', primary: '#D50A0A', secondary: '#34302B', division: 'NFC South', venue: 'Raymond James Stadium' },
+        cardinals: { name: 'Arizona Cardinals', abbr: 'ARI', primary: '#97233F', secondary: '#000000', division: 'NFC West', venue: 'State Farm Stadium' },
+        rams: { name: 'Los Angeles Rams', abbr: 'LAR', primary: '#003594', secondary: '#FFA300', division: 'NFC West', venue: 'SoFi Stadium' },
+        seahawks: { name: 'Seattle Seahawks', abbr: 'SEA', primary: '#002244', secondary: '#69BE28', division: 'NFC West', venue: 'Lumen Field' }
+      },
+      nba: {
+        grizzlies: { name: 'Memphis Grizzlies', abbr: 'MEM', primary: '#5D76A9', secondary: '#12173F', division: 'Southwest', conference: 'Western', venue: 'FedExForum' },
+        spurs: { name: 'San Antonio Spurs', abbr: 'SAS', primary: '#C4CED4', secondary: '#000000', division: 'Southwest', conference: 'Western', venue: 'Frost Bank Center' },
+        mavericks: { name: 'Dallas Mavericks', abbr: 'DAL', primary: '#00538C', secondary: '#002B5E', division: 'Southwest', conference: 'Western', venue: 'American Airlines Center' },
+        rockets: { name: 'Houston Rockets', abbr: 'HOU', primary: '#CE1141', secondary: '#000000', division: 'Southwest', conference: 'Western', venue: 'Toyota Center' },
+        pelicans: { name: 'New Orleans Pelicans', abbr: 'NOP', primary: '#0C2340', secondary: '#C8102E', division: 'Southwest', conference: 'Western', venue: 'Smoothie King Center' },
+        lakers: { name: 'Los Angeles Lakers', abbr: 'LAL', primary: '#552583', secondary: '#FDB927', division: 'Pacific', conference: 'Western', venue: 'Crypto.com Arena' },
+        clippers: { name: 'Los Angeles Clippers', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', division: 'Pacific', conference: 'Western', venue: 'Intuit Dome' },
+        warriors: { name: 'Golden State Warriors', abbr: 'GSW', primary: '#1D428A', secondary: '#FFC72C', division: 'Pacific', conference: 'Western', venue: 'Chase Center' },
+        suns: { name: 'Phoenix Suns', abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', division: 'Pacific', conference: 'Western', venue: 'Footprint Center' },
+        kings: { name: 'Sacramento Kings', abbr: 'SAC', primary: '#5A2D81', secondary: '#63727A', division: 'Pacific', conference: 'Western', venue: 'Golden 1 Center' },
+        nuggets: { name: 'Denver Nuggets', abbr: 'DEN', primary: '#0E2240', secondary: '#FEC524', division: 'Northwest', conference: 'Western', venue: 'Ball Arena' },
+        thunder: { name: 'Oklahoma City Thunder', abbr: 'OKC', primary: '#007AC1', secondary: '#EF3B24', division: 'Northwest', conference: 'Western', venue: 'Paycom Center' },
+        blazers: { name: 'Portland Trail Blazers', abbr: 'POR', primary: '#E03A3E', secondary: '#000000', division: 'Northwest', conference: 'Western', venue: 'Moda Center' },
+        jazz: { name: 'Utah Jazz', abbr: 'UTA', primary: '#002B5C', secondary: '#00471B', division: 'Northwest', conference: 'Western', venue: 'Delta Center' },
+        timberwolves: { name: 'Minnesota Timberwolves', abbr: 'MIN', primary: '#0C2340', secondary: '#236192', division: 'Northwest', conference: 'Western', venue: 'Target Center' },
+        celtics: { name: 'Boston Celtics', abbr: 'BOS', primary: '#007A33', secondary: '#BA9653', division: 'Atlantic', conference: 'Eastern', venue: 'TD Garden' },
+        nets: { name: 'Brooklyn Nets', abbr: 'BKN', primary: '#000000', secondary: '#FFFFFF', division: 'Atlantic', conference: 'Eastern', venue: 'Barclays Center' },
+        knicks: { name: 'New York Knicks', abbr: 'NYK', primary: '#006BB6', secondary: '#F58426', division: 'Atlantic', conference: 'Eastern', venue: 'Madison Square Garden' },
+        sixers: { name: 'Philadelphia 76ers', abbr: 'PHI', primary: '#006BB6', secondary: '#ED174C', division: 'Atlantic', conference: 'Eastern', venue: 'Wells Fargo Center' },
+        raptors: { name: 'Toronto Raptors', abbr: 'TOR', primary: '#CE1141', secondary: '#000000', division: 'Atlantic', conference: 'Eastern', venue: 'Scotiabank Arena' },
+        bulls: { name: 'Chicago Bulls', abbr: 'CHI', primary: '#CE1141', secondary: '#000000', division: 'Central', conference: 'Eastern', venue: 'United Center' },
+        cavaliers: { name: 'Cleveland Cavaliers', abbr: 'CLE', primary: '#860038', secondary: '#041E42', division: 'Central', conference: 'Eastern', venue: 'Rocket Mortgage FieldHouse' },
+        pistons: { name: 'Detroit Pistons', abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', division: 'Central', conference: 'Eastern', venue: 'Little Caesars Arena' },
+        pacers: { name: 'Indiana Pacers', abbr: 'IND', primary: '#002D62', secondary: '#FDBB30', division: 'Central', conference: 'Eastern', venue: 'Gainbridge Fieldhouse' },
+        bucks: { name: 'Milwaukee Bucks', abbr: 'MIL', primary: '#00471B', secondary: '#EEE1C6', division: 'Central', conference: 'Eastern', venue: 'Fiserv Forum' },
+        hawks: { name: 'Atlanta Hawks', abbr: 'ATL', primary: '#E03A3E', secondary: '#C1D32F', division: 'Southeast', conference: 'Eastern', venue: 'State Farm Arena' },
+        hornets: { name: 'Charlotte Hornets', abbr: 'CHA', primary: '#1D1160', secondary: '#00788C', division: 'Southeast', conference: 'Eastern', venue: 'Spectrum Center' },
+        heat: { name: 'Miami Heat', abbr: 'MIA', primary: '#98002E', secondary: '#F9A01B', division: 'Southeast', conference: 'Eastern', venue: 'Kaseya Center' },
+        magic: { name: 'Orlando Magic', abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', division: 'Southeast', conference: 'Eastern', venue: 'Kia Center' },
+        wizards: { name: 'Washington Wizards', abbr: 'WAS', primary: '#002B5C', secondary: '#E31837', division: 'Southeast', conference: 'Eastern', venue: 'Capital One Arena' }
+      }
+    };
+
+    function parseTeamFromUrl() {
+      var path = window.location.pathname;
+      var match = path.match(/^\/(mlb|nfl|nba)\/teams\/([a-z0-9-]+)\/?$/i);
+      if (match) {
+        return { sport: match[1].toLowerCase(), slug: match[2].toLowerCase() };
+      }
+      return null;
+    }
+
+    function setTeamColors(primary, secondary) {
+      document.documentElement.style.setProperty('--team-primary', primary);
+      document.documentElement.style.setProperty('--team-secondary', secondary);
+    }
+
+    function loadTeamData() {
+      var parsed = parseTeamFromUrl();
+      if (!parsed) {
+        document.getElementById('team-name').textContent = 'Team Not Found';
+        document.getElementById('team-league').textContent = '';
+        return;
+      }
+
+      var sportData = TEAM_DATA[parsed.sport];
+      if (!sportData) {
+        document.getElementById('team-name').textContent = 'Sport Not Found';
+        return;
+      }
+
+      var team = sportData[parsed.slug];
+      if (!team) {
+        document.getElementById('team-name').textContent = 'Team Not Found';
+        document.getElementById('team-league').textContent = parsed.sport.toUpperCase();
+        return;
+      }
+
+      document.title = team.name + ' | Blaze Sports Intel';
+      document.getElementById('team-name').textContent = team.name;
+      document.getElementById('team-abbr').textContent = team.abbr;
+      document.getElementById('team-league').textContent = parsed.sport.toUpperCase();
+      setTeamColors(team.primary, team.secondary);
+
+      document.getElementById('info-division').textContent = team.division || '--';
+      document.getElementById('info-conference').textContent = team.conference || parsed.sport.toUpperCase();
+      document.getElementById('info-venue').textContent = team.venue || '--';
+
+      loadTeamStats(parsed.sport, team.abbr);
+      loadRecentGames(parsed.sport, team.abbr);
+    }
+
+    function loadTeamStats(sport, abbr) {
+      fetch('/api/' + sport + '/standings')
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+          if (data.standings) {
+            var teamData = null;
+            for (var i = 0; i < data.standings.length; i++) {
+              if (data.standings[i].abbr === abbr || data.standings[i].abbreviation === abbr) {
+                teamData = data.standings[i];
+                break;
+              }
+            }
+            if (teamData) {
+              document.getElementById('stat-wins').textContent = teamData.wins || teamData.w || '--';
+              document.getElementById('stat-losses').textContent = teamData.losses || teamData.l || '--';
+              var pct = teamData.pct || teamData.winPct;
+              if (pct) {
+                document.getElementById('stat-pct').textContent = (parseFloat(pct) < 1 ? pct : (pct / 100).toFixed(3));
+              }
+              document.getElementById('stat-rank').textContent = teamData.divisionRank || teamData.rank || '--';
+            }
+          }
+        })
+        .catch(function(error) {
+          console.error('Failed to load standings:', error);
+        });
+    }
+
+    function loadRecentGames(sport, abbr) {
+      var container = document.getElementById('games-list');
+
+      fetch('/api/' + sport + '/scores')
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+          while (container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
+
+          var games = data.games || data.scores || [];
+          var teamGames = games.filter(function(game) {
+            var homeAbbr = (game.homeTeam && game.homeTeam.abbreviation) || game.homeAbbr || '';
+            var awayAbbr = (game.awayTeam && game.awayTeam.abbreviation) || game.awayAbbr || '';
+            return homeAbbr === abbr || awayAbbr === abbr;
+          }).slice(0, 5);
+
+          if (teamGames.length === 0) {
+            var noGames = document.createElement('div');
+            noGames.className = 'loading-state';
+            var msg = document.createElement('p');
+            msg.textContent = 'No recent games found.';
+            noGames.appendChild(msg);
+            container.appendChild(noGames);
+            return;
+          }
+
+          teamGames.forEach(function(game) {
+            var row = document.createElement('div');
+            row.className = 'game-row';
+
+            var teamsDiv = document.createElement('div');
+            teamsDiv.className = 'game-teams';
+
+            var away = document.createElement('span');
+            away.className = 'game-team';
+            away.textContent = (game.awayTeam && game.awayTeam.abbreviation) || game.awayAbbr || 'AWAY';
+
+            var vs = document.createElement('span');
+            vs.className = 'game-vs';
+            vs.textContent = '@';
+
+            var home = document.createElement('span');
+            home.className = 'game-team';
+            home.textContent = (game.homeTeam && game.homeTeam.abbreviation) || game.homeAbbr || 'HOME';
+
+            teamsDiv.appendChild(away);
+            teamsDiv.appendChild(vs);
+            teamsDiv.appendChild(home);
+
+            var scoreDiv = document.createElement('div');
+            scoreDiv.className = 'game-score';
+            var awayScore = game.awayScore || (game.awayTeam && game.awayTeam.score) || '-';
+            var homeScore = game.homeScore || (game.homeTeam && game.homeTeam.score) || '-';
+            scoreDiv.textContent = awayScore + ' - ' + homeScore;
+
+            var dateDiv = document.createElement('div');
+            dateDiv.className = 'game-date';
+            dateDiv.textContent = game.gameDate || game.date || '';
+
+            row.appendChild(teamsDiv);
+            row.appendChild(scoreDiv);
+            row.appendChild(dateDiv);
+            container.appendChild(row);
+          });
+        })
+        .catch(function(error) {
+          console.error('Failed to load games:', error);
+          while (container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
+          var errorDiv = document.createElement('div');
+          errorDiv.className = 'loading-state';
+          var errorMsg = document.createElement('p');
+          errorMsg.textContent = 'Unable to load games.';
+          errorDiv.appendChild(errorMsg);
+          container.appendChild(errorDiv);
+        });
+    }
+
+    loadTeamData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive spray chart tool. Plot and analyze batted ball distribution patterns.">
+  <title>Spray Chart | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-ember: #FF6B35;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-gold: #C9A227;
+      --bsi-success: #2E7D32;
+      --bsi-warning: #F9A825;
+      --bsi-error: #C62828;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bsi-midnight);
+      color: #E8E8E8;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .header {
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      border-bottom: 1px solid #333;
+    }
+    .logo {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--bsi-burnt-orange);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: #888;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--bsi-burnt-orange); }
+
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    .page-header h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .page-header p {
+      color: #888;
+      font-size: 0.95rem;
+    }
+
+    .tool-container {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 2rem;
+    }
+
+    .field-section {
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #333;
+    }
+
+    .field-canvas-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #fieldCanvas {
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      border-radius: 8px;
+    }
+
+    .controls-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .control-card {
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid #333;
+    }
+    .control-card h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      color: var(--bsi-burnt-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .hit-type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+    .hit-type-btn {
+      padding: 0.75rem;
+      background: var(--bsi-midnight);
+      border: 2px solid #333;
+      border-radius: 8px;
+      color: #ccc;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .hit-type-btn:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: #fff;
+    }
+    .hit-type-btn.active {
+      border-color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.2);
+      color: #fff;
+    }
+    .hit-type-btn .indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+    .result-btn {
+      padding: 0.6rem;
+      background: var(--bsi-midnight);
+      border: 2px solid #333;
+      border-radius: 6px;
+      color: #ccc;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .result-btn:hover {
+      border-color: #666;
+    }
+    .result-btn.active {
+      border-color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.2);
+      color: #fff;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hit-log {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .hit-log-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      background: var(--bsi-midnight);
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .hit-log-item .type-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+    .hit-log-item .hit-info {
+      display: flex;
+      align-items: center;
+      color: #ccc;
+    }
+    .hit-log-item .delete-btn {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .hit-log-item .delete-btn:hover {
+      color: var(--bsi-error);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .action-btn {
+      flex: 1;
+      padding: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .action-btn.primary {
+      background: var(--bsi-burnt-orange);
+      color: #fff;
+    }
+    .action-btn.primary:hover {
+      background: var(--bsi-ember);
+    }
+    .action-btn.secondary {
+      background: transparent;
+      border: 1px solid #444;
+      color: #888;
+    }
+    .action-btn.secondary:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-burnt-orange);
+    }
+
+    .distribution-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .dist-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .dist-bar-label {
+      width: 50px;
+      font-size: 0.75rem;
+      color: #888;
+    }
+    .dist-bar-container {
+      flex: 1;
+      height: 20px;
+      background: var(--bsi-midnight);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .dist-bar-fill {
+      height: 100%;
+      background: var(--bsi-burnt-orange);
+      transition: width 0.3s;
+    }
+    .dist-bar-value {
+      width: 40px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #ccc;
+      text-align: right;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: #444;
+      font-size: 0.8rem;
+      border-top: 1px solid #222;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .tool-container {
+        grid-template-columns: 1fr;
+      }
+      .controls-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .controls-section {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
+  <!-- BSI Premium Enhancements - Micro-interactions & Visual Polish -->
+  <link rel="stylesheet" href="../../css/bsi-enhancements.css">
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">BLAZE SPORTS INTEL</a>
+    <nav class="nav-links">
+      <a href="/tools">All Tools</a>
+      <a href="/tools/strike-zone">Strike Zone</a>
+      <a href="/mlb">MLB</a>
+      <a href="/college-baseball">College Baseball</a>
+    </nav>
+  </header>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>Spray Chart</h1>
+      <p>Plot batted balls on the field. Click anywhere to log a hit.</p>
+    </div>
+
+    <div class="tool-container">
+      <div class="field-section">
+        <div class="field-canvas-container">
+          <canvas id="fieldCanvas" width="600" height="600"></canvas>
+        </div>
+      </div>
+
+      <div class="controls-section">
+        <div class="control-card">
+          <h3>Hit Type</h3>
+          <div class="hit-type-grid" id="hitTypeGrid">
+            <button class="hit-type-btn active" data-type="single">
+              <span class="indicator" style="background: #4CAF50;"></span>1B
+            </button>
+            <button class="hit-type-btn" data-type="double">
+              <span class="indicator" style="background: #2196F3;"></span>2B
+            </button>
+            <button class="hit-type-btn" data-type="triple">
+              <span class="indicator" style="background: #FF9800;"></span>3B
+            </button>
+            <button class="hit-type-btn" data-type="homerun">
+              <span class="indicator" style="background: #E91E63;"></span>HR
+            </button>
+            <button class="hit-type-btn" data-type="groundout">
+              <span class="indicator" style="background: #9E9E9E;"></span>GO
+            </button>
+            <button class="hit-type-btn" data-type="flyout">
+              <span class="indicator" style="background: #607D8B;"></span>FO
+            </button>
+            <button class="hit-type-btn" data-type="lineout">
+              <span class="indicator" style="background: #795548;"></span>LO
+            </button>
+            <button class="hit-type-btn" data-type="error">
+              <span class="indicator" style="background: #F44336;"></span>E
+            </button>
+          </div>
+        </div>
+
+        <div class="control-card">
+          <h3>Direction</h3>
+          <div class="result-grid" id="directionGrid">
+            <button class="result-btn active" data-direction="pull">Pull</button>
+            <button class="result-btn" data-direction="center">Center</button>
+            <button class="result-btn" data-direction="oppo">Oppo</button>
+            <button class="result-btn" data-direction="auto">Auto</button>
+          </div>
+        </div>
+
+        <div class="control-card">
+          <h3>Session Stats</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value" id="totalHits">0</div>
+              <div class="stat-label">Total ABs</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="battingAvg">.000</div>
+              <div class="stat-label">AVG</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="slugging">.000</div>
+              <div class="stat-label">SLG</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="pullPct">0%</div>
+              <div class="stat-label">Pull %</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-card">
+          <h3>Field Distribution</h3>
+          <div class="distribution-bars">
+            <div class="dist-bar-item">
+              <span class="dist-bar-label">Left</span>
+              <div class="dist-bar-container">
+                <div class="dist-bar-fill" id="leftBar" style="width: 0%;"></div>
+              </div>
+              <span class="dist-bar-value" id="leftPct">0%</span>
+            </div>
+            <div class="dist-bar-item">
+              <span class="dist-bar-label">Center</span>
+              <div class="dist-bar-container">
+                <div class="dist-bar-fill" id="centerBar" style="width: 0%;"></div>
+              </div>
+              <span class="dist-bar-value" id="centerPct">0%</span>
+            </div>
+            <div class="dist-bar-item">
+              <span class="dist-bar-label">Right</span>
+              <div class="dist-bar-container">
+                <div class="dist-bar-fill" id="rightBar" style="width: 0%;"></div>
+              </div>
+              <span class="dist-bar-value" id="rightPct">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-card">
+          <h3>Hit Log</h3>
+          <div class="hit-log" id="hitLog"></div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="action-btn secondary" id="clearBtn">Clear All</button>
+          <button class="action-btn secondary" id="undoBtn">Undo</button>
+          <button class="action-btn primary" id="exportBtn">Export</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <img src="/images/bsi-logo-nav.png" alt="Blaze Sports Intel" class="logo-img">
+          </a>
+          <p>Born in Memphis. Rooted in Texas soil. Built for fans who care.</p>
+          <div class="footer-values">
+            <span>Courage</span>
+            <span>•</span>
+            <span>Grit</span>
+            <span>•</span>
+            <span>Leadership</span>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="/analytics">Live Analytics</a></li>
+            <li><a href="/scores">Live Scores</a></li>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/tools">Tools</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Coverage</h4>
+          <ul>
+            <li><a href="/college-baseball">College Baseball</a></li>
+            <li><a href="/mlb">MLB</a></li>
+            <li><a href="/nfl">NFL</a></li>
+            <li><a href="/nba">NBA</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="mailto:austin@blazesportsintel.com">Email Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Blaze Sports Intel. Built on Cloudflare.</p>
+        <p class="footer-tagline">Born to Blaze the Path Less Beaten</p>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      var canvas = document.getElementById('fieldCanvas');
+      var ctx = canvas.getContext('2d');
+
+      var HIT_COLORS = {
+        single: '#4CAF50',
+        double: '#2196F3',
+        triple: '#FF9800',
+        homerun: '#E91E63',
+        groundout: '#9E9E9E',
+        flyout: '#607D8B',
+        lineout: '#795548',
+        error: '#F44336'
+      };
+
+      var HIT_LABELS = {
+        single: '1B',
+        double: '2B',
+        triple: '3B',
+        homerun: 'HR',
+        groundout: 'GO',
+        flyout: 'FO',
+        lineout: 'LO',
+        error: 'E'
+      };
+
+      var hits = [];
+      var selectedType = 'single';
+      var selectedDirection = 'auto';
+
+      function drawField() {
+        var w = canvas.width;
+        var h = canvas.height;
+        var centerX = w / 2;
+        var homeY = h - 50;
+
+        ctx.fillStyle = '#1a472a';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.fillStyle = '#2d5a3d';
+        ctx.beginPath();
+        ctx.moveTo(centerX, homeY);
+        ctx.lineTo(0, homeY - w * 0.7);
+        ctx.lineTo(centerX, 20);
+        ctx.lineTo(w, homeY - w * 0.7);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.moveTo(centerX, homeY);
+        ctx.lineTo(centerX - 90, homeY - 90);
+        ctx.lineTo(centerX, homeY - 127);
+        ctx.lineTo(centerX + 90, homeY - 90);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, homeY);
+        ctx.lineTo(0, homeY - w * 0.7);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, homeY);
+        ctx.lineTo(w, homeY - w * 0.7);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(centerX, homeY, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX - 90, homeY - 90, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX, homeY - 127, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX + 90, homeY - 90, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.setLineDash([5, 5]);
+
+        var angle2 = Math.PI / 4 + Math.PI / 6;
+        var lineLen = w * 0.8;
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, homeY);
+        ctx.lineTo(centerX - Math.cos(angle2) * lineLen, homeY - Math.sin(angle2) * lineLen);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, homeY);
+        ctx.lineTo(centerX + Math.cos(angle2) * lineLen, homeY - Math.sin(angle2) * lineLen);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('LF', 80, h / 2 - 80);
+        ctx.fillText('CF', centerX, 80);
+        ctx.fillText('RF', w - 80, h / 2 - 80);
+      }
+
+      function drawHits() {
+        for (var i = 0; i < hits.length; i++) {
+          var hit = hits[i];
+          ctx.fillStyle = HIT_COLORS[hit.type];
+          ctx.beginPath();
+          ctx.arc(hit.x, hit.y, 8, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 9px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(HIT_LABELS[hit.type], hit.x, hit.y);
+        }
+      }
+
+      function render() {
+        drawField();
+        drawHits();
+      }
+
+      function getDirection(x) {
+        var third = canvas.width / 3;
+
+        if (x < third) return 'left';
+        if (x > third * 2) return 'right';
+        return 'center';
+      }
+
+      function calculateStats() {
+        var total = hits.length;
+        if (total === 0) {
+          document.getElementById('totalHits').textContent = '0';
+          document.getElementById('battingAvg').textContent = '.000';
+          document.getElementById('slugging').textContent = '.000';
+          document.getElementById('pullPct').textContent = '0%';
+          document.getElementById('leftBar').style.width = '0%';
+          document.getElementById('centerBar').style.width = '0%';
+          document.getElementById('rightBar').style.width = '0%';
+          document.getElementById('leftPct').textContent = '0%';
+          document.getElementById('centerPct').textContent = '0%';
+          document.getElementById('rightPct').textContent = '0%';
+          return;
+        }
+
+        var hitTypes = ['single', 'double', 'triple', 'homerun', 'error'];
+        var hitsCount = 0;
+        var totalBases = 0;
+        var leftCount = 0;
+        var centerCount = 0;
+        var rightCount = 0;
+
+        for (var i = 0; i < hits.length; i++) {
+          var h = hits[i];
+          if (hitTypes.indexOf(h.type) !== -1) {
+            hitsCount++;
+          }
+          if (h.type === 'single' || h.type === 'error') totalBases += 1;
+          else if (h.type === 'double') totalBases += 2;
+          else if (h.type === 'triple') totalBases += 3;
+          else if (h.type === 'homerun') totalBases += 4;
+
+          if (h.direction === 'left') leftCount++;
+          else if (h.direction === 'center') centerCount++;
+          else if (h.direction === 'right') rightCount++;
+        }
+
+        var avg = hitsCount / total;
+        var slg = totalBases / total;
+
+        document.getElementById('totalHits').textContent = total.toString();
+        document.getElementById('battingAvg').textContent = '.' + Math.round(avg * 1000).toString().padStart(3, '0');
+        document.getElementById('slugging').textContent = slg.toFixed(3);
+
+        var leftPct = Math.round((leftCount / total) * 100);
+        var centerPctVal = Math.round((centerCount / total) * 100);
+        var rightPct = Math.round((rightCount / total) * 100);
+
+        document.getElementById('pullPct').textContent = leftPct + '%';
+
+        document.getElementById('leftBar').style.width = leftPct + '%';
+        document.getElementById('centerBar').style.width = centerPctVal + '%';
+        document.getElementById('rightBar').style.width = rightPct + '%';
+
+        document.getElementById('leftPct').textContent = leftPct + '%';
+        document.getElementById('centerPct').textContent = centerPctVal + '%';
+        document.getElementById('rightPct').textContent = rightPct + '%';
+      }
+
+      function clearHitLog() {
+        var log = document.getElementById('hitLog');
+        while (log.firstChild) {
+          log.removeChild(log.firstChild);
+        }
+      }
+
+      function updateHitLog() {
+        clearHitLog();
+        var log = document.getElementById('hitLog');
+
+        var displayHits = hits.slice().reverse().slice(0, 10);
+        for (var i = 0; i < displayHits.length; i++) {
+          var hit = displayHits[i];
+          var actualIndex = hits.length - 1 - i;
+
+          var item = document.createElement('div');
+          item.className = 'hit-log-item';
+
+          var hitInfo = document.createElement('div');
+          hitInfo.className = 'hit-info';
+
+          var indicator = document.createElement('span');
+          indicator.className = 'type-indicator';
+          indicator.style.backgroundColor = HIT_COLORS[hit.type];
+
+          var text = document.createTextNode(HIT_LABELS[hit.type] + ' - ' + hit.direction.charAt(0).toUpperCase() + hit.direction.slice(1));
+
+          hitInfo.appendChild(indicator);
+          hitInfo.appendChild(text);
+
+          var deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.textContent = '\u00D7';
+          deleteBtn.setAttribute('data-index', actualIndex.toString());
+
+          item.appendChild(hitInfo);
+          item.appendChild(deleteBtn);
+          log.appendChild(item);
+        }
+      }
+
+      canvas.addEventListener('click', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var x = (e.clientX - rect.left) * scaleX;
+        var y = (e.clientY - rect.top) * scaleY;
+
+        var direction = selectedDirection === 'auto' ? getDirection(x) : selectedDirection;
+
+        hits.push({
+          x: x,
+          y: y,
+          type: selectedType,
+          direction: direction,
+          timestamp: new Date().toISOString()
+        });
+
+        render();
+        calculateStats();
+        updateHitLog();
+      });
+
+      document.getElementById('hitTypeGrid').addEventListener('click', function(e) {
+        var btn = e.target.closest('.hit-type-btn');
+        if (!btn) return;
+
+        var buttons = document.querySelectorAll('.hit-type-btn');
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].classList.remove('active');
+        }
+        btn.classList.add('active');
+        selectedType = btn.getAttribute('data-type');
+      });
+
+      document.getElementById('directionGrid').addEventListener('click', function(e) {
+        var btn = e.target.closest('.result-btn');
+        if (!btn) return;
+
+        var buttons = document.querySelectorAll('#directionGrid .result-btn');
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].classList.remove('active');
+        }
+        btn.classList.add('active');
+        selectedDirection = btn.getAttribute('data-direction');
+      });
+
+      document.getElementById('hitLog').addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-btn')) {
+          var index = parseInt(e.target.getAttribute('data-index'), 10);
+          hits.splice(index, 1);
+          render();
+          calculateStats();
+          updateHitLog();
+        }
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', function() {
+        if (hits.length === 0) return;
+        if (confirm('Clear all hits?')) {
+          hits = [];
+          render();
+          calculateStats();
+          updateHitLog();
+        }
+      });
+
+      document.getElementById('undoBtn').addEventListener('click', function() {
+        if (hits.length > 0) {
+          hits.pop();
+          render();
+          calculateStats();
+          updateHitLog();
+        }
+      });
+
+      document.getElementById('exportBtn').addEventListener('click', function() {
+        var data = {
+          exportDate: new Date().toISOString(),
+          totalAtBats: hits.length,
+          hits: hits,
+          stats: {
+            avg: document.getElementById('battingAvg').textContent,
+            slg: document.getElementById('slugging').textContent,
+            pullPct: document.getElementById('pullPct').textContent
+          }
+        };
+
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'spray-chart-' + new Date().toISOString().split('T')[0] + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

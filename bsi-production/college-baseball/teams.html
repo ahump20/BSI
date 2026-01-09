@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse all 300+ NCAA Division I baseball teams. Find schedules, rosters, stats, and recruiting news for every D1 program.">
+  <title>All D1 Teams | College Baseball | Blaze Sports Intel</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="All D1 Baseball Teams | Blaze Sports Intel">
+  <meta property="og:description" content="Browse all 300+ NCAA Division I baseball teams. Complete coverage for every program.">
+  <meta property="og:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://blazesportsintel.com/college-baseball/teams">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="All D1 Baseball Teams | Blaze Sports Intel">
+  <meta name="twitter:description" content="Browse all 300+ NCAA Division I baseball teams.">
+  <meta name="twitter:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
+
+  <!-- Canonical & SEO -->
+  <link rel="canonical" href="https://blazesportsintel.com/college-baseball/teams">
+  <meta name="theme-color" content="#BF5700">
+  <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+  <meta name="keywords" content="college baseball teams, NCAA D1 baseball, college baseball directory, D1 baseball programs">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "NCAA D1 Baseball Teams Directory",
+    "description": "Complete directory of all NCAA Division I baseball programs",
+    "url": "https://blazesportsintel.com/college-baseball/teams",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Blaze Sports Intel",
+      "url": "https://blazesportsintel.com"
+    },
+    "about": {
+      "@type": "SportsOrganization",
+      "name": "NCAA Division I Baseball"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Navigation */
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.75rem 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
+    .nav.scrolled { padding: 0.5rem 0; background: rgba(13, 13, 13, 0.98); }
+    .nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--bsi-cream); font-weight: 700; font-size: 1.125rem; }
+    .logo-img { height: 44px; width: auto; filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3)); transition: transform 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
+    .logo:hover .logo-img { transform: scale(1.05); }
+    .logo-text { display: none; }
+    @media (min-width: 640px) { .logo-text { display: block; } .logo-img { height: 48px; } }
+    .nav-links { display: none; gap: 2rem; list-style: none; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; }
+    .nav-links a { color: var(--bsi-cream); text-decoration: none; opacity: 0.7; transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--bsi-ember); transition: width 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
+    .nav-links a:hover { opacity: 1; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { opacity: 1; color: var(--bsi-ember); }
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+    .nav-cta { display: none; }
+    .nav-cta .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.25rem; font-size: 0.875rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); border: none; text-align: center; text-decoration: none; background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); color: white; box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3); }
+    .nav-cta .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4); }
+    @media (min-width: 1024px) { .nav-cta { display: block; } }
+
+    .page-header {
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(191, 87, 0, 0.2) 0%, transparent 70%);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-bottom: 1rem;
+    }
+    .page-header h1 span {
+      display: block;
+      color: var(--bsi-burnt-orange);
+    }
+    .page-header p {
+      color: rgba(250, 248, 245, 0.7);
+      font-size: 1.125rem;
+      max-width: 600px;
+    }
+
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.7);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 3rem 2rem;
+      background: var(--bsi-midnight);
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    .filter-label {
+      display: block;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.6);
+      margin-bottom: 0.5rem;
+    }
+    .filter-select, .filter-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bsi-midnight);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: var(--bsi-cream);
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
+    }
+    .filter-select:focus, .filter-input:focus {
+      outline: none;
+      border-color: var(--bsi-burnt-orange);
+    }
+    .filter-select option {
+      background: var(--bsi-midnight);
+      color: var(--bsi-cream);
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 1.5rem;
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+    }
+    .stat-value {
+      color: var(--bsi-burnt-orange);
+      font-weight: 600;
+    }
+
+    /* Teams Grid */
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .team-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bsi-charcoal);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s;
+    }
+    .team-card:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .team-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+    .team-logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .team-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .team-name {
+      font-family: var(--font-ui);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .team-meta {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.6);
+    }
+    .team-conference {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background: rgba(191, 87, 0, 0.15);
+      color: var(--bsi-burnt-orange);
+      border-radius: 4px;
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.5rem;
+    }
+
+    /* Conference Sections */
+    .conference-section {
+      margin-bottom: 3rem;
+    }
+    .conference-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--bsi-burnt-orange);
+    }
+    .conference-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .conference-count {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.6);
+      background: var(--bsi-charcoal);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+
+    /* Loading & Empty States */
+    .loading-state {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.6);
+    }
+    .empty-state h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--bsi-cream);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .footer p {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <img src="/images/bsi-logo-nav.png" alt="BSI" class="logo-img">
+        <span class="logo-text">Blaze Sports Intel</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/scores">Scores</a></li>
+        <li><a href="/college-baseball/" class="active">College Baseball</a></li>
+        <li><a href="/mlb">MLB</a></li>
+        <li><a href="/nfl">NFL</a></li>
+        <li><a href="/tools">Tools</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="/subscribe" class="btn-primary">Go Pro</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="page-header-inner">
+      <h1>D1 Baseball Teams <span>Every Program. Complete Coverage.</span></h1>
+      <p>Browse all 300+ NCAA Division I baseball programs. The comprehensive team directory ESPN never built.</p>
+    </div>
+  </header>
+
+  <!-- Sub Navigation -->
+  <nav class="sub-nav">
+    <div class="sub-nav-inner">
+      <a href="/college-baseball/">Overview</a>
+      <a href="/college-baseball/scores">Scores</a>
+      <a href="/college-baseball/rankings">Rankings</a>
+      <a href="/college-baseball/standings">Standings</a>
+      <a href="/college-baseball/teams" class="active">Teams</a>
+      <a href="/college-baseball/transfer-portal">Transfer Portal</a>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <section class="content">
+    <div class="content-inner">
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-group">
+          <label class="filter-label" for="search">Search Teams</label>
+          <input type="text" id="search" class="filter-input" placeholder="Search by name or city...">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="conference">Conference</label>
+          <select id="conference" class="filter-select">
+            <option value="">All Conferences</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="state">State</label>
+          <select id="state" class="filter-select">
+            <option value="">All States</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar" id="stats-bar">
+        <div class="stat-item">Loading teams...</div>
+      </div>
+
+      <!-- Teams Container -->
+      <div id="teams-container">
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Loading teams...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+    </div>
+  </footer>
+
+  <script>
+    let allTeams = [];
+    let conferences = new Set();
+    let states = new Set();
+
+    // Safe element creation
+    function createElement(tag, className, textContent) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (textContent) el.textContent = textContent;
+      return el;
+    }
+
+    // Create stat item with styled value - safe DOM method
+    function createStatItem(value, label) {
+      const item = createElement('div', 'stat-item');
+      const valueSpan = createElement('span', 'stat-value', String(value));
+      const labelText = document.createTextNode(' ' + label);
+      item.appendChild(valueSpan);
+      item.appendChild(labelText);
+      return item;
+    }
+
+    // Build team card
+    function buildTeamCard(team) {
+      const card = document.createElement('a');
+      card.href = '/college-baseball/teams/' + encodeURIComponent(team.slug);
+      card.className = 'team-card';
+
+      // Logo
+      const logo = createElement('div', 'team-logo');
+      if (team.primary_color) {
+        logo.style.background = 'linear-gradient(135deg, ' + team.primary_color + ', ' + (team.secondary_color || team.primary_color) + ')';
+      } else {
+        logo.style.background = 'linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember))';
+      }
+      if (team.logo_url) {
+        const img = document.createElement('img');
+        img.src = team.logo_url;
+        img.alt = team.name;
+        logo.appendChild(img);
+      } else {
+        logo.textContent = team.abbreviation || team.slug.substring(0, 3).toUpperCase();
+      }
+      card.appendChild(logo);
+
+      // Details
+      const details = createElement('div', 'team-details');
+      const name = createElement('div', 'team-name', team.name);
+      const meta = createElement('div', 'team-meta', team.city + ', ' + team.state);
+      const conf = createElement('span', 'team-conference', team.conference);
+      details.appendChild(name);
+      details.appendChild(meta);
+      details.appendChild(conf);
+      card.appendChild(details);
+
+      return card;
+    }
+
+    // Group teams by conference
+    function groupByConference(teams) {
+      const groups = {};
+      teams.forEach(function(team) {
+        const conf = team.conference || 'Independent';
+        if (!groups[conf]) groups[conf] = [];
+        groups[conf].push(team);
+      });
+      return groups;
+    }
+
+    // Render teams
+    function renderTeams(teams) {
+      const container = document.getElementById('teams-container');
+      container.textContent = '';
+
+      if (teams.length === 0) {
+        const empty = createElement('div', 'empty-state');
+        const h3 = createElement('h3', '', 'No Teams Found');
+        const p = createElement('p', '', 'Try adjusting your filters or search query.');
+        empty.appendChild(h3);
+        empty.appendChild(p);
+        container.appendChild(empty);
+        return;
+      }
+
+      const grouped = groupByConference(teams);
+      const sortedConferences = Object.keys(grouped).sort();
+
+      sortedConferences.forEach(function(conf) {
+        const section = createElement('div', 'conference-section');
+
+        const header = createElement('div', 'conference-header');
+        const name = createElement('h2', 'conference-name', conf);
+        const count = createElement('span', 'conference-count', grouped[conf].length + ' teams');
+        header.appendChild(name);
+        header.appendChild(count);
+        section.appendChild(header);
+
+        const grid = createElement('div', 'teams-grid');
+        grouped[conf].sort(function(a, b) { return a.name.localeCompare(b.name); }).forEach(function(team) {
+          grid.appendChild(buildTeamCard(team));
+        });
+        section.appendChild(grid);
+        container.appendChild(section);
+      });
+    }
+
+    // Update stats bar using safe DOM methods
+    function updateStatsBar(teams) {
+      const bar = document.getElementById('stats-bar');
+      bar.textContent = '';
+
+      bar.appendChild(createStatItem(teams.length, 'Teams'));
+
+      const confCount = new Set(teams.map(function(t) { return t.conference; })).size;
+      bar.appendChild(createStatItem(confCount, 'Conferences'));
+
+      const stateCount = new Set(teams.map(function(t) { return t.state; })).size;
+      bar.appendChild(createStatItem(stateCount, 'States'));
+    }
+
+    // Apply filters
+    function applyFilters() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const conference = document.getElementById('conference').value;
+      const state = document.getElementById('state').value;
+
+      var filtered = allTeams;
+
+      if (search) {
+        filtered = filtered.filter(function(t) {
+          return t.name.toLowerCase().indexOf(search) !== -1 ||
+            t.city.toLowerCase().indexOf(search) !== -1 ||
+            (t.mascot && t.mascot.toLowerCase().indexOf(search) !== -1);
+        });
+      }
+
+      if (conference) {
+        filtered = filtered.filter(function(t) { return t.conference === conference; });
+      }
+
+      if (state) {
+        filtered = filtered.filter(function(t) { return t.state === state; });
+      }
+
+      updateStatsBar(filtered);
+      renderTeams(filtered);
+    }
+
+    // Populate filter dropdowns
+    function populateFilters() {
+      const confSelect = document.getElementById('conference');
+      const stateSelect = document.getElementById('state');
+
+      // Clear existing options except first
+      confSelect.length = 1;
+      stateSelect.length = 1;
+
+      // Add conference options
+      Array.from(conferences).sort().forEach(function(conf) {
+        const option = document.createElement('option');
+        option.value = conf;
+        option.textContent = conf;
+        confSelect.appendChild(option);
+      });
+
+      // Add state options
+      Array.from(states).sort().forEach(function(state) {
+        const option = document.createElement('option');
+        option.value = state;
+        option.textContent = state;
+        stateSelect.appendChild(option);
+      });
+    }
+
+    // Load teams
+    async function loadTeams() {
+      try {
+        const response = await fetch('/api/college-baseball/teams?limit=400');
+        if (!response.ok) throw new Error('Failed to load teams');
+
+        const data = await response.json();
+        if (data.success && data.data) {
+          allTeams = data.data;
+
+          // Build filter options
+          allTeams.forEach(function(team) {
+            if (team.conference) conferences.add(team.conference);
+            if (team.state) states.add(team.state);
+          });
+
+          populateFilters();
+          updateStatsBar(allTeams);
+          renderTeams(allTeams);
+        }
+      } catch (error) {
+        console.error('Error loading teams:', error);
+        const container = document.getElementById('teams-container');
+        container.textContent = '';
+        const empty = createElement('div', 'empty-state');
+        const h3 = createElement('h3', '', 'Error Loading Teams');
+        const p = createElement('p', '', 'Please try again later.');
+        empty.appendChild(h3);
+        empty.appendChild(p);
+        container.appendChild(empty);
+      }
+    }
+
+    // Event listeners
+    document.getElementById('search').addEventListener('input', applyFilters);
+    document.getElementById('conference').addEventListener('change', applyFilters);
+    document.getElementById('state').addEventListener('change', applyFilters);
+
+    // Navigation scroll effect
+    window.addEventListener('scroll', function() {
+      const nav = document.querySelector('.nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadTeams);
+  </script>
+</body>
+</html>

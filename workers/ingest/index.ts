@@ -26,6 +26,7 @@ interface Env {
   INGEST_SECRET: string;
   SPORTSDATAIO_KEY?: string;
   ESPN_API_BASE?: string;
+  DB: D1Database;
 }
 
 interface GameData {
@@ -134,6 +135,11 @@ export default {
         case '/ingest/archive':
           ctx.waitUntil(archiveHistoricalData(env, ctx));
           return Response.json({ message: 'Historical archival started' }, { status: 202 });
+
+        case '/ingest/ncaa-baseball':
+          const games = await request.json() as any[];
+          ctx.waitUntil(ingestNCAABaseball(games, env, ctx));
+          return Response.json({ message: 'NCAA baseball ingestion started', count: games.length }, { status: 202 });
 
         default:
           return new Response('Not Found', { status: 404 });

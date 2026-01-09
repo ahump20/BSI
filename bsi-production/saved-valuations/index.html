@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Valuations | Blaze Sports Intel</title>
+  <meta name="description" content="View and manage your saved NIL valuations. Pro feature.">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --burnt-orange: #BF5700;
+      --ember: #FF6B35;
+      --charcoal: #1A1A1A;
+      --midnight: #0D0D0D;
+      --cream: #FAF8F5;
+      --gold: #C9A227;
+      --text-primary: #FFFFFF;
+      --text-secondary: #9CA3AF;
+      --border: #374151;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--midnight);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--charcoal);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--burnt-orange);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .page-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--charcoal);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--ember);
+    }
+    .valuations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+    .valuation-card {
+      background: var(--charcoal);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+    .valuation-card:hover {
+      border-color: var(--burnt-orange);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .card-sport {
+      font-size: 12px;
+      color: var(--burnt-orange);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+    .card-tier {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .tier-elite { background: rgba(201, 162, 39, 0.2); color: var(--gold); }
+    .tier-premium { background: rgba(191, 87, 0, 0.2); color: var(--burnt-orange); }
+    .tier-rising { background: rgba(34, 197, 94, 0.2); color: #22C55E; }
+    .tier-developing { background: rgba(59, 130, 246, 0.2); color: #3B82F6; }
+    .card-athlete {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-conference {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .card-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--ember);
+      margin-bottom: 4px;
+    }
+    .card-range {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    .card-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .detail-item {
+      font-size: 13px;
+    }
+    .detail-label {
+      color: var(--text-secondary);
+    }
+    .detail-value {
+      font-weight: 500;
+    }
+    .card-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--burnt-orange);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--ember); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .btn-secondary:hover {
+      border-color: #C62828;
+      color: #C62828;
+    }
+    .loading, .empty-state, .auth-required {
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    .empty-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .empty-text {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .hidden { display: none; }
+    @media (max-width: 640px) {
+      .valuations-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <!-- BSI Premium Enhancements - Micro-interactions & Visual Polish -->
+  <link rel="stylesheet" href="../css/bsi-enhancements.css">
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">🔥 Blaze Sports Intel</a>
+    <nav class="nav-links">
+      <a href="/nil-calculator">NIL Calculator</a>
+      <a href="/monte-carlo">Monte Carlo</a>
+      <a href="/transfer-portal">Transfer Portal</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Saved Valuations</h1>
+    <p class="page-subtitle">Your saved NIL valuations from the calculator</p>
+
+    <!-- Auth Required State -->
+    <div id="auth-required" class="auth-required hidden">
+      <div class="empty-icon">🔒</div>
+      <h2 class="empty-title">Pro Feature</h2>
+      <p class="empty-text">Saved valuations are available for Pro subscribers.</p>
+      <a href="/pricing" class="btn btn-primary" style="display:inline-block;text-decoration:none;">Upgrade to Pro</a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Loading your valuations...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="empty-state hidden">
+      <div class="empty-icon">📊</div>
+      <h2 class="empty-title">No Saved Valuations</h2>
+      <p class="empty-text">Start by calculating an athlete's NIL value and save it for later.</p>
+      <a href="/nil-calculator" class="btn btn-primary" style="display:inline-block;text-decoration:none;">Go to NIL Calculator</a>
+    </div>
+
+    <!-- Content State -->
+    <div id="content" class="hidden">
+      <div class="stats-bar" id="stats-bar"></div>
+      <div class="valuations-grid" id="valuations-grid"></div>
+    </div>
+  </main>
+
+  <script>
+    // Safe DOM creation utilities
+    function createElement(tag, className, textContent) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (textContent !== undefined) el.textContent = textContent;
+      return el;
+    }
+
+    function createStatCard(label, value) {
+      const card = createElement('div', 'stat-card');
+      card.appendChild(createElement('div', 'stat-label', label));
+      card.appendChild(createElement('div', 'stat-value', value));
+      return card;
+    }
+
+    function getTierClass(tier) {
+      const tierMap = {
+        'Elite': 'tier-elite',
+        'Premium': 'tier-premium',
+        'Rising Star': 'tier-rising',
+        'Developing': 'tier-developing'
+      };
+      return tierMap[tier] || 'tier-developing';
+    }
+
+    function createValuationCard(valuation) {
+      const card = createElement('div', 'valuation-card');
+      card.dataset.id = valuation.id;
+
+      // Header
+      const header = createElement('div', 'card-header');
+      header.appendChild(createElement('span', 'card-sport', valuation.sport || 'Unknown'));
+      const tierBadge = createElement('span', 'card-tier ' + getTierClass(valuation.tier), valuation.tier || 'N/A');
+      header.appendChild(tierBadge);
+      card.appendChild(header);
+
+      // Athlete name
+      card.appendChild(createElement('div', 'card-athlete', valuation.athlete_name || 'Unnamed Athlete'));
+      card.appendChild(createElement('div', 'card-conference', valuation.conference + (valuation.division ? ' ' + valuation.division : '')));
+
+      // Value
+      card.appendChild(createElement('div', 'card-value', valuation.estimated_value));
+      if (valuation.value_range) {
+        card.appendChild(createElement('div', 'card-range', 'Range: ' + valuation.value_range));
+      }
+
+      // Details grid
+      const details = createElement('div', 'card-details');
+
+      // Position
+      if (valuation.position) {
+        const posItem = createElement('div', 'detail-item');
+        posItem.appendChild(createElement('span', 'detail-label', 'Position: '));
+        posItem.appendChild(createElement('span', 'detail-value', valuation.position));
+        details.appendChild(posItem);
+      }
+
+      // Year
+      if (valuation.year) {
+        const yearItem = createElement('div', 'detail-item');
+        yearItem.appendChild(createElement('span', 'detail-label', 'Year: '));
+        yearItem.appendChild(createElement('span', 'detail-value', valuation.year));
+        details.appendChild(yearItem);
+      }
+
+      // Performance Score
+      if (valuation.performance_score) {
+        const perfItem = createElement('div', 'detail-item');
+        perfItem.appendChild(createElement('span', 'detail-label', 'Performance: '));
+        perfItem.appendChild(createElement('span', 'detail-value', valuation.performance_score + '/100'));
+        details.appendChild(perfItem);
+      }
+
+      // Social followers
+      const totalFollowers = (valuation.instagram || 0) + (valuation.twitter || 0) + (valuation.tiktok || 0);
+      if (totalFollowers > 0) {
+        const socialItem = createElement('div', 'detail-item');
+        socialItem.appendChild(createElement('span', 'detail-label', 'Followers: '));
+        socialItem.appendChild(createElement('span', 'detail-value', totalFollowers.toLocaleString()));
+        details.appendChild(socialItem);
+      }
+
+      // Created date
+      if (valuation.created_at) {
+        const dateItem = createElement('div', 'detail-item');
+        dateItem.appendChild(createElement('span', 'detail-label', 'Saved: '));
+        dateItem.appendChild(createElement('span', 'detail-value', new Date(valuation.created_at).toLocaleDateString()));
+        details.appendChild(dateItem);
+      }
+
+      card.appendChild(details);
+
+      // Actions
+      const actions = createElement('div', 'card-actions');
+
+      const recalcBtn = createElement('button', 'btn btn-primary', 'Recalculate');
+      recalcBtn.addEventListener('click', function() {
+        const params = new URLSearchParams({
+          sport: valuation.sport || '',
+          conference: valuation.conference || '',
+          position: valuation.position || ''
+        });
+        window.location.href = '/nil-calculator?' + params.toString();
+      });
+      actions.appendChild(recalcBtn);
+
+      const deleteBtn = createElement('button', 'btn btn-secondary', 'Delete');
+      deleteBtn.addEventListener('click', function() {
+        deleteValuation(valuation.id);
+      });
+      actions.appendChild(deleteBtn);
+
+      card.appendChild(actions);
+
+      return card;
+    }
+
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/session', { credentials: 'include' });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.user && data.user.subscription === 'pro' ? data.user : null;
+      } catch {
+        return null;
+      }
+    }
+
+    async function loadValuations() {
+      try {
+        const response = await fetch('/api/nil/saved-valuations', { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to load');
+        const data = await response.json();
+        return data.valuations || [];
+      } catch (error) {
+        console.error('Error loading valuations:', error);
+        return [];
+      }
+    }
+
+    async function deleteValuation(id) {
+      if (!confirm('Delete this valuation?')) return;
+
+      try {
+        const response = await fetch('/api/nil/saved-valuations/' + id, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const card = document.querySelector('[data-id="' + id + '"]');
+          if (card) card.remove();
+
+          // Check if grid is now empty
+          const grid = document.getElementById('valuations-grid');
+          if (grid.children.length === 0) {
+            document.getElementById('content').classList.add('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
+          } else {
+            // Recalculate stats
+            init();
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting:', error);
+        alert('Failed to delete valuation');
+      }
+    }
+
+    function parseValue(valueStr) {
+      if (!valueStr) return 0;
+      const cleaned = valueStr.replace(/[^0-9.]/g, '');
+      return parseFloat(cleaned) || 0;
+    }
+
+    function formatCurrency(num) {
+      if (num >= 1000000) return '$' + (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return '$' + (num / 1000).toFixed(0) + 'K';
+      return '$' + num.toFixed(0);
+    }
+
+    async function init() {
+      const authRequired = document.getElementById('auth-required');
+      const loading = document.getElementById('loading');
+      const emptyState = document.getElementById('empty-state');
+      const content = document.getElementById('content');
+      const statsBar = document.getElementById('stats-bar');
+      const grid = document.getElementById('valuations-grid');
+
+      // Show loading
+      loading.classList.remove('hidden');
+
+      // Check auth
+      const user = await checkAuth();
+      if (!user) {
+        loading.classList.add('hidden');
+        authRequired.classList.remove('hidden');
+        return;
+      }
+
+      // Load valuations
+      const valuations = await loadValuations();
+      loading.classList.add('hidden');
+
+      if (valuations.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      // Calculate stats
+      const values = valuations.map(v => parseValue(v.estimated_value));
+      const total = valuations.length;
+      const avgValue = values.reduce((a, b) => a + b, 0) / total;
+      const maxValue = Math.max(...values);
+
+      // Render stats
+      statsBar.textContent = '';
+      statsBar.appendChild(createStatCard('Total Saved', total.toString()));
+      statsBar.appendChild(createStatCard('Average Value', formatCurrency(avgValue)));
+      statsBar.appendChild(createStatCard('Highest Value', formatCurrency(maxValue)));
+
+      // Render valuations
+      grid.textContent = '';
+      valuations.forEach(v => {
+        grid.appendChild(createValuationCard(v));
+      });
+
+      content.classList.remove('hidden');
+    }
+
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>

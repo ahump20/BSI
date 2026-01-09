@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Analytics Dashboard | Blaze Sports Intel Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bsi-midnight);
+      color: var(--bsi-cream);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .admin-header {
+      padding: 1.5rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .admin-header .back-link {
+      color: rgba(250, 248, 245, 0.7);
+      font-size: 0.875rem;
+      text-decoration: none;
+    }
+    .admin-header .back-link:hover { color: var(--bsi-burnt-orange); }
+
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .stat-card .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.6);
+      margin-bottom: 0.5rem;
+    }
+    .stat-card .value {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+    }
+    .stat-card .change {
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .stat-card .change.positive { color: #2E7D32; }
+    .stat-card .change.negative { color: #C62828; }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--bsi-cream);
+    }
+
+    .tables-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    .data-table {
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .data-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th,
+    .data-table td {
+      padding: 0.875rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .data-table th {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.6);
+      background: rgba(0, 0, 0, 0.3);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(191, 87, 0, 0.1); }
+    .data-table .mono {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+    }
+
+    .time-filter {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .time-filter button {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: var(--bsi-cream);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .time-filter button:hover { border-color: var(--bsi-burnt-orange); }
+    .time-filter button.active {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: rgba(250, 248, 245, 0.6);
+    }
+
+    .last-updated {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard { padding: 1rem; }
+      .tables-grid { grid-template-columns: 1fr; }
+      .stat-card .value { font-size: 1.5rem; }
+    }
+  </style>
+  <!-- BSI Premium Enhancements - Micro-interactions & Visual Polish -->
+  <link rel="stylesheet" href="../css/bsi-enhancements.css">
+</head>
+<body>
+  <header class="admin-header">
+    <h1>Analytics Dashboard</h1>
+    <a href="/" class="back-link">← Back to Site</a>
+  </header>
+
+  <main class="dashboard">
+    <div class="time-filter">
+      <button class="active" data-period="24h">Last 24 Hours</button>
+      <button data-period="7d">Last 7 Days</button>
+      <button data-period="30d">Last 30 Days</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Page Views</div>
+        <div class="value" id="pageViews">--</div>
+        <div class="change" id="pageViewsChange"></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Unique Visitors</div>
+        <div class="value" id="uniqueVisitors">--</div>
+        <div class="change" id="uniqueVisitorsChange"></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">API Requests</div>
+        <div class="value" id="apiRequests">--</div>
+        <div class="change" id="apiRequestsChange"></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Avg Response Time</div>
+        <div class="value" id="avgResponseTime">--</div>
+        <div class="change" id="avgResponseTimeChange"></div>
+      </div>
+    </div>
+
+    <div class="tables-grid">
+      <div class="data-table">
+        <h3 class="section-title" style="padding: 1rem 1rem 0;">Top Pages</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Page</th>
+              <th>Views</th>
+              <th>Avg Time</th>
+            </tr>
+          </thead>
+          <tbody id="topPagesTable">
+            <tr><td colspan="3" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-table">
+        <h3 class="section-title" style="padding: 1rem 1rem 0;">Top Referrers</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Visits</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody id="topReferrersTable">
+            <tr><td colspan="3" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-table">
+        <h3 class="section-title" style="padding: 1rem 1rem 0;">API Endpoints</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Requests</th>
+              <th>Avg ms</th>
+            </tr>
+          </thead>
+          <tbody id="apiEndpointsTable">
+            <tr><td colspan="3" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-table">
+        <h3 class="section-title" style="padding: 1rem 1rem 0;">Recent Events</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Count</th>
+              <th>Last</th>
+            </tr>
+          </thead>
+          <tbody id="eventsTable">
+            <tr><td colspan="3" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="last-updated" id="lastUpdated"></div>
+  </main>
+
+  <script>
+    var currentPeriod = '24h';
+
+    // Safe text setting - no innerHTML with user data
+    function setText(id, text) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    // Create table row safely
+    function createRow(cells) {
+      var tr = document.createElement('tr');
+      cells.forEach(function(cell) {
+        var td = document.createElement('td');
+        if (cell.mono) td.className = 'mono';
+        td.textContent = cell.text;
+        tr.appendChild(td);
+      });
+      return tr;
+    }
+
+    // Clear and populate table
+    function populateTable(tableId, rows) {
+      var tbody = document.getElementById(tableId);
+      if (!tbody) return;
+      tbody.textContent = ''; // Clear safely
+
+      if (!rows || rows.length === 0) {
+        var tr = document.createElement('tr');
+        var td = document.createElement('td');
+        td.colSpan = 3;
+        td.className = 'loading';
+        td.textContent = 'No data available';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      rows.forEach(function(row) {
+        tbody.appendChild(createRow(row));
+      });
+    }
+
+    // Format numbers
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return num.toString();
+    }
+
+    // Set change indicator
+    function setChange(id, value) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (value > 0) {
+        el.textContent = '↑ ' + value + '% vs previous';
+        el.className = 'change positive';
+      } else if (value < 0) {
+        el.textContent = '↓ ' + Math.abs(value) + '% vs previous';
+        el.className = 'change negative';
+      } else {
+        el.textContent = '— No change';
+        el.className = 'change';
+      }
+    }
+
+    async function loadAnalytics() {
+      try {
+        var response = await fetch('/api/admin/analytics?period=' + currentPeriod);
+        if (!response.ok) throw new Error('Failed to load analytics');
+
+        var data = await response.json();
+
+        // Update stat cards
+        setText('pageViews', formatNumber(data.pageViews || 0));
+        setText('uniqueVisitors', formatNumber(data.uniqueVisitors || 0));
+        setText('apiRequests', formatNumber(data.apiRequests || 0));
+        setText('avgResponseTime', (data.avgResponseTime || 0) + 'ms');
+
+        // Update change indicators
+        setChange('pageViewsChange', data.pageViewsChange || 0);
+        setChange('uniqueVisitorsChange', data.uniqueVisitorsChange || 0);
+        setChange('apiRequestsChange', data.apiRequestsChange || 0);
+        setChange('avgResponseTimeChange', data.avgResponseTimeChange || 0);
+
+        // Update tables
+        if (data.topPages) {
+          populateTable('topPagesTable', data.topPages.map(function(p) {
+            return [
+              { text: p.path },
+              { text: formatNumber(p.views), mono: true },
+              { text: p.avgTime + 's', mono: true }
+            ];
+          }));
+        }
+
+        if (data.topReferrers) {
+          populateTable('topReferrersTable', data.topReferrers.map(function(r) {
+            return [
+              { text: r.source },
+              { text: formatNumber(r.visits), mono: true },
+              { text: r.percent + '%', mono: true }
+            ];
+          }));
+        }
+
+        if (data.apiEndpoints) {
+          populateTable('apiEndpointsTable', data.apiEndpoints.map(function(e) {
+            return [
+              { text: e.path },
+              { text: formatNumber(e.requests), mono: true },
+              { text: e.avgMs + 'ms', mono: true }
+            ];
+          }));
+        }
+
+        if (data.events) {
+          populateTable('eventsTable', data.events.map(function(e) {
+            return [
+              { text: e.name },
+              { text: formatNumber(e.count), mono: true },
+              { text: e.lastSeen }
+            ];
+          }));
+        }
+
+        // Update timestamp
+        setText('lastUpdated', 'Last updated: ' + new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+
+      } catch (error) {
+        console.error('Analytics load error:', error);
+        setText('pageViews', 'Error');
+        setText('uniqueVisitors', 'Error');
+        setText('apiRequests', 'Error');
+        setText('avgResponseTime', 'Error');
+      }
+    }
+
+    // Time filter buttons
+    document.querySelectorAll('.time-filter button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.time-filter button').forEach(function(b) {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        currentPeriod = btn.dataset.period;
+        loadAnalytics();
+      });
+    });
+
+    // Initial load
+    loadAnalytics();
+
+    // Refresh every 60 seconds
+    setInterval(loadAnalytics, 60000);
+  </script>
+</body>
+</html>

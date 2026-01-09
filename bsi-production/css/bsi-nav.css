@@ -1,0 +1,461 @@
+/* BSI Navigation & Footer - Shared Component
+ * Use on all pages for consistent styling
+ * Source: index.html pattern
+ * Last updated: January 2025
+ */
+
+/* ===========================================
+   CSS VARIABLES (use fallbacks for pages without :root)
+   =========================================== */
+
+/* Navigation Container - supports both .nav and .bsi-nav */
+.nav,
+.bsi-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0.75rem 0;
+  background: rgba(13, 13, 13, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+.nav.scrolled,
+.bsi-nav.scrolled {
+  padding: 0.5rem 0;
+  background: rgba(13, 13, 13, 0.98);
+}
+
+.nav-inner,
+.bsi-nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Logo - supports both .logo and .bsi-logo */
+.logo,
+.bsi-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+  color: #FAF8F5;
+}
+
+.logo-img,
+.bsi-logo-img {
+  height: 44px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3));
+  transition: transform 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+.logo:hover .logo-img,
+.bsi-logo:hover .bsi-logo-img {
+  transform: scale(1.05);
+}
+
+.logo-text,
+.bsi-logo-text {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .logo-text,
+  .bsi-logo-text {
+    display: block;
+  }
+  .logo-img,
+  .bsi-logo-img {
+    height: 48px;
+  }
+}
+
+/* Navigation Links */
+.nav-links,
+.bsi-nav-links {
+  display: none;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.nav-links a,
+.bsi-nav-links a {
+  color: #FAF8F5;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+  position: relative;
+}
+
+.nav-links a::after,
+.bsi-nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #FF6B35;
+  transition: width 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+.nav-links a:hover,
+.bsi-nav-links a:hover {
+  opacity: 1;
+}
+
+.nav-links a:hover::after,
+.bsi-nav-links a:hover::after {
+  width: 100%;
+}
+
+.nav-links a.active,
+.bsi-nav-links a.active {
+  opacity: 1;
+  color: #FF6B35;
+}
+
+@media (min-width: 768px) {
+  .nav-links,
+  .bsi-nav-links {
+    display: flex;
+  }
+}
+
+/* CTA Button */
+.nav-cta,
+.bsi-nav-cta {
+  display: none;
+}
+
+.nav-cta .btn-primary,
+.bsi-nav-cta .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  background: linear-gradient(135deg, #BF5700, #FF6B35);
+  color: white;
+  box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
+}
+
+.nav-cta .btn-primary:hover,
+.bsi-nav-cta .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4);
+}
+
+@media (min-width: 1024px) {
+  .nav-cta,
+  .bsi-nav-cta {
+    display: block;
+  }
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn,
+.bsi-mobile-menu-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.mobile-menu-btn span,
+.bsi-mobile-menu-btn span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #FAF8F5;
+  transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+.mobile-menu-btn.active span:nth-child(1),
+.bsi-mobile-menu-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-btn.active span:nth-child(2),
+.bsi-mobile-menu-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-btn.active span:nth-child(3),
+.bsi-mobile-menu-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-btn,
+  .bsi-mobile-menu-btn {
+    display: none;
+  }
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu,
+.bsi-mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: #0D0D0D;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 100px 2rem 2rem;
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
+  pointer-events: none;
+  overflow-y: auto;
+}
+
+.mobile-menu.active,
+.bsi-mobile-menu.active {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.mobile-menu ul,
+.bsi-mobile-menu ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-menu a,
+.bsi-mobile-menu a {
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #FAF8F5;
+  text-decoration: none;
+  display: block;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(250, 248, 245, 0.1);
+}
+
+.mobile-menu a:hover,
+.bsi-mobile-menu a:hover {
+  color: #FF6B35;
+}
+
+@media (min-width: 768px) {
+  .mobile-menu,
+  .bsi-mobile-menu {
+    display: none;
+  }
+}
+
+/* ===========================================
+   FOOTER STYLES
+   =========================================== */
+
+.footer {
+  background: #0D0D0D;
+  padding: 4rem 0 2rem;
+  border-top: 1px solid rgba(191, 87, 0, 0.15);
+}
+
+.footer .container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+}
+
+.footer-brand {
+  max-width: 300px;
+}
+
+.footer-brand .logo {
+  margin-bottom: 1rem;
+}
+
+.footer-brand p {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 0.9375rem;
+  color: rgba(250, 248, 245, 0.6);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.footer-values {
+  display: flex;
+  gap: 1rem;
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #C9A227;
+}
+
+.footer-links h4 {
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #BF5700;
+  margin-bottom: 1rem;
+}
+
+.footer-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.875rem;
+  color: rgba(250, 248, 245, 0.6);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #FAF8F5;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(250, 248, 245, 0.08);
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.8125rem;
+  color: rgba(250, 248, 245, 0.4);
+}
+
+@media (min-width: 768px) {
+  .footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.footer-tagline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  color: #BF5700;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-legal a {
+  color: rgba(250, 248, 245, 0.4);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-legal a:hover {
+  color: rgba(250, 248, 245, 0.7);
+}
+
+/* ===========================================
+   UTILITY CLASSES
+   =========================================== */
+
+/* Body padding for fixed nav */
+.bsi-has-fixed-nav {
+  padding-top: 80px;
+}
+
+/* Container class for pages that don't have it */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ===========================================
+   JAVASCRIPT PATTERNS (add to pages)
+   ===========================================
+
+   // Mobile menu toggle
+   var menuBtn = document.querySelector('.mobile-menu-btn');
+   var mobileMenu = document.querySelector('.mobile-menu');
+   if (menuBtn && mobileMenu) {
+     menuBtn.addEventListener('click', function() {
+       menuBtn.classList.toggle('active');
+       mobileMenu.classList.toggle('active');
+       document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+     });
+     document.querySelectorAll('.mobile-menu a').forEach(function(link) {
+       link.addEventListener('click', function() {
+         menuBtn.classList.remove('active');
+         mobileMenu.classList.remove('active');
+         document.body.style.overflow = '';
+       });
+     });
+   }
+
+   // Scroll effect for nav
+   window.addEventListener('scroll', function() {
+     var nav = document.querySelector('.nav');
+     if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+   });
+*/

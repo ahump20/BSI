@@ -49,3 +49,9 @@ local_protocol = "http"
 name = "blazesports-ingest-staging"
 [env.staging.vars]
 ENVIRONMENT = "staging"
+
+# D1 Database (NCAA Baseball Games)
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-game-db"
+database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"

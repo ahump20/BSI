@@ -468,6 +468,59 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       });
     }
 
+
+
+    // === ADMIN ROUTES ===
+    // Photo management
+    if (path === '/api/admin/photos/upload' && request.method === 'POST') {
+      return handlePhotoUpload(request, env, corsHeaders);
+    }
+    if (path === '/api/admin/photos/bulk-import' && request.method === 'POST') {
+      return handleBulkPhotoImport(request, env, corsHeaders);
+    }
+    if (path === '/api/admin/photos' && request.method === 'GET') {
+      return handleListPhotos(url, env, corsHeaders);
+    }
+    if (path.startsWith('/api/admin/photos/') && request.method === 'DELETE') {
+      const photoId = path.split('/').pop();
+      return handleDeletePhoto(photoId, env, corsHeaders);
+    }
+
+    // Roster management
+    if (path === '/api/admin/rosters' && request.method === 'GET') {
+      return handleListRosters(url, env, corsHeaders);
+    }
+    if (path === '/api/admin/rosters' && request.method === 'POST') {
+      return handleAddRoster(request, env, corsHeaders);
+    }
+    if (path === '/api/admin/roster-players' && request.method === 'GET') {
+      return handleListRosterPlayers(url, env, corsHeaders);
+    }
+    if (path === '/api/admin/roster-players' && request.method === 'POST') {
+      return handleAddRosterPlayer(request, env, corsHeaders);
+    }
+    if (path === '/api/admin/roster-verify' && request.method === 'POST') {
+      return handleVerifyPortalAgainstRoster(request, env, corsHeaders);
+    }
+
+    // Transfer portal notifications
+    if (path === '/api/transfer-portal/subscribe' && request.method === 'POST') {
+      return handleNotificationSubscribe(request, env, corsHeaders);
+    }
+    if (path === '/api/transfer-portal/unsubscribe') {
+      return handleNotificationUnsubscribe(url, env, corsHeaders);
+    }
+
+    // Admin photos page
+    if (path === '/admin/photos' || path === '/admin/photos.html') {
+      return serveAsset(env, 'origin/admin/photos.html', 'text/html', corsHeaders);
+    }
+
+    // === COLLEGE BASEBALL API ===
+    if (path === '/api/college-baseball/conference-flow') {
+      return getConferenceFlow(url.searchParams, env, corsHeaders);
+    }
+
     // === COLLEGE BASEBALL ROUTES ===
     if (path === '/college-baseball' || path === '/college-baseball/') {
       return serveAsset(env, 'origin/college-baseball/index.html', 'text/html', corsHeaders);
@@ -4100,4 +4153,235 @@ function jsonResponse(data, status, corsHeaders, sessionToken = null) {
   }
 
   return new Response(JSON.stringify(data), { status, headers });
+}
+
+
+// ============================================
+// ADMIN HANDLER FUNCTIONS
+// ============================================
+
+function verifyAdminAuth(request, env) {
+  const authHeader = request.headers.get('Authorization');
+  const apiKey = authHeader?.replace('Bearer ', '');
+  if (!env.ADMIN_API_KEY || apiKey !== env.ADMIN_API_KEY) {
+    return { authorized: false, response: new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } }) };
+  }
+  return { authorized: true };
+}
+
+async function handlePhotoUpload(request, env, corsHeaders) {
+  const auth = verifyAdminAuth(request, env);
+  if (!auth.authorized) return auth.response;
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file');
+    const playerName = formData.get('player_name');
+    const schoolName = formData.get('school_name');
+    const playerId = formData.get('player_id');
+    if (!file || !playerName) {
+      return new Response(JSON.stringify({ error: 'file and player_name required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+    const timestamp = Date.now();
+    const safeName = playerName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    const ext = file.name?.split('.').pop() || 'jpg';
+    const r2Key = 'photos/players/' + safeName + '-' + timestamp + '.' + ext;
+    const arrayBuffer = await file.arrayBuffer();
+    await env.ASSETS.put(r2Key, arrayBuffer, { httpMetadata: { contentType: file.type || 'image/jpeg' } });
+    const r2Url = 'https://blazesportsintel.com/' + r2Key;
+    await env.DB.prepare('INSERT INTO player_photos (player_id, player_name, school_name, r2_key, r2_url, photo_type, file_size, uploaded_by, approved) VALUES (?, ?, ?, ?, ?, \'headshot\', ?, \'admin\', 1)').bind(playerId || null, playerName, schoolName || null, r2Key, r2Url, arrayBuffer.byteLength).run();
+    return new Response(JSON.stringify({ success: true, r2_key: r2Key, r2_url: r2Url, player_name: playerName }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    console.error('Photo upload error:', error);
+    return new Response(JSON.stringify({ error: 'Upload failed', details: error.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleBulkPhotoImport(request, env, corsHeaders) {
+  const auth = verifyAdminAuth(request, env);
+  if (!auth.authorized) return auth.response;
+  try {
+    const body = await request.json();
+    const { photos } = body;
+    if (!photos || !Array.isArray(photos)) {
+      return new Response(JSON.stringify({ error: 'photos array required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+    const results = [];
+    for (const photo of photos) {
+      try {
+        const { player_name, school_name, photo_url, player_id } = photo;
+        if (!player_name || !photo_url) { results.push({ player_name, status: 'error', error: 'Missing fields' }); continue; }
+        const imageResponse = await fetch(photo_url);
+        if (!imageResponse.ok) { results.push({ player_name, status: 'error', error: 'Fetch failed' }); continue; }
+        const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
+        const arrayBuffer = await imageResponse.arrayBuffer();
+        const timestamp = Date.now();
+        const safeName = player_name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const ext = contentType.includes('png') ? 'png' : 'jpg';
+        const r2Key = 'photos/players/' + safeName + '-' + timestamp + '.' + ext;
+        await env.ASSETS.put(r2Key, arrayBuffer, { httpMetadata: { contentType } });
+        const r2Url = 'https://blazesportsintel.com/' + r2Key;
+        await env.DB.prepare('INSERT INTO player_photos (player_id, player_name, school_name, r2_key, r2_url, photo_type, file_size, uploaded_by, approved) VALUES (?, ?, ?, ?, ?, \'headshot\', ?, \'bulk-import\', 1)').bind(player_id || null, player_name, school_name || null, r2Key, r2Url, arrayBuffer.byteLength).run();
+        results.push({ player_name, status: 'success', r2_key: r2Key });
+      } catch (err) { results.push({ player_name: photo.player_name, status: 'error', error: err.message }); }
+    }
+    const successful = results.filter(r => r.status === 'success').length;
+    return new Response(JSON.stringify({ imported: successful, total: photos.length, results }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    console.error('Bulk import error:', error);
+    return new Response(JSON.stringify({ error: 'Bulk import failed' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleListPhotos(url, env, corsHeaders) {
+  try {
+    const school = url.searchParams.get('school');
+    const limit = Math.min(parseInt(url.searchParams.get('limit')) || 100, 500);
+    let sql = 'SELECT * FROM player_photos WHERE 1=1';
+    const params = [];
+    if (school) { sql += ' AND LOWER(school_name) LIKE ?'; params.push('%' + school.toLowerCase() + '%'); }
+    sql += ' ORDER BY uploaded_at DESC LIMIT ?';
+    params.push(limit);
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+    return new Response(JSON.stringify({ photos: results, count: results.length, fetchedAt: getChicagoTimestamp() }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to list photos' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleDeletePhoto(photoId, env, corsHeaders) {
+  try {
+    const photo = await env.DB.prepare('SELECT * FROM player_photos WHERE id = ?').bind(photoId).first();
+    if (!photo) { return new Response(JSON.stringify({ error: 'Photo not found' }), { status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
+    if (photo.r2_key) { await env.ASSETS.delete(photo.r2_key); }
+    await env.DB.prepare('DELETE FROM player_photos WHERE id = ?').bind(photoId).run();
+    return new Response(JSON.stringify({ success: true, deleted: photoId }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to delete photo' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleListRosters(url, env, corsHeaders) {
+  try {
+    const season = url.searchParams.get('season') || '2025';
+    const { results } = await env.DB.prepare('SELECT * FROM roster_sources WHERE season = ? ORDER BY school_name').bind(season).all();
+    return new Response(JSON.stringify({ rosters: results, count: results.length, season }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to list rosters' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleAddRoster(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { school_name, source_type, source_url, season } = body;
+    if (!school_name || !source_type) { return new Response(JSON.stringify({ error: 'school_name and source_type required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
+    await env.DB.prepare("INSERT OR REPLACE INTO roster_sources (school_name, source_type, source_url, season, last_scraped, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))").bind(school_name, source_type, source_url || null, season || '2025').run();
+    return new Response(JSON.stringify({ success: true, school_name }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to add roster' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleListRosterPlayers(url, env, corsHeaders) {
+  try {
+    const school = url.searchParams.get('school');
+    const season = url.searchParams.get('season') || '2025';
+    const limit = Math.min(parseInt(url.searchParams.get('limit')) || 100, 500);
+    let sql = 'SELECT * FROM roster_players WHERE season = ?';
+    const params = [season];
+    if (school) { sql += ' AND LOWER(school_name) LIKE ?'; params.push('%' + school.toLowerCase() + '%'); }
+    sql += ' ORDER BY school_name, player_name LIMIT ?';
+    params.push(limit);
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+    return new Response(JSON.stringify({ players: results, count: results.length, season }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to list roster players' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleAddRosterPlayer(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { school_name, player_name, jersey_number, position, class_year, hometown, high_school, source_type, season } = body;
+    if (!school_name || !player_name) { return new Response(JSON.stringify({ error: 'school_name and player_name required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
+    await env.DB.prepare("INSERT OR REPLACE INTO roster_players (school_name, player_name, jersey_number, position, class_year, hometown, high_school, source_type, season, scraped_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))").bind(school_name, player_name, jersey_number || null, position || null, class_year || null, hometown || null, high_school || null, source_type || 'manual', season || '2025').run();
+    return new Response(JSON.stringify({ success: true, player_name, school_name }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to add roster player' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleVerifyPortalAgainstRoster(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const seasonYear = body.season || '2025';
+    const { results: portalEntries } = await env.DB.prepare("SELECT id, player_name, from_school, to_school, position FROM transfer_portal WHERE status = 'committed' AND to_school IS NOT NULL").all();
+    const verifications = [];
+    for (const entry of portalEntries) {
+      const { results: rosterMatches } = await env.DB.prepare('SELECT id, player_name, school_name, position FROM roster_players WHERE season = ? AND LOWER(school_name) LIKE ? AND (LOWER(player_name) LIKE ? OR LOWER(player_name) LIKE ?)').bind(seasonYear, '%' + entry.to_school.toLowerCase() + '%', '%' + entry.player_name.split(' ')[0].toLowerCase() + '%', '%' + entry.player_name.toLowerCase() + '%').all();
+      if (rosterMatches.length > 0) { verifications.push({ portal_id: entry.id, player_name: entry.player_name, to_school: entry.to_school, verified: true, roster_match: rosterMatches[0] }); }
+    }
+    return new Response(JSON.stringify({ verified_count: verifications.length, total_committed: portalEntries.length, verifications }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Failed to verify against roster' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleNotificationSubscribe(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { email, frequency, filters_position, filters_conference } = body;
+    const freq = frequency || 'instant';
+    if (!email) { return new Response(JSON.stringify({ error: 'email required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
+    const unsubscribeToken = crypto.randomUUID();
+    await env.DB.prepare("INSERT OR REPLACE INTO notification_subscribers (email, frequency, notification_type, filters_position, status, unsubscribe_token, filters_conference) VALUES (?, ?, 'transfer-portal', ?, 'active', ?, ?)").bind(email, freq, filters_position || null, unsubscribeToken, filters_conference || null).run();
+    return new Response(JSON.stringify({ success: true, email, unsubscribe_url: 'https://blazesportsintel.com/api/transfer-portal/unsubscribe?token=' + unsubscribeToken }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: 'Subscription failed' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function handleNotificationUnsubscribe(url, env, corsHeaders) {
+  try {
+    const token = url.searchParams.get('token');
+    if (!token) { return new Response('Missing token', { status: 400 }); }
+    const result = await env.DB.prepare("UPDATE notification_subscribers SET status = 'unsubscribed' WHERE unsubscribe_token = ?").bind(token).run();
+    if (result.meta.changes === 0) { return new Response('Invalid or expired token', { status: 404 }); }
+    return new Response('<!DOCTYPE html><html><head><title>Unsubscribed</title></head><body style="font-family: sans-serif; text-align: center; padding: 50px;"><h1>Unsubscribed Successfully</h1><p>You will no longer receive transfer portal notifications.</p><p><a href="/transfer-portal">Return to Transfer Portal</a></p></body></html>', { headers: { 'Content-Type': 'text/html', ...corsHeaders } });
+  } catch (error) {
+    return new Response('Unsubscribe failed', { status: 500 });
+  }
+}
+
+async function getConferenceFlow(searchParams, env, corsHeaders) {
+  try {
+    const year = searchParams.get('year') || '2025';
+    const { results: entries } = await env.DB.prepare("SELECT from_conference, to_conference, from_school, to_school, status FROM transfer_portal WHERE substr(entry_date, 1, 4) = ?").bind(year).all();
+    const conferenceStats = {};
+    entries.forEach(function(entry) {
+      if (entry.from_conference) {
+        if (!conferenceStats[entry.from_conference]) { conferenceStats[entry.from_conference] = { entries_out: 0, commits_in: 0, schools_out: {}, schools_in: {} }; }
+        conferenceStats[entry.from_conference].entries_out++;
+        conferenceStats[entry.from_conference].schools_out[entry.from_school] = (conferenceStats[entry.from_conference].schools_out[entry.from_school] || 0) + 1;
+      }
+      if (entry.status === 'committed' && entry.to_conference) {
+        if (!conferenceStats[entry.to_conference]) { conferenceStats[entry.to_conference] = { entries_out: 0, commits_in: 0, schools_out: {}, schools_in: {} }; }
+        conferenceStats[entry.to_conference].commits_in++;
+        conferenceStats[entry.to_conference].schools_in[entry.to_school] = (conferenceStats[entry.to_conference].schools_in[entry.to_school] || 0) + 1;
+      }
+    });
+    const conferences = Object.entries(conferenceStats).map(function(item) {
+      const conference = item[0];
+      const stats = item[1];
+      const schoolsOut = Object.entries(stats.schools_out);
+      const schoolsIn = Object.entries(stats.schools_in);
+      const topLoser = schoolsOut.sort(function(a, b) { return b[1] - a[1]; })[0];
+      const topGainer = schoolsIn.sort(function(a, b) { return b[1] - a[1]; })[0];
+      return { conference: conference, entries_out: stats.entries_out, commits_in: stats.commits_in, net_flow: stats.commits_in - stats.entries_out, top_gainer_school: topGainer ? topGainer[0] : null, top_gainer_count: topGainer ? topGainer[1] : 0, top_loser_school: topLoser ? topLoser[0] : null, top_loser_count: topLoser ? topLoser[1] : 0 };
+    }).filter(function(c) { return c.conference && c.conference !== 'Unknown'; }).sort(function(a, b) { return b.net_flow - a.net_flow; });
+    return new Response(JSON.stringify({ conferences: conferences, year: year, fetchedAt: getChicagoTimestamp() }), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders } });
+  } catch (error) {
+    console.error('Conference Flow Error:', error);
+    return new Response(JSON.stringify({ error: 'Failed to calculate conference flow', details: error.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
 }

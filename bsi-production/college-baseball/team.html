@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" id="meta-description" content="College baseball team coverage from Blaze Sports Intel.">
+  <title id="page-title">Team | College Baseball | Blaze Sports Intel</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" id="og-title" content="Team | Blaze Sports Intel">
+  <meta property="og:description" id="og-description" content="College baseball team coverage from Blaze Sports Intel.">
+  <meta property="og:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" id="og-url" content="https://blazesportsintel.com/college-baseball/teams/">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twitter-title" content="Team | Blaze Sports Intel">
+  <meta name="twitter:description" id="twitter-description" content="College baseball team coverage.">
+  <meta name="twitter:image" content="https://blazesportsintel.com/images/texas-soil.jpg">
+
+  <!-- Canonical & SEO -->
+  <link rel="canonical" id="canonical-url" href="https://blazesportsintel.com/college-baseball/teams/">
+  <meta name="theme-color" content="#BF5700">
+  <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+  <meta name="keywords" id="meta-keywords" content="college baseball, NCAA baseball">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json" id="structured-data">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsTeam",
+    "name": "College Baseball Team",
+    "sport": "Baseball",
+    "memberOf": {
+      "@type": "SportsOrganization",
+      "name": "NCAA Division I"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --team-primary: var(--bsi-burnt-orange);
+      --team-secondary: var(--bsi-charcoal);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Navigation */
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.75rem 0; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(191, 87, 0, 0.15); transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
+    .nav.scrolled { padding: 0.5rem 0; background: rgba(13, 13, 13, 0.98); }
+    .nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--bsi-cream); font-weight: 700; font-size: 1.125rem; }
+    .logo-img { height: 44px; width: auto; filter: drop-shadow(0 2px 8px rgba(191, 87, 0, 0.3)); transition: transform 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
+    .logo:hover .logo-img { transform: scale(1.05); }
+    .logo-text { display: none; }
+    @media (min-width: 640px) { .logo-text { display: block; } .logo-img { height: 48px; } }
+    .nav-links { display: none; gap: 2rem; list-style: none; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; }
+    .nav-links a { color: var(--bsi-cream); text-decoration: none; opacity: 0.7; transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--bsi-ember); transition: width 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); }
+    .nav-links a:hover { opacity: 1; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { opacity: 1; color: var(--bsi-ember); }
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+    .nav-cta { display: none; }
+    .nav-cta .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.25rem; font-size: 0.875rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1); border: none; text-align: center; text-decoration: none; background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); color: white; box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3); }
+    .nav-cta .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4); }
+    @media (min-width: 1024px) { .nav-cta { display: block; } }
+
+    /* Team Header with Team Colors */
+    .team-header {
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(135deg, var(--team-primary) 0%, var(--team-secondary) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .team-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
+      pointer-events: none;
+    }
+    .team-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .team-logo-container {
+      width: 120px;
+      height: 120px;
+      background: white;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .team-logo-container img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    .team-logo-placeholder {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--team-primary);
+    }
+    .team-info {
+      flex: 1;
+      min-width: 280px;
+    }
+    .team-conference {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 0.5rem;
+    }
+    .team-name {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .team-location {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.7);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 3rem 2rem;
+      background: var(--bsi-midnight);
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Quick Stats Bar */
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .stat-card {
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--team-primary);
+      margin-bottom: 0.25rem;
+    }
+    .stat-label {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.6);
+    }
+
+    /* Section Styles */
+    .section {
+      margin-bottom: 3rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--team-primary);
+    }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    .info-card {
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .info-card-title {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.6);
+      margin-bottom: 1rem;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.6);
+    }
+    .info-value {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--bsi-cream);
+    }
+
+    /* Social Links */
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: var(--bsi-cream);
+      transition: background 0.2s;
+    }
+    .social-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Related Teams */
+    .related-teams {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .related-team-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bsi-charcoal);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s;
+    }
+    .related-team-card:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-2px);
+    }
+    .related-team-abbr {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+    }
+    .related-team-info h4 {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .related-team-info span {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.6);
+    }
+
+    /* Loading & Error States */
+    .loading-state {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      margin: 2rem;
+    }
+    .error-state h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .error-state p {
+      color: rgba(250, 248, 245, 0.7);
+      margin-bottom: 1.5rem;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      border-radius: 8px;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-back:hover { background: var(--bsi-ember); }
+
+    /* Footer */
+    .footer {
+      background: var(--bsi-midnight);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .footer p {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <img src="/images/bsi-logo-nav.png" alt="BSI" class="logo-img">
+        <span class="logo-text">Blaze Sports Intel</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/scores">Scores</a></li>
+        <li><a href="/college-baseball/" class="active">College Baseball</a></li>
+        <li><a href="/mlb">MLB</a></li>
+        <li><a href="/nfl">NFL</a></li>
+        <li><a href="/tools">Tools</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="/subscribe" class="btn-primary">Go Pro</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main id="main-content">
+    <!-- Loading State -->
+    <div id="loading-state" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading team data...</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Extract team slug from URL
+    function getTeamSlug() {
+      const path = window.location.pathname;
+      const match = path.match(/\/college-baseball\/teams\/([a-z0-9-]+)/i);
+      return match ? match[1] : null;
+    }
+
+    // Safe text setting - prevents XSS by using textContent
+    function setText(elementId, text) {
+      const el = document.getElementById(elementId);
+      if (el) el.textContent = text;
+    }
+
+    // Update meta tags safely
+    function updateMeta(id, attr, value) {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute(attr, value);
+    }
+
+    // Create element safely
+    function createElement(tag, className, textContent) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (textContent) el.textContent = textContent;
+      return el;
+    }
+
+    // Build team page content
+    function buildTeamPage(team) {
+      const main = document.getElementById('main-content');
+      main.textContent = ''; // Clear loading state
+
+      // Update CSS variables with team colors
+      if (team.primary_color) {
+        document.documentElement.style.setProperty('--team-primary', team.primary_color);
+      }
+      if (team.secondary_color) {
+        document.documentElement.style.setProperty('--team-secondary', team.secondary_color);
+      }
+
+      // Update SEO metadata
+      const title = team.seo_title || `${team.name} Baseball | Blaze Sports Intel`;
+      document.title = title;
+      updateMeta('meta-description', 'content', team.seo_description || `${team.name} baseball coverage: schedule, roster, stats, and recruiting news.`);
+      updateMeta('og-title', 'content', title);
+      updateMeta('og-description', 'content', team.seo_description || '');
+      updateMeta('og-url', 'content', `https://blazesportsintel.com/college-baseball/teams/${team.slug}`);
+      updateMeta('twitter-title', 'content', title);
+      updateMeta('twitter-description', 'content', team.seo_description || '');
+      updateMeta('canonical-url', 'href', `https://blazesportsintel.com/college-baseball/teams/${team.slug}`);
+      if (team.seo_keywords) {
+        updateMeta('meta-keywords', 'content', team.seo_keywords);
+      }
+
+      // Update structured data
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "SportsTeam",
+        "name": team.name,
+        "sport": "Baseball",
+        "url": `https://blazesportsintel.com/college-baseball/teams/${team.slug}`,
+        "location": {
+          "@type": "Place",
+          "name": team.stadium_name || '',
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": team.city,
+            "addressRegion": team.state
+          }
+        },
+        "memberOf": {
+          "@type": "SportsOrganization",
+          "name": team.conference
+        }
+      };
+      const sdScript = document.getElementById('structured-data');
+      if (sdScript) sdScript.textContent = JSON.stringify(structuredData);
+
+      // Build Team Header
+      const header = createElement('header', 'team-header');
+      const headerInner = createElement('div', 'team-header-inner');
+
+      // Logo container
+      const logoContainer = createElement('div', 'team-logo-container');
+      if (team.logo_url) {
+        const logoImg = document.createElement('img');
+        logoImg.src = team.logo_url;
+        logoImg.alt = team.name;
+        logoContainer.appendChild(logoImg);
+      } else {
+        const placeholder = createElement('span', 'team-logo-placeholder', team.abbreviation || team.slug.substring(0, 3).toUpperCase());
+        logoContainer.appendChild(placeholder);
+      }
+      headerInner.appendChild(logoContainer);
+
+      // Team info
+      const teamInfo = createElement('div', 'team-info');
+      const conference = createElement('div', 'team-conference', team.conference + ' Conference');
+      const teamName = createElement('h1', 'team-name', team.name);
+      const location = createElement('div', 'team-location');
+      location.textContent = `${team.city}, ${team.state}`;
+      if (team.stadium_name) {
+        location.textContent += ` • ${team.stadium_name}`;
+      }
+      teamInfo.appendChild(conference);
+      teamInfo.appendChild(teamName);
+      teamInfo.appendChild(location);
+      headerInner.appendChild(teamInfo);
+      header.appendChild(headerInner);
+      main.appendChild(header);
+
+      // Sub Navigation
+      const subNav = createElement('nav', 'sub-nav');
+      const subNavInner = createElement('div', 'sub-nav-inner');
+      const navLinks = [
+        { href: '/college-baseball/', text: 'Overview' },
+        { href: '/college-baseball/scores', text: 'Scores' },
+        { href: '/college-baseball/rankings', text: 'Rankings' },
+        { href: '/college-baseball/standings', text: 'Standings' },
+        { href: '/college-baseball/teams', text: 'Teams', active: true },
+        { href: '/college-baseball/transfer-portal', text: 'Transfer Portal' }
+      ];
+      navLinks.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.textContent = link.text;
+        if (link.active) a.className = 'active';
+        subNavInner.appendChild(a);
+      });
+      subNav.appendChild(subNavInner);
+      main.appendChild(subNav);
+
+      // Content Section
+      const content = createElement('section', 'content');
+      const contentInner = createElement('div', 'content-inner');
+
+      // Quick Stats
+      const statsSection = createElement('div', 'quick-stats');
+      const stats = [
+        { value: team.division || 'D1', label: 'Division' },
+        { value: team.conference || '-', label: 'Conference' },
+        { value: team.coach_name ? '1' : '0', label: 'Active' },
+        { value: team.page_views || '0', label: 'Views' }
+      ];
+      stats.forEach(stat => {
+        const card = createElement('div', 'stat-card');
+        const value = createElement('div', 'stat-value', stat.value);
+        const label = createElement('div', 'stat-label', stat.label);
+        card.appendChild(value);
+        card.appendChild(label);
+        statsSection.appendChild(card);
+      });
+      contentInner.appendChild(statsSection);
+
+      // Info Grid
+      const infoGrid = createElement('div', 'info-grid');
+
+      // Program Info Card
+      const programCard = createElement('div', 'info-card');
+      const programTitle = createElement('h3', 'info-card-title', 'Program Information');
+      programCard.appendChild(programTitle);
+
+      const programInfo = [
+        { label: 'Head Coach', value: team.coach_name || 'TBD' },
+        { label: 'Tenure', value: team.coach_years ? `${team.coach_years} years` : '-' },
+        { label: 'Record', value: team.coach_record || '-' },
+        { label: 'Mascot', value: team.mascot || '-' },
+        { label: 'Nickname', value: team.nickname || team.abbreviation || '-' }
+      ];
+      programInfo.forEach(info => {
+        const row = createElement('div', 'info-row');
+        const label = createElement('span', 'info-label', info.label);
+        const value = createElement('span', 'info-value', info.value);
+        row.appendChild(label);
+        row.appendChild(value);
+        programCard.appendChild(row);
+      });
+      infoGrid.appendChild(programCard);
+
+      // Facilities Card
+      const facilitiesCard = createElement('div', 'info-card');
+      const facilitiesTitle = createElement('h3', 'info-card-title', 'Facilities');
+      facilitiesCard.appendChild(facilitiesTitle);
+
+      const facilitiesInfo = [
+        { label: 'Stadium', value: team.stadium_name || 'TBD' },
+        { label: 'Capacity', value: team.stadium_capacity ? team.stadium_capacity.toLocaleString() : '-' },
+        { label: 'Surface', value: team.stadium_surface || '-' },
+        { label: 'Founded', value: team.founded_year || '-' }
+      ];
+      facilitiesInfo.forEach(info => {
+        const row = createElement('div', 'info-row');
+        const label = createElement('span', 'info-label', info.label);
+        const value = createElement('span', 'info-value', info.value);
+        row.appendChild(label);
+        row.appendChild(value);
+        facilitiesCard.appendChild(row);
+      });
+
+      // Social links
+      if (team.twitter_handle || team.instagram_handle || team.website_url) {
+        const socialLinks = createElement('div', 'social-links');
+        if (team.twitter_handle) {
+          const twitterLink = document.createElement('a');
+          twitterLink.href = `https://twitter.com/${team.twitter_handle.replace('@', '')}`;
+          twitterLink.className = 'social-link';
+          twitterLink.target = '_blank';
+          twitterLink.rel = 'noopener noreferrer';
+          twitterLink.textContent = team.twitter_handle;
+          socialLinks.appendChild(twitterLink);
+        }
+        if (team.instagram_handle) {
+          const instaLink = document.createElement('a');
+          instaLink.href = `https://instagram.com/${team.instagram_handle.replace('@', '')}`;
+          instaLink.className = 'social-link';
+          instaLink.target = '_blank';
+          instaLink.rel = 'noopener noreferrer';
+          instaLink.textContent = team.instagram_handle;
+          socialLinks.appendChild(instaLink);
+        }
+        if (team.website_url) {
+          const webLink = document.createElement('a');
+          webLink.href = team.website_url;
+          webLink.className = 'social-link';
+          webLink.target = '_blank';
+          webLink.rel = 'noopener noreferrer';
+          webLink.textContent = 'Official Site';
+          socialLinks.appendChild(webLink);
+        }
+        facilitiesCard.appendChild(socialLinks);
+      }
+      infoGrid.appendChild(facilitiesCard);
+      contentInner.appendChild(infoGrid);
+
+      content.appendChild(contentInner);
+      main.appendChild(content);
+    }
+
+    // Show error state
+    function showError(message) {
+      const main = document.getElementById('main-content');
+      main.textContent = '';
+
+      const errorDiv = createElement('div', 'error-state');
+      const h2 = createElement('h2', '', 'Team Not Found');
+      const p = createElement('p', '', message || 'We couldn\'t find the team you\'re looking for.');
+      const backLink = document.createElement('a');
+      backLink.href = '/college-baseball/teams';
+      backLink.className = 'btn-back';
+      backLink.textContent = 'Browse All Teams';
+
+      errorDiv.appendChild(h2);
+      errorDiv.appendChild(p);
+      errorDiv.appendChild(backLink);
+      main.appendChild(errorDiv);
+    }
+
+    // Fetch team data
+    async function loadTeam() {
+      const slug = getTeamSlug();
+      if (!slug) {
+        showError('No team specified in URL.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/college-baseball/teams/${slug}`);
+        if (!response.ok) {
+          throw new Error('Team not found');
+        }
+        const data = await response.json();
+        if (data.success && data.data) {
+          buildTeamPage(data.data);
+        } else {
+          showError(data.error || 'Team not found');
+        }
+      } catch (error) {
+        console.error('Error loading team:', error);
+        showError('Failed to load team data. Please try again.');
+      }
+    }
+
+    // Navigation scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('.nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadTeam);
+  </script>
+</body>
+</html>
