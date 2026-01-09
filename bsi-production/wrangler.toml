@@ -70,3 +70,4 @@ local_protocol = "http"
 # - STRIPE_SECRET_KEY
 # - STRIPE_WEBHOOK_SECRET
 # - SESSION_SECRET
+# - RESEND_API_KEY

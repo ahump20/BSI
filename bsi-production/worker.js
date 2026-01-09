@@ -511,6 +511,14 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       return handleNotificationUnsubscribe(url, env, corsHeaders);
     }
 
+    if (path === '/api/transfer-portal/notifications/process' && request.method === 'POST') {
+      return processTransferNotifications(env, corsHeaders);
+    }
+    if (path === '/api/transfer-portal/notifications/digest' && request.method === 'POST') {
+      const body = await request.json().catch(function() { return {}; });
+      const frequency = body.frequency || 'daily';
+      return processDigestNotifications(env, frequency, corsHeaders);
+    }
     // Admin photos page
     if (path === '/admin/photos' || path === '/admin/photos.html') {
       return serveAsset(env, 'origin/admin/photos.html', 'text/html', corsHeaders);
@@ -4403,5 +4411,211 @@ async function getConferenceFlow(searchParams, env, corsHeaders) {
   } catch (error) {
     console.error('Conference Flow Error:', error);
     return new Response(JSON.stringify({ error: 'Failed to calculate conference flow', details: error.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+// =============================================================================
+// EMAIL NOTIFICATION SYSTEM - Resend Integration
+// =============================================================================
+
+async function sendEmail(env, to, subject, html) {
+  if (!env.RESEND_API_KEY) {
+    console.error('RESEND_API_KEY not configured');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + env.RESEND_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Blaze Sports Intel <notifications@blazesportsintel.com>',
+        to: [to],
+        subject: subject,
+        html: html
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Resend API error:', error);
+      return { success: false, error };
+    }
+
+    const result = await response.json();
+    return { success: true, id: result.id };
+  } catch (error) {
+    console.error('Email send error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function generateTransferNotificationEmail(transfers, subscriber) {
+  var transferRows = transfers.map(function(t) {
+    return '<tr style="border-bottom: 1px solid #333;">' +
+      '<td style="padding: 12px; font-weight: 600; color: #FAF8F5;">' + t.player_name + '</td>' +
+      '<td style="padding: 12px; color: #999;">' + t.position + '</td>' +
+      '<td style="padding: 12px; color: #FF6B35;">' + t.from_school + '</td>' +
+      '<td style="padding: 12px; color: #2E7D32;">' + (t.to_school || 'Uncommitted') + '</td>' +
+      '<td style="padding: 12px; color: #666;">' + t.status + '</td>' +
+      '</tr>';
+  }).join('');
+
+  return '<!DOCTYPE html>' +
+    '<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>' +
+    '<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; background-color: #0D0D0D; color: #FAF8F5;">' +
+    '<div style="max-width: 600px; margin: 0 auto; padding: 20px;">' +
+    '<div style="text-align: center; padding: 30px 0; border-bottom: 2px solid #BF5700;">' +
+    '<h1 style="margin: 0; color: #BF5700; font-size: 24px;">Transfer Portal Update</h1>' +
+    '<p style="margin: 10px 0 0; color: #999; font-size: 14px;">Blaze Sports Intel</p></div>' +
+    '<div style="padding: 30px 0;">' +
+    '<p style="color: #FAF8F5; font-size: 16px; margin: 0 0 20px;">' + transfers.length + ' new transfer' + (transfers.length > 1 ? 's' : '') + ' matching your preferences:</p>' +
+    '<table style="width: 100%; border-collapse: collapse; background-color: #1A1A1A; border-radius: 8px; overflow: hidden;">' +
+    '<thead><tr style="background-color: #2A2A2A;">' +
+    '<th style="padding: 12px; text-align: left; color: #BF5700; font-size: 12px; text-transform: uppercase;">Player</th>' +
+    '<th style="padding: 12px; text-align: left; color: #BF5700; font-size: 12px; text-transform: uppercase;">Pos</th>' +
+    '<th style="padding: 12px; text-align: left; color: #BF5700; font-size: 12px; text-transform: uppercase;">From</th>' +
+    '<th style="padding: 12px; text-align: left; color: #BF5700; font-size: 12px; text-transform: uppercase;">To</th>' +
+    '<th style="padding: 12px; text-align: left; color: #BF5700; font-size: 12px; text-transform: uppercase;">Status</th>' +
+    '</tr></thead><tbody>' + transferRows + '</tbody></table>' +
+    '<div style="margin-top: 30px; text-align: center;">' +
+    '<a href="https://blazesportsintel.com/transfer-portal" style="display: inline-block; background-color: #BF5700; color: #FAF8F5; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: 600;">View Full Portal</a></div></div>' +
+    '<div style="border-top: 1px solid #333; padding: 20px 0; text-align: center;">' +
+    '<p style="color: #666; font-size: 12px; margin: 0;">Born to blaze the path less beaten.</p>' +
+    '<p style="color: #666; font-size: 11px; margin: 10px 0 0;">' +
+    '<a href="https://blazesportsintel.com/api/transfer-portal/unsubscribe?token=' + subscriber.unsubscribe_token + '" style="color: #999;">Unsubscribe</a></p></div></div></body></html>';
+}
+
+async function processTransferNotifications(env, corsHeaders) {
+  var results = { processed: 0, sent: 0, errors: [] };
+
+  try {
+    var subscribersResult = await env.DB.prepare("SELECT * FROM notification_subscribers WHERE status = 'active' AND frequency = 'instant'").all();
+    var subscribers = subscribersResult.results;
+
+    if (!subscribers || subscribers.length === 0) {
+      return new Response(JSON.stringify({ message: 'No active instant subscribers', processed: 0, sent: 0, errors: [] }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    var transfersResult = await env.DB.prepare("SELECT * FROM transfer_portal WHERE datetime(created_at) > datetime('now', '-24 hours') ORDER BY created_at DESC").all();
+    var recentTransfers = transfersResult.results;
+
+    if (!recentTransfers || recentTransfers.length === 0) {
+      return new Response(JSON.stringify({ message: 'No new transfers in last 24 hours', processed: 0, sent: 0, errors: [] }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    for (var i = 0; i < subscribers.length; i++) {
+      var subscriber = subscribers[i];
+      results.processed++;
+      var matchedTransfers = recentTransfers.slice();
+
+      if (subscriber.filters_position) {
+        var positions = subscriber.filters_position.split(',').map(function(p) { return p.trim().toUpperCase(); });
+        matchedTransfers = matchedTransfers.filter(function(t) {
+          return positions.some(function(p) { return (t.position || '').toUpperCase().indexOf(p) >= 0; });
+        });
+      }
+
+      if (subscriber.filters_conference) {
+        var conferences = subscriber.filters_conference.split(',').map(function(c) { return c.trim().toUpperCase(); });
+        matchedTransfers = matchedTransfers.filter(function(t) {
+          return conferences.some(function(c) {
+            return (t.from_conference || '').toUpperCase().indexOf(c) >= 0 || (t.to_conference || '').toUpperCase().indexOf(c) >= 0;
+          });
+        });
+      }
+
+      if (matchedTransfers.length === 0) continue;
+
+      if (subscriber.last_notified_at) {
+        var lastNotified = new Date(subscriber.last_notified_at);
+        matchedTransfers = matchedTransfers.filter(function(t) { return new Date(t.created_at) > lastNotified; });
+      }
+
+      if (matchedTransfers.length === 0) continue;
+
+      var subject = matchedTransfers.length + ' New Transfer' + (matchedTransfers.length > 1 ? 's' : '') + ' in the Portal';
+      var html = generateTransferNotificationEmail(matchedTransfers, subscriber);
+      var emailResult = await sendEmail(env, subscriber.email, subject, html);
+
+      if (emailResult.success) {
+        results.sent++;
+        await env.DB.prepare("UPDATE notification_subscribers SET last_notified_at = datetime('now'), notification_count = notification_count + 1, updated_at = datetime('now') WHERE id = ?").bind(subscriber.id).run();
+      } else {
+        results.errors.push({ email: subscriber.email, error: emailResult.error });
+      }
+    }
+
+    return new Response(JSON.stringify({ success: true, message: 'Processed ' + results.processed + ' subscribers, sent ' + results.sent + ' emails', processed: results.processed, sent: results.sent, errors: results.errors, timestamp: getChicagoTimestamp() }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+
+  } catch (error) {
+    console.error('Notification processing error:', error);
+    return new Response(JSON.stringify({ success: false, error: error.message, processed: results.processed, sent: results.sent, errors: results.errors }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+  }
+}
+
+async function processDigestNotifications(env, frequency, corsHeaders) {
+  var results = { processed: 0, sent: 0, errors: [] };
+  var periodHours = frequency === 'daily' ? 24 : 168;
+
+  try {
+    var subscribersResult = await env.DB.prepare("SELECT * FROM notification_subscribers WHERE status = 'active' AND frequency = ?").bind(frequency).all();
+    var subscribers = subscribersResult.results;
+
+    if (!subscribers || subscribers.length === 0) {
+      return new Response(JSON.stringify({ message: 'No active ' + frequency + ' subscribers', processed: 0, sent: 0, errors: [] }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    var transfersResult = await env.DB.prepare("SELECT * FROM transfer_portal WHERE datetime(created_at) > datetime('now', '-" + periodHours + " hours') ORDER BY created_at DESC").all();
+    var recentTransfers = transfersResult.results;
+
+    if (!recentTransfers || recentTransfers.length === 0) {
+      return new Response(JSON.stringify({ message: 'No transfers in last ' + periodHours + ' hours', processed: 0, sent: 0, errors: [] }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    for (var i = 0; i < subscribers.length; i++) {
+      var subscriber = subscribers[i];
+      results.processed++;
+      var matchedTransfers = recentTransfers.slice();
+
+      if (subscriber.filters_position) {
+        var positions = subscriber.filters_position.split(',').map(function(p) { return p.trim().toUpperCase(); });
+        matchedTransfers = matchedTransfers.filter(function(t) {
+          return positions.some(function(p) { return (t.position || '').toUpperCase().indexOf(p) >= 0; });
+        });
+      }
+
+      if (subscriber.filters_conference) {
+        var conferences = subscriber.filters_conference.split(',').map(function(c) { return c.trim().toUpperCase(); });
+        matchedTransfers = matchedTransfers.filter(function(t) {
+          return conferences.some(function(c) {
+            return (t.from_conference || '').toUpperCase().indexOf(c) >= 0 || (t.to_conference || '').toUpperCase().indexOf(c) >= 0;
+          });
+        });
+      }
+
+      if (matchedTransfers.length === 0) continue;
+
+      var periodLabel = frequency === 'daily' ? 'Daily' : 'Weekly';
+      var subject = periodLabel + ' Transfer Portal Digest - ' + matchedTransfers.length + ' Update' + (matchedTransfers.length > 1 ? 's' : '');
+      var html = generateTransferNotificationEmail(matchedTransfers, subscriber);
+      var emailResult = await sendEmail(env, subscriber.email, subject, html);
+
+      if (emailResult.success) {
+        results.sent++;
+        await env.DB.prepare("UPDATE notification_subscribers SET last_notified_at = datetime('now'), notification_count = notification_count + 1, updated_at = datetime('now') WHERE id = ?").bind(subscriber.id).run();
+      } else {
+        results.errors.push({ email: subscriber.email, error: emailResult.error });
+      }
+    }
+
+    return new Response(JSON.stringify({ success: true, message: frequency + ' digest: processed ' + results.processed + ', sent ' + results.sent, processed: results.processed, sent: results.sent, errors: results.errors, timestamp: getChicagoTimestamp() }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+
+  } catch (error) {
+    console.error(frequency + ' digest error:', error);
+    return new Response(JSON.stringify({ success: false, error: error.message, processed: results.processed, sent: results.sent, errors: results.errors }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   }
 }
