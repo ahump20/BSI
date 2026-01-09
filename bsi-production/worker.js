@@ -565,6 +565,26 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       }
     }
 
+    // === TRANSFER PORTAL ROUTES ===
+    if (path === '/transfer-portal' || path === '/transfer-portal/') {
+      return serveAsset(env, 'origin/transfer-portal/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/transfer-portal/')) {
+      const subPath = path.replace('/transfer-portal/', '').replace(/\/$/, '');
+      let assetPath = `origin/transfer-portal/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        assetPath = `origin/transfer-portal/${subPath}/index.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        const contentType = assetPath.endsWith('.js') ? 'application/javascript' :
+                           assetPath.endsWith('.css') ? 'text/css' : 'text/html';
+        return new Response(asset.body, {
+          headers: { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
     // === MLB ROUTES ===
     if (path === '/mlb' || path === '/mlb/') {
       return serveAsset(env, 'origin/mlb/index.html', 'text/html', corsHeaders);
