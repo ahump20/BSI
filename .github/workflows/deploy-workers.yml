@@ -76,31 +76,31 @@ jobs:
             WORKERS="[]"
 
             if echo "$CHANGED_FILES" | grep -q "workers/prediction/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["bsi-prediction-api"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-prediction-api"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "workers/bsi-news-ticker/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["bsi-news-ticker"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-news-ticker"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "workers/bsi-cfb-ai/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["bsi-cfb-ai"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-cfb-ai"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "workers/ingest/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["blazesports-ingest"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blazesports-ingest"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "workers/bsi-cache-warmer/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["bsi-cache-warmer"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-cache-warmer"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "bsi-production/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["bsi-home"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-home"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "workers/bsi-chatgpt-app/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["bsi-chatgpt-app"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-chatgpt-app"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "src/agents/bsi-agent/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["bsi-portal-agent"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-portal-agent"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "games/blitz/"; then
-              WORKERS=$(echo "$WORKERS" | jq '. + ["blaze-blitz-football"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blaze-blitz-football"]')
             fi
           fi
 
