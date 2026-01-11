@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College football rankings from CFP, AP Poll, and Coaches Poll. Updated weekly.">
+  <title>College Football Rankings | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --bsi-success: #2E7D32;
+      --bsi-warning: #F9A825;
+      --bsi-error: #C62828;
+      --font-display: 'Oswald', sans-serif;
+      --font-body: 'Cormorant Garamond', Georgia, serif;
+      --font-ui: 'Oswald', sans-serif;
+      --font-mono: 'Oswald', sans-serif;
+    }
+
+    /* BSI Brand: Dark mode only */
+          background: #F5F5F5;
+      color: #1A1A1A;
+    }
+          background: rgba(255, 255, 255, 0.95);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 7rem 2rem 2rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+    }
+    .page-header h1 span { color: var(--bsi-burnt-orange); }
+
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(250, 248, 245, 0.7);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 2rem;
+      background: var(--bsi-midnight);
+      min-height: 60vh;
+    }
+    .content-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .freshness-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .freshness-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .freshness-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .poll-selector {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .poll-btn {
+      padding: 0.75rem 1.25rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: rgba(250, 248, 245, 0.8);
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .poll-btn:hover { border-color: var(--bsi-burnt-orange); }
+    .poll-btn.active {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+      color: white;
+    }
+
+    .rankings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(250, 248, 245, 0.5);
+    }
+
+    .ranking-row {
+      display: grid;
+      grid-template-columns: 50px 1fr auto auto;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s;
+    }
+    .ranking-row:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateX(4px);
+    }
+
+    .rank {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--bsi-burnt-orange);
+      text-align: center;
+    }
+    .rank.top-4 { color: var(--bsi-gold); }
+
+    .team-info-rank {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .team-logo-rank {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .team-logo-rank img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .team-details h3 {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.125rem;
+    }
+    .team-details .conference {
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+
+    .team-record {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.7);
+      text-align: right;
+      min-width: 60px;
+    }
+
+    .team-change {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: right;
+    }
+    .team-change.up { color: var(--bsi-success); }
+    .team-change.down { color: var(--bsi-error); }
+    .team-change.same { color: rgba(250, 248, 245, 0.3); }
+
+    .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.5);
+    }
+    .empty-state h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: rgba(250, 248, 245, 0.7);
+    }
+
+    /* Source badge */
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(250, 248, 245, 0.8);
+    }
+    .source-badge.highlightly {
+      background: rgba(191, 87, 0, 0.2);
+      color: var(--bsi-burnt-orange);
+    }
+    .source-badge.espn {
+      background: rgba(201, 162, 39, 0.2);
+      color: var(--bsi-gold);
+    }
+    .source-badge.database {
+      background: rgba(46, 125, 50, 0.2);
+      color: var(--bsi-success);
+    }
+    .source-badge.error {
+      background: rgba(198, 40, 40, 0.2);
+      color: var(--bsi-error);
+    }
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .last-updated {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.4);
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.5);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .page-header { padding: 5rem 1rem 1.5rem; }
+      .content { padding: 1rem; }
+      .sub-nav { top: 52px; padding: 0.75rem 1rem; }
+      .ranking-row { grid-template-columns: 40px 1fr auto; }
+      .team-change { display: none; }
+    }
+  
+  /* BSI Brand: Dark mode only */
+    .theme-toggle{background:transparent;border:1px solid rgba(250,248,245,0.2);border-radius:6px;padding:8px;cursor:pointer;color:#FAF8F5;display:flex;align-items:center;justify-content:center;margin-left:auto}
+  .theme-toggle:hover{border-color:#BF5700}
+  .theme-toggle svg{width:18px;height:18px}
+    .team-row.texas-team,.game-card.texas-game,.ranking-row.texas-team{border:2px solid rgba(191,87,0,0.4);background:linear-gradient(135deg,rgba(191,87,0,0.1),transparent);position:relative}
+  .team-row.texas-team::before,.game-card.texas-game::before,.ranking-row.texas-team::before{content:'🤘';position:absolute;left:-1.5rem;font-size:1rem}
+    .source-tag { font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.5rem; }
+    .source-tag.highlightly { background: linear-gradient(135deg, #10B981, #059669); color: white; }
+    .source-tag.espn { background: linear-gradient(135deg, #C9082A, #8B0000); color: white; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <nav class="nav">
+        <a href="/college-baseball">College Baseball</a>
+        <a href="/college-football" class="active">College Football</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>College Football <span>Rankings</span></h1>
+      </div>
+    </section>
+
+    <nav class="sub-nav">
+      <div class="sub-nav-inner">
+        <a href="/college-football">Overview</a>
+        <a href="/college-football/scores">Scores</a>
+        <a href="/college-football/standings">Standings</a>
+        <a href="/college-football/rankings" class="active">Rankings</a>
+        <a href="/college-football/teams">Teams</a>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="content-inner">
+        <div class="freshness-header">
+          <h2 style="font-family: var(--font-display); font-size: 1.25rem; margin: 0;">Rankings</h2>
+          <span class="source-badge" id="sourceBadge">
+            <span class="status-dot"></span>
+            <span id="sourceLabel">Loading</span>
+          </span>
+          <div class="freshness-container">
+            <span class="freshness-label">Data:</span>
+            <span id="freshnessBadge"></span>
+          </div>
+        </div>
+
+        <div class="poll-selector">
+          <button class="poll-btn active" data-poll="cfp">CFP Rankings</button>
+          <button class="poll-btn" data-poll="ap">AP Top 25</button>
+          <button class="poll-btn" data-poll="coaches">Coaches Poll</button>
+        </div>
+
+        <div id="rankingsContainer">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading rankings...</p>
+          </div>
+        </div>
+
+        <p class="last-updated" id="lastUpdated"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to Blaze the Path Less Beaten.</p>
+  </footer>
+
+  <script src="/src/js/freshness-indicator.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      var currentPoll = 'cfp';
+      var rankingsData = null;
+      var freshnessController = null;
+      var lastSyncTime = null;
+
+      function showLoading(container) {
+        container.replaceChildren();
+        var loading = document.createElement('div');
+        loading.className = 'loading';
+        var spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        loading.appendChild(spinner);
+        var text = document.createElement('p');
+        text.textContent = 'Loading rankings...';
+        loading.appendChild(text);
+        container.appendChild(loading);
+      }
+
+      function createRankingRow(team, index) {
+        var row = document.createElement('div');
+        row.className = 'ranking-row';
+
+        var rankDiv = document.createElement('div');
+        rankDiv.className = 'rank' + (index < 4 ? ' top-4' : '');
+        rankDiv.textContent = index + 1;
+        row.appendChild(rankDiv);
+
+        var infoDiv = document.createElement('div');
+        infoDiv.className = 'team-info-rank';
+
+        var logoDiv = document.createElement('div');
+        logoDiv.className = 'team-logo-rank';
+        var teamObj = team.team || {};
+        var logoUrl = teamObj.logo || (teamObj.logos && teamObj.logos[0] && teamObj.logos[0].href);
+        if (logoUrl) {
+          var img = document.createElement('img');
+          img.src = logoUrl;
+          img.alt = teamObj.displayName || '';
+          img.onerror = function() { this.style.display = 'none'; };
+          logoDiv.appendChild(img);
+        }
+        infoDiv.appendChild(logoDiv);
+
+        var detailsDiv = document.createElement('div');
+        detailsDiv.className = 'team-details';
+        var nameH3 = document.createElement('h3');
+        nameH3.textContent = teamObj.displayName || teamObj.name || team.name || 'Unknown';
+        detailsDiv.appendChild(nameH3);
+        var confSpan = document.createElement('span');
+        confSpan.className = 'conference';
+        confSpan.textContent = teamObj.conferenceId || team.conference || '';
+        detailsDiv.appendChild(confSpan);
+        infoDiv.appendChild(detailsDiv);
+        row.appendChild(infoDiv);
+
+        var recordDiv = document.createElement('div');
+        recordDiv.className = 'team-record';
+        recordDiv.textContent = team.recordSummary || team.record || '';
+        row.appendChild(recordDiv);
+
+        var changeDiv = document.createElement('div');
+        changeDiv.className = 'team-change';
+        var prev = team.previousRank || team.previous || (index + 1);
+        var curr = team.current || team.rank || (index + 1);
+        var diff = prev - curr;
+        if (diff > 0) {
+          changeDiv.classList.add('up');
+          changeDiv.textContent = '+' + diff;
+        } else if (diff < 0) {
+          changeDiv.classList.add('down');
+          changeDiv.textContent = diff;
+        } else {
+          changeDiv.classList.add('same');
+          changeDiv.textContent = '-';
+        }
+        row.appendChild(changeDiv);
+
+        return row;
+      }
+
+      function renderRankings(teams) {
+        var container = document.getElementById('rankingsContainer');
+        container.replaceChildren();
+
+        if (!teams || teams.length === 0) {
+          var empty = document.createElement('div');
+          empty.className = 'empty-state';
+          var h3 = document.createElement('h3');
+          h3.textContent = 'Rankings Not Available';
+          empty.appendChild(h3);
+          var p = document.createElement('p');
+          p.textContent = 'Check back during the season (August-January) for updated rankings.';
+          empty.appendChild(p);
+          container.appendChild(empty);
+          return;
+        }
+
+        var header = document.createElement('div');
+        header.className = 'rankings-header';
+        var rankLabel = document.createElement('span');
+        rankLabel.textContent = 'Rank';
+        header.appendChild(rankLabel);
+        var teamLabel = document.createElement('span');
+        teamLabel.textContent = 'Team';
+        header.appendChild(teamLabel);
+        var recordLabel = document.createElement('span');
+        recordLabel.textContent = 'Record';
+        header.appendChild(recordLabel);
+        var changeLabel = document.createElement('span');
+        changeLabel.textContent = '+/-';
+        header.appendChild(changeLabel);
+        container.appendChild(header);
+
+        teams.slice(0, 25).forEach(function(team, i) {
+          container.appendChild(createRankingRow(team, i));
+        });
+      }
+
+      function updateFreshnessIndicator() {
+        if (!window.BSIFreshness) return;
+        var container = document.getElementById('freshnessBadge');
+        if (!container) return;
+
+        if (freshnessController) {
+          freshnessController.update({ lastSync: lastSyncTime, isLive: false });
+        } else {
+          freshnessController = BSIFreshness.render({
+            container: container,
+            lastSync: lastSyncTime,
+            source: 'espn',
+            sport: 'football',
+            isLive: false,
+            showTooltip: true,
+            size: 'default',
+            autoUpdate: true
+          });
+        }
+      }
+
+      // Update source badge
+      function updateSourceBadge(source, status) {
+        var badge = document.getElementById('sourceBadge');
+        var label = document.getElementById('sourceLabel');
+        if (!badge || !label) return;
+        
+        var dot = badge.querySelector('.status-dot');
+        badge.className = 'source-badge';
+        
+        var sourceMap = {
+          'highlightly': { name: 'Highlightly', class: 'highlightly' },
+          'Highlightly Pro': { name: 'Highlightly', class: 'highlightly' },
+          'espn': { name: 'ESPN', class: 'espn' },
+          'ESPN': { name: 'ESPN', class: 'espn' },
+          'database': { name: 'Cached', class: 'database' },
+          'bsi-database': { name: 'Cached', class: 'database' },
+          'error': { name: 'Error', class: 'error' }
+        };
+        
+        var mapped = sourceMap[source] || { name: source || 'Unknown', class: '' };
+        label.textContent = mapped.name;
+        if (mapped.class) badge.classList.add(mapped.class);
+      }
+
+      async function loadRankings() {
+        var container = document.getElementById('rankingsContainer');
+        showLoading(container);
+
+        try {
+          var response = await fetch('/api/cfb/rankings');
+          var data = await response.json();
+
+          rankingsData = data;
+          lastSyncTime = data.lastUpdated || data.lastSync || new Date().toISOString();
+          
+          // Update source badge
+          updateSourceBadge(data.source || 'espn', data.status || 'ok');
+
+          var rankings = data.data || data.rankings || [];
+          var pollRankings = null;
+
+          for (var i = 0; i < rankings.length; i++) {
+            var r = rankings[i];
+            var name = (r.name || '').toLowerCase();
+            var type = (r.type || '').toLowerCase();
+
+            if (currentPoll === 'cfp' && (name.includes('playoff') || name.includes('cfp') || type.includes('playoff'))) {
+              pollRankings = r;
+              break;
+            } else if (currentPoll === 'ap' && (name.includes('ap ') || name.includes('associated press') || type === 'ap')) {
+              pollRankings = r;
+              break;
+            } else if (currentPoll === 'coaches' && (name.includes('coaches') || type === 'coaches')) {
+              pollRankings = r;
+              break;
+            }
+          }
+
+          if (!pollRankings && rankings.length > 0) {
+            pollRankings = rankings[0];
+          }
+
+          var teams = pollRankings && (pollRankings.ranks || pollRankings.teams) ? (pollRankings.ranks || pollRankings.teams) : [];
+
+          renderRankings(teams);
+          updateFreshnessIndicator();
+
+          document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleDateString('en-US', {
+            timeZone: 'America/Chicago',
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          });
+
+        } catch (error) {
+          console.error('Failed to load rankings from BSI API:', error);
+
+          try {
+            var espnRes = await fetch('/api/cfb/rankings');
+            var espnData = await espnRes.json();
+
+            rankingsData = espnData;
+            lastSyncTime = espnData.lastUpdated || new Date().toISOString();
+            
+            // Update source badge for ESPN data
+            updateSourceBadge(espnData.source || 'espn', 'ok');
+
+            var rankings = espnData.data || espnData.rankings || [];
+            var pollRankings = null;
+
+            for (var j = 0; j < rankings.length; j++) {
+              var r = rankings[j];
+              var name = (r.name || '').toLowerCase();
+
+              if (currentPoll === 'cfp' && (name.includes('playoff') || name.includes('cfp'))) {
+                pollRankings = r;
+                break;
+              } else if (currentPoll === 'ap' && name.includes('ap ')) {
+                pollRankings = r;
+                break;
+              } else if (currentPoll === 'coaches' && name.includes('coaches')) {
+                pollRankings = r;
+                break;
+              }
+            }
+
+            if (!pollRankings && rankings.length > 0) {
+              pollRankings = rankings[0];
+            }
+
+            var teams = pollRankings && pollRankings.ranks ? pollRankings.ranks : [];
+
+            renderRankings(teams);
+            updateFreshnessIndicator();
+
+            document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleDateString('en-US', {
+              timeZone: 'America/Chicago',
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric'
+            });
+
+          } catch (espnError) {
+            console.error('ESPN fallback also failed:', espnError);
+            updateSourceBadge('error', 'error');
+            lastSyncTime = null;
+            updateFreshnessIndicator();
+
+            container.replaceChildren();
+            var empty = document.createElement('div');
+            empty.className = 'empty-state';
+            var h3 = document.createElement('h3');
+            h3.textContent = 'Unable to Load Rankings';
+            empty.appendChild(h3);
+            var p = document.createElement('p');
+            p.textContent = 'Please try again later.';
+            empty.appendChild(p);
+            container.appendChild(empty);
+          }
+        }
+      }
+
+      document.querySelectorAll('.poll-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.poll-btn').forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+          currentPoll = this.getAttribute('data-poll');
+          loadRankings();
+        });
+      });
+
+      loadRankings();
+
+      window.addEventListener('beforeunload', function() {
+        if (freshnessController) freshnessController.destroy();
+      });
+    })();
+  
+  var themeToggle = document.querySelector('.theme-toggle');
+  if (themeToggle) {
+    var savedTheme = localStorage.getItem('bsi-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggle.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('bsi-theme', next);
+    });
+  }</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
+</body>
+</html>

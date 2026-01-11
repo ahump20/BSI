@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESPN Can't Find College Baseball. We Built It. | Blaze Sports Intel</title>
+    <meta name="description" content="While ESPN returns a 404 for college baseball, Blaze Sports Intel delivers live scores, D1 rankings, transfer portal tracking, and analytics tools. The coverage this sport deserves.">
+
+    <meta property="og:title" content="ESPN Can't Find College Baseball. We Built It.">
+    <meta property="og:description" content="ESPN's college baseball page: 'Page not found.' Our college baseball page: Live scores, rankings, standings, transfer portal, and analytics tools.">
+    <meta property="og:image" content="https://blazesportsintel.com/images/espn-404-vs-bsi.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blazesportsintel.com/promo/espn-cant-find-it">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ESPN Can't Find College Baseball. We Built It.">
+    <meta name="twitter:description" content="ESPN returns 404. BSI delivers live scores, rankings, and analytics. The coverage college baseball deserves.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+
+    <style>
+        :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-texas-soil: #8B4513;
+            --bsi-gold: #C9A227;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-ember: #FF6B35;
+            --bsi-error: #DC2626;
+            --font-display: 'Oswald', sans-serif;
+            --font-body: 'Cormorant Garamond', Georgia, serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .promo-page {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            padding: 1rem 1.5rem;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+            text-decoration: none;
+        }
+        .header-cta {
+            padding: 0.5rem 1.25rem;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            color: white;
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Hero Split */
+        .hero-split {
+            display: grid;
+            grid-template-columns: 1fr;
+            flex: 1;
+        }
+        @media (min-width: 768px) {
+            .hero-split { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* ESPN Side - The Problem */
+        .espn-side {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            border-bottom: 4px solid var(--bsi-error);
+        }
+        @media (min-width: 768px) {
+            .espn-side {
+                border-bottom: none;
+                border-right: 4px solid var(--bsi-error);
+                padding: 4rem 3rem;
+            }
+        }
+
+        .espn-logo {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #DC2626;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .error-box {
+            background: white;
+            color: #1a1a1a;
+            padding: 3rem 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .error-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+        .error-url {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #666;
+            background: #f5f5f5;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+        .error-message {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            color: #666;
+        }
+
+        .espn-caption {
+            margin-top: 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* BSI Side - The Solution */
+        .bsi-side {
+            background: linear-gradient(135deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            .bsi-side { padding: 4rem 3rem; }
+        }
+
+        .bsi-side::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 30% 30%, rgba(191, 87, 0, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .bsi-content {
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+        }
+
+        .bsi-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.875rem;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 100px;
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #10B981;
+            margin-bottom: 1.5rem;
+        }
+        .bsi-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .bsi-headline {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .bsi-headline .highlight {
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bsi-subhead {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            color: rgba(250, 248, 245, 0.8);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(191, 87, 0, 0.08);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 8px;
+        }
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .feature-icon svg {
+            width: 18px;
+            height: 18px;
+            color: white;
+        }
+        .feature-text {
+            font-family: var(--font-display);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--bsi-cream);
+        }
+
+        .cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .btn-primary {
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            color: white;
+            font-family: var(--font-display);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(191, 87, 0, 0.4);
+        }
+        .btn-secondary {
+            padding: 0.875rem 2rem;
+            background: transparent;
+            color: var(--bsi-cream);
+            font-family: var(--font-display);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: 1px solid rgba(250, 248, 245, 0.3);
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(250, 248, 245, 0.08);
+            border-color: rgba(250, 248, 245, 0.5);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--bsi-charcoal);
+            border-top: 1px solid rgba(191, 87, 0, 0.2);
+            padding: 1.5rem 2rem;
+        }
+        .stats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bsi-ember);
+        }
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(250, 248, 245, 0.6);
+            margin-top: 0.25rem;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 1.5rem 2rem;
+            background: var(--bsi-midnight);
+            border-top: 1px solid rgba(191, 87, 0, 0.1);
+            text-align: center;
+        }
+        .footer p {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.5);
+        }
+        .footer .tagline {
+            font-family: var(--font-body);
+            font-style: italic;
+            color: var(--bsi-burnt-orange);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="promo-page">
+        <header class="header">
+            <a href="/" class="logo">Blaze Sports Intel</a>
+            <a href="/college-baseball" class="header-cta">See It Live</a>
+        </header>
+
+        <main class="hero-split">
+            <!-- ESPN Side - The Problem -->
+            <div class="espn-side">
+                <div class="espn-logo">ESPN</div>
+                <div class="error-box">
+                    <h2 class="error-title">Page not found.</h2>
+                    <div class="error-url">espn.com/college-baseball/</div>
+                    <p class="error-message">The page you requested could not be found.</p>
+                </div>
+                <p class="espn-caption">Actual ESPN Result &mdash; January 2025</p>
+            </div>
+
+            <!-- BSI Side - The Solution -->
+            <div class="bsi-side">
+                <div class="bsi-content">
+                    <div class="bsi-badge">Live Now</div>
+                    <h1 class="bsi-headline">
+                        They can't find it.<br>
+                        <span class="highlight">We built it.</span>
+                    </h1>
+                    <p class="bsi-subhead">
+                        While the Worldwide Leader returns a 404, Blaze Sports Intel delivers the college baseball coverage this sport deserves.
+                    </p>
+
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <span class="feature-text">Live Scores</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                            </div>
+                            <span class="feature-text">D1 Rankings</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                            </div>
+                            <span class="feature-text">Transfer Portal</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            </div>
+                            <span class="feature-text">Standings</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                            </div>
+                            <span class="feature-text">Analytics Tools</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <span class="feature-text">Real-Time Data</span>
+                        </div>
+                    </div>
+
+                    <div class="cta-group">
+                        <a href="/college-baseball" class="btn-primary">Explore College Baseball</a>
+                        <a href="/tools" class="btn-secondary">See Our Tools</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="stats-bar">
+            <div class="stats-inner">
+                <div class="stat-item">
+                    <div class="stat-value">300+</div>
+                    <div class="stat-label">D1 Programs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">11</div>
+                    <div class="stat-label">Analytics Tools</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">Live</div>
+                    <div class="stat-label">Score Updates</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">$29</div>
+                    <div class="stat-label">Pro / Month</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+            <p class="tagline">Born to Blaze the Path Less Beaten.</p>
+        </footer>
+    </div>
+
+    <!-- Analytics -->
+    <script>
+        // Track page views for this promo
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                page_title: 'ESPN vs BSI Promo',
+                page_location: window.location.href,
+                campaign_name: 'espn_404_campaign'
+            });
+        }
+
+        // Track CTA clicks
+        document.querySelectorAll('.btn-primary, .btn-secondary, .header-cta').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'click', {
+                        event_category: 'promo_cta',
+                        event_label: this.textContent.trim(),
+                        campaign_name: 'espn_404_campaign'
+                    });
+                }
+            });
+        });
+    </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
+</body>
+</html>

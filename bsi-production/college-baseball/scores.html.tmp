@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Live college baseball scores from Blaze Sports Intel. Real-time D1 scores and results.">
+  <title>College Baseball Scores | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Oswald', sans-serif;
+      --font-body: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .theme-toggle { background: transparent; border: 1px solid rgba(250, 248, 245, 0.2); border-radius: 6px; padding: 8px; cursor: pointer; color: var(--bsi-cream); display: flex; align-items: center; justify-content: center; }
+    .theme-toggle:hover { border-color: var(--bsi-burnt-orange); }
+    .theme-toggle svg { width: 18px; height: 18px; }
+    [data-theme="light"] .theme-toggle { color: var(--bsi-charcoal); border-color: rgba(26, 26, 26, 0.2); }
+    .nav a {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(250, 248, 245, 0.8);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--bsi-burnt-orange); }
+
+    .page-header {
+      padding: 7rem 2rem 2rem;
+      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .page-header h1 span {
+      color: var(--bsi-burnt-orange);
+    }
+
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(250, 248, 245, 0.7);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .content {
+      padding: 2rem;
+      background: var(--bsi-midnight);
+      min-height: 60vh;
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+    }
+    .status-bar .last-updated {
+      color: rgba(250, 248, 245, 0.6);
+    }
+    .status-bar .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #22c55e;
+    }
+    .status-bar .live-indicator::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Enhanced freshness indicator */
+    .status-bar-enhanced {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .freshness-badge-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .freshness-label {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Source badge */
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(250, 248, 245, 0.8);
+    }
+    .source-badge.highlightly {
+      background: rgba(191, 87, 0, 0.2);
+      color: var(--bsi-burnt-orange);
+    }
+    .source-badge.espn {
+      background: rgba(201, 162, 39, 0.2);
+      color: var(--bsi-gold);
+    }
+    .source-badge.database {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+    .source-badge.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .status-dot.pulsing {
+      animation: statusPulse 2s infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    .date-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .date-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: rgba(250, 248, 245, 0.8);
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .date-btn:hover {
+      border-color: var(--bsi-burnt-orange);
+    }
+    .date-btn.active {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+      color: white;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+
+    .game-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.2s;
+    }
+    .game-card:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: translateY(-2px);
+    }
+    .game-card.live {
+      border-color: #22c55e;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.1);
+    }
+
+    .game-status {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .game-status.live { color: #22c55e; }
+    .game-status.final { color: rgba(250, 248, 245, 0.65); }
+    .game-status.scheduled { color: var(--bsi-burnt-orange); }
+
+    .team-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+    .team-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .team-logo {
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.625rem;
+      font-weight: 700;
+      overflow: hidden;
+    }
+    .team-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .team-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .team-rank {
+      font-size: 0.75rem;
+      color: var(--bsi-gold);
+      margin-right: 0.25rem;
+    }
+    .team-score {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .team-row.winner .team-score {
+      color: var(--bsi-burnt-orange);
+    }
+
+    .game-meta {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.75rem;
+      color: rgba(250, 248, 245, 0.65);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: rgba(250, 248, 245, 0.65);
+    }
+    .empty-state h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: rgba(250, 248, 245, 0.7);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bsi-charcoal);
+      text-align: center;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer p {
+      color: rgba(250, 248, 245, 0.65);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn { display: none; flex-direction: column; gap: 5px; padding: 8px; background: transparent; border: none; cursor: pointer; }
+    .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: var(--bsi-cream, #FAF8F5); transition: all 0.3s; }
+    .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+    .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    /* Light theme */
+    [data-theme="light"] { --bg-primary: var(--bsi-cream); --bg-secondary: #FFFFFF; --text-primary: var(--bsi-charcoal); }
+    [data-theme="light"] body { background: var(--bsi-cream); color: var(--bsi-charcoal); }
+    [data-theme="light"] .header { background: rgba(255, 255, 255, 0.95); }
+    [data-theme="light"] .game-card { background: #FFFFFF; border-color: rgba(0, 0, 0, 0.1); }
+    [data-theme="light"] .status-bar-enhanced { background: #FFFFFF; }
+    [data-theme="light"] .date-btn { background: #FFFFFF; border-color: rgba(0, 0, 0, 0.1); color: var(--bsi-charcoal); }
+    /* Longhorns highlighting */
+    .game-card.longhorns-game { border-color: rgba(191, 87, 0, 0.4) !important; background: linear-gradient(135deg, rgba(191, 87, 0, 0.08), var(--bsi-charcoal)); position: relative; }
+    .game-card.longhorns-game::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #BF5700, #FFFFFF); border-radius: 12px 12px 0 0; }
+    [data-theme="light"] .game-card.longhorns-game { background: linear-gradient(135deg, rgba(191, 87, 0, 0.12), #FFFFFF); }
+    @media (max-width: 768px) {
+      .mobile-menu-btn { display: flex; }
+      .nav { display: none; }
+      .page-header { padding: 5rem 1rem 1.5rem; }
+      .content { padding: 1rem; }
+      .sub-nav { top: 52px; padding: 0.75rem 1rem; }
+      .games-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <button class="mobile-menu-btn" aria-label="Menu"><span></span><span></span><span></span></button><nav class="nav">
+        <a href="/college-baseball" class="active">College Baseball</a>
+        <a href="/mlb">MLB</a>
+        <a href="/nfl">NFL</a>
+        <a href="/tools">Tools</a>
+        <a href="/login">Sign In</a><button class="theme-toggle" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>College Baseball <span>Scores</span></h1>
+      </div>
+    </section>
+
+    <nav class="sub-nav">
+      <div class="sub-nav-inner">
+        <a href="/college-baseball">Overview</a>
+        <a href="/college-baseball/scores" class="active">Scores</a>
+        <a href="/college-baseball/standings">Standings</a>
+        <a href="/college-baseball/rankings">Rankings</a>
+        <a href="/college-baseball/teams">Teams</a>
+        <a href="/college-baseball/players">Players</a>
+        <a href="/college-baseball/transfer-portal">Portal</a>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="content-inner">
+        <div class="status-bar-enhanced">
+          <div class="status-left">
+            <span class="source-badge" id="sourceBadge">
+              <span class="status-dot"></span>
+              <span id="sourceLabel">Loading</span>
+            </span>
+            <div class="freshness-badge-container">
+              <span class="freshness-label">Data:</span>
+              <span id="freshnessBadge"></span>
+            </div>
+            <span class="last-updated" id="lastUpdated">Loading...</span>
+          </div>
+          <span class="live-indicator" id="liveIndicator" style="display: none;">Live Updates</span>
+        </div>
+
+        <div class="date-nav" id="dateNav"></div>
+
+        <div id="gamesContainer">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading scores...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to blaze the path less beaten.</p>
+  </footer>
+
+  <script src="/src/js/freshness-indicator.js"></script>
+  <script>
+    var allGames = [];
+    var selectedDate = new Date().toISOString().split('T')[0];
+    var refreshInterval = null;
+    var freshnessController = null;
+    var lastSyncTime = null;
+    var hasLiveGames = false;
+
+    // Format time in America/Chicago
+    function formatChicagoTime(dateStr) {
+      if (!dateStr) return '';
+      try {
+        var d = new Date(dateStr);
+        return d.toLocaleString('en-US', {
+          timeZone: 'America/Chicago',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+      } catch (e) {
+        return '';
+      }
+    }
+
+    // Build date navigation
+    function buildDateNav() {
+      var nav = document.getElementById('dateNav');
+      nav.replaceChildren();
+
+      var today = new Date();
+      for (var i = -3; i <= 3; i++) {
+        var d = new Date(today);
+        d.setDate(d.getDate() + i);
+        var dateStr = d.toISOString().split('T')[0];
+
+        var btn = document.createElement('button');
+        btn.className = 'date-btn' + (dateStr === selectedDate ? ' active' : '');
+        btn.setAttribute('data-date', dateStr);
+
+        if (i === 0) {
+          btn.textContent = 'Today';
+        } else if (i === -1) {
+          btn.textContent = 'Yesterday';
+        } else if (i === 1) {
+          btn.textContent = 'Tomorrow';
+        } else {
+          btn.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+
+        btn.addEventListener('click', function() {
+          selectedDate = this.getAttribute('data-date');
+          document.querySelectorAll('.date-btn').forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+          loadScores();
+        });
+
+        nav.appendChild(btn);
+      }
+    }
+
+    // Create game card safely
+    function createGameCard(game) {
+      var card = document.createElement('div');
+      card.className = 'game-card';
+
+      var isLive = game.status?.type?.state === 'in' || game.status?.type?.name === 'STATUS_IN_PROGRESS';
+      var isFinal = game.status?.type?.completed || game.status?.type?.name === 'STATUS_FINAL';
+
+      if (isLive) card.classList.add('live');
+
+      // Status
+      var statusDiv = document.createElement('div');
+      statusDiv.className = 'game-status';
+      if (isLive) {
+        statusDiv.classList.add('live');
+        statusDiv.textContent = game.status?.type?.detail || 'LIVE';
+      } else if (isFinal) {
+        statusDiv.classList.add('final');
+        statusDiv.textContent = 'FINAL';
+      } else {
+        statusDiv.classList.add('scheduled');
+        statusDiv.textContent = formatChicagoTime(game.date) || 'TBD';
+      }
+      card.appendChild(statusDiv);
+
+      // Away team
+      var away = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'away'; }) || {};
+      var home = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'home'; }) || {};
+
+      var awayScore = parseInt(away.score) || 0;
+      var homeScore = parseInt(home.score) || 0;
+      var awayWon = isFinal && awayScore > homeScore;
+      var homeWon = isFinal && homeScore > awayScore;
+
+      // Away row
+      var awayRow = document.createElement('div');
+      awayRow.className = 'team-row' + (awayWon ? ' winner' : '');
+
+      var awayInfo = document.createElement('div');
+      awayInfo.className = 'team-info';
+
+      var awayLogo = document.createElement('div');
+      awayLogo.className = 'team-logo';
+      var awayLogoUrl = away.team?.logo || away.team?.logos?.[0]?.href;
+      if (awayLogoUrl) {
+        var awayLogoImg = document.createElement('img');
+        awayLogoImg.src = awayLogoUrl;
+        awayLogoImg.alt = away.team?.abbreviation || '';
+        awayLogoImg.onerror = function() { this.parentNode.textContent = (away.team?.abbreviation || '?').substring(0, 3); };
+        awayLogo.appendChild(awayLogoImg);
+      } else {
+        awayLogo.textContent = (away.team?.abbreviation || '?').substring(0, 3);
+      }
+      awayInfo.appendChild(awayLogo);
+
+      var awayName = document.createElement('span');
+      awayName.className = 'team-name';
+      if (away.curatedRank?.current && away.curatedRank.current <= 25) {
+        var awayRank = document.createElement('span');
+        awayRank.className = 'team-rank';
+        awayRank.textContent = '#' + away.curatedRank.current + ' ';
+        awayName.appendChild(awayRank);
+      }
+      awayName.appendChild(document.createTextNode(away.team?.shortDisplayName || away.team?.displayName || 'TBD'));
+      awayInfo.appendChild(awayName);
+      awayRow.appendChild(awayInfo);
+
+      var awayScoreSpan = document.createElement('span');
+      awayScoreSpan.className = 'team-score';
+      awayScoreSpan.textContent = isFinal || isLive ? awayScore : '-';
+      awayRow.appendChild(awayScoreSpan);
+      card.appendChild(awayRow);
+
+      // Home row
+      var homeRow = document.createElement('div');
+      homeRow.className = 'team-row' + (homeWon ? ' winner' : '');
+
+      var homeInfo = document.createElement('div');
+      homeInfo.className = 'team-info';
+
+      var homeLogo = document.createElement('div');
+      homeLogo.className = 'team-logo';
+      var homeLogoUrl = home.team?.logo || home.team?.logos?.[0]?.href;
+      if (homeLogoUrl) {
+        var homeLogoImg = document.createElement('img');
+        homeLogoImg.src = homeLogoUrl;
+        homeLogoImg.alt = home.team?.abbreviation || '';
+        homeLogoImg.onerror = function() { this.parentNode.textContent = (home.team?.abbreviation || '?').substring(0, 3); };
+        homeLogo.appendChild(homeLogoImg);
+      } else {
+        homeLogo.textContent = (home.team?.abbreviation || '?').substring(0, 3);
+      }
+      homeInfo.appendChild(homeLogo);
+
+      var homeName = document.createElement('span');
+      homeName.className = 'team-name';
+      if (home.curatedRank?.current && home.curatedRank.current <= 25) {
+        var homeRank = document.createElement('span');
+        homeRank.className = 'team-rank';
+        homeRank.textContent = '#' + home.curatedRank.current + ' ';
+        homeName.appendChild(homeRank);
+      }
+      homeName.appendChild(document.createTextNode(home.team?.shortDisplayName || home.team?.displayName || 'TBD'));
+      homeInfo.appendChild(homeName);
+      homeRow.appendChild(homeInfo);
+
+      var homeScoreSpan = document.createElement('span');
+      homeScoreSpan.className = 'team-score';
+      homeScoreSpan.textContent = isFinal || isLive ? homeScore : '-';
+      homeRow.appendChild(homeScoreSpan);
+      card.appendChild(homeRow);
+
+      // Meta
+      var meta = document.createElement('div');
+      meta.className = 'game-meta';
+      var venue = game.competitions?.[0]?.venue?.fullName || '';
+      var venueSpan = document.createElement('span');
+      venueSpan.textContent = venue;
+      meta.appendChild(venueSpan);
+      card.appendChild(meta);
+
+      return card;
+    }
+
+    // Render games
+    function renderGames() {
+      var container = document.getElementById('gamesContainer');
+      container.replaceChildren();
+
+      if (allGames.length === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        var h3 = document.createElement('h3');
+        h3.textContent = 'No Games Scheduled';
+        empty.appendChild(h3);
+        var p = document.createElement('p');
+        p.textContent = 'Check back during the season for live college baseball scores.';
+        empty.appendChild(p);
+        container.appendChild(empty);
+        return;
+      }
+
+      var grid = document.createElement('div');
+      grid.className = 'games-grid';
+
+      // Sort: live first, then by time
+      allGames.sort(function(a, b) {
+        var aLive = a.status?.type?.state === 'in' ? 0 : 1;
+        var bLive = b.status?.type?.state === 'in' ? 0 : 1;
+        if (aLive !== bLive) return aLive - bLive;
+        return new Date(a.date) - new Date(b.date);
+      });
+
+      allGames.forEach(function(game) {
+        grid.appendChild(createGameCard(game));
+      });
+
+      container.appendChild(grid);
+
+      // Update live indicator
+      var hasLive = allGames.some(function(g) { return g.status?.type?.state === 'in'; });
+      document.getElementById('liveIndicator').style.display = hasLive ? 'flex' : 'none';
+    }
+
+    // Update freshness indicator
+    function updateFreshnessIndicator() {
+      if (!window.BSIFreshness) return;
+      var container = document.getElementById('freshnessBadge');
+      if (!container) return;
+
+      if (freshnessController) {
+        freshnessController.update({
+          lastSync: lastSyncTime,
+          isLive: hasLiveGames
+        });
+      } else {
+        freshnessController = BSIFreshness.render({
+          container: container,
+          lastSync: lastSyncTime,
+          source: 'espn',
+          sport: 'baseball',
+          isLive: hasLiveGames,
+          showTooltip: true,
+          size: 'default',
+          autoUpdate: true
+        });
+      }
+    }
+
+    // Load scores
+    async function loadScores() {
+      try {
+        var response = await fetch('/api/college-baseball/scores?date=' + selectedDate);
+        var data = await response.json();
+
+        // Use unified response format (data array) or legacy format (games array)
+        allGames = data.data || data.games || data.events || [];
+        lastSyncTime = data.lastUpdated || data.timestamp || new Date().toISOString();
+        
+        // Update source badge with unified format
+        updateSourceBadge(data.source || 'unknown', data.status || 'ok');
+        
+        // Check for live games
+        hasLiveGames = allGames.some(function(g) {
+          var status = g.status;
+          if (typeof status === 'string') return status === 'live';
+          return status && status.type && status.type.state === 'in';
+        });
+
+        // Use server timestamp if available, otherwise local time
+        var displayTime = lastSyncTime;
+        try {
+          var d = new Date(lastSyncTime);
+          displayTime = d.toLocaleTimeString('en-US', {
+            timeZone: 'America/Chicago',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          }) + ' CT';
+        } catch (e) {
+          displayTime = new Date().toLocaleTimeString('en-US', {
+            timeZone: 'America/Chicago',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          }) + ' CT';
+        }
+        document.getElementById('lastUpdated').textContent = displayTime;
+
+        renderGames();
+        updateFreshnessIndicator();
+      } catch (error) {
+        console.error('Failed to load scores:', error);
+        lastSyncTime = null;
+        updateSourceBadge('error', 'error');
+        updateFreshnessIndicator();
+        var container = document.getElementById('gamesContainer');
+        container.replaceChildren();
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        var h3 = document.createElement('h3');
+        h3.textContent = 'Unable to Load Scores';
+        empty.appendChild(h3);
+        var p = document.createElement('p');
+        p.textContent = 'Please try again later.';
+        empty.appendChild(p);
+        container.appendChild(empty);
+      }
+    }
+    
+    // Update source badge with data origin
+    function updateSourceBadge(source, status) {
+      var badge = document.getElementById('sourceBadge');
+      var label = document.getElementById('sourceLabel');
+      var dot = badge.querySelector('.status-dot');
+      
+      // Remove all state classes
+      badge.className = 'source-badge';
+      dot.className = 'status-dot';
+      
+      // Map source to display name and class
+      var sourceMap = {
+        'highlightly': { name: 'Highlightly', class: 'highlightly' },
+        'Highlightly Pro': { name: 'Highlightly', class: 'highlightly' },
+        'espn': { name: 'ESPN', class: 'espn' },
+        'ESPN': { name: 'ESPN', class: 'espn' },
+        'database': { name: 'Cached', class: 'database' },
+        'bsi-database': { name: 'Cached', class: 'database' },
+        'error': { name: 'Error', class: 'error' },
+        'unavailable': { name: 'Unavailable', class: 'error' }
+      };
+      
+      var mapped = sourceMap[source] || { name: source || 'Unknown', class: '' };
+      label.textContent = mapped.name;
+      if (mapped.class) badge.classList.add(mapped.class);
+      
+      // Add pulsing dot for live data sources
+      if (status === 'ok' && (source === 'highlightly' || source === 'Highlightly Pro')) {
+        dot.classList.add('pulsing');
+      }
+    }
+
+    // Initialize
+    buildDateNav();
+    loadScores();
+
+    // Auto-refresh every 30 seconds
+    refreshInterval = setInterval(loadScores, 30000);
+  </script>
+<script>
+  (function() {
+    var menuBtn = document.querySelector('.mobile-menu-btn');
+    var nav = document.querySelector('.nav');
+    if (menuBtn && nav) {
+      menuBtn.addEventListener('click', function() {
+        menuBtn.classList.toggle('active');
+        nav.classList.toggle('open');
+      });
+    }
+  })();
+</script>
+  <script>
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NBA Player Profile | Blaze Sports Intel</title>
+  <meta name="description" content="NBA player profile with career stats, bio, and performance data.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --burnt-orange: #BF5700;
+      --texas-soil: #8B4513;
+      --ember: #FF6B35;
+      --charcoal: #1A1A1A;
+      --midnight: #0D0D0D;
+      --cream: #FAF8F5;
+      --gold: #C9A227;
+      --nba-primary: #17408B;
+      --nba-secondary: #C9082A;
+      --text-primary: #FFFFFF;
+      --text-secondary: rgba(255,255,255,0.7);
+      --card-bg: rgba(255,255,255,0.05);
+      --card-border: rgba(255,255,255,0.1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      background: linear-gradient(135deg, var(--midnight) 0%, var(--charcoal) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+    header {
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--burnt-orange);
+      text-decoration: none;
+    }
+    nav { display: flex; gap: 24px; }
+    nav a {
+      font-family: 'Oswald', sans-serif;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--burnt-orange); }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--burnt-orange); }
+    .back-link svg { width: 16px; height: 16px; }
+
+    .player-hero {
+      padding: 48px 0 32px;
+      background: linear-gradient(180deg, rgba(23, 64, 139, 0.2) 0%, transparent 100%);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .player-hero-content {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .player-headshot {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--nba-primary);
+      background: var(--charcoal);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .player-info h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .player-meta {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    .player-team-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+    }
+    .team-logo {
+      width: 32px;
+      height: 32px;
+    }
+    .team-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .bio-section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .section-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--burnt-orange);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .bio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+    }
+    .bio-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .bio-item:hover { border-color: var(--burnt-orange); }
+    .bio-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--burnt-orange);
+      margin-bottom: 6px;
+    }
+    .bio-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .stats-section {
+      padding: 32px 0;
+    }
+    .stats-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .stats-tab {
+      padding: 12px 24px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .stats-tab.active {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+      color: white;
+    }
+    .stats-tab:hover:not(.active) { border-color: var(--burnt-orange); }
+    .stats-panel { display: none; }
+    .stats-panel.active { display: block; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+    }
+    .stat-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-item:hover {
+      border-color: var(--burnt-orange);
+      transform: translateY(-2px);
+    }
+    .stat-value {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--burnt-orange);
+    }
+    .stat-name {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .season-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .season-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .season-select {
+      padding: 10px 16px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+    .season-select:focus { border-color: var(--burnt-orange); outline: none; }
+
+    .loading, .error-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--card-border);
+      border-top-color: var(--burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { color: var(--text-secondary); font-size: 1.1rem; }
+    .error-state h2 {
+      font-family: 'Oswald', sans-serif;
+      color: var(--nba-secondary);
+      margin-bottom: 8px;
+    }
+    .error-state p { color: var(--text-secondary); }
+    .retry-btn {
+      margin-top: 20px;
+      padding: 12px 28px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      background: var(--burnt-orange);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .retry-btn:hover { background: var(--ember); }
+
+    footer {
+      padding: 32px 0;
+      text-align: center;
+      border-top: 1px solid var(--card-border);
+      margin-top: 48px;
+    }
+    .source-tag {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .source-tag span { color: var(--gold); }
+
+    @media (max-width: 768px) {
+      .header-content { flex-direction: column; gap: 12px; }
+      nav { flex-wrap: wrap; justify-content: center; gap: 16px; }
+      .player-hero-content { flex-direction: column; text-align: center; }
+      .player-headshot { width: 140px; height: 140px; }
+      .player-info h1 { font-size: 2rem; }
+      .bio-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">BLAZE SPORTS INTEL</a>
+        <nav>
+          <a href="/nba/">NBA Home</a>
+          <a href="/nba/scores.html">Scores</a>
+          <a href="/nba/standings.html">Standings</a>
+          <a href="/nba/players.html">Players</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="padding: 16px 0;">
+      <a href="javascript:history.back()" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back
+      </a>
+    </div>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading player profile...</p>
+    </div>
+
+    <div id="errorState" class="error-state" style="display: none;">
+      <h2>Player Not Found</h2>
+      <p>We couldn't load this player's profile. Please try again.</p>
+      <button class="retry-btn" onclick="loadPlayer()">Retry</button>
+    </div>
+
+    <div id="playerContent" style="display: none;">
+      <section class="player-hero">
+        <div class="player-hero-content">
+          <img id="playerHeadshot" class="player-headshot" src="" alt="Player headshot">
+          <div class="player-info">
+            <h1 id="playerName">Loading...</h1>
+            <p id="playerMeta" class="player-meta"></p>
+            <div id="teamBadge" class="player-team-badge">
+              <img id="teamLogo" class="team-logo" src="" alt="Team logo">
+              <span id="teamName" class="team-name"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bio-section">
+        <h2 class="section-title">Bio</h2>
+        <div id="bioGrid" class="bio-grid"></div>
+      </section>
+
+      <section class="stats-section">
+        <h2 class="section-title">Statistics</h2>
+        <div class="season-selector">
+          <span class="season-label">Season:</span>
+          <select id="seasonSelect" class="season-select"></select>
+        </div>
+        <div id="statsTabs" class="stats-tabs"></div>
+        <div id="statsPanels"></div>
+      </section>
+
+      <footer>
+        <p class="source-tag">Data provided by <span>Highlightly</span> | Updated <span id="fetchedAt"></span></p>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    var API_BASE = '/api/nba';
+    var playerId = new URLSearchParams(window.location.search).get('id');
+
+    var loadingEl = document.getElementById('loading');
+    var errorEl = document.getElementById('errorState');
+    var contentEl = document.getElementById('playerContent');
+
+    function createElement(tag, attrs, children) {
+      var el = document.createElement(tag);
+      if (attrs) {
+        Object.keys(attrs).forEach(function(key) {
+          if (key === 'className') el.className = attrs[key];
+          else if (key === 'textContent') el.textContent = attrs[key];
+          else el.setAttribute(key, attrs[key]);
+        });
+      }
+      if (children) {
+        children.forEach(function(child) {
+          if (typeof child === 'string') el.appendChild(document.createTextNode(child));
+          else if (child) el.appendChild(child);
+        });
+      }
+      return el;
+    }
+
+    function clearElement(el) {
+      while (el.firstChild) {
+        el.removeChild(el.firstChild);
+      }
+    }
+
+    function formatHeight(inches) {
+      if (!inches) return '-';
+      var feet = Math.floor(inches / 12);
+      var remaining = inches % 12;
+      return feet + "'" + remaining + '"';
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      var d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    async function loadPlayer() {
+      if (!playerId) {
+        showError('No player ID provided');
+        return;
+      }
+
+      loadingEl.style.display = 'block';
+      errorEl.style.display = 'none';
+      contentEl.style.display = 'none';
+
+      try {
+        var profileRes = await fetch(API_BASE + '/players/' + playerId);
+        var statsRes = await fetch(API_BASE + '/players/' + playerId + '/statistics');
+
+        if (!profileRes.ok && !statsRes.ok) {
+          throw new Error('Failed to load player data');
+        }
+
+        var profile = profileRes.ok ? await profileRes.json() : {};
+        var statsData = statsRes.ok ? await statsRes.json() : {};
+
+        renderPlayer(profile, statsData);
+
+        loadingEl.style.display = 'none';
+        contentEl.style.display = 'block';
+        document.title = (profile.fullName || profile.name || 'Player') + ' | NBA | Blaze Sports Intel';
+
+      } catch (err) {
+        console.error('Error loading player:', err);
+        showError(err.message);
+      }
+    }
+
+    function showError(msg) {
+      loadingEl.style.display = 'none';
+      errorEl.style.display = 'block';
+      contentEl.style.display = 'none';
+    }
+
+    function renderPlayer(profile, statsData) {
+      var name = profile.fullName || profile.name || 'Unknown Player';
+      document.getElementById('playerName').textContent = name;
+
+      var metaParts = [];
+      if (profile.jersey) metaParts.push('#' + profile.jersey);
+      if (profile.position) {
+        var pos = profile.position.main || profile.position.abbreviation || profile.position;
+        if (typeof pos === 'string') metaParts.push(pos);
+      }
+      document.getElementById('playerMeta').textContent = metaParts.join(' | ');
+
+      var headshotUrl = profile.headshot ||
+        'https://a.espncdn.com/i/headshots/nba/players/full/' + playerId + '.png';
+      var headshot = document.getElementById('playerHeadshot');
+      headshot.src = headshotUrl;
+      headshot.alt = name;
+      headshot.onerror = function() {
+        this.src = 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=200&h=146';
+      };
+
+      if (profile.team) {
+        var teamName = typeof profile.team === 'object' ? profile.team.name : profile.team;
+        document.getElementById('teamName').textContent = teamName || 'NBA';
+        var teamLogo = document.getElementById('teamLogo');
+        if (profile.team.logo) {
+          teamLogo.src = profile.team.logo;
+        } else {
+          teamLogo.style.display = 'none';
+        }
+      } else {
+        document.getElementById('teamBadge').style.display = 'none';
+      }
+
+      renderBio(profile);
+      renderStats(statsData);
+
+      if (statsData.fetchedAt) {
+        document.getElementById('fetchedAt').textContent = statsData.fetchedAt;
+      }
+    }
+
+    function renderBio(profile) {
+      var bioGrid = document.getElementById('bioGrid');
+      clearElement(bioGrid);
+
+      var items = [
+        { label: 'Height', value: formatHeight(profile.height) },
+        { label: 'Weight', value: profile.weight ? profile.weight + ' lbs' : '-' },
+        { label: 'Born', value: formatDate(profile.birthDate) },
+        { label: 'Hometown', value: profile.birthPlace || '-' },
+        { label: 'College', value: profile.college || '-' },
+        { label: 'Experience', value: profile.experience ? profile.experience + ' yrs' : '-' },
+        { label: 'Draft', value: profile.draft ? profile.draft.year + ' R' + profile.draft.round + ' P' + profile.draft.pick : 'Undrafted' },
+        { label: 'Status', value: profile.status || 'Active' }
+      ];
+
+      items.forEach(function(item) {
+        var div = createElement('div', { className: 'bio-item' }, [
+          createElement('div', { className: 'bio-label', textContent: item.label }),
+          createElement('div', { className: 'bio-value', textContent: item.value })
+        ]);
+        bioGrid.appendChild(div);
+      });
+    }
+
+    function renderStats(statsData) {
+      var tabsContainer = document.getElementById('statsTabs');
+      var panelsContainer = document.getElementById('statsPanels');
+      var seasonSelect = document.getElementById('seasonSelect');
+
+      clearElement(tabsContainer);
+      clearElement(panelsContainer);
+      clearElement(seasonSelect);
+
+      var seasons = [];
+
+      if (statsData.perSeason && statsData.perSeason.length > 0) {
+        statsData.perSeason.forEach(function(s, i) {
+          seasons.push({ label: s.season || s.year || ('Season ' + (i + 1)), data: s });
+        });
+      } else if (statsData.statistics && statsData.statistics.length > 0) {
+        statsData.statistics.forEach(function(s, i) {
+          seasons.push({ label: s.season || s.year || ('Season ' + (i + 1)), data: s });
+        });
+      } else if (statsData.career) {
+        seasons.push({ label: 'Career', data: statsData.career });
+      }
+
+      if (seasons.length === 0) {
+        var noStats = createElement('p', { textContent: 'No statistics available for this player.' });
+        noStats.style.color = 'var(--text-secondary)';
+        noStats.style.padding = '20px 0';
+        panelsContainer.appendChild(noStats);
+        seasonSelect.parentElement.style.display = 'none';
+        return;
+      }
+
+      seasons.forEach(function(season, i) {
+        var option = createElement('option', { value: i, textContent: season.label });
+        if (i === 0) option.selected = true;
+        seasonSelect.appendChild(option);
+      });
+
+      seasonSelect.addEventListener('change', function() {
+        renderSeasonStats(seasons[this.value].data);
+      });
+
+      renderSeasonStats(seasons[0].data);
+    }
+
+    function renderSeasonStats(seasonData) {
+      var tabsContainer = document.getElementById('statsTabs');
+      var panelsContainer = document.getElementById('statsPanels');
+
+      clearElement(tabsContainer);
+      clearElement(panelsContainer);
+
+      var categories = [];
+
+      if (seasonData.offense) categories.push({ name: 'Offense', data: seasonData.offense });
+      if (seasonData.defense) categories.push({ name: 'Defense', data: seasonData.defense });
+      if (seasonData.general) categories.push({ name: 'General', data: seasonData.general });
+
+      if (categories.length === 0) {
+        var allStats = [];
+        Object.keys(seasonData).forEach(function(key) {
+          if (key === 'season' || key === 'year' || key === 'team') return;
+          var val = seasonData[key];
+          if (typeof val === 'number' || typeof val === 'string') {
+            allStats.push({ name: key, value: val });
+          } else if (Array.isArray(val)) {
+            val.forEach(function(stat) {
+              if (stat.name && stat.value !== undefined) {
+                allStats.push(stat);
+              }
+            });
+          }
+        });
+        if (allStats.length) {
+          categories.push({ name: 'Stats', data: allStats });
+        }
+      }
+
+      if (categories.length === 0) {
+        var noDetails = createElement('p', { textContent: 'No detailed statistics available.' });
+        noDetails.style.color = 'var(--text-secondary)';
+        noDetails.style.padding = '20px 0';
+        panelsContainer.appendChild(noDetails);
+        return;
+      }
+
+      categories.forEach(function(cat, idx) {
+        var tab = createElement('button', {
+          className: 'stats-tab' + (idx === 0 ? ' active' : ''),
+          textContent: cat.name
+        });
+        tab.setAttribute('data-index', idx);
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.stats-tab').forEach(function(t) { t.classList.remove('active'); });
+          document.querySelectorAll('.stats-panel').forEach(function(p) { p.classList.remove('active'); });
+          this.classList.add('active');
+          document.getElementById('panel-' + idx).classList.add('active');
+        });
+        tabsContainer.appendChild(tab);
+
+        var panel = createElement('div', {
+          className: 'stats-panel' + (idx === 0 ? ' active' : ''),
+          id: 'panel-' + idx
+        });
+
+        var grid = createElement('div', { className: 'stats-grid' });
+
+        var statsList = Array.isArray(cat.data) ? cat.data : [];
+        if (!Array.isArray(cat.data) && typeof cat.data === 'object') {
+          Object.keys(cat.data).forEach(function(key) {
+            statsList.push({ name: key, value: cat.data[key] });
+          });
+        }
+
+        statsList.slice(0, 16).forEach(function(stat) {
+          var val = stat.value;
+          if (typeof val === 'number') {
+            val = val % 1 === 0 ? val : val.toFixed(1);
+          }
+          var item = createElement('div', { className: 'stat-item' }, [
+            createElement('div', { className: 'stat-value', textContent: val }),
+            createElement('div', { className: 'stat-name', textContent: stat.name || stat.label || 'Stat' })
+          ]);
+          grid.appendChild(item);
+        });
+
+        panel.appendChild(grid);
+        panelsContainer.appendChild(panel);
+      });
+    }
+
+    loadPlayer();
+  </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
+</body>
+</html>

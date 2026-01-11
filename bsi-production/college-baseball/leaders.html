@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stat Leaders | College Baseball | Blaze Sports Intel</title>
+    <meta name="description" content="Top NCAA college baseball statistical leaders in batting average, home runs, RBI, ERA, strikeouts, and more.">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --burnt-orange: #BF5700;
+            --texas-soil: #8B4513;
+            --ember: #FF6B35;
+            --charcoal: #1A1A1A;
+            --midnight: #0D0D0D;
+            --cream: #FAF8F5;
+            --gold: #C9A227;
+            --success: #2E7D32;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--midnight);
+            color: var(--cream);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .nav {
+            background: var(--charcoal);
+            border-bottom: 2px solid var(--burnt-orange);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--burnt-orange);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--ember); }
+        .nav-links a.active { color: var(--burnt-orange); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--cream);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(250, 248, 245, 0.7);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            padding: 0.75rem 1.5rem;
+            background: var(--charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 4px;
+            color: var(--cream);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-tab:hover { border-color: var(--burnt-orange); }
+
+        .category-tab.active {
+            background: var(--burnt-orange);
+            border-color: var(--burnt-orange);
+        }
+
+        .leaders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .leader-card {
+            background: var(--charcoal);
+            border-radius: 8px;
+            overflow: hidden;
+            border-left: 4px solid var(--burnt-orange);
+        }
+
+        .leader-card-header {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            text-transform: uppercase;
+            padding: 1rem 1.5rem;
+            background: var(--midnight);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            color: var(--burnt-orange);
+        }
+
+        .leader-list {
+            list-style: none;
+        }
+
+        .leader-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid rgba(250, 248, 245, 0.1);
+            transition: background 0.2s;
+        }
+
+        .leader-item:hover {
+            background: rgba(191, 87, 0, 0.05);
+        }
+
+        .leader-item:last-child {
+            border-bottom: none;
+        }
+
+        .leader-rank {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gold);
+            width: 2rem;
+            text-align: center;
+        }
+
+        .leader-rank.top-3 {
+            color: var(--burnt-orange);
+        }
+
+        .leader-info {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .leader-name {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            color: var(--cream);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .leader-name:hover { color: var(--ember); }
+
+        .leader-team {
+            font-size: 0.85rem;
+            color: rgba(250, 248, 245, 0.6);
+        }
+
+        .leader-stat {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cream);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--charcoal);
+            border-top-color: var(--burnt-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #C62828;
+        }
+
+        .source-citation {
+            text-align: center;
+            padding: 1.5rem;
+            color: rgba(250, 248, 245, 0.5);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(250, 248, 245, 0.1);
+            margin-top: 2rem;
+        }
+
+        .category-section {
+            display: none;
+        }
+
+        .category-section.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 1rem; flex-wrap: wrap; gap: 1rem; }
+            .nav-links { gap: 1rem; }
+            .container { padding: 1rem; }
+            .page-title { font-size: 2rem; }
+            .leaders-grid { grid-template-columns: 1fr; }
+            .category-tabs { gap: 0.25rem; }
+            .category-tab { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+        <div class="nav-links">
+            <a href="/college-baseball/">Baseball</a>
+            <a href="/college-baseball/scores">Scores</a>
+            <a href="/college-baseball/standings">Standings</a>
+            <a href="/college-baseball/rankings">Rankings</a>
+            <a href="/college-baseball/leaders" class="active">Leaders</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="page-header">
+            <h1 class="page-title">Statistical Leaders</h1>
+            <p class="page-subtitle">Top NCAA Division I college baseball performers</p>
+        </header>
+
+        <div class="category-tabs">
+            <button class="category-tab active" data-category="batting">Batting</button>
+            <button class="category-tab" data-category="pitching">Pitching</button>
+        </div>
+
+        <div id="leadersContent">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading leaders...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Safe DOM helpers
+        function createElement(tag, className, textContent) {
+            const el = document.createElement(tag);
+            if (className) el.className = className;
+            if (textContent !== undefined) el.textContent = textContent;
+            return el;
+        }
+
+        function createLink(href, className, textContent) {
+            const a = document.createElement('a');
+            a.href = href;
+            if (className) a.className = className;
+            if (textContent) a.textContent = textContent;
+            return a;
+        }
+
+        let leadersData = null;
+
+        loadLeaders();
+
+        async function loadLeaders() {
+            try {
+                const response = await fetch('/api/college-baseball/leaders');
+                if (!response.ok) throw new Error('Failed to load leaders');
+
+                leadersData = await response.json();
+                renderLeaders();
+            } catch (error) {
+                console.error('Error loading leaders:', error);
+                showError('Unable to load statistical leaders. Please try again.');
+            }
+        }
+
+        function showError(message) {
+            const content = document.getElementById('leadersContent');
+            content.textContent = '';
+            const errorDiv = createElement('div', 'error-message', message);
+            content.appendChild(errorDiv);
+        }
+
+        function renderLeaders() {
+            const content = document.getElementById('leadersContent');
+            content.textContent = '';
+
+            // Batting Section
+            const battingSection = createElement('div', 'category-section active');
+            battingSection.id = 'batting-section';
+
+            const battingGrid = createElement('div', 'leaders-grid');
+
+            // Batting Average
+            if (leadersData.batting && leadersData.batting.avg) {
+                battingGrid.appendChild(createLeaderCard('Batting Average', 'AVG', leadersData.batting.avg));
+            }
+
+            // Home Runs
+            if (leadersData.batting && leadersData.batting.hr) {
+                battingGrid.appendChild(createLeaderCard('Home Runs', 'HR', leadersData.batting.hr));
+            }
+
+            // RBI
+            if (leadersData.batting && leadersData.batting.rbi) {
+                battingGrid.appendChild(createLeaderCard('Runs Batted In', 'RBI', leadersData.batting.rbi));
+            }
+
+            // Hits
+            if (leadersData.batting && leadersData.batting.hits) {
+                battingGrid.appendChild(createLeaderCard('Hits', 'H', leadersData.batting.hits));
+            }
+
+            // Runs
+            if (leadersData.batting && leadersData.batting.runs) {
+                battingGrid.appendChild(createLeaderCard('Runs Scored', 'R', leadersData.batting.runs));
+            }
+
+            // Stolen Bases
+            if (leadersData.batting && leadersData.batting.sb) {
+                battingGrid.appendChild(createLeaderCard('Stolen Bases', 'SB', leadersData.batting.sb));
+            }
+
+            battingSection.appendChild(battingGrid);
+            content.appendChild(battingSection);
+
+            // Pitching Section
+            const pitchingSection = createElement('div', 'category-section');
+            pitchingSection.id = 'pitching-section';
+
+            const pitchingGrid = createElement('div', 'leaders-grid');
+
+            // ERA
+            if (leadersData.pitching && leadersData.pitching.era) {
+                pitchingGrid.appendChild(createLeaderCard('Earned Run Average', 'ERA', leadersData.pitching.era));
+            }
+
+            // Strikeouts
+            if (leadersData.pitching && leadersData.pitching.so) {
+                pitchingGrid.appendChild(createLeaderCard('Strikeouts', 'K', leadersData.pitching.so));
+            }
+
+            // Wins
+            if (leadersData.pitching && leadersData.pitching.wins) {
+                pitchingGrid.appendChild(createLeaderCard('Wins', 'W', leadersData.pitching.wins));
+            }
+
+            // WHIP
+            if (leadersData.pitching && leadersData.pitching.whip) {
+                pitchingGrid.appendChild(createLeaderCard('WHIP', 'WHIP', leadersData.pitching.whip));
+            }
+
+            // Innings Pitched
+            if (leadersData.pitching && leadersData.pitching.ip) {
+                pitchingGrid.appendChild(createLeaderCard('Innings Pitched', 'IP', leadersData.pitching.ip));
+            }
+
+            // Saves
+            if (leadersData.pitching && leadersData.pitching.saves) {
+                pitchingGrid.appendChild(createLeaderCard('Saves', 'SV', leadersData.pitching.saves));
+            }
+
+            pitchingSection.appendChild(pitchingGrid);
+            content.appendChild(pitchingSection);
+
+            // Source citation
+            const citation = createElement('div', 'source-citation');
+            citation.textContent = 'Data provided by ESPN & D1Baseball • Updated ' + new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' });
+            content.appendChild(citation);
+
+            // Setup tab switching
+            setupTabs();
+        }
+
+        function createLeaderCard(title, abbrev, players) {
+            const card = createElement('div', 'leader-card');
+
+            const header = createElement('div', 'leader-card-header');
+            const titleSpan = createElement('span', null, title);
+            header.appendChild(titleSpan);
+            const statLabel = createElement('span', 'stat-label', abbrev);
+            header.appendChild(statLabel);
+            card.appendChild(header);
+
+            const list = createElement('ul', 'leader-list');
+
+            const displayPlayers = players.slice(0, 10);
+            displayPlayers.forEach((player, index) => {
+                const item = createElement('li', 'leader-item');
+
+                const rank = createElement('span', 'leader-rank' + (index < 3 ? ' top-3' : ''));
+                rank.textContent = (index + 1).toString();
+                item.appendChild(rank);
+
+                const info = createElement('div', 'leader-info');
+
+                if (player.id) {
+                    const nameLink = createLink('/college-baseball/player-detail.html?id=' + player.id, 'leader-name', player.name || 'Unknown');
+                    info.appendChild(nameLink);
+                } else {
+                    const nameSpan = createElement('span', 'leader-name', player.name || 'Unknown');
+                    info.appendChild(nameSpan);
+                }
+
+                const team = createElement('div', 'leader-team', player.team || '');
+                info.appendChild(team);
+                item.appendChild(info);
+
+                const stat = createElement('span', 'leader-stat', formatStat(player.value, abbrev));
+                item.appendChild(stat);
+
+                list.appendChild(item);
+            });
+
+            card.appendChild(list);
+            return card;
+        }
+
+        function formatStat(value, type) {
+            if (value === undefined || value === null) return '-';
+
+            // Format based on stat type
+            if (type === 'AVG' || type === 'WHIP' || type === 'ERA') {
+                const num = parseFloat(value);
+                if (isNaN(num)) return value.toString();
+                return num.toFixed(3).replace(/^0/, '');
+            }
+
+            return value.toString();
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+
+                    this.classList.add('active');
+                    const sectionId = this.dataset.category + '-section';
+                    const section = document.getElementById(sectionId);
+                    if (section) section.classList.add('active');
+                });
+            });
+        }
+    </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
+</body>
+</html>

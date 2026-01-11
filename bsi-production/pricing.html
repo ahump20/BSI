@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Blaze Sports Intel pricing. Pro analytics for fans, enterprise solutions for programs. The college baseball coverage ESPN should have built.">
+  <meta name="description" content="Coverage that matches your commitment. Analytics built for fans who care and programs that need to know.">
   <meta name="keywords" content="sports analytics, college baseball, MLB stats, NFL analytics, sports data API">
   <meta property="og:title" content="Pricing | Blaze Sports Intel">
-  <meta property="og:description" content="The coverage ESPN should have built. Pro analytics starting at $29/month.">
+  <meta property="og:description" content="Coverage that matches your commitment. Pro analytics starting at $29/month.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://blazesportsintel.com/pricing">
   <title>Pricing | Blaze Sports Intel</title>
@@ -632,9 +632,10 @@
   </header>
 
   <section class="hero">
+    <p style="font-family: var(--font-display); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--bsi-burnt-orange); margin-bottom: 0.75rem;">Born to Blaze the Path Less Beaten</p>
     <span class="hero-badge">Premium Sports Intelligence</span>
-    <h1>The Coverage <span class="highlight">ESPN Should Have Built</span></h1>
-    <p>Real analytics for real fans. College baseball depth, Monte Carlo simulations, and data that actually matters. No fluff, no corporate sponsors dictating coverage.</p>
+    <h1>ESPN Can't Find <span class="highlight">College Baseball</span></h1>
+    <p>We can. Real-time scores, complete box scores, and professional-grade analytics for the sports you actually follow. Built by a fan who pitched a perfect game and got tired of waiting.</p>
   </section>
 
   <section class="pricing-section">
@@ -667,7 +668,7 @@
           <div class="tier-price">
             <span class="currency">$</span>29<span class="period">/mo</span>
           </div>
-          <p class="tier-description">For serious fans and fantasy players</p>
+          <p class="tier-description">For fans who care</p>
         </div>
         <ul class="feature-list">
           <li>Everything in Free</li>
@@ -678,6 +679,11 @@
           <li>Custom alerts</li>
           <li>Team archetype builder</li>
           <li>Ad-free experience</li>
+          <li class="highlight-feature">Starting lineups (real-time)</li>
+          <li>Video highlights</li>
+          <li>Player career stats</li>
+          <li>Head-to-head history</li>
+          <li>Live betting odds</li>
         </ul>
         <button class="btn-tier btn-pro" id="btn-pro" onclick="handleCheckout('pro')">
           Start Pro Trial
@@ -691,7 +697,7 @@
           <div class="tier-price">
             <span class="currency">$</span>199<span class="period">/mo</span>
           </div>
-          <p class="tier-description">For programs, scouts, and media</p>
+          <p class="tier-description">For programs that need to know</p>
         </div>
         <ul class="feature-list">
           <li>Everything in Pro</li>
@@ -845,11 +851,11 @@
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-question">
-          <span>What makes BSI different from ESPN or other sports sites?</span>
+          <span>What makes BSI different?</span>
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
-          <p>ESPN treats college baseball like an afterthought. We don't. BSI was built by fans who got tired of waiting for proper coverage. We offer deeper analytics, real Monte Carlo simulations, and coverage that prioritizes what fans actually want to know, not what sponsors want to push.</p>
+          <p>BSI was built by a fan who cared the way you do and got tired of waiting for proper coverage. We offer deeper analytics, real Monte Carlo simulations, and coverage that prioritizes what fans actually want to know. Every sport gets full attention.</p>
         </div>
       </div>
       <div class="faq-item">
@@ -911,7 +917,7 @@
 
   <footer class="footer">
     <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
-    <p class="tagline">Born to blaze the path less beaten.</p>
+    <p class="tagline">Born to Blaze the Path Less Beaten.</p>
   </footer>
 
   <div class="toast" id="toast"></div>
@@ -1094,5 +1100,7 @@
       checkCheckoutStatus();
     });
   </script>
+    <script src="/src/js/analytics.js"></script>
+    <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(console.error);}</script>
 </body>
 </html>

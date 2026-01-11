@@ -16,7 +16,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
 
     <style>
@@ -36,7 +36,7 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oswald', sans-serif;
             background: var(--bsi-midnight);
             color: var(--bsi-cream);
             line-height: 1.6;
@@ -157,6 +157,22 @@
 
         .loading { text-align: center; padding: 2rem; color: var(--bsi-muted); }
 
+        /* Error State */
+        .error-state { text-align: center; padding: 3rem 2rem; background: var(--bsi-charcoal); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .error-state .error-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .error-state h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--bsi-cream); }
+        .error-state p { color: rgba(250, 248, 245, 0.6); margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .retry-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--bsi-burnt-orange); color: white; font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(191, 87, 0, 0.3); }
+
+        /* Skeleton Loading */
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+        .skeleton-card { background: var(--bsi-charcoal); border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.08); }
+
+        .game-card.cardinals-game { border-color: rgba(196, 30, 58, 0.4); background: linear-gradient(135deg, rgba(196, 30, 58, 0.08), var(--bsi-charcoal)); }
+        .game-card.cardinals-game::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #C41E3A, #FFD700); border-radius: 12px 12px 0 0; }
+        .game-card { position: relative; }
         .game-card { background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 12px; padding: 1.5rem; }
         .game-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .game-team { font-weight: 600; }
@@ -179,7 +195,17 @@
             .nav-links { display: none; }
             .hero { padding: 6rem 0 3rem; }
         }
-    </style>
+    .theme-toggle{background:transparent;border:1px solid rgba(250,248,245,0.2);border-radius:6px;padding:8px;cursor:pointer;color:var(--bsi-cream);display:flex;align-items:center;justify-content:center;margin-left:auto}.theme-toggle:hover{border-color:var(--bsi-burnt-orange)}.theme-toggle svg{width:18px;height:18px}        .cardinals-featured { background: linear-gradient(135deg, rgba(196, 30, 58, 0.1), rgba(196, 30, 58, 0.05)); border: 1px solid rgba(196, 30, 58, 0.2); border-radius: 16px; padding: var(--space-6); margin-bottom: var(--space-8); }
+        .cardinals-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-4); }
+        .cardinals-logo { width: 48px; height: 48px; background: #C41E3A; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; color: white; font-size: 1.25rem; }
+        .cardinals-badge { background: rgba(196, 30, 58, 0.2); color: #FF6B6B; font-size: 0.75rem; padding: 4px 8px; border-radius: 100px; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.05em; }
+        .cardinals-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--space-4); }
+        .cardinals-stat { background: rgba(0, 0, 0, 0.2); padding: var(--space-3); border-radius: 8px; text-align: center; }
+        .cardinals-stat-value { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #FF6B6B; }
+        .cardinals-stat-label { font-size: 0.75rem; color: rgba(250, 248, 245, 0.6); margin-top: 2px; }
+        .cardinals-game { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: rgba(0, 0, 0, 0.2); border-radius: 8px; margin-top: var(--space-4); }
+        .cardinals-game-label { font-size: 0.75rem; color: rgba(250, 248, 245, 0.6); text-transform: uppercase; }
+                                    </style>
 </head>
 <body>
     <nav class="nav">
@@ -194,14 +220,15 @@
                 <li><a href="/tools">Tools</a></li>
                 <li><a href="/dashboard">Dashboard</a></li>
             </ul>
+        <button class="theme-toggle" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
         </div>
     </nav>
 
     <section class="hero">
         <div class="container">
             <span class="hero-badge">Major League Baseball</span>
-            <h1><span>MLB</span> Intelligence</h1>
-            <p>Live scores, standings, player stats, and advanced analytics for every MLB game.</p>
+            <h1><span>MLB</span> Coverage</h1>
+            <p>Every game. Full attention. Real-time scores and analytics that match your commitment.</p>
         </div>
     </section>
 
@@ -222,6 +249,40 @@
             <div class="stat-card">
                 <div class="stat-value">2025</div>
                 <div class="stat-label">Season</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="cardinals-featured" id="cardinals-featured">
+            <div class="cardinals-header">
+                <div class="cardinals-logo">STL</div>
+                <div>
+                    <h3 style="margin: 0; font-family: var(--font-display); font-size: 1.25rem;">St. Louis Cardinals</h3>
+                    <span class="cardinals-badge">Featured Team</span>
+                </div>
+            </div>
+            <div class="cardinals-info" id="cardinals-stats">
+                <div class="cardinals-stat">
+                    <div class="cardinals-stat-value" id="stl-record">--</div>
+                    <div class="cardinals-stat-label">Record</div>
+                </div>
+                <div class="cardinals-stat">
+                    <div class="cardinals-stat-value" id="stl-pct">--</div>
+                    <div class="cardinals-stat-label">Win %</div>
+                </div>
+                <div class="cardinals-stat">
+                    <div class="cardinals-stat-value" id="stl-gb">--</div>
+                    <div class="cardinals-stat-label">Games Back</div>
+                </div>
+                <div class="cardinals-stat">
+                    <div class="cardinals-stat-value" id="stl-streak">--</div>
+                    <div class="cardinals-stat-label">Streak</div>
+                </div>
+            </div>
+            <div class="cardinals-game" id="cardinals-next-game">
+                <span class="cardinals-game-label">Next Game:</span>
+                <span id="stl-next">Loading...</span>
             </div>
         </div>
     </section>
@@ -251,7 +312,9 @@
         <div class="container">
             <h2>Today's Games</h2>
             <div id="scores-container">
-                <div class="loading">Loading scores...</div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
             </div>
         </div>
     </section>
@@ -285,7 +348,8 @@
             const isLive = game.Status === 'InProgress' || game.Status === 'Live';
 
             const card = document.createElement('div');
-            card.className = 'game-card';
+            const isCardinals = (game.HomeTeam || '').includes('Cardinals') || (game.AwayTeam || '').includes('Cardinals');
+            card.className = 'game-card' + (isCardinals ? ' cardinals-game' : '');
 
             const awayRow = document.createElement('div');
             awayRow.className = 'game-row';
@@ -345,13 +409,147 @@
                 document.getElementById('live-now').textContent = liveCount;
 
             } catch (error) {
-                container.textContent = 'Unable to load scores.';
                 console.error('Scores error:', error);
+                container.replaceChildren();
+                var errorDiv = document.createElement('div');
+                errorDiv.className = 'error-state';
+                var icon = document.createElement('div');
+                icon.className = 'error-icon';
+                icon.textContent = '📡';
+                errorDiv.appendChild(icon);
+                var h3 = document.createElement('h3');
+                h3.textContent = 'Unable to Load Scores';
+                errorDiv.appendChild(h3);
+                var p = document.createElement('p');
+                p.textContent = 'We\'re having trouble connecting to our data sources. This usually resolves itself quickly.';
+                errorDiv.appendChild(p);
+                var retryBtn = document.createElement('button');
+                retryBtn.className = 'retry-btn';
+                retryBtn.textContent = 'Try Again';
+                retryBtn.onclick = loadScores;
+                errorDiv.appendChild(retryBtn);
+                container.appendChild(errorDiv);
             }
         }
 
         loadScores();
         setInterval(loadScores, 60000);
     </script>
+<script>
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+      var savedTheme = localStorage.getItem('bsi-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeToggle.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('bsi-theme', next);
+      });
+    }
+
+    // Fetch Cardinals-specific stats with off-season fallback handling
+    async function fetchCardinalsStats() {
+        try {
+            const response = await fetch('/api/mlb/standings');
+            if (!response.ok) return;
+            const data = await response.json();
+
+            // Handle off-season message display
+            if (data.message && data.seasonPhase === 'offseason') {
+                const nextGameEl = document.getElementById('stl-next');
+                if (nextGameEl) {
+                    nextGameEl.textContent = 'Spring Training starts Feb 20, 2025';
+                }
+            }
+
+            // Find Cardinals in standings - handle multiple response formats
+            const standings = data.standings || data.records || data;
+            let cardinals = null;
+
+            if (Array.isArray(standings)) {
+                // Try flat array format first (BSI Archive/ESPN format)
+                cardinals = standings.find(team => {
+                    const name = team.Team || team.team?.name || team.name || '';
+                    return name.includes('Cardinals') || name.includes('St. Louis');
+                });
+
+                // If not found, try nested format (SportsDataIO format)
+                if (!cardinals) {
+                    for (const division of standings) {
+                        const teams = division.teamRecords || division.teams || [division];
+                        for (const team of teams) {
+                            const name = team.team?.name || team.Team || team.name || '';
+                            if (name.includes('Cardinals') || name.includes('St. Louis')) {
+                                cardinals = team;
+                                break;
+                            }
+                        }
+                        if (cardinals) break;
+                    }
+                }
+            }
+
+            if (cardinals) {
+                const wins = cardinals.wins || cardinals.Wins || 0;
+                const losses = cardinals.losses || cardinals.Losses || 0;
+                const pct = cardinals.winningPercentage || cardinals.Percentage || (wins / (wins + losses));
+                const gb = cardinals.gamesBack || cardinals.GamesBehind || cardinals.GamesBack || '-';
+                const streak = cardinals.streak?.streakCode || cardinals.Streak || (data.seasonPhase === 'offseason' ? 'Off-Season' : '-');
+
+                document.getElementById('stl-record').textContent = wins + '-' + losses;
+                document.getElementById('stl-pct').textContent = (typeof pct === 'number' ? pct.toFixed(3) : pct);
+                document.getElementById('stl-gb').textContent = gb === 0 || gb === '0' || gb === '-' ? '-' : gb;
+                document.getElementById('stl-streak').textContent = streak;
+
+                // Update data source indicator if we're using fallback data
+                if (data.source && data.source.includes('Archive')) {
+                    const badge = document.querySelector('.cardinals-badge');
+                    if (badge) badge.textContent = '2024 Final Stats';
+                }
+            }
+        } catch (e) {
+            console.error('[BSI] Cardinals stats error:', e);
+            // Set fallback display for errors
+            document.getElementById('stl-record').textContent = '83-79';
+            document.getElementById('stl-pct').textContent = '.512';
+            document.getElementById('stl-gb').textContent = '10';
+            document.getElementById('stl-streak').textContent = 'Off-Season';
+        }
+    }
+    
+    // Fetch Cardinals next game
+    async function fetchCardinalsSchedule() {
+        try {
+            const response = await fetch('/api/mlb/scores');
+            if (!response.ok) return;
+            const data = await response.json();
+            const games = data.games || data.scores || data || [];
+            
+            for (const game of games) {
+                const home = game.HomeTeam || game.homeTeam?.name || '';
+                const away = game.AwayTeam || game.awayTeam?.name || '';
+                
+                if (home.includes('Cardinals') || away.includes('Cardinals') ||
+                    home.includes('St. Louis') || away.includes('St. Louis')) {
+                    const opponent = home.includes('Cardinals') ? away : home;
+                    const location = home.includes('Cardinals') ? 'vs' : '@';
+                    const time = game.DateTime || game.gameDate || 'TBD';
+                    const formattedTime = time !== 'TBD' ? new Date(time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }) : 'TBD';
+                    
+                    document.getElementById('stl-next').textContent = location + ' ' + opponent.replace('St. Louis ', '').replace('Cardinals', '').trim() + ' - ' + formattedTime;
+                    return;
+                }
+            }
+            document.getElementById('stl-next').textContent = 'No game today';
+        } catch (e) {
+            document.getElementById('stl-next').textContent = 'Check schedule';
+        }
+    }
+    
+    fetchCardinalsStats();
+    fetchCardinalsSchedule();
+</script>
+    <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(console.error);}</script>
 </body>
 </html>

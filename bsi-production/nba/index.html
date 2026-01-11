@@ -157,6 +157,19 @@
 
         .loading { text-align: center; padding: 2rem; color: var(--bsi-muted); }
 
+        /* Error State */
+        .error-state { text-align: center; padding: 3rem 2rem; background: var(--bsi-charcoal); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .error-state .error-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .error-state h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--bsi-cream); }
+        .error-state p { color: rgba(250, 248, 245, 0.6); margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .retry-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--bsi-burnt-orange); color: white; font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(191, 87, 0, 0.3); }
+
+        /* Skeleton Loading */
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+        .skeleton-card { background: var(--bsi-charcoal); border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.08); }
+
         .game-card { background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 12px; padding: 1.5rem; }
         .game-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .game-team { font-weight: 600; }
@@ -179,6 +192,22 @@
             .nav-links { display: none; }
             .hero { padding: 6rem 0 3rem; }
         }
+    
+        .theme-toggle { background: transparent; border: 1px solid rgba(250, 248, 245, 0.2); border-radius: 6px; padding: 8px; cursor: pointer; color: var(--bsi-cream); display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; margin-left: 1rem; }
+        .theme-toggle:hover { border-color: var(--bsi-burnt-orange); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+                .grizzlies-featured { background: linear-gradient(135deg, rgba(93, 118, 169, 0.1), rgba(93, 118, 169, 0.05)); border: 1px solid rgba(93, 118, 169, 0.2); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; }
+        .grizzlies-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .grizzlies-logo { width: 48px; height: 48px; background: linear-gradient(135deg, #5D76A9, #12173F); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 1rem; }
+        .grizzlies-badge { background: rgba(93, 118, 169, 0.2); color: #7B94C9; font-size: 0.75rem; padding: 4px 8px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .grizzlies-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; }
+        .grizzlies-stat { background: rgba(0, 0, 0, 0.2); padding: 0.75rem; border-radius: 8px; text-align: center; }
+        .grizzlies-stat-value { font-size: 1.25rem; font-weight: 700; color: #7B94C9; }
+        .grizzlies-stat-label { font-size: 0.75rem; color: rgba(250, 248, 245, 0.6); margin-top: 2px; }
+        .grizzlies-game { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(0, 0, 0, 0.2); border-radius: 8px; margin-top: 1rem; }
+        .grizzlies-game-label { font-size: 0.75rem; color: rgba(250, 248, 245, 0.6); text-transform: uppercase; }
+                        .game-card.grizzlies-game-card { border-color: rgba(93, 118, 169, 0.4); background: linear-gradient(135deg, rgba(93, 118, 169, 0.08), var(--bsi-charcoal)); position: relative; }
+        .game-card.grizzlies-game-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #5D76A9, #F5B112); border-radius: 8px 8px 0 0; }
     </style>
 </head>
 <body>
@@ -189,10 +218,10 @@
                 <span>Blaze</span> Sports Intel
             </a>
             <ul class="nav-links">
-                <li><a href="/scores/nba" class="active">Scores</a></li>
-                <li><a href="/analytics">Analytics</a></li>
+                <li><a href="/nba/" class="active">Scores</a></li>
+                <li><a href="/nba/standings.html">Standings</a></li>
+                <li><a href="/nba/players.html">Players</a></li>
                 <li><a href="/tools">Tools</a></li>
-                <li><a href="/dashboard">Dashboard</a></li>
             </ul>
         </div>
     </nav>
@@ -251,7 +280,9 @@
         <div class="container">
             <h2>Today's Games</h2>
             <div id="scores-container">
-                <div class="loading">Loading scores...</div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
             </div>
         </div>
     </section>
@@ -345,13 +376,95 @@
                 document.getElementById('live-now').textContent = liveCount;
 
             } catch (error) {
-                container.textContent = 'Unable to load scores.';
                 console.error('Scores error:', error);
+                container.replaceChildren();
+                var errorDiv = document.createElement('div');
+                errorDiv.className = 'error-state';
+                var icon = document.createElement('div');
+                icon.className = 'error-icon';
+                icon.textContent = '📡';
+                errorDiv.appendChild(icon);
+                var h3 = document.createElement('h3');
+                h3.textContent = 'Unable to Load Scores';
+                errorDiv.appendChild(h3);
+                var p = document.createElement('p');
+                p.textContent = 'We\'re having trouble connecting to our data sources. This usually resolves itself quickly.';
+                errorDiv.appendChild(p);
+                var retryBtn = document.createElement('button');
+                retryBtn.className = 'retry-btn';
+                retryBtn.textContent = 'Try Again';
+                retryBtn.onclick = loadScores;
+                errorDiv.appendChild(retryBtn);
+                container.appendChild(errorDiv);
             }
         }
 
         loadScores();
         setInterval(loadScores, 60000);
-    </script>
+    
+    // Theme toggle
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+      var savedTheme = localStorage.getItem('bsi-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeToggle.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('bsi-theme', next);
+      });
+    }
+
+    // Grizzlies data
+    async function fetchGrizzliesStats() {
+      try {
+        const response = await fetch('/api/nba/standings');
+        if (!response.ok) return;
+        const data = await response.json();
+        const standings = data.standings || data.records || data;
+        
+        for (const conf of (Array.isArray(standings) ? standings : [])) {
+          const teams = conf.teamRecords || conf.teams || [conf];
+          for (const team of teams) {
+            const name = team.team?.name || team.Team || team.name || '';
+            if (name.includes('Grizzlies') || name.includes('Memphis')) {
+              document.getElementById('mem-record').textContent = (team.wins || 0) + '-' + (team.losses || 0);
+              document.getElementById('mem-conf').textContent = team.conference || 'Western';
+              document.getElementById('mem-streak').textContent = team.streak?.streakCode || team.Streak || '-';
+              document.getElementById('mem-ppg').textContent = team.pointsPerGame || team.PPG || '-';
+              return;
+            }
+          }
+        }
+      } catch (e) { console.log('Grizzlies stats error:', e); }
+    }
+    
+    async function fetchGrizzliesSchedule() {
+      try {
+        const response = await fetch('/api/nba/scores');
+        if (!response.ok) return;
+        const data = await response.json();
+        const games = data.games || data.scores || data || [];
+        
+        for (const game of games) {
+          const home = game.HomeTeam || game.homeTeam?.name || '';
+          const away = game.AwayTeam || game.awayTeam?.name || '';
+          if (home.includes('Grizzlies') || away.includes('Grizzlies') || home.includes('Memphis') || away.includes('Memphis')) {
+            const opponent = home.includes('Grizzlies') || home.includes('Memphis') ? away : home;
+            const location = home.includes('Grizzlies') || home.includes('Memphis') ? 'vs' : '@';
+            document.getElementById('mem-next').textContent = location + ' ' + opponent;
+            return;
+          }
+        }
+        document.getElementById('mem-next').textContent = 'No game scheduled';
+      } catch (e) {
+        document.getElementById('mem-next').textContent = 'Check schedule';
+      }
+    }
+    
+    fetchGrizzliesStats();
+    fetchGrizzliesSchedule();
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(console.error);}</script>
 </body>
 </html>

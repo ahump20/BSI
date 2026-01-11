@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Live college basketball scores from Blaze Sports Intel. Real-time NCAAB scores and game updates for every Division I program.">
+  <title>College Basketball Scores | Blaze Sports Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+  <style>
+    :root { --bsi-burnt-orange: #BF5700; --bsi-charcoal: #1A1A1A; --bsi-midnight: #0D0D0D; --bsi-cream: #FAF8F5; --bsi-ember: #FF6B35; --bsi-gold: #C9A227; --ncaab-primary: #1E3A5F; --ncaab-secondary: #E35205; --font-display: 'Oswald', sans-serif; --font-body: 'Cormorant Garamond', Georgia, serif; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); color: var(--bsi-cream); background: var(--bsi-midnight); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    .header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1rem 2rem; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+    .header-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a { font-family: var(--font-display); font-size: 0.875rem; font-weight: 500; text-transform: uppercase; color: rgba(250, 248, 245, 0.8); }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--ncaab-secondary); }
+    .page-header { padding: 7rem 2rem 2rem; background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%); }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .page-header h1 { font-family: var(--font-display); font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700; text-transform: uppercase; }
+    .page-header h1 span { color: var(--ncaab-secondary); }
+    .sub-nav { padding: 1rem 2rem; background: var(--bsi-charcoal); border-bottom: 1px solid rgba(255, 255, 255, 0.1); position: sticky; top: 60px; z-index: 50; }
+    .sub-nav-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 2rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .sub-nav-links { display: flex; gap: 2rem; }
+    .sub-nav a { font-family: var(--font-display); font-size: 0.875rem; font-weight: 500; text-transform: uppercase; color: rgba(250, 248, 245, 0.7); padding: 0.5rem 0; border-bottom: 2px solid transparent; }
+    .sub-nav a.active { color: var(--ncaab-secondary); border-color: var(--ncaab-secondary); }
+    .content { padding: 2rem; min-height: 60vh; }
+    .content-inner { max-width: 1200px; margin: 0 auto; }
+    .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: var(--bsi-charcoal); border-radius: 8px; font-family: var(--font-display); font-size: 0.875rem; }
+    .live-dot { width: 8px; height: 8px; background: #10B981; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .game-card { background: var(--bsi-charcoal); border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.08); transition: border-color 0.2s; }
+    .game-card:hover { border-color: var(--ncaab-primary); }
+    .game-card.live { border-left: 3px solid #10B981; }
+    .game-card.final { border-left: 3px solid var(--bsi-gold); }
+    .game-status { font-family: var(--font-display); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; color: rgba(250, 248, 245, 0.6); }
+    .game-status.live { color: #10B981; }
+    .game-status.final { color: var(--bsi-gold); }
+    .team-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+    .team-row + .team-row { border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .team-info { display: flex; align-items: center; gap: 0.5rem; }
+    .team-abbr { font-family: var(--font-display); font-size: 1rem; font-weight: 600; min-width: 50px; }
+    .team-score { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+    .winner .team-score { color: var(--ncaab-secondary); }
+    .no-games { text-align: center; padding: 4rem 2rem; font-family: var(--font-display); color: rgba(250, 248, 245, 0.6); }
+    .source-tag { font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; }
+    .source-tag.highlightly { background: linear-gradient(135deg, #10B981, #059669); color: white; }
+    .source-tag.espn { background: linear-gradient(135deg, #C9082A, #8B0000); color: white; }
+    .footer { padding: 3rem 2rem; background: var(--bsi-charcoal); border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; }
+    .footer p { font-family: var(--font-display); font-size: 0.875rem; color: rgba(250, 248, 245, 0.5); }
+    .theme-toggle { background: transparent; border: 1px solid rgba(250, 248, 245, 0.2); border-radius: 6px; padding: 8px; cursor: pointer; color: var(--bsi-cream); display: flex; align-items: center; justify-content: center; }
+    .theme-toggle svg { width: 18px; height: 18px; }
+                    .game-card.longhorns-game { border-color: rgba(191, 87, 0, 0.4) !important; background: linear-gradient(135deg, rgba(191, 87, 0, 0.08), var(--bsi-charcoal)); position: relative; }
+    .game-card.longhorns-game::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember)); border-radius: 12px 12px 0 0; }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+    .skeleton-card { background: var(--bsi-charcoal); border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.08); }
+    .skeleton-status { height: 12px; width: 60px; margin-bottom: 0.75rem; }
+    .skeleton-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+    .skeleton-row + .skeleton-row { border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .skeleton-team { display: flex; align-items: center; gap: 0.75rem; }
+    .skeleton-name { height: 16px; width: 60px; }
+    .skeleton-score { height: 20px; width: 32px; }
+    .error-state { text-align: center; padding: 3rem 2rem; }
+    .error-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    .error-title { font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .error-message { color: rgba(250, 248, 245, 0.6); margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .retry-btn { font-family: var(--font-display); background: var(--bsi-burnt-orange); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .retry-btn:hover { background: var(--bsi-ember); }
+    @media (max-width: 768px) { .header { padding: 0.75rem 1rem; } .nav { gap: 1rem; } .nav a { font-size: 0.75rem; } .games-grid { grid-template-columns: 1fr; } .sub-nav-inner { gap: 1rem; } .game-card { padding: 1rem; } }
+    @media (max-width: 480px) { .header { padding: 0.5rem 0.75rem; } .logo { font-size: 1.25rem; } .nav a { font-size: 0.65rem; } .page-header { padding: 5.5rem 1rem 1rem; } .page-header h1 { font-size: 1.5rem; } .sub-nav { top: 48px; } .content { padding: 1rem 0.75rem; } .status-bar { flex-direction: column; gap: 0.5rem; align-items: flex-start; } .footer { padding: 2rem 1rem; } .footer p { font-size: 0.75rem; } }
+  </style>
+</head>
+<body>
+  <header class="header"><div class="header-inner"><a href="/" class="logo">BLAZE SPORTS INTEL</a><nav class="nav"><a href="/mlb/">MLB</a><a href="/nba/">NBA</a><a href="/ncaab/" class="active">NCAAB</a><a href="/college-baseball/">College BB</a><a href="/college-football/">College FB</a><a href="/tools/">Tools</a><button class="theme-toggle" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button></nav></div></header>
+  <section class="page-header"><div class="page-header-inner"><h1><span>College Basketball</span> Live Scores</h1></div></section>
+  <nav class="sub-nav"><div class="sub-nav-inner"><div class="sub-nav-links"><a href="/ncaab/scores" class="active">Scores</a><a href="/ncaab/standings">Standings</a><a href="/ncaab/">Overview</a></div></div></nav>
+  <main class="content"><div class="content-inner"><div class="status-bar"><div style="display: flex; align-items: center; gap: 0.5rem;"><div class="live-dot"></div><span id="updateStatus">Loading scores...</span></div><div style="display: flex; align-items: center; gap: 1rem;"><span id="sourceTag" class="source-tag" style="display:none;"></span><span id="lastUpdate">--</span></div></div><div id="gamesContainer" class="games-grid"><div class="skeleton-card"><div class="skeleton skeleton-status"></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div></div><div class="skeleton-card"><div class="skeleton skeleton-status"></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div></div><div class="skeleton-card"><div class="skeleton skeleton-status"></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div></div><div class="skeleton-card"><div class="skeleton skeleton-status"></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div><div class="skeleton-row"><div class="skeleton-team"><div class="skeleton skeleton-name"></div></div><div class="skeleton skeleton-score"></div></div></div></div></div></main>
+  <footer class="footer"><p>Data powered by Highlightly Pro + ESPN. Updated every 30 seconds during games. 2025 Blaze Sports Intel.</p></footer>
+  <script src="/src/js/data-state.js"></script>
+  <script>
+    async function loadScores() {
+      try {
+        var response = await fetch('/api/ncaab/scores');
+        if (!response.ok) throw new Error('API error');
+        var data = await response.json();
+        var games = data.games || [];
+        var container = document.getElementById('gamesContainer');
+        
+        if (games.length === 0) {
+          BSIDataState.renderEmpty(container, {
+            sport: 'ncaab',
+            title: 'No Games Scheduled',
+            seasonInfo: 'Check back on game day for live college basketball scores.'
+          });
+          document.getElementById('updateStatus').textContent = 'No games today';
+          return;
+        }
+
+        container.innerHTML = '';
+        var liveCount = 0;
+
+        games.forEach(function(game) {
+          var status = game.Status || game.status || 'Scheduled';
+          var isLive = status.indexOf('Progress') > -1 || status.indexOf('1st') > -1 || status.indexOf('2nd') > -1 || status.indexOf('Half') > -1 || status.indexOf('OT') > -1;
+          var isFinal = status.indexOf('Final') > -1;
+          if (isLive) liveCount++;
+          
+          var statusClass = isLive ? 'live' : (isFinal ? 'final' : '');
+          var awayTeam = game.AwayTeam || game.awayTeam || 'Away';
+          var homeTeam = game.HomeTeam || game.homeTeam || 'Home';
+          var awayScore = game.AwayTeamScore !== undefined ? game.AwayTeamScore : (game.awayScore !== undefined ? game.awayScore : '--');
+          var homeScore = game.HomeTeamScore !== undefined ? game.HomeTeamScore : (game.homeScore !== undefined ? game.homeScore : '--');
+          var awayWinner = isFinal && parseInt(awayScore) > parseInt(homeScore);
+          var homeWinner = isFinal && parseInt(homeScore) > parseInt(awayScore);
+          var isLonghorns = awayTeam === 'TEX' || homeTeam === 'TEX' || awayTeam === 'TEXAS' || homeTeam === 'TEXAS';
+          
+          var displayStatus = status;
+          if (isLive && game.TimeRemaining) {
+            displayStatus = 'H' + game.Period + ' ' + game.TimeRemaining;
+          }
+
+          var card = document.createElement('div');
+          card.className = 'game-card ' + statusClass + (isLonghorns ? ' longhorns-game' : '');
+          
+          var statusDiv = document.createElement('div');
+          statusDiv.className = 'game-status ' + statusClass;
+          statusDiv.textContent = displayStatus;
+          card.appendChild(statusDiv);
+
+          var awayRow = document.createElement('div');
+          awayRow.className = 'team-row' + (awayWinner ? ' winner' : '');
+          awayRow.innerHTML = '<div class="team-info"><span class="team-abbr">' + awayTeam + '</span></div><span class="team-score">' + awayScore + '</span>';
+          card.appendChild(awayRow);
+
+          var homeRow = document.createElement('div');
+          homeRow.className = 'team-row' + (homeWinner ? ' winner' : '');
+          homeRow.innerHTML = '<div class="team-info"><span class="team-abbr">' + homeTeam + '</span></div><span class="team-score">' + homeScore + '</span>';
+          card.appendChild(homeRow);
+
+          container.appendChild(card);
+        });
+
+        var statusText = games.length + ' game' + (games.length !== 1 ? 's' : '');
+        if (liveCount > 0) statusText += ' (' + liveCount + ' live)';
+        document.getElementById('updateStatus').textContent = statusText;
+        document.getElementById('lastUpdate').textContent = data.fetchedAt || new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }) + ' CT';
+        
+        var sourceTag = document.getElementById('sourceTag');
+        if (data.source) {
+          sourceTag.textContent = data.source;
+          sourceTag.className = 'source-tag ' + (data.source.toLowerCase() === 'highlightly' ? 'highlightly' : 'espn');
+          sourceTag.style.display = 'inline-block';
+        }
+      } catch (err) {
+        console.error('NCAAB scores error:', err);
+        BSIDataState.renderError(document.getElementById('gamesContainer'), {
+          message: 'Unable to load college basketball scores. Please try again in a moment.'
+        });
+        document.getElementById('updateStatus').textContent = 'Connection issue';
+      }
+    }
+
+    loadScores();
+    setInterval(loadScores, 30000);
+
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+      var savedTheme = localStorage.getItem('bsi-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeToggle.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('bsi-theme', next);
+      });
+    }
+  </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
+</body>
+</html>

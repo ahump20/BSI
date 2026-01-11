@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Basketball Players | Blaze Sports Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --burnt-orange: #BF5700;
+      --texas-soil: #8B4513;
+      --ember: #FF6B35;
+      --charcoal: #1A1A1A;
+      --midnight: #0D0D0D;
+      --cream: #FAF8F5;
+      --gold: #C9A227;
+      --text-primary: #FFFFFF;
+      --text-secondary: rgba(255,255,255,0.7);
+      --card-bg: rgba(255,255,255,0.05);
+      --card-border: rgba(255,255,255,0.1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      background: linear-gradient(135deg, var(--midnight) 0%, var(--charcoal) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    
+    header {
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--burnt-orange);
+      text-decoration: none;
+    }
+    nav { display: flex; gap: 24px; }
+    nav a {
+      font-family: 'Oswald', sans-serif;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+    nav a:hover, nav a.active { color: var(--burnt-orange); }
+    
+    .hero { padding: 48px 0 32px; text-align: center; }
+    .hero h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+    
+    .search-section { padding: 24px 0; }
+    .search-box {
+      display: flex;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .search-input {
+      flex: 1;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--burnt-orange); }
+    .search-input::placeholder { color: var(--text-secondary); }
+    .search-btn {
+      padding: 14px 28px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: var(--burnt-orange);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .search-btn:hover { background: var(--ember); }
+    .search-btn:active { transform: scale(0.98); }
+    
+    .results-section { padding: 32px 0; }
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .results-count {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+    
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .player-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .player-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--burnt-orange);
+      box-shadow: 0 8px 32px rgba(191, 87, 0, 0.2);
+    }
+    .player-headshot {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 12px;
+      background: var(--charcoal);
+    }
+    .player-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .player-team {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 40px 20px;
+    }
+    .modal-overlay.active { display: block; }
+    .modal {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--charcoal);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 32px;
+      background: linear-gradient(135deg, var(--midnight) 0%, var(--charcoal) 100%);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .modal-headshot {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--burnt-orange);
+    }
+    .modal-player-info h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .modal-player-meta { color: var(--text-secondary); font-size: 1.1rem; }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 50%;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: var(--burnt-orange); }
+    .modal-body { padding: 32px; position: relative; }
+    
+    .bio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .bio-item {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .bio-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--burnt-orange);
+      margin-bottom: 4px;
+    }
+    .bio-value { font-size: 1.1rem; font-weight: 600; }
+    
+    .stats-section h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+    .stats-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .stats-tab {
+      padding: 10px 20px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .stats-tab.active {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+      color: white;
+    }
+    .stats-tab:hover:not(.active) { border-color: var(--burnt-orange); }
+    .stats-panel { display: none; }
+    .stats-panel.active { display: block; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .stat-item {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--burnt-orange);
+    }
+    .stat-name { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; }
+    
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
+    .page-btn {
+      padding: 10px 16px;
+      font-family: 'Oswald', sans-serif;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--burnt-orange); }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .page-btn.active { background: var(--burnt-orange); border-color: var(--burnt-orange); }
+    
+    .loading { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--card-border);
+      border-top-color: var(--burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    
+    @media (max-width: 768px) {
+      .header-content { flex-direction: column; gap: 12px; }
+      nav { flex-wrap: wrap; justify-content: center; }
+      .hero h1 { font-size: 2rem; }
+      .search-box { flex-direction: column; }
+      .modal-header { flex-direction: column; text-align: center; padding: 24px; }
+      .bio-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">BLAZE SPORTS INTEL</a>
+        <nav>
+          <a href="/ncaab/">Scores</a>
+          <a href="/ncaab/standings.html">Standings</a>
+          <a href="/ncaab/players.html" class="active">Players</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>College Basketball Players</h1>
+      <p>Search NCAA player profiles, stats, and career data</p>
+    </div>
+  </section>
+
+  <section class="search-section">
+    <div class="container">
+      <div class="search-box">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search players by name...">
+        <button class="search-btn" id="searchBtn">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="results-section">
+    <div class="container">
+      <div class="results-header">
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+      <div id="playersGrid" class="players-grid"></div>
+      <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading players...</p>
+      </div>
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <p>No players found. Try a different search term.</p>
+      </div>
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <img id="modalHeadshot" class="modal-headshot" src="" alt="">
+        <div class="modal-player-info">
+          <h2 id="modalName"></h2>
+          <p class="modal-player-meta" id="modalMeta"></p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div class="bio-grid" id="bioGrid"></div>
+        <div class="stats-section">
+          <h3>Season Statistics</h3>
+          <div class="stats-tabs" id="statsTabs"></div>
+          <div id="statsPanels"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://blazesportsintel.com/api/ncaab';
+    let currentOffset = 0;
+    const LIMIT = 20;
+    let totalPlayers = 0;
+
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const playersGrid = document.getElementById('playersGrid');
+    const loading = document.getElementById('loading');
+    const emptyState = document.getElementById('emptyState');
+    const resultsCount = document.getElementById('resultsCount');
+    const pagination = document.getElementById('pagination');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+
+    async function searchPlayers(query, offset) {
+      offset = offset || 0;
+      loading.style.display = 'block';
+      playersGrid.innerHTML = '';
+      emptyState.style.display = 'none';
+      pagination.innerHTML = '';
+
+      try {
+        var url = query
+          ? API_BASE + '/players?name=' + encodeURIComponent(query) + '&offset=' + offset + '&limit=' + LIMIT
+          : API_BASE + '/players?offset=' + offset + '&limit=' + LIMIT;
+        
+        var res = await fetch(url);
+        var data = await res.json();
+        
+        loading.style.display = 'none';
+
+        if (!data.players || data.players.length === 0) {
+          emptyState.style.display = 'block';
+          resultsCount.textContent = '0 players found';
+          return;
+        }
+
+        totalPlayers = data.pagination ? data.pagination.total : data.players.length;
+        resultsCount.textContent = totalPlayers + ' players found';
+        currentOffset = offset;
+
+        data.players.forEach(function(player) {
+          var card = document.createElement('div');
+          card.className = 'player-card';
+          card.setAttribute('data-id', player.id);
+
+          var img = document.createElement('img');
+          img.className = 'player-headshot';
+          img.src = player.logo || 'https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/' + player.id + '.png';
+          img.alt = player.fullName;
+          img.onerror = function() { this.src = 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=200&h=146'; };
+
+          var name = document.createElement('div');
+          name.className = 'player-name';
+          name.textContent = player.fullName;
+
+          var team = document.createElement('div');
+          team.className = 'player-team';
+          team.textContent = player.team || 'NCAAB';
+
+          card.appendChild(img);
+          card.appendChild(name);
+          card.appendChild(team);
+          card.addEventListener('click', function() { openPlayerModal(player.id); });
+          playersGrid.appendChild(card);
+        });
+
+        renderPagination(data.pagination);
+      } catch (err) {
+        loading.style.display = 'none';
+        emptyState.style.display = 'block';
+        emptyState.querySelector('p').textContent = 'Error loading players. Please try again.';
+        console.error('Search error:', err);
+      }
+    }
+
+    function renderPagination(pag) {
+      if (!pag || pag.total <= LIMIT) return;
+      pagination.innerHTML = '';
+      var totalPages = Math.ceil(pag.total / LIMIT);
+      var currentPage = Math.floor(pag.offset / LIMIT) + 1;
+
+      var prevBtn = document.createElement('button');
+      prevBtn.className = 'page-btn';
+      prevBtn.textContent = 'Previous';
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.addEventListener('click', function() {
+        searchPlayers(searchInput.value, (currentPage - 2) * LIMIT);
+      });
+      pagination.appendChild(prevBtn);
+
+      var info = document.createElement('span');
+      info.className = 'page-btn';
+      info.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+      pagination.appendChild(info);
+
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'page-btn';
+      nextBtn.textContent = 'Next';
+      nextBtn.disabled = currentPage >= totalPages;
+      nextBtn.addEventListener('click', function() {
+        searchPlayers(searchInput.value, currentPage * LIMIT);
+      });
+      pagination.appendChild(nextBtn);
+    }
+
+    async function openPlayerModal(playerId) {
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      var modalName = document.getElementById('modalName');
+      var modalMeta = document.getElementById('modalMeta');
+      var modalHeadshot = document.getElementById('modalHeadshot');
+      var bioGrid = document.getElementById('bioGrid');
+      var statsTabs = document.getElementById('statsTabs');
+      var statsPanels = document.getElementById('statsPanels');
+
+      modalName.textContent = 'Loading...';
+      modalMeta.textContent = '';
+      bioGrid.innerHTML = '';
+      statsTabs.innerHTML = '';
+      statsPanels.innerHTML = '';
+
+      try {
+        var profileRes = await fetch(API_BASE + '/players/' + playerId);
+        var profile = await profileRes.json();
+
+        modalName.textContent = profile.fullName || 'Unknown Player';
+        
+        var metaParts = [];
+        if (profile.jersey) metaParts.push('#' + profile.jersey);
+        if (profile.position && profile.position.main) metaParts.push(profile.position.main);
+        if (profile.team && profile.team.name) metaParts.push(profile.team.name);
+        if (profile.class) metaParts.push(profile.class);
+        modalMeta.textContent = metaParts.join(' | ');
+
+        modalHeadshot.src = profile.headshot || 'https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/' + playerId + '.png';
+        modalHeadshot.onerror = function() { this.src = 'https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=200&h=146'; };
+
+        var bioItems = [
+          { label: 'Height', value: profile.height ? Math.floor(profile.height/12) + "'" + (profile.height%12) + '"' : '-' },
+          { label: 'Weight', value: profile.weight ? profile.weight + ' lbs' : '-' },
+          { label: 'Class', value: profile.class || '-' },
+          { label: 'Hometown', value: profile.birthPlace || '-' },
+          { label: 'High School', value: profile.highSchool || '-' },
+          { label: 'Eligibility', value: profile.eligibility || '-' }
+        ];
+
+        bioItems.forEach(function(item) {
+          var div = document.createElement('div');
+          div.className = 'bio-item';
+          var label = document.createElement('div');
+          label.className = 'bio-label';
+          label.textContent = item.label;
+          var value = document.createElement('div');
+          value.className = 'bio-value';
+          value.textContent = item.value;
+          div.appendChild(label);
+          div.appendChild(value);
+          bioGrid.appendChild(div);
+        });
+
+        var statsRes = await fetch(API_BASE + '/players/' + playerId + '/statistics');
+        var statsData = await statsRes.json();
+
+        if (statsData.perSeason && statsData.perSeason.length > 0) {
+          var season = statsData.perSeason[0];
+          var categories = ['offense', 'defense', 'general'];
+          
+          categories.forEach(function(cat, idx) {
+            var tab = document.createElement('button');
+            tab.className = 'stats-tab' + (idx === 0 ? ' active' : '');
+            tab.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+            tab.setAttribute('data-cat', cat);
+            tab.addEventListener('click', function() {
+              document.querySelectorAll('.stats-tab').forEach(function(t) { t.classList.remove('active'); });
+              document.querySelectorAll('.stats-panel').forEach(function(p) { p.classList.remove('active'); });
+              tab.classList.add('active');
+              document.getElementById('panel-' + cat).classList.add('active');
+            });
+            statsTabs.appendChild(tab);
+
+            var panel = document.createElement('div');
+            panel.className = 'stats-panel' + (idx === 0 ? ' active' : '');
+            panel.id = 'panel-' + cat;
+            var grid = document.createElement('div');
+            grid.className = 'stats-grid';
+            var stats = season[cat] || [];
+            stats.slice(0, 12).forEach(function(stat) {
+              var item = document.createElement('div');
+              item.className = 'stat-item';
+              var val = document.createElement('div');
+              val.className = 'stat-value';
+              val.textContent = typeof stat.value === 'number' ? stat.value.toFixed(1) : stat.value;
+              var name = document.createElement('div');
+              name.className = 'stat-name';
+              name.textContent = stat.name;
+              item.appendChild(val);
+              item.appendChild(name);
+              grid.appendChild(item);
+            });
+            panel.appendChild(grid);
+            statsPanels.appendChild(panel);
+          });
+        } else {
+          var noStats = document.createElement('p');
+          noStats.style.color = 'var(--text-secondary)';
+          noStats.textContent = 'No statistics available for this season.';
+          statsPanels.appendChild(noStats);
+        }
+      } catch (err) {
+        modalName.textContent = 'Error loading player';
+        console.error('Modal error:', err);
+      }
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    searchBtn.addEventListener('click', function() {
+      searchPlayers(searchInput.value.trim(), 0);
+    });
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') searchPlayers(searchInput.value.trim(), 0);
+    });
+
+    searchPlayers('', 0);
+  </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
+</body>
+</html>

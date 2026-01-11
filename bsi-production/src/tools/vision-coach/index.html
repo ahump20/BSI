@@ -1,0 +1,4672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vision Coach - Real-time biometric presence training with vocal pitch analysis, dynamic MediaPipe metrics, and composite grade scoring. By Blaze Sports Intel.">
+  <title>Vision Coach | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-ember: #FF6B35;
+      --bsi-midnight: #0D0D0D;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-charcoal-light: #2A2A2A;
+      --bsi-bone: #F5F2EB;
+      --bsi-white: #FFFFFF;
+      --bsi-gray-300: #D1D5DB;
+      --bsi-gray-400: #9CA3AF;
+      --bsi-gray-500: #6B7280;
+      --bsi-gray-600: #4B5563;
+      --bsi-success: #10B981;
+      --bsi-warning: #F59E0B;
+      --bsi-error: #EF4444;
+
+      --font-heading: 'Oswald', sans-serif;
+      --font-body: 'Cormorant Garamond', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bsi-midnight);
+      color: var(--bsi-bone);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #root {
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .vc-header {
+      background: var(--bsi-charcoal);
+      border-bottom: 1px solid var(--bsi-charcoal-light);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .vc-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .vc-brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .vc-brand-text {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--bsi-white);
+    }
+
+    .vc-brand-sub {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--bsi-gray-400);
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    .vc-nav {
+      display: flex;
+      gap: 4px;
+    }
+
+    .vc-nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--bsi-gray-400);
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .vc-nav-btn:hover {
+      background: var(--bsi-charcoal-light);
+      color: var(--bsi-white);
+    }
+
+    .vc-nav-btn.active {
+      background: var(--bsi-burnt-orange);
+      color: var(--bsi-white);
+    }
+
+    .vc-user-btn {
+      background: var(--bsi-charcoal-light);
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-bone);
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .vc-user-btn:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-white);
+    }
+
+    /* User Area with Sync Indicator */
+    .vc-user-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .vc-sync-indicator {
+      font-size: 16px;
+      cursor: help;
+      transition: all 0.2s;
+    }
+
+    .vc-sync-indicator.syncing {
+      animation: spin 1s linear infinite;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .vc-sync-indicator.error {
+      color: #EF4444;
+      cursor: pointer;
+    }
+
+    .vc-sync-indicator.synced {
+      color: #22C55E;
+      opacity: 0.7;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Main Layout */
+    .vc-main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+      .vc-main { grid-template-columns: 1fr 340px; }
+    }
+
+    /* Video Section */
+    .vc-video-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .vc-video-wrap {
+      position: relative;
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      border: 1px solid var(--bsi-charcoal-light);
+    }
+
+    .vc-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .vc-video.mirrored { transform: scaleX(-1); }
+
+    .vc-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .vc-canvas.mirrored { transform: scaleX(-1); }
+
+    .vc-three-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .vc-video-overlay {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+    }
+
+    .vc-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.7);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .vc-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .vc-status-dot.running { background: var(--bsi-success); }
+    .vc-status-dot.loading { background: var(--bsi-warning); }
+    .vc-status-dot.error { background: var(--bsi-error); }
+    .vc-status-dot.idle { background: var(--bsi-gray-500); animation: none; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .vc-timer {
+      background: rgba(0,0,0,0.7);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--bsi-burnt-orange);
+    }
+
+    /* Controls */
+    .vc-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .vc-btn {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .vc-btn-primary {
+      background: var(--bsi-burnt-orange);
+      color: var(--bsi-white);
+    }
+
+    .vc-btn-primary:hover { background: var(--bsi-ember); }
+
+    .vc-btn-secondary {
+      background: var(--bsi-charcoal-light);
+      color: var(--bsi-bone);
+      border: 1px solid var(--bsi-gray-600);
+    }
+
+    .vc-btn-secondary:hover { border-color: var(--bsi-burnt-orange); }
+
+    .vc-btn-danger {
+      background: transparent;
+      color: var(--bsi-error);
+      border: 1px solid var(--bsi-error);
+    }
+
+    .vc-btn-danger:hover {
+      background: var(--bsi-error);
+      color: var(--bsi-white);
+    }
+
+    .vc-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .vc-attractor-select {
+      background: var(--bsi-charcoal-light);
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-bone);
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      min-width: 140px;
+    }
+
+    .vc-attractor-select:focus {
+      outline: none;
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    /* Metrics Panel */
+    .vc-metrics-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .vc-grade-card {
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid var(--bsi-charcoal-light);
+    }
+
+    .vc-grade-label {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--bsi-gray-400);
+      margin-bottom: 8px;
+    }
+
+    .vc-grade-display {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .vc-grade-letter {
+      font-family: var(--font-heading);
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .vc-grade-letter.grade-a { color: var(--bsi-success); }
+    .vc-grade-letter.grade-b { color: #22D3EE; }
+    .vc-grade-letter.grade-c { color: var(--bsi-warning); }
+    .vc-grade-letter.grade-d { color: var(--bsi-ember); }
+    .vc-grade-letter.grade-f { color: var(--bsi-error); }
+
+    .vc-grade-score {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      color: var(--bsi-gray-400);
+    }
+
+    .vc-metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .vc-metric {
+      background: var(--bsi-charcoal);
+      border-radius: 6px;
+      padding: 12px;
+      border: 1px solid var(--bsi-charcoal-light);
+    }
+
+    .vc-metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .vc-metric-label {
+      font-family: var(--font-heading);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--bsi-gray-400);
+    }
+
+    .vc-metric-value {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--bsi-white);
+    }
+
+    .vc-metric-unit {
+      font-size: 11px;
+      color: var(--bsi-gray-500);
+      margin-left: 2px;
+    }
+
+    .vc-metric-bar {
+      height: 4px;
+      background: var(--bsi-charcoal-light);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .vc-metric-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .vc-metric-fill.good { background: var(--bsi-success); }
+    .vc-metric-fill.warn { background: var(--bsi-warning); }
+    .vc-metric-fill.bad { background: var(--bsi-error); }
+
+    /* Voice Section */
+    .vc-voice-section {
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid var(--bsi-charcoal-light);
+    }
+
+    .vc-voice-header {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--bsi-burnt-orange);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .vc-voice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .vc-voice-stat { text-align: center; }
+
+    .vc-voice-stat-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--bsi-white);
+    }
+
+    .vc-voice-stat-label {
+      font-size: 9px;
+      color: var(--bsi-gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* Coach Note */
+    .vc-coach-note {
+      background: var(--bsi-charcoal);
+      border-radius: 6px;
+      padding: 10px 12px;
+      border-left: 3px solid var(--bsi-burnt-orange);
+      font-size: 13px;
+      color: var(--bsi-gray-300);
+      line-height: 1.4;
+    }
+
+    /* Settings Panel */
+    .vc-settings {
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .vc-settings-title {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--bsi-white);
+      margin-bottom: 4px;
+    }
+
+    .vc-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--bsi-charcoal-light);
+      cursor: pointer;
+    }
+
+    .vc-toggle:last-child { border-bottom: none; }
+
+    .vc-toggle-label {
+      font-size: 13px;
+      color: var(--bsi-gray-300);
+    }
+
+    .vc-switch-wrap {
+      position: relative;
+      width: 40px;
+      height: 22px;
+    }
+
+    .vc-switch-wrap input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .vc-switch {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bsi-gray-600);
+      border-radius: 11px;
+      transition: 0.2s;
+    }
+
+    .vc-switch:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--bsi-white);
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .vc-switch-wrap input:checked + .vc-switch { background: var(--bsi-burnt-orange); }
+    .vc-switch-wrap input:checked + .vc-switch:before { transform: translateX(18px); }
+
+    .vc-slider { padding: 8px 0; }
+
+    .vc-slider-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .vc-slider-label {
+      font-size: 13px;
+      color: var(--bsi-gray-300);
+    }
+
+    .vc-slider-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .vc-slider input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: var(--bsi-charcoal-light);
+      border-radius: 2px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .vc-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Select Component */
+    .vc-select {
+      padding: 8px 0;
+    }
+
+    .vc-select-label {
+      font-size: 13px;
+      color: var(--bsi-gray-300);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .vc-select select {
+      width: 100%;
+      background: var(--bsi-charcoal-light);
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-bone);
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .vc-select select:hover {
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .vc-select select:focus {
+      border-color: var(--bsi-burnt-orange);
+      box-shadow: 0 0 0 2px rgba(191, 87, 0, 0.2);
+    }
+
+    .vc-select-hint {
+      font-size: 11px;
+      color: var(--bsi-gray-500);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Camera Zoom Control */
+    .vc-zoom-control {
+      padding: 8px 0;
+    }
+
+    .vc-zoom-label {
+      font-size: 13px;
+      color: var(--bsi-gray-300);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .vc-zoom-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .vc-zoom-btn {
+      flex: 1;
+      background: var(--bsi-charcoal-light);
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-bone);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .vc-zoom-btn:hover {
+      border-color: var(--bsi-burnt-orange);
+      background: var(--bsi-charcoal);
+    }
+
+    .vc-zoom-btn.active {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-white);
+    }
+
+    /* History Panel */
+    .vc-history {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .vc-history-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .vc-history-stats { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .vc-stat-card {
+      background: var(--bsi-charcoal);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid var(--bsi-charcoal-light);
+    }
+
+    .vc-stat-value {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .vc-stat-label {
+      font-size: 10px;
+      color: var(--bsi-gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-top: 4px;
+    }
+
+    .vc-session-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .vc-session-card {
+      background: var(--bsi-charcoal);
+      border-radius: 6px;
+      padding: 12px;
+      border: 1px solid var(--bsi-charcoal-light);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .vc-session-card:hover { border-color: var(--bsi-burnt-orange); }
+
+    .vc-session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .vc-session-date {
+      font-size: 12px;
+      color: var(--bsi-gray-400);
+    }
+
+    .vc-session-grade {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .vc-session-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--bsi-gray-300);
+    }
+
+    .vc-session-stat span { color: var(--bsi-gray-500); }
+
+    .vc-mini-chart { margin-top: 8px; }
+    .vc-mini-chart svg { width: 100%; height: 40px; }
+    .vc-mini-chart polyline {
+      fill: none;
+      stroke: var(--bsi-burnt-orange);
+      stroke-width: 1.5;
+    }
+
+    /* Auth Modal */
+    .vc-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .vc-modal {
+      background: var(--bsi-charcoal);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 360px;
+      width: 100%;
+      border: 1px solid var(--bsi-charcoal-light);
+    }
+
+    .vc-modal-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--bsi-white);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .vc-modal-sub {
+      font-size: 13px;
+      color: var(--bsi-gray-400);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .vc-form-group { margin-bottom: 12px; }
+
+    .vc-form-label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--bsi-gray-400);
+      margin-bottom: 6px;
+    }
+
+    .vc-form-input {
+      width: 100%;
+      background: var(--bsi-midnight);
+      border: 1px solid var(--bsi-gray-600);
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--bsi-white);
+    }
+
+    .vc-form-input:focus {
+      outline: none;
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .vc-modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .vc-modal-link {
+      text-align: center;
+      font-size: 12px;
+      color: var(--bsi-gray-400);
+      margin-top: 12px;
+    }
+
+    .vc-modal-link button {
+      background: none;
+      border: none;
+      color: var(--bsi-burnt-orange);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Empty State */
+    .vc-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--bsi-gray-500);
+    }
+
+    .vc-empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .vc-header {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .vc-nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .vc-metrics-grid { grid-template-columns: 1fr; }
+      .vc-voice-grid { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       VR/AR-INSPIRED FEATURES
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+    /* AR Posture Guide Overlay */
+    .vc-ar-guide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .vc-ar-guide svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .vc-ar-guide .guide-zone {
+      fill: none;
+      stroke: var(--bsi-success);
+      stroke-width: 2;
+      stroke-dasharray: 8, 4;
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+
+    .vc-ar-guide .guide-zone.warning {
+      stroke: var(--bsi-warning);
+      opacity: 0.7;
+    }
+
+    .vc-ar-guide .guide-zone.error {
+      stroke: var(--bsi-error);
+      opacity: 0.8;
+      animation: arPulse 1s infinite;
+    }
+
+    @keyframes arPulse {
+      0%, 100% { opacity: 0.8; stroke-width: 2; }
+      50% { opacity: 0.4; stroke-width: 3; }
+    }
+
+    /* Immersive Mode */
+    .vc-immersive {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      background: var(--bsi-midnight);
+    }
+
+    .vc-immersive .vc-header { display: none; }
+
+    .vc-immersive .vc-main {
+      display: flex;
+      height: 100vh;
+      padding: 0;
+      max-width: none;
+    }
+
+    .vc-immersive .vc-video-section {
+      flex: 1;
+      height: 100%;
+    }
+
+    .vc-immersive .vc-video-wrap {
+      height: calc(100vh - 80px);
+      border-radius: 0;
+      aspect-ratio: auto;
+    }
+
+    .vc-immersive .vc-metrics-panel {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 280px;
+      opacity: 0.9;
+    }
+
+    .vc-immersive .vc-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26, 26, 26, 0.9);
+      padding: 12px 20px;
+      border-radius: 30px;
+    }
+
+    /* Exit Immersive Button */
+    .vc-exit-immersive {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      background: rgba(26, 26, 26, 0.9);
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-bone);
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .vc-exit-immersive:hover {
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    /* Spatial Audio Indicator */
+    .vc-spatial-indicator {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--bsi-gray-400);
+    }
+
+    .vc-spatial-indicator.active {
+      color: var(--bsi-success);
+    }
+
+    .vc-spatial-wave {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .vc-spatial-wave span {
+      width: 3px;
+      background: currentColor;
+      border-radius: 1px;
+      animation: wave 1s ease-in-out infinite;
+    }
+
+    .vc-spatial-wave span:nth-child(1) { height: 8px; animation-delay: 0s; }
+    .vc-spatial-wave span:nth-child(2) { height: 12px; animation-delay: 0.1s; }
+    .vc-spatial-wave span:nth-child(3) { height: 6px; animation-delay: 0.2s; }
+    .vc-spatial-wave span:nth-child(4) { height: 10px; animation-delay: 0.3s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.5); }
+    }
+
+    /* Depth Perception Indicator */
+    .vc-depth-indicator {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 120px;
+      background: var(--bsi-charcoal-light);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .vc-depth-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, var(--bsi-burnt-orange), var(--bsi-ember));
+      border-radius: 4px;
+      transition: height 0.3s;
+    }
+
+    /* Focus Ring Animation */
+    .vc-focus-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      border: 2px solid var(--bsi-burnt-orange);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .vc-focus-ring.active {
+      animation: focusRing 2s infinite;
+    }
+
+    @keyframes focusRing {
+      0% { width: 60px; height: 60px; opacity: 0.6; }
+      100% { width: 120px; height: 120px; opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       SESSION REPLAY UI
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+    .vc-replay-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .vc-replay-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .vc-replay-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      color: var(--bsi-white);
+    }
+
+    .vc-replay-close {
+      background: transparent;
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-gray-400);
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .vc-replay-close:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-white);
+    }
+
+    .vc-replay-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 20px;
+      min-height: 0;
+    }
+
+    @media (max-width: 900px) {
+      .vc-replay-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .vc-replay-video-area {
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .vc-replay-canvas-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bsi-midnight);
+    }
+
+    .vc-replay-canvas {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .vc-replay-timeline {
+      padding: 16px;
+      background: var(--bsi-charcoal-light);
+    }
+
+    .vc-replay-scrubber {
+      position: relative;
+      height: 60px;
+      background: var(--bsi-midnight);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .vc-replay-waveform {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 4px;
+      gap: 1px;
+    }
+
+    .vc-replay-bar {
+      flex: 1;
+      background: var(--bsi-burnt-orange);
+      opacity: 0.6;
+      border-radius: 1px 1px 0 0;
+      transition: opacity 0.1s;
+    }
+
+    .vc-replay-bar.active {
+      opacity: 1;
+    }
+
+    .vc-replay-bar.past {
+      background: var(--bsi-gray-500);
+    }
+
+    .vc-replay-playhead {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--bsi-white);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      pointer-events: none;
+    }
+
+    .vc-replay-time {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--bsi-gray-400);
+    }
+
+    .vc-replay-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: center;
+    }
+
+    .vc-replay-btn {
+      background: var(--bsi-charcoal);
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-bone);
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      transition: all 0.15s;
+    }
+
+    .vc-replay-btn:hover {
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .vc-replay-btn.playing {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .vc-replay-metrics {
+      background: var(--bsi-charcoal);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .vc-replay-metrics h4 {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--bsi-gray-400);
+      margin-bottom: 12px;
+    }
+
+    .vc-replay-grade {
+      text-align: center;
+      padding: 16px;
+      background: var(--bsi-midnight);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .vc-replay-grade-letter {
+      font-family: var(--font-heading);
+      font-size: 48px;
+      font-weight: 700;
+    }
+
+    .vc-replay-grade-score {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--bsi-gray-400);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       COACHING CHALLENGES UI
+       ═══════════════════════════════════════════════════════════════════════════ */
+
+    .vc-challenges {
+      margin-top: 16px;
+    }
+
+    .vc-challenge-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid var(--bsi-charcoal-light);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .vc-challenge-card.active {
+      border-color: var(--bsi-burnt-orange);
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.1), transparent);
+    }
+
+    .vc-challenge-card.completed {
+      border-color: var(--bsi-success);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
+    }
+
+    .vc-challenge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .vc-challenge-title {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      color: var(--bsi-white);
+    }
+
+    .vc-challenge-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: var(--bsi-midnight);
+      color: var(--bsi-gray-400);
+    }
+
+    .vc-challenge-badge.gold {
+      background: linear-gradient(135deg, #C9A227, #8B6914);
+      color: var(--bsi-midnight);
+    }
+
+    .vc-challenge-badge.silver {
+      background: linear-gradient(135deg, #9CA3AF, #6B7280);
+      color: var(--bsi-midnight);
+    }
+
+    .vc-challenge-badge.bronze {
+      background: linear-gradient(135deg, #CD7F32, #8B4513);
+      color: var(--bsi-midnight);
+    }
+
+    .vc-challenge-desc {
+      font-size: 12px;
+      color: var(--bsi-gray-400);
+      margin-bottom: 8px;
+    }
+
+    .vc-challenge-progress {
+      height: 6px;
+      background: var(--bsi-midnight);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .vc-challenge-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .vc-challenge-fill.complete {
+      background: linear-gradient(90deg, var(--bsi-success), #34D399);
+    }
+
+    .vc-challenge-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--bsi-gray-500);
+    }
+
+    .vc-live-challenge {
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(191, 87, 0, 0.05));
+      border: 1px solid var(--bsi-burnt-orange);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .vc-live-challenge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .vc-live-challenge-title {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .vc-live-challenge-timer {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: var(--bsi-white);
+    }
+
+    .vc-live-challenge-goal {
+      font-size: 13px;
+      color: var(--bsi-bone);
+    }
+
+    /* Session card replay button */
+    .vc-session-replay-btn {
+      background: transparent;
+      border: 1px solid var(--bsi-gray-600);
+      color: var(--bsi-gray-400);
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      margin-left: 8px;
+      transition: all 0.15s;
+    }
+
+    .vc-session-replay-btn:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-burnt-orange);
+    }
+
+    .vc-session-replay-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Challenge Progress Bar */
+    .vc-challenge-progress-bar {
+      position: relative;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .vc-challenge-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      border-radius: 12px;
+      transition: width 0.3s ease-out;
+    }
+
+    .vc-challenge-progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--bsi-bone);
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .vc-live-challenge-desc {
+      font-size: 12px;
+      color: var(--bsi-gray-400);
+      margin-top: 4px;
+    }
+
+    /* Challenge Completion Toast */
+    .vc-challenge-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(26, 26, 26, 0.98);
+      border: 2px solid var(--bsi-burnt-orange);
+      border-radius: 16px;
+      padding: 24px 32px;
+      text-align: center;
+      z-index: 1100;
+      box-shadow: 0 0 60px rgba(191, 87, 0, 0.4), 0 0 120px rgba(191, 87, 0, 0.2);
+      animation: toastIn 0.4s ease-out;
+    }
+
+    @keyframes toastIn {
+      from {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .vc-challenge-toast-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .vc-challenge-toast-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--bsi-bone);
+      font-weight: 600;
+    }
+
+    .vc-challenge-toast-xp {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: var(--bsi-gold);
+      margin-top: 8px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Meyda.js for advanced audio feature extraction -->
+  <script src="https://unpkg.com/meyda@5.6.3/dist/web/meyda.min.js"></script>
+
+  <!-- MediaPipe Vision Tasks for Face Landmarker -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.min.js" crossorigin></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ATTRACTOR SYSTEMS (visual biofeedback)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    const ATTRACTORS = {
+      lorenz: {
+        name: "Lorenz",
+        desc: "Classic chaos — fast loops reward steady presence",
+        params: { sigma: 10, rho: 28, beta: 8 / 3 },
+        scale: 0.03,
+        compute: (x, y, z, dt, p) => ({
+          dx: p.sigma * (y - x) * dt,
+          dy: (x * (p.rho - z) - y) * dt,
+          dz: (x * y - p.beta * z) * dt,
+        }),
+      },
+      aizawa: {
+        name: "Aizawa",
+        desc: "Organic swirl — voice energy wakes it up",
+        params: { a: 0.95, b: 0.7, c: 0.6, d: 3.5, e: 0.25, f: 0.1 },
+        scale: 0.12,
+        compute: (x, y, z, dt, p) => ({
+          dx: ((z - p.b) * x - p.d * y) * dt,
+          dy: (p.d * x + (z - p.b) * y) * dt,
+          dz: (p.c + p.a * z - (z ** 3) / 3 - (x ** 2 + y ** 2) * (1 + p.e * z) + p.f * z * x ** 3) * dt,
+        }),
+      },
+      thomas: {
+        name: "Thomas",
+        desc: "Smooth sine-chaos — calm presence makes it glow",
+        params: { b: 0.208186 },
+        scale: 0.25,
+        compute: (x, y, z, dt, p) => ({
+          dx: (Math.sin(y) - p.b * x) * dt,
+          dy: (Math.sin(z) - p.b * y) * dt,
+          dz: (Math.sin(x) - p.b * z) * dt,
+        }),
+      },
+      halvorsen: {
+        name: "Halvorsen",
+        desc: "Angular energy — any wobble becomes motion",
+        params: { a: 1.89 },
+        scale: 0.06,
+        compute: (x, y, z, dt, p) => ({
+          dx: (-p.a * x - 4 * y - 4 * z - y * y) * dt,
+          dy: (-p.a * y - 4 * z - 4 * x - z * z) * dt,
+          dz: (-p.a * z - 4 * x - 4 * y - x * x) * dt,
+        }),
+      },
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // COACHING CHALLENGES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    const CHALLENGES = {
+      presence_hold_30: {
+        id: "presence_hold_30",
+        title: "Steady State",
+        desc: "Maintain presence above 70% for 30 consecutive seconds",
+        type: "duration",
+        threshold: 70,
+        targetDuration: 30,
+        badge: "bronze",
+        xp: 50
+      },
+      presence_hold_60: {
+        id: "presence_hold_60",
+        title: "Iron Focus",
+        desc: "Maintain presence above 75% for 60 consecutive seconds",
+        type: "duration",
+        threshold: 75,
+        targetDuration: 60,
+        badge: "silver",
+        xp: 100
+      },
+      presence_hold_90: {
+        id: "presence_hold_90",
+        title: "Zen Master",
+        desc: "Maintain presence above 80% for 90 consecutive seconds",
+        type: "duration",
+        threshold: 80,
+        targetDuration: 90,
+        badge: "gold",
+        xp: 200
+      },
+      peak_presence_90: {
+        id: "peak_presence_90",
+        title: "Peak Performance",
+        desc: "Reach a presence score of 90 or higher",
+        type: "peak",
+        threshold: 90,
+        badge: "silver",
+        xp: 75
+      },
+      session_5min: {
+        id: "session_5min",
+        title: "Dedicated Practice",
+        desc: "Complete a 5-minute training session",
+        type: "session_length",
+        targetDuration: 300,
+        badge: "bronze",
+        xp: 30
+      },
+      session_10min: {
+        id: "session_10min",
+        title: "Deep Work",
+        desc: "Complete a 10-minute training session",
+        type: "session_length",
+        targetDuration: 600,
+        badge: "silver",
+        xp: 75
+      },
+      weekly_streak_3: {
+        id: "weekly_streak_3",
+        title: "Consistency",
+        desc: "Complete 3 sessions this week",
+        type: "weekly_sessions",
+        target: 3,
+        badge: "bronze",
+        xp: 50
+      },
+      weekly_streak_7: {
+        id: "weekly_streak_7",
+        title: "Week Warrior",
+        desc: "Train every day for a week",
+        type: "weekly_sessions",
+        target: 7,
+        badge: "gold",
+        xp: 200
+      },
+      grade_a: {
+        id: "grade_a",
+        title: "A-Grade Session",
+        desc: "Achieve an A grade in any session",
+        type: "grade",
+        targetGrade: "A",
+        badge: "silver",
+        xp: 100
+      }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // UTILITIES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const mean = (arr) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0);
+    const stdDev = (arr) => {
+      if (arr.length < 2) return 0;
+      const m = mean(arr);
+      return Math.sqrt(arr.reduce((sum, x) => sum + (x - m) ** 2, 0) / arr.length);
+    };
+    const formatTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, "0")}`;
+    const formatDate = (d) => new Date(d).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+    });
+
+    const loadScript = (src) =>
+      new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) return resolve();
+        const script = document.createElement("script");
+        script.src = src;
+        script.crossOrigin = "anonymous";
+        script.onload = resolve;
+        script.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(script);
+      });
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // AUDIO PITCH DETECTION (Autocorrelation algorithm)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    function detectPitch(buffer, sampleRate) {
+      const SIZE = buffer.length;
+      const MAX_SAMPLES = Math.floor(SIZE / 2);
+      const MIN_FREQ = 80;
+      const MAX_FREQ = 400;
+
+      const minPeriod = Math.floor(sampleRate / MAX_FREQ);
+      const maxPeriod = Math.floor(sampleRate / MIN_FREQ);
+
+      let rms = 0;
+      for (let i = 0; i < SIZE; i++) {
+        const val = buffer[i];
+        rms += val * val;
+      }
+      rms = Math.sqrt(rms / SIZE);
+      if (rms < 0.01) return 0;
+
+      let bestCorrelation = 0;
+      let bestPeriod = 0;
+
+      for (let period = minPeriod; period < Math.min(maxPeriod, MAX_SAMPLES); period++) {
+        let correlation = 0;
+        for (let i = 0; i < MAX_SAMPLES; i++) {
+          correlation += Math.abs((buffer[i]) - (buffer[i + period]));
+        }
+        correlation = 1 - (correlation / MAX_SAMPLES);
+
+        if (correlation > bestCorrelation) {
+          bestCorrelation = correlation;
+          bestPeriod = period;
+        }
+      }
+
+      if (bestCorrelation > 0.9 && bestPeriod > 0) {
+        return sampleRate / bestPeriod;
+      }
+      return 0;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // COMPOSITE GRADE ALGORITHM - Context-Aware by Presentation Mode
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    function computeCompositeGrade(metrics, mode = 'seated') {
+      const {
+        bodyStability = 50,
+        facingCamera = 50,
+        headTilt = 0,
+        shoulderLevel = 0,
+        voiceEnergy = 0,
+        pitchStability = 50,
+        speechPresence = 0,
+        eyeContact = 50,
+        smileScore = 0,
+        browTension = 0,
+        vocalClarity = 50,
+        fillerWordRate = 0,
+      } = metrics;
+
+      // Base scores
+      const stabilityScore = bodyStability;
+      const alignmentScore = facingCamera;
+      const headScore = clamp(100 - Math.abs(headTilt) * 4, 0, 100);
+      const shoulderScore = clamp(100 - Math.abs(shoulderLevel) * 5, 0, 100);
+      const voiceScore = speechPresence > 0.3 ? clamp(voiceEnergy * 1.5, 0, 100) : 50;
+      const pitchScore = speechPresence > 0.3 ? pitchStability : 50;
+      const eyeContactScore = eyeContact;
+      const expressionScore = clamp(50 + smileScore * 0.3 - browTension * 0.2, 0, 100);
+      const clarityScore = speechPresence > 0.3 ? vocalClarity : 50;
+      const fillerPenalty = clamp(100 - fillerWordRate * 10, 0, 100);
+
+      let composite;
+      let weights;
+
+      // Different weight distributions based on presentation mode
+      if (mode === 'seated') {
+        // Seated presentation (Zoom calls, desk work)
+        // Body stability less important (can't see lower body)
+        // Eye contact, face, voice matter most
+        weights = {
+          stability: 0.05,    // De-emphasized - can't see full body
+          alignment: 0.15,    // Face toward camera
+          head: 0.12,         // Keep head level
+          shoulder: 0.08,     // Shoulders visible
+          voice: 0.15,        // Vocal presence
+          pitch: 0.10,        // Pitch consistency
+          eyeContact: 0.15,   // Eye contact critical
+          expression: 0.10,   // Facial expression
+          clarity: 0.05,      // Voice clarity
+          filler: 0.05,       // Filler words
+        };
+      } else if (mode === 'standing') {
+        // Standing speech/presentation
+        // Full body metrics matter, more formal
+        weights = {
+          stability: 0.20,    // Body stillness important
+          alignment: 0.12,    // Face camera
+          head: 0.10,         // Head level
+          shoulder: 0.12,     // Shoulder alignment
+          voice: 0.12,        // Projection
+          pitch: 0.08,        // Pitch control
+          eyeContact: 0.10,   // Audience connection
+          expression: 0.06,   // Expression
+          clarity: 0.05,      // Clarity
+          filler: 0.05,       // Filler words
+        };
+      } else if (mode === 'closeup') {
+        // Close-up face only (headshot, interview)
+        // Only face and voice matter
+        weights = {
+          stability: 0.02,    // Minimal - not visible
+          alignment: 0.10,    // Face camera
+          head: 0.15,         // Head position critical
+          shoulder: 0.03,     // Barely visible
+          voice: 0.15,        // Voice quality
+          pitch: 0.10,        // Pitch
+          eyeContact: 0.20,   // Eye contact most critical
+          expression: 0.15,   // Expression very visible
+          clarity: 0.05,      // Clarity
+          filler: 0.05,       // Filler words
+        };
+      } else {
+        // Default fallback
+        weights = {
+          stability: 0.15, alignment: 0.15, head: 0.12, shoulder: 0.08,
+          voice: 0.12, pitch: 0.10, eyeContact: 0.12, expression: 0.08,
+          clarity: 0.04, filler: 0.04,
+        };
+      }
+
+      composite =
+        stabilityScore * weights.stability +
+        alignmentScore * weights.alignment +
+        headScore * weights.head +
+        shoulderScore * weights.shoulder +
+        voiceScore * weights.voice +
+        pitchScore * weights.pitch +
+        eyeContactScore * weights.eyeContact +
+        expressionScore * weights.expression +
+        clarityScore * weights.clarity +
+        fillerPenalty * weights.filler;
+
+      let letter;
+      if (composite >= 97) letter = "A+";
+      else if (composite >= 93) letter = "A";
+      else if (composite >= 90) letter = "A-";
+      else if (composite >= 87) letter = "B+";
+      else if (composite >= 83) letter = "B";
+      else if (composite >= 80) letter = "B-";
+      else if (composite >= 77) letter = "C+";
+      else if (composite >= 73) letter = "C";
+      else if (composite >= 70) letter = "C-";
+      else if (composite >= 60) letter = "D";
+      else letter = "F";
+
+      return {
+        score: Math.round(composite),
+        letter,
+        mode,
+        breakdown: {
+          stability: Math.round(stabilityScore),
+          alignment: Math.round(alignmentScore),
+          head: Math.round(headScore),
+          shoulder: Math.round(shoulderScore),
+          voice: Math.round(voiceScore),
+          pitch: Math.round(pitchScore),
+          eyeContact: Math.round(eyeContactScore),
+          expression: Math.round(expressionScore),
+        },
+      };
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STORAGE
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    const STORAGE_KEY = "bsi_vision_coach_v2";
+
+    const loadSessions = () => {
+      try {
+        return JSON.parse(localStorage.getItem(`${STORAGE_KEY}_sessions`) || "[]");
+      } catch { return []; }
+    };
+
+    const saveSessions = (sessions) => {
+      try {
+        localStorage.setItem(`${STORAGE_KEY}_sessions`, JSON.stringify(sessions.slice(-100)));
+      } catch {}
+    };
+
+    const loadUser = () => {
+      try {
+        return JSON.parse(localStorage.getItem(`${STORAGE_KEY}_user`) || "null");
+      } catch { return null; }
+    };
+
+    const saveUser = (user) => {
+      try {
+        if (user) localStorage.setItem(`${STORAGE_KEY}_user`, JSON.stringify(user));
+        else localStorage.removeItem(`${STORAGE_KEY}_user`);
+      } catch {}
+    };
+
+    const loadChallenges = () => {
+      try {
+        return JSON.parse(localStorage.getItem(`${STORAGE_KEY}_challenges`) || "{}");
+      } catch { return {}; }
+    };
+
+    const saveChallenges = (challenges) => {
+      try {
+        localStorage.setItem(`${STORAGE_KEY}_challenges`, JSON.stringify(challenges));
+      } catch {}
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SERVER SYNC (API INTEGRATION)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // Fetch sessions from server for authenticated users
+    const fetchServerSessions = async () => {
+      try {
+        const res = await fetch('/api/vision-coach/sessions', { credentials: 'include' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.sessions || [];
+      } catch (err) {
+        console.warn('[VisionCoach] Server sessions fetch failed:', err);
+        return null;
+      }
+    };
+
+    // Save a session to the server
+    const syncSessionToServer = async (session) => {
+      try {
+        const res = await fetch('/api/vision-coach/sessions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ session })
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          if (data.error === 'session_limit_reached') {
+            console.warn('[VisionCoach] Free tier session limit reached');
+            return { error: 'limit', message: data.message };
+          }
+          return { error: 'save_failed' };
+        }
+        return { success: true };
+      } catch (err) {
+        console.warn('[VisionCoach] Server session sync failed:', err);
+        return { error: 'network' };
+      }
+    };
+
+    // Fetch challenges from server
+    const fetchServerChallenges = async () => {
+      try {
+        const res = await fetch('/api/vision-coach/challenges', { credentials: 'include' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.challenges || {};
+      } catch (err) {
+        console.warn('[VisionCoach] Server challenges fetch failed:', err);
+        return null;
+      }
+    };
+
+    // Save challenges to server
+    const syncChallengesToServer = async (challenges) => {
+      try {
+        const res = await fetch('/api/vision-coach/challenges', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ challenges })
+        });
+        return res.ok;
+      } catch (err) {
+        console.warn('[VisionCoach] Server challenges sync failed:', err);
+        return false;
+      }
+    };
+
+    // Fetch user stats from server
+    const fetchServerStats = async () => {
+      try {
+        const res = await fetch('/api/vision-coach/stats', { credentials: 'include' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.stats || null;
+      } catch (err) {
+        console.warn('[VisionCoach] Server stats fetch failed:', err);
+        return null;
+      }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SESSION REPLAY COMPONENT
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    function SessionReplay({ session, onClose }) {
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [playbackSpeed, setPlaybackSpeed] = useState(1);
+      const canvasRef = useRef(null);
+      const animFrameRef = useRef(null);
+      const lastTickRef = useRef(0);
+
+      const snapshots = session.snapshots || [];
+      const hasSnapshots = snapshots.length > 0;
+
+      const currentSnapshot = snapshots[currentIndex] || {
+        presenceScore: session.avgPresence || 50,
+        bodyStability: session.avgStability || 50,
+        headTilt: 0,
+        shoulderLevel: 0,
+        voiceEnergy: 0,
+        pitch: 0
+      };
+
+      const currentGrade = useMemo(() => {
+        if (!hasSnapshots) return { score: session.compositeScore || 50, letter: session.compositeGrade || "C" };
+        // Use session's mode if available, default to 'seated' for backwards compat
+        return computeCompositeGrade(currentSnapshot, session.presentationMode || 'seated');
+      }, [currentSnapshot, hasSnapshots, session]);
+
+      const gradeColor = currentGrade.letter.startsWith("A") ? "#10B981" :
+                         currentGrade.letter.startsWith("B") ? "#22D3EE" :
+                         currentGrade.letter.startsWith("C") ? "#F59E0B" : "#EF4444";
+
+      // Playback loop
+      useEffect(() => {
+        if (!isPlaying || !hasSnapshots) return;
+
+        const interval = 500 / playbackSpeed; // Snapshots are 500ms apart
+        let lastTime = performance.now();
+
+        const tick = (now) => {
+          if (now - lastTime >= interval) {
+            lastTime = now;
+            setCurrentIndex(i => {
+              if (i >= snapshots.length - 1) {
+                setIsPlaying(false);
+                return i;
+              }
+              return i + 1;
+            });
+          }
+          animFrameRef.current = requestAnimationFrame(tick);
+        };
+
+        animFrameRef.current = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(animFrameRef.current);
+      }, [isPlaying, snapshots.length, playbackSpeed, hasSnapshots]);
+
+      // Draw attractor visualization
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.fillStyle = "#0D0D0D";
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw presence-reactive visualization
+        const presence = currentSnapshot.presenceScore || 50;
+        const centerX = w / 2;
+        const centerY = h / 2;
+        const radius = 50 + (presence / 100) * 80;
+
+        // Glow based on presence
+        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius * 1.5);
+        gradient.addColorStop(0, `rgba(191, 87, 0, ${presence / 200})`);
+        gradient.addColorStop(0.5, `rgba(255, 107, 53, ${presence / 400})`);
+        gradient.addColorStop(1, "transparent");
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Core presence circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(191, 87, 0, ${0.3 + presence / 200})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Head tilt indicator
+        const tiltAngle = (currentSnapshot.headTilt || 0) * Math.PI / 180;
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(tiltAngle);
+        ctx.beginPath();
+        ctx.moveTo(-30, -60);
+        ctx.lineTo(30, -60);
+        ctx.strokeStyle = "#F5F2EB";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        // Stability ring
+        const stability = currentSnapshot.bodyStability || 50;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius + 20, 0, Math.PI * 2 * (stability / 100));
+        ctx.strokeStyle = "#10B981";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+      }, [currentSnapshot]);
+
+      const handleScrubberClick = (e) => {
+        if (!hasSnapshots) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pct = x / rect.width;
+        const newIndex = Math.floor(pct * snapshots.length);
+        setCurrentIndex(clamp(newIndex, 0, snapshots.length - 1));
+        setIsPlaying(false);
+      };
+
+      const currentTime = hasSnapshots ? (currentIndex * 0.5) : 0;
+      const totalTime = hasSnapshots ? (snapshots.length * 0.5) : session.duration;
+
+      return (
+        <div className="vc-replay-modal">
+          <div className="vc-replay-header">
+            <div className="vc-replay-title">
+              Session Replay — {formatDate(session.date)}
+            </div>
+            <button className="vc-replay-close" onClick={onClose}>✕ Close</button>
+          </div>
+
+          <div className="vc-replay-content">
+            <div className="vc-replay-video-area">
+              <div className="vc-replay-canvas-wrap">
+                <canvas
+                  ref={canvasRef}
+                  className="vc-replay-canvas"
+                  width={400}
+                  height={300}
+                />
+              </div>
+
+              <div className="vc-replay-timeline">
+                <div className="vc-replay-scrubber" onClick={handleScrubberClick}>
+                  <div className="vc-replay-waveform">
+                    {hasSnapshots ? snapshots.map((snap, i) => (
+                      <div
+                        key={i}
+                        className={`vc-replay-bar ${i === currentIndex ? 'active' : ''} ${i < currentIndex ? 'past' : ''}`}
+                        style={{ height: `${snap.presenceScore || 50}%` }}
+                      />
+                    )) : (
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B7280', fontSize: 12 }}>
+                        No snapshot data for this session
+                      </div>
+                    )}
+                  </div>
+                  {hasSnapshots && (
+                    <div
+                      className="vc-replay-playhead"
+                      style={{ left: `${(currentIndex / Math.max(snapshots.length - 1, 1)) * 100}%` }}
+                    />
+                  )}
+                </div>
+
+                <div className="vc-replay-time">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(totalTime)}</span>
+                </div>
+
+                <div className="vc-replay-controls">
+                  <button
+                    className="vc-replay-btn"
+                    onClick={() => setCurrentIndex(0)}
+                    disabled={!hasSnapshots}
+                  >
+                    ⏮ Start
+                  </button>
+                  <button
+                    className={`vc-replay-btn ${isPlaying ? 'playing' : ''}`}
+                    onClick={() => setIsPlaying(!isPlaying)}
+                    disabled={!hasSnapshots}
+                  >
+                    {isPlaying ? '⏸ Pause' : '▶ Play'}
+                  </button>
+                  <button
+                    className="vc-replay-btn"
+                    onClick={() => setCurrentIndex(snapshots.length - 1)}
+                    disabled={!hasSnapshots}
+                  >
+                    ⏭ End
+                  </button>
+                  <select
+                    className="vc-attractor-select"
+                    value={playbackSpeed}
+                    onChange={(e) => setPlaybackSpeed(Number(e.target.value))}
+                    style={{ marginLeft: 8 }}
+                  >
+                    <option value={0.5}>0.5x</option>
+                    <option value={1}>1x</option>
+                    <option value={2}>2x</option>
+                    <option value={4}>4x</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="vc-replay-metrics">
+              <h4>Current Frame</h4>
+              <div className="vc-replay-grade">
+                <div className="vc-replay-grade-letter" style={{ color: gradeColor }}>
+                  {currentGrade.letter}
+                </div>
+                <div className="vc-replay-grade-score">{currentGrade.score}%</div>
+              </div>
+
+              <MetricCard
+                label="Presence Score"
+                value={Math.round(currentSnapshot.presenceScore || 0)}
+                unit="%"
+                pct={currentSnapshot.presenceScore || 0}
+              />
+              <MetricCard
+                label="Body Stability"
+                value={Math.round(currentSnapshot.bodyStability || 0)}
+                unit="%"
+                pct={currentSnapshot.bodyStability || 0}
+              />
+              <MetricCard
+                label="Head Tilt"
+                value={Math.abs(currentSnapshot.headTilt || 0).toFixed(1)}
+                unit="°"
+                pct={clamp(100 - Math.abs(currentSnapshot.headTilt || 0) * 4, 0, 100)}
+              />
+              <MetricCard
+                label="Voice Energy"
+                value={Math.round(currentSnapshot.voiceEnergy || 0)}
+                unit="%"
+                pct={currentSnapshot.voiceEnergy || 0}
+              />
+
+              <h4 style={{ marginTop: 16 }}>Session Summary</h4>
+              <div style={{ fontSize: 12, color: '#9CA3AF' }}>
+                <p>Duration: {formatTime(session.duration)}</p>
+                <p>Avg Presence: {session.avgPresence}%</p>
+                <p>Peak Presence: {session.peakPresence}%</p>
+                <p>Attractor: {session.attractor}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // COMPONENTS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    function Toggle({ label, checked, onChange }) {
+      return (
+        <label className="vc-toggle">
+          <span className="vc-toggle-label">{label}</span>
+          <span className="vc-switch-wrap">
+            <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+            <span className="vc-switch" />
+          </span>
+        </label>
+      );
+    }
+
+    function Slider({ label, value, min, max, step, onChange, format }) {
+      return (
+        <div className="vc-slider">
+          <div className="vc-slider-header">
+            <span className="vc-slider-label">{label}</span>
+            <span className="vc-slider-value">{format ? format(value) : value}</span>
+          </div>
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onChange={(e) => onChange(Number(e.target.value))}
+          />
+        </div>
+      );
+    }
+
+    function Select({ label, value, options, onChange, hint }) {
+      return (
+        <div className="vc-select">
+          <label className="vc-select-label">{label}</label>
+          <select value={value} onChange={(e) => onChange(e.target.value)}>
+            {options.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          {hint && <div className="vc-select-hint">{hint}</div>}
+        </div>
+      );
+    }
+
+    function CameraZoomControl({ zoom, onZoomChange }) {
+      const zoomLevels = [
+        { value: 1, label: 'Wide' },
+        { value: 1.5, label: 'Medium' },
+        { value: 2, label: 'Close' },
+        { value: 2.5, label: 'Face' },
+      ];
+
+      return (
+        <div className="vc-zoom-control">
+          <label className="vc-zoom-label">Camera framing</label>
+          <div className="vc-zoom-buttons">
+            {zoomLevels.map(level => (
+              <button
+                key={level.value}
+                className={`vc-zoom-btn ${zoom === level.value ? 'active' : ''}`}
+                onClick={() => onZoomChange(level.value)}
+              >
+                {level.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function MetricCard({ label, value, unit, pct, tone }) {
+      const getTone = () => {
+        if (tone) return tone;
+        if (typeof pct !== "number") return "good";
+        if (pct >= 70) return "good";
+        if (pct >= 40) return "warn";
+        return "bad";
+      };
+
+      return (
+        <div className="vc-metric">
+          <div className="vc-metric-header">
+            <span className="vc-metric-label">{label}</span>
+            <span className="vc-metric-value">
+              {value}<span className="vc-metric-unit">{unit}</span>
+            </span>
+          </div>
+          {typeof pct === "number" && (
+            <div className="vc-metric-bar">
+              <div
+                className={`vc-metric-fill ${getTone()}`}
+                style={{ width: `${clamp(pct, 0, 100)}%` }}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function MiniChart({ data, height = 40 }) {
+      if (!data || data.length < 2) return null;
+
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+      const range = max - min || 1;
+      const width = 200;
+
+      const points = data.map((v, i) => {
+        const x = (i / (data.length - 1)) * width;
+        const y = height - ((v - min) / range) * (height - 4) - 2;
+        return `${x},${y}`;
+      }).join(" ");
+
+      return (
+        <div className="vc-mini-chart">
+          <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+            <polyline points={points} />
+          </svg>
+        </div>
+      );
+    }
+
+    function AuthModal({ onAuth, onClose }) {
+      const [mode, setMode] = useState("signin");
+      const [email, setEmail] = useState("");
+      const [password, setPassword] = useState("");
+      const [name, setName] = useState("");
+      const [error, setError] = useState("");
+      const [loading, setLoading] = useState(false);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+
+        if (!email || !password) {
+          setError("Please fill in all fields");
+          return;
+        }
+
+        if (mode === "signup" && !name) {
+          setError("Please enter your name");
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          const endpoint = mode === "signin" ? "/api/auth/login" : "/api/auth/register";
+          const body = mode === "signin"
+            ? { email, password }
+            : { email, password, name };
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(body),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Authentication failed");
+          }
+
+          onAuth(data.user);
+        } catch (err) {
+          setError(err.message || "Authentication failed");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="vc-modal-overlay" onClick={onClose}>
+          <div className="vc-modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="vc-modal-title">
+              {mode === "signin" ? "Sign In" : "Create Account"}
+            </h2>
+            <p className="vc-modal-sub">
+              {mode === "signin"
+                ? "Track your progress across sessions"
+                : "Start training with Vision Coach"}
+            </p>
+
+            {error && (
+              <div style={{ color: "#EF4444", fontSize: 13, marginBottom: 12, textAlign: "center" }}>
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              {mode === "signup" && (
+                <div className="vc-form-group">
+                  <label className="vc-form-label">Name</label>
+                  <input
+                    className="vc-form-input"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your name"
+                  />
+                </div>
+              )}
+
+              <div className="vc-form-group">
+                <label className="vc-form-label">Email</label>
+                <input
+                  className="vc-form-input"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <div className="vc-form-group">
+                <label className="vc-form-label">Password</label>
+                <input
+                  className="vc-form-input"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div className="vc-modal-actions">
+                <button
+                  type="submit"
+                  className="vc-btn vc-btn-primary"
+                  style={{ width: "100%", justifyContent: "center" }}
+                  disabled={loading}
+                >
+                  {loading ? "Please wait..." : mode === "signin" ? "Sign In" : "Create Account"}
+                </button>
+                <button
+                  type="button"
+                  className="vc-btn vc-btn-secondary"
+                  style={{ width: "100%", justifyContent: "center" }}
+                  onClick={onClose}
+                >
+                  Continue as Guest
+                </button>
+              </div>
+            </form>
+
+            <div className="vc-modal-link">
+              {mode === "signin" ? (
+                <>Don't have an account? <button onClick={() => setMode("signup")}>Sign up</button></>
+              ) : (
+                <>Already have an account? <button onClick={() => setMode("signin")}>Sign in</button></>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function HistoryPanel({ sessions, onReplay }) {
+      if (!sessions.length) {
+        return (
+          <div className="vc-empty">
+            <div className="vc-empty-icon">📊</div>
+            <p>No sessions yet. Complete your first session to start tracking progress.</p>
+          </div>
+        );
+      }
+
+      const totalSessions = sessions.length;
+      const totalMinutes = Math.round(sessions.reduce((sum, s) => sum + (s.duration || 0), 0) / 60);
+      const avgPresence = Math.round(mean(sessions.map(s => s.avgPresence || 0)));
+      const avgGrade = Math.round(mean(sessions.map(s => s.compositeScore || s.avgPresence || 0)));
+
+      const recentSessions = [...sessions].reverse().slice(0, 10);
+
+      return (
+        <div className="vc-history">
+          <div className="vc-history-stats">
+            <div className="vc-stat-card">
+              <div className="vc-stat-value">{totalSessions}</div>
+              <div className="vc-stat-label">Sessions</div>
+            </div>
+            <div className="vc-stat-card">
+              <div className="vc-stat-value">{totalMinutes}</div>
+              <div className="vc-stat-label">Minutes</div>
+            </div>
+            <div className="vc-stat-card">
+              <div className="vc-stat-value">{avgPresence}%</div>
+              <div className="vc-stat-label">Avg Presence</div>
+            </div>
+            <div className="vc-stat-card">
+              <div className="vc-stat-value">{avgGrade}%</div>
+              <div className="vc-stat-label">Avg Grade</div>
+            </div>
+          </div>
+
+          <div className="vc-session-list">
+            {recentSessions.map((session) => (
+              <div key={session.id} className="vc-session-card">
+                <div className="vc-session-header">
+                  <span className="vc-session-date">{formatDate(session.date)}</span>
+                  <span
+                    className="vc-session-grade"
+                    style={{ color: session.compositeGrade?.startsWith("A") ? "#10B981" :
+                                   session.compositeGrade?.startsWith("B") ? "#22D3EE" :
+                                   session.compositeGrade?.startsWith("C") ? "#F59E0B" : "#EF4444" }}
+                  >
+                    {session.compositeGrade || "—"}
+                  </span>
+                </div>
+                <div className="vc-session-stats">
+                  <span className="vc-session-stat"><span>Duration:</span> {formatTime(session.duration)}</span>
+                  <span className="vc-session-stat"><span>Presence:</span> {session.avgPresence}%</span>
+                  <span className="vc-session-stat"><span>Attractor:</span> {session.attractor}</span>
+                </div>
+                {session.presenceHistory?.length > 3 && (
+                  <MiniChart data={session.presenceHistory} />
+                )}
+                <div className="vc-session-actions" style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                  {session.snapshots?.length > 0 ? (
+                    <button
+                      className="vc-btn vc-btn-secondary"
+                      style={{ fontSize: 12, padding: '6px 12px' }}
+                      onClick={() => onReplay && onReplay(session)}
+                    >
+                      ▶ Replay Session
+                    </button>
+                  ) : (
+                    <span style={{ fontSize: 11, color: '#6B7280', fontStyle: 'italic' }}>
+                      No replay data
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MAIN COMPONENT
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    function VisionCoachV2() {
+      const [running, setRunning] = useState(false);
+      const [paused, setPaused] = useState(false);
+      const [status, setStatus] = useState({ level: "idle", text: "Ready" });
+      const [hasDetection, setHasDetection] = useState(false);
+      const [sessionTime, setSessionTime] = useState(0);
+      const [selectedAttractor, setSelectedAttractor] = useState("lorenz");
+
+      const [view, setView] = useState("live");
+      const [showAuth, setShowAuth] = useState(false);
+
+      const [user, setUser] = useState(() => loadUser());
+      const [sessions, setSessions] = useState(() => loadSessions());
+
+      const [mirrorVideo, setMirrorVideo] = useState(true);
+      const [showOverlay, setShowOverlay] = useState(false);  // Off by default - less intrusive
+      const [showAttractor, setShowAttractor] = useState(false); // Off by default - distracting
+
+      // Presentation Mode: 'seated', 'standing', 'closeup'
+      // Changes which metrics matter and how grading works
+      const [presentationMode, setPresentationMode] = useState('seated');
+      const [cameraZoom, setCameraZoom] = useState(1); // 1 = wide, 1.5 = medium, 2 = close, 2.5 = face
+      const [particleCount, setParticleCount] = useState(10000);
+      const [presenceSmoothing, setPresenceSmoothing] = useState(0.1);
+
+      const [metrics, setMetrics] = useState({
+        // Pose metrics
+        headTilt: 0,
+        shoulderLevel: 0,
+        bodyStability: 50,
+        facingCamera: 50,
+        // Basic vocal metrics
+        voiceEnergy: 0,
+        pitch: 0,
+        pitchStability: 50,
+        speechPresence: 0,
+        presenceScore: 50,
+        // Advanced vocal metrics (Meyda)
+        spectralCentroid: 0,     // Voice brightness (0-100)
+        spectralFlux: 0,         // Voice variation (0-100)
+        spectralFlatness: 0,     // Noisiness vs tonal (0-100)
+        vocalClarity: 50,        // Derived from spectral features
+        // Face expression metrics (MediaPipe Face Landmarker)
+        smileScore: 0,           // 0-100
+        browTension: 0,          // 0-100 (raised = stress)
+        eyeOpenness: 50,         // 0-100
+        jawClench: 0,            // 0-100 (tension indicator)
+        eyeContact: 50,          // Gaze toward camera
+        // Speech content metrics (Web Speech API)
+        fillerWordCount: 0,      // Total filler words this session
+        fillerWordRate: 0,       // Filler words per minute
+        wordsPerMinute: 0,       // Speaking pace
+        recentFillers: [],       // Last few filler words detected
+      });
+
+      const [compositeGrade, setCompositeGrade] = useState({ score: 50, letter: "C", breakdown: {} });
+      const [coachNote, setCoachNote] = useState("Press Start to begin your presence training session.");
+
+      // VR/AR-inspired feature states
+      const [immersiveMode, setImmersiveMode] = useState(false);
+      const [spatialAudioEnabled, setSpatialAudioEnabled] = useState(false);
+      const [arGuideEnabled, setArGuideEnabled] = useState(true);
+      const [hapticFeedback, setHapticFeedback] = useState(true);
+      const [focusRingActive, setFocusRingActive] = useState(false);
+      const [depthValue, setDepthValue] = useState(50);
+
+      // Session Replay state
+      const [replaySession, setReplaySession] = useState(null);
+
+      // Coaching Challenges state
+      const [completedChallenges, setCompletedChallenges] = useState(() => loadChallenges());
+      const [activeChallenge, setActiveChallenge] = useState(null);
+      const [challengeProgress, setChallengeProgress] = useState({ currentStreak: 0, peakAchieved: false });
+      const [showChallengeComplete, setShowChallengeComplete] = useState(null);
+
+      // Server Sync state (for authenticated users)
+      const [serverStats, setServerStats] = useState(null);
+      const [serverSyncing, setServerSyncing] = useState(false);
+      const [syncError, setSyncError] = useState(null);
+
+      const videoRef = useRef(null);
+      const canvasRef = useRef(null);
+      const threeContainerRef = useRef(null);
+      const streamRef = useRef(null);
+      const poseRef = useRef(null);
+      const audioCtxRef = useRef(null);
+      const analyserRef = useRef(null);
+      const rafRef = useRef(null);
+      const startTimeRef = useRef(0);
+      const pauseStartRef = useRef(null);
+      const pausedAccumRef = useRef(0);
+      const runningRef = useRef(false);
+      const pausedRef = useRef(false);
+      const threeRef = useRef(null);
+
+      // VR/AR refs
+      const spatialAudioRef = useRef({
+        ctx: null,
+        gainNode: null,
+        panNode: null,
+        oscillator: null,
+        isPlaying: false
+      });
+      const hapticIntervalRef = useRef(null);
+
+      // Session Replay refs
+      const snapshotsRef = useRef([]);
+      const snapshotIntervalRef = useRef(null);
+
+      // Challenge tracking ref (for duration-based challenges)
+      const challengeStreakRef = useRef({ startTime: null, duration: 0 });
+
+      // Presentation mode ref (for callbacks to access current mode)
+      const presentationModeRef = useRef('seated');
+
+      // Sync presentationMode state to ref
+      useEffect(() => {
+        presentationModeRef.current = presentationMode;
+      }, [presentationMode]);
+
+      // Advanced Audio Analysis refs (Meyda.js)
+      const meydaAnalyzerRef = useRef(null);
+      const meydaFeaturesRef = useRef({
+        spectralCentroid: 0,
+        spectralFlux: 0,
+        spectralFlatness: 0,
+        rms: 0
+      });
+
+      // Face Landmarker refs (MediaPipe)
+      const faceLandmarkerRef = useRef(null);
+      const faceResultsRef = useRef(null);
+
+      // Speech Recognition refs (Web Speech API)
+      const speechRecognitionRef = useRef(null);
+      const speechDataRef = useRef({
+        totalWords: 0,
+        fillerWords: 0,
+        fillerList: [],
+        startTime: null,
+        transcript: ''
+      });
+
+      const historyRef = useRef({
+        nose: [],
+        presence: [],
+        presenceHistory: [],
+        pitchHistory: [],
+        voiceEnergyHistory: [],
+        spectralHistory: [],
+      });
+
+      const smoothRef = useRef({
+        headTilt: 0,
+        shoulderLevel: 0,
+        bodyStability: 50,
+        facingCamera: 50,
+        voiceEnergy: 0,
+        pitch: 0,
+        pitchStability: 50,
+        speechPresence: 0,
+        presenceScore: 50,
+      });
+
+      const metricsRef = useRef(metrics);
+      const uiTickRef = useRef({ last: 0 });
+      const audioBufferRef = useRef(null);
+
+      useEffect(() => { metricsRef.current = metrics; }, [metrics]);
+      useEffect(() => { saveSessions(sessions); }, [sessions]);
+      useEffect(() => { saveChallenges(completedChallenges); }, [completedChallenges]);
+
+      // Server sync: fetch sessions/challenges/stats on mount if authenticated
+      useEffect(() => {
+        if (!user) return;
+
+        const syncFromServer = async () => {
+          setServerSyncing(true);
+          setSyncError(null);
+          try {
+            // Fetch server data in parallel
+            const [serverSessions, serverChallenges, stats] = await Promise.all([
+              fetchServerSessions(),
+              fetchServerChallenges(),
+              fetchServerStats()
+            ]);
+
+            // Merge server sessions with local (server takes precedence for matching IDs)
+            if (serverSessions && serverSessions.length > 0) {
+              setSessions(prev => {
+                const localIds = new Set(prev.map(s => s.id));
+                const serverIds = new Set(serverSessions.map(s => s.id));
+                // Keep local sessions not on server, add all server sessions
+                const localOnly = prev.filter(s => !serverIds.has(s.id));
+                return [...serverSessions, ...localOnly].slice(-100);
+              });
+            }
+
+            // Merge server challenges with local
+            if (serverChallenges && Object.keys(serverChallenges).length > 0) {
+              setCompletedChallenges(prev => ({
+                ...prev,
+                ...serverChallenges
+              }));
+            }
+
+            // Store server stats
+            if (stats) {
+              setServerStats(stats);
+            }
+          } catch (err) {
+            console.warn('[VisionCoach] Server sync failed:', err);
+            setSyncError('Could not sync with server');
+          } finally {
+            setServerSyncing(false);
+          }
+        };
+
+        syncFromServer();
+      }, [user]);
+
+      const getElapsedSeconds = useCallback(() => {
+        const now = Date.now();
+        const base = now - (startTimeRef.current || now);
+        const pausedExtra = pausedAccumRef.current +
+          (pausedRef.current && pauseStartRef.current ? now - pauseStartRef.current : 0);
+        return Math.max(0, Math.floor((base - pausedExtra) / 1000));
+      }, []);
+
+      useEffect(() => {
+        if (!running) return;
+        const id = setInterval(() => setSessionTime(getElapsedSeconds()), 1000);
+        return () => clearInterval(id);
+      }, [running, getElapsedSeconds]);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // VR/AR SPATIAL AUDIO SYSTEM
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const initSpatialAudio = useCallback(() => {
+        if (spatialAudioRef.current.ctx) return;
+
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const gainNode = ctx.createGain();
+        const panNode = ctx.createStereoPanner();
+
+        gainNode.gain.value = 0;
+        panNode.pan.value = 0;
+
+        panNode.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        spatialAudioRef.current = { ctx, gainNode, panNode, oscillator: null, isPlaying: false };
+      }, []);
+
+      const updateSpatialAudio = useCallback((presenceScore, headTilt) => {
+        const sa = spatialAudioRef.current;
+        if (!sa.ctx || !spatialAudioEnabled || !running) return;
+
+        // Map presence to frequency (220Hz - 440Hz) - higher pitch = better presence
+        const baseFreq = 220 + (presenceScore / 100) * 220;
+
+        // Map head tilt to stereo pan (-1 to 1)
+        const pan = clamp(headTilt / 30, -1, 1);
+
+        // Volume based on presence (quieter = needs work)
+        const volume = 0.03 + (presenceScore / 100) * 0.07;
+
+        // Update or create oscillator
+        if (!sa.oscillator || !sa.isPlaying) {
+          if (sa.oscillator) {
+            try { sa.oscillator.stop(); } catch {}
+          }
+          sa.oscillator = sa.ctx.createOscillator();
+          sa.oscillator.type = 'sine';
+          sa.oscillator.frequency.value = baseFreq;
+          sa.oscillator.connect(sa.panNode);
+          sa.oscillator.start();
+          sa.isPlaying = true;
+        } else {
+          sa.oscillator.frequency.setTargetAtTime(baseFreq, sa.ctx.currentTime, 0.1);
+        }
+
+        sa.gainNode.gain.setTargetAtTime(volume, sa.ctx.currentTime, 0.1);
+        sa.panNode.pan.setTargetAtTime(pan, sa.ctx.currentTime, 0.1);
+      }, [spatialAudioEnabled, running]);
+
+      const stopSpatialAudio = useCallback(() => {
+        const sa = spatialAudioRef.current;
+        if (sa.oscillator) {
+          try { sa.oscillator.stop(); } catch {}
+          sa.oscillator = null;
+          sa.isPlaying = false;
+        }
+        if (sa.gainNode) {
+          sa.gainNode.gain.setTargetAtTime(0, sa.ctx?.currentTime || 0, 0.05);
+        }
+      }, []);
+
+      const cleanupSpatialAudio = useCallback(() => {
+        stopSpatialAudio();
+        if (spatialAudioRef.current.ctx) {
+          try { spatialAudioRef.current.ctx.close(); } catch {}
+        }
+        spatialAudioRef.current = { ctx: null, gainNode: null, panNode: null, oscillator: null, isPlaying: false };
+      }, [stopSpatialAudio]);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // HAPTIC FEEDBACK SYSTEM (Mobile)
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const triggerHaptic = useCallback((pattern = 'light') => {
+        if (!hapticFeedback || !navigator.vibrate) return;
+
+        const patterns = {
+          light: [10],
+          medium: [20],
+          heavy: [40],
+          warning: [20, 50, 20],
+          success: [10, 30, 10, 30, 10]
+        };
+
+        try { navigator.vibrate(patterns[pattern] || patterns.light); } catch {}
+      }, [hapticFeedback]);
+
+      const startHapticLoop = useCallback(() => {
+        if (hapticIntervalRef.current) return;
+
+        hapticIntervalRef.current = setInterval(() => {
+          const score = metricsRef.current.presenceScore;
+          if (score < 40) triggerHaptic('warning');
+          else if (score < 60) triggerHaptic('medium');
+          else if (score >= 85) triggerHaptic('success');
+        }, 3000);
+      }, [triggerHaptic]);
+
+      const stopHapticLoop = useCallback(() => {
+        if (hapticIntervalRef.current) {
+          clearInterval(hapticIntervalRef.current);
+          hapticIntervalRef.current = null;
+        }
+      }, []);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // SESSION SNAPSHOT COLLECTION (for replay)
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const startSnapshotCollection = useCallback(() => {
+        snapshotsRef.current = [];
+        if (snapshotIntervalRef.current) clearInterval(snapshotIntervalRef.current);
+
+        snapshotIntervalRef.current = setInterval(() => {
+          if (!runningRef.current || pausedRef.current) return;
+
+          const m = metricsRef.current;
+          snapshotsRef.current.push({
+            t: getElapsedSeconds(),
+            presenceScore: Math.round(m.presenceScore),
+            bodyStability: Math.round(m.bodyStability),
+            facingCamera: Math.round(m.facingCamera),
+            headTilt: Number(m.headTilt.toFixed(1)),
+            shoulderLevel: Number(m.shoulderLevel.toFixed(1)),
+            voiceEnergy: Math.round(m.voiceEnergy),
+            pitch: Math.round(m.pitch),
+            pitchStability: Math.round(m.pitchStability)
+          });
+        }, 500); // Snapshot every 500ms
+      }, [getElapsedSeconds]);
+
+      const stopSnapshotCollection = useCallback(() => {
+        if (snapshotIntervalRef.current) {
+          clearInterval(snapshotIntervalRef.current);
+          snapshotIntervalRef.current = null;
+        }
+      }, []);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // COACHING CHALLENGE SYSTEM
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const completeChallenge = useCallback((challengeId) => {
+        const challenge = CHALLENGES[challengeId];
+        if (!challenge || completedChallenges[challengeId]) return;
+
+        const newChallenge = {
+          completedAt: new Date().toISOString(),
+          badge: challenge.badge,
+          xp: challenge.xp
+        };
+
+        setCompletedChallenges(prev => {
+          const updated = { ...prev, [challengeId]: newChallenge };
+          // Sync to server if authenticated
+          if (user) {
+            syncChallengesToServer(updated);
+          }
+          return updated;
+        });
+
+        setShowChallengeComplete(challenge);
+        triggerHaptic('success');
+
+        // Auto-hide after 4 seconds
+        setTimeout(() => setShowChallengeComplete(null), 4000);
+      }, [completedChallenges, triggerHaptic, user]);
+
+      const checkChallengeProgress = useCallback((presenceScore, compositeGrade) => {
+        if (!activeChallenge || !running) return;
+
+        const challenge = CHALLENGES[activeChallenge];
+        if (!challenge || completedChallenges[activeChallenge]) return;
+
+        const now = Date.now();
+
+        // Duration-based challenges (maintain presence above threshold)
+        if (challenge.type === 'duration') {
+          if (presenceScore >= challenge.threshold) {
+            // Start or continue streak
+            if (!challengeStreakRef.current.startTime) {
+              challengeStreakRef.current.startTime = now;
+            }
+            const elapsed = (now - challengeStreakRef.current.startTime) / 1000;
+            challengeStreakRef.current.duration = elapsed;
+
+            setChallengeProgress(prev => ({
+              ...prev,
+              currentStreak: Math.floor(elapsed)
+            }));
+
+            // Check if completed
+            if (elapsed >= challenge.targetDuration) {
+              completeChallenge(activeChallenge);
+              setActiveChallenge(null);
+              challengeStreakRef.current = { startTime: null, duration: 0 };
+            }
+          } else {
+            // Break the streak
+            challengeStreakRef.current = { startTime: null, duration: 0 };
+            setChallengeProgress(prev => ({ ...prev, currentStreak: 0 }));
+          }
+        }
+
+        // Peak-based challenges (reach a score once)
+        else if (challenge.type === 'peak') {
+          if (presenceScore >= challenge.threshold) {
+            completeChallenge(activeChallenge);
+            setActiveChallenge(null);
+          }
+        }
+
+        // Grade-based challenges (achieve a specific grade)
+        else if (challenge.type === 'grade') {
+          if (compositeGrade?.letter?.startsWith(challenge.targetGrade)) {
+            completeChallenge(activeChallenge);
+            setActiveChallenge(null);
+          }
+        }
+      }, [activeChallenge, running, completedChallenges, completeChallenge]);
+
+      const checkSessionChallenges = useCallback((duration) => {
+        // Check session length challenges
+        Object.values(CHALLENGES).forEach(challenge => {
+          if (challenge.type === 'session_length' && !completedChallenges[challenge.id]) {
+            if (duration >= challenge.targetDuration) {
+              completeChallenge(challenge.id);
+            }
+          }
+        });
+
+        // Check weekly session challenges
+        const thisWeekSessions = sessions.filter(s => {
+          const sessionDate = new Date(s.date);
+          const now = new Date();
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          return sessionDate > weekAgo;
+        }).length + 1; // +1 for current session
+
+        Object.values(CHALLENGES).forEach(challenge => {
+          if (challenge.type === 'weekly_sessions' && !completedChallenges[challenge.id]) {
+            if (thisWeekSessions >= challenge.target) {
+              completeChallenge(challenge.id);
+            }
+          }
+        });
+      }, [completedChallenges, sessions, completeChallenge]);
+
+      const startChallenge = useCallback((challengeId) => {
+        if (completedChallenges[challengeId]) return;
+        setActiveChallenge(challengeId);
+        challengeStreakRef.current = { startTime: null, duration: 0 };
+        setChallengeProgress({ currentStreak: 0, peakAchieved: false });
+      }, [completedChallenges]);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // IMMERSIVE MODE & DEPTH TRACKING
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const toggleImmersive = useCallback(() => {
+        setImmersiveMode(prev => !prev);
+        if (!immersiveMode) {
+          triggerHaptic('medium');
+        }
+      }, [immersiveMode, triggerHaptic]);
+
+      // Update depth indicator based on shoulder width (proxy for distance)
+      const updateDepthFromPose = useCallback((landmarks) => {
+        if (!landmarks) return;
+        const leftShoulder = landmarks[11];
+        const rightShoulder = landmarks[12];
+        if (leftShoulder && rightShoulder) {
+          // Shoulder width relative to frame width indicates depth
+          const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
+          // Normalize: wider = closer (higher value)
+          const depth = clamp(shoulderWidth * 300, 20, 100);
+          setDepthValue(depth);
+        }
+      }, []);
+
+      // Update focus ring based on high presence
+      useEffect(() => {
+        if (running && metrics.presenceScore >= 80) {
+          setFocusRingActive(true);
+        } else {
+          setFocusRingActive(false);
+        }
+      }, [running, metrics.presenceScore]);
+
+      // Cleanup VR/AR on spatial audio toggle off
+      useEffect(() => {
+        if (!spatialAudioEnabled) {
+          stopSpatialAudio();
+        } else if (running) {
+          initSpatialAudio();
+        }
+      }, [spatialAudioEnabled, running, initSpatialAudio, stopSpatialAudio]);
+
+      const cleanupResources = useCallback(() => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+        if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+        if (audioCtxRef.current) audioCtxRef.current.close().catch(() => {});
+        audioCtxRef.current = null;
+        analyserRef.current = null;
+        audioBufferRef.current = null;
+        if (videoRef.current) {
+          try { videoRef.current.pause(); } catch {}
+          videoRef.current.srcObject = null;
+        }
+        try { poseRef.current?.close?.(); } catch {}
+        poseRef.current = null;
+        if (threeRef.current?.cleanup) threeRef.current.cleanup();
+        threeRef.current = null;
+        runningRef.current = false;
+        pausedRef.current = false;
+        pauseStartRef.current = null;
+        pausedAccumRef.current = 0;
+
+        // VR/AR cleanup
+        cleanupSpatialAudio();
+        stopHapticLoop();
+        setImmersiveMode(false);
+        setFocusRingActive(false);
+
+        // Stop snapshot collection
+        stopSnapshotCollection();
+
+        // Stop advanced analysis features
+        stopMeydaAnalyzer();
+        stopSpeechRecognition();
+
+        // Close Face Landmarker
+        if (faceLandmarkerRef.current) {
+          try { faceLandmarkerRef.current.close(); } catch {}
+          faceLandmarkerRef.current = null;
+        }
+      }, [cleanupSpatialAudio, stopHapticLoop, stopSnapshotCollection, stopMeydaAnalyzer, stopSpeechRecognition]);
+
+      const saveSession = useCallback(async () => {
+        const duration = getElapsedSeconds();
+        if (duration < 5) return;
+
+        const { presenceHistory, pitchHistory, voiceEnergyHistory } = historyRef.current;
+        const grade = computeCompositeGrade(metricsRef.current, presentationModeRef.current);
+
+        const session = {
+          id: Date.now().toString(),
+          date: new Date().toISOString(),
+          duration,
+          attractor: ATTRACTORS[selectedAttractor].name,
+          presentationMode: presentationModeRef.current, // Store mode for replay context
+          avgPresence: Math.round(mean(presenceHistory) || metricsRef.current.presenceScore),
+          avgStability: Math.round(metricsRef.current.bodyStability),
+          peakPresence: Math.round(Math.max(...presenceHistory, metricsRef.current.presenceScore)),
+          avgPitch: Math.round(mean(pitchHistory.filter(p => p > 0)) || 0),
+          avgVoiceEnergy: Math.round(mean(voiceEnergyHistory) || 0),
+          compositeScore: grade.score,
+          compositeGrade: grade.letter,
+          presenceHistory: presenceHistory.filter((_, i) => i % 3 === 0).slice(-60),
+          // Session replay snapshots (captured every 500ms)
+          snapshots: snapshotsRef.current.slice(),
+        };
+
+        // Save locally
+        setSessions(prev => [...prev, session]);
+
+        // Check session-based challenges (duration, weekly streaks)
+        checkSessionChallenges(duration);
+
+        // Sync to server if authenticated
+        if (user) {
+          const result = await syncSessionToServer(session);
+          if (result.error === 'limit') {
+            setSyncError('Free tier limit reached (10 sessions). Upgrade to Pro for unlimited.');
+          } else if (result.error) {
+            setSyncError('Session saved locally only');
+          }
+        }
+      }, [getElapsedSeconds, selectedAttractor, checkSessionChallenges, user]);
+
+      const stop = useCallback((opts) => {
+        if (!opts?.silent && runningRef.current) saveSession();
+        cleanupResources();
+        if (opts?.silent) return;
+        setRunning(false);
+        setPaused(false);
+        setHasDetection(false);
+        setStatus({ level: "idle", text: "Stopped" });
+        setCoachNote("Session complete. Review your metrics and try again!");
+      }, [cleanupResources, saveSession]);
+
+      const initThree = useCallback(({ attractorKey, particles }) => {
+        const THREE = window.THREE;
+        const container = threeContainerRef.current;
+        if (!THREE || !container) return;
+        if (threeRef.current?.cleanup) threeRef.current.cleanup();
+        threeRef.current = null;
+
+        const w = Math.max(1, container.clientWidth || 600);
+        const h = Math.max(1, container.clientHeight || 400);
+
+        const scene = new THREE.Scene();
+        scene.background = null;
+
+        const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 1000);
+        camera.position.set(0, 0, 5);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(w, h);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setClearColor(0x000000, 0);
+        renderer.domElement.style.display = "block";
+
+        container.innerHTML = "";
+        container.appendChild(renderer.domElement);
+
+        const attractor = ATTRACTORS[attractorKey];
+        const PARTICLE_COUNT = clamp(particles, 5000, 20000);
+        const positions = new Float32Array(PARTICLE_COUNT * 3);
+        const colors = new Float32Array(PARTICLE_COUNT * 3);
+
+        let x = 0.1, y = 0, z = 0;
+        const dt = 0.005;
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const d = attractor.compute(x, y, z, dt, attractor.params);
+          x += d.dx; y += d.dy; z += d.dz;
+          positions[i * 3] = x * attractor.scale;
+          positions[i * 3 + 1] = y * attractor.scale;
+          positions[i * 3 + 2] = z * attractor.scale;
+          const t = i / PARTICLE_COUNT;
+          colors[i * 3] = 0.75 + t * 0.25;
+          colors[i * 3 + 1] = 0.34 + t * 0.15;
+          colors[i * 3 + 2] = t * 0.2;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+          size: 0.025,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.85,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+
+        let rotation = { x: 0, y: 0 };
+        let baseSpeed = 0.3;
+
+        threeRef.current = {
+          scene,
+          camera,
+          renderer,
+          points,
+          geometry,
+          rotation,
+          baseSpeed,
+          cleanup: () => {
+            geometry.dispose();
+            material.dispose();
+            renderer.dispose();
+            container.innerHTML = "";
+          },
+        };
+      }, []);
+
+      const renderThree = useCallback(() => {
+        const t = threeRef.current;
+        if (!t) return;
+
+        const m = smoothRef.current;
+        const speedMod = clamp(1 + (m.voiceEnergy / 100) * 0.5, 1, 1.5);
+        const presenceMod = clamp(m.presenceScore / 100, 0.3, 1);
+
+        t.rotation.x += 0.002 * t.baseSpeed * speedMod;
+        t.rotation.y += 0.003 * t.baseSpeed * speedMod;
+
+        t.points.rotation.x = t.rotation.x;
+        t.points.rotation.y = t.rotation.y;
+        t.points.material.opacity = 0.5 + presenceMod * 0.4;
+
+        t.renderer.render(t.scene, t.camera);
+      }, []);
+
+      const processAudio = useCallback(() => {
+        if (!analyserRef.current || !audioCtxRef.current) return { energy: 0, pitch: 0 };
+
+        const analyser = analyserRef.current;
+        const sampleRate = audioCtxRef.current.sampleRate;
+
+        if (!audioBufferRef.current || audioBufferRef.current.length !== analyser.fftSize) {
+          audioBufferRef.current = new Float32Array(analyser.fftSize);
+        }
+
+        analyser.getFloatTimeDomainData(audioBufferRef.current);
+
+        let sum = 0;
+        for (let i = 0; i < audioBufferRef.current.length; i++) {
+          sum += audioBufferRef.current[i] ** 2;
+        }
+        const rms = Math.sqrt(sum / audioBufferRef.current.length);
+        const energy = clamp(rms * 150, 0, 100);
+
+        const pitch = detectPitch(audioBufferRef.current, sampleRate);
+
+        return { energy, pitch };
+      }, []);
+
+      const processPose = useCallback((results) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (!results?.poseLandmarks?.length) {
+          setHasDetection(false);
+          return;
+        }
+        setHasDetection(true);
+
+        const lm = results.poseLandmarks;
+        const w = canvas.width, h = canvas.height;
+        const pt = (i) => lm[i] ? { x: lm[i].x * w, y: lm[i].y * h, v: lm[i].visibility || 0 } : null;
+
+        const nose = pt(0), leftEye = pt(2), rightEye = pt(5);
+        const leftShoulder = pt(11), rightShoulder = pt(12);
+        const leftEar = pt(7), rightEar = pt(8);
+
+        // Calculate head tilt as deviation from horizontal (accounting for mirrored video)
+        // In a mirrored webcam, "left eye" landmark appears on right side of screen
+        // We want deviation from level, not raw angle
+        let headTilt = 0;
+        if (leftEye?.v > 0.5 && rightEye?.v > 0.5) {
+          const rawAngle = (Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x) * 180) / Math.PI;
+          // Normalize to -90 to +90 range (deviation from horizontal)
+          // Angles near 0° or near ±180° both mean "level" depending on mirror state
+          headTilt = rawAngle > 90 ? rawAngle - 180 : (rawAngle < -90 ? rawAngle + 180 : rawAngle);
+        }
+
+        // Same fix for shoulder level
+        let shoulderLevel = 0;
+        if (leftShoulder?.v > 0.5 && rightShoulder?.v > 0.5) {
+          const rawAngle = (Math.atan2(rightShoulder.y - leftShoulder.y, rightShoulder.x - leftShoulder.x) * 180) / Math.PI;
+          shoulderLevel = rawAngle > 90 ? rawAngle - 180 : (rawAngle < -90 ? rawAngle + 180 : rawAngle);
+        }
+
+        let facingCamera = 50;
+        if (nose && leftEar?.v > 0.3 && rightEar?.v > 0.3) {
+          const dl = Math.hypot(nose.x - leftEar.x, nose.y - leftEar.y);
+          const dr = Math.hypot(nose.x - rightEar.x, nose.y - rightEar.y);
+          facingCamera = clamp((Math.min(dl, dr) / Math.max(dl, dr)) * 100, 0, 100);
+        }
+
+        let bodyStability = 50;
+        if (nose) {
+          historyRef.current.nose.push({ x: nose.x, y: nose.y });
+          if (historyRef.current.nose.length > 60) historyRef.current.nose.shift();
+          if (historyRef.current.nose.length >= 20) {
+            const xs = historyRef.current.nose.map(p => p.x);
+            const ys = historyRef.current.nose.map(p => p.y);
+            bodyStability = clamp(100 - (stdDev(xs) + stdDev(ys)) * 4, 0, 100);
+          }
+        }
+
+        const { energy: voiceEnergy, pitch } = processAudio();
+
+        if (pitch > 0) {
+          historyRef.current.pitchHistory.push(pitch);
+          if (historyRef.current.pitchHistory.length > 60) historyRef.current.pitchHistory.shift();
+        }
+        historyRef.current.voiceEnergyHistory.push(voiceEnergy);
+        if (historyRef.current.voiceEnergyHistory.length > 60) historyRef.current.voiceEnergyHistory.shift();
+
+        const recentPitches = historyRef.current.pitchHistory.filter(p => p > 0).slice(-30);
+        let pitchStability = 50;
+        if (recentPitches.length > 5) {
+          const pitchStdDev = stdDev(recentPitches);
+          pitchStability = clamp(100 - pitchStdDev * 2, 0, 100);
+        }
+
+        const recentEnergy = historyRef.current.voiceEnergyHistory.slice(-30);
+        const speechPresence = recentEnergy.filter(e => e > 10).length / Math.max(recentEnergy.length, 1);
+
+        const s = smoothRef.current;
+        s.headTilt = lerp(s.headTilt, headTilt, 0.2);
+        s.shoulderLevel = lerp(s.shoulderLevel, shoulderLevel, 0.2);
+        s.bodyStability = lerp(s.bodyStability, bodyStability, 0.15);
+        s.facingCamera = lerp(s.facingCamera, facingCamera, 0.2);
+        s.voiceEnergy = lerp(s.voiceEnergy, voiceEnergy, 0.3);
+        s.pitch = pitch > 0 ? lerp(s.pitch, pitch, 0.3) : s.pitch;
+        s.pitchStability = lerp(s.pitchStability, pitchStability, 0.1);
+        s.speechPresence = lerp(s.speechPresence, speechPresence, 0.15);
+
+        const presenceFactors = [
+          clamp(100 - Math.abs(s.headTilt) * 4, 0, 100),
+          clamp(100 - Math.abs(s.shoulderLevel) * 5, 0, 100),
+          s.bodyStability,
+          s.facingCamera,
+        ];
+        s.presenceScore = lerp(s.presenceScore, mean(presenceFactors), presenceSmoothing);
+
+        historyRef.current.presence.push(s.presenceScore);
+        if (historyRef.current.presence.length > 120) historyRef.current.presence.shift();
+
+        if (Date.now() % 2000 < 100) {
+          historyRef.current.presenceHistory.push(Math.round(s.presenceScore));
+        }
+
+        const now = performance.now();
+        if (now - uiTickRef.current.last > 100) {
+          uiTickRef.current.last = now;
+
+          // Get advanced vocal metrics from Meyda
+          const meydaMetrics = getMeydaMetrics();
+
+          // Get face expression metrics (cached from loop)
+          const faceMetrics = faceResultsRef.current ? processFaceLandmarks(videoRef.current, performance.now()) : null;
+
+          // Get speech metrics
+          const speechMetrics = getSpeechMetrics();
+
+          const newMetrics = {
+            // Pose metrics
+            headTilt: Math.round(s.headTilt * 10) / 10,
+            shoulderLevel: Math.round(s.shoulderLevel * 10) / 10,
+            bodyStability: Math.round(s.bodyStability),
+            facingCamera: Math.round(s.facingCamera),
+            // Basic vocal metrics
+            voiceEnergy: Math.round(s.voiceEnergy),
+            pitch: Math.round(s.pitch),
+            pitchStability: Math.round(s.pitchStability),
+            speechPresence: Math.round(s.speechPresence * 100) / 100,
+            presenceScore: Math.round(s.presenceScore),
+            // Advanced vocal metrics (Meyda)
+            spectralCentroid: Math.round(meydaMetrics.spectralCentroid),
+            spectralFlux: Math.round(meydaMetrics.spectralFlux),
+            spectralFlatness: Math.round(meydaMetrics.spectralFlatness),
+            vocalClarity: Math.round(meydaMetrics.vocalClarity),
+            // Face expression metrics
+            smileScore: faceMetrics?.smileScore || 0,
+            browTension: faceMetrics?.browTension || 0,
+            eyeOpenness: faceMetrics?.eyeOpenness || 50,
+            jawClench: faceMetrics?.jawClench || 0,
+            eyeContact: faceMetrics?.eyeContact || 50,
+            // Speech content metrics
+            fillerWordCount: speechMetrics.fillerWordCount,
+            fillerWordRate: speechMetrics.fillerWordRate,
+            wordsPerMinute: speechMetrics.wordsPerMinute,
+            recentFillers: speechMetrics.recentFillers,
+          };
+
+          setMetrics(newMetrics);
+          setCompositeGrade(computeCompositeGrade(newMetrics, presentationModeRef.current));
+
+          // Enhanced coaching feedback with new metrics
+          if (newMetrics.fillerWordRate > 5) {
+            setCoachNote(`Watch the filler words (${newMetrics.recentFillers.slice(-2).join(", ")}). Pause instead of filling silence.`);
+          } else if (newMetrics.browTension > 60) {
+            setCoachNote("Tension detected in your brow. Relax your forehead — it reads as stress.");
+          } else if (newMetrics.jawClench > 50) {
+            setCoachNote("You're clenching. Drop your jaw slightly and unclench.");
+          } else if (newMetrics.eyeContact < 40) {
+            setCoachNote("Eyes wandering. Lock onto the camera lens to project confidence.");
+          } else if (newMetrics.bodyStability < 50) {
+            setCoachNote("Try to minimize movement. Plant your feet and find stillness.");
+          } else if (Math.abs(newMetrics.headTilt) > 10) {
+            setCoachNote("Level your head — slight tilt detected.");
+          } else if (newMetrics.facingCamera < 60) {
+            setCoachNote("Turn to face the camera more directly.");
+          } else if (newMetrics.speechPresence > 0.3 && newMetrics.pitchStability < 40) {
+            setCoachNote("Voice detected. Try for more consistent pitch — it projects confidence.");
+          } else if (newMetrics.speechPresence > 0.3 && newMetrics.vocalClarity < 40) {
+            setCoachNote("Voice sounds breathy. Project from your diaphragm for clearer speech.");
+          } else if (newMetrics.smileScore > 70 && newMetrics.presenceScore > 70) {
+            setCoachNote("Great energy! Your smile and presence are working together.");
+          } else if (newMetrics.presenceScore > 80) {
+            setCoachNote("Strong presence! Maintain this centered posture.");
+          } else {
+            setCoachNote("Good. Keep your gaze steady and shoulders relaxed.");
+          }
+
+          // VR/AR feature updates
+          updateSpatialAudio(newMetrics.presenceScore, newMetrics.headTilt);
+          updateDepthFromPose(lm);
+
+          // Challenge progress tracking
+          const grade = computeCompositeGrade(newMetrics, presentationModeRef.current);
+          checkChallengeProgress(newMetrics.presenceScore, grade);
+        }
+
+        if (!showOverlay) return;
+
+        ctx.fillStyle = "#F5F2EB";
+        ctx.strokeStyle = "#BF5700";
+        ctx.lineWidth = 2;
+
+        const draw = (p, r = 4) => {
+          if (p?.v > 0.5) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        };
+
+        const line = (a, b) => {
+          if (a?.v > 0.5 && b?.v > 0.5) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        };
+
+        draw(nose, 5);
+        draw(leftEye, 3);
+        draw(rightEye, 3);
+        draw(leftShoulder, 4);
+        draw(rightShoulder, 4);
+        line(leftEye, rightEye);
+        line(leftShoulder, rightShoulder);
+      }, [presenceSmoothing, showOverlay, processAudio, updateSpatialAudio, updateDepthFromPose, checkChallengeProgress, getMeydaMetrics, processFaceLandmarks, getSpeechMetrics]);
+
+      const loop = useCallback(async () => {
+        if (!runningRef.current) return;
+        if (pausedRef.current) {
+          rafRef.current = requestAnimationFrame(loop);
+          return;
+        }
+
+        const video = videoRef.current;
+        if (video?.readyState >= 2 && poseRef.current) {
+          try { await poseRef.current.send({ image: video }); } catch {}
+        }
+
+        if (showAttractor) {
+          renderThree();
+        }
+
+        rafRef.current = requestAnimationFrame(loop);
+      }, [renderThree, showAttractor]);
+
+      useEffect(() => {
+        if (!running) return;
+        rafRef.current = requestAnimationFrame(loop);
+        return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+      }, [running, loop]);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // MEYDA.JS ADVANCED AUDIO ANALYSIS
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const initMeydaAnalyzer = useCallback(() => {
+        if (!audioCtxRef.current || !window.Meyda) return;
+
+        try {
+          // Create audio source from existing stream
+          const stream = streamRef.current;
+          if (!stream) return;
+
+          const source = audioCtxRef.current.createMediaStreamSource(stream);
+
+          meydaAnalyzerRef.current = window.Meyda.createMeydaAnalyzer({
+            audioContext: audioCtxRef.current,
+            source: source,
+            bufferSize: 512,
+            featureExtractors: ['rms', 'spectralCentroid', 'spectralFlux', 'spectralFlatness'],
+            callback: (features) => {
+              if (features) {
+                meydaFeaturesRef.current = {
+                  rms: features.rms || 0,
+                  spectralCentroid: features.spectralCentroid || 0,
+                  spectralFlux: features.spectralFlux || 0,
+                  spectralFlatness: features.spectralFlatness || 0
+                };
+              }
+            }
+          });
+
+          meydaAnalyzerRef.current.start();
+          console.log('[VisionCoach] Meyda analyzer initialized');
+        } catch (err) {
+          console.warn('[VisionCoach] Meyda init failed:', err);
+        }
+      }, []);
+
+      const stopMeydaAnalyzer = useCallback(() => {
+        if (meydaAnalyzerRef.current) {
+          try {
+            meydaAnalyzerRef.current.stop();
+          } catch {}
+          meydaAnalyzerRef.current = null;
+        }
+      }, []);
+
+      // Get processed Meyda features (normalized to 0-100)
+      const getMeydaMetrics = useCallback(() => {
+        const f = meydaFeaturesRef.current;
+        // Normalize spectralCentroid (typically 0-8000 Hz for voice) to 0-100
+        const centroidNorm = clamp((f.spectralCentroid / 4000) * 100, 0, 100);
+        // Normalize spectralFlux (typically 0-0.5) to 0-100
+        const fluxNorm = clamp(f.spectralFlux * 200, 0, 100);
+        // Spectral flatness is already 0-1, scale to 0-100
+        const flatnessNorm = clamp(f.spectralFlatness * 100, 0, 100);
+        // Vocal clarity: inverse of flatness (more tonal = clearer)
+        const clarityNorm = clamp(100 - flatnessNorm, 0, 100);
+
+        return {
+          spectralCentroid: centroidNorm,
+          spectralFlux: fluxNorm,
+          spectralFlatness: flatnessNorm,
+          vocalClarity: clarityNorm
+        };
+      }, []);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // MEDIAPIPE FACE LANDMARKER (Expression Analysis)
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const initFaceLandmarker = useCallback(async () => {
+        if (!window.FilesetResolver || !window.FaceLandmarker) {
+          // Try to use the vision bundle
+          const vision = window.vision;
+          if (!vision) {
+            console.warn('[VisionCoach] MediaPipe Vision not loaded');
+            return;
+          }
+          try {
+            const filesetResolver = await vision.FilesetResolver.forVisionTasks(
+              'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+            );
+            faceLandmarkerRef.current = await vision.FaceLandmarker.createFromOptions(filesetResolver, {
+              baseOptions: {
+                modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+                delegate: 'GPU'
+              },
+              runningMode: 'VIDEO',
+              outputFaceBlendshapes: true,
+              outputFacialTransformationMatrixes: false,
+              numFaces: 1
+            });
+            console.log('[VisionCoach] Face Landmarker initialized');
+          } catch (err) {
+            console.warn('[VisionCoach] Face Landmarker init failed:', err);
+          }
+        }
+      }, []);
+
+      const processFaceLandmarks = useCallback((video, timestamp) => {
+        if (!faceLandmarkerRef.current || !video) return null;
+
+        try {
+          const results = faceLandmarkerRef.current.detectForVideo(video, timestamp);
+          faceResultsRef.current = results;
+
+          if (results?.faceBlendshapes?.[0]?.categories) {
+            const blendshapes = {};
+            results.faceBlendshapes[0].categories.forEach(cat => {
+              blendshapes[cat.categoryName] = cat.score;
+            });
+
+            // Extract key expression metrics
+            const smileLeft = blendshapes['mouthSmileLeft'] || 0;
+            const smileRight = blendshapes['mouthSmileRight'] || 0;
+            const smileScore = ((smileLeft + smileRight) / 2) * 100;
+
+            const browUp = (blendshapes['browInnerUp'] || 0) +
+                           (blendshapes['browOuterUpLeft'] || 0) +
+                           (blendshapes['browOuterUpRight'] || 0);
+            const browTension = clamp(browUp * 50, 0, 100);
+
+            const eyeOpenLeft = 1 - (blendshapes['eyeBlinkLeft'] || 0);
+            const eyeOpenRight = 1 - (blendshapes['eyeBlinkRight'] || 0);
+            const eyeOpenness = ((eyeOpenLeft + eyeOpenRight) / 2) * 100;
+
+            const jawOpen = blendshapes['jawOpen'] || 0;
+            const jawClench = clamp((1 - jawOpen) * (blendshapes['mouthClose'] || 0) * 100, 0, 100);
+
+            // Eye contact estimation from eye direction blendshapes
+            const lookLeft = blendshapes['eyeLookOutLeft'] || 0;
+            const lookRight = blendshapes['eyeLookOutRight'] || 0;
+            const lookUp = (blendshapes['eyeLookUpLeft'] || 0) + (blendshapes['eyeLookUpRight'] || 0);
+            const lookDown = (blendshapes['eyeLookDownLeft'] || 0) + (blendshapes['eyeLookDownRight'] || 0);
+            const gazeDeviation = Math.abs(lookLeft - lookRight) + (lookUp + lookDown) / 2;
+            const eyeContact = clamp(100 - gazeDeviation * 200, 0, 100);
+
+            return {
+              smileScore: Math.round(smileScore),
+              browTension: Math.round(browTension),
+              eyeOpenness: Math.round(eyeOpenness),
+              jawClench: Math.round(jawClench),
+              eyeContact: Math.round(eyeContact)
+            };
+          }
+        } catch (err) {
+          // Silent fail for performance
+        }
+        return null;
+      }, []);
+
+      // ═══════════════════════════════════════════════════════════════════════════
+      // WEB SPEECH API (Filler Word Detection)
+      // ═══════════════════════════════════════════════════════════════════════════
+
+      const FILLER_WORDS = ['um', 'uh', 'like', 'you know', 'basically', 'actually', 'literally', 'so', 'right', 'okay', 'well', 'i mean', 'kind of', 'sort of'];
+
+      const initSpeechRecognition = useCallback(() => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          console.warn('[VisionCoach] Speech Recognition not supported');
+          return;
+        }
+
+        try {
+          const recognition = new SpeechRecognition();
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.lang = 'en-US';
+
+          recognition.onresult = (event) => {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              const transcript = event.results[i][0].transcript.toLowerCase();
+              if (event.results[i].isFinal) {
+                finalTranscript += transcript + ' ';
+              } else {
+                interimTranscript += transcript;
+              }
+            }
+
+            if (finalTranscript) {
+              // Count words
+              const words = finalTranscript.trim().split(/\s+/).filter(w => w.length > 0);
+              speechDataRef.current.totalWords += words.length;
+
+              // Detect filler words
+              FILLER_WORDS.forEach(filler => {
+                const regex = new RegExp(`\\b${filler}\\b`, 'gi');
+                const matches = finalTranscript.match(regex);
+                if (matches) {
+                  speechDataRef.current.fillerWords += matches.length;
+                  matches.forEach(() => {
+                    speechDataRef.current.fillerList.push({
+                      word: filler,
+                      time: Date.now()
+                    });
+                  });
+                  // Keep only last 20 filler instances
+                  if (speechDataRef.current.fillerList.length > 20) {
+                    speechDataRef.current.fillerList = speechDataRef.current.fillerList.slice(-20);
+                  }
+                }
+              });
+
+              speechDataRef.current.transcript += finalTranscript;
+            }
+          };
+
+          recognition.onerror = (event) => {
+            if (event.error !== 'no-speech') {
+              console.warn('[VisionCoach] Speech recognition error:', event.error);
+            }
+          };
+
+          recognition.onend = () => {
+            // Auto-restart if still running
+            if (runningRef.current && !pausedRef.current && speechRecognitionRef.current) {
+              try {
+                speechRecognitionRef.current.start();
+              } catch {}
+            }
+          };
+
+          speechRecognitionRef.current = recognition;
+          recognition.start();
+          speechDataRef.current.startTime = Date.now();
+          console.log('[VisionCoach] Speech Recognition initialized');
+        } catch (err) {
+          console.warn('[VisionCoach] Speech Recognition init failed:', err);
+        }
+      }, []);
+
+      const stopSpeechRecognition = useCallback(() => {
+        if (speechRecognitionRef.current) {
+          try {
+            speechRecognitionRef.current.stop();
+          } catch {}
+          speechRecognitionRef.current = null;
+        }
+      }, []);
+
+      const getSpeechMetrics = useCallback(() => {
+        const data = speechDataRef.current;
+        const elapsedMinutes = data.startTime ? (Date.now() - data.startTime) / 60000 : 0;
+
+        const fillerWordRate = elapsedMinutes > 0 ? data.fillerWords / elapsedMinutes : 0;
+        const wordsPerMinute = elapsedMinutes > 0 ? data.totalWords / elapsedMinutes : 0;
+
+        // Get recent fillers (last 5)
+        const recentFillers = data.fillerList.slice(-5).map(f => f.word);
+
+        return {
+          fillerWordCount: data.fillerWords,
+          fillerWordRate: Math.round(fillerWordRate * 10) / 10,
+          wordsPerMinute: Math.round(wordsPerMinute),
+          recentFillers
+        };
+      }, []);
+
+      const start = useCallback(async () => {
+        if (runningRef.current) return;
+        setStatus({ level: "loading", text: "Loading libraries..." });
+        setCoachNote("Initializing camera and pose detection...");
+
+        try {
+          await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js");
+          await loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js");
+          await new Promise(r => setTimeout(r, 300));
+
+          setStatus({ level: "loading", text: "Camera..." });
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+            audio: true,
+          });
+          streamRef.current = stream;
+
+          const video = videoRef.current;
+          if (!video) throw new Error("Video element missing");
+          video.srcObject = stream;
+          video.muted = true;
+          await new Promise(resolve => {
+            video.onloadedmetadata = () => video.play().then(resolve).catch(resolve);
+          });
+
+          try {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (Ctx) {
+              const ctx = new Ctx();
+              const analyser = ctx.createAnalyser();
+              analyser.fftSize = 2048;
+              analyser.smoothingTimeConstant = 0.3;
+              ctx.createMediaStreamSource(stream).connect(analyser);
+              audioCtxRef.current = ctx;
+              analyserRef.current = analyser;
+            }
+          } catch {}
+
+          setStatus({ level: "loading", text: "Pose detection..." });
+          const pose = new window.Pose({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`,
+          });
+          pose.setOptions({
+            modelComplexity: 1,
+            smoothLandmarks: true,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5,
+          });
+          pose.onResults(processPose);
+          poseRef.current = pose;
+
+          if (showAttractor) {
+            initThree({ attractorKey: selectedAttractor, particles: particleCount });
+          }
+
+          historyRef.current = {
+            nose: [],
+            presence: [],
+            presenceHistory: [],
+            pitchHistory: [],
+            voiceEnergyHistory: [],
+          };
+          smoothRef.current = {
+            headTilt: 0,
+            shoulderLevel: 0,
+            bodyStability: 50,
+            facingCamera: 50,
+            voiceEnergy: 0,
+            pitch: 0,
+            pitchStability: 50,
+            speechPresence: 0,
+            presenceScore: 50,
+          };
+
+          startTimeRef.current = Date.now();
+          pauseStartRef.current = null;
+          pausedAccumRef.current = 0;
+
+          setSessionTime(0);
+          setHasDetection(false);
+          runningRef.current = true;
+          pausedRef.current = false;
+          setPaused(false);
+          setRunning(true);
+          setStatus({ level: "running", text: "Running" });
+          setCoachNote("Session started. Find a comfortable standing position facing the camera.");
+
+          // Initialize VR/AR features
+          if (spatialAudioEnabled) initSpatialAudio();
+          if (hapticFeedback) startHapticLoop();
+
+          // Start session snapshot collection for replay
+          startSnapshotCollection();
+
+          // Initialize advanced analysis features
+          // Meyda.js for spectral audio analysis
+          setTimeout(() => initMeydaAnalyzer(), 500);
+
+          // MediaPipe Face Landmarker for expression analysis
+          initFaceLandmarker();
+
+          // Web Speech API for filler word detection (Chrome/Edge only)
+          initSpeechRecognition();
+
+          // Reset speech data for new session
+          speechDataRef.current = {
+            totalWords: 0,
+            fillerWords: 0,
+            fillerList: [],
+            startTime: Date.now(),
+            transcript: ''
+          };
+        } catch (err) {
+          cleanupResources();
+          setRunning(false);
+          setPaused(false);
+          setHasDetection(false);
+          setStatus({ level: "error", text: `Error: ${err?.message || "Unknown"}` });
+          setCoachNote("Failed to start. Please check camera/microphone permissions and try again.");
+        }
+      }, [cleanupResources, initThree, particleCount, processPose, selectedAttractor, showAttractor, spatialAudioEnabled, initSpatialAudio, hapticFeedback, startHapticLoop, startSnapshotCollection, initMeydaAnalyzer, initFaceLandmarker, initSpeechRecognition]);
+
+      const togglePause = useCallback(() => {
+        if (!runningRef.current) return;
+        setPaused(p => {
+          const next = !p;
+          pausedRef.current = next;
+          if (next) {
+            pauseStartRef.current = Date.now();
+            setStatus({ level: "idle", text: "Paused" });
+            setCoachNote("Session paused. Press Space to resume.");
+          } else {
+            if (pauseStartRef.current) {
+              pausedAccumRef.current += Date.now() - pauseStartRef.current;
+              pauseStartRef.current = null;
+            }
+            setStatus({ level: "running", text: "Running" });
+            setCoachNote("Resumed. Find your center again.");
+          }
+          return next;
+        });
+      }, []);
+
+      useEffect(() => {
+        const onKey = (e) => {
+          const tag = (e.target?.tagName || "").toLowerCase();
+          if (tag === "input" || tag === "textarea" || e.target?.isContentEditable) return;
+          if (e.key === " ") {
+            e.preventDefault();
+            if (!runningRef.current) start();
+            else togglePause();
+          }
+          if (e.key === "Escape" && runningRef.current) stop();
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+      }, [start, stop, togglePause]);
+
+      const handleAuth = (newUser) => {
+        setUser(newUser);
+        saveUser(newUser);
+        setShowAuth(false);
+      };
+
+      const handleLogout = async () => {
+        try {
+          await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+        } catch {}
+        setUser(null);
+        saveUser(null);
+      };
+
+      const gradeClass = compositeGrade.letter.startsWith("A") ? "grade-a" :
+                         compositeGrade.letter.startsWith("B") ? "grade-b" :
+                         compositeGrade.letter.startsWith("C") ? "grade-c" :
+                         compositeGrade.letter.startsWith("D") ? "grade-d" : "grade-f";
+
+      return (
+        <div className={immersiveMode ? 'vc-immersive' : ''}>
+          {immersiveMode && (
+            <button className="vc-exit-immersive" onClick={() => setImmersiveMode(false)}>
+              ✕ Exit Immersive
+            </button>
+          )}
+          <header className="vc-header">
+            <a href="/" className="vc-brand">
+              <div className="vc-brand-icon">👁️</div>
+              <div>
+                <div className="vc-brand-text">Vision Coach</div>
+                <div className="vc-brand-sub">Blaze Sports Intel</div>
+              </div>
+            </a>
+
+            <nav className="vc-nav">
+              <button
+                className={`vc-nav-btn ${view === "live" ? "active" : ""}`}
+                onClick={() => setView("live")}
+              >
+                Live
+              </button>
+              <button
+                className={`vc-nav-btn ${view === "settings" ? "active" : ""}`}
+                onClick={() => setView("settings")}
+              >
+                Settings
+              </button>
+              <button
+                className={`vc-nav-btn ${view === "history" ? "active" : ""}`}
+                onClick={() => setView("history")}
+              >
+                History
+              </button>
+            </nav>
+
+            <div className="vc-user-area">
+              {user && serverSyncing && (
+                <span className="vc-sync-indicator syncing" title="Syncing with server...">⟳</span>
+              )}
+              {user && syncError && (
+                <span
+                  className="vc-sync-indicator error"
+                  title={syncError}
+                  onClick={() => setSyncError(null)}
+                >⚠</span>
+              )}
+              {user && !serverSyncing && !syncError && (
+                <span className="vc-sync-indicator synced" title="Synced">☁</span>
+              )}
+              <button className="vc-user-btn" onClick={() => user ? handleLogout() : setShowAuth(true)}>
+                {user ? `${user.name} ▾` : "Sign In"}
+              </button>
+            </div>
+          </header>
+
+          <main className="vc-main">
+            {view === "live" && (
+              <>
+                <div className="vc-video-section">
+                  <div className="vc-video-wrap">
+                    <video
+                      ref={videoRef}
+                      className={`vc-video ${mirrorVideo ? "mirrored" : ""}`}
+                      style={{ transform: `scale(${cameraZoom})` }}
+                      playsInline
+                      autoPlay
+                      muted
+                    />
+                    <canvas
+                      ref={canvasRef}
+                      className={`vc-canvas ${mirrorVideo ? "mirrored" : ""}`}
+                      style={{ transform: `scale(${cameraZoom})` }}
+                      width={640}
+                      height={480}
+                    />
+                    {showAttractor && (
+                      <div ref={threeContainerRef} className="vc-three-container" />
+                    )}
+                    <div className="vc-video-overlay">
+                      <div className="vc-status-badge">
+                        <span className={`vc-status-dot ${status.level}`} />
+                        <span>{status.text}</span>
+                        {hasDetection && <span style={{ color: "#10B981" }}>• Tracking</span>}
+                      </div>
+                      {running && (
+                        <div className="vc-timer">{formatTime(sessionTime)}</div>
+                      )}
+                    </div>
+
+                    {/* VR/AR Depth Indicator */}
+                    {running && arGuideEnabled && (
+                      <div className="vc-depth-indicator">
+                        <div className="vc-depth-fill" style={{ height: `${depthValue}%` }} />
+                      </div>
+                    )}
+
+                    {/* VR/AR Focus Ring */}
+                    <div className={`vc-focus-ring ${focusRingActive ? 'active' : ''}`} />
+
+                    {/* VR/AR Spatial Audio Indicator */}
+                    {spatialAudioEnabled && (
+                      <div className={`vc-spatial-indicator ${running ? 'active' : ''}`}>
+                        <div className="vc-spatial-wave">
+                          <span /><span /><span /><span />
+                        </div>
+                        <span>Spatial Audio</span>
+                      </div>
+                    )}
+
+                    {/* AR Posture Guide Overlay */}
+                    {running && arGuideEnabled && hasDetection && (
+                      <div className="vc-ar-guide">
+                        <svg viewBox="0 0 640 480" style={{ width: '100%', height: '100%' }}>
+                          {/* Shoulder alignment guide */}
+                          <line
+                            x1="220" y1="200" x2="420" y2="200"
+                            stroke="rgba(191, 87, 0, 0.4)"
+                            strokeWidth="2"
+                            strokeDasharray="8 4"
+                          />
+                          {/* Center vertical guide */}
+                          <line
+                            x1="320" y1="80" x2="320" y2="400"
+                            stroke="rgba(191, 87, 0, 0.2)"
+                            strokeWidth="1"
+                            strokeDasharray="4 8"
+                          />
+                          {/* Head position zone */}
+                          <ellipse
+                            cx="320" cy="140"
+                            rx="60" ry="70"
+                            fill="none"
+                            stroke="rgba(191, 87, 0, 0.3)"
+                            strokeWidth="2"
+                            strokeDasharray="10 5"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="vc-controls">
+                    {!running ? (
+                      <button className="vc-btn vc-btn-primary" onClick={start}>
+                        ▶ Start Session
+                      </button>
+                    ) : (
+                      <>
+                        <button className="vc-btn vc-btn-secondary" onClick={togglePause}>
+                          {paused ? "▶ Resume" : "⏸ Pause"}
+                        </button>
+                        <button className="vc-btn vc-btn-danger" onClick={() => stop()}>
+                          ■ Stop
+                        </button>
+                      </>
+                    )}
+
+                    <select
+                      className="vc-attractor-select"
+                      value={selectedAttractor}
+                      onChange={(e) => {
+                        setSelectedAttractor(e.target.value);
+                        if (running && showAttractor) {
+                          initThree({ attractorKey: e.target.value, particles: particleCount });
+                        }
+                      }}
+                      disabled={running && !paused}
+                    >
+                      {Object.entries(ATTRACTORS).map(([key, { name, desc }]) => (
+                        <option key={key} value={key}>{name} — {desc}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      className="vc-attractor-select"
+                      value={presentationMode}
+                      onChange={(e) => setPresentationMode(e.target.value)}
+                      title="Presentation mode - affects grading weights"
+                      style={{ minWidth: '120px' }}
+                    >
+                      <option value="seated">📹 Seated</option>
+                      <option value="standing">🎤 Standing</option>
+                      <option value="closeup">🖼 Close-up</option>
+                    </select>
+
+                    {running && (
+                      <button
+                        className="vc-btn vc-btn-secondary"
+                        onClick={toggleImmersive}
+                        title="Enter distraction-free immersive mode"
+                      >
+                        {immersiveMode ? '↙ Exit' : '⛶ Immersive'}
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="vc-coach-note">{coachNote}</div>
+
+                  {/* Active Challenge Display */}
+                  {activeChallenge && running && (
+                    <div className="vc-live-challenge">
+                      <div className="vc-live-challenge-header">
+                        <span className={`vc-challenge-badge ${CHALLENGES[activeChallenge]?.badge}`}>
+                          {CHALLENGES[activeChallenge]?.badge?.toUpperCase()}
+                        </span>
+                        <span>{CHALLENGES[activeChallenge]?.title}</span>
+                      </div>
+                      <div className="vc-live-challenge-desc">
+                        {CHALLENGES[activeChallenge]?.desc}
+                      </div>
+                      {CHALLENGES[activeChallenge]?.type === 'duration' && (
+                        <div className="vc-challenge-progress-bar">
+                          <div
+                            className="vc-challenge-progress-fill"
+                            style={{
+                              width: `${(challengeProgress.currentStreak / CHALLENGES[activeChallenge]?.targetDuration) * 100}%`
+                            }}
+                          />
+                          <span className="vc-challenge-progress-text">
+                            {challengeProgress.currentStreak}s / {CHALLENGES[activeChallenge]?.targetDuration}s
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Challenge Selector (when not running) */}
+                  {!running && (
+                    <div style={{ marginTop: 16 }}>
+                      <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 8 }}>
+                        <strong>Select a Challenge:</strong>
+                      </div>
+                      <select
+                        className="vc-attractor-select"
+                        value={activeChallenge || ''}
+                        onChange={(e) => e.target.value ? startChallenge(e.target.value) : setActiveChallenge(null)}
+                        style={{ width: '100%' }}
+                      >
+                        <option value="">No challenge (free practice)</option>
+                        {Object.entries(CHALLENGES).map(([key, ch]) => (
+                          <option
+                            key={key}
+                            value={key}
+                            disabled={!!completedChallenges[key]}
+                          >
+                            {completedChallenges[key] ? '✓ ' : ''}{ch.title} ({ch.badge}) — {ch.xp} XP
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                <div className="vc-metrics-panel">
+                  <div className="vc-grade-card">
+                    <div className="vc-grade-label">
+                      Overall Grade
+                      <span style={{ fontSize: '10px', color: 'var(--bsi-gray-400)', marginLeft: '6px', textTransform: 'none' }}>
+                        {presentationMode === 'seated' ? '(Seated Mode)' : presentationMode === 'standing' ? '(Standing Mode)' : '(Close-up Mode)'}
+                      </span>
+                    </div>
+                    <div className="vc-grade-display">
+                      <span className={`vc-grade-letter ${gradeClass}`}>{compositeGrade.letter}</span>
+                      <span className="vc-grade-score">{compositeGrade.score}</span>
+                    </div>
+                  </div>
+
+                  <div className="vc-metrics-grid">
+                    {/* Body Stability - less relevant for close-up mode */}
+                    {presentationMode !== 'closeup' && (
+                      <MetricCard
+                        label="Body Stability"
+                        value={metrics.bodyStability}
+                        unit="%"
+                        pct={metrics.bodyStability}
+                      />
+                    )}
+                    <MetricCard
+                      label="Camera Alignment"
+                      value={metrics.facingCamera}
+                      unit="%"
+                      pct={metrics.facingCamera}
+                    />
+                    <MetricCard
+                      label="Head Tilt"
+                      value={Math.abs(metrics.headTilt).toFixed(1)}
+                      unit="°"
+                      pct={clamp(100 - Math.abs(metrics.headTilt) * 4, 0, 100)}
+                    />
+                    {/* Shoulder Level - less relevant for close-up mode */}
+                    {presentationMode !== 'closeup' && (
+                      <MetricCard
+                        label="Shoulder Level"
+                        value={Math.abs(metrics.shoulderLevel).toFixed(1)}
+                        unit="°"
+                        pct={clamp(100 - Math.abs(metrics.shoulderLevel) * 5, 0, 100)}
+                      />
+                    )}
+                    {/* Eye Contact - more relevant for close-up and seated modes */}
+                    {(presentationMode === 'closeup' || presentationMode === 'seated') && metrics.eyeContact !== undefined && (
+                      <MetricCard
+                        label="Eye Contact"
+                        value={Math.round(metrics.eyeContact || 0)}
+                        unit="%"
+                        pct={metrics.eyeContact || 0}
+                      />
+                    )}
+                  </div>
+
+                  <div className="vc-voice-section">
+                    <div className="vc-voice-header">
+                      🎤 Vocal Intelligence
+                    </div>
+                    <div className="vc-voice-grid">
+                      <div className="vc-voice-stat">
+                        <div className="vc-voice-stat-value">{metrics.voiceEnergy}%</div>
+                        <div className="vc-voice-stat-label">Energy</div>
+                      </div>
+                      <div className="vc-voice-stat">
+                        <div className="vc-voice-stat-value">
+                          {metrics.pitch > 0 ? `${metrics.pitch} Hz` : "—"}
+                        </div>
+                        <div className="vc-voice-stat-label">Pitch</div>
+                      </div>
+                      <div className="vc-voice-stat">
+                        <div className="vc-voice-stat-value">{metrics.pitchStability}%</div>
+                        <div className="vc-voice-stat-label">Stability</div>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: "8px" }}>
+                      <MetricCard
+                        label="Speech Presence"
+                        value={Math.round(metrics.speechPresence * 100)}
+                        unit="%"
+                        pct={metrics.speechPresence * 100}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Advanced Vocal Analysis (Meyda.js) */}
+                  <div className="vc-voice-section">
+                    <div className="vc-voice-header">
+                      📊 Spectral Analysis
+                    </div>
+                    <div className="vc-voice-grid">
+                      <div className="vc-voice-stat" title="Voice brightness - higher = sharper, lower = warmer">
+                        <div className="vc-voice-stat-value">{metrics.spectralCentroid}</div>
+                        <div className="vc-voice-stat-label">Brightness</div>
+                      </div>
+                      <div className="vc-voice-stat" title="Voice variation - higher = more dynamic">
+                        <div className="vc-voice-stat-value">{metrics.spectralFlux}</div>
+                        <div className="vc-voice-stat-label">Variation</div>
+                      </div>
+                      <div className="vc-voice-stat" title="Vocal clarity - higher = cleaner tone">
+                        <div className="vc-voice-stat-value">{metrics.vocalClarity}%</div>
+                        <div className="vc-voice-stat-label">Clarity</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Expression Analysis (MediaPipe Face Landmarker) */}
+                  <div className="vc-voice-section">
+                    <div className="vc-voice-header">
+                      😊 Expression Analysis
+                    </div>
+                    <div className="vc-voice-grid">
+                      <div className="vc-voice-stat" title="Smile intensity">
+                        <div className="vc-voice-stat-value" style={{ color: metrics.smileScore > 50 ? '#22C55E' : 'inherit' }}>
+                          {metrics.smileScore}%
+                        </div>
+                        <div className="vc-voice-stat-label">Smile</div>
+                      </div>
+                      <div className="vc-voice-stat" title="Brow tension - lower = more relaxed">
+                        <div className="vc-voice-stat-value" style={{ color: metrics.browTension > 50 ? '#F59E0B' : 'inherit' }}>
+                          {metrics.browTension}%
+                        </div>
+                        <div className="vc-voice-stat-label">Brow Tension</div>
+                      </div>
+                      <div className="vc-voice-stat" title="Eye contact with camera">
+                        <div className="vc-voice-stat-value" style={{ color: metrics.eyeContact > 60 ? '#22C55E' : metrics.eyeContact < 40 ? '#EF4444' : 'inherit' }}>
+                          {metrics.eyeContact}%
+                        </div>
+                        <div className="vc-voice-stat-label">Eye Contact</div>
+                      </div>
+                    </div>
+                    <div className="vc-voice-grid" style={{ marginTop: "6px" }}>
+                      <div className="vc-voice-stat" title="Eye openness - lower may indicate fatigue">
+                        <div className="vc-voice-stat-value">{metrics.eyeOpenness}%</div>
+                        <div className="vc-voice-stat-label">Eyes Open</div>
+                      </div>
+                      <div className="vc-voice-stat" title="Jaw clenching - indicator of stress">
+                        <div className="vc-voice-stat-value" style={{ color: metrics.jawClench > 40 ? '#F59E0B' : 'inherit' }}>
+                          {metrics.jawClench}%
+                        </div>
+                        <div className="vc-voice-stat-label">Jaw Clench</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Speech Content (Web Speech API) */}
+                  <div className="vc-voice-section">
+                    <div className="vc-voice-header">
+                      💬 Speech Content
+                    </div>
+                    <div className="vc-voice-grid">
+                      <div className="vc-voice-stat" title="Filler words detected this session">
+                        <div className="vc-voice-stat-value" style={{ color: metrics.fillerWordCount > 10 ? '#F59E0B' : 'inherit' }}>
+                          {metrics.fillerWordCount}
+                        </div>
+                        <div className="vc-voice-stat-label">Fillers</div>
+                      </div>
+                      <div className="vc-voice-stat" title="Filler words per minute - lower is better">
+                        <div className="vc-voice-stat-value" style={{ color: metrics.fillerWordRate > 5 ? '#EF4444' : metrics.fillerWordRate > 2 ? '#F59E0B' : '#22C55E' }}>
+                          {metrics.fillerWordRate}/min
+                        </div>
+                        <div className="vc-voice-stat-label">Filler Rate</div>
+                      </div>
+                      <div className="vc-voice-stat" title="Speaking pace">
+                        <div className="vc-voice-stat-value">{metrics.wordsPerMinute}</div>
+                        <div className="vc-voice-stat-label">WPM</div>
+                      </div>
+                    </div>
+                    {metrics.recentFillers && metrics.recentFillers.length > 0 && (
+                      <div style={{ marginTop: "8px", fontSize: "11px", color: "var(--bsi-gray-400)", fontFamily: "var(--font-mono)" }}>
+                        Recent: {metrics.recentFillers.slice(-3).map((f, i) => (
+                          <span key={i} style={{ background: "rgba(245, 158, 11, 0.2)", padding: "2px 6px", borderRadius: "3px", marginRight: "4px" }}>
+                            {f}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <MetricCard
+                    label="Presence Score"
+                    value={metrics.presenceScore}
+                    unit="%"
+                    pct={metrics.presenceScore}
+                  />
+                </div>
+              </>
+            )}
+
+            {view === "settings" && (
+              <div className="vc-settings" style={{ gridColumn: "1 / -1", maxWidth: "500px" }}>
+                <div>
+                  <h3 className="vc-settings-title">Coaching Mode</h3>
+                  <Select
+                    label="Presentation context"
+                    value={presentationMode}
+                    onChange={setPresentationMode}
+                    options={[
+                      { value: 'seated', label: 'Seated (Zoom/Video call)' },
+                      { value: 'standing', label: 'Standing (Speech/Presentation)' },
+                      { value: 'closeup', label: 'Close-up (Headshot/Interview)' },
+                    ]}
+                    hint="Changes which metrics matter most. Seated mode focuses on face and shoulders; Standing includes full body posture."
+                  />
+                  <CameraZoomControl zoom={cameraZoom} onZoomChange={setCameraZoom} />
+                </div>
+
+                <div>
+                  <h3 className="vc-settings-title">Display</h3>
+                  <Toggle label="Mirror video" checked={mirrorVideo} onChange={setMirrorVideo} />
+                  <Toggle label="Show pose overlay" checked={showOverlay} onChange={setShowOverlay} />
+                  <Toggle label="Show attractor visualization" checked={showAttractor} onChange={setShowAttractor} />
+                </div>
+
+                <div>
+                  <h3 className="vc-settings-title">Performance</h3>
+                  <Slider
+                    label="Particle count"
+                    value={particleCount}
+                    min={5000}
+                    max={20000}
+                    step={1000}
+                    onChange={setParticleCount}
+                    format={(v) => `${(v/1000).toFixed(0)}k`}
+                  />
+                  <Slider
+                    label="Smoothing"
+                    value={presenceSmoothing}
+                    min={0.05}
+                    max={0.3}
+                    step={0.01}
+                    onChange={setPresenceSmoothing}
+                    format={(v) => `${Math.round(v * 100)}%`}
+                  />
+                </div>
+
+                <div>
+                  <h3 className="vc-settings-title">VR/AR Features</h3>
+                  <Toggle
+                    label="Spatial audio feedback"
+                    checked={spatialAudioEnabled}
+                    onChange={setSpatialAudioEnabled}
+                  />
+                  <Toggle
+                    label="AR posture guides"
+                    checked={arGuideEnabled}
+                    onChange={setArGuideEnabled}
+                  />
+                  <Toggle
+                    label="Haptic feedback (mobile)"
+                    checked={hapticFeedback}
+                    onChange={setHapticFeedback}
+                  />
+                  <p style={{ fontSize: "11px", color: "#6B7280", marginTop: "8px" }}>
+                    Spatial audio uses binaural tones that shift with your posture.
+                    Higher pitch = better presence. Pan follows head tilt.
+                  </p>
+                </div>
+
+                <div style={{ fontSize: "12px", color: "#6B7280", marginTop: "8px" }}>
+                  <p><strong>Keyboard shortcuts:</strong></p>
+                  <p>Space — Start / Pause</p>
+                  <p>Escape — Stop session</p>
+                </div>
+              </div>
+            )}
+
+            {view === "history" && (
+              <div style={{ gridColumn: "1 / -1" }}>
+                <HistoryPanel sessions={sessions} onReplay={setReplaySession} />
+              </div>
+            )}
+          </main>
+
+          {showAuth && (
+            <AuthModal onAuth={handleAuth} onClose={() => setShowAuth(false)} />
+          )}
+
+          {replaySession && (
+            <SessionReplay session={replaySession} onClose={() => setReplaySession(null)} />
+          )}
+
+          {/* Challenge Completion Toast */}
+          {showChallengeComplete && (
+            <div className="vc-challenge-toast">
+              <div className="vc-challenge-toast-header">
+                <span className={`vc-challenge-badge ${showChallengeComplete.badge}`}>
+                  {showChallengeComplete.badge?.toUpperCase()}
+                </span>
+                <span style={{ color: '#10B981', fontWeight: 700 }}>Challenge Complete!</span>
+              </div>
+              <div className="vc-challenge-toast-title">{showChallengeComplete.title}</div>
+              <div className="vc-challenge-toast-xp">+{showChallengeComplete.xp} XP</div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Render
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<VisionCoachV2 />);
+  </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
+</body>
+</html>

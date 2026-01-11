@@ -4,7 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="College baseball rankings from D1Baseball, coaches poll, and more. Updated weekly.">
+  <meta property="og:title" content="College Baseball Rankings | Blaze Sports Intel">
+  <meta property="og:description" content="College baseball rankings from D1Baseball, coaches poll, and more. Updated weekly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://blazesportsintel.com/college-baseball/rankings">
+  <meta property="og:image" content="https://blazesportsintel.com/images/og-college-baseball.png">
+  <meta property="og:site_name" content="Blaze Sports Intel">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="College Baseball Rankings | Blaze Sports Intel">
+  <meta name="twitter:description" content="College baseball rankings from D1Baseball, coaches poll, and more. Updated weekly.">
   <title>College Baseball Rankings | Blaze Sports Intel</title>
+  <link rel="canonical" href="https://blazesportsintel.com/college-baseball/rankings">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "College Baseball Rankings",
+    "description": "College baseball rankings from D1Baseball, coaches poll, and more. Updated weekly during the NCAA baseball season.",
+    "url": "https://blazesportsintel.com/college-baseball/rankings",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Blaze Sports Intel",
+      "url": "https://blazesportsintel.com"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://blazesportsintel.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "College Baseball",
+          "item": "https://blazesportsintel.com/college-baseball"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Rankings",
+          "item": "https://blazesportsintel.com/college-baseball/rankings"
+        }
+      ]
+    },
+    "about": {
+      "@type": "SportsOrganization",
+      "name": "NCAA Division I Baseball"
+    }
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,6 +145,18 @@
     }
     .page-header h1 span { color: var(--bsi-burnt-orange); }
 
+    /* Share buttons */
+    .share-buttons { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 0.75rem; font-family: var(--font-display);
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px; color: var(--bsi-cream); cursor: pointer; transition: all 0.2s;
+    }
+    .share-btn:hover { background: var(--bsi-burnt-orange); border-color: var(--bsi-burnt-orange); }
+    .share-btn svg { width: 14px; height: 14px; }
+
     .sub-nav {
       padding: 1rem 2rem;
       background: var(--bsi-charcoal);
@@ -170,7 +235,7 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: rgba(250, 248, 245, 0.5);
+      color: rgba(250, 248, 245, 0.65);
     }
 
     .ranking-row {
@@ -227,7 +292,7 @@
     }
     .team-details .conference {
       font-size: 0.75rem;
-      color: rgba(250, 248, 245, 0.5);
+      color: rgba(250, 248, 245, 0.65);
     }
 
     .team-record {
@@ -267,7 +332,7 @@
     .empty-state {
       text-align: center;
       padding: 4rem 2rem;
-      color: rgba(250, 248, 245, 0.5);
+      color: rgba(250, 248, 245, 0.65);
     }
     .empty-state h3 {
       font-family: var(--font-display);
@@ -276,11 +341,58 @@
       color: rgba(250, 248, 245, 0.7);
     }
 
+    /* Source badge */
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(250, 248, 245, 0.8);
+      margin-left: auto;
+    }
+    .source-badge.highlightly {
+      background: rgba(191, 87, 0, 0.2);
+      color: var(--bsi-burnt-orange);
+    }
+    .source-badge.d1baseball {
+      background: rgba(255, 107, 53, 0.2);
+      color: var(--bsi-ember);
+    }
+    .source-badge.database {
+      background: rgba(46, 125, 50, 0.2);
+      color: #4CAF50;
+    }
+    .source-badge.error {
+      background: rgba(198, 40, 40, 0.2);
+      color: #EF5350;
+    }
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .poll-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
     .last-updated {
       text-align: center;
       margin-top: 2rem;
       font-size: 0.875rem;
-      color: rgba(250, 248, 245, 0.4);
+      color: rgba(250, 248, 245, 0.6);
     }
 
     .footer {
@@ -290,7 +402,7 @@
       border-top: 1px solid rgba(191, 87, 0, 0.2);
     }
     .footer p {
-      color: rgba(250, 248, 245, 0.5);
+      color: rgba(250, 248, 245, 0.65);
       font-size: 0.875rem;
     }
     .footer .tagline {
@@ -299,7 +411,18 @@
       margin-top: 0.5rem;
     }
 
+    /* Mobile Menu Button */
+    .mobile-menu-btn { display: none; flex-direction: column; gap: 5px; padding: 8px; background: transparent; border: none; cursor: pointer; }
+    .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: var(--bsi-cream); transition: all 0.3s; }
+    .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+    .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
     @media (max-width: 768px) {
+      .mobile-menu-btn { display: flex; }
+      .nav { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(13,13,13,0.98); padding: 1rem 2rem; gap: 0; border-bottom: 1px solid rgba(191,87,0,0.3); }
+      .nav.open { display: flex !important; }
+      .nav a { padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
       .nav { display: none; }
       .page-header { padding: 5rem 1rem 1.5rem; }
       .content { padding: 1rem; }
@@ -307,12 +430,17 @@
       .ranking-row { grid-template-columns: 40px 1fr auto; }
       .team-change { display: none; }
     }
+  
+    .source-tag { font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.5rem; }
+    .source-tag.highlightly { background: linear-gradient(135deg, #10B981, #059669); color: white; }
+    .source-tag.espn { background: linear-gradient(135deg, #C9082A, #8B0000); color: white; }
   </style>
 </head>
 <body>
   <header class="header">
     <div class="header-inner">
       <a href="/" class="logo">Blaze Sports Intel</a>
+      <button class="mobile-menu-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
       <nav class="nav">
         <a href="/college-baseball" class="active">College Baseball</a>
         <a href="/mlb">MLB</a>
@@ -327,6 +455,20 @@
     <section class="page-header">
       <div class="page-header-inner">
         <h1>College Baseball <span>Rankings</span></h1>
+        <div class="share-buttons">
+          <button class="share-btn" onclick="shareTwitter()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share
+          </button>
+          <button class="share-btn" onclick="shareFacebook()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Share
+          </button>
+          <button class="share-btn" onclick="copyLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copy
+          </button>
+        </div>
       </div>
     </section>
 
@@ -344,9 +486,15 @@
 
     <section class="content">
       <div class="content-inner">
-        <div class="poll-selector">
-          <button class="poll-btn active" data-poll="d1baseball">D1Baseball Top 25</button>
-          <button class="poll-btn" data-poll="coaches">Coaches Poll</button>
+        <div class="poll-header">
+          <div class="poll-selector">
+            <button class="poll-btn active" data-poll="d1baseball">D1Baseball Top 25</button>
+            <button class="poll-btn" data-poll="coaches">Coaches Poll</button>
+          </div>
+          <span class="source-badge" id="sourceBadge">
+            <span class="status-dot"></span>
+            <span id="sourceLabel">Loading</span>
+          </span>
         </div>
 
         <div id="rankingsContainer">
@@ -363,7 +511,7 @@
 
   <footer class="footer">
     <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
-    <p class="tagline">Born to blaze the path less beaten.</p>
+    <p class="tagline">Born to Blaze the Path Less Beaten.</p>
   </footer>
 
   <script>
@@ -488,40 +636,77 @@
       });
     }
 
+    // Update source badge
+    function updateSourceBadge(source, status) {
+      var badge = document.getElementById('sourceBadge');
+      var label = document.getElementById('sourceLabel');
+      if (!badge || !label) return;
+      
+      var dot = badge.querySelector('.status-dot');
+      badge.className = 'source-badge';
+      
+      var sourceMap = {
+        'highlightly': { name: 'Highlightly', class: 'highlightly' },
+        'd1baseball': { name: 'D1Baseball', class: 'd1baseball' },
+        'D1Baseball': { name: 'D1Baseball', class: 'd1baseball' },
+        'database': { name: 'Cached', class: 'database' },
+        'bsi-database': { name: 'Cached', class: 'database' },
+        'error': { name: 'Error', class: 'error' }
+      };
+      
+      var mapped = sourceMap[source] || { name: source || 'Unknown', class: '' };
+      label.textContent = mapped.name;
+      if (mapped.class) badge.classList.add(mapped.class);
+    }
+
     // Load rankings
     async function loadRankings() {
       var container = document.getElementById('rankingsContainer');
       showLoading(container);
 
       try {
-        var response = await fetch('/api/ncaa/baseball/rankings');
+        var response = await fetch('/api/college-baseball/rankings');
         var data = await response.json();
 
-        rankingsData = data;
+        // Use unified format (data array) or legacy format (rankings array)
+        var rankings = data.data || data.rankings;
+        var dataSource = data.source || data.poll || 'd1baseball';
+        var timestamp = data.lastUpdated || data.timestamp || new Date().toISOString();
+        
+        // Update source badge
+        updateSourceBadge(dataSource, data.status || 'ok');
+        
+        if (rankings && rankings.length > 0) {
+          // Transform to rendering format
+          var teams = rankings.map(function(r) {
+            return {
+              team: {
+                displayName: r.team_name || r.name,
+                logos: r.team_logo ? [{ href: r.team_logo }] : (r.logo ? [{ href: r.logo }] : null),
+                conferenceId: r.conference || ''
+              },
+              recordSummary: r.record || '',
+              previousRank: r.previous_rank || r.previousRank,
+              current: r.rank
+            };
+          });
 
-        // ESPN returns rankings in data.rankings array
-        var rankings = data.rankings || [];
-        var pollRankings = rankings.find(function(r) {
-          if (currentPoll === 'd1baseball') {
-            return r.name?.toLowerCase().includes('d1baseball') || r.type === 'd1baseball';
-          }
-          return r.name?.toLowerCase().includes('coaches') || r.type === 'coaches';
-        }) || rankings[0];
+          renderRankings(teams);
 
-        var teams = pollRankings?.ranks || pollRankings?.teams || [];
-
-        renderRankings(teams);
-
-        document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleDateString('en-US', {
-          timeZone: 'America/Chicago',
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric'
-        });
+          document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date(timestamp).toLocaleDateString('en-US', {
+            timeZone: 'America/Chicago',
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          });
+        } else {
+          throw new Error('No rankings data');
+        }
 
       } catch (error) {
         console.error('Failed to load rankings:', error);
+        updateSourceBadge('error', 'error');
         container.replaceChildren();
         var empty = document.createElement('div');
         empty.className = 'empty-state';
@@ -545,8 +730,40 @@
       });
     });
 
+    // Mobile menu toggle
+    var menuBtn = document.querySelector('.mobile-menu-btn');
+    var nav = document.querySelector('.nav');
+    if (menuBtn && nav) {
+      menuBtn.addEventListener('click', function() {
+        menuBtn.classList.toggle('active');
+        nav.classList.toggle('open');
+      });
+    }
+
     // Initialize
     loadRankings();
   </script>
+  <script>
+    // Social sharing functions
+    function shareTwitter() {
+      var text = 'College Baseball Rankings on Blaze Sports Intel';
+      var url = encodeURIComponent(window.location.href);
+      window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + url, '_blank', 'width=550,height=420');
+    }
+    function shareFacebook() {
+      var url = encodeURIComponent(window.location.href);
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=550,height=420');
+    }
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        var btn = event.target.closest('.share-btn');
+        var originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = originalText; }, 1500);
+      });
+    }
+  </script>
+  <script src="/src/js/analytics.js"></script>
+  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(console.error);}</script>
 </body>
 </html>

@@ -1,674 +1,1480 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Football Standings | Blaze Sports Intel</title>
-    <meta name="description" content="Live FBS college football standings by conference. SEC, Big Ten, Big 12, ACC, and Group of Five conference standings.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College football conference standings from Blaze Sports Intel. Track every D1 conference race with live updates.">
+  <meta property="og:title" content="Conference Standings | College Football">
+  <meta property="og:description" content="College football conference standings. Track every FBS conference race.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://blazesportsintel.com/college-football/standings">
+  <meta property="og:image" content="https://blazesportsintel.com/images/og-college-football.png">
+  <meta property="og:site_name" content="Blaze Sports Intel">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Conference Standings | College Football | Blaze Sports Intel</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Source+Serif+4:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --charcoal: #1A1A1A;
-            --midnight: #0D0D0D;
-            --burnt-orange: #BF5700;
-            --ember: #FF6B35;
-            --gold: #C9A227;
-            --cream: #FAF8F5;
-            --warm-white: #FAFAFA;
-            --success: #2E7D32;
-            --warning: #F9A825;
-            --error: #C62828;
-            --font-display: 'Playfair Display', Georgia, serif;
-            --font-body: 'Source Serif 4', Georgia, serif;
-            --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
-            --font-mono: 'IBM Plex Mono', monospace;
-        }
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-gold: #C9A227;
+      --font-display: 'Oswald', sans-serif;
+      --font-body: 'Cormorant Garamond', Georgia, serif;
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+      /* Theme variables - Dark mode default */
+      --bg-primary: var(--bsi-midnight);
+      --bg-secondary: var(--bsi-charcoal);
+      --bg-tertiary: rgba(255, 255, 255, 0.05);
+      --text-primary: var(--bsi-cream);
+      --text-secondary: rgba(250, 248, 245, 0.7);
+      --text-muted: rgba(250, 248, 245, 0.5);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(191, 87, 0, 0.2);
+    }
 
-        body {
-            font-family: var(--font-ui);
-            background: var(--midnight);
-            color: var(--cream);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+    /* BSI Brand: Dark mode only */
 
-        .header {
-            background: linear-gradient(180deg, var(--charcoal) 0%, var(--midnight) 100%);
-            border-bottom: 1px solid rgba(191, 87, 0, 0.3);
-            padding: 1rem 1.5rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
 
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-accent);
+    }
+          background: rgba(255, 255, 255, 0.95);
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--bsi-burnt-orange); }
+    .nav a.active { color: var(--bsi-burnt-orange); }
 
-        .logo {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--burnt-orange);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    /* Theme Toggle */
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .theme-toggle:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: scale(1.05);
+    }
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-secondary);
+      fill: none;
+      transition: stroke 0.2s;
+    }
+    .theme-toggle:hover svg { stroke: var(--bsi-burnt-orange); }
+    /* Theme toggle hidden - BSI is dark mode only */
+    .theme-toggle { display: none; }
+    .icon-sun { display: none; }
+    .icon-moon { display: block; }
+        
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all 0.3s;
+    }
+    .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+    .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--burnt-orange);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
+    /* Page Header */
+    .page-header {
+      padding: 7rem 2rem 2rem;
+      background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(191, 87, 0, 0.15) 0%, transparent 70%);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .page-header h1 span {
+      display: block;
+      color: var(--bsi-burnt-orange);
+      font-size: 0.6em;
+      font-weight: 500;
+      margin-top: 0.25rem;
+    }
+    .page-header-tagline {
+      font-family: var(--font-body);
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      font-style: italic;
+    }
 
-        .nav { display: flex; gap: 0.5rem; }
+    /* Sub Navigation */
+    .sub-nav {
+      padding: 1rem 2rem;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .sub-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+    }
+    .sub-nav a {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .sub-nav a:hover { color: var(--text-primary); }
+    .sub-nav a.active {
+      color: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
 
-        .nav a {
-            color: var(--cream);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            opacity: 0.8;
-        }
+    /* Content */
+    .content {
+      padding: 2rem;
+      background: var(--bg-primary);
+      min-height: 60vh;
+    }
+    .content-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .nav a:hover, .nav a.active {
-            background: rgba(191, 87, 0, 0.2);
-            color: var(--burnt-orange);
-            opacity: 1;
-        }
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+    .controls-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .controls-bar label {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .controls-bar select {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      padding: 0.5rem 2rem 0.5rem 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      border-radius: 6px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23BF5700' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      transition: border-color 0.2s;
+    }
+    .controls-bar select:hover,
+    .controls-bar select:focus {
+      border-color: var(--bsi-burnt-orange);
+      outline: none;
+    }
+    .freshness-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .freshness-label {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-        .main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
+    /* Source badge */
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+    }
+    .source-badge.highlightly {
+      background: rgba(191, 87, 0, 0.15);
+      color: var(--bsi-burnt-orange);
+    }
+    .source-badge.espn {
+      background: rgba(201, 162, 39, 0.15);
+      color: var(--bsi-gold);
+    }
+    .source-badge.database {
+      background: rgba(46, 125, 50, 0.15);
+      color: #4CAF50;
+    }
+    .source-badge.d1baseball {
+      background: rgba(191, 87, 0, 0.15);
+      color: var(--bsi-ember);
+    }
+    .source-badge.error {
+      background: rgba(198, 40, 40, 0.15);
+      color: #EF5350;
+    }
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
 
-        .page-header { margin-bottom: 2rem; }
+    /* Update Indicator */
+    .update-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      color: var(--bsi-burnt-orange);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .update-indicator.visible {
+      opacity: 1;
+    }
+    .update-indicator .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(191, 87, 0, 0.3);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        .page-title {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 800;
-            color: var(--cream);
-            margin-bottom: 0.5rem;
-        }
+    /* Conferences Grid */
+    .conferences-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
 
-        .page-title span { color: var(--burnt-orange); }
+    /* Conference Card */
+    .conference-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .conference-card:hover {
+      border-color: var(--border-accent);
+    }
+    .conference-header {
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), rgba(191, 87, 0, 0.05));
+      border-bottom: 1px solid var(--border-accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .conference-header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .conference-logo {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .conference-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .conference-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .conference-abbr {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--bsi-burnt-orange);
+      background: rgba(191, 87, 0, 0.15);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-        .page-subtitle {
-            font-family: var(--font-body);
-            font-size: 1.1rem;
-            color: rgba(250, 248, 245, 0.7);
-        }
+    /* Teams Table */
+    .teams-table-wrapper {
+      overflow-x: auto;
+    }
+    .teams-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+    .teams-table th,
+    .teams-table td {
+      padding: 0.875rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .teams-table th {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      background: var(--bg-tertiary);
+      position: sticky;
+      top: 0;
+    }
+    .teams-table th.sortable {
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .teams-table th.sortable:hover {
+      color: var(--bsi-burnt-orange);
+    }
+    .teams-table td {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+    }
+    .teams-table tbody tr {
+      transition: background-color 0.2s;
+    }
+    .teams-table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+    .teams-table tbody tr:last-child td {
+      border-bottom: none;
+    }
 
-        .stats-bar {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
-            padding: 1rem 1.5rem;
-            background: var(--charcoal);
-            border-radius: 12px;
-            border: 1px solid rgba(191, 87, 0, 0.2);
-        }
+    /* Team Row - Featured (Texas) */
+    .teams-table tbody tr.featured {
+      background: rgba(191, 87, 0, 0.1);
+    }
+    .teams-table tbody tr.featured:hover {
+      background: rgba(191, 87, 0, 0.15);
+    }
+    .teams-table tbody tr.featured .team-name-text {
+      color: var(--bsi-burnt-orange);
+      font-weight: 700;
+    }
 
-        .stat-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    /* Team Cell */
+    .team-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .team-rank {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--bsi-gold);
+      min-width: 24px;
+    }
+    .team-logo {
+      width: 28px;
+      height: 28px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .team-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .team-logo-placeholder {
+      font-family: var(--font-display);
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .team-name-text {
+      font-weight: 500;
+    }
 
-        .stat-value {
-            font-family: var(--font-mono);
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--burnt-orange);
-        }
+    /* Stat Cells */
+    .stat-cell {
+      font-family: var(--font-display);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-cell.pending {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .stat-cell.pct {
+      font-weight: 600;
+    }
+    .stat-cell.rpi {
+      color: var(--bsi-gold);
+      font-weight: 600;
+    }
 
-        .stat-label {
-            font-size: 0.8rem;
-            color: rgba(250, 248, 245, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+    /* Streak Indicator */
+    .streak-indicator {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      min-width: 40px;
+    }
+    .streak-indicator.win {
+      background: rgba(46, 125, 50, 0.2);
+      color: #4CAF50;
+    }
+    .streak-indicator.loss {
+      background: rgba(198, 40, 40, 0.2);
+      color: #EF5350;
+    }
+    .streak-indicator.neutral {
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+    }
 
-        .filter-section { margin-bottom: 2rem; }
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--bsi-burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    .loading p {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
 
-        .conference-tabs {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            padding: 1rem;
-            background: var(--charcoal);
-            border-radius: 12px;
-            border: 1px solid rgba(191, 87, 0, 0.2);
-        }
+    /* Error State */
+    .error {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: rgba(198, 40, 40, 0.1);
+      border: 1px solid rgba(198, 40, 40, 0.3);
+      border-radius: 12px;
+    }
+    .error-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      color: #C62828;
+    }
+    .error h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: #C62828;
+      margin-bottom: 0.5rem;
+    }
+    .error p {
+      color: var(--text-secondary);
+    }
+    .error-retry {
+      margin-top: 1rem;
+      padding: 0.5rem 1.5rem;
+      background: var(--bsi-burnt-orange);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .error-retry:hover {
+      background: var(--bsi-ember);
+    }
 
-        .conf-tab {
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(191, 87, 0, 0.3);
-            border-radius: 8px;
-            background: transparent;
-            color: var(--cream);
-            font-family: var(--font-ui);
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+    /* Empty State */
+    .empty {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .empty h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    .empty p {
+      color: var(--text-muted);
+    }
 
-        .conf-tab:hover {
-            border-color: var(--burnt-orange);
-            background: rgba(191, 87, 0, 0.1);
-        }
+    /* Season Note */
+    .season-note {
+      text-align: center;
+      padding: 1.25rem;
+      margin-top: 2rem;
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+    }
+    .season-note p {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+    .season-note .source {
+      color: var(--bsi-burnt-orange);
+      font-weight: 500;
+    }
 
-        .conf-tab.active {
-            background: var(--burnt-orange);
-            border-color: var(--burnt-orange);
-            color: white;
-        }
+    /* Footer */
+    .footer {
+      padding: 3rem 2rem;
+      background: var(--bg-secondary);
+      text-align: center;
+      border-top: 1px solid var(--border-accent);
+    }
+    .footer p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    .footer .tagline {
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--bsi-burnt-orange);
+      margin-top: 0.5rem;
+    }
 
-        .conference-section { margin-bottom: 2.5rem; }
-
-        .conference-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--burnt-orange);
-        }
-
-        .conference-name {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--cream);
-        }
-
-        .conference-badge {
-            padding: 0.25rem 0.75rem;
-            background: rgba(191, 87, 0, 0.2);
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--burnt-orange);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .standings-table-container {
-            background: var(--charcoal);
-            border-radius: 12px;
-            border: 1px solid rgba(191, 87, 0, 0.2);
-            overflow: hidden;
-        }
-
-        .standings-table { width: 100%; border-collapse: collapse; }
-
-        .standings-table th {
-            background: rgba(191, 87, 0, 0.15);
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: rgba(250, 248, 245, 0.7);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
-        }
-
-        .standings-table th.center, .standings-table td.center { text-align: center; }
-
-        .standings-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(191, 87, 0, 0.1);
-            font-size: 0.9rem;
-        }
-
-        .standings-table tr:last-child td { border-bottom: none; }
-        .standings-table tr:hover { background: rgba(191, 87, 0, 0.08); }
-
-        .rank-cell {
-            font-family: var(--font-mono);
-            font-weight: 600;
-            color: var(--burnt-orange);
-            width: 50px;
-        }
-
-        .team-cell { display: flex; align-items: center; gap: 0.75rem; }
-
-        .team-logo {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            background: rgba(250, 248, 245, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .team-logo img { width: 28px; height: 28px; object-fit: contain; }
-        .team-name { font-weight: 600; color: var(--cream); }
-        .record-cell { font-family: var(--font-mono); font-weight: 500; }
-        .conf-record { color: var(--gold); }
-
-        .streak-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .streak-badge.win { background: rgba(46, 125, 50, 0.2); color: var(--success); }
-        .streak-badge.loss { background: rgba(198, 40, 40, 0.2); color: var(--error); }
-
-        .pct-cell { font-family: var(--font-mono); font-weight: 600; }
-        .pct-high { color: var(--success); }
-        .pct-mid { color: var(--gold); }
-        .pct-low { color: var(--error); }
-
-        .points-cell { font-family: var(--font-mono); font-size: 0.85rem; }
-        .points-for { color: var(--success); }
-        .points-against { color: var(--error); }
-
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .loading-spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid rgba(191, 87, 0, 0.2);
-            border-top-color: var(--burnt-orange);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { font-family: var(--font-body); color: rgba(250, 248, 245, 0.7); }
-
-        .error-container {
-            padding: 3rem 2rem;
-            text-align: center;
-            background: var(--charcoal);
-            border-radius: 12px;
-            border: 1px solid rgba(198, 40, 40, 0.3);
-        }
-
-        .error-icon { font-size: 3rem; margin-bottom: 1rem; }
-        .error-title { font-family: var(--font-display); font-size: 1.5rem; color: var(--error); margin-bottom: 0.5rem; }
-        .error-message { color: rgba(250, 248, 245, 0.7); }
-
-        .retry-btn {
-            margin-top: 1.5rem;
-            padding: 0.75rem 2rem;
-            background: var(--burnt-orange);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-family: var(--font-ui);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .retry-btn:hover { background: var(--ember); transform: translateY(-2px); }
-
-        .footer {
-            margin-top: 4rem;
-            padding: 2rem 1.5rem;
-            background: var(--charcoal);
-            border-top: 1px solid rgba(191, 87, 0, 0.2);
-            text-align: center;
-        }
-
-        .footer-text { font-size: 0.85rem; color: rgba(250, 248, 245, 0.5); }
-        .footer-text a { color: var(--burnt-orange); text-decoration: none; }
-        .footer-text a:hover { text-decoration: underline; }
-
-        @media (max-width: 768px) {
-            .header-content { flex-direction: column; align-items: flex-start; }
-            .nav { width: 100%; overflow-x: auto; padding-bottom: 0.5rem; }
-            .stats-bar { gap: 1rem; }
-            .stat-item { flex: 1; min-width: 80px; }
-            .conference-tabs { overflow-x: auto; flex-wrap: nowrap; }
-            .conf-tab { flex-shrink: 0; padding: 0.4rem 0.75rem; font-size: 0.8rem; }
-            .standings-table-container { overflow-x: auto; }
-            .standings-table { min-width: 700px; }
-        }
-
-        @media (max-width: 480px) {
-            .main { padding: 1.5rem 1rem; }
-            .page-subtitle { font-size: 1rem; }
-            .stat-value { font-size: 1.25rem; }
-        }
-    </style>
+    /* Mobile Styles */
+    @media (max-width: 768px) {
+      .mobile-menu-btn { display: flex; }
+      .nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        flex-direction: column;
+        padding: 1rem 2rem;
+        gap: 1rem;
+        border-bottom: 1px solid var(--border-accent);
+      }
+      .nav.open { display: flex; }
+      .page-header { padding: 5rem 1rem 1.5rem; }
+      .content { padding: 1rem; }
+      .sub-nav { top: 52px; padding: 0.75rem 1rem; }
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls-left,
+      .controls-right {
+        justify-content: space-between;
+      }
+      .conference-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .teams-table th:nth-child(n+5),
+      .teams-table td:nth-child(n+5) {
+        display: none;
+      }
+      .team-cell {
+        gap: 0.5rem;
+      }
+      .team-logo {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  
+    .source-tag { font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.5rem; }
+    .source-tag.highlightly { background: linear-gradient(135deg, #10B981, #059669); color: white; }
+    .source-tag.espn { background: linear-gradient(135deg, #C9082A, #8B0000); color: white; }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <a href="/" class="logo">
-                <span class="logo-icon">🔥</span>
-                BSI
-            </a>
-            <nav class="nav">
-                <a href="/college-football/">Football</a>
-                <a href="/college-football/teams.html">Teams</a>
-                <a href="/college-football/standings.html" class="active">Standings</a>
-                <a href="/college-football/transfer-portal.html">Portal</a>
-                <a href="/college-baseball/">Baseball</a>
-            </nav>
-        </div>
-    </header>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">Blaze Sports Intel</a>
+      <div class="header-right">
+        <button class="theme-toggle" aria-label="Toggle theme" id="themeToggle">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="mobile-menu-btn" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="nav">
+          <a href="/college-football">College Baseball</a>
+          <a href="/mlb">MLB</a>
+          <a href="/nfl">NFL</a>
+          <a href="/tools">Tools</a>
+          <a href="/login">Sign In</a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-    <main class="main">
-        <div class="page-header">
-            <h1 class="page-title">FBS <span>Standings</span></h1>
-            <p class="page-subtitle">2025-2026 College Football Conference Standings</p>
-            <div class="stats-bar" id="statsBar">
-                <div class="stat-item">
-                    <span class="stat-value" id="totalTeams">--</span>
-                    <span class="stat-label">Teams</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="totalConferences">--</span>
-                    <span class="stat-label">Conferences</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="gamesPlayed">--</span>
-                    <span class="stat-label">Games Played</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="lastUpdated">--</span>
-                    <span class="stat-label">Last Updated</span>
-                </div>
+  <main>
+    <section class="page-header">
+      <div class="page-header-inner">
+        <h1>Conference Standings<span>2025 Season</span></h1>
+        <p class="page-header-tagline">Track every FBS conference race. Win-loss records, conference records, and playoff rankings updated weekly.</p>
+      </div>
+    </section>
+
+    <nav class="sub-nav">
+      <div class="sub-nav-inner">
+        <a href="/college-football">Overview</a>
+        <a href="/college-football/scores">Scores</a>
+        <a href="/college-football/standings" class="active">Standings</a>
+        <a href="/college-football/rankings">Rankings</a>
+        <a href="/college-football/teams">Teams</a>
+        <a href="/college-football/players">Players</a>
+        <a href="/college-football/transfer-portal">Portal</a>
+        <a href="/college-football/news">News</a>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="content-inner">
+        <div class="controls-bar">
+          <div class="controls-left">
+            <label for="conference-select">Conference:</label>
+            <select id="conference-select">
+              <option value="all">All Conferences</option>
+              <option value="sec">SEC</option>
+              <option value="acc">ACC</option>
+              <option value="big12">Big 12</option>
+              <option value="bigten">Big Ten</option>
+              <option value="pac12">Pac-12</option>
+              <option value="american">American</option>
+              <option value="sunbelt">Sun Belt</option>
+              <option value="mac">MAC</option>
+              <option value="mwc">Mountain West</option>
+              <option value="cusa">Conference USA</option>
+            </select>
+            <div class="update-indicator" id="updateIndicator">
+              <div class="spinner"></div>
+              <span>Updating...</span>
             </div>
-        </div>
-
-        <div class="filter-section">
-            <div class="conference-tabs" id="confTabs"></div>
-        </div>
-
-        <div id="standingsContent">
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Loading standings...</p>
+          </div>
+          <div class="controls-right">
+            <span class="source-badge" id="sourceBadge">
+              <span class="status-dot"></span>
+              <span id="sourceLabel">Loading</span>
+            </span>
+            <div class="freshness-container">
+              <span class="freshness-label">Data:</span>
+              <div id="freshnessBadge"></div>
             </div>
+          </div>
         </div>
-    </main>
 
-    <footer class="footer">
-        <p class="footer-text">&copy; 2025 <a href="/">Blaze Sports Intel</a> · Born to Blaze the Path Less Beaten</p>
-    </footer>
+        <div id="standings-container">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading standings...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    <script>
-        const CONFERENCE_ORDER = ['SEC', 'Big Ten', 'Big 12', 'ACC', 'American Athletic', 'Sun Belt', 'Mountain West', 'Mid-American', 'Conference USA', 'Independent'];
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
+    <p class="tagline">Born to Blaze the Path Less Beaten.</p>
+  </footer>
 
-        let allStandings = [];
-        let activeConference = 'all';
+  <script src="/src/js/freshness-indicator.js"></script>
+  <script>
+    (function() {
+      'use strict';
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.textContent;
+      // State
+      var container = document.getElementById('standings-container');
+      var conferenceSelect = document.getElementById('conference-select');
+      var updateIndicator = document.getElementById('updateIndicator');
+      var freshnessController = null;
+      var lastSyncTime = null;
+      var refreshInterval = null;
+
+      // Featured team for highlighting
+      var FEATURED_TEAM = 'Texas';
+
+      // Team logo URLs (ESPN CDN)
+      var TEAM_LOGOS = {
+        'texas': 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png',
+        'texas longhorns': 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png',
+        'texas a&m': 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png',
+        'lsu': 'https://a.espncdn.com/i/teamlogos/ncaa/500/99.png',
+        'arkansas': 'https://a.espncdn.com/i/teamlogos/ncaa/500/8.png',
+        'ole miss': 'https://a.espncdn.com/i/teamlogos/ncaa/500/145.png',
+        'florida': 'https://a.espncdn.com/i/teamlogos/ncaa/500/57.png',
+        'tennessee': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png',
+        'vanderbilt': 'https://a.espncdn.com/i/teamlogos/ncaa/500/238.png',
+        'georgia': 'https://a.espncdn.com/i/teamlogos/ncaa/500/61.png',
+        'auburn': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2.png',
+        'south carolina': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2579.png',
+        'mississippi state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/344.png',
+        'kentucky': 'https://a.espncdn.com/i/teamlogos/ncaa/500/96.png',
+        'alabama': 'https://a.espncdn.com/i/teamlogos/ncaa/500/333.png',
+        'missouri': 'https://a.espncdn.com/i/teamlogos/ncaa/500/142.png',
+        'oklahoma': 'https://a.espncdn.com/i/teamlogos/ncaa/500/201.png',
+        'oklahoma state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/197.png',
+        'texas tech': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2641.png',
+        'tcu': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png',
+        'baylor': 'https://a.espncdn.com/i/teamlogos/ncaa/500/239.png',
+        'west virginia': 'https://a.espncdn.com/i/teamlogos/ncaa/500/277.png',
+        'kansas': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png',
+        'kansas state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2306.png',
+        'ucf': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2116.png',
+        'byu': 'https://a.espncdn.com/i/teamlogos/ncaa/500/252.png',
+        'cincinnati': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2132.png',
+        'houston': 'https://a.espncdn.com/i/teamlogos/ncaa/500/248.png',
+        'arizona': 'https://a.espncdn.com/i/teamlogos/ncaa/500/12.png',
+        'arizona state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/9.png',
+        'colorado': 'https://a.espncdn.com/i/teamlogos/ncaa/500/38.png',
+        'utah': 'https://a.espncdn.com/i/teamlogos/ncaa/500/254.png',
+        'wake forest': 'https://a.espncdn.com/i/teamlogos/ncaa/500/154.png',
+        'clemson': 'https://a.espncdn.com/i/teamlogos/ncaa/500/228.png',
+        'nc state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/152.png',
+        'north carolina': 'https://a.espncdn.com/i/teamlogos/ncaa/500/153.png',
+        'duke': 'https://a.espncdn.com/i/teamlogos/ncaa/500/150.png',
+        'miami': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2390.png',
+        'virginia': 'https://a.espncdn.com/i/teamlogos/ncaa/500/258.png',
+        'virginia tech': 'https://a.espncdn.com/i/teamlogos/ncaa/500/259.png',
+        'florida state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/52.png',
+        'louisville': 'https://a.espncdn.com/i/teamlogos/ncaa/500/97.png',
+        'notre dame': 'https://a.espncdn.com/i/teamlogos/ncaa/500/87.png',
+        'pittsburgh': 'https://a.espncdn.com/i/teamlogos/ncaa/500/221.png',
+        'georgia tech': 'https://a.espncdn.com/i/teamlogos/ncaa/500/59.png',
+        'boston college': 'https://a.espncdn.com/i/teamlogos/ncaa/500/103.png',
+        'stanford': 'https://a.espncdn.com/i/teamlogos/ncaa/500/24.png',
+        'cal': 'https://a.espncdn.com/i/teamlogos/ncaa/500/25.png',
+        'oregon state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/204.png',
+        'washington state': 'https://a.espncdn.com/i/teamlogos/ncaa/500/265.png'
+      };
+
+      // Conference logos
+      var CONFERENCE_LOGOS = {
+        'sec': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/sec.png',
+        'acc': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/acc.png',
+        'big 12': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/big12.png',
+        'big12': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/big12.png',
+        'big ten': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/bigten.png',
+        'bigten': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/bigten.png',
+        'pac-12': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/pac12.png',
+        'pac12': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/pac12.png',
+        'american': 'https://a.espncdn.com/i/teamlogos/ncaa_conf/500/aac.png'
+      };
+
+      // Create SVG error icon using DOM methods
+      function createErrorIcon() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '48');
+        svg.setAttribute('height', '48');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor');
+        svg.setAttribute('stroke-width', '2');
+
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '12');
+        circle.setAttribute('cy', '12');
+        circle.setAttribute('r', '10');
+        svg.appendChild(circle);
+
+        var line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line1.setAttribute('x1', '12');
+        line1.setAttribute('y1', '8');
+        line1.setAttribute('x2', '12');
+        line1.setAttribute('y2', '12');
+        svg.appendChild(line1);
+
+        var line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line2.setAttribute('x1', '12');
+        line2.setAttribute('y1', '16');
+        line2.setAttribute('x2', '12.01');
+        line2.setAttribute('y2', '16');
+        svg.appendChild(line2);
+
+        return svg;
+      }
+
+      // Initialize theme toggle
+      function initThemeToggle() {
+        // BSI Brand: Force dark mode - cinematic grit aesthetic
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('bsi-theme', 'dark');
+      }
+
+      // Initialize mobile menu
+      function initMobileMenu() {
+        var menuBtn = document.querySelector('.mobile-menu-btn');
+        var nav = document.querySelector('.nav');
+        if (menuBtn && nav) {
+          menuBtn.addEventListener('click', function() {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('open');
+          });
+        }
+      }
+
+      // Show loading state
+      function showLoading() {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        var loadingDiv = document.createElement('div');
+        loadingDiv.className = 'loading';
+
+        var spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        loadingDiv.appendChild(spinner);
+
+        var text = document.createElement('p');
+        text.textContent = 'Loading standings...';
+        loadingDiv.appendChild(text);
+
+        container.appendChild(loadingDiv);
+      }
+
+      // Show error state
+      function showError(message, onRetry) {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        var errorDiv = document.createElement('div');
+        errorDiv.className = 'error';
+
+        var icon = document.createElement('div');
+        icon.className = 'error-icon';
+        icon.appendChild(createErrorIcon());
+        errorDiv.appendChild(icon);
+
+        var h3 = document.createElement('h3');
+        h3.textContent = 'Unable to Load Standings';
+        errorDiv.appendChild(h3);
+
+        var p = document.createElement('p');
+        p.textContent = message;
+        errorDiv.appendChild(p);
+
+        if (onRetry) {
+          var btn = document.createElement('button');
+          btn.className = 'error-retry';
+          btn.textContent = 'Try Again';
+          btn.addEventListener('click', onRetry);
+          errorDiv.appendChild(btn);
         }
 
-        function createElement(tag, className, textContent) {
-            const el = document.createElement(tag);
-            if (className) el.className = className;
-            if (textContent) el.textContent = textContent;
-            return el;
+        container.appendChild(errorDiv);
+      }
+
+      // Show empty state
+      function showEmpty() {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty';
+
+        var h3 = document.createElement('h3');
+        h3.textContent = 'No Standings Available';
+        emptyDiv.appendChild(h3);
+
+        var p = document.createElement('p');
+        p.textContent = 'No standings data available for this conference. Check back during the season.';
+        emptyDiv.appendChild(p);
+
+        container.appendChild(emptyDiv);
+      }
+
+      // Show update indicator
+      function showUpdating(show) {
+        if (show) {
+          updateIndicator.classList.add('visible');
+        } else {
+          updateIndicator.classList.remove('visible');
+        }
+      }
+
+      // Get team logo URL
+      function getTeamLogo(teamName) {
+        var key = (teamName || '').toLowerCase();
+        return TEAM_LOGOS[key] || null;
+      }
+
+      // Get conference logo URL
+      function getConferenceLogo(confName) {
+        var key = (confName || '').toLowerCase();
+        return CONFERENCE_LOGOS[key] || null;
+      }
+
+      // Check if team is featured (Texas)
+      function isFeaturedTeam(teamName) {
+        var name = (teamName || '').toLowerCase();
+        return name === 'texas' || name === 'texas longhorns';
+      }
+
+      // Generate streak indicator
+      function createStreakIndicator(streak) {
+        var span = document.createElement('span');
+        span.className = 'streak-indicator';
+
+        if (!streak || streak === '--') {
+          span.classList.add('neutral');
+          span.textContent = '--';
+          return span;
         }
 
-        document.addEventListener('DOMContentLoaded', loadStandings);
-
-        async function loadStandings() {
-            const content = document.getElementById('standingsContent');
-            try {
-                const response = await fetch('/api/ncaa-football/standings');
-                if (!response.ok) throw new Error('Failed to load standings');
-                const data = await response.json();
-                allStandings = data.standings || data || [];
-                if (allStandings.length === 0) allStandings = generateSampleStandings();
-                buildConferenceTabs();
-                renderStandings();
-                updateStats();
-            } catch (error) {
-                console.error('Error loading standings:', error);
-                buildErrorState(content, error.message);
-            }
+        var match = streak.match(/([WL])(\d+)/i);
+        if (match) {
+          var type = match[1].toUpperCase();
+          var count = match[2];
+          if (type === 'W') {
+            span.classList.add('win');
+            span.textContent = 'W' + count;
+          } else {
+            span.classList.add('loss');
+            span.textContent = 'L' + count;
+          }
+        } else {
+          span.classList.add('neutral');
+          span.textContent = streak;
         }
 
-        function buildConferenceTabs() {
-            const tabsContainer = document.getElementById('confTabs');
-            tabsContainer.replaceChildren();
+        return span;
+      }
 
-            const allTab = createElement('button', 'conf-tab active', 'All Conferences');
-            allTab.dataset.conf = 'all';
-            allTab.addEventListener('click', handleTabClick);
-            tabsContainer.appendChild(allTab);
+      // Create conference card
+      function createConferenceCard(conference) {
+        var card = document.createElement('div');
+        card.className = 'conference-card';
 
-            const conferences = [...new Set(allStandings.map(s => s.conference))];
-            conferences.sort((a, b) => {
-                const aIdx = CONFERENCE_ORDER.indexOf(a);
-                const bIdx = CONFERENCE_ORDER.indexOf(b);
-                return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
-            });
+        // Header
+        var header = document.createElement('div');
+        header.className = 'conference-header';
 
-            conferences.forEach(conf => {
-                const tab = createElement('button', 'conf-tab', conf);
-                tab.dataset.conf = conf;
-                tab.addEventListener('click', handleTabClick);
-                tabsContainer.appendChild(tab);
-            });
+        var headerLeft = document.createElement('div');
+        headerLeft.className = 'conference-header-left';
+
+        // Conference logo
+        var confLogoUrl = getConferenceLogo(conference.abbreviation || conference.name);
+        if (confLogoUrl) {
+          var confLogo = document.createElement('div');
+          confLogo.className = 'conference-logo';
+          var confLogoImg = document.createElement('img');
+          confLogoImg.src = confLogoUrl;
+          confLogoImg.alt = conference.name;
+          confLogoImg.onerror = function() { this.parentNode.style.display = 'none'; };
+          confLogo.appendChild(confLogoImg);
+          headerLeft.appendChild(confLogo);
         }
 
-        function handleTabClick(e) {
-            document.querySelectorAll('.conf-tab').forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
-            activeConference = e.target.dataset.conf;
-            renderStandings();
+        var name = document.createElement('span');
+        name.className = 'conference-name';
+        name.textContent = conference.name;
+        headerLeft.appendChild(name);
+
+        header.appendChild(headerLeft);
+
+        var abbr = document.createElement('span');
+        abbr.className = 'conference-abbr';
+        abbr.textContent = conference.abbreviation || conference.name.substring(0, 3).toUpperCase();
+        header.appendChild(abbr);
+
+        card.appendChild(header);
+
+        // Table wrapper for horizontal scroll on mobile
+        var tableWrapper = document.createElement('div');
+        tableWrapper.className = 'teams-table-wrapper';
+
+        // Table
+        var table = document.createElement('table');
+        table.className = 'teams-table';
+
+        // Header row
+        var thead = document.createElement('thead');
+        var headerRow = document.createElement('tr');
+        var columns = [
+          { key: 'team', label: 'Team', align: 'left' },
+          { key: 'conf', label: 'Conf', align: 'center' },
+          { key: 'overall', label: 'Overall', align: 'center' },
+          { key: 'pct', label: 'Pct', align: 'center' },
+          { key: 'streak', label: 'Strk', align: 'center' },
+          { key: 'rpi', label: 'RPI', align: 'center' }
+        ];
+
+        columns.forEach(function(col) {
+          var th = document.createElement('th');
+          th.textContent = col.label;
+          if (col.align !== 'left') th.style.textAlign = col.align;
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Body rows
+        var tbody = document.createElement('tbody');
+
+        // Check if we have real standings data or just team names
+        var teams = conference.standings || conference.teams || [];
+
+        teams.forEach(function(team, index) {
+          var row = document.createElement('tr');
+
+          // Determine team name (could be string or object)
+          var teamName = typeof team === 'string' ? team : (team.name || team.team?.displayName || 'Unknown');
+          var teamData = typeof team === 'object' ? team : {};
+
+          // Check if featured team
+          if (isFeaturedTeam(teamName)) {
+            row.classList.add('featured');
+          }
+
+          // Team cell
+          var teamCell = document.createElement('td');
+          var teamCellInner = document.createElement('div');
+          teamCellInner.className = 'team-cell';
+
+          // Rank (if available)
+          if (teamData.rank && teamData.rank <= 25) {
+            var rankSpan = document.createElement('span');
+            rankSpan.className = 'team-rank';
+            rankSpan.textContent = '#' + teamData.rank;
+            teamCellInner.appendChild(rankSpan);
+          }
+
+          // Team logo
+          var logoDiv = document.createElement('div');
+          logoDiv.className = 'team-logo';
+          var logoUrl = getTeamLogo(teamName);
+          if (logoUrl) {
+            var logoImg = document.createElement('img');
+            logoImg.src = logoUrl;
+            logoImg.alt = teamName;
+            logoImg.onerror = function() {
+              while (this.parentNode.firstChild) {
+                this.parentNode.removeChild(this.parentNode.firstChild);
+              }
+              var placeholder = document.createElement('span');
+              placeholder.className = 'team-logo-placeholder';
+              placeholder.textContent = teamName.substring(0, 3).toUpperCase();
+              this.parentNode.appendChild(placeholder);
+            };
+            logoDiv.appendChild(logoImg);
+          } else {
+            var placeholder = document.createElement('span');
+            placeholder.className = 'team-logo-placeholder';
+            placeholder.textContent = teamName.substring(0, 3).toUpperCase();
+            logoDiv.appendChild(placeholder);
+          }
+          teamCellInner.appendChild(logoDiv);
+
+          // Team name
+          var teamNameSpan = document.createElement('span');
+          teamNameSpan.className = 'team-name-text';
+          teamNameSpan.textContent = teamName;
+          teamCellInner.appendChild(teamNameSpan);
+
+          teamCell.appendChild(teamCellInner);
+          row.appendChild(teamCell);
+
+          // Conference record
+          var confCell = document.createElement('td');
+          confCell.className = 'stat-cell';
+          confCell.textContent = teamData.confRecord || teamData.conferenceRecord || '--';
+          if (confCell.textContent === '--') confCell.classList.add('pending');
+          row.appendChild(confCell);
+
+          // Overall record
+          var overallCell = document.createElement('td');
+          overallCell.className = 'stat-cell';
+          overallCell.textContent = teamData.overallRecord || teamData.record || '--';
+          if (overallCell.textContent === '--') overallCell.classList.add('pending');
+          row.appendChild(overallCell);
+
+          // Win percentage
+          var pctCell = document.createElement('td');
+          pctCell.className = 'stat-cell pct';
+          var pct = teamData.winPct || teamData.pct || '--';
+          if (typeof pct === 'number') {
+            pctCell.textContent = pct.toFixed(3).replace(/^0/, '');
+          } else {
+            pctCell.textContent = pct;
+            if (pct === '--') pctCell.classList.add('pending');
+          }
+          row.appendChild(pctCell);
+
+          // Streak
+          var streakCell = document.createElement('td');
+          streakCell.className = 'stat-cell';
+          streakCell.appendChild(createStreakIndicator(teamData.streak || '--'));
+          row.appendChild(streakCell);
+
+          // RPI
+          var rpiCell = document.createElement('td');
+          rpiCell.className = 'stat-cell rpi';
+          var rpi = teamData.rpi || '--';
+          if (typeof rpi === 'number') {
+            rpiCell.textContent = '#' + rpi;
+          } else {
+            rpiCell.textContent = rpi;
+            if (rpi === '--') rpiCell.classList.add('pending');
+          }
+          row.appendChild(rpiCell);
+
+          tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        tableWrapper.appendChild(table);
+        card.appendChild(tableWrapper);
+
+        return card;
+      }
+
+      // Update freshness indicator
+      function updateFreshnessIndicator() {
+        if (!window.BSIFreshness) return;
+        var badgeContainer = document.getElementById('freshnessBadge');
+        if (!badgeContainer) return;
+
+        if (freshnessController) {
+          freshnessController.update({
+            lastSync: lastSyncTime,
+            isLive: false
+          });
+        } else {
+          freshnessController = BSIFreshness.render({
+            container: badgeContainer,
+            lastSync: lastSyncTime,
+            source: 'espn',
+            sport: 'football',
+            isLive: false,
+            showTooltip: true,
+            size: 'default',
+            autoUpdate: true
+          });
+        }
+      }
+
+      // Update source badge
+      function updateSourceBadge(source, status) {
+        var badge = document.getElementById('sourceBadge');
+        var label = document.getElementById('sourceLabel');
+        if (!badge || !label) return;
+        
+        var dot = badge.querySelector('.status-dot');
+        badge.className = 'source-badge';
+        
+        var sourceMap = {
+          'highlightly': { name: 'Highlightly', class: 'highlightly' },
+          'Highlightly Pro': { name: 'Highlightly', class: 'highlightly' },
+          'espn': { name: 'ESPN', class: 'espn' },
+          'ESPN': { name: 'ESPN', class: 'espn' },
+          'database': { name: 'Cached', class: 'database' },
+          'bsi-database': { name: 'Cached', class: 'database' },
+          'cfb': { name: 'ESPN CFB', class: 'espn' },
+          'ESPN': { name: 'ESPN', class: 'd1baseball' },
+          'error': { name: 'Error', class: 'error' },
+          'unavailable': { name: 'Offline', class: 'error' }
+        };
+        
+        var mapped = sourceMap[source] || { name: source || 'Unknown', class: '' };
+        label.textContent = mapped.name;
+        if (mapped.class) badge.classList.add(mapped.class);
+      }
+
+      // Fetch standings data
+      async function fetchStandings(conference) {
+        conference = conference || 'all';
+        showUpdating(true);
+
+        // If this is the initial load, show loading state
+        if (!container.querySelector('.conferences-grid')) {
+          showLoading();
         }
 
-        function renderStandings() {
-            const content = document.getElementById('standingsContent');
-            content.replaceChildren();
+        try {
+          var url = '/api/cfb/standings';
+          if (conference !== 'all') {
+            url += '?conference=' + encodeURIComponent(conference);
+          }
 
-            let filtered = allStandings;
-            if (activeConference !== 'all') {
-                filtered = allStandings.filter(s => s.conference === activeConference);
-            }
+          var response = await fetch(url);
+          if (!response.ok) {
+            throw new Error('Failed to fetch standings');
+          }
 
-            const byConference = {};
-            filtered.forEach(team => {
-                if (!byConference[team.conference]) byConference[team.conference] = [];
-                byConference[team.conference].push(team);
-            });
+          var data = await response.json();
 
-            const sortedConferences = Object.keys(byConference).sort((a, b) => {
-                const aIdx = CONFERENCE_ORDER.indexOf(a);
-                const bIdx = CONFERENCE_ORDER.indexOf(b);
-                return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
-            });
+          // Update last sync time and source badge
+          lastSyncTime = data.lastUpdated || data.fetchedAt || data.timestamp || new Date().toISOString();
+          updateSourceBadge(data.source || 'd1baseball', data.status || 'ok');
 
-            sortedConferences.forEach(conf => {
-                const teams = byConference[conf];
-                teams.sort((a, b) => {
-                    const aConfWins = a.conference_wins || 0;
-                    const bConfWins = b.conference_wins || 0;
-                    if (bConfWins !== aConfWins) return bConfWins - aConfWins;
-                    return (b.wins || 0) - (a.wins || 0);
-                });
-                content.appendChild(buildConferenceSection(conf, teams));
-            });
+          if (!data.conferences || data.conferences.length === 0) {
+            showEmpty();
+            showUpdating(false);
+            updateFreshnessIndicator();
+            return;
+          }
 
-            if (content.children.length === 0) {
-                const empty = createElement('div', 'loading-container');
-                empty.appendChild(createElement('p', 'loading-text', 'No standings data available'));
-                content.appendChild(empty);
-            }
+          // Clear container and render
+          while (container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
+
+          var grid = document.createElement('div');
+          grid.className = 'conferences-grid';
+
+          data.conferences.forEach(function(conf) {
+            var card = createConferenceCard(conf);
+            grid.appendChild(card);
+          });
+
+          container.appendChild(grid);
+
+          // Add season note
+          var note = document.createElement('div');
+          note.className = 'season-note';
+          var noteP = document.createElement('p');
+          noteP.textContent = 'Conference standings update weekly during the 2025 season. Source: ';
+          var sourceSpan = document.createElement('span');
+          sourceSpan.className = 'source';
+          sourceSpan.textContent = data.source || 'ESPN';
+          noteP.appendChild(sourceSpan);
+          note.appendChild(noteP);
+          container.appendChild(note);
+
+          showUpdating(false);
+          updateFreshnessIndicator();
+
+        } catch (error) {
+          console.error('Error fetching standings:', error);
+          updateSourceBadge('error', 'error');
+          showError('Unable to load standings. Please check your connection and try again.', function() {
+            fetchStandings(conference);
+          });
+          showUpdating(false);
+          lastSyncTime = null;
+          updateFreshnessIndicator();
         }
+      }
 
-        function buildConferenceSection(conference, teams) {
-            const section = createElement('div', 'conference-section');
+      // Conference filter change handler
+      conferenceSelect.addEventListener('change', function() {
+        fetchStandings(this.value);
+      });
 
-            const header = createElement('div', 'conference-header');
-            header.appendChild(createElement('h2', 'conference-name', conference));
-            header.appendChild(createElement('span', 'conference-badge', teams.length + ' Teams'));
-            section.appendChild(header);
+      // Initialize
+      function init() {
+        initThemeToggle();
+        initMobileMenu();
+        fetchStandings();
 
-            section.appendChild(buildStandingsTable(teams));
-            return section;
+        // Auto-refresh every 5 minutes during baseball season, 30 minutes otherwise
+        var isFootballSeason = (function() {
+          var month = new Date().getMonth() + 1;
+          return (month >= 8 && month <= 12) || month === 1;
+        })();
+
+        var refreshRate = isFootballSeason ? 300000 : 1800000; // 5 min or 30 min
+        refreshInterval = setInterval(function() {
+          fetchStandings(conferenceSelect.value);
+        }, refreshRate);
+      }
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', function() {
+        if (refreshInterval) {
+          clearInterval(refreshInterval);
         }
-
-        function buildStandingsTable(teams) {
-            const container = createElement('div', 'standings-table-container');
-            const table = createElement('table', 'standings-table');
-
-            const thead = document.createElement('thead');
-            const headerRow = document.createElement('tr');
-            ['#', 'Team', 'Overall', 'Conf', 'Pct', 'PF', 'PA', 'Streak'].forEach((text, i) => {
-                const th = createElement('th', i !== 1 ? 'center' : '', text);
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-
-            const tbody = document.createElement('tbody');
-            teams.forEach((team, idx) => {
-                const row = document.createElement('tr');
-
-                const rankCell = createElement('td', 'rank-cell center', String(idx + 1));
-                row.appendChild(rankCell);
-
-                const teamCell = document.createElement('td');
-                const teamDiv = createElement('div', 'team-cell');
-                const logoDiv = createElement('div', 'team-logo');
-                if (team.espn_id) {
-                    const img = document.createElement('img');
-                    img.src = 'https://a.espncdn.com/i/teamlogos/ncaa/500/' + team.espn_id + '.png';
-                    img.alt = escapeHtml(team.name || team.team_name || '');
-                    img.onerror = function() { this.style.display = 'none'; };
-                    logoDiv.appendChild(img);
-                }
-                teamDiv.appendChild(logoDiv);
-                teamDiv.appendChild(createElement('span', 'team-name', team.name || team.team_name || 'Unknown'));
-                teamCell.appendChild(teamDiv);
-                row.appendChild(teamCell);
-
-                const wins = team.wins || 0;
-                const losses = team.losses || 0;
-                row.appendChild(createElement('td', 'record-cell center', wins + '-' + losses));
-                row.appendChild(createElement('td', 'record-cell conf-record center', (team.conference_wins || 0) + '-' + (team.conference_losses || 0)));
-
-                const totalGames = wins + losses;
-                const pct = totalGames > 0 ? wins / totalGames : 0;
-                const pctClass = pct >= 0.7 ? 'pct-high' : pct >= 0.5 ? 'pct-mid' : 'pct-low';
-                row.appendChild(createElement('td', 'pct-cell center ' + pctClass, pct.toFixed(3).substring(1)));
-
-                row.appendChild(createElement('td', 'points-cell points-for center', String(team.points_for || 0)));
-                row.appendChild(createElement('td', 'points-cell points-against center', String(team.points_against || 0)));
-
-                const streakCell = createElement('td', 'center');
-                const streak = team.streak || 0;
-                const streakBadge = createElement('span', 'streak-badge');
-                if (streak > 0) {
-                    streakBadge.classList.add('win');
-                    streakBadge.textContent = 'W' + streak;
-                } else if (streak < 0) {
-                    streakBadge.classList.add('loss');
-                    streakBadge.textContent = 'L' + Math.abs(streak);
-                } else {
-                    streakBadge.textContent = '--';
-                }
-                streakCell.appendChild(streakBadge);
-                row.appendChild(streakCell);
-
-                tbody.appendChild(row);
-            });
-            table.appendChild(tbody);
-            container.appendChild(table);
-            return container;
+        if (freshnessController) {
+          freshnessController.destroy();
         }
+      });
 
-        function updateStats() {
-            const conferences = [...new Set(allStandings.map(s => s.conference))];
-            const totalGames = allStandings.reduce((sum, t) => sum + (t.wins || 0) + (t.losses || 0), 0) / 2;
-            document.getElementById('totalTeams').textContent = allStandings.length;
-            document.getElementById('totalConferences').textContent = conferences.length;
-            document.getElementById('gamesPlayed').textContent = Math.floor(totalGames);
-            const now = new Date();
-            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' });
-        }
-
-        function buildErrorState(container, message) {
-            container.replaceChildren();
-            const errorDiv = createElement('div', 'error-container');
-            errorDiv.appendChild(createElement('div', 'error-icon', '⚠️'));
-            errorDiv.appendChild(createElement('h3', 'error-title', 'Unable to Load Standings'));
-            errorDiv.appendChild(createElement('p', 'error-message', message));
-            const btn = createElement('button', 'retry-btn', 'Try Again');
-            btn.addEventListener('click', loadStandings);
-            errorDiv.appendChild(btn);
-            container.appendChild(errorDiv);
-        }
-
-        function generateSampleStandings() {
-            const conferences = [
-                { name: 'SEC', teams: ['Georgia', 'Alabama', 'LSU', 'Texas', 'Tennessee', 'Ole Miss', 'Missouri', 'Texas A&M', 'Florida', 'Auburn', 'Kentucky', 'South Carolina', 'Arkansas', 'Mississippi State', 'Vanderbilt', 'Oklahoma'] },
-                { name: 'Big Ten', teams: ['Michigan', 'Ohio State', 'Penn State', 'Oregon', 'Iowa', 'Wisconsin', 'Minnesota', 'Illinois', 'Nebraska', 'Purdue', 'Indiana', 'Northwestern', 'Maryland', 'Rutgers', 'Michigan State', 'UCLA', 'USC', 'Washington'] },
-                { name: 'Big 12', teams: ['Texas Tech', 'Kansas State', 'Oklahoma State', 'TCU', 'Baylor', 'Kansas', 'Iowa State', 'West Virginia', 'BYU', 'UCF', 'Cincinnati', 'Houston', 'Colorado', 'Arizona', 'Arizona State', 'Utah'] },
-                { name: 'ACC', teams: ['Florida State', 'Clemson', 'Miami', 'North Carolina', 'NC State', 'Louisville', 'Duke', 'Wake Forest', 'Pittsburgh', 'Virginia', 'Virginia Tech', 'Georgia Tech', 'Boston College', 'Syracuse', 'SMU', 'Stanford', 'California'] }
-            ];
-            const standings = [];
-            let espnId = 1;
-            conferences.forEach(conf => {
-                conf.teams.forEach(team => {
-                    const wins = Math.floor(Math.random() * 8) + 4;
-                    standings.push({
-                        team_id: conf.name.toLowerCase().replace(' ', '-') + '-' + team.toLowerCase().replace(/ /g, '-'),
-                        name: team,
-                        conference: conf.name,
-                        wins: wins,
-                        losses: 12 - wins,
-                        conference_wins: Math.floor(Math.random() * 6) + 2,
-                        conference_losses: Math.floor(Math.random() * 5) + 1,
-                        points_for: Math.floor(Math.random() * 200) + 250,
-                        points_against: Math.floor(Math.random() * 200) + 200,
-                        streak: Math.floor(Math.random() * 7) - 3,
-                        espn_id: espnId++
-                    });
-                });
-            });
-            return standings;
-        }
-    </script>
+      // Start
+      init();
+    })();
+  </script>
+  <script src="/src/js/analytics.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
 </body>
 </html>

@@ -8,6 +8,20 @@
     <link rel="icon" href="/favicon.ico">
     <style>
         :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-ember: #FF6B35;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-gold: #C9A227;
+            --font-display: 'Oswald', sans-serif;
+            --font-body: 'Cormorant Garamond', Georgia, serif;
+        }
+        /* BSI Brand: Dark mode only */
+                .theme-toggle{position:fixed;top:1rem;right:1rem;background:rgba(26,26,26,0.8);border:1px solid rgba(250,248,245,0.2);border-radius:8px;padding:10px;cursor:pointer;color:#FAF8F5;z-index:1000;display:flex;align-items:center;justify-content:center}
+        .theme-toggle:hover{border-color:#BF5700;background:rgba(191,87,0,0.2)}
+        .theme-toggle svg{width:20px;height:20px}
+                :root {
             --burnt-orange: #BF5700;
             --texas-soil: #8B4513;
             --ember: #FF6B35;
@@ -102,6 +116,49 @@
             select, input { width: 100%; min-width: unset; }
             .btn { width: 100%; }
             header { padding: 20px 0; }
+            .autocomplete-wrapper { width: 100%; }
+        }
+        .autocomplete-wrapper { flex: 1; min-width: 220px; }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--charcoal);
+            border: 1px solid #555;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .autocomplete-dropdown.show { display: block; }
+        .autocomplete-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            transition: background 0.15s;
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover { background: rgba(191, 87, 0, 0.2); }
+        .autocomplete-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #333;
+        }
+        .autocomplete-item-info { flex: 1; }
+        .autocomplete-item-name { font-weight: 600; color: var(--cream); }
+        .autocomplete-item-meta { font-size: 0.8rem; color: #888; }
+        .autocomplete-loading {
+            padding: 16px;
+            text-align: center;
+            color: #888;
         }
         .field-panel {
             background: var(--charcoal);
@@ -223,8 +280,13 @@
         .tooltip-title { font-weight: 700; margin-bottom: 6px; }
         .tooltip-line { color: #aaa; margin: 2px 0; }
     </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
+    <button class="theme-toggle" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
     <div class="container">
         <a href="/tools" class="back-link">&larr; Back to Tools</a>
 
@@ -234,7 +296,11 @@
         </header>
 
         <div class="controls">
-            <input type="text" id="batterInput" placeholder="Batter name...">
+            <div class="autocomplete-wrapper" style="position:relative;">
+                <input type="text" id="batterInput" placeholder="Search batter name..." autocomplete="off">
+                <input type="hidden" id="batterId">
+                <div id="autocompleteResults" class="autocomplete-dropdown"></div>
+            </div>
             <select id="hitTypeSelect">
                 <option value="">All Hit Types</option>
                 <option value="single">Singles</option>
@@ -515,11 +581,17 @@
 
         async function loadData() {
             var batter = document.getElementById('batterInput').value;
+            var playerId = selectedPlayerId || document.getElementById('batterId').value;
             var hitType = document.getElementById('hitTypeSelect').value;
             var season = document.getElementById('seasonSelect').value;
 
             var url = '/api/tools/spray-chart?season=' + encodeURIComponent(season);
-            if (batter) url += '&batter=' + encodeURIComponent(batter);
+            if (playerId) {
+                url += '&player=' + encodeURIComponent(playerId);
+                url += '&real=true'; // Use real data when we have a player ID
+            } else if (batter) {
+                url += '&batter=' + encodeURIComponent(batter);
+            }
             if (hitType) url += '&type=' + encodeURIComponent(hitType);
 
             try {
@@ -600,9 +672,154 @@
 
         document.getElementById('loadBtn').addEventListener('click', loadData);
 
+        // Player autocomplete
+        const batterInput = document.getElementById('batterInput');
+        const batterIdInput = document.getElementById('batterId');
+        const autocompleteResults = document.getElementById('autocompleteResults');
+        let searchTimeout = null;
+        let selectedPlayerId = null;
+
+        function debounce(func, wait) {
+            return function() {
+                var context = this;
+                var args = arguments;
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+
+        async function searchPlayers(query) {
+            if (query.length < 2) {
+                autocompleteResults.classList.remove('show');
+                return;
+            }
+
+            // Show loading state
+            autocompleteResults.textContent = '';
+            var loadingDiv = document.createElement('div');
+            loadingDiv.className = 'autocomplete-loading';
+            loadingDiv.textContent = 'Searching...';
+            autocompleteResults.appendChild(loadingDiv);
+            autocompleteResults.classList.add('show');
+
+            try {
+                var response = await fetch('/api/players/search?q=' + encodeURIComponent(query) + '&sport=mlb&limit=15');
+                var data = await response.json();
+
+                autocompleteResults.textContent = '';
+
+                if (!data.players || data.players.length === 0) {
+                    var noResults = document.createElement('div');
+                    noResults.className = 'autocomplete-loading';
+                    noResults.textContent = 'No players found';
+                    autocompleteResults.appendChild(noResults);
+                    return;
+                }
+
+                // Filter to show position players first (not pitchers), then include all
+                var players = data.players;
+                var positionPlayers = players.filter(function(p) {
+                    return p.position && p.position !== 'P' && p.position !== 'TWP';
+                });
+                var pitchers = players.filter(function(p) {
+                    return p.position === 'P' || p.position === 'TWP';
+                });
+                // Show position players first, then pitchers (some pitch and hit)
+                var sortedPlayers = positionPlayers.concat(pitchers).slice(0, 10);
+
+                sortedPlayers.forEach(function(player) {
+                    var item = document.createElement('div');
+                    item.className = 'autocomplete-item';
+                    item.setAttribute('data-player-id', player.id);
+                    item.setAttribute('data-player-name', player.fullName);
+
+                    var img = document.createElement('img');
+                    img.src = player.headshot || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Ccircle cx="20" cy="20" r="20" fill="%23333"/%3E%3C/svg%3E';
+                    img.alt = player.fullName;
+                    item.appendChild(img);
+
+                    var infoDiv = document.createElement('div');
+                    infoDiv.className = 'autocomplete-item-info';
+
+                    var nameDiv = document.createElement('div');
+                    nameDiv.className = 'autocomplete-item-name';
+                    nameDiv.textContent = player.fullName;
+                    infoDiv.appendChild(nameDiv);
+
+                    var metaDiv = document.createElement('div');
+                    metaDiv.className = 'autocomplete-item-meta';
+                    var metaParts = [];
+                    if (player.position) metaParts.push(player.position);
+                    if (player.team) metaParts.push(player.team);
+                    metaDiv.textContent = metaParts.join(' • ');
+                    infoDiv.appendChild(metaDiv);
+
+                    item.appendChild(infoDiv);
+                    autocompleteResults.appendChild(item);
+
+                    item.addEventListener('click', function() {
+                        selectPlayer(player.id, player.fullName);
+                    });
+                });
+            } catch (error) {
+                console.error('Search error:', error);
+                autocompleteResults.textContent = '';
+                var errorDiv = document.createElement('div');
+                errorDiv.className = 'autocomplete-loading';
+                errorDiv.textContent = 'Search failed';
+                autocompleteResults.appendChild(errorDiv);
+            }
+        }
+
+        function selectPlayer(id, name) {
+            selectedPlayerId = id;
+            batterInput.value = name;
+            batterIdInput.value = id;
+            autocompleteResults.classList.remove('show');
+            // Auto-load data when player selected
+            loadData();
+        }
+
+        var debouncedSearch = debounce(function() {
+            searchPlayers(batterInput.value);
+        }, 300);
+
+        batterInput.addEventListener('input', function() {
+            selectedPlayerId = null;
+            debouncedSearch();
+        });
+
+        batterInput.addEventListener('focus', function() {
+            if (batterInput.value.length >= 2) {
+                autocompleteResults.classList.add('show');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.autocomplete-wrapper')) {
+                autocompleteResults.classList.remove('show');
+            }
+        });
+
         // Initial load
         drawField();
         loadData();
     </script>
+<script>
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+      var savedTheme = localStorage.getItem('bsi-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeToggle.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('bsi-theme', next);
+      });
+    }
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
 </body>
 </html>

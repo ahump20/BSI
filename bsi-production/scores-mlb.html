@@ -606,5 +606,6 @@
         // Refresh every 30 seconds
         setInterval(loadGames, 30000);
     </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
 </body>
 </html>

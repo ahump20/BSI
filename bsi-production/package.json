@@ -1,5 +1,5 @@
 {
   "devDependencies": {
-    "wrangler": "^4.57.0"
+    "workerd": "^1.20260109.0"
   }
 }

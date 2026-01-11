@@ -16,7 +16,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
 
     <style>
@@ -33,10 +33,17 @@
             --sport-secondary: #D50A0A;
         }
 
+        /* BSI Brand: Dark mode only */
+                    background: #F5F5F5;
+            color: #1A1A1A;
+        }
+                    background: rgba(255, 255, 255, 0.95);
+        }
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oswald', sans-serif;
             background: var(--bsi-midnight);
             color: var(--bsi-cream);
             line-height: 1.6;
@@ -157,6 +164,19 @@
 
         .loading { text-align: center; padding: 2rem; color: var(--bsi-muted); }
 
+        /* Error State */
+        .error-state { text-align: center; padding: 3rem 2rem; background: var(--bsi-charcoal); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .error-state .error-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .error-state h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--bsi-cream); }
+        .error-state p { color: rgba(250, 248, 245, 0.6); margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .retry-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--bsi-burnt-orange); color: white; font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .retry-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(191, 87, 0, 0.3); }
+
+        /* Skeleton Loading */
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+        .skeleton-card { background: var(--bsi-charcoal); border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.08); }
+
         .game-card { background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 12px; padding: 1.5rem; }
         .game-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .game-team { font-weight: 600; }
@@ -179,6 +199,23 @@
             .nav-links { display: none; }
             .hero { padding: 6rem 0 3rem; }
         }
+    
+        .theme-toggle { background: transparent; border: 1px solid rgba(250, 248, 245, 0.2); border-radius: 6px; padding: 8px; cursor: pointer; color: var(--bsi-cream); display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; margin-left: 1rem; }
+        .theme-toggle:hover { border-color: var(--bsi-burnt-orange); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        
+        .titans-featured { background: linear-gradient(135deg, rgba(75, 146, 219, 0.1), rgba(75, 146, 219, 0.05)); border: 1px solid rgba(75, 146, 219, 0.2); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; }
+        .titans-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .titans-logo { width: 48px; height: 48px; background: linear-gradient(135deg, #4B92DB, #002A5C); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 1.25rem; }
+        .titans-badge { background: rgba(75, 146, 219, 0.2); color: #7CB9E8; font-size: 0.75rem; padding: 4px 8px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .titans-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; }
+        .titans-stat { background: rgba(0, 0, 0, 0.2); padding: 0.75rem; border-radius: 8px; text-align: center; }
+        .titans-stat-value { font-size: 1.25rem; font-weight: 700; color: #7CB9E8; }
+        .titans-stat-label { font-size: 0.75rem; color: rgba(250, 248, 245, 0.6); margin-top: 2px; }
+        .titans-game { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(0, 0, 0, 0.2); border-radius: 8px; margin-top: 1rem; }
+        .titans-game-label { font-size: 0.75rem; color: rgba(250, 248, 245, 0.6); text-transform: uppercase; }
+                        .game-card.titans-game-card { border-color: rgba(75, 146, 219, 0.4); background: linear-gradient(135deg, rgba(75, 146, 219, 0.08), var(--bsi-charcoal)); position: relative; }
+        .game-card.titans-game-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #4B92DB, #C8102E); border-radius: 8px 8px 0 0; }
     </style>
 </head>
 <body>
@@ -200,8 +237,8 @@
     <section class="hero">
         <div class="container">
             <span class="hero-badge">National Football League</span>
-            <h1><span>NFL</span> Intelligence</h1>
-            <p>Live scores, standings, player stats, and advanced analytics for every NFL game.</p>
+            <h1><span>NFL</span> Coverage</h1>
+            <p>Every game. Full attention. Real-time scores and analytics that match your commitment.</p>
         </div>
     </section>
 
@@ -251,7 +288,9 @@
         <div class="container">
             <h2>This Week's Games</h2>
             <div id="scores-container">
-                <div class="loading">Loading scores...</div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
+                <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60px;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:100%;margin-bottom:10px;"></div><div class="skeleton" style="height:12px;width:50px;"></div></div>
             </div>
         </div>
     </section>
@@ -346,13 +385,95 @@
                 document.getElementById('live-now').textContent = liveCount;
 
             } catch (error) {
-                container.textContent = 'Unable to load scores.';
                 console.error('Scores error:', error);
+                container.replaceChildren();
+                var errorDiv = document.createElement('div');
+                errorDiv.className = 'error-state';
+                var icon = document.createElement('div');
+                icon.className = 'error-icon';
+                icon.textContent = '📡';
+                errorDiv.appendChild(icon);
+                var h3 = document.createElement('h3');
+                h3.textContent = 'Unable to Load Scores';
+                errorDiv.appendChild(h3);
+                var p = document.createElement('p');
+                p.textContent = 'We\'re having trouble connecting to our data sources. This usually resolves itself quickly.';
+                errorDiv.appendChild(p);
+                var retryBtn = document.createElement('button');
+                retryBtn.className = 'retry-btn';
+                retryBtn.textContent = 'Try Again';
+                retryBtn.onclick = loadScores;
+                errorDiv.appendChild(retryBtn);
+                container.appendChild(errorDiv);
             }
         }
 
         loadScores();
         setInterval(loadScores, 60000);
-    </script>
+    
+    // Theme toggle
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+      var savedTheme = localStorage.getItem('bsi-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeToggle.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('bsi-theme', next);
+      });
+    }
+
+    // Titans data
+    async function fetchTitansStats() {
+      try {
+        const response = await fetch('/api/nfl/standings');
+        if (!response.ok) return;
+        const data = await response.json();
+        const standings = data.standings || data.records || data;
+        
+        for (const div of (Array.isArray(standings) ? standings : [])) {
+          const teams = div.teamRecords || div.teams || [div];
+          for (const team of teams) {
+            const name = team.team?.name || team.Team || team.name || '';
+            if (name.includes('Titans') || name.includes('Tennessee')) {
+              document.getElementById('ten-record').textContent = (team.wins || 0) + '-' + (team.losses || 0);
+              document.getElementById('ten-division').textContent = team.division || 'AFC South';
+              document.getElementById('ten-streak').textContent = team.streak?.streakCode || team.Streak || '-';
+              document.getElementById('ten-pf').textContent = team.pointsFor || team.PointsFor || '-';
+              return;
+            }
+          }
+        }
+      } catch (e) { console.log('Titans stats error:', e); }
+    }
+    
+    async function fetchTitansSchedule() {
+      try {
+        const response = await fetch('/api/nfl/scores');
+        if (!response.ok) return;
+        const data = await response.json();
+        const games = data.games || data.scores || data || [];
+        
+        for (const game of games) {
+          const home = game.HomeTeam || game.homeTeam?.name || '';
+          const away = game.AwayTeam || game.awayTeam?.name || '';
+          if (home.includes('Titans') || away.includes('Titans')) {
+            const opponent = home.includes('Titans') ? away : home;
+            const location = home.includes('Titans') ? 'vs' : '@';
+            document.getElementById('ten-next').textContent = location + ' ' + opponent;
+            return;
+          }
+        }
+        document.getElementById('ten-next').textContent = 'No game scheduled';
+      } catch (e) {
+        document.getElementById('ten-next').textContent = 'Check schedule';
+      }
+    }
+    
+    fetchTitansStats();
+    fetchTitansSchedule();
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(console.error);}</script>
 </body>
 </html>

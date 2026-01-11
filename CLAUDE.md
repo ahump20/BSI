@@ -11,9 +11,9 @@ Austin Humphrey. BSI (Blaze Sports Intel). Cloudflare-only architecture.
 ## Anti-Sprawl Rules
 
 1. **Replace, don't add** — New code replaces obsolete code in the same commit
-1. **Search before create** — Check existing files/functions/bindings first. Use `grep -r`, check the repo
-1. **Delete obsolete** — Remove dead code in the same PR that adds replacement
-1. **One way to do things** — If two patterns exist, consolidate to one
+2. **Search before create** — Check existing files/functions/bindings first. Use `grep -r`, check the repo
+3. **Delete obsolete** — Remove dead code in the same PR that adds replacement
+4. **One way to do things** — If two patterns exist, consolidate to one
 
 Why: I've watched repos balloon from 10 files to 200 with the same functionality. Every duplicate is a future bug.
 
@@ -21,12 +21,12 @@ Why: I've watched repos balloon from 10 files to 200 with the same functionality
 
 All BSI infrastructure runs on Cloudflare. No exceptions.
 
-|Resource|Pattern                  |Example           |
-|--------|-------------------------|------------------|
-|Worker  |`bsi-{domain}-{function}`|`bsi-scores-live` |
-|KV      |`BSI_{DOMAIN}_{PURPOSE}` |`BSI_SCORES_CACHE`|
-|D1      |`bsi-{domain}-db`        |`bsi-analytics-db`|
-|R2      |`bsi-{domain}-assets`    |`bsi-media-assets`|
+| Resource | Pattern | Example |
+|----------|---------|---------|
+| Worker | `bsi-{domain}-{function}` | `bsi-scores-live` |
+| KV | `BSI_{DOMAIN}_{PURPOSE}` | `BSI_SCORES_CACHE` |
+| D1 | `bsi-{domain}-db` | `bsi-analytics-db` |
+| R2 | `bsi-{domain}-assets` | `bsi-media-assets` |
 
 Why: Naming discipline prevents the "what does this binding do?" problem six months later.
 
@@ -96,6 +96,6 @@ If I say "WHY FIRST" or "stop optimizing" — stop. Return to understanding what
 - [ ] Deleted obsolete code this change replaces
 - [ ] Tested the actual behavior, not just the types
 
------
+---
 
 *Update this file with `#` when patterns emerge. This is living documentation.*

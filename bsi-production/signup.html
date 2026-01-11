@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Join Blaze Sports Intel. Premium sports analytics, live scores, and insider coverage that ESPN won't give you.">
+  <meta name="description" content="Join Blaze Sports Intel. Join the fans who finally have coverage that matches their commitment. Start your free trial.">
   <title>Sign Up | Blaze Sports Intel</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -262,7 +262,7 @@
 
   <main class="auth-container">
     <div class="auth-card">
-      <h1>Join the Blaze</h1>
+      <h1>A Place for People Who Care</h1>
       <p class="subtitle">Start your 7-day free trial</p>
 
       <form action="/api/auth/signup" method="POST">
@@ -271,13 +271,13 @@
             <input type="radio" name="tier" value="pro" checked>
             <div class="tier-name">Pro</div>
             <div class="tier-price">$29<span>/mo</span></div>
-            <div class="tier-desc">Fans & fantasy players</div>
+            <div class="tier-desc">For fans who care</div>
           </label>
           <label class="tier-option">
             <input type="radio" name="tier" value="enterprise">
             <div class="tier-name">Enterprise</div>
             <div class="tier-price">$199<span>/mo</span></div>
-            <div class="tier-desc">Programs & scouts</div>
+            <div class="tier-desc">For programs that need to know</div>
           </label>
         </div>
 
@@ -319,7 +319,7 @@
 
   <footer class="footer">
     <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
-    <p class="tagline">Born to blaze the path less beaten.</p>
+    <p class="tagline">Born to Blaze the Path Less Beaten.</p>
   </footer>
 
   <script>
@@ -333,5 +333,7 @@
       });
     });
   </script>
+    <script src="/src/js/analytics.js"></script>
+    <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(console.error);}</script>
 </body>
 </html>
