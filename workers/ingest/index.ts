@@ -20,13 +20,13 @@
  */
 
 interface Env {
-  CACHE: KVNamespace;
-  R2_BUCKET: R2Bucket;
+  BSI_INGEST_CACHE: KVNamespace;
+  BSI_INGEST_ASSETS: R2Bucket;
   ANALYTICS?: AnalyticsEngineDataset;
   INGEST_SECRET: string;
   SPORTSDATAIO_KEY?: string;
   ESPN_API_BASE?: string;
-  DB: D1Database;
+  BSI_GAME_DB: D1Database;
 }
 
 interface GameData {
@@ -193,7 +193,7 @@ async function ingestLiveGames(env: Env, ctx: ExecutionContext): Promise<void> {
 
     // Cache live games in KV (60s TTL)
     const cacheKey = `live:games:mlb:${today}`;
-    await env.CACHE.put(cacheKey, JSON.stringify({
+    await env.BSI_INGEST_CACHE.put(cacheKey, JSON.stringify({
       games,
       fetchedAt: new Date().toISOString(),
       source: 'ESPN'
@@ -265,7 +265,7 @@ async function ingestTeamStats(env: Env, ctx: ExecutionContext): Promise<void> {
 
     // Cache standings in KV (4hr TTL)
     const cacheKey = `standings:mlb:${season}`;
-    await env.CACHE.put(cacheKey, JSON.stringify({
+    await env.BSI_INGEST_CACHE.put(cacheKey, JSON.stringify({
       standings,
       fetchedAt: new Date().toISOString(),
       source: 'ESPN'
@@ -303,7 +303,7 @@ async function archiveHistoricalData(env: Env, ctx: ExecutionContext): Promise<v
   try {
     // Get yesterday's cached games
     const cacheKey = `live:games:mlb:${dateStr.replace(/-/g, '')}`;
-    const cachedData = await env.CACHE.get(cacheKey);
+    const cachedData = await env.BSI_INGEST_CACHE.get(cacheKey);
 
     if (!cachedData) {
       console.log(`[Ingest] No cached data found for ${dateStr}, skipping archive`);
@@ -330,7 +330,7 @@ async function archiveHistoricalData(env: Env, ctx: ExecutionContext): Promise<v
       games: completedGames
     };
 
-    await env.R2_BUCKET.put(archiveKey, JSON.stringify(archiveData, null, 2), {
+    await env.BSI_INGEST_ASSETS.put(archiveKey, JSON.stringify(archiveData, null, 2), {
       customMetadata: {
         season: season.toString(),
         date: dateStr,

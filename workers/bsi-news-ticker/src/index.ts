@@ -16,7 +16,7 @@ export { NewsTickerDO };
 interface Env {
   NEWS_TICKER: DurableObjectNamespace;
   NEWS_QUEUE: Queue;
-  TICKER_CACHE: KVNamespace;
+  BSI_TICKER_CACHE: KVNamespace;
   ESPN_API_BASE: string;
   MLB_API_BASE: string;
   NFL_API_BASE: string;

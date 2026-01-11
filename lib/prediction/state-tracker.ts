@@ -43,8 +43,8 @@ export class StateTracker {
   private readonly cache: KVNamespace;
 
   constructor(env: CloudflareEnv) {
-    this.db = env.DB;
-    this.cache = env.PREDICTION_CACHE;
+    this.db = env.BSI_HISTORICAL_DB;
+    this.cache = env.BSI_PREDICTION_CACHE;
   }
 
   // ============================================================================

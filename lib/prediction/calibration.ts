@@ -548,7 +548,7 @@ export class CalibrationEngine {
     const bucketCounts = calibration.calibrationBuckets.map((b) => b.predictedCount);
     const bucketActual = calibration.calibrationBuckets.map((b) => b.actualWinRate);
 
-    await this.env.DB.prepare(query)
+    await this.env.BSI_HISTORICAL_DB.prepare(query)
       .bind(
         calibration.sport,
         calibration.modelVersion,
@@ -597,7 +597,7 @@ export class CalibrationEngine {
       LIMIT 1
     `;
 
-    const result = await this.env.DB.prepare(query)
+    const result = await this.env.BSI_HISTORICAL_DB.prepare(query)
       .bind(sport, modelVersion)
       .first<CalibrationRow>();
 

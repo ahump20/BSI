@@ -22,7 +22,7 @@ on:
           - bsi-prediction-api
           - bsi-news-ticker
           - bsi-cfb-ai
-          - blazesports-ingest
+          - bsi-ingest
           - bsi-cache-warmer
           - bsi-home
           - bsi-chatgpt-app
@@ -66,7 +66,7 @@ jobs:
         run: |
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             if [ "$INPUT_WORKER" = "all" ]; then
-              WORKERS='["bsi-prediction-api","bsi-news-ticker","bsi-cfb-ai","blazesports-ingest","bsi-cache-warmer","bsi-home"]'
+              WORKERS='["bsi-prediction-api","bsi-news-ticker","bsi-cfb-ai","bsi-ingest","bsi-cache-warmer","bsi-home"]'
             else
               WORKERS="[\"$INPUT_WORKER\"]"
             fi
@@ -85,7 +85,7 @@ jobs:
               WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-cfb-ai"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "workers/ingest/"; then
-              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blazesports-ingest"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-ingest"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "workers/bsi-cache-warmer/"; then
               WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-cache-warmer"]')
@@ -197,7 +197,7 @@ jobs:
               echo "path=workers/bsi-cfb-ai/wrangler.toml" >> $GITHUB_OUTPUT
               echo "health_url=" >> $GITHUB_OUTPUT
               ;;
-            "blazesports-ingest")
+            "bsi-ingest")
               echo "path=workers/ingest/wrangler.toml" >> $GITHUB_OUTPUT
               echo "health_url=" >> $GITHUB_OUTPUT
               ;;

@@ -4,7 +4,7 @@ compatibility_date = "2025-01-01"
 
 # KV namespace for caching baseball rankings data
 [[kv_namespaces]]
-binding = "BSI_KV"
+binding = "BSI_BASEBALL_CACHE"
 id = "a53c3726fc3044be82e79d2d1e371d26"  # Using existing CACHE namespace
 
 # Worker route configuration

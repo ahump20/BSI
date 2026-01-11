@@ -10,11 +10,11 @@ ENVIRONMENT = "production"
 binding = "AI"
 
 [[kv_namespaces]]
-binding = "CFB_CACHE"
+binding = "BSI_CFB_CACHE"
 id = "963541b67da84e36919914e914a1bb31"
 
 [[d1_databases]]
-binding = "DB"
+binding = "BSI_HISTORICAL_DB"
 database_name = "bsi-historical-db"
 database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 

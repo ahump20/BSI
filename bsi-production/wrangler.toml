@@ -18,23 +18,23 @@ R2_PREFIX = "origin/"
 
 # R2 bucket for static assets
 [[r2_buckets]]
-binding = "ASSETS"
+binding = "BSI_ASSETS"
 bucket_name = "blazesports-assets"
 
 # D1 database for users, subscriptions, sessions
 [[d1_databases]]
-binding = "DB"
+binding = "BSI_GAME_DB"
 database_name = "bsi-game-db"
 database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
 
 # KV namespace for sessions
 [[kv_namespaces]]
-binding = "SESSIONS"
+binding = "BSI_SESSIONS"
 id = "b03e0651b4a34078a3e031bc5bc14ad7"
 
 # KV namespace for analytics events (batch processing fallback)
 [[kv_namespaces]]
-binding = "ANALYTICS_KV"
+binding = "BSI_ANALYTICS_KV"
 id = "78cfab88ebc24bb1a96a3081be48e17c"
 
 # Analytics Engine for time-series metrics
