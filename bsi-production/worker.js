@@ -68,6 +68,121 @@ const STRIKE_ZONE = {
   BOTTOM: 1.5
 };
 
+/**
+ * Handle diagnostics endpoint - validates data flow chain
+ * GET /api/diagnostics/data-flow
+ */
+async function handleDiagnostics(request, env, corsHeaders, isCanary) {
+  const startTime = Date.now();
+  const diagnostics = {
+    timestamp: new Date().toISOString(),
+    timezone: 'America/Chicago',
+    canary: isCanary,
+    worker: {
+      status: 'ok',
+      version: '2.5.0',
+      responseTime: null
+    },
+    kv: {
+      status: 'unknown',
+      latency: null
+    },
+    d1: {
+      status: 'unknown',
+      latency: null
+    },
+    r2: {
+      status: 'unknown',
+      latency: null
+    },
+    api: {
+      highlightly: { status: 'planned', note: 'Integration pending' },
+      sportsDataIO: { status: 'unknown', latency: null },
+      espn: { status: 'unknown', latency: null }
+    }
+  };
+
+  // Test KV (BSI_SESSIONS)
+  try {
+    const kvStart = Date.now();
+    await env.BSI_SESSIONS.get('__health_check__');
+    diagnostics.kv.status = 'ok';
+    diagnostics.kv.latency = Date.now() - kvStart;
+  } catch (e) {
+    diagnostics.kv.status = 'error';
+    diagnostics.kv.error = e.message;
+  }
+
+  // Test D1 (BSI_GAME_DB)
+  try {
+    const d1Start = Date.now();
+    await env.BSI_GAME_DB.prepare('SELECT 1').first();
+    diagnostics.d1.status = 'ok';
+    diagnostics.d1.latency = Date.now() - d1Start;
+  } catch (e) {
+    diagnostics.d1.status = 'error';
+    diagnostics.d1.error = e.message;
+  }
+
+  // Test R2 (BSI_ASSETS)
+  try {
+    const r2Start = Date.now();
+    const r2Test = await env.BSI_ASSETS.head('origin/index.html');
+    diagnostics.r2.status = r2Test ? 'ok' : 'missing';
+    diagnostics.r2.latency = Date.now() - r2Start;
+  } catch (e) {
+    diagnostics.r2.status = 'error';
+    diagnostics.r2.error = e.message;
+  }
+
+  // Test SportsDataIO API (quick health check)
+  try {
+    const apiStart = Date.now();
+    const apiKey = env.SPORTSDATAIO_API_KEY;
+    if (apiKey) {
+      const testUrl = 'https://api.sportsdata.io/v3/mlb/scores/json/AreAnyGamesInProgress';
+      const resp = await fetch(testUrl, {
+        headers: { 'Ocp-Apim-Subscription-Key': apiKey }
+      });
+      diagnostics.api.sportsDataIO.status = resp.ok ? 'ok' : 'quota_exceeded';
+      diagnostics.api.sportsDataIO.latency = Date.now() - apiStart;
+    } else {
+      diagnostics.api.sportsDataIO.status = 'no_key';
+    }
+  } catch (e) {
+    diagnostics.api.sportsDataIO.status = 'error';
+    diagnostics.api.sportsDataIO.error = e.message;
+  }
+
+  // Test ESPN (free fallback)
+  try {
+    const espnStart = Date.now();
+    const espnResp = await fetch('https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard');
+    diagnostics.api.espn.status = espnResp.ok ? 'ok' : 'unavailable';
+    diagnostics.api.espn.latency = Date.now() - espnStart;
+  } catch (e) {
+    diagnostics.api.espn.status = 'error';
+    diagnostics.api.espn.error = e.message;
+  }
+
+  // Calculate overall status
+  const allOk = diagnostics.kv.status === 'ok'
+    && diagnostics.d1.status === 'ok'
+    && diagnostics.r2.status === 'ok'
+    && (diagnostics.api.sportsDataIO.status === 'ok' || diagnostics.api.espn.status === 'ok');
+
+  diagnostics.overall = allOk ? 'healthy' : 'degraded';
+  diagnostics.worker.responseTime = Date.now() - startTime;
+
+  return new Response(JSON.stringify(diagnostics, null, 2), {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
+    }
+  });
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -77,7 +192,7 @@ export default {
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, stripe-signature',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, stripe-signature, X-BSI-Canary',
       'Access-Control-Allow-Credentials': 'true',
     };
 
@@ -86,8 +201,17 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
+    // === CANARY FLAG DETECTION ===
+    const isCanary = request.headers.get('X-BSI-Canary') === 'true'
+      || url.searchParams.get('canary') === 'true';
+
+    // === DIAGNOSTICS ENDPOINT ===
+    if (path === '/api/diagnostics/data-flow') {
+      return handleDiagnostics(request, env, corsHeaders, isCanary);
+    }
+
     // === AUTH ROUTES ===
-    if (path === '/api/auth/register' && request.method === 'POST') {
+    if ((path === '/api/auth/register' || path === '/api/auth/signup') && request.method === 'POST') {
       return handleRegister(request, env, corsHeaders);
     }
     if (path === '/api/auth/login' && request.method === 'POST') {
@@ -2289,19 +2413,51 @@ function getFeaturedNCAABaseballGames() {
 
 async function handleRegister(request, env, corsHeaders) {
   try {
-    const { email, password } = await request.json();
+    // Parse request body - support both JSON and form-urlencoded
+    const contentType = request.headers.get('content-type') || '';
+    let email, password, firstName, lastName, tier;
+    const isFormSubmit = contentType.includes('application/x-www-form-urlencoded');
+
+    if (isFormSubmit) {
+      const formData = await request.formData();
+      email = formData.get('email');
+      password = formData.get('password');
+      firstName = formData.get('firstName');
+      lastName = formData.get('lastName');
+      tier = formData.get('tier');
+    } else {
+      const body = await request.json();
+      email = body.email;
+      password = body.password;
+      firstName = body.firstName;
+      lastName = body.lastName;
+      tier = body.tier;
+    }
 
     if (!email || !password) {
+      if (isFormSubmit) {
+        return Response.redirect('https://blazesportsintel.com/signup?error=missing_fields', 302);
+      }
       return jsonResponse({ error: 'Email and password required' }, 400, corsHeaders);
     }
 
     if (password.length < 8) {
+      if (isFormSubmit) {
+        return Response.redirect('https://blazesportsintel.com/signup?error=password_short', 302);
+      }
       return jsonResponse({ error: 'Password must be at least 8 characters' }, 400, corsHeaders);
     }
+
+    // Combine name fields, default tier to free
+    const name = [firstName, lastName].filter(Boolean).join(' ') || null;
+    const subscriptionTier = tier || 'free';
 
     // Check if user exists
     const existing = await env.BSI_GAME_DB.prepare('SELECT id FROM users WHERE email = ?').bind(email.toLowerCase()).first();
     if (existing) {
+      if (isFormSubmit) {
+        return Response.redirect('https://blazesportsintel.com/signup?error=email_exists', 302);
+      }
       return jsonResponse({ error: 'Email already registered' }, 409, corsHeaders);
     }
 
@@ -2309,16 +2465,28 @@ async function handleRegister(request, env, corsHeaders) {
     const passwordHash = await hashPassword(password);
     const userId = crypto.randomUUID();
 
-    // Create user
+    // Create user with name and tier (username uses email for legacy schema compatibility)
     await env.BSI_GAME_DB.prepare(
-      'INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)'
-    ).bind(userId, email.toLowerCase(), passwordHash).run();
+      'INSERT INTO users (id, username, email, password_hash, name, subscription_tier) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(userId, email.toLowerCase(), email.toLowerCase(), passwordHash, name, subscriptionTier).run();
 
     // Create session
     const sessionToken = await createSession(env, userId);
 
+    // Form submits redirect to dashboard, API calls return JSON
+    if (isFormSubmit) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          'Location': 'https://blazesportsintel.com/dashboard',
+          'Set-Cookie': `bsi_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`,
+          ...corsHeaders
+        }
+      });
+    }
+
     return jsonResponse(
-      { success: true, user: { id: userId, email: email.toLowerCase() } },
+      { success: true, user: { id: userId, email: email.toLowerCase(), name, subscriptionTier } },
       201,
       corsHeaders,
       sessionToken
@@ -2331,9 +2499,25 @@ async function handleRegister(request, env, corsHeaders) {
 
 async function handleLogin(request, env, corsHeaders) {
   try {
-    const { email, password } = await request.json();
+    // Parse request body - support both JSON and form-urlencoded
+    const contentType = request.headers.get('content-type') || '';
+    let email, password;
+    const isFormSubmit = contentType.includes('application/x-www-form-urlencoded');
+
+    if (isFormSubmit) {
+      const formData = await request.formData();
+      email = formData.get('email');
+      password = formData.get('password');
+    } else {
+      const body = await request.json();
+      email = body.email;
+      password = body.password;
+    }
 
     if (!email || !password) {
+      if (isFormSubmit) {
+        return Response.redirect('https://blazesportsintel.com/login?error=missing_fields', 302);
+      }
       return jsonResponse({ error: 'Email and password required' }, 400, corsHeaders);
     }
 
@@ -2343,17 +2527,35 @@ async function handleLogin(request, env, corsHeaders) {
     ).bind(email.toLowerCase()).first();
 
     if (!user) {
+      if (isFormSubmit) {
+        return Response.redirect('https://blazesportsintel.com/login?error=invalid_credentials', 302);
+      }
       return jsonResponse({ error: 'Invalid credentials' }, 401, corsHeaders);
     }
 
     // Verify password
     const valid = await verifyPassword(password, user.password_hash);
     if (!valid) {
+      if (isFormSubmit) {
+        return Response.redirect('https://blazesportsintel.com/login?error=invalid_credentials', 302);
+      }
       return jsonResponse({ error: 'Invalid credentials' }, 401, corsHeaders);
     }
 
     // Create session
     const sessionToken = await createSession(env, user.id);
+
+    // Form submits redirect to dashboard, API calls return JSON
+    if (isFormSubmit) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          'Location': 'https://blazesportsintel.com/dashboard',
+          'Set-Cookie': `bsi_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`,
+          ...corsHeaders
+        }
+      });
+    }
 
     return jsonResponse(
       {

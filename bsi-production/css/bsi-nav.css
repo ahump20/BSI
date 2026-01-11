@@ -5,7 +5,12 @@
  */
 
 /* ===========================================
-   CSS VARIABLES (use fallbacks for pages without :root)
+   Z-INDEX SCALE (use these for layering)
+   --bsi-z-base: 1       - Local stacking
+   --bsi-z-dropdown: 10  - Dropdowns, tooltips
+   --bsi-z-sticky: 100   - Sticky elements
+   --bsi-z-fixed: 1000   - Fixed nav, headers
+   --bsi-z-modal: 9999   - Modals, overlays
    =========================================== */
 
 /* Navigation Container - supports both .nav and .bsi-nav */
@@ -15,7 +20,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: var(--bsi-z-fixed, 1000);
   padding: 0.75rem 0;
   background: rgba(13, 13, 13, 0.95);
   backdrop-filter: blur(20px);
@@ -51,7 +56,7 @@
   font-weight: 700;
   font-size: 1.125rem;
   text-decoration: none;
-  color: #FAF8F5;
+  color: var(--bsi-cream, #FAF8F5);
 }
 
 .logo-img,
@@ -98,7 +103,7 @@
 
 .nav-links a,
 .bsi-nav-links a {
-  color: #FAF8F5;
+  color: var(--bsi-cream, #FAF8F5);
   text-decoration: none;
   opacity: 0.7;
   transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
@@ -113,7 +118,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: #FF6B35;
+  background: var(--bsi-ember, #FF6B35);
   transition: width 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
 }
 
@@ -130,7 +135,7 @@
 .nav-links a.active,
 .bsi-nav-links a.active {
   opacity: 1;
-  color: #FF6B35;
+  color: var(--bsi-ember, #FF6B35);
 }
 
 @media (min-width: 768px) {
@@ -162,7 +167,7 @@
   border: none;
   text-align: center;
   text-decoration: none;
-  background: linear-gradient(135deg, #BF5700, #FF6B35);
+  background: linear-gradient(135deg, var(--bsi-burnt-orange, #BF5700), var(--bsi-ember, #FF6B35));
   color: white;
   box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
 }
@@ -197,7 +202,7 @@
   display: block;
   width: 24px;
   height: 2px;
-  background: #FAF8F5;
+  background: var(--bsi-cream, #FAF8F5);
   transition: all 0.3s cubic-bezier(0.0, 0.0, 0.2, 1);
 }
 
@@ -231,8 +236,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 999;
-  background: #0D0D0D;
+  z-index: calc(var(--bsi-z-fixed, 1000) - 1);
+  background: var(--bsi-midnight, #0D0D0D);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding: 100px 2rem 2rem;
@@ -267,7 +272,7 @@
   font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
   font-size: 1.125rem;
   font-weight: 500;
-  color: #FAF8F5;
+  color: var(--bsi-cream, #FAF8F5);
   text-decoration: none;
   display: block;
   padding: 0.75rem 0;
@@ -276,7 +281,7 @@
 
 .mobile-menu a:hover,
 .bsi-mobile-menu a:hover {
-  color: #FF6B35;
+  color: var(--bsi-ember, #FF6B35);
 }
 
 @media (min-width: 768px) {
@@ -291,7 +296,7 @@
    =========================================== */
 
 .footer {
-  background: #0D0D0D;
+  background: var(--bsi-midnight, #0D0D0D);
   padding: 4rem 0 2rem;
   border-top: 1px solid rgba(191, 87, 0, 0.15);
 }
@@ -339,7 +344,7 @@
   font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #C9A227;
+  color: var(--bsi-gold, #C9A227);
 }
 
 .footer-links h4 {
@@ -348,7 +353,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #BF5700;
+  color: var(--bsi-burnt-orange, #BF5700);
   margin-bottom: 1rem;
 }
 
@@ -371,7 +376,7 @@
 }
 
 .footer-links a:hover {
-  color: #FAF8F5;
+  color: var(--bsi-cream, #FAF8F5);
 }
 
 .footer-bottom {
@@ -396,7 +401,7 @@
 .footer-tagline {
   font-family: 'Playfair Display', Georgia, serif;
   font-style: italic;
-  color: #BF5700;
+  color: var(--bsi-burnt-orange, #BF5700);
 }
 
 .footer-legal {

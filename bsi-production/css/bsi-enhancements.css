@@ -728,7 +728,7 @@ blockquote:hover::before,
   left: -12px;
   width: 8px;
   height: 8px;
-  background: #22C55E;
+  background: var(--bsi-success, #10B981);
   border-radius: 50%;
   transform: translateY(-50%);
   animation: live-dot-pulse 1.5s ease-in-out infinite;
@@ -2101,5 +2101,122 @@ section.scroll-reveal.is-visible,
   .nav-links > * {
     opacity: 1;
     animation: none;
+  }
+}
+
+/* ===========================================
+   FILM GRAIN OVERLAY
+   Subtle cinematic texture for BSI brand
+   Enable via: data-bsi-grain="true" on <body>
+   =========================================== */
+
+.bsi-grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  transition: opacity 0.5s ease-out;
+}
+
+/* Enable grain when canary flag is active */
+body[data-bsi-grain="true"] .bsi-grain-overlay {
+  opacity: 0.035;
+}
+
+/* Slightly more visible grain for hero sections */
+body[data-bsi-grain="true"] .hero .bsi-grain-overlay,
+body[data-bsi-grain="intense"] .bsi-grain-overlay {
+  opacity: 0.05;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .bsi-grain-overlay {
+    display: none;
+  }
+}
+
+/* Print: hide grain overlay */
+@media print {
+  .bsi-grain-overlay {
+    display: none;
+  }
+}
+
+/* ===========================================
+   DATA ATTRIBUTION FOOTER
+   "Last updated" + "Powered by Highlightly"
+   =========================================== */
+
+.bsi-data-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: rgba(250, 248, 245, 0.5);
+  border-top: 1px solid rgba(191, 87, 0, 0.15);
+  background: rgba(13, 13, 13, 0.5);
+}
+
+.bsi-data-footer__timestamp {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bsi-data-footer__timestamp::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--bsi-burnt-orange, #BF5700);
+  border-radius: 50%;
+  animation: bsi-pulse 2s ease-in-out infinite;
+}
+
+.bsi-data-footer__attribution {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.bsi-data-footer__attribution a {
+  color: var(--bsi-ember, #FF6B35);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.bsi-data-footer__attribution a:hover {
+  color: var(--bsi-burnt-orange, #BF5700);
+  text-decoration: underline;
+}
+
+/* Compact variant for cards */
+.bsi-data-footer--compact {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.7rem;
+  flex-wrap: wrap;
+}
+
+/* Dark variant for lighter backgrounds */
+.bsi-data-footer--dark {
+  background: rgba(26, 26, 26, 0.8);
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 480px) {
+  .bsi-data-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }

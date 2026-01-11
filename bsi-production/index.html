@@ -117,6 +117,13 @@
             --bsi-flame: #E85D04;
             --bsi-success: #10B981;
             --bsi-muted: #6B7280;
+
+            /* Z-Index Scale */
+            --bsi-z-base: 1;
+            --bsi-z-dropdown: 10;
+            --bsi-z-sticky: 100;
+            --bsi-z-fixed: 1000;
+            --bsi-z-modal: 9999;
             --font-display: 'Oswald', sans-serif;
             --font-body: 'Cormorant Garamond', Georgia, serif;
             --font-ui: 'Oswald', sans-serif;
@@ -1412,6 +1419,9 @@
     </style>
 </head>
 <body>
+    <!-- Film grain overlay - controlled via data-bsi-grain attribute on body -->
+    <div class="bsi-grain-overlay" aria-hidden="true"></div>
+
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <div class="container nav-inner">
             <a href="/" class="logo" aria-label="Blaze Sports Intel - Home">
@@ -3612,6 +3622,8 @@
         }
     </script>
     <script src="/src/js/analytics.js"></script>
+    <script src="/src/js/error-boundary.js"></script>
+    <script src="/src/js/attribution-footer.js"></script>
 
   <script>
     (function() {
@@ -3880,6 +3892,46 @@
                 updateStep(currentStep - 1);
             }
         });
+    })();
+    </script>
+
+    <!-- BSI Canary Flag System -->
+    <script>
+    (function() {
+        'use strict';
+
+        // Check for canary flag activation
+        var params = new URLSearchParams(window.location.search);
+        var isCanary = params.get('canary') === 'true'
+            || localStorage.getItem('bsi-canary') === 'true';
+
+        if (isCanary) {
+            // Enable film grain overlay
+            document.body.setAttribute('data-bsi-grain', 'true');
+
+            // Store canary preference for session
+            localStorage.setItem('bsi-canary', 'true');
+
+            // Log canary activation (dev only)
+            if (window.location.hostname === 'localhost' || params.get('debug') === 'true') {
+                console.log('[BSI Canary] Enabled - Film grain active');
+            }
+        }
+
+        // Expose canary toggle for testing
+        window.BSICanary = {
+            enable: function() {
+                document.body.setAttribute('data-bsi-grain', 'true');
+                localStorage.setItem('bsi-canary', 'true');
+            },
+            disable: function() {
+                document.body.removeAttribute('data-bsi-grain');
+                localStorage.removeItem('bsi-canary');
+            },
+            isEnabled: function() {
+                return document.body.getAttribute('data-bsi-grain') === 'true';
+            }
+        };
     })();
     </script>
 </body>
