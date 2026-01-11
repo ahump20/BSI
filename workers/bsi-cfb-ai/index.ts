@@ -21,8 +21,8 @@
 
 interface Env {
   AI: Ai;
-  CFB_CACHE: KVNamespace;
-  DB: D1Database;
+  BSI_CFB_CACHE: KVNamespace;
+  BSI_HISTORICAL_DB: D1Database;
   SPORTSDATAIO_API_KEY?: string;
 }
 
@@ -175,7 +175,7 @@ async function fetchCodedContent(env: Env): Promise<SportsDataIOArticle[]> {
 async function storeArticle(env: Env, article: Partial<CodedContentArticle>): Promise<void> {
   const slug = article.slug || generateSlug(article.title || 'untitled', article.game_id?.toString());
 
-  await env.DB.prepare(`
+  await env.BSI_HISTORICAL_DB.prepare(`
     INSERT INTO coded_content_articles (
       article_type, game_id, title, slug, summary, content,
       home_team_id, home_team_name, away_team_id, away_team_name,
@@ -238,13 +238,13 @@ async function getArticles(
   query += ' ORDER BY published_at DESC LIMIT ? OFFSET ?';
   params.push(limit, offset);
 
-  const result = await env.DB.prepare(query).bind(...params).all<CodedContentArticle>();
+  const result = await env.BSI_HISTORICAL_DB.prepare(query).bind(...params).all<CodedContentArticle>();
   return result.results || [];
 }
 
 // Get article by slug
 async function getArticleBySlug(env: Env, slug: string): Promise<CodedContentArticle | null> {
-  const result = await env.DB.prepare(
+  const result = await env.BSI_HISTORICAL_DB.prepare(
     'SELECT * FROM coded_content_articles WHERE slug = ? AND sport = ?'
   )
     .bind(slug, 'CFB')
@@ -258,7 +258,7 @@ async function getArticleByGameId(
   gameId: string,
   type: 'preview' | 'recap'
 ): Promise<CodedContentArticle | null> {
-  const result = await env.DB.prepare(
+  const result = await env.BSI_HISTORICAL_DB.prepare(
     'SELECT * FROM coded_content_articles WHERE game_id = ? AND article_type = ? AND sport = ?'
   )
     .bind(parseInt(gameId), type, 'CFB')
@@ -452,7 +452,7 @@ export default {
 
         // Check KV cache for AI-generated content
         const cacheKey = `cfb-preview-${gameId}`;
-        const cached = await env.CFB_CACHE.get(cacheKey);
+        const cached = await env.BSI_CFB_CACHE.get(cacheKey);
         if (cached) {
           return new Response(
             JSON.stringify({
@@ -494,7 +494,7 @@ export default {
 
         // Check KV cache
         const cacheKey = `cfb-recap-${gameId}`;
-        const cached = await env.CFB_CACHE.get(cacheKey);
+        const cached = await env.BSI_CFB_CACHE.get(cacheKey);
         if (cached) {
           return new Response(
             JSON.stringify({
@@ -519,7 +519,7 @@ export default {
         const cacheKey = `cfb-games-${today}`;
 
         // Check cache
-        const cached = await env.CFB_CACHE.get(cacheKey);
+        const cached = await env.BSI_CFB_CACHE.get(cacheKey);
         if (cached) {
           return new Response(cached, {
             headers: { ...corsHeaders, 'X-Cache': 'HIT' },
@@ -544,13 +544,13 @@ export default {
             // Fall back to KV cache / AI generation
             if (!content) {
               const contentCacheKey = `cfb-${contentType}-${game.id}`;
-              content = await env.CFB_CACHE.get(contentCacheKey);
+              content = await env.BSI_CFB_CACHE.get(contentCacheKey);
 
               if (!content) {
                 content = isCompleted
                   ? await generateRecap(env, game)
                   : await generatePreview(env, game);
-                await env.CFB_CACHE.put(contentCacheKey, content, { expirationTtl: 3600 });
+                await env.BSI_CFB_CACHE.put(contentCacheKey, content, { expirationTtl: 3600 });
               }
               source = 'Workers AI';
             }
@@ -584,7 +584,7 @@ export default {
         };
 
         const json = JSON.stringify(response);
-        await env.CFB_CACHE.put(cacheKey, json, { expirationTtl: 300 });
+        await env.BSI_CFB_CACHE.put(cacheKey, json, { expirationTtl: 300 });
 
         return new Response(json, {
           headers: { ...corsHeaders, 'X-Cache': 'MISS' },
@@ -676,12 +676,12 @@ export default {
           const contentType = isCompleted ? 'recap' : 'preview';
           const cacheKey = `cfb-${contentType}-${game.id}`;
 
-          const existing = await env.CFB_CACHE.get(cacheKey);
+          const existing = await env.BSI_CFB_CACHE.get(cacheKey);
           if (!existing) {
             const content = isCompleted
               ? await generateRecap(env, game)
               : await generatePreview(env, game);
-            await env.CFB_CACHE.put(cacheKey, content, { expirationTtl: 86400 });
+            await env.BSI_CFB_CACHE.put(cacheKey, content, { expirationTtl: 86400 });
 
             // Also store in D1 for persistence
             const competition = game.competitions[0];
