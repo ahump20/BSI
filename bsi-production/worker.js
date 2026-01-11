@@ -9,25 +9,19 @@
  * - College Football Data: NCAA Football
  * - TheOddsAPI: Betting odds
  *
- * Module Structure (src/workers/api/):
- * - constants.js       : API URLs, Stripe prices, CORS headers
- * - index.js           : Barrel export for all modules
- * - handlers/sports.js : MLB, NFL, NBA, CFB, Odds handlers
- * - utils/helpers.js   : Date, fetch, and response utilities
- *
- * Migration: Functions are being extracted to modules for better
- * maintainability. Import from './src/workers/api/index.js' when ready.
- *
- * @version 2.4.0
- * @updated 2025-01-08
+ * @version 2.5.0
+ * @updated 2025-01-11
  */
 
-// API base URLs
-const SPORTSDATAIO_BASE = 'https://api.sportsdata.io/v3';
-const COLLEGEFOOTBALL_BASE = 'https://api.collegefootballdata.com';
-const SPORTSRADAR_BASE = 'https://api.sportradar.com';
-const THEODDS_BASE = 'https://api.the-odds-api.com/v4';
-const STRIPE_API_BASE = 'https://api.stripe.com/v1';
+// Import constants from modules
+import {
+  SPORTSDATAIO_BASE,
+  COLLEGEFOOTBALL_BASE,
+  SPORTSRADAR_BASE,
+  THEODDS_BASE,
+  STRIPE_API_BASE,
+  STRIPE_PRICES,
+} from './src/workers/api/constants.js';
 
 // ESPN API (free fallback - no API key required)
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports';
@@ -61,12 +55,6 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelay = 100
   }
   throw lastError;
 }
-
-// Stripe Price IDs
-const STRIPE_PRICES = {
-  pro: 'price_1SX9voLvpRBk20R2pW0AjUIv',         // $29/mo
-  enterprise: 'price_1SX9w7LvpRBk20R2DJkKAH3y'   // $199/mo
-};
 
 // Demo data generation counts
 const STRIKE_ZONE_DEMO_PITCH_COUNT = 150;
