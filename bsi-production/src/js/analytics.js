@@ -13,10 +13,8 @@
 (function() {
   'use strict';
 
-  // GA4 Measurement ID
-  // To configure: Create GA4 property at analytics.google.com
-  // Add the measurement ID (G-XXXXXXXXXX) here
-  // Until configured, events log to console only (development mode)
+  // GA4 Measurement ID - configured for production
+  // Override via window.BSI_GA4_ID before this script loads if needed
   const GA_MEASUREMENT_ID = window.BSI_GA4_ID || 'G-FY8SBYMFFT';
   
   // Initialize dataLayer

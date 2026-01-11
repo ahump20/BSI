@@ -68,6 +68,18 @@ const STRIPE_PRICES = {
   enterprise: 'price_1SX9w7LvpRBk20R2DJkKAH3y'   // $199/mo
 };
 
+// Demo data generation counts
+const STRIKE_ZONE_DEMO_PITCH_COUNT = 150;
+const SPRAY_CHART_DEMO_BALL_COUNT = 200;
+
+// Strike zone dimensions (feet from plate center, per MLB rulebook)
+const STRIKE_ZONE = {
+  LEFT: -0.708,   // plate width / 2
+  RIGHT: 0.708,
+  TOP: 3.5,       // typical knee-to-letters height
+  BOTTOM: 1.5
+};
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -669,7 +681,6 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
       if (response.status === 403 || !response.ok) {
-        console.log(`SportsDataIO MLB returned ${response.status}, falling back to ESPN`);
         return fetchESPNMLBScores(corsHeaders);
       }
 
@@ -679,7 +690,6 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
       if (!Array.isArray(rawData)) {
         // Check for quota error and fallback
         if ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403) {
-          console.log('SportsDataIO MLB quota exceeded, falling back to ESPN');
           return fetchESPNMLBScores(corsHeaders);
         }
         return new Response(JSON.stringify({
@@ -724,7 +734,6 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
       });
     } catch (error) {
       // On any error, try ESPN fallback
-      console.log(`SportsDataIO MLB error: ${error.message}, falling back to ESPN`);
       return fetchESPNMLBScores(corsHeaders);
     }
   }
@@ -828,7 +837,6 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
       });
     } catch (error) {
-      console.log(`ESPN MLB leaders error: ${error.message}`);
       return new Response(JSON.stringify({
         error: error.message,
         batting: { avg: [], hr: [], rbi: [] },
@@ -869,7 +877,6 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
       if (response.status === 403 || !response.ok) {
-        console.log(`SportsDataIO NFL returned ${response.status}, falling back to ESPN`);
         return fetchESPNNFLScores(corsHeaders);
       }
 
@@ -877,7 +884,6 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
 
       // Check for quota error in response body
       if (!Array.isArray(rawData) && ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403)) {
-        console.log('SportsDataIO NFL quota exceeded, falling back to ESPN');
         return fetchESPNNFLScores(corsHeaders);
       }
 
@@ -886,7 +892,6 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
       });
     } catch (error) {
       // On any error, try ESPN fallback
-      console.log(`SportsDataIO NFL error: ${error.message}, falling back to ESPN`);
       return fetchESPNNFLScores(corsHeaders);
     }
   }
@@ -989,7 +994,6 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
       });
     } catch (error) {
-      console.log(`ESPN NFL leaders error: ${error.message}`);
       return new Response(JSON.stringify({
         error: error.message,
         passingYards: [],
@@ -1034,7 +1038,6 @@ async function handleNBARequest(path, url, env, corsHeaders) {
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
       if (response.status === 403 || !response.ok) {
-        console.log(`SportsDataIO NBA returned ${response.status}, falling back to ESPN`);
         return fetchESPNNBAScores(corsHeaders);
       }
 
@@ -1044,7 +1047,6 @@ async function handleNBARequest(path, url, env, corsHeaders) {
       if (!Array.isArray(rawData)) {
         // Check for quota error and fallback
         if ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403) {
-          console.log('SportsDataIO NBA quota exceeded, falling back to ESPN');
           return fetchESPNNBAScores(corsHeaders);
         }
         return new Response(JSON.stringify({
@@ -1077,7 +1079,6 @@ async function handleNBARequest(path, url, env, corsHeaders) {
       });
     } catch (error) {
       // On any error, try ESPN fallback
-      console.log(`SportsDataIO NBA error: ${error.message}, falling back to ESPN`);
       return fetchESPNNBAScores(corsHeaders);
     }
   }
@@ -1180,7 +1181,6 @@ async function handleNBARequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
       });
     } catch (error) {
-      console.log(`ESPN NBA leaders error: ${error.message}`);
       return new Response(JSON.stringify({
         error: error.message,
         points: [],
@@ -1639,7 +1639,7 @@ async function handleStrikeZone(env, corsHeaders, playerId = null, pitchType = n
     };
 
     // Filter by pitch type if specified
-    const pitchCount = 150;
+    const pitchCount = STRIKE_ZONE_DEMO_PITCH_COUNT;
     let pitches = pitchType ? generatePitches(pitchCount, pitchType.toUpperCase()) : generatePitches(pitchCount);
 
     // Calculate zone breakdown
@@ -1669,10 +1669,10 @@ async function handleStrikeZone(env, corsHeaders, playerId = null, pitchType = n
       },
       zoneBreakdown: zoneBreakdown,
       strikezone: {
-        left: -0.708, // feet from center of plate
-        right: 0.708,
-        top: 3.5,     // typical top
-        bottom: 1.5   // typical bottom
+        left: STRIKE_ZONE.LEFT,
+        right: STRIKE_ZONE.RIGHT,
+        top: STRIKE_ZONE.TOP,
+        bottom: STRIKE_ZONE.BOTTOM
       },
       source: 'BSI Synthetic Data (connect to Statcast for real data)',
       fetchedAt: getChicagoTimestamp()
@@ -1793,7 +1793,7 @@ async function handleSprayChart(env, corsHeaders, playerId = null, hitType = nul
       return balls;
     };
 
-    const ballCount = 200;
+    const ballCount = SPRAY_CHART_DEMO_BALL_COUNT;
     const validHitTypes = ['single', 'double', 'triple', 'home_run', 'groundout', 'flyout', 'lineout'];
     const normalizedType = hitType && validHitTypes.includes(hitType.toLowerCase()) ? hitType.toLowerCase() : null;
     let battedBalls = normalizedType ? generateBattedBalls(ballCount, normalizedType) : generateBattedBalls(ballCount);
@@ -2520,7 +2520,6 @@ async function handleStripeWebhook(request, env, corsHeaders) {
     }
 
     const event = JSON.parse(body);
-    console.log('Stripe webhook event:', event.type);
 
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -2569,8 +2568,6 @@ async function handleStripeWebhook(request, env, corsHeaders) {
             subscription.current_period_start,
             subscription.current_period_end
           ).run();
-
-          console.log(`Subscription activated for user ${userId}: ${tier}`);
         }
         break;
       }
