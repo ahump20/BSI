@@ -3900,38 +3900,29 @@
     (function() {
         'use strict';
 
-        // Check for canary flag activation
-        var params = new URLSearchParams(window.location.search);
-        var isCanary = params.get('canary') === 'true'
-            || localStorage.getItem('bsi-canary') === 'true';
+        // Film grain enabled for all users
+        // Respects prefers-reduced-motion via CSS (see bsi-enhancements.css)
+        document.body.setAttribute('data-bsi-grain', 'true');
 
-        if (isCanary) {
-            // Enable film grain overlay
-            document.body.setAttribute('data-bsi-grain', 'true');
-
-            // Store canary preference for session
-            localStorage.setItem('bsi-canary', 'true');
-
-            // Log canary activation (dev only)
-            if (window.location.hostname === 'localhost' || params.get('debug') === 'true') {
-                console.log('[BSI Canary] Enabled - Film grain active');
-            }
-        }
-
-        // Expose canary toggle for testing
-        window.BSICanary = {
+        // Expose grain toggle for user preference override
+        window.BSIGrain = {
             enable: function() {
                 document.body.setAttribute('data-bsi-grain', 'true');
-                localStorage.setItem('bsi-canary', 'true');
+                localStorage.setItem('bsi-grain-disabled', 'false');
             },
             disable: function() {
                 document.body.removeAttribute('data-bsi-grain');
-                localStorage.removeItem('bsi-canary');
+                localStorage.setItem('bsi-grain-disabled', 'true');
             },
             isEnabled: function() {
                 return document.body.getAttribute('data-bsi-grain') === 'true';
             }
         };
+
+        // Allow users to persist their grain preference
+        if (localStorage.getItem('bsi-grain-disabled') === 'true') {
+            document.body.removeAttribute('data-bsi-grain');
+        }
     })();
     </script>
 </body>

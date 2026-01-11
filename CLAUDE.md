@@ -69,7 +69,7 @@ Why: I'm building production systems. Every placeholder is a lie about what's do
 - **Timezone**: Always America/Chicago for timestamps
 - **Citations**: Every data point needs source + timestamp
 - **Design tokens**: Burnt orange (#BF5700), Texas soil (#8B4513), charcoal (#1A1A1A), midnight (#0D0D0D), ember (#FF6B35 accent only)
-- **No visual noise**: Never add film grain, noise overlays, particle effects, or SVG turbulence filters
+- **Film grain**: Enabled globally at 3.5% opacity via SVG turbulence filter. Respects prefers-reduced-motion. Users can toggle via BSIGrain.disable()
 
 ## Git
 

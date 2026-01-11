@@ -445,6 +445,7 @@
     <p class="tagline">Born to Blaze the Path Less Beaten.</p>
   </footer>
 
+  <script src="/src/js/attribution-footer.js"></script>
   <script>
     (function() {
       'use strict';
@@ -569,6 +570,8 @@
           allGames = [].concat(data.mlb || [], data.nfl || [], data.nba || [], data.ncaab || [], data.ncaaf || []);
           sources = data.sources || {};
           renderGames();
+          // Add attribution footer to scores container
+          BSIAttribution.update('.main-content', { fetchedAt: data.fetchedAt || new Date().toISOString(), compact: true });
           var now = new Date();
           document.getElementById('last-updated').textContent = 'Updated: ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZone: 'America/Chicago', timeZoneName: 'short' });
         } catch (e) {

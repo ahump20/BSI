@@ -4,7 +4,7 @@
  */
 
 // External API base URLs
-export const SPORTSDATAIO_BASE = 'https://api.sportsdata.io/v3';
+// Note: Highlightly API base URLs are defined in worker.js (HIGHLIGHTLY_MLB, HIGHLIGHTLY_NFL, HIGHLIGHTLY_NBA)
 export const COLLEGEFOOTBALL_BASE = 'https://api.collegefootballdata.com';
 export const SPORTSRADAR_BASE = 'https://api.sportradar.com';
 export const THEODDS_BASE = 'https://api.the-odds-api.com/v4';

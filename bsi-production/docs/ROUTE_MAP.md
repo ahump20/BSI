@@ -18,7 +18,7 @@ Crawl Tool: Playwright MCP
 ### Score Hub Pages (CSR with Dynamic Data)
 | Route | Status | Issues |
 |-------|--------|--------|
-| `/scores` | 200 | React hydration error #418, 404 on resource |
+| `/scores` | 200 | Vanilla JS - no React (previous docs were incorrect) |
 | `/mlb/` | 200 | "TBD" placeholders, "--" for stats |
 | `/nfl/` | 200 | Not crawled |
 | `/nba/` | 200 | Not crawled |
@@ -41,39 +41,28 @@ Crawl Tool: Playwright MCP
 | `/signup` | 200 | Not crawled |
 | `/dashboard` | 200 | Not crawled |
 
-## Issues Identified
+## Issues Identified (Updated 2025-01-11)
 
-### Critical
-1. **React Hydration Mismatch** (`/scores`)
-   - Error: `Minified React error #418`
-   - Cause: Server/client content mismatch
-   - Impact: Can cause blank screens or broken UI
+### Resolved
+1. ~~**React Hydration Mismatch** (`/scores`)~~ - **RESOLVED**: /scores is 100% vanilla JS, not React. Previous documentation was incorrect.
+2. ~~**Script MIME Type Blocking**~~ - **RESOLVED**: Added JS uploads to deploy.sh and /src/js/* route in worker.js
+3. ~~**Missing Attribution**~~ - **RESOLVED**: BSIAttribution footer component integrated
 
-2. **Data Not Hydrating** (`/mlb/`, `/college-baseball/`)
-   - "TBD" showing for team names
-   - "--" showing for stats (Record, Win %, Games Back)
-   - API fetch silently failing or returning empty data
+### Remaining
+4. **Data Placeholders** (`/mlb/`, `/college-baseball/`)
+   - "TBD" showing for team names when API fails
+   - "--" showing for stats during loading
+   - Solution: Skeleton loaders during load, error state on failure
 
-### Moderate
-3. **Script MIME Type Blocking** (`/college-baseball/`)
-   - `freshness-indicator.js` refused to execute
-   - Likely incorrect Content-Type header
-
-4. **404 Resources**
-   - Multiple pages have missing resources
-   - Console errors but UI continues to render
-
-### Low
-5. **Missing Attribution**
-   - No "Last updated" timestamps on data blocks
-   - No "Powered by Highlightly" footer
+5. **404 Resources**
+   - Some pages may still have missing resources
+   - Monitor console errors during testing
 
 ## Console Errors Log
 
 ### /scores
 ```
-Error: Minified React error #418
-Failed to load resource: 404
+(No errors - vanilla JS, no React)
 ```
 
 ### /college-baseball/
@@ -102,15 +91,19 @@ Screenshots saved to: `/Users/AustinHumphrey/.playwright-mcp/`
 
 ## Rendering Architecture
 
-- **Homepage** (`/`): Vanilla HTML served from R2, client-side JS hydration
-- **Score Pages** (`/scores`): React-based SPA, different component structure
+All pages use vanilla HTML + vanilla JavaScript:
+
+- **Homepage** (`/`): Vanilla HTML served from R2, client-side JS for interactivity
+- **Score Pages** (`/scores`): Vanilla HTML + fetch() for live data, no React
 - **Sport Hubs** (`/mlb/`, `/college-baseball/`): Vanilla HTML + fetch() for data
-- **Tools** (`/tools`): Vanilla HTML hub, individual tools may be React/Vue
+- **Tools** (`/tools`): Vanilla HTML hub; 3d-showcase and vision-coach use React internally (isolated)
 
-## Recommendations
+**Note**: Previous documentation incorrectly stated /scores uses React. Investigation confirmed all public pages are vanilla JS.
 
-1. Add error boundaries to catch React hydration failures
-2. Fix MIME type for freshness-indicator.js
-3. Add fallback UI for failed data fetches (not "--" or "TBD")
-4. Consolidate template approaches (vanilla vs React)
-5. Add attribution footer component
+## Recommendations (Updated 2025-01-11)
+
+1. ~~Add error boundaries~~ - Done (error-boundary.js)
+2. ~~Fix MIME type for freshness-indicator.js~~ - Done (deploy.sh + worker route)
+3. Add skeleton loaders for loading states (replace "--" and "TBD")
+4. ~~Add attribution footer component~~ - Done (BSIAttribution)
+5. No consolidation needed - architecture is already consistent (vanilla JS)

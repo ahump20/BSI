@@ -192,8 +192,29 @@ echo "  ✓ origin/tools/strike-zone/index.html"
 $WRANGLER r2 object put $BUCKET_NAME/origin/tools/vision-coach/index.html --file src/tools/vision-coach/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/vision-coach/index.html"
 
+# JavaScript modules
 echo ""
-echo "All HTML files uploaded to R2."
+echo "JavaScript modules..."
+$WRANGLER r2 object put $BUCKET_NAME/src/js/freshness-indicator.js --file src/js/freshness-indicator.js --content-type "application/javascript; charset=utf-8" --remote
+echo "  ✓ src/js/freshness-indicator.js"
+
+$WRANGLER r2 object put $BUCKET_NAME/src/js/freshness-calculator.js --file src/js/freshness-calculator.js --content-type "application/javascript; charset=utf-8" --remote
+echo "  ✓ src/js/freshness-calculator.js"
+
+$WRANGLER r2 object put $BUCKET_NAME/src/js/freshness-badge.js --file src/js/freshness-badge.js --content-type "application/javascript; charset=utf-8" --remote
+echo "  ✓ src/js/freshness-badge.js"
+
+$WRANGLER r2 object put $BUCKET_NAME/src/js/attribution-footer.js --file src/js/attribution-footer.js --content-type "application/javascript; charset=utf-8" --remote
+echo "  ✓ src/js/attribution-footer.js"
+
+$WRANGLER r2 object put $BUCKET_NAME/src/js/error-boundary.js --file src/js/error-boundary.js --content-type "application/javascript; charset=utf-8" --remote
+echo "  ✓ src/js/error-boundary.js"
+
+$WRANGLER r2 object put $BUCKET_NAME/src/js/analytics.js --file src/js/analytics.js --content-type "application/javascript; charset=utf-8" --remote
+echo "  ✓ src/js/analytics.js"
+
+echo ""
+echo "All assets uploaded to R2."
 echo ""
 
 # Step 2: Deploy Worker
