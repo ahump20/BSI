@@ -1,0 +1,28 @@
+/**
+ * BSI Animations - Single Source of Truth
+ * All animation keyframes consolidated here.
+ * Import this file in HTML <head> ONCE.
+ */
+
+/* Pulse animation - fades in/out with subtle scale */
+@keyframes bsi-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+/* Spin animation - 360 degree rotation */
+@keyframes bsi-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Shimmer animation - loading skeleton effect */
+@keyframes bsi-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Fade in animation */
+@keyframes bsi-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

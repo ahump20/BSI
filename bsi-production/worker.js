@@ -32,6 +32,11 @@ const STRIPE_API_BASE = 'https://api.stripe.com/v1';
 // ESPN API (free fallback - no API key required)
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports';
 
+// Highlightly API (PRIMARY source - Pro subscription)
+const HIGHLIGHTLY_MLB_BASE = 'https://baseball.highlightly.net';
+const HIGHLIGHTLY_NFL_BASE = 'https://american-football.highlightly.net';
+const HIGHLIGHTLY_NBA_BASE = 'https://nba.highlightly.net';
+
 /**
  * Fetch with exponential backoff retry
  * @param {string} url - URL to fetch
@@ -126,6 +131,69 @@ export default {
       return handleLeadCapture(request, env, corsHeaders);
     }
 
+    // === NEWSLETTER SUBSCRIPTION ===
+    if (path === '/api/newsletter/subscribe' && request.method === 'POST') {
+      return handleNewsletterSubscribe(request, env, corsHeaders);
+    }
+
+    // === PUSH NOTIFICATIONS ROUTES ===
+    if (path === '/api/notifications/vapid-key' && request.method === 'GET') {
+      return handleGetVapidKey(env, corsHeaders);
+    }
+    if (path === '/api/notifications/subscribe' && request.method === 'POST') {
+      return handlePushSubscribe(request, env, corsHeaders);
+    }
+    if (path === '/api/notifications/unsubscribe' && request.method === 'POST') {
+      return handlePushUnsubscribe(request, env, corsHeaders);
+    }
+    if (path === '/api/notifications/preferences' && request.method === 'POST') {
+      return handlePushPreferences(request, env, corsHeaders);
+    }
+    if (path === '/api/notifications/preferences' && request.method === 'GET') {
+      return handleGetPushPreferences(request, env, corsHeaders);
+    }
+    if (path === '/api/notifications/test' && request.method === 'POST') {
+      return handleTestNotification(request, env, corsHeaders);
+    }
+
+    // === VISION COACH API ROUTES ===
+    if (path === '/api/vision-coach/sessions' && request.method === 'GET') {
+      return handleGetVisionCoachSessions(request, env, corsHeaders);
+    }
+    if (path === '/api/vision-coach/sessions' && request.method === 'POST') {
+      return handleSaveVisionCoachSession(request, env, corsHeaders);
+    }
+    if (path === '/api/vision-coach/challenges' && request.method === 'GET') {
+      return handleGetVisionCoachChallenges(request, env, corsHeaders);
+    }
+    if (path === '/api/vision-coach/challenges' && request.method === 'POST') {
+      return handleSaveVisionCoachChallenges(request, env, corsHeaders);
+    }
+    if (path === '/api/vision-coach/stats' && request.method === 'GET') {
+      return handleGetVisionCoachStats(request, env, corsHeaders);
+    }
+
+    // === SEARCH API ===
+    if (path === '/api/search' && request.method === 'GET') {
+      return handleSearch(request, env, corsHeaders);
+    }
+
+    // Search index admin endpoints (KV management)
+    if (path === '/api/search/index' && request.method === 'POST') {
+      return handleSearchIndexRefresh(request, env, corsHeaders);
+    }
+    if (path === '/api/search/index/add' && request.method === 'POST') {
+      return handleSearchIndexAdd(request, env, corsHeaders);
+    }
+
+    // === FAVORITES SYNC API ===
+    if (path === '/api/favorites/sync' && request.method === 'POST') {
+      return handleFavoritesSync(request, env, corsHeaders);
+    }
+    if (path === '/api/favorites' && request.method === 'GET') {
+      return handleGetFavorites(request, env, corsHeaders);
+    }
+
     // === AUTH PAGES ===
     if (path === '/login' || path === '/login.html') {
       return serveAsset(env, 'origin/login.html', 'text/html', corsHeaders);
@@ -194,6 +262,27 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
         headers: {
           'Content-Type': 'text/plain',
           'Cache-Control': 'public, max-age=86400',
+          ...corsHeaders,
+        },
+      });
+    }
+
+    // Serve video assets from R2
+    if (path.startsWith('/assets/video/')) {
+      const videoPath = 'origin/video/' + path.replace('/assets/video/', '');
+      const video = await env.ASSETS.get(videoPath);
+
+      if (!video) {
+        // Return 404 - the frontend will fall back to poster image
+        return new Response('Video not found', { status: 404 });
+      }
+
+      const contentType = path.endsWith('.webm') ? 'video/webm' : 'video/mp4';
+      return new Response(video.body, {
+        headers: {
+          'Content-Type': contentType,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+          'Accept-Ranges': 'bytes',
           ...corsHeaders,
         },
       });
@@ -291,6 +380,34 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       return serveAsset(env, 'origin/scores-nba.html', 'text/html', corsHeaders);
     }
 
+    // === PROMO PAGES ===
+    // ESPN vs BSI campaign
+    if (path === '/promo/espn-cant-find-it' || path === '/promo/espn-cant-find-it/') {
+      return serveAsset(env, 'origin/promo/espn-cant-find-it.html', 'text/html', corsHeaders);
+    }
+
+    // === COMPONENT SCRIPTS ===
+    // Score ticker component
+    if (path === '/src/components/score-ticker.js') {
+      return serveAsset(env, 'origin/src/components/score-ticker.js', 'application/javascript', corsHeaders);
+    }
+
+    // === SITE JAVASCRIPT ===
+    // Analytics and tracking scripts
+    if (path.startsWith('/src/js/')) {
+      const key = `origin${path}`;
+      const asset = await env.ASSETS.get(key);
+      if (asset) {
+        return new Response(asset.body, {
+          headers: {
+            'Content-Type': 'application/javascript',
+            'Cache-Control': 'public, max-age=86400',
+            ...corsHeaders
+          }
+        });
+      }
+    }
+
     // === INTERACTIVE TOOLS ===
     // Tools landing page
     if (path === '/tools' || path === '/tools/') {
@@ -348,6 +465,10 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     if (path === '/tools/spray-chart' || path === '/tools/spray-chart/') {
       return serveToolAsset(env, 'origin/tools/spray-chart/index.html', 'text/html', corsHeaders, request);
     }
+    // Vision Coach - Biometric Presence Training (Pro)
+    if (path === '/tools/vision-coach' || path === '/tools/vision-coach/') {
+      return serveToolAsset(env, 'origin/tools/vision-coach/index.html', 'text/html', corsHeaders, request);
+    }
     // Serve tool assets (JS, CSS)
     if (path.startsWith('/tools/')) {
       return serveToolStaticAsset(env, path, corsHeaders);
@@ -381,6 +502,37 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       return handleNCAABaseballSchedule(env, corsHeaders, team);
     }
 
+    // === COLLEGE BASEBALL ROUTE ALIASES ===
+    // These map /api/college-baseball/* to the NCAA baseball handlers
+    if (path === '/api/college-baseball/rankings') {
+      return handleNCAABaseballRankings(env, corsHeaders);
+    }
+    if (path === '/api/college-baseball/scores') {
+      return handleNCAABaseballScores(request, env, corsHeaders);
+    }
+    if (path === '/api/college-baseball/standings') {
+      const conference = url.searchParams.get('conference');
+      return handleNCAABaseballStandings(env, corsHeaders, conference);
+    }
+    if (path === '/api/college-baseball/schedule') {
+      const team = url.searchParams.get('team');
+      return handleNCAABaseballSchedule(env, corsHeaders, team);
+    }
+    // Box score endpoint for individual game details
+    if (path.startsWith('/api/college-baseball/box-score/')) {
+      const gameId = path.split('/').pop();
+      return handleNCAABaseballBoxScore(env, corsHeaders, gameId);
+    }
+    // Leaders endpoint for top batting/pitching stats
+    if (path === '/api/college-baseball/leaders') {
+      return handleNCAABaseballLeaders(env, corsHeaders);
+    }
+    // Player detail endpoint
+    if (path.startsWith('/api/college-baseball/player/')) {
+      const playerId = path.split('/').pop();
+      return handleNCAABaseballPlayer(env, corsHeaders, playerId);
+    }
+
     // === UNIFIED SCORES ENDPOINT ===
     // Aggregates all sports scores in one call for scores dashboard
     if (path === '/api/scores/all') {
@@ -402,9 +554,22 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       return handleNBARequest(path, url, env, corsHeaders);
     }
 
-    // College Football Data
+    // College Basketball (NCAAB) Data
+    if (path.startsWith('/api/ncaab/')) {
+      return handleNCAABRequest(path, url, env, corsHeaders);
+    }
+    // CBB alias for NCAAB
+    if (path.startsWith('/api/cbb/')) {
+      return handleNCAABRequest(path.replace('/api/cbb/', '/api/ncaab/'), url, env, corsHeaders);
+    }
+    // College Football Data (CFB and NCAAF aliases)
     if (path.startsWith('/api/cfb/')) {
       return handleCFBRequest(path, url, env, corsHeaders);
+    }
+    if (path.startsWith('/api/ncaaf/')) {
+      // Alias /api/ncaaf/ to /api/cfb/ for consistency with NCAAB naming
+      const cfbPath = path.replace('/api/ncaaf/', '/api/cfb/');
+      return handleCFBRequest(cfbPath, url, env, corsHeaders);
     }
 
     // Betting Odds (TheOddsAPI)
@@ -445,13 +610,16 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
         timezone: 'America/Chicago',
         version: '2.1.0',
         apis: ['mlb', 'nfl', 'nba', 'cfb', 'odds', 'analytics'],
+        primarySource: 'Highlightly',
         fallback: {
+          chain: ['Highlightly', 'SportsDataIO', 'ESPN'],
           espn: true,
           sports: ['mlb', 'nfl', 'nba'],
-          note: 'ESPN used automatically when SportsDataIO quota exceeded'
+          note: 'Highlightly Pro is primary; SportsDataIO secondary; ESPN tertiary fallback'
         },
         tools: toolsHealth,
         keysConfigured: {
+          highlightly: !!env.HIGHLIGHTLY_API_KEY,
           sportsdataio: !!env.SPORTSDATAIO_API_KEY,
           cfb: !!env.COLLEGEFOOTBALLDATA_API_KEY,
           odds: !!env.THEODDSAPI_KEY,
@@ -463,22 +631,33 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       });
     }
 
+    // Admin ingest status endpoint - observability for data pipeline health
+    if (path === '/api/admin/ingest-status') {
+      return handleIngestStatus(env, corsHeaders);
+    }
+
     // === COLLEGE BASEBALL ROUTES ===
     if (path === '/college-baseball' || path === '/college-baseball/') {
       return serveAsset(env, 'origin/college-baseball/index.html', 'text/html', corsHeaders);
     }
     if (path.startsWith('/college-baseball/')) {
       const subPath = path.replace('/college-baseball/', '');
-      // Try exact file match first
-      let assetPath = `origin/college-baseball/${subPath}`;
-      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
-        // Try as directory index
-        assetPath = `origin/college-baseball/${subPath}/index.html`;
+      let asset = null;
+
+      if (subPath.endsWith('.html') || subPath.includes('.')) {
+        asset = await env.ASSETS.get(`origin/college-baseball/${subPath}`);
+      } else {
+        // Try .html extension first, then /index.html fallback
+        asset = await env.ASSETS.get(`origin/college-baseball/${subPath}.html`);
+        if (!asset) {
+          asset = await env.ASSETS.get(`origin/college-baseball/${subPath}/index.html`);
+        }
       }
-      const asset = await env.ASSETS.get(assetPath);
+
       if (asset) {
-        const contentType = assetPath.endsWith('.js') ? 'application/javascript' :
-                           assetPath.endsWith('.css') ? 'text/css' : 'text/html';
+        const assetPath = subPath.endsWith('.js') ? 'js' : subPath.endsWith('.css') ? 'css' : 'html';
+        const contentType = assetPath === 'js' ? 'application/javascript' :
+                           assetPath === 'css' ? 'text/css' : 'text/html';
         return new Response(asset.body, {
           headers: { 'Content-Type': contentType, 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
         });
@@ -491,11 +670,18 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     }
     if (path.startsWith('/mlb/') && !path.startsWith('/mlb/api')) {
       const subPath = path.replace('/mlb/', '');
-      let assetPath = `origin/mlb/${subPath}`;
-      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
-        assetPath = `origin/mlb/${subPath}/index.html`;
+      let asset = null;
+
+      if (subPath.endsWith('.html') || subPath.includes('.')) {
+        asset = await env.ASSETS.get(`origin/mlb/${subPath}`);
+      } else {
+        // Try .html extension first, then /index.html fallback
+        asset = await env.ASSETS.get(`origin/mlb/${subPath}.html`);
+        if (!asset) {
+          asset = await env.ASSETS.get(`origin/mlb/${subPath}/index.html`);
+        }
       }
-      const asset = await env.ASSETS.get(assetPath);
+
       if (asset) {
         return new Response(asset.body, {
           headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -509,11 +695,19 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     }
     if (path.startsWith('/nfl/') && !path.startsWith('/nfl/api')) {
       const subPath = path.replace('/nfl/', '');
-      let assetPath = `origin/nfl/${subPath}`;
-      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
-        assetPath = `origin/nfl/${subPath}/index.html`;
+      let asset = null;
+
+      if (subPath.endsWith('.html') || subPath.includes('.')) {
+        // Has extension, use as-is
+        asset = await env.ASSETS.get(`origin/nfl/${subPath}`);
+      } else {
+        // Try .html extension first, then /index.html fallback
+        asset = await env.ASSETS.get(`origin/nfl/${subPath}.html`);
+        if (!asset) {
+          asset = await env.ASSETS.get(`origin/nfl/${subPath}/index.html`);
+        }
       }
-      const asset = await env.ASSETS.get(assetPath);
+
       if (asset) {
         return new Response(asset.body, {
           headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -529,7 +723,44 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       const subPath = path.replace('/nba/', '');
       let assetPath = `origin/nba/${subPath}`;
       if (!subPath.endsWith('.html') && !subPath.includes('.')) {
-        assetPath = `origin/nba/${subPath}/index.html`;
+        assetPath = `origin/nba/${subPath}.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        return new Response(asset.body, {
+          headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
+
+    // === NCAAB (College Basketball) ROUTES ===
+    if (path === '/ncaab' || path === '/ncaab/') {
+      return serveAsset(env, 'origin/ncaab/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/ncaab/') && !path.startsWith('/ncaab/api')) {
+      const subPath = path.replace('/ncaab/', '');
+      let assetPath = `origin/ncaab/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        assetPath = `origin/ncaab/${subPath}.html`;
+      }
+      const asset = await env.ASSETS.get(assetPath);
+      if (asset) {
+        return new Response(asset.body, {
+          headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+        });
+      }
+    }
+
+    // === NCAAF (College Football) ROUTES ===
+    if (path === '/college-football' || path === '/college-football/') {
+      return serveAsset(env, 'origin/college-football/index.html', 'text/html', corsHeaders);
+    }
+    if (path.startsWith('/college-football/') && !path.startsWith('/college-football/api')) {
+      const subPath = path.replace('/college-football/', '');
+      let assetPath = `origin/college-football/${subPath}`;
+      if (!subPath.endsWith('.html') && !subPath.includes('.')) {
+        assetPath = `origin/college-football/${subPath}.html`;
       }
       const asset = await env.ASSETS.get(assetPath);
       if (asset) {
@@ -542,21 +773,711 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     // 404 for other paths (or forward to existing app)
     return new Response('Not found', { status: 404 });
   },
+
+  /**
+   * Scheduled handler for cron-triggered data ingestion
+   * Crons defined in wrangler.toml:
+   *   - Every 15 min   → Scores (CFB + CBB)
+   *   - Every 6 hours  → Standings (CFB + CBB)
+   *   - Daily 8am CT   → Rankings (CFB + CBB)
+   */
+  async scheduled(event, env, ctx) {
+    const cron = event.cron;
+    const startTime = Date.now();
+    const results = [];
+
+    console.log(`[CRON] Starting scheduled job: ${cron}`);
+
+    try {
+      // Scores: every 15 minutes
+      if (cron === '*/15 * * * *') {
+        results.push(await syncScores(env, 'cfb'));
+        results.push(await syncScores(env, 'cbb'));
+        results.push(await syncScores(env, 'ncaabb')); // College baseball
+        // Check for score notifications
+        await checkAndNotifyScores(env, 'nfl');
+        await checkAndNotifyScores(env, 'nba');
+      }
+
+      // Standings: every 6 hours
+      if (cron === '0 */6 * * *') {
+        results.push(await syncStandings(env, 'cfb'));
+        results.push(await syncStandings(env, 'cbb'));
+        results.push(await syncStandings(env, 'ncaabb')); // College baseball
+      }
+
+      // Rankings: daily at 8am CT (14:00 UTC)
+      if (cron === '0 14 * * *') {
+        results.push(await syncRankings(env, 'cfb'));
+        results.push(await syncRankings(env, 'cbb'));
+        results.push(await syncRankings(env, 'ncaabb')); // College baseball
+      }
+
+      const duration = Date.now() - startTime;
+      console.log(`[CRON] Completed ${cron} in ${duration}ms:`, JSON.stringify(results));
+
+    } catch (error) {
+      console.error(`[CRON] Failed ${cron}:`, error.message);
+      await logIngest(env, {
+        sport: 'system',
+        dataType: 'scheduled',
+        source: 'espn',
+        success: false,
+        errorMessage: error.message,
+        errorStack: error.stack
+      });
+    }
+  }
 };
+
+// === SCHEDULED SYNC FUNCTIONS ===
+
+/**
+ * Log ingestion run to D1 for observability
+ */
+async function logIngest(env, params) {
+  const {
+    sport,
+    dataType,
+    source,
+    season = new Date().getFullYear(),
+    dateParam = null,
+    recordsFetched = 0,
+    recordsInserted = 0,
+    recordsUpdated = 0,
+    durationMs = 0,
+    success = true,
+    errorMessage = null,
+    errorStack = null
+  } = params;
+
+  try {
+    await env.DB.prepare(`
+      INSERT INTO ingest_log (
+        sport, data_type, source, season, date_param,
+        records_fetched, records_inserted, records_updated,
+        duration_ms, success, error_message, error_stack
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      sport,
+      dataType,
+      source,
+      season,
+      dateParam,
+      recordsFetched,
+      recordsInserted,
+      recordsUpdated,
+      durationMs,
+      success ? 1 : 0,
+      errorMessage,
+      errorStack
+    ).run();
+  } catch (err) {
+    console.error('[logIngest] Failed to log:', err.message);
+  }
+}
+
+/**
+ * Update sync metadata in D1
+ */
+async function updateSyncMetadata(env, key, value) {
+  try {
+    await env.DB.prepare(`
+      INSERT OR REPLACE INTO sync_metadata (key, value, updated_at)
+      VALUES (?, ?, datetime('now'))
+    `).bind(key, value).run();
+  } catch (err) {
+    console.error('[updateSyncMetadata] Failed:', err.message);
+  }
+}
+
+/**
+ * Normalize ESPN game event to canonical format
+ */
+function normalizeESPNGameForDB(event, sport) {
+  const comp = event.competitions?.[0];
+  const home = comp?.competitors?.find(c => c.homeAway === 'home');
+  const away = comp?.competitors?.find(c => c.homeAway === 'away');
+  const status = event.status?.type?.name;
+
+  // Map ESPN status to our canonical status
+  const statusMap = {
+    'STATUS_SCHEDULED': 'scheduled',
+    'STATUS_IN_PROGRESS': 'live',
+    'STATUS_HALFTIME': 'live',
+    'STATUS_END_OF_PERIOD': 'live',
+    'STATUS_FINAL': 'final',
+    'STATUS_POSTPONED': 'postponed',
+    'STATUS_CANCELED': 'canceled',
+    'STATUS_DELAYED': 'delayed'
+  };
+
+  return {
+    id: `${sport}_espn_${event.id}`,
+    sport: sport === 'cfb' ? 'college_football' : 'college_basketball',
+    season: new Date().getFullYear(),
+    date: event.date?.split('T')[0] || new Date().toISOString().split('T')[0],
+    startTime: event.date,
+    homeTeamId: home?.team?.id || 'unknown',
+    awayTeamId: away?.team?.id || 'unknown',
+    homeTeamName: home?.team?.displayName || 'TBD',
+    awayTeamName: away?.team?.displayName || 'TBD',
+    homeTeamLogo: home?.team?.logo || null,
+    awayTeamLogo: away?.team?.logo || null,
+    homeTeamAbbrev: home?.team?.abbreviation || 'TBD',
+    awayTeamAbbrev: away?.team?.abbreviation || 'TBD',
+    homeRank: home?.curatedRank?.current || null,
+    awayRank: away?.curatedRank?.current || null,
+    homeScore: parseInt(home?.score) || 0,
+    awayScore: parseInt(away?.score) || 0,
+    status: statusMap[status] || 'scheduled',
+    period: comp?.status?.period || null,
+    periodDetail: comp?.status?.type?.detail || null,
+    clock: comp?.status?.displayClock || null,
+    venue: comp?.venue?.fullName || null,
+    broadcast: comp?.broadcasts?.[0]?.names?.[0] || null,
+    isConferenceGame: comp?.conferenceCompetition ? 1 : 0,
+    source: 'espn',
+    sourceId: event.id
+  };
+}
+
+/**
+ * Upsert games to D1 database
+ */
+async function upsertGames(env, games, sport) {
+  let inserted = 0;
+  let updated = 0;
+
+  for (const game of games) {
+    try {
+      // Check if game exists
+      const existing = await env.DB.prepare(`
+        SELECT id FROM games WHERE sport = ? AND source = ? AND source_id = ?
+      `).bind(
+        sport === 'cfb' ? 'college_football' : 'college_basketball',
+        'espn',
+        game.sourceId
+      ).first();
+
+      if (existing) {
+        // Update existing game
+        await env.DB.prepare(`
+          UPDATE games SET
+            home_score = ?, away_score = ?, status = ?,
+            period = ?, period_detail = ?, clock = ?,
+            last_updated = datetime('now')
+          WHERE id = ?
+        `).bind(
+          game.homeScore,
+          game.awayScore,
+          game.status,
+          game.period,
+          game.periodDetail,
+          game.clock,
+          existing.id
+        ).run();
+        updated++;
+      } else {
+        // Insert new game
+        await env.DB.prepare(`
+          INSERT INTO games (
+            id, sport, season, date, start_time,
+            home_team_id, away_team_id, home_team_name, away_team_name,
+            home_team_logo, away_team_logo, home_team_abbrev, away_team_abbrev,
+            home_rank, away_rank, home_score, away_score,
+            status, period, period_detail, clock, venue, broadcast,
+            is_conference_game, source, source_id
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          game.id,
+          game.sport,
+          game.season,
+          game.date,
+          game.startTime,
+          game.homeTeamId,
+          game.awayTeamId,
+          game.homeTeamName,
+          game.awayTeamName,
+          game.homeTeamLogo,
+          game.awayTeamLogo,
+          game.homeTeamAbbrev,
+          game.awayTeamAbbrev,
+          game.homeRank,
+          game.awayRank,
+          game.homeScore,
+          game.awayScore,
+          game.status,
+          game.period,
+          game.periodDetail,
+          game.clock,
+          game.venue,
+          game.broadcast,
+          game.isConferenceGame,
+          game.source,
+          game.sourceId
+        ).run();
+        inserted++;
+      }
+    } catch (err) {
+      console.error(`[upsertGames] Failed for game ${game.sourceId}:`, err.message);
+    }
+  }
+
+  return { inserted, updated };
+}
+
+/**
+ * Sync scores from ESPN for CFB or CBB
+ */
+async function syncScores(env, sport) {
+  const startTime = Date.now();
+  const dataType = 'scores';
+  const source = 'espn';
+
+  try {
+    // ESPN endpoint based on sport
+    const espnSportMap = {
+      'cfb': 'football/college-football',
+      'cbb': 'basketball/mens-college-basketball',
+      'ncaabb': 'baseball/college-baseball'
+    };
+    const espnSport = espnSportMap[sport] || 'basketball/mens-college-basketball';
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${espnSport}/scoreboard`;
+
+    console.log(`[syncScores] Fetching ${sport} from ${url}`);
+
+    const response = await fetchWithRetry(url);
+
+    if (!response.ok) {
+      throw new Error(`ESPN API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const events = data.events || [];
+
+    if (!Array.isArray(events)) {
+      throw new Error('Invalid response format: events not an array');
+    }
+
+    console.log(`[syncScores] Fetched ${events.length} ${sport} games`);
+
+    // Transform to canonical format
+    const normalizedGames = events.map(event => normalizeESPNGameForDB(event, sport));
+
+    // Upsert to D1
+    const { inserted, updated } = await upsertGames(env, normalizedGames, sport);
+
+    // Write to KV cache for fast reads
+    const kvKey = `${sport.toUpperCase()}_SCORES_CURRENT`;
+    const cachePayload = {
+      data: normalizedGames,
+      lastUpdated: new Date().toISOString(),
+      source: 'espn',
+      meta: { count: normalizedGames.length, sport, season: new Date().getFullYear() }
+    };
+
+    // Determine TTL: 60s if live games, 1 hour otherwise
+    const hasLiveGames = normalizedGames.some(g => g.status === 'live');
+    const ttl = hasLiveGames ? 60 : 3600;
+
+    if (env.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(kvKey, JSON.stringify(cachePayload), { expirationTtl: ttl });
+      console.log(`[syncScores] Cached ${kvKey} with TTL ${ttl}s`);
+    }
+
+    // Write R2 snapshot for fallback
+    if (env.ASSETS) {
+      try {
+        const snapshotPayload = {
+          ...cachePayload,
+          snapshotCreated: new Date().toISOString()
+        };
+        await env.ASSETS.put(
+          `snapshots/${sport}/scores-latest.json`,
+          JSON.stringify(snapshotPayload),
+          { httpMetadata: { contentType: 'application/json' } }
+        );
+        console.log(`[syncScores] R2 snapshot written for ${sport}`);
+      } catch (r2Err) {
+        console.error(`[syncScores] R2 snapshot failed:`, r2Err.message);
+      }
+    }
+
+    // Update sync metadata
+    await updateSyncMetadata(env, `${sport}_scores_last_sync`, new Date().toISOString());
+    await updateSyncMetadata(env, `${sport}_scores_source`, source);
+
+    const duration = Date.now() - startTime;
+
+    // Log success
+    await logIngest(env, {
+      sport,
+      dataType,
+      source,
+      recordsFetched: events.length,
+      recordsInserted: inserted,
+      recordsUpdated: updated,
+      durationMs: duration,
+      success: true
+    });
+
+    return { sport, dataType, success: true, fetched: events.length, inserted, updated, duration };
+
+  } catch (error) {
+    const duration = Date.now() - startTime;
+
+    await logIngest(env, {
+      sport,
+      dataType,
+      source,
+      durationMs: duration,
+      success: false,
+      errorMessage: error.message,
+      errorStack: error.stack
+    });
+
+    return { sport, dataType, success: false, error: error.message, duration };
+  }
+}
+
+/**
+ * Sync standings from ESPN for CFB or CBB
+ */
+async function syncStandings(env, sport) {
+  const startTime = Date.now();
+  const dataType = 'standings';
+  const source = 'espn';
+
+  try {
+    // ESPN standings endpoint
+    const espnSportMap = {
+      'cfb': 'football/college-football',
+      'cbb': 'basketball/mens-college-basketball',
+      'ncaabb': 'baseball/college-baseball'
+    };
+    const espnSport = espnSportMap[sport] || 'basketball/mens-college-basketball';
+    const url = `https://site.api.espn.com/apis/v2/sports/${espnSport}/standings`;
+
+    console.log(`[syncStandings] Fetching ${sport} from ${url}`);
+
+    const response = await fetchWithRetry(url);
+
+    if (!response.ok) {
+      throw new Error(`ESPN API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const conferences = data.children || [];
+
+    let totalTeams = 0;
+    for (const conf of conferences) {
+      const standings = conf.standings?.entries || [];
+      totalTeams += standings.length;
+    }
+
+    console.log(`[syncStandings] Fetched ${conferences.length} conferences, ${totalTeams} teams`);
+
+    // Write to KV cache for fast reads
+    const season = new Date().getFullYear();
+    const kvKey = `${sport.toUpperCase()}_STANDINGS_${season}`;
+    const cachePayload = {
+      data: conferences,
+      lastUpdated: new Date().toISOString(),
+      source: 'espn',
+      meta: { conferenceCount: conferences.length, teamCount: totalTeams, sport, season }
+    };
+
+    if (env.SPORT_CACHE) {
+      // 6 hour TTL for standings
+      await env.SPORT_CACHE.put(kvKey, JSON.stringify(cachePayload), { expirationTtl: 21600 });
+      console.log(`[syncStandings] Cached ${kvKey} with TTL 6h`);
+    }
+
+    // Write R2 snapshot for fallback
+    if (env.ASSETS) {
+      try {
+        const snapshotPayload = {
+          ...cachePayload,
+          snapshotCreated: new Date().toISOString()
+        };
+        await env.ASSETS.put(
+          `snapshots/${sport}/standings-${season}.json`,
+          JSON.stringify(snapshotPayload),
+          { httpMetadata: { contentType: 'application/json' } }
+        );
+        console.log(`[syncStandings] R2 snapshot written for ${sport}`);
+      } catch (r2Err) {
+        console.error(`[syncStandings] R2 snapshot failed:`, r2Err.message);
+      }
+    }
+
+    // Update sync metadata
+    await updateSyncMetadata(env, `${sport}_standings_last_sync`, new Date().toISOString());
+    await updateSyncMetadata(env, `${sport}_standings_source`, source);
+
+    const duration = Date.now() - startTime;
+
+    await logIngest(env, {
+      sport,
+      dataType,
+      source,
+      recordsFetched: totalTeams,
+      durationMs: duration,
+      success: true
+    });
+
+    return { sport, dataType, success: true, conferences: conferences.length, teams: totalTeams, duration };
+
+  } catch (error) {
+    const duration = Date.now() - startTime;
+
+    await logIngest(env, {
+      sport,
+      dataType,
+      source,
+      durationMs: duration,
+      success: false,
+      errorMessage: error.message,
+      errorStack: error.stack
+    });
+
+    return { sport, dataType, success: false, error: error.message, duration };
+  }
+}
+
+/**
+ * Sync rankings from ESPN for CFB or CBB
+ */
+async function syncRankings(env, sport) {
+  const startTime = Date.now();
+  const dataType = 'rankings';
+  const source = 'espn';
+
+  try {
+    // ESPN rankings endpoint
+    const espnSportMap = {
+      'cfb': 'football/college-football',
+      'cbb': 'basketball/mens-college-basketball',
+      'ncaabb': 'baseball/college-baseball'
+    };
+    const espnSport = espnSportMap[sport] || 'basketball/mens-college-basketball';
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${espnSport}/rankings`;
+
+    console.log(`[syncRankings] Fetching ${sport} from ${url}`);
+
+    const response = await fetchWithRetry(url);
+
+    if (!response.ok) {
+      throw new Error(`ESPN API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const rankings = data.rankings || [];
+
+    let totalRanked = 0;
+    for (const poll of rankings) {
+      totalRanked += poll.ranks?.length || 0;
+    }
+
+    console.log(`[syncRankings] Fetched ${rankings.length} polls, ${totalRanked} ranked teams`);
+
+    // Write to KV cache for fast reads
+    const kvKey = `${sport.toUpperCase()}_RANKINGS_CURRENT`;
+    const cachePayload = {
+      data: rankings,
+      lastUpdated: new Date().toISOString(),
+      source: 'espn',
+      meta: { pollCount: rankings.length, rankedCount: totalRanked, sport }
+    };
+
+    if (env.SPORT_CACHE) {
+      // 24 hour TTL for rankings
+      await env.SPORT_CACHE.put(kvKey, JSON.stringify(cachePayload), { expirationTtl: 86400 });
+      console.log(`[syncRankings] Cached ${kvKey} with TTL 24h`);
+    }
+
+    // Write R2 snapshot for fallback
+    if (env.ASSETS) {
+      try {
+        const snapshotPayload = {
+          ...cachePayload,
+          snapshotCreated: new Date().toISOString()
+        };
+        await env.ASSETS.put(
+          `snapshots/${sport}/rankings-latest.json`,
+          JSON.stringify(snapshotPayload),
+          { httpMetadata: { contentType: 'application/json' } }
+        );
+        console.log(`[syncRankings] R2 snapshot written for ${sport}`);
+      } catch (r2Err) {
+        console.error(`[syncRankings] R2 snapshot failed:`, r2Err.message);
+      }
+    }
+
+    // Update sync metadata
+    await updateSyncMetadata(env, `${sport}_rankings_last_sync`, new Date().toISOString());
+    await updateSyncMetadata(env, `${sport}_rankings_source`, source);
+
+    const duration = Date.now() - startTime;
+
+    await logIngest(env, {
+      sport,
+      dataType,
+      source,
+      recordsFetched: totalRanked,
+      durationMs: duration,
+      success: true
+    });
+
+    return { sport, dataType, success: true, polls: rankings.length, ranked: totalRanked, duration };
+
+  } catch (error) {
+    const duration = Date.now() - startTime;
+
+    await logIngest(env, {
+      sport,
+      dataType,
+      source,
+      durationMs: duration,
+      success: false,
+      errorMessage: error.message,
+      errorStack: error.stack
+    });
+
+    return { sport, dataType, success: false, error: error.message, duration };
+  }
+}
+
+/**
+ * Admin endpoint for data pipeline observability
+ * GET /api/admin/ingest-status
+ */
+async function handleIngestStatus(env, corsHeaders) {
+  try {
+    // Get 24-hour ingest summary using the view
+    const summaryResult = await env.DB.prepare(`
+      SELECT
+        sport,
+        data_type,
+        source,
+        COUNT(*) as total_runs,
+        SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successful,
+        SUM(CASE WHEN success = 0 THEN 1 ELSE 0 END) as failed,
+        ROUND(AVG(duration_ms), 0) as avg_duration_ms,
+        SUM(records_fetched) as total_fetched,
+        SUM(records_inserted) as total_inserted,
+        SUM(records_updated) as total_updated,
+        MAX(created_at) as last_run
+      FROM ingest_log
+      WHERE created_at >= datetime('now', '-24 hours')
+      GROUP BY sport, data_type, source
+      ORDER BY sport, data_type
+    `).all();
+
+    // Get recent failures
+    const failuresResult = await env.DB.prepare(`
+      SELECT sport, data_type, source, error_message, created_at
+      FROM ingest_log
+      WHERE success = 0 AND created_at >= datetime('now', '-24 hours')
+      ORDER BY created_at DESC
+      LIMIT 10
+    `).all();
+
+    // Get sync metadata
+    const metadataResult = await env.DB.prepare(`
+      SELECT key, value, updated_at
+      FROM sync_metadata
+      WHERE key LIKE '%_last_sync' OR key LIKE '%_source'
+      ORDER BY key
+    `).all();
+
+    // Check KV cache status
+    const kvStatus = {
+      cfbScores: false,
+      cbbScores: false,
+      cfbStandings: false,
+      cbbStandings: false,
+      cfbRankings: false,
+      cbbRankings: false
+    };
+
+    if (env.SPORT_CACHE) {
+      kvStatus.cfbScores = !!(await env.SPORT_CACHE.get('CFB_SCORES_CURRENT'));
+      kvStatus.cbbScores = !!(await env.SPORT_CACHE.get('CBB_SCORES_CURRENT'));
+      kvStatus.cfbStandings = !!(await env.SPORT_CACHE.get(`CFB_STANDINGS_${new Date().getFullYear()}`));
+      kvStatus.cbbStandings = !!(await env.SPORT_CACHE.get(`CBB_STANDINGS_${new Date().getFullYear()}`));
+      kvStatus.cfbRankings = !!(await env.SPORT_CACHE.get('CFB_RANKINGS_CURRENT'));
+      kvStatus.cbbRankings = !!(await env.SPORT_CACHE.get('CBB_RANKINGS_CURRENT'));
+    }
+
+    // Calculate health score
+    const summary = summaryResult.results || [];
+    const totalRuns = summary.reduce((acc, row) => acc + (row.total_runs || 0), 0);
+    const successfulRuns = summary.reduce((acc, row) => acc + (row.successful || 0), 0);
+    const healthScore = totalRuns > 0 ? Math.round((successfulRuns / totalRuns) * 100) : 0;
+
+    const healthStatus = healthScore >= 95 ? 'healthy' :
+                         healthScore >= 80 ? 'degraded' : 'unhealthy';
+
+    return new Response(JSON.stringify({
+      health: {
+        score: healthScore,
+        status: healthStatus,
+        lastCheck: getChicagoTimestamp()
+      },
+      summary: summary,
+      recentFailures: failuresResult.results || [],
+      syncStatus: metadataResult.results || [],
+      kvStatus: kvStatus,
+      meta: {
+        totalRuns24h: totalRuns,
+        successRate: totalRuns > 0 ? `${healthScore}%` : 'N/A',
+        generated: new Date().toISOString()
+      }
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'private, no-cache',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: 'Failed to retrieve ingest status',
+      message: error.message,
+      health: { status: 'error' }
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
 
 // === API HANDLER FUNCTIONS ===
 
 async function handleMLBRequest(path, url, env, corsHeaders) {
   const endpoint = path.replace('/api/mlb/', '');
-  const apiKey = env.SPORTSDATAIO_API_KEY;
+  const highlightlyKey = env.HIGHLIGHTLY_API_KEY;
+  const sportsdataioKey = env.SPORTSDATAIO_API_KEY;
 
   // Live scores endpoint - fetch today's games
+  // Fallback chain: Highlightly → SportsDataIO → ESPN
   if (endpoint === 'scores') {
+    // 1. Try Highlightly FIRST (PRIMARY source)
+    if (highlightlyKey) {
+      const highlightlyResponse = await fetchHighlightlyMLBScores(highlightlyKey, corsHeaders, env);
+      if (highlightlyResponse) {
+        return highlightlyResponse;
+      }
+    }
+
+    // 2. Fallback to SportsDataIO (SECONDARY)
     const today = getTodayDate();
     const apiUrl = `${SPORTSDATAIO_BASE}/mlb/scores/json/GamesByDate/${today}`;
     try {
       const response = await fetch(apiUrl, {
-        headers: { 'Ocp-Apim-Subscription-Key': apiKey }
+        headers: { 'Ocp-Apim-Subscription-Key': sportsdataioKey }
       });
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
@@ -611,11 +1532,12 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
         dateTime: game.DateTime
       }));
 
-      return new Response(JSON.stringify({ games, source: 'SportsDataIO', fetchedAt: getChicagoTimestamp() }), {
+      const seasonPhase = getMLBSeasonPhase();
+      return new Response(JSON.stringify({ games, source: 'SportsDataIO', seasonPhase, fetchedAt: getChicagoTimestamp() }), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
-      // On any error, try ESPN fallback
+      // 3. On any error, try ESPN fallback (TERTIARY)
       console.log(`SportsDataIO MLB error: ${error.message}, falling back to ESPN`);
       return fetchESPNMLBScores(corsHeaders);
     }
@@ -624,7 +1546,8 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
   // Leaders endpoint - fetch from ESPN core API with athlete resolution
   if (endpoint === 'leaders') {
     try {
-      const espnUrl = 'https://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/2024/types/2/leaders?limit=10';
+      const currentYear = new Date().getFullYear();
+      const espnUrl = `https://sports.core.api.espn.com/v2/sports/baseball/leagues/mlb/seasons/${currentYear}/types/2/leaders?limit=10`;
       const response = await fetch(espnUrl);
       if (!response.ok) {
         return new Response(JSON.stringify({
@@ -733,8 +1656,117 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
     }
   }
 
+
+  // Standings endpoint - try Highlightly first, then SportsDataIO, then ESPN, then static 2024 fallback
+  if (endpoint === 'standings') {
+    // Check if we're in off-season
+    const seasonPhase = getMLBSeasonPhase();
+
+    // 1. Try Highlightly FIRST (PRIMARY source)
+    if (highlightlyKey) {
+      const highlightlyResponse = await fetchHighlightlyStandings('mlb', highlightlyKey, corsHeaders, env);
+      if (highlightlyResponse) {
+        return highlightlyResponse;
+      }
+    }
+
+    // 2. Try SportsDataIO (SECONDARY)
+    try {
+      const standingsUrl = `${SPORTSDATAIO_BASE}/mlb/scores/json/Standings/2025`;
+      const response = await fetch(standingsUrl + `?key=${sportsdataioKey}`, {
+        headers: { 'Ocp-Apim-Subscription-Key': sportsdataioKey }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return new Response(JSON.stringify({
+          standings: data,
+          source: 'SportsDataIO',
+          season: '2025',
+          seasonPhase: seasonPhase.phase,
+          fetchedAt: getChicagoTimestamp()
+        }), {
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
+        });
+      }
+
+      // If quota exceeded or error, continue to fallback
+      console.log(`SportsDataIO MLB standings returned ${response.status}, trying ESPN fallback`);
+    } catch (error) {
+      console.log(`SportsDataIO MLB standings error: ${error.message}, trying ESPN fallback`);
+    }
+
+    // 3. Try ESPN (TERTIARY)
+    try {
+      const espnUrl = 'https://site.api.espn.com/apis/v2/sports/baseball/mlb/standings';
+      const espnResponse = await fetch(espnUrl, {
+        headers: { 'User-Agent': 'BlazeIntel/2.4' }
+      });
+
+      if (espnResponse.ok) {
+        const espnData = await espnResponse.json();
+        // Transform ESPN data to our format
+        const standings = [];
+        if (espnData.children) {
+          for (const league of espnData.children) {
+            for (const division of (league.children || [])) {
+              for (const team of (division.standings?.entries || [])) {
+                const stats = team.stats || [];
+                const getStatValue = (name) => {
+                  const stat = stats.find(s => s.name === name || s.abbreviation === name);
+                  return stat ? (stat.value || stat.displayValue || '0') : '0';
+                };
+                standings.push({
+                  Team: team.team?.displayName || team.team?.name || 'Unknown',
+                  City: team.team?.location || '',
+                  Division: division.name || league.name || 'Unknown',
+                  League: league.name || 'Unknown',
+                  Wins: parseInt(getStatValue('wins')) || 0,
+                  Losses: parseInt(getStatValue('losses')) || 0,
+                  Percentage: parseFloat(getStatValue('winPercent')) || 0,
+                  GamesBehind: getStatValue('gamesBehind') || '-',
+                  TeamID: team.team?.id || null
+                });
+              }
+            }
+          }
+        }
+
+        // Only return ESPN data if we actually got standings
+        if (standings.length > 0) {
+          return new Response(JSON.stringify({
+            standings,
+            source: 'ESPN',
+            season: '2024',
+            seasonPhase: seasonPhase.phase,
+            fetchedAt: getChicagoTimestamp()
+          }), {
+            headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
+          });
+        }
+        console.log('ESPN returned empty standings, using static 2024 fallback');
+      }
+    } catch (error) {
+      console.log(`ESPN MLB standings error: ${error.message}, using static 2024 fallback`);
+    }
+
+    // 4. Ultimate fallback: 2024 Final Standings (static data)
+    const finalStandings2024 = getMLB2024FinalStandings();
+    return new Response(JSON.stringify({
+      standings: finalStandings2024,
+      source: 'BSI Archive (2024 Final)',
+      season: '2024',
+      seasonPhase: seasonPhase.phase,
+      message: seasonPhase.isOffseason
+        ? 'Off-season. Showing 2024 final standings. Spring Training begins Feb 20, 2025.'
+        : 'Live data temporarily unavailable. Showing 2024 final standings.',
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+    });
+  }
+
   const routes = {
-    'standings': '/mlb/scores/json/Standings/2025',
     'teams': '/mlb/scores/json/Teams',
     'schedule': '/mlb/scores/json/Games/2025',
     'cardinals': '/mlb/scores/json/TeamSeasonStats/2025?team=STL',
@@ -743,20 +1775,30 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
   };
 
   const apiPath = routes[endpoint] || `/mlb/scores/json/${endpoint}`;
-  return fetchSportsData(`${SPORTSDATAIO_BASE}${apiPath}`, apiKey, corsHeaders, 300);
+  return fetchSportsData(`${SPORTSDATAIO_BASE}${apiPath}`, sportsdataioKey, corsHeaders, 300);
 }
 
 async function handleNFLRequest(path, url, env, corsHeaders) {
   const endpoint = path.replace('/api/nfl/', '');
-  const apiKey = env.SPORTSDATAIO_API_KEY;
+  const highlightlyKey = env.HIGHLIGHTLY_API_KEY;
+  const sportsdataioKey = env.SPORTSDATAIO_API_KEY;
 
   // Live scores endpoint - fetch current week games
+  // Fallback chain: Highlightly → SportsDataIO → ESPN
   if (endpoint === 'scores') {
-    // Get current NFL week (2024 season is in progress, 2025 will start in September)
+    // 1. Try Highlightly FIRST (PRIMARY source)
+    if (highlightlyKey) {
+      const highlightlyResponse = await fetchHighlightlyNFLScores(highlightlyKey, corsHeaders, env);
+      if (highlightlyResponse) {
+        return highlightlyResponse;
+      }
+    }
+
+    // 2. Fallback to SportsDataIO (SECONDARY)
     const apiUrl = `${SPORTSDATAIO_BASE}/nfl/scores/json/ScoresByWeek/2024/REG/13`;
     try {
       const response = await fetch(apiUrl, {
-        headers: { 'Ocp-Apim-Subscription-Key': apiKey }
+        headers: { 'Ocp-Apim-Subscription-Key': sportsdataioKey }
       });
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
@@ -777,7 +1819,7 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
-      // On any error, try ESPN fallback
+      // 3. On any error, try ESPN fallback (TERTIARY)
       console.log(`SportsDataIO NFL error: ${error.message}, falling back to ESPN`);
       return fetchESPNNFLScores(corsHeaders);
     }
@@ -786,7 +1828,8 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
   // Leaders endpoint - fetch from ESPN core API with athlete resolution
   if (endpoint === 'leaders') {
     try {
-      const espnUrl = 'https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2024/types/2/leaders?limit=10';
+      const currentYear = new Date().getFullYear();
+      const espnUrl = `https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/${currentYear}/types/2/leaders?limit=10`;
       const response = await fetch(espnUrl);
       if (!response.ok) {
         return new Response(JSON.stringify({
@@ -898,8 +1941,142 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
     }
   }
 
+  // Standings endpoint - try Highlightly first
+  if (endpoint === 'standings') {
+    if (highlightlyKey) {
+      const highlightlyResponse = await fetchHighlightlyStandings('nfl', highlightlyKey, corsHeaders, env);
+      if (highlightlyResponse) {
+        return highlightlyResponse;
+      }
+    }
+    // Fallback to SportsDataIO
+    return fetchSportsData(`${SPORTSDATAIO_BASE}/nfl/scores/json/Standings/2024`, sportsdataioKey, corsHeaders, 300);
+  }
+
+  // Box score endpoint - /api/nfl/box-score/:matchId
+  if (endpoint.startsWith('box-score/')) {
+    const matchId = endpoint.replace('box-score/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const boxScore = await fetchHighlightlyBoxScore('nfl', matchId, highlightlyKey, corsHeaders, env);
+      if (boxScore) return boxScore;
+    }
+    return new Response(JSON.stringify({ error: 'Box score not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Match details endpoint - /api/nfl/match/:matchId
+  if (endpoint.startsWith('match/')) {
+    const matchId = endpoint.replace('match/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const matchDetails = await fetchHighlightlyMatchDetails('nfl', matchId, highlightlyKey, corsHeaders, env);
+      if (matchDetails) return matchDetails;
+    }
+    return new Response(JSON.stringify({ error: 'Match details not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Lineups endpoint - /api/nfl/lineups/:matchId
+  if (endpoint.startsWith('lineups/')) {
+    const matchId = endpoint.replace('lineups/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const lineups = await fetchHighlightlyLineups('nfl', matchId, highlightlyKey, corsHeaders, env);
+      if (lineups) return lineups;
+    }
+    return new Response(JSON.stringify({ error: 'Lineups not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Highlights endpoint - /api/nfl/highlights?date=YYYY-MM-DD&matchId=123
+  if (endpoint === 'highlights') {
+    const date = url.searchParams.get('date');
+    const matchId = url.searchParams.get('matchId');
+    if (highlightlyKey) {
+      const highlights = await fetchHighlightlyHighlights('nfl', highlightlyKey, corsHeaders, env, date, matchId);
+      if (highlights) return highlights;
+    }
+    return new Response(JSON.stringify({ highlights: [], source: 'Highlightly', error: 'No highlights available' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Player stats endpoint - /api/nfl/players/:playerId/stats
+  if (endpoint.match(/^players\/[^\/]+\/stats$/)) {
+    const playerId = endpoint.split('/')[1];
+    if (highlightlyKey) {
+      const stats = await fetchHighlightlyPlayerStats('nfl', playerId, highlightlyKey, corsHeaders, env);
+      if (stats) return stats;
+    }
+    return new Response(JSON.stringify({ error: 'Player stats not available', playerId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Head-to-head endpoint - /api/nfl/h2h?teamOne=10&teamTwo=11
+  if (endpoint === 'h2h') {
+    const teamOne = url.searchParams.get('teamOne');
+    const teamTwo = url.searchParams.get('teamTwo');
+    if (!teamOne || !teamTwo) {
+      return new Response(JSON.stringify({ error: 'Both teamOne and teamTwo are required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const h2h = await fetchHighlightlyHeadToHead('nfl', teamOne, teamTwo, highlightlyKey, corsHeaders, env);
+      if (h2h) return h2h;
+    }
+    return new Response(JSON.stringify({ error: 'Head-to-head data not available', teamOne, teamTwo }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Odds endpoint - /api/nfl/odds/:matchId
+  if (endpoint.startsWith('odds/')) {
+    const matchId = endpoint.replace('odds/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const odds = await fetchHighlightlyOdds('nfl', matchId, highlightlyKey, corsHeaders, env);
+      if (odds) return odds;
+    }
+    return new Response(JSON.stringify({ error: 'Odds not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
   const routes = {
-    'standings': '/nfl/scores/json/Standings/2024',
     'teams': '/nfl/scores/json/Teams',
     'schedule': '/nfl/scores/json/Schedules/2024',
     'titans': '/nfl/scores/json/TeamSeasonStats/2024/TEN',
@@ -908,20 +2085,31 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
   };
 
   const apiPath = routes[endpoint] || `/nfl/scores/json/${endpoint}`;
-  return fetchSportsData(`${SPORTSDATAIO_BASE}${apiPath}`, apiKey, corsHeaders, 300);
+  return fetchSportsData(`${SPORTSDATAIO_BASE}${apiPath}`, sportsdataioKey, corsHeaders, 300);
 }
 
 async function handleNBARequest(path, url, env, corsHeaders) {
   const endpoint = path.replace('/api/nba/', '');
-  const apiKey = env.SPORTSDATAIO_API_KEY;
+  const highlightlyKey = env.HIGHLIGHTLY_API_KEY;
+  const sportsdataioKey = env.SPORTSDATAIO_API_KEY;
 
   // Live scores endpoint - fetch today's games
+  // Fallback chain: Highlightly → SportsDataIO → ESPN
   if (endpoint === 'scores') {
+    // 1. Try Highlightly FIRST (PRIMARY source)
+    if (highlightlyKey) {
+      const highlightlyResponse = await fetchHighlightlyNBAScores(highlightlyKey, corsHeaders, env);
+      if (highlightlyResponse) {
+        return highlightlyResponse;
+      }
+    }
+
+    // 2. Fallback to SportsDataIO (SECONDARY)
     const today = getTodayDate();
     const apiUrl = `${SPORTSDATAIO_BASE}/nba/scores/json/GamesByDate/${today}`;
     try {
       const response = await fetch(apiUrl, {
-        headers: { 'Ocp-Apim-Subscription-Key': apiKey }
+        headers: { 'Ocp-Apim-Subscription-Key': sportsdataioKey }
       });
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
@@ -968,7 +2156,7 @@ async function handleNBARequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
       });
     } catch (error) {
-      // On any error, try ESPN fallback
+      // 3. On any error, try ESPN fallback (TERTIARY)
       console.log(`SportsDataIO NBA error: ${error.message}, falling back to ESPN`);
       return fetchESPNNBAScores(corsHeaders);
     }
@@ -1089,8 +2277,318 @@ async function handleNBARequest(path, url, env, corsHeaders) {
     }
   }
 
+  // === NBA PLAYER ENDPOINTS (ESPN) ===
+
+  // Player Search - /api/nba/players?name=LeBron&offset=0&limit=20
+  if (endpoint === 'players') {
+    const nameQuery = url.searchParams.get('name') || '';
+    const offset = parseInt(url.searchParams.get('offset')) || 0;
+    const limit = Math.min(parseInt(url.searchParams.get('limit')) || 20, 50);
+
+    try {
+      // Get all NBA team rosters from ESPN
+      const teamsUrl = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams?limit=30';
+      const teamsResp = await fetch(teamsUrl);
+      if (!teamsResp.ok) throw new Error('Failed to fetch NBA teams');
+      
+      const teamsData = await teamsResp.json();
+      const teams = teamsData.sports?.[0]?.leagues?.[0]?.teams || [];
+      
+      // Collect all players from rosters in parallel
+      const rosterPromises = teams.slice(0, 30).map(async (t) => {
+        try {
+          const rosterUrl = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${t.team.id}/roster`;
+          const resp = await fetch(rosterUrl);
+          if (!resp.ok) return [];
+          const data = await resp.json();
+          return (data.athletes || []).map(a => ({
+            id: a.id,
+            fullName: a.fullName || a.displayName,
+            logo: a.headshot?.href || `https://a.espncdn.com/i/headshots/nba/players/full/${a.id}.png`,
+            team: t.team.displayName,
+            teamAbbr: t.team.abbreviation,
+            position: a.position?.abbreviation || ''
+          }));
+        } catch (e) { return []; }
+      });
+
+      const rosters = await Promise.all(rosterPromises);
+      let allPlayers = rosters.flat();
+
+      // Filter by name if provided
+      if (nameQuery) {
+        const query = nameQuery.toLowerCase();
+        allPlayers = allPlayers.filter(p => 
+          (p.fullName || '').toLowerCase().includes(query)
+        );
+      }
+
+      // Sort alphabetically and paginate
+      allPlayers.sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
+      const paginated = allPlayers.slice(offset, offset + limit);
+
+      return new Response(JSON.stringify({
+        players: paginated.map(p => ({ id: p.id, logo: p.logo, fullName: p.fullName })),
+        pagination: { offset, limit, total: allPlayers.length, hasMore: offset + limit < allPlayers.length },
+        source: 'ESPN',
+        league: 'NBA',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`NBA player search error: ${error.message}`);
+      return new Response(JSON.stringify({ 
+        players: [], error: error.message, fetchedAt: getChicagoTimestamp() 
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+  // Player Profile - /api/nba/players/{playerId}
+  if (endpoint.match(/^players\/[^\/]+$/) && !endpoint.includes('/statistics')) {
+    const playerId = endpoint.split('/')[1];
+
+    try {
+      const profileUrl = `https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/athletes/${playerId}`;
+      const resp = await fetch(profileUrl);
+      
+      if (!resp.ok) {
+        return new Response(JSON.stringify({ error: 'Player not found', playerId }), {
+          status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
+      const p = await resp.json();
+      const birthCity = p.birthPlace?.city || null;
+      const birthState = p.birthPlace?.state || p.birthPlace?.country || '';
+
+      const profile = {
+        id: p.id,
+        fullName: p.fullName || p.displayName,
+        jersey: p.jersey || null,
+        isActive: p.active !== undefined ? p.active : true,
+        height: p.height || null,
+        weight: p.weight || null,
+        birthDate: p.dateOfBirth || null,
+        birthPlace: birthCity ? (birthCity + (birthState ? ', ' + birthState : '')) : null,
+        position: {
+          main: p.position?.displayName || null,
+          abbreviation: p.position?.abbreviation || null
+        },
+        team: p.team ? {
+          id: p.team.id,
+          name: p.team.shortDisplayName || p.team.displayName,
+          displayName: p.team.displayName,
+          abbreviation: p.team.abbreviation,
+          logo: p.team.logos?.[0]?.href || null,
+          league: 'NBA'
+        } : null,
+        headshot: p.headshot?.href || `https://a.espncdn.com/i/headshots/nba/players/full/${p.id}.png`,
+        college: p.college?.name || null,
+        draft: p.draft ? { year: p.draft.year, round: p.draft.round, pick: p.draft.selection } : null
+      };
+
+      return new Response(JSON.stringify(profile), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`NBA player profile error: ${error.message}`);
+      return new Response(JSON.stringify({ error: error.message, playerId }), {
+        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+  // Player Statistics - /api/nba/players/{playerId}/statistics
+  if (endpoint.match(/^players\/[^\/]+\/statistics$/)) {
+    const playerId = endpoint.split('/')[1];
+
+    try {
+      const statsUrl = `https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/athletes/${playerId}/statistics`;
+      const resp = await fetch(statsUrl);
+      
+      if (!resp.ok) {
+        return new Response(JSON.stringify({ playerId, perSeason: [], error: 'No statistics available', fetchedAt: getChicagoTimestamp() }), {
+          status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
+      const data = await resp.json();
+      const defenseNames = ['blocks', 'steals', 'defensive rebounds'];
+      const generalNames = ['minutes', 'games played', 'games started', 'fouls', 'rebounds'];
+
+      const categorizeStats = (categories) => {
+        const defense = [], general = [], offense = [];
+        for (const cat of (categories || [])) {
+          for (const stat of (cat.stats || [])) {
+            const formatted = { name: stat.displayName || stat.name, value: stat.value || 0 };
+            const nameLower = (formatted.name || '').toLowerCase();
+            if (defenseNames.some(d => nameLower.includes(d))) { defense.push(formatted); }
+            else if (generalNames.some(g => nameLower.includes(g))) { general.push(formatted); }
+            else { offense.push(formatted); }
+          }
+        }
+        return { defense, general, offense };
+      };
+
+      const perSeason = [];
+      if (data.splits?.categories) {
+        const categorized = categorizeStats(data.splits.categories);
+        perSeason.push({ season: new Date().getFullYear(), league: 'NBA', teams: [], ...categorized });
+      }
+
+      return new Response(JSON.stringify({ playerId, perSeason, source: 'ESPN', league: 'NBA', fetchedAt: getChicagoTimestamp() }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`NBA player stats error: ${error.message}`);
+      return new Response(JSON.stringify({ error: error.message, playerId, perSeason: [] }), {
+        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+
+  // Standings endpoint - try Highlightly first
+  if (endpoint === 'standings') {
+    if (highlightlyKey) {
+      const highlightlyResponse = await fetchHighlightlyStandings('nba', highlightlyKey, corsHeaders, env);
+      if (highlightlyResponse) {
+        return highlightlyResponse;
+      }
+    }
+    // Fallback to SportsDataIO
+    return fetchSportsData(`${SPORTSDATAIO_BASE}/nba/scores/json/Standings/2025`, sportsdataioKey, corsHeaders, 300);
+  }
+
+  // Box score endpoint - /api/nba/box-score/:matchId
+  if (endpoint.startsWith('box-score/')) {
+    const matchId = endpoint.replace('box-score/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const boxScore = await fetchHighlightlyBoxScore('nba', matchId, highlightlyKey, corsHeaders, env);
+      if (boxScore) return boxScore;
+    }
+    return new Response(JSON.stringify({ error: 'Box score not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Match details endpoint - /api/nba/match/:matchId
+  if (endpoint.startsWith('match/')) {
+    const matchId = endpoint.replace('match/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const matchDetails = await fetchHighlightlyMatchDetails('nba', matchId, highlightlyKey, corsHeaders, env);
+      if (matchDetails) return matchDetails;
+    }
+    return new Response(JSON.stringify({ error: 'Match details not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Lineups endpoint - /api/nba/lineups/:matchId
+  if (endpoint.startsWith('lineups/')) {
+    const matchId = endpoint.replace('lineups/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const lineups = await fetchHighlightlyLineups('nba', matchId, highlightlyKey, corsHeaders, env);
+      if (lineups) return lineups;
+    }
+    return new Response(JSON.stringify({ error: 'Lineups not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Highlights endpoint - /api/nba/highlights?date=YYYY-MM-DD&matchId=123
+  if (endpoint === 'highlights') {
+    const date = url.searchParams.get('date');
+    const matchId = url.searchParams.get('matchId');
+    if (highlightlyKey) {
+      const highlights = await fetchHighlightlyHighlights('nba', highlightlyKey, corsHeaders, env, date, matchId);
+      if (highlights) return highlights;
+    }
+    return new Response(JSON.stringify({ highlights: [], source: 'Highlightly', error: 'No highlights available' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Highlightly player stats endpoint - /api/nba/players/:playerId/highlightly-stats
+  // (separate from ESPN /statistics endpoint)
+  if (endpoint.match(/^players\/[^\/]+\/highlightly-stats$/)) {
+    const playerId = endpoint.split('/')[1];
+    if (highlightlyKey) {
+      const stats = await fetchHighlightlyPlayerStats('nba', playerId, highlightlyKey, corsHeaders, env);
+      if (stats) return stats;
+    }
+    return new Response(JSON.stringify({ error: 'Highlightly player stats not available', playerId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Head-to-head endpoint - /api/nba/h2h?teamOne=10&teamTwo=11
+  if (endpoint === 'h2h') {
+    const teamOne = url.searchParams.get('teamOne');
+    const teamTwo = url.searchParams.get('teamTwo');
+    if (!teamOne || !teamTwo) {
+      return new Response(JSON.stringify({ error: 'Both teamOne and teamTwo are required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const h2h = await fetchHighlightlyHeadToHead('nba', teamOne, teamTwo, highlightlyKey, corsHeaders, env);
+      if (h2h) return h2h;
+    }
+    return new Response(JSON.stringify({ error: 'Head-to-head data not available', teamOne, teamTwo }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  // Odds endpoint - /api/nba/odds/:matchId
+  if (endpoint.startsWith('odds/')) {
+    const matchId = endpoint.replace('odds/', '');
+    if (!matchId) {
+      return new Response(JSON.stringify({ error: 'Match ID required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    if (highlightlyKey) {
+      const odds = await fetchHighlightlyOdds('nba', matchId, highlightlyKey, corsHeaders, env);
+      if (odds) return odds;
+    }
+    return new Response(JSON.stringify({ error: 'Odds not available', matchId }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
   const routes = {
-    'standings': '/nba/scores/json/Standings/2025',
     'teams': '/nba/scores/json/Teams',
     'schedule': '/nba/scores/json/Games/2025',
     'grizzlies': '/nba/scores/json/TeamSeasonStats/2025/MEM',
@@ -1099,12 +2597,498 @@ async function handleNBARequest(path, url, env, corsHeaders) {
   };
 
   const apiPath = routes[endpoint] || `/nba/scores/json/${endpoint}`;
-  return fetchSportsData(`${SPORTSDATAIO_BASE}${apiPath}`, apiKey, corsHeaders, 300);
+  return fetchSportsData(`${SPORTSDATAIO_BASE}${apiPath}`, sportsdataioKey, corsHeaders, 300);
+}
+
+
+
+// === NCAAB (College Basketball) Handler ===
+async function handleNCAABRequest(path, url, env, corsHeaders) {
+  const endpoint = path.replace('/api/ncaab/', '');
+
+  // === PLAYER ENDPOINTS (ESPN) ===
+
+  // Player Search - /api/ncaab/players?name=Cooper&offset=0&limit=50
+  if (endpoint === 'players') {
+    const nameQuery = url.searchParams.get('name') || '';
+    const offset = parseInt(url.searchParams.get('offset')) || 0;
+    const limit = Math.min(parseInt(url.searchParams.get('limit')) || 50, 100);
+
+    try {
+      // Get all men's college basketball teams from ESPN
+      const teamsUrl = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams?limit=50&groups=50'; // Top 50 D1 teams
+      const teamsResp = await fetch(teamsUrl);
+      if (!teamsResp.ok) throw new Error('Failed to fetch NCAAB teams');
+      
+      const teamsData = await teamsResp.json();
+      const teams = teamsData.sports?.[0]?.leagues?.[0]?.teams || [];
+      
+      // Collect players from rosters in parallel (limit to top 30 teams for performance)
+      const rosterPromises = teams.slice(0, 30).map(async (t) => {
+        try {
+          const rosterUrl = `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${t.team.id}/roster`;
+          const resp = await fetch(rosterUrl);
+          if (!resp.ok) return [];
+          const data = await resp.json();
+          return (data.athletes || []).map(a => ({
+            id: a.id,
+            fullName: a.fullName || a.displayName,
+            logo: a.headshot?.href || `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${a.id}.png`,
+            team: t.team.displayName,
+            teamAbbr: t.team.abbreviation,
+            position: a.position?.abbreviation || '',
+            class: a.experience?.displayValue || null
+          }));
+        } catch (e) { return []; }
+      });
+
+      const rosters = await Promise.all(rosterPromises);
+      let allPlayers = rosters.flat();
+
+      // Filter by name if provided
+      if (nameQuery) {
+        const query = nameQuery.toLowerCase();
+        allPlayers = allPlayers.filter(p => 
+          (p.fullName || '').toLowerCase().includes(query)
+        );
+      }
+
+      // Sort alphabetically and paginate
+      allPlayers.sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
+      const paginated = allPlayers.slice(offset, offset + limit);
+
+      return new Response(JSON.stringify({
+        players: paginated.map(p => ({ id: p.id, logo: p.logo, fullName: p.fullName })),
+        pagination: { offset, limit, total: allPlayers.length, hasMore: offset + limit < allPlayers.length },
+        source: 'ESPN',
+        league: 'NCAAB',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`NCAAB player search error: ${error.message}`);
+      return new Response(JSON.stringify({ 
+        players: [], error: error.message, fetchedAt: getChicagoTimestamp() 
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+  // Player Profile - /api/ncaab/players/{playerId}
+  if (endpoint.match(/^players\/[^\/]+$/) && !endpoint.includes('/statistics')) {
+    const playerId = endpoint.split('/')[1];
+
+    try {
+      const profileUrl = `https://sports.core.api.espn.com/v2/sports/basketball/leagues/mens-college-basketball/athletes/${playerId}`;
+      const resp = await fetch(profileUrl);
+      
+      if (!resp.ok) {
+        return new Response(JSON.stringify({ error: 'Player not found', playerId }), {
+          status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
+      const p = await resp.json();
+      const birthCity = p.birthPlace?.city || null;
+      const birthState = p.birthPlace?.state || p.birthPlace?.country || '';
+
+      const profile = {
+        id: p.id,
+        fullName: p.fullName || p.displayName,
+        jersey: p.jersey || null,
+        isActive: p.active !== undefined ? p.active : true,
+        height: p.height || null,
+        weight: p.weight || null,
+        birthDate: p.dateOfBirth || null,
+        birthPlace: birthCity ? (birthCity + (birthState ? ', ' + birthState : '')) : null,
+        class: p.experience?.displayValue || null,
+        eligibility: p.eligibilityYear || null,
+        position: {
+          main: p.position?.displayName || null,
+          abbreviation: p.position?.abbreviation || null
+        },
+        team: p.team ? {
+          id: p.team.id,
+          name: p.team.shortDisplayName || p.team.displayName,
+          displayName: p.team.displayName,
+          abbreviation: p.team.abbreviation,
+          logo: p.team.logos?.[0]?.href || null,
+          conference: null,
+          league: 'NCAAB'
+        } : null,
+        headshot: p.headshot?.href || `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${p.id}.png`,
+        highSchool: p.highSchool?.name || null
+      };
+
+      return new Response(JSON.stringify(profile), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`NCAAB player profile error: ${error.message}`);
+      return new Response(JSON.stringify({ error: error.message, playerId }), {
+        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+  // Player Statistics - /api/ncaab/players/{playerId}/statistics
+  if (endpoint.match(/^players\/[^\/]+\/statistics$/)) {
+    const playerId = endpoint.split('/')[1];
+
+    try {
+      const statsUrl = `https://sports.core.api.espn.com/v2/sports/basketball/leagues/mens-college-basketball/athletes/${playerId}/statistics`;
+      const resp = await fetch(statsUrl);
+      
+      if (!resp.ok) {
+        return new Response(JSON.stringify({ playerId, perSeason: [], error: 'No statistics available', fetchedAt: getChicagoTimestamp() }), {
+          status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+
+      const data = await resp.json();
+      const defenseNames = ['blocks', 'steals', 'defensive rebounds'];
+      const generalNames = ['minutes', 'games played', 'games started', 'fouls', 'rebounds'];
+
+      const categorizeStats = (categories) => {
+        const defense = [], general = [], offense = [];
+        for (const cat of (categories || [])) {
+          for (const stat of (cat.stats || [])) {
+            const formatted = { name: stat.displayName || stat.name, value: stat.value || 0 };
+            const nameLower = (formatted.name || '').toLowerCase();
+            if (defenseNames.some(d => nameLower.includes(d))) { defense.push(formatted); }
+            else if (generalNames.some(g => nameLower.includes(g))) { general.push(formatted); }
+            else { offense.push(formatted); }
+          }
+        }
+        return { defense, general, offense };
+      };
+
+      const perSeason = [];
+      if (data.splits?.categories) {
+        const categorized = categorizeStats(data.splits.categories);
+        perSeason.push({ season: new Date().getFullYear(), league: 'NCAAB', teams: [], ...categorized });
+      }
+
+      return new Response(JSON.stringify({ playerId, perSeason, source: 'ESPN', league: 'NCAAB', fetchedAt: getChicagoTimestamp() }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    } catch (error) {
+      console.log(`NCAAB player stats error: ${error.message}`);
+      return new Response(JSON.stringify({ error: error.message, playerId, perSeason: [] }), {
+        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+  // Scores endpoint - KV first, then ESPN fallback
+  if (endpoint === 'scores') {
+    // Try KV cache first
+    if (env.SPORT_CACHE) {
+      try {
+        const cached = await env.SPORT_CACHE.get('CBB_SCORES_CURRENT', { type: 'json' });
+        if (cached && cached.data && cached.data.length > 0) {
+          // Transform cached data to legacy format
+          const games = cached.data.map(g => ({
+            id: g.sourceId,
+            Status: g.status === 'live' ? 'In Progress' : g.status === 'final' ? 'Final' : 'Scheduled',
+            HomeTeam: g.homeTeamAbbrev,
+            AwayTeam: g.awayTeamAbbrev,
+            HomeTeamScore: g.homeScore,
+            AwayTeamScore: g.awayScore,
+            Period: g.period || 0,
+            TimeRemaining: g.clock || '',
+            DateTime: g.startTime
+          }));
+          return new Response(JSON.stringify({
+            data: games,
+            games, // Legacy format
+            lastUpdated: cached.lastUpdated,
+            source: 'ESPN',
+            status: 'cached',
+            league: 'NCAAB',
+            fetchedAt: getChicagoTimestamp()
+          }), {
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'public, max-age=15',
+              'X-Cache-Status': 'HIT',
+              ...corsHeaders
+            }
+          });
+        }
+      } catch (e) {
+        console.log('[CBB Scores] KV read failed:', e.message);
+      }
+    }
+
+    // KV miss - fetch live from ESPN
+    try {
+      const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard';
+      const response = await fetch(espnUrl);
+      if (!response.ok) throw new Error('ESPN NCAAB API failed');
+
+      const data = await response.json();
+      const games = (data.events || []).map(event => {
+        const comp = event.competitions?.[0];
+        const homeTeam = comp?.competitors?.find(c => c.homeAway === 'home');
+        const awayTeam = comp?.competitors?.find(c => c.homeAway === 'away');
+        return {
+          id: event.id,
+          Status: event.status?.type?.description || 'Unknown',
+          HomeTeam: homeTeam?.team?.abbreviation || 'TBD',
+          AwayTeam: awayTeam?.team?.abbreviation || 'TBD',
+          HomeTeamScore: parseInt(homeTeam?.score) || 0,
+          AwayTeamScore: parseInt(awayTeam?.score) || 0,
+          Period: comp?.status?.period || 0,
+          TimeRemaining: comp?.status?.displayClock || '',
+          DateTime: event.date
+        };
+      });
+
+      return new Response(JSON.stringify({
+        data: games,
+        games, // Legacy format
+        lastUpdated: new Date().toISOString(),
+        source: 'ESPN',
+        status: 'live',
+        league: 'NCAAB',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=60',
+          'X-Cache-Status': 'MISS',
+          ...corsHeaders
+        }
+      });
+    } catch (error) {
+      return new Response(JSON.stringify({
+        data: [],
+        games: [],
+        error: error.message,
+        status: 'error',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+  // === STANDINGS ENDPOINT ===
+  if (endpoint === 'standings') {
+    const conferenceFilter = url.searchParams.get('conference');
+    try {
+      // Fetch standings for major conferences from ESPN
+      const conferences = [
+        { id: '8', name: 'SEC' },
+        { id: '4', name: 'Big 12' },
+        { id: '7', name: 'Big Ten' },
+        { id: '2', name: 'ACC' },
+        { id: '3', name: 'Big East' },
+        { id: '21', name: 'Pac-12' },
+        { id: '62', name: 'AAC' },
+        { id: '44', name: 'Mountain West' },
+        { id: '50', name: 'WCC' },
+        { id: '1', name: 'America East' },
+        { id: '5', name: 'Big Sky' },
+        { id: '6', name: 'Big South' },
+        { id: '9', name: 'Colonial' },
+        { id: '10', name: 'Conference USA' },
+        { id: '11', name: 'Horizon' },
+        { id: '12', name: 'Ivy' },
+        { id: '13', name: 'MAAC' },
+        { id: '14', name: 'MAC' },
+        { id: '16', name: 'MEAC' },
+        { id: '18', name: 'Missouri Valley' },
+        { id: '20', name: 'Ohio Valley' },
+        { id: '22', name: 'Patriot' },
+        { id: '24', name: 'Southern' },
+        { id: '25', name: 'Southland' },
+        { id: '26', name: 'SWAC' },
+        { id: '27', name: 'Sun Belt' },
+        { id: '29', name: 'Atlantic 10' },
+        { id: '30', name: 'WAC' },
+        { id: '45', name: 'ASUN' },
+        { id: '46', name: 'Big West' },
+        { id: '49', name: 'Summit' },
+        { id: '48', name: 'NEC' }
+      ];
+
+      let filteredConferences = conferences;
+      if (conferenceFilter && conferenceFilter !== 'all') {
+        filteredConferences = conferences.filter(c =>
+          c.name.toLowerCase().includes(conferenceFilter.toLowerCase())
+        );
+      }
+
+      const standingsData = await Promise.all(
+        filteredConferences.slice(0, 10).map(async (conf) => {
+          try {
+            const standingsUrl = `https://site.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?group=${conf.id}`;
+            const resp = await fetch(standingsUrl);
+            if (!resp.ok) return null;
+            const data = await resp.json();
+
+            const teams = (data.standings?.entries || []).map(entry => ({
+              name: entry.team?.displayName || 'Unknown',
+              abbreviation: entry.team?.abbreviation || '',
+              logo: entry.team?.logos?.[0]?.href || null,
+              rank: entry.team?.rank || null,
+              conferenceWins: entry.stats?.find(s => s.name === 'wins')?.value || 0,
+              conferenceLosses: entry.stats?.find(s => s.name === 'losses')?.value || 0,
+              wins: entry.stats?.find(s => s.name === 'overall')?.displayValue?.split('-')?.[0] || 0,
+              losses: entry.stats?.find(s => s.name === 'overall')?.displayValue?.split('-')?.[1] || 0,
+              streak: entry.stats?.find(s => s.name === 'streak')?.displayValue || '--'
+            }));
+
+            return { name: conf.name, teams };
+          } catch (e) {
+            console.log(`Error fetching ${conf.name}: ${e.message}`);
+            return null;
+          }
+        })
+      );
+
+      const standings = standingsData.filter(s => s && s.teams.length > 0);
+
+      return new Response(JSON.stringify({
+        standings,
+        source: 'ESPN',
+        league: 'NCAAB',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=600', ...corsHeaders }
+      });
+    } catch (error) {
+      return new Response(JSON.stringify({ standings: [], error: error.message, fetchedAt: getChicagoTimestamp() }), {
+        status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
+
+  // Default: return available endpoints
+  return new Response(JSON.stringify({
+    error: 'Endpoint not found',
+    availableEndpoints: [
+      '/api/ncaab/scores',
+      '/api/ncaab/standings',
+      '/api/ncaab/players',
+      '/api/ncaab/players/{id}',
+      '/api/ncaab/players/{id}/statistics'
+    ],
+    fetchedAt: getChicagoTimestamp()
+  }), {
+    status: 404,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders }
+  });
 }
 
 async function handleCFBRequest(path, url, env, corsHeaders) {
   const endpoint = path.replace('/api/cfb/', '');
   const apiKey = env.COLLEGEFOOTBALLDATA_API_KEY;
+
+  // Scores endpoint - KV first, then ESPN fallback
+  if (endpoint === 'scores') {
+    // Try KV cache first
+    if (env.SPORT_CACHE) {
+      try {
+        const cached = await env.SPORT_CACHE.get('CFB_SCORES_CURRENT', { type: 'json' });
+        if (cached && cached.data && cached.data.length > 0) {
+          // Transform cached data to legacy format
+          const games = cached.data.map(g => ({
+            id: g.sourceId,
+            Status: g.status === 'live' ? 'In Progress' : g.status === 'final' ? 'Final' : 'Scheduled',
+            HomeTeam: g.homeTeamAbbrev,
+            AwayTeam: g.awayTeamAbbrev,
+            HomeTeamScore: g.homeScore,
+            AwayTeamScore: g.awayScore,
+            Quarter: g.period || 0,
+            TimeRemaining: g.clock || '',
+            DateTime: g.startTime,
+            HomeRank: g.homeRank,
+            AwayRank: g.awayRank
+          }));
+          return new Response(JSON.stringify({
+            data: games,
+            games, // Legacy format
+            lastUpdated: cached.lastUpdated,
+            source: 'ESPN',
+            status: 'cached',
+            league: 'NCAAF',
+            fetchedAt: getChicagoTimestamp()
+          }), {
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'public, max-age=15',
+              'X-Cache-Status': 'HIT',
+              ...corsHeaders
+            }
+          });
+        }
+      } catch (e) {
+        console.log('[CFB Scores] KV read failed:', e.message);
+      }
+    }
+
+    // KV miss - fetch live from ESPN
+    try {
+      const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard';
+      const response = await fetch(espnUrl);
+      if (!response.ok) throw new Error('ESPN CFB API failed');
+
+      const data = await response.json();
+      const games = (data.events || []).map(event => {
+        const comp = event.competitions?.[0];
+        const homeTeam = comp?.competitors?.find(c => c.homeAway === 'home');
+        const awayTeam = comp?.competitors?.find(c => c.homeAway === 'away');
+        return {
+          id: event.id,
+          Status: event.status?.type?.description || 'Unknown',
+          HomeTeam: homeTeam?.team?.abbreviation || 'TBD',
+          AwayTeam: awayTeam?.team?.abbreviation || 'TBD',
+          HomeTeamScore: parseInt(homeTeam?.score) || 0,
+          AwayTeamScore: parseInt(awayTeam?.score) || 0,
+          Quarter: comp?.status?.period || 0,
+          TimeRemaining: comp?.status?.displayClock || '',
+          DateTime: event.date,
+          HomeRank: homeTeam?.curatedRank?.current || null,
+          AwayRank: awayTeam?.curatedRank?.current || null
+        };
+      });
+
+      return new Response(JSON.stringify({
+        data: games,
+        games, // Legacy format
+        lastUpdated: new Date().toISOString(),
+        source: 'ESPN',
+        status: 'live',
+        league: 'NCAAF',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=60',
+          'X-Cache-Status': 'MISS',
+          ...corsHeaders
+        }
+      });
+    } catch (error) {
+      return new Response(JSON.stringify({
+        data: [],
+        games: [],
+        error: error.message,
+        status: 'error',
+        fetchedAt: getChicagoTimestamp()
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+  }
 
   const routes = {
     'rankings': '/rankings?year=2025&seasonType=regular',
@@ -1227,6 +3211,789 @@ async function fetchCFBData(url, apiKey, corsHeaders, cacheTTL = 600) {
   }
 }
 
+// === HIGHLIGHTLY API FUNCTIONS (PRIMARY SOURCE) ===
+// All Highlightly functions use KV caching to reduce API calls
+
+/**
+ * Fetch MLB scores from Highlightly (PRIMARY source)
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment with KV bindings
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyMLBScores(apiKey, corsHeaders, env) {
+  const cacheKey = 'HIGHLIGHTLY_MLB_SCORES';
+
+  // Check KV cache first
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] MLB scores cache HIT`);
+        return new Response(JSON.stringify({
+          ...cached,
+          cached: true
+        }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const response = await fetchWithRetry(`${HIGHLIGHTLY_MLB_BASE}/matches?date=${today}&league=mlb`, {
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly MLB returned ${response.status}, falling back to SportsDataIO`);
+      return null;
+    }
+
+    const data = await response.json();
+    const matches = data.matches || data.data || data || [];
+
+    const games = matches.map(match => ({
+      id: match.id || match.matchId,
+      status: {
+        state: match.status || 'scheduled',
+        isLive: match.status === 'live' || match.isLive,
+        inning: match.inning || match.period || null,
+        inningState: match.inningHalf || match.periodType || null,
+        detailedState: match.statusText || match.status
+      },
+      teams: {
+        away: {
+          name: match.awayTeam || match.away?.name,
+          abbreviation: match.awayTeamAbbr || match.away?.abbreviation,
+          score: match.awayScore ?? match.away?.score ?? 0
+        },
+        home: {
+          name: match.homeTeam || match.home?.name,
+          abbreviation: match.homeTeamAbbr || match.home?.abbreviation,
+          score: match.homeScore ?? match.home?.score ?? 0
+        }
+      },
+      dateTime: match.startTime || match.dateTime || match.date
+    }));
+
+    const hasLiveGames = games.some(g => g.status?.isLive);
+    const seasonPhase = getMLBSeasonPhase();
+    const payload = {
+      games,
+      source: 'Highlightly',
+      seasonPhase,
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache with appropriate TTL (60s for live, 300s otherwise)
+    if (env?.SPORT_CACHE) {
+      const ttl = hasLiveGames ? 60 : 300;
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: ttl });
+      console.log(`[Highlightly] MLB scores cached with TTL ${ttl}s`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly MLB error: ${error.message}, falling back to SportsDataIO`);
+    return null;
+  }
+}
+
+/**
+ * Fetch NFL scores from Highlightly (PRIMARY source)
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment with KV bindings
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyNFLScores(apiKey, corsHeaders, env) {
+  const cacheKey = 'HIGHLIGHTLY_NFL_SCORES';
+
+  // Check KV cache first
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] NFL scores cache HIT`);
+        return new Response(JSON.stringify({
+          ...cached,
+          cached: true
+        }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const response = await fetchWithRetry(`${HIGHLIGHTLY_NFL_BASE}/matches?league=nfl&season=2024`, {
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly NFL returned ${response.status}, falling back to SportsDataIO`);
+      return null;
+    }
+
+    const data = await response.json();
+    const matches = data.matches || data.data || data || [];
+
+    const games = matches.map(match => ({
+      GameID: match.id || match.matchId,
+      Status: match.status || 'Scheduled',
+      AwayTeam: match.awayTeam || match.away?.name,
+      HomeTeam: match.homeTeam || match.home?.name,
+      AwayScore: match.awayScore ?? match.away?.score ?? 0,
+      HomeScore: match.homeScore ?? match.home?.score ?? 0,
+      Quarter: match.period || match.quarter || null,
+      TimeRemaining: match.clock || match.timeRemaining || null,
+      DateTime: match.startTime || match.dateTime || match.date
+    }));
+
+    const hasLiveGames = games.some(g => g.Status === 'InProgress' || g.Status === 'live');
+    const payload = {
+      games,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache with appropriate TTL (60s for live, 300s otherwise)
+    if (env?.SPORT_CACHE) {
+      const ttl = hasLiveGames ? 60 : 300;
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: ttl });
+      console.log(`[Highlightly] NFL scores cached with TTL ${ttl}s`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly NFL error: ${error.message}, falling back to SportsDataIO`);
+    return null;
+  }
+}
+
+/**
+ * Fetch NBA scores from Highlightly (PRIMARY source)
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment with KV bindings
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyNBAScores(apiKey, corsHeaders, env) {
+  const cacheKey = 'HIGHLIGHTLY_NBA_SCORES';
+
+  // Check KV cache first
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] NBA scores cache HIT`);
+        return new Response(JSON.stringify({
+          ...cached,
+          cached: true
+        }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const response = await fetchWithRetry(`${HIGHLIGHTLY_NBA_BASE}/matches?date=${today}&league=nba`, {
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly NBA returned ${response.status}, falling back to SportsDataIO`);
+      return null;
+    }
+
+    const data = await response.json();
+    const matches = data.matches || data.data || data || [];
+
+    const games = matches.map(match => ({
+      id: match.id || match.matchId,
+      GameID: match.id || match.matchId,
+      Status: match.status || 'Scheduled',
+      AwayTeam: match.awayTeam || match.away?.name,
+      HomeTeam: match.homeTeam || match.home?.name,
+      AwayTeamScore: match.awayScore ?? match.away?.score ?? 0,
+      HomeTeamScore: match.homeScore ?? match.home?.score ?? 0,
+      Quarter: match.period || match.quarter || null,
+      TimeRemaining: match.clock || match.timeRemaining || null,
+      DateTime: match.startTime || match.dateTime || match.date
+    }));
+
+    const hasLiveGames = games.some(g => g.Status === 'InProgress' || g.Status === 'live');
+    const payload = {
+      games,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache with appropriate TTL (60s for live, 300s otherwise)
+    if (env?.SPORT_CACHE) {
+      const ttl = hasLiveGames ? 60 : 300;
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: ttl });
+      console.log(`[Highlightly] NBA scores cached with TTL ${ttl}s`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly NBA error: ${error.message}, falling back to SportsDataIO`);
+    return null;
+  }
+}
+
+/**
+ * Fetch standings from Highlightly (PRIMARY source)
+ * @param {string} sport - Sport type (mlb, nfl, nba)
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment with KV bindings
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyStandings(sport, apiKey, corsHeaders, env) {
+  const cacheKey = `HIGHLIGHTLY_${sport.toUpperCase()}_STANDINGS`;
+
+  // Check KV cache first (standings have 6 hour TTL)
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] ${sport.toUpperCase()} standings cache HIT`);
+        return new Response(JSON.stringify({
+          ...cached,
+          cached: true
+        }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = {
+      mlb: HIGHLIGHTLY_MLB_BASE,
+      nfl: HIGHLIGHTLY_NFL_BASE,
+      nba: HIGHLIGHTLY_NBA_BASE
+    };
+
+    const response = await fetchWithRetry(`${baseUrls[sport]}/standings?season=2024`, {
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} standings returned ${response.status}, falling back`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      standings: data.standings || data.data || data,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache standings for 6 hours
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 21600 });
+      console.log(`[Highlightly] ${sport.toUpperCase()} standings cached with TTL 6h`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} standings error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch box score from Highlightly
+ * @param {string} sport - 'nfl' or 'nba'
+ * @param {string} matchId - Match ID
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyBoxScore(sport, matchId, apiKey, corsHeaders, env) {
+  const cacheKey = `HIGHLIGHTLY_BOXSCORE_${sport.toUpperCase()}_${matchId}`;
+
+  // Check cache first (box scores cached for 2 minutes during live games)
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] Box score cache HIT for ${matchId}`);
+        return new Response(JSON.stringify({ ...cached, cached: true }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = {
+      nfl: HIGHLIGHTLY_NFL_BASE,
+      nba: HIGHLIGHTLY_NBA_BASE
+    };
+
+    const response = await fetchWithRetry(`${baseUrls[sport]}/box-score/${matchId}`, {
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} box-score returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      boxScore: data,
+      matchId,
+      sport,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache box scores for 2 minutes (live data changes frequently)
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 120 });
+      console.log(`[Highlightly] Box score cached for ${matchId}`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} box-score error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch match details from Highlightly
+ * @param {string} sport - 'nfl' or 'nba'
+ * @param {string} matchId - Match ID
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyMatchDetails(sport, matchId, apiKey, corsHeaders, env) {
+  const cacheKey = `HIGHLIGHTLY_MATCH_${sport.toUpperCase()}_${matchId}`;
+
+  // Check cache first (match details cached for 5 minutes)
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] Match details cache HIT for ${matchId}`);
+        return new Response(JSON.stringify({ ...cached, cached: true }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = {
+      nfl: HIGHLIGHTLY_NFL_BASE,
+      nba: HIGHLIGHTLY_NBA_BASE
+    };
+
+    const response = await fetchWithRetry(`${baseUrls[sport]}/matches/${matchId}`, {
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} match details returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      match: data,
+      matchId,
+      sport,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache match details for 5 minutes
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 300 });
+      console.log(`[Highlightly] Match details cached for ${matchId}`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} match details error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch lineups from Highlightly
+ * @param {string} sport - 'nfl' or 'nba'
+ * @param {string} matchId - Match ID
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyLineups(sport, matchId, apiKey, corsHeaders, env) {
+  const cacheKey = `HIGHLIGHTLY_LINEUPS_${sport.toUpperCase()}_${matchId}`;
+
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] Lineups cache HIT for ${matchId}`);
+        return new Response(JSON.stringify({ ...cached, cached: true }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = { nfl: HIGHLIGHTLY_NFL_BASE, nba: HIGHLIGHTLY_NBA_BASE };
+    const response = await fetchWithRetry(`${baseUrls[sport]}/lineups/${matchId}`, {
+      headers: { 'x-rapidapi-key': apiKey, 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} lineups returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      lineups: data.lineups || data.home || data,
+      matchId,
+      sport,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache lineups for 30 minutes (stable pre-game, updates at game time)
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 1800 });
+      console.log(`[Highlightly] Lineups cached for ${matchId}`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} lineups error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch highlights from Highlightly
+ * @param {string} sport - 'nfl' or 'nba'
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment
+ * @param {string} date - Optional date filter (YYYY-MM-DD)
+ * @param {string} matchId - Optional match ID filter
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyHighlights(sport, apiKey, corsHeaders, env, date = null, matchId = null) {
+  const today = date || new Date().toISOString().split('T')[0];
+  const cacheKey = matchId
+    ? `HIGHLIGHTLY_HIGHLIGHTS_${sport.toUpperCase()}_${matchId}`
+    : `HIGHLIGHTLY_HIGHLIGHTS_${sport.toUpperCase()}_${today}`;
+
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] Highlights cache HIT`);
+        return new Response(JSON.stringify({ ...cached, cached: true }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = { nfl: HIGHLIGHTLY_NFL_BASE, nba: HIGHLIGHTLY_NBA_BASE };
+    const league = sport === 'nfl' ? 'nfl' : 'nba';
+    let url = `${baseUrls[sport]}/highlights?league=${league}&date=${today}`;
+    if (matchId) url += `&matchId=${matchId}`;
+
+    const response = await fetchWithRetry(url, {
+      headers: { 'x-rapidapi-key': apiKey, 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} highlights returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      highlights: data.highlights || data.data || data || [],
+      date: today,
+      matchId: matchId || null,
+      sport,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache highlights for 5 minutes
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 300 });
+      console.log(`[Highlightly] Highlights cached`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} highlights error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch player stats from Highlightly
+ * @param {string} sport - 'nfl' or 'nba'
+ * @param {string} playerId - Player ID
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyPlayerStats(sport, playerId, apiKey, corsHeaders, env) {
+  const cacheKey = `HIGHLIGHTLY_PLAYERSTATS_${sport.toUpperCase()}_${playerId}`;
+
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] Player stats cache HIT for ${playerId}`);
+        return new Response(JSON.stringify({ ...cached, cached: true }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = { nfl: HIGHLIGHTLY_NFL_BASE, nba: HIGHLIGHTLY_NBA_BASE };
+    const response = await fetchWithRetry(`${baseUrls[sport]}/players/${playerId}/statistics`, {
+      headers: { 'x-rapidapi-key': apiKey, 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} player stats returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      player: data.player || data,
+      statistics: data.statistics || data.seasons || data.stats || [],
+      playerId,
+      sport,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache player stats for 1 hour
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 3600 });
+      console.log(`[Highlightly] Player stats cached for ${playerId}`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} player stats error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch head-to-head from Highlightly
+ * @param {string} sport - 'nfl' or 'nba'
+ * @param {string} teamOne - First team ID
+ * @param {string} teamTwo - Second team ID
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyHeadToHead(sport, teamOne, teamTwo, apiKey, corsHeaders, env) {
+  const cacheKey = `HIGHLIGHTLY_H2H_${sport.toUpperCase()}_${teamOne}_${teamTwo}`;
+
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] H2H cache HIT`);
+        return new Response(JSON.stringify({ ...cached, cached: true }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = { nfl: HIGHLIGHTLY_NFL_BASE, nba: HIGHLIGHTLY_NBA_BASE };
+    const response = await fetchWithRetry(
+      `${baseUrls[sport]}/head-2-head?teamIdOne=${teamOne}&teamIdTwo=${teamTwo}`,
+      { headers: { 'x-rapidapi-key': apiKey, 'Accept': 'application/json' } }
+    );
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} H2H returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      matches: data.matches || data.games || data || [],
+      teamOne,
+      teamTwo,
+      sport,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache H2H for 6 hours (historical data doesn't change often)
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 21600 });
+      console.log(`[Highlightly] H2H cached`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} H2H error: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Fetch odds from Highlightly
+ * @param {string} sport - 'nfl' or 'nba'
+ * @param {string} matchId - Match ID
+ * @param {string} apiKey - Highlightly API key
+ * @param {Object} corsHeaders - CORS headers
+ * @param {Object} env - Worker environment
+ * @returns {Promise<Response>}
+ */
+async function fetchHighlightlyOdds(sport, matchId, apiKey, corsHeaders, env) {
+  const cacheKey = `HIGHLIGHTLY_ODDS_${sport.toUpperCase()}_${matchId}`;
+
+  if (env?.SPORT_CACHE) {
+    try {
+      const cached = await env.SPORT_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) {
+        console.log(`[Highlightly] Odds cache HIT for ${matchId}`);
+        return new Response(JSON.stringify({ ...cached, cached: true }), {
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+    } catch (e) {
+      console.log(`[Highlightly] Cache read error: ${e.message}`);
+    }
+  }
+
+  try {
+    const baseUrls = { nfl: HIGHLIGHTLY_NFL_BASE, nba: HIGHLIGHTLY_NBA_BASE };
+    const response = await fetchWithRetry(`${baseUrls[sport]}/odds?matchId=${matchId}`, {
+      headers: { 'x-rapidapi-key': apiKey, 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) {
+      console.log(`Highlightly ${sport.toUpperCase()} odds returned ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const payload = {
+      odds: data.odds || data.bookmakers || data || [],
+      matchId,
+      sport,
+      source: 'Highlightly',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache odds for 2 minutes (live odds change frequently)
+    if (env?.SPORT_CACHE) {
+      await env.SPORT_CACHE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 120 });
+      console.log(`[Highlightly] Odds cached for ${matchId}`);
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (error) {
+    console.log(`Highlightly ${sport.toUpperCase()} odds error: ${error.message}`);
+    return null;
+  }
+}
+
 // === ESPN API FALLBACK FUNCTIONS ===
 
 /**
@@ -1241,11 +4008,13 @@ async function fetchESPNMLBScores(corsHeaders) {
     }
     const data = await response.json();
     const games = transformESPNMLBGames(data);
+    const seasonPhase = getMLBSeasonPhase();
 
     return new Response(JSON.stringify({
       games,
       source: 'ESPN',
       fallback: true,
+      seasonPhase,
       fetchedAt: getChicagoTimestamp()
     }), {
       headers: {
@@ -1256,11 +4025,13 @@ async function fetchESPNMLBScores(corsHeaders) {
       }
     });
   } catch (error) {
+    const seasonPhase = getMLBSeasonPhase();
     return new Response(JSON.stringify({
       error: error.message,
       games: [],
       source: 'ESPN',
-      fallback: true
+      fallback: true,
+      seasonPhase
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -1456,6 +4227,102 @@ function getMonthAbbrev() {
 
 function getChicagoTimestamp() {
   return new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' });
+}
+
+// MLB Season Phase Detection
+function getMLBSeasonPhase() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // 1-12
+  const day = now.getDate();
+
+  // Spring Training: Feb 20 - Mar 25 (approximate)
+  if ((month === 2 && day >= 20) || (month === 3 && day <= 25)) {
+    return {
+      phase: 'spring_training',
+      label: 'Spring Training',
+      isSpringTraining: true,
+      isRegularSeason: false,
+      isPostseason: false,
+      isOffseason: false
+    };
+  }
+
+  // Regular Season: Late March - Late September
+  if ((month === 3 && day > 25) || (month >= 4 && month <= 9)) {
+    return {
+      phase: 'regular',
+      label: 'Regular Season',
+      isSpringTraining: false,
+      isRegularSeason: true,
+      isPostseason: false,
+      isOffseason: false
+    };
+  }
+
+  // Postseason: October
+  if (month === 10) {
+    return {
+      phase: 'postseason',
+      label: 'Postseason',
+      isSpringTraining: false,
+      isRegularSeason: false,
+      isPostseason: true,
+      isOffseason: false
+    };
+  }
+
+  // Offseason: November - February 19
+  return {
+    phase: 'offseason',
+    label: 'Offseason',
+    isSpringTraining: false,
+    isRegularSeason: false,
+    isPostseason: false,
+    isOffseason: true
+  };
+}
+
+// 2024 Final MLB Standings - Authoritative fallback data
+// Source: Baseball-Reference, verified November 2024
+function getMLB2024FinalStandings() {
+  return [
+    // AL East
+    { Team: 'New York Yankees', City: 'New York', Division: 'AL East', League: 'American', Wins: 94, Losses: 68, Percentage: 0.580, GamesBehind: '-' },
+    { Team: 'Baltimore Orioles', City: 'Baltimore', Division: 'AL East', League: 'American', Wins: 91, Losses: 71, Percentage: 0.562, GamesBehind: '3' },
+    { Team: 'Boston Red Sox', City: 'Boston', Division: 'AL East', League: 'American', Wins: 81, Losses: 81, Percentage: 0.500, GamesBehind: '13' },
+    { Team: 'Tampa Bay Rays', City: 'Tampa Bay', Division: 'AL East', League: 'American', Wins: 80, Losses: 82, Percentage: 0.494, GamesBehind: '14' },
+    { Team: 'Toronto Blue Jays', City: 'Toronto', Division: 'AL East', League: 'American', Wins: 74, Losses: 88, Percentage: 0.457, GamesBehind: '20' },
+    // AL Central
+    { Team: 'Cleveland Guardians', City: 'Cleveland', Division: 'AL Central', League: 'American', Wins: 92, Losses: 70, Percentage: 0.568, GamesBehind: '-' },
+    { Team: 'Kansas City Royals', City: 'Kansas City', Division: 'AL Central', League: 'American', Wins: 86, Losses: 76, Percentage: 0.531, GamesBehind: '6' },
+    { Team: 'Minnesota Twins', City: 'Minnesota', Division: 'AL Central', League: 'American', Wins: 82, Losses: 80, Percentage: 0.506, GamesBehind: '10' },
+    { Team: 'Detroit Tigers', City: 'Detroit', Division: 'AL Central', League: 'American', Wins: 86, Losses: 76, Percentage: 0.531, GamesBehind: '6' },
+    { Team: 'Chicago White Sox', City: 'Chicago', Division: 'AL Central', League: 'American', Wins: 41, Losses: 121, Percentage: 0.253, GamesBehind: '51' },
+    // AL West
+    { Team: 'Houston Astros', City: 'Houston', Division: 'AL West', League: 'American', Wins: 88, Losses: 74, Percentage: 0.543, GamesBehind: '-' },
+    { Team: 'Seattle Mariners', City: 'Seattle', Division: 'AL West', League: 'American', Wins: 85, Losses: 77, Percentage: 0.525, GamesBehind: '3' },
+    { Team: 'Texas Rangers', City: 'Texas', Division: 'AL West', League: 'American', Wins: 78, Losses: 84, Percentage: 0.481, GamesBehind: '10' },
+    { Team: 'Los Angeles Angels', City: 'Los Angeles', Division: 'AL West', League: 'American', Wins: 63, Losses: 99, Percentage: 0.389, GamesBehind: '25' },
+    { Team: 'Oakland Athletics', City: 'Oakland', Division: 'AL West', League: 'American', Wins: 69, Losses: 93, Percentage: 0.426, GamesBehind: '19' },
+    // NL East
+    { Team: 'Philadelphia Phillies', City: 'Philadelphia', Division: 'NL East', League: 'National', Wins: 95, Losses: 67, Percentage: 0.586, GamesBehind: '-' },
+    { Team: 'New York Mets', City: 'New York', Division: 'NL East', League: 'National', Wins: 89, Losses: 73, Percentage: 0.549, GamesBehind: '6' },
+    { Team: 'Atlanta Braves', City: 'Atlanta', Division: 'NL East', League: 'National', Wins: 89, Losses: 73, Percentage: 0.549, GamesBehind: '6' },
+    { Team: 'Washington Nationals', City: 'Washington', Division: 'NL East', League: 'National', Wins: 71, Losses: 91, Percentage: 0.438, GamesBehind: '24' },
+    { Team: 'Miami Marlins', City: 'Miami', Division: 'NL East', League: 'National', Wins: 62, Losses: 100, Percentage: 0.383, GamesBehind: '33' },
+    // NL Central
+    { Team: 'Milwaukee Brewers', City: 'Milwaukee', Division: 'NL Central', League: 'National', Wins: 93, Losses: 69, Percentage: 0.574, GamesBehind: '-' },
+    { Team: 'St. Louis Cardinals', City: 'St. Louis', Division: 'NL Central', League: 'National', Wins: 83, Losses: 79, Percentage: 0.512, GamesBehind: '10' },
+    { Team: 'Chicago Cubs', City: 'Chicago', Division: 'NL Central', League: 'National', Wins: 83, Losses: 79, Percentage: 0.512, GamesBehind: '10' },
+    { Team: 'Pittsburgh Pirates', City: 'Pittsburgh', Division: 'NL Central', League: 'National', Wins: 76, Losses: 86, Percentage: 0.469, GamesBehind: '17' },
+    { Team: 'Cincinnati Reds', City: 'Cincinnati', Division: 'NL Central', League: 'National', Wins: 77, Losses: 85, Percentage: 0.475, GamesBehind: '16' },
+    // NL West
+    { Team: 'Los Angeles Dodgers', City: 'Los Angeles', Division: 'NL West', League: 'National', Wins: 98, Losses: 64, Percentage: 0.605, GamesBehind: '-' },
+    { Team: 'San Diego Padres', City: 'San Diego', Division: 'NL West', League: 'National', Wins: 93, Losses: 69, Percentage: 0.574, GamesBehind: '5' },
+    { Team: 'Arizona Diamondbacks', City: 'Arizona', Division: 'NL West', League: 'National', Wins: 89, Losses: 73, Percentage: 0.549, GamesBehind: '9' },
+    { Team: 'San Francisco Giants', City: 'San Francisco', Division: 'NL West', League: 'National', Wins: 80, Losses: 82, Percentage: 0.494, GamesBehind: '18' },
+    { Team: 'Colorado Rockies', City: 'Colorado', Division: 'NL West', League: 'National', Wins: 61, Losses: 101, Percentage: 0.377, GamesBehind: '37' }
+  ];
 }
 
 // === TOOLS API HANDLERS ===
@@ -1944,71 +4811,100 @@ function getNCAABaseballRankingsPlaceholder() {
   ];
 }
 
-async function handleNCAABaseballScores(env, corsHeaders) {
+async function handleNCAABaseballScores(request, env, corsHeaders) {
   try {
+    // Check user subscription for content gating
+    const session = await getSession(request, env);
+    let isPro = false;
+    if (session?.user_id) {
+      const userResult = await env.DB.prepare('SELECT subscription_tier, subscription_status FROM users WHERE id = ?')
+        .bind(session.user_id)
+        .first();
+      isPro = userResult?.subscription_tier === 'pro' && userResult?.subscription_status === 'active';
+    }
+
     // Check cache first
     const cacheKey = 'ncaa_baseball_scores';
     const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    let games = [];
+    let fromCache = false;
+
     if (cached && cached.expiresAt > Date.now()) {
-      return new Response(JSON.stringify(cached.data), {
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=120', ...corsHeaders }
+      games = cached.data.games || [];
+      fromCache = true;
+    } else {
+      // Try ESPN college baseball scoreboard
+      const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard';
+      const response = await fetch(espnUrl, {
+        headers: { 'User-Agent': 'BlazeIntel/2.4' }
       });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.events) {
+          games = data.events.map(event => {
+            const competition = event.competitions?.[0];
+            const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
+            const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
+
+            return {
+              id: event.id,
+              name: event.name || event.shortName,
+              status: event.status?.type?.description || 'Scheduled',
+              inning: event.status?.period || null,
+              inningState: event.status?.type?.state || null,
+              homeTeam: {
+                name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'TBD',
+                abbreviation: homeTeam?.team?.abbreviation || '',
+                score: parseInt(homeTeam?.score) || 0,
+                logo: homeTeam?.team?.logo || null,
+                rank: homeTeam?.curatedRank?.current || null
+              },
+              awayTeam: {
+                name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'TBD',
+                abbreviation: awayTeam?.team?.abbreviation || '',
+                score: parseInt(awayTeam?.score) || 0,
+                logo: awayTeam?.team?.logo || null,
+                rank: awayTeam?.curatedRank?.current || null
+              },
+              startTime: event.date,
+              venue: competition?.venue?.fullName || null,
+              broadcast: competition?.broadcasts?.[0]?.names?.[0] || null
+            };
+          });
+        }
+      }
+
+      // Cache for 2 minutes (full data, gating applied per-request)
+      const fullResult = { games, expiresAt: Date.now() + 120000 };
+      await env.SESSIONS.put(cacheKey, JSON.stringify({ data: fullResult, expiresAt: Date.now() + 120000 }));
     }
 
-    // Try ESPN college baseball scoreboard
-    const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard';
-    const response = await fetch(espnUrl, {
-      headers: { 'User-Agent': 'BlazeIntel/2.4' }
-    });
+    // Apply content gating for free users
+    const totalGames = games.length;
+    const FREE_GAME_LIMIT = 3;
 
-    let games = [];
-    if (response.ok) {
-      const data = await response.json();
-      if (data.events) {
-        games = data.events.map(event => {
-          const competition = event.competitions?.[0];
-          const homeTeam = competition?.competitors?.find(c => c.homeAway === 'home');
-          const awayTeam = competition?.competitors?.find(c => c.homeAway === 'away');
-
-          return {
-            id: event.id,
-            name: event.name || event.shortName,
-            status: event.status?.type?.description || 'Scheduled',
-            inning: event.status?.period || null,
-            inningState: event.status?.type?.state || null,
-            homeTeam: {
-              name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'TBD',
-              abbreviation: homeTeam?.team?.abbreviation || '',
-              score: parseInt(homeTeam?.score) || 0,
-              logo: homeTeam?.team?.logo || null,
-              rank: homeTeam?.curatedRank?.current || null
-            },
-            awayTeam: {
-              name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'TBD',
-              abbreviation: awayTeam?.team?.abbreviation || '',
-              score: parseInt(awayTeam?.score) || 0,
-              logo: awayTeam?.team?.logo || null,
-              rank: awayTeam?.curatedRank?.current || null
-            },
-            startTime: event.date,
-            venue: competition?.venue?.fullName || null,
-            broadcast: competition?.broadcasts?.[0]?.names?.[0] || null
-          };
-        });
-      }
+    if (!isPro && games.length > FREE_GAME_LIMIT) {
+      games = games.slice(0, FREE_GAME_LIMIT);
     }
 
     const result = {
       games,
       count: games.length,
-      source: response.ok ? 'ESPN' : 'unavailable',
+      totalCount: totalGames,
+      source: fromCache ? 'ESPN (cached)' : 'ESPN',
       fetchedAt: getChicagoTimestamp(),
       season: '2025',
-      message: games.length === 0 ? 'No games scheduled. College baseball season starts mid-February 2025.' : null
+      message: totalGames === 0 ? 'No games scheduled. College baseball season starts mid-February 2025.' : null,
+      // Content gating info
+      isPro,
+      preview: !isPro && totalGames > FREE_GAME_LIMIT,
+      upgradeRequired: !isPro && totalGames > FREE_GAME_LIMIT,
+      hiddenGames: !isPro ? Math.max(0, totalGames - FREE_GAME_LIMIT) : 0,
+      upgradeMessage: !isPro && totalGames > FREE_GAME_LIMIT
+        ? `Upgrade to Pro to see all ${totalGames} games`
+        : null
     };
-
-    // Cache for 2 minutes during games
-    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 120000 }));
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=120', ...corsHeaders }
@@ -2154,6 +5050,266 @@ async function handleNCAABaseballSchedule(env, corsHeaders, team = null) {
   }
 }
 
+// Box score handler - detailed game statistics
+async function handleNCAABaseballBoxScore(env, corsHeaders, gameId) {
+  try {
+    const cacheKey = `ncaa_baseball_boxscore_${gameId}`;
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', ...corsHeaders }
+      });
+    }
+
+    // Fetch from ESPN event API
+    const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/summary?event=${gameId}`;
+    const response = await fetch(espnUrl, { headers: { 'User-Agent': 'BlazeIntel/2.4' } });
+
+    if (!response.ok) {
+      return new Response(JSON.stringify({ error: 'Game not found', gameId }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    const data = await response.json();
+    const boxscore = data.boxscore || {};
+    const gameInfo = data.header?.competitions?.[0] || {};
+
+    // Parse teams
+    const teams = (boxscore.teams || []).map(team => ({
+      id: team.team?.id,
+      name: team.team?.displayName || team.team?.name,
+      abbreviation: team.team?.abbreviation,
+      logo: team.team?.logo,
+      homeAway: team.homeAway,
+      score: parseInt(gameInfo.competitors?.find(c => c.id === team.team?.id)?.score) || 0,
+      linescores: (gameInfo.competitors?.find(c => c.id === team.team?.id)?.linescores || []).map(ls => parseInt(ls.value) || 0),
+      batting: (team.statistics || []).filter(s => ['avg', 'rbi', 'hr', 'hits', 'runs', 'strikeouts', 'walks'].includes(s.name)).map(s => ({
+        name: s.name,
+        displayName: s.displayName,
+        value: s.displayValue
+      })),
+      pitching: (team.statistics || []).filter(s => ['era', 'strikeouts', 'walks', 'earnedRuns', 'inningsPitched'].includes(s.name)).map(s => ({
+        name: s.name,
+        displayName: s.displayName,
+        value: s.displayValue
+      }))
+    }));
+
+    // Parse players
+    const players = (boxscore.players || []).map(teamPlayers => ({
+      team: teamPlayers.team?.displayName,
+      batters: (teamPlayers.statistics?.[0]?.athletes || []).map(p => ({
+        id: p.athlete?.id,
+        name: p.athlete?.displayName,
+        position: p.athlete?.position?.abbreviation,
+        stats: p.stats || []
+      })),
+      pitchers: (teamPlayers.statistics?.[1]?.athletes || []).map(p => ({
+        id: p.athlete?.id,
+        name: p.athlete?.displayName,
+        position: 'P',
+        stats: p.stats || []
+      }))
+    }));
+
+    const result = {
+      gameId,
+      status: data.header?.gameNote || gameInfo.status?.type?.description || 'Scheduled',
+      inning: gameInfo.status?.period || null,
+      venue: gameInfo.venue?.fullName || null,
+      attendance: gameInfo.attendance,
+      teams,
+      players,
+      source: 'ESPN',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache for 1 minute during games, 1 hour if final
+    const isFinal = gameInfo.status?.type?.completed;
+    const ttl = isFinal ? 3600000 : 60000;
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + ttl }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${isFinal ? 3600 : 60}`, ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('NCAA Baseball Box Score error:', error);
+    return new Response(JSON.stringify({ error: error.message, gameId }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Leaders handler - top batting/pitching stats
+async function handleNCAABaseballLeaders(env, corsHeaders) {
+  try {
+    const cacheKey = 'ncaa_baseball_leaders';
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    }
+
+    // ESPN doesn't have a direct leaders endpoint for college baseball
+    // Fetch from their stat leaders page or use curated data
+    const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/leaders';
+    const response = await fetch(espnUrl, { headers: { 'User-Agent': 'BlazeIntel/2.4' } });
+
+    let batting = [];
+    let pitching = [];
+
+    if (response.ok) {
+      const data = await response.json();
+      // Parse ESPN leaders format
+      const categories = data.leaders?.categories || [];
+
+      const battingCat = categories.find(c => c.name === 'batting' || c.abbreviation === 'batting');
+      const pitchingCat = categories.find(c => c.name === 'pitching' || c.abbreviation === 'pitching');
+
+      if (battingCat?.leaders) {
+        batting = battingCat.leaders.slice(0, 25).map((leader, idx) => ({
+          rank: idx + 1,
+          name: leader.athlete?.displayName || leader.displayName,
+          team: leader.team?.displayName || leader.athlete?.team?.displayName,
+          position: leader.athlete?.position?.abbreviation,
+          stat: leader.displayValue,
+          category: battingCat.displayName
+        }));
+      }
+
+      if (pitchingCat?.leaders) {
+        pitching = pitchingCat.leaders.slice(0, 25).map((leader, idx) => ({
+          rank: idx + 1,
+          name: leader.athlete?.displayName || leader.displayName,
+          team: leader.team?.displayName || leader.athlete?.team?.displayName,
+          position: 'P',
+          stat: leader.displayValue,
+          category: pitchingCat.displayName
+        }));
+      }
+    }
+
+    // Fallback with placeholder data if ESPN doesn't have leaders yet (preseason)
+    if (batting.length === 0) {
+      batting = [
+        { rank: 1, name: 'Season starts Feb 14', team: 'Check back after opening day', position: '-', stat: '-', category: 'Batting Average' }
+      ];
+      pitching = [
+        { rank: 1, name: 'Season starts Feb 14', team: 'Check back after opening day', position: 'P', stat: '-', category: 'ERA' }
+      ];
+    }
+
+    const result = {
+      batting,
+      pitching,
+      categories: {
+        batting: ['AVG', 'HR', 'RBI', 'H', 'R', 'SB'],
+        pitching: ['ERA', 'W', 'K', 'SV', 'IP', 'WHIP']
+      },
+      season: '2025',
+      source: response.ok && batting.length > 1 ? 'ESPN' : 'Preseason',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache for 1 hour
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('NCAA Baseball Leaders error:', error);
+    return new Response(JSON.stringify({
+      error: error.message,
+      batting: [],
+      pitching: [],
+      source: 'error',
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Player detail handler - individual player stats
+async function handleNCAABaseballPlayer(env, corsHeaders, playerId) {
+  try {
+    const cacheKey = `ncaa_baseball_player_${playerId}`;
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify(cached.data), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+      });
+    }
+
+    // Fetch from ESPN athlete endpoint
+    const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/athletes/${playerId}`;
+    const response = await fetch(espnUrl, { headers: { 'User-Agent': 'BlazeIntel/2.4' } });
+
+    if (!response.ok) {
+      return new Response(JSON.stringify({ error: 'Player not found', playerId }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    const data = await response.json();
+    const athlete = data.athlete || data;
+
+    const result = {
+      id: playerId,
+      name: athlete.displayName || athlete.fullName,
+      firstName: athlete.firstName,
+      lastName: athlete.lastName,
+      jersey: athlete.jersey,
+      position: athlete.position?.displayName || athlete.position?.abbreviation,
+      height: athlete.displayHeight,
+      weight: athlete.displayWeight,
+      birthplace: athlete.birthPlace?.city && athlete.birthPlace?.state
+        ? `${athlete.birthPlace.city}, ${athlete.birthPlace.state}` : null,
+      experience: athlete.experience?.displayValue,
+      team: {
+        id: athlete.team?.id,
+        name: athlete.team?.displayName || athlete.team?.name,
+        abbreviation: athlete.team?.abbreviation,
+        logo: athlete.team?.logos?.[0]?.href
+      },
+      headshot: athlete.headshot?.href || null,
+      statistics: (athlete.statistics || []).map(stat => ({
+        season: stat.season?.displayName || stat.season?.year,
+        splits: (stat.splits || []).map(split => ({
+          name: split.displayName,
+          stats: (split.stats || []).map(s => ({
+            name: s.name,
+            value: s.displayValue,
+            description: s.description
+          }))
+        }))
+      })),
+      source: 'ESPN',
+      fetchedAt: getChicagoTimestamp()
+    };
+
+    // Cache for 1 hour
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
+    });
+  } catch (error) {
+    console.error('NCAA Baseball Player error:', error);
+    return new Response(JSON.stringify({ error: error.message, playerId }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
 function getESPNTeamId(teamName) {
   const teamIds = {
     'texas': '251', 'longhorns': '251',
@@ -2193,7 +5349,7 @@ function getFeaturedNCAABaseballGames() {
 
 async function handleRegister(request, env, corsHeaders) {
   try {
-    const { email, password } = await request.json();
+    const { email, password, name } = await request.json();
 
     if (!email || !password) {
       return jsonResponse({ error: 'Email and password required' }, 400, corsHeaders);
@@ -2213,23 +5369,23 @@ async function handleRegister(request, env, corsHeaders) {
     const passwordHash = await hashPassword(password);
     const userId = crypto.randomUUID();
 
-    // Create user
+    // Create user with name (username uses email for legacy schema compatibility)
     await env.DB.prepare(
-      'INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)'
-    ).bind(userId, email.toLowerCase(), passwordHash).run();
+      'INSERT INTO users (id, email, password_hash, name, username, subscription_tier, subscription_status) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(userId, email.toLowerCase(), passwordHash, name || null, email.toLowerCase(), 'free', 'active').run();
 
     // Create session
     const sessionToken = await createSession(env, userId);
 
     return jsonResponse(
-      { success: true, user: { id: userId, email: email.toLowerCase() } },
+      { success: true, user: { id: userId, email: email.toLowerCase(), name: name || null, subscription_tier: 'free' } },
       201,
       corsHeaders,
       sessionToken
     );
   } catch (error) {
     console.error('Register error:', error);
-    return jsonResponse({ error: 'Registration failed' }, 500, corsHeaders);
+    return jsonResponse({ error: 'Registration failed: ' + error.message }, 500, corsHeaders);
   }
 }
 
@@ -2713,7 +5869,7 @@ async function serveToolAsset(env, key, contentType, corsHeaders, request) {
   }
 
   // Determine if this is a Pro tool
-  const proTools = ['composition-optimizer', '3d-showcase', 'draft-value', 'schedule-strength'];
+  const proTools = ['composition-optimizer', '3d-showcase', 'draft-value', 'schedule-strength', 'vision-coach'];
   const toolName = key.split('/').slice(-2, -1)[0] || '';
   const isProTool = proTools.includes(toolName);
   const hasProAccess = subscriptionTier === 'pro' || subscriptionTier === 'enterprise';
@@ -3075,6 +6231,1054 @@ async function handleLeadCapture(request, env, corsHeaders) {
   }
 }
 
+// === NEWSLETTER SUBSCRIPTION HANDLER ===
+async function handleNewsletterSubscribe(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { email, source } = body;
+
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return jsonResponse({ error: 'Please enter a valid email address' }, 400, corsHeaders);
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Store in D1 newsletter_subscribers table
+    const subscriberId = crypto.randomUUID();
+    await env.DB.prepare(`
+      INSERT INTO newsletter_subscribers (id, email, source, subscribed_at, status)
+      VALUES (?, ?, ?, datetime('now'), 'active')
+      ON CONFLICT(email) DO UPDATE SET
+        status = 'active',
+        resubscribed_at = datetime('now')
+    `).bind(subscriberId, normalizedEmail, source || 'footer').run();
+
+    // Log to Analytics Engine
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: ['newsletter_subscribe', source || 'footer'],
+        doubles: [1],
+        indexes: ['newsletter']
+      });
+    }
+
+    return jsonResponse({
+      success: true,
+      message: 'Welcome to the Blaze! Check your inbox for updates.'
+    }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Newsletter subscribe error:', e);
+    // Check for unique constraint violation (already subscribed)
+    if (e.message && e.message.includes('UNIQUE constraint')) {
+      return jsonResponse({
+        success: true,
+        message: 'You\'re already subscribed! We appreciate your enthusiasm.'
+      }, 200, corsHeaders);
+    }
+    return jsonResponse({ error: 'Failed to subscribe. Please try again.' }, 500, corsHeaders);
+  }
+}
+
+// === SEARCH API HANDLER ===
+
+/**
+ * @typedef {Object} SearchResult
+ * @property {string} type - 'team' | 'page' | 'tool' | 'stat'
+ * @property {string} name - Display name
+ * @property {string} url - URL to navigate
+ * @property {string} [icon] - Icon type
+ * @property {string} [sport] - Sport category
+ * @property {number} score - Relevance score
+ */
+
+/**
+ * Search teams, pages, tools, and stats
+ * KV-backed with fallback to hardcoded index
+ * @param {Request} request
+ * @param {Object} env
+ * @param {Object} corsHeaders
+ * @returns {Promise<Response>}
+ */
+async function handleSearch(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const query = (url.searchParams.get('q') || '').toLowerCase().trim();
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '10'), 50);
+    const type = url.searchParams.get('type'); // Filter by type
+
+    if (!query || query.length < 2) {
+      return jsonResponse({ results: [], query }, 200, corsHeaders);
+    }
+
+    // Fetch search index from KV with fallback to hardcoded
+    const searchIndex = await getSearchIndexFromKV(env);
+
+    // Filter and score results
+    const results = searchIndex
+      .filter(item => {
+        if (type && item.type !== type) return false;
+        const searchText = `${item.name} ${item.keywords || ''} ${item.sport || ''}`.toLowerCase();
+        return searchText.includes(query);
+      })
+      .map(item => {
+        // Calculate relevance score
+        let score = 0;
+        const name = item.name.toLowerCase();
+        if (name === query) score = 100;
+        else if (name.startsWith(query)) score = 80;
+        else if (name.includes(query)) score = 60;
+        else score = 40;
+
+        // Boost teams
+        if (item.type === 'team') score += 10;
+
+        return { ...item, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
+
+    // Cache the response for 5 minutes
+    return jsonResponse(
+      { results, query, count: results.length },
+      200,
+      {
+        ...corsHeaders,
+        'Cache-Control': 'public, max-age=300'
+      }
+    );
+  } catch (e) {
+    console.error('Search error:', e);
+    return jsonResponse({ error: 'Search failed', results: [] }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Get search index - combines teams, pages, and tools
+ * @returns {Array<Object>}
+ */
+function getSearchIndex() {
+  return [
+    // MLB Teams
+    { type: 'team', name: 'St. Louis Cardinals', url: '/mlb?team=STL', icon: 'team', sport: 'MLB', keywords: 'cardinals stl redbirds' },
+    { type: 'team', name: 'Houston Astros', url: '/mlb?team=HOU', icon: 'team', sport: 'MLB', keywords: 'astros houston' },
+    { type: 'team', name: 'Texas Rangers', url: '/mlb?team=TEX', icon: 'team', sport: 'MLB', keywords: 'rangers texas arlington' },
+    { type: 'team', name: 'New York Yankees', url: '/mlb?team=NYY', icon: 'team', sport: 'MLB', keywords: 'yankees ny bronx bombers' },
+    { type: 'team', name: 'Los Angeles Dodgers', url: '/mlb?team=LAD', icon: 'team', sport: 'MLB', keywords: 'dodgers la los angeles' },
+    { type: 'team', name: 'Atlanta Braves', url: '/mlb?team=ATL', icon: 'team', sport: 'MLB', keywords: 'braves atlanta' },
+
+    // NFL Teams
+    { type: 'team', name: 'Tennessee Titans', url: '/nfl?team=TEN', icon: 'team', sport: 'NFL', keywords: 'titans tennessee nashville' },
+    { type: 'team', name: 'Dallas Cowboys', url: '/nfl?team=DAL', icon: 'team', sport: 'NFL', keywords: 'cowboys dallas americas team' },
+    { type: 'team', name: 'Houston Texans', url: '/nfl?team=HOU', icon: 'team', sport: 'NFL', keywords: 'texans houston' },
+    { type: 'team', name: 'Kansas City Chiefs', url: '/nfl?team=KC', icon: 'team', sport: 'NFL', keywords: 'chiefs kansas city kc' },
+
+    // NBA Teams
+    { type: 'team', name: 'Memphis Grizzlies', url: '/nba?team=MEM', icon: 'team', sport: 'NBA', keywords: 'grizzlies memphis grizz' },
+    { type: 'team', name: 'San Antonio Spurs', url: '/nba?team=SAS', icon: 'team', sport: 'NBA', keywords: 'spurs san antonio' },
+    { type: 'team', name: 'Houston Rockets', url: '/nba?team=HOU', icon: 'team', sport: 'NBA', keywords: 'rockets houston' },
+    { type: 'team', name: 'Dallas Mavericks', url: '/nba?team=DAL', icon: 'team', sport: 'NBA', keywords: 'mavericks mavs dallas luka' },
+
+    // College Baseball
+    { type: 'team', name: 'Texas Longhorns Baseball', url: '/college-baseball?team=texas', icon: 'team', sport: 'NCAA', keywords: 'texas longhorns ut austin hook em' },
+    { type: 'team', name: 'Texas A&M Aggies Baseball', url: '/college-baseball?team=tamu', icon: 'team', sport: 'NCAA', keywords: 'aggies tamu texas am college station' },
+    { type: 'team', name: 'LSU Tigers Baseball', url: '/college-baseball?team=lsu', icon: 'team', sport: 'NCAA', keywords: 'lsu tigers louisiana geaux' },
+    { type: 'team', name: 'Florida Gators Baseball', url: '/college-baseball?team=florida', icon: 'team', sport: 'NCAA', keywords: 'florida gators' },
+    { type: 'team', name: 'Vanderbilt Commodores Baseball', url: '/college-baseball?team=vanderbilt', icon: 'team', sport: 'NCAA', keywords: 'vandy vanderbilt commodores' },
+
+    // Pages
+    { type: 'page', name: 'Live Scores', url: '/#live-scores', icon: 'page', keywords: 'scores live games today' },
+    { type: 'page', name: 'MLB Scores', url: '/mlb', icon: 'page', sport: 'MLB', keywords: 'mlb baseball scores standings' },
+    { type: 'page', name: 'NFL Scores', url: '/nfl', icon: 'page', sport: 'NFL', keywords: 'nfl football scores standings' },
+    { type: 'page', name: 'NBA Scores', url: '/nba', icon: 'page', sport: 'NBA', keywords: 'nba basketball scores standings' },
+    { type: 'page', name: 'College Baseball', url: '/college-baseball', icon: 'page', sport: 'NCAA', keywords: 'ncaa college baseball d1' },
+    { type: 'page', name: 'Pricing', url: '/pricing', icon: 'page', keywords: 'pricing pro subscription plans cost' },
+    { type: 'page', name: 'About Us', url: '/about', icon: 'page', keywords: 'about story founder austin' },
+    { type: 'page', name: 'Dashboard', url: '/dashboard', icon: 'page', keywords: 'dashboard account profile settings' },
+
+    // Pro Tools
+    { type: 'tool', name: 'Pitch Arsenal Analyzer', url: '/tools/pitch-arsenal', icon: 'tool', keywords: 'pitch arsenal analyzer spin rate velocity' },
+    { type: 'tool', name: 'Player Comparison', url: '/tools/player-comparison', icon: 'tool', keywords: 'compare players stats head to head' },
+    { type: 'tool', name: 'Strike Zone Heatmap', url: '/tools/strike-zone', icon: 'tool', keywords: 'strike zone heatmap pitching location' },
+    { type: 'tool', name: 'Spray Chart', url: '/tools/spray-chart', icon: 'tool', keywords: 'spray chart hitting batted ball' },
+    { type: 'tool', name: 'NIL Valuation Calculator', url: '/tools/nil-valuation', icon: 'tool', keywords: 'nil name image likeness value calculator' },
+    { type: 'tool', name: 'Draft Value Calculator', url: '/tools/draft-value', icon: 'tool', keywords: 'draft value trade calculator picks' },
+    { type: 'tool', name: 'Schedule Strength', url: '/tools/schedule-strength', icon: 'tool', keywords: 'schedule strength sos rpi ranking' },
+    { type: 'tool', name: 'Prospect Tracker', url: '/tools/prospect-tracker', icon: 'tool', keywords: 'prospect tracker top 100 draft' },
+    { type: 'tool', name: 'Recruiting Tracker', url: '/tools/recruiting-tracker', icon: 'tool', keywords: 'recruiting commits class rankings' },
+    { type: 'tool', name: '3D Showcase', url: '/tools/3d-showcase', icon: 'tool', keywords: '3d visualization batting swing' }
+  ];
+}
+
+/**
+ * Get search index from KV with fallback to hardcoded
+ * @param {Object} env - Worker environment bindings
+ * @returns {Promise<Array<Object>>}
+ */
+async function getSearchIndexFromKV(env) {
+  const KV_KEY = 'search:index';
+
+  try {
+    // Try to get from KV first
+    const cached = await env.SPORT_CACHE.get(KV_KEY, { type: 'json' });
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      return cached;
+    }
+  } catch (e) {
+    console.error('KV read error for search index:', e);
+  }
+
+  // Fallback to hardcoded index
+  return getSearchIndex();
+}
+
+/**
+ * Initialize or update the search index in KV
+ * POST /api/search/index - Refreshes the KV cache with latest index
+ * @param {Request} request
+ * @param {Object} env
+ * @param {Object} corsHeaders
+ * @returns {Promise<Response>}
+ */
+async function handleSearchIndexRefresh(request, env, corsHeaders) {
+  try {
+    // Optional: Add admin auth check here
+    // const authHeader = request.headers.get('X-Admin-Key');
+    // if (authHeader !== env.ADMIN_KEY) return jsonResponse({ error: 'Forbidden' }, 403, corsHeaders);
+
+    const KV_KEY = 'search:index';
+    const searchIndex = getSearchIndex();
+
+    // Store in KV with 24-hour TTL (auto-refresh daily)
+    await env.SPORT_CACHE.put(KV_KEY, JSON.stringify(searchIndex), {
+      expirationTtl: 86400 // 24 hours
+    });
+
+    return jsonResponse({
+      success: true,
+      message: 'Search index refreshed',
+      count: searchIndex.length,
+      timestamp: new Date().toISOString()
+    }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Search index refresh error:', e);
+    return jsonResponse({ error: 'Failed to refresh search index' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Add items to the search index dynamically
+ * POST /api/search/index/add - Add new items without redeploying
+ * @param {Request} request
+ * @param {Object} env
+ * @param {Object} corsHeaders
+ * @returns {Promise<Response>}
+ */
+async function handleSearchIndexAdd(request, env, corsHeaders) {
+  try {
+    const KV_KEY = 'search:index';
+    const body = await request.json();
+
+    if (!body.items || !Array.isArray(body.items)) {
+      return jsonResponse({ error: 'Missing items array' }, 400, corsHeaders);
+    }
+
+    // Validate items have required fields
+    const validItems = body.items.filter(item =>
+      item.type && item.name && item.url
+    );
+
+    if (validItems.length === 0) {
+      return jsonResponse({ error: 'No valid items provided' }, 400, corsHeaders);
+    }
+
+    // Get current index
+    let currentIndex = await getSearchIndexFromKV(env);
+
+    // Merge new items (avoid duplicates by URL)
+    const existingUrls = new Set(currentIndex.map(i => i.url));
+    const newItems = validItems.filter(i => !existingUrls.has(i.url));
+
+    const updatedIndex = [...currentIndex, ...newItems];
+
+    // Store updated index
+    await env.SPORT_CACHE.put(KV_KEY, JSON.stringify(updatedIndex), {
+      expirationTtl: 86400
+    });
+
+    return jsonResponse({
+      success: true,
+      added: newItems.length,
+      total: updatedIndex.length,
+      timestamp: new Date().toISOString()
+    }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Search index add error:', e);
+    return jsonResponse({ error: 'Failed to add items to search index' }, 500, corsHeaders);
+  }
+}
+
+// === FAVORITES SYNC HANDLERS ===
+
+/**
+ * Sync favorites from localStorage to KV for logged-in users
+ * @param {Request} request
+ * @param {Object} env
+ * @param {Object} corsHeaders
+ * @returns {Promise<Response>}
+ */
+async function handleFavoritesSync(request, env, corsHeaders) {
+  try {
+    // Verify authentication
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+    }
+
+    const token = authHeader.split(' ')[1];
+    const user = await verifyToken(token, env);
+    if (!user) {
+      return jsonResponse({ error: 'Invalid token' }, 401, corsHeaders);
+    }
+
+    const body = await request.json();
+    const { favorites } = body;
+
+    if (!Array.isArray(favorites)) {
+      return jsonResponse({ error: 'Invalid favorites format' }, 400, corsHeaders);
+    }
+
+    // Validate and sanitize favorites (max 50 teams)
+    const validFavorites = favorites
+      .filter(f => typeof f === 'string' && f.length < 100)
+      .slice(0, 50);
+
+    // Store in KV with user ID as key
+    const kvKey = `favorites:${user.id}`;
+    await env.BSI_KV.put(kvKey, JSON.stringify({
+      teams: validFavorites,
+      updatedAt: new Date().toISOString()
+    }), {
+      expirationTtl: 60 * 60 * 24 * 365 // 1 year
+    });
+
+    return jsonResponse({
+      success: true,
+      count: validFavorites.length,
+      synced: validFavorites
+    }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Favorites sync error:', e);
+    return jsonResponse({ error: 'Sync failed' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Get user favorites from KV
+ * @param {Request} request
+ * @param {Object} env
+ * @param {Object} corsHeaders
+ * @returns {Promise<Response>}
+ */
+async function handleGetFavorites(request, env, corsHeaders) {
+  try {
+    // Verify authentication
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+    }
+
+    const token = authHeader.split(' ')[1];
+    const user = await verifyToken(token, env);
+    if (!user) {
+      return jsonResponse({ error: 'Invalid token' }, 401, corsHeaders);
+    }
+
+    // Get from KV
+    const kvKey = `favorites:${user.id}`;
+    const stored = await env.BSI_KV.get(kvKey, { type: 'json' });
+
+    if (!stored) {
+      return jsonResponse({ teams: [], updatedAt: null }, 200, corsHeaders);
+    }
+
+    return jsonResponse(stored, 200, corsHeaders);
+  } catch (e) {
+    console.error('Get favorites error:', e);
+    return jsonResponse({ error: 'Failed to retrieve favorites', teams: [] }, 500, corsHeaders);
+  }
+}
+
+// === PUSH NOTIFICATIONS HANDLERS ===
+
+/**
+ * Return VAPID public key for client-side push subscription
+ */
+async function handleGetVapidKey(env, corsHeaders) {
+  // Public key is safe to expose - it's meant for the client
+  const publicKey = env.VAPID_PUBLIC_KEY;
+  if (!publicKey) {
+    return jsonResponse({ error: 'Push notifications not configured' }, 500, corsHeaders);
+  }
+  return jsonResponse({ publicKey }, 200, corsHeaders);
+}
+
+/**
+ * Save push subscription to D1
+ */
+async function handlePushSubscribe(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { subscription, preferences } = body;
+
+    if (!subscription || !subscription.endpoint || !subscription.keys) {
+      return jsonResponse({ error: 'Invalid subscription object' }, 400, corsHeaders);
+    }
+
+    const { endpoint, keys } = subscription;
+    const { p256dh, auth } = keys;
+
+    if (!p256dh || !auth) {
+      return jsonResponse({ error: 'Missing subscription keys' }, 400, corsHeaders);
+    }
+
+    // Default preferences
+    const teams = preferences?.teams ? JSON.stringify(preferences.teams) : null;
+    const sports = preferences?.sports ? JSON.stringify(preferences.sports) : JSON.stringify(['nfl', 'nba', 'mlb']);
+    const notifyScores = preferences?.notifyScores !== false ? 1 : 0;
+    const notifyLineups = preferences?.notifyLineups !== false ? 1 : 0;
+    const notifyOdds = preferences?.notifyOdds === true ? 1 : 0;
+
+    // Upsert subscription
+    await env.DB.prepare(`
+      INSERT INTO push_subscriptions (endpoint, p256dh, auth, teams, sports, notify_scores, notify_lineups, notify_odds, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      ON CONFLICT(endpoint) DO UPDATE SET
+        p256dh = excluded.p256dh,
+        auth = excluded.auth,
+        teams = excluded.teams,
+        sports = excluded.sports,
+        notify_scores = excluded.notify_scores,
+        notify_lineups = excluded.notify_lineups,
+        notify_odds = excluded.notify_odds,
+        updated_at = datetime('now')
+    `).bind(endpoint, p256dh, auth, teams, sports, notifyScores, notifyLineups, notifyOdds).run();
+
+    // Log to Analytics Engine
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: ['push_subscribe', sports],
+        doubles: [1],
+        indexes: ['push_subscribe']
+      });
+    }
+
+    return jsonResponse({ success: true, message: 'Subscribed to notifications' }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Push subscribe error:', e);
+    return jsonResponse({ error: 'Failed to save subscription' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Remove push subscription from D1
+ */
+async function handlePushUnsubscribe(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { endpoint } = body;
+
+    if (!endpoint) {
+      return jsonResponse({ error: 'Missing endpoint' }, 400, corsHeaders);
+    }
+
+    await env.DB.prepare('DELETE FROM push_subscriptions WHERE endpoint = ?').bind(endpoint).run();
+
+    // Log to Analytics Engine
+    if (env.ANALYTICS) {
+      env.ANALYTICS.writeDataPoint({
+        blobs: ['push_unsubscribe'],
+        doubles: [1],
+        indexes: ['push_unsubscribe']
+      });
+    }
+
+    return jsonResponse({ success: true, message: 'Unsubscribed from notifications' }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Push unsubscribe error:', e);
+    return jsonResponse({ error: 'Failed to remove subscription' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Update push subscription preferences
+ */
+async function handlePushPreferences(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const { endpoint, preferences } = body;
+
+    if (!endpoint) {
+      return jsonResponse({ error: 'Missing endpoint' }, 400, corsHeaders);
+    }
+
+    const teams = preferences?.teams ? JSON.stringify(preferences.teams) : null;
+    const sports = preferences?.sports ? JSON.stringify(preferences.sports) : null;
+    const notifyScores = preferences?.notifyScores !== undefined ? (preferences.notifyScores ? 1 : 0) : null;
+    const notifyLineups = preferences?.notifyLineups !== undefined ? (preferences.notifyLineups ? 1 : 0) : null;
+    const notifyOdds = preferences?.notifyOdds !== undefined ? (preferences.notifyOdds ? 1 : 0) : null;
+
+    // Build dynamic update query
+    const updates = [];
+    const values = [];
+    if (teams !== null) { updates.push('teams = ?'); values.push(teams); }
+    if (sports !== null) { updates.push('sports = ?'); values.push(sports); }
+    if (notifyScores !== null) { updates.push('notify_scores = ?'); values.push(notifyScores); }
+    if (notifyLineups !== null) { updates.push('notify_lineups = ?'); values.push(notifyLineups); }
+    if (notifyOdds !== null) { updates.push('notify_odds = ?'); values.push(notifyOdds); }
+
+    if (updates.length === 0) {
+      return jsonResponse({ error: 'No preferences to update' }, 400, corsHeaders);
+    }
+
+    updates.push('updated_at = datetime("now")');
+    values.push(endpoint);
+
+    await env.DB.prepare(
+      `UPDATE push_subscriptions SET ${updates.join(', ')} WHERE endpoint = ?`
+    ).bind(...values).run();
+
+    return jsonResponse({ success: true, message: 'Preferences updated' }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Push preferences error:', e);
+    return jsonResponse({ error: 'Failed to update preferences' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * Get current subscription preferences
+ */
+async function handleGetPushPreferences(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const endpoint = url.searchParams.get('endpoint');
+
+    if (!endpoint) {
+      return jsonResponse({ error: 'Missing endpoint parameter' }, 400, corsHeaders);
+    }
+
+    const sub = await env.DB.prepare(
+      'SELECT teams, sports, notify_scores, notify_lineups, notify_odds FROM push_subscriptions WHERE endpoint = ?'
+    ).bind(endpoint).first();
+
+    if (!sub) {
+      return jsonResponse({ error: 'Subscription not found' }, 404, corsHeaders);
+    }
+
+    return jsonResponse({
+      teams: sub.teams ? JSON.parse(sub.teams) : [],
+      sports: sub.sports ? JSON.parse(sub.sports) : ['nfl', 'nba', 'mlb'],
+      notifyScores: !!sub.notify_scores,
+      notifyLineups: !!sub.notify_lineups,
+      notifyOdds: !!sub.notify_odds
+    }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Get preferences error:', e);
+    return jsonResponse({ error: 'Failed to get preferences' }, 500, corsHeaders);
+  }
+}
+
+// === WEB PUSH SENDER (Cloudflare Workers Native Implementation) ===
+
+/**
+ * Base64URL encode a buffer
+ */
+function base64UrlEncode(buffer) {
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/**
+ * Base64URL decode to Uint8Array
+ */
+function base64UrlDecode(str) {
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padding = '='.repeat((4 - base64.length % 4) % 4);
+  const binary = atob(base64 + padding);
+  return Uint8Array.from(binary, c => c.charCodeAt(0));
+}
+
+/**
+ * Import VAPID private key for signing
+ */
+async function importVapidPrivateKey(base64PrivateKey) {
+  const privateKeyBytes = base64UrlDecode(base64PrivateKey);
+
+  // Create JWK for P-256 private key
+  const jwk = {
+    kty: 'EC',
+    crv: 'P-256',
+    x: base64UrlEncode(privateKeyBytes.slice(0, 32)),
+    y: base64UrlEncode(privateKeyBytes.slice(32, 64)),
+    d: base64UrlEncode(privateKeyBytes)
+  };
+
+  return crypto.subtle.importKey(
+    'jwk',
+    jwk,
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    false,
+    ['sign']
+  );
+}
+
+/**
+ * Create VAPID JWT for authorization
+ */
+async function createVapidJwt(audience, subject, privateKey) {
+  const header = { typ: 'JWT', alg: 'ES256' };
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    aud: audience,
+    exp: now + 86400, // 24 hours
+    sub: subject
+  };
+
+  const headerB64 = base64UrlEncode(new TextEncoder().encode(JSON.stringify(header)));
+  const payloadB64 = base64UrlEncode(new TextEncoder().encode(JSON.stringify(payload)));
+  const unsignedToken = `${headerB64}.${payloadB64}`;
+
+  const signature = await crypto.subtle.sign(
+    { name: 'ECDSA', hash: 'SHA-256' },
+    privateKey,
+    new TextEncoder().encode(unsignedToken)
+  );
+
+  return `${unsignedToken}.${base64UrlEncode(signature)}`;
+}
+
+/**
+ * Send a push notification to a single subscription
+ */
+async function sendPushNotification(subscription, payload, env) {
+  try {
+    const endpoint = subscription.endpoint;
+    const audience = new URL(endpoint).origin;
+
+    // Import private key and create JWT
+    const privateKey = await importVapidPrivateKey(env.VAPID_PRIVATE_KEY);
+    const jwt = await createVapidJwt(audience, env.VAPID_SUBJECT, privateKey);
+
+    // Prepare headers
+    const headers = {
+      'Authorization': `vapid t=${jwt}, k=${env.VAPID_PUBLIC_KEY}`,
+      'Content-Type': 'application/json',
+      'TTL': '86400'
+    };
+
+    // Send the notification (unencrypted for simplicity - works with most browsers)
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (response.status === 201 || response.status === 200) {
+      return { success: true, endpoint };
+    } else if (response.status === 410 || response.status === 404) {
+      // Subscription expired or invalid - remove from database
+      await env.DB.prepare('DELETE FROM push_subscriptions WHERE endpoint = ?').bind(endpoint).run();
+      return { success: false, expired: true, endpoint };
+    } else {
+      return { success: false, status: response.status, endpoint };
+    }
+  } catch (error) {
+    console.error('Push send error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Send notifications to all subscribers matching criteria
+ */
+async function broadcastNotification(env, notification, filters = {}) {
+  let query = 'SELECT endpoint, p256dh, auth, teams, sports FROM push_subscriptions WHERE 1=1';
+  const params = [];
+
+  // Filter by notification type
+  if (filters.type === 'score') {
+    query += ' AND notify_scores = 1';
+  } else if (filters.type === 'lineup') {
+    query += ' AND notify_lineups = 1';
+  } else if (filters.type === 'odds') {
+    query += ' AND notify_odds = 1';
+  }
+
+  const subscriptions = await env.DB.prepare(query).bind(...params).all();
+
+  if (!subscriptions.results || subscriptions.results.length === 0) {
+    return { sent: 0, failed: 0, expired: 0 };
+  }
+
+  let sent = 0, failed = 0, expired = 0;
+
+  // Filter by sport/team on client side for flexibility
+  for (const sub of subscriptions.results) {
+    // Check sport filter
+    if (filters.sport) {
+      const sports = sub.sports ? JSON.parse(sub.sports) : ['nfl', 'nba', 'mlb'];
+      if (!sports.includes(filters.sport)) continue;
+    }
+
+    // Check team filter
+    if (filters.team && sub.teams) {
+      const teams = JSON.parse(sub.teams);
+      if (teams.length > 0 && !teams.includes(filters.team)) continue;
+    }
+
+    const result = await sendPushNotification(sub, notification, env);
+    if (result.success) sent++;
+    else if (result.expired) expired++;
+    else failed++;
+  }
+
+  console.log(`[PUSH] Broadcast complete: ${sent} sent, ${failed} failed, ${expired} expired`);
+  return { sent, failed, expired };
+}
+
+/**
+ * Check for score updates and send notifications
+ */
+async function checkAndNotifyScores(env, sport) {
+  const cacheKey = `push:last_scores:${sport}`;
+  const lastCheck = await env.SPORT_CACHE.get(cacheKey);
+  const lastScores = lastCheck ? JSON.parse(lastCheck) : {};
+
+  // Fetch current scores
+  let scores = [];
+  try {
+    if (sport === 'nfl') {
+      const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard`);
+      const data = await res.json();
+      scores = (data.events || []).map(e => ({
+        id: e.id,
+        status: e.status?.type?.state,
+        home: e.competitions?.[0]?.competitors?.find(c => c.homeAway === 'home'),
+        away: e.competitions?.[0]?.competitors?.find(c => c.homeAway === 'away')
+      }));
+    } else if (sport === 'nba') {
+      const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard`);
+      const data = await res.json();
+      scores = (data.events || []).map(e => ({
+        id: e.id,
+        status: e.status?.type?.state,
+        home: e.competitions?.[0]?.competitors?.find(c => c.homeAway === 'home'),
+        away: e.competitions?.[0]?.competitors?.find(c => c.homeAway === 'away')
+      }));
+    }
+  } catch (e) {
+    console.error(`[PUSH] Failed to fetch ${sport} scores:`, e);
+    return;
+  }
+
+  // Check for newly completed games
+  for (const game of scores) {
+    if (game.status === 'post' && lastScores[game.id] !== 'post') {
+      // Game just ended - send notification
+      const homeName = game.home?.team?.shortDisplayName || game.home?.team?.abbreviation || 'Home';
+      const awayName = game.away?.team?.shortDisplayName || game.away?.team?.abbreviation || 'Away';
+      const homeScore = game.home?.score || '0';
+      const awayScore = game.away?.score || '0';
+      const winner = parseInt(homeScore) > parseInt(awayScore) ? homeName : awayName;
+
+      await broadcastNotification(env, {
+        title: `${sport.toUpperCase()} Final`,
+        body: `${awayName} ${awayScore} - ${homeName} ${homeScore}`,
+        icon: '/images/bsi-logo-192.png',
+        badge: '/images/bsi-logo-96.png',
+        tag: `score-${game.id}`,
+        data: { url: `/${sport}/scores.html`, gameId: game.id }
+      }, { sport, type: 'score' });
+    }
+  }
+
+  // Update cache
+  const newScores = {};
+  scores.forEach(g => { newScores[g.id] = g.status; });
+  await env.SPORT_CACHE.put(cacheKey, JSON.stringify(newScores), { expirationTtl: 3600 });
+}
+
+/**
+ * Admin endpoint to send test notification
+ */
+async function handleTestNotification(request, env, corsHeaders) {
+  // Simple admin check (in production, use proper auth)
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return jsonResponse({ error: 'Unauthorized' }, 401, corsHeaders);
+  }
+
+  try {
+    const body = await request.json();
+    const { title, body: msgBody, sport, type } = body;
+
+    const result = await broadcastNotification(env, {
+      title: title || 'BSI Alert',
+      body: msgBody || 'Test notification from Blaze Sports Intel',
+      icon: '/images/bsi-logo-192.png',
+      badge: '/images/bsi-logo-96.png',
+      tag: `test-${Date.now()}`,
+      data: { url: '/' }
+    }, { sport, type });
+
+    return jsonResponse(result, 200, corsHeaders);
+  } catch (e) {
+    console.error('Test notification error:', e);
+    return jsonResponse({ error: 'Failed to send notification' }, 500, corsHeaders);
+  }
+}
+
+// === VISION COACH API HANDLERS ===
+
+/**
+ * Get authenticated user from session cookie
+ */
+async function getAuthenticatedUser(request, env) {
+  const cookie = request.headers.get('Cookie') || '';
+  const match = cookie.match(/session=([^;]+)/);
+  if (!match) return null;
+
+  const sessionId = match[1];
+  const session = await env.DB.prepare(
+    'SELECT user_id FROM sessions WHERE id = ? AND expires_at > datetime("now")'
+  ).bind(sessionId).first();
+
+  if (!session) return null;
+
+  const user = await env.DB.prepare(
+    'SELECT id, email, name, subscription_tier FROM users WHERE id = ?'
+  ).bind(session.user_id).first();
+
+  return user;
+}
+
+/**
+ * GET /api/vision-coach/sessions - List user's vision coach sessions
+ */
+async function handleGetVisionCoachSessions(request, env, corsHeaders) {
+  try {
+    const user = await getAuthenticatedUser(request, env);
+    if (!user) {
+      return jsonResponse({ error: 'Authentication required' }, 401, corsHeaders);
+    }
+
+    const url = new URL(request.url);
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '50'), 100);
+    const offset = parseInt(url.searchParams.get('offset') || '0');
+
+    const sessions = await env.DB.prepare(`
+      SELECT id, date, duration, attractor, avg_presence, avg_stability, peak_presence,
+             composite_score, composite_grade, presence_history, snapshots
+      FROM vision_coach_sessions
+      WHERE user_id = ?
+      ORDER BY date DESC
+      LIMIT ? OFFSET ?
+    `).bind(user.id, limit, offset).all();
+
+    // Parse JSON fields
+    const parsed = sessions.results.map(s => ({
+      ...s,
+      presenceHistory: s.presence_history ? JSON.parse(s.presence_history) : [],
+      snapshots: s.snapshots ? JSON.parse(s.snapshots) : [],
+      avgPresence: s.avg_presence,
+      avgStability: s.avg_stability,
+      peakPresence: s.peak_presence,
+      compositeScore: s.composite_score,
+      compositeGrade: s.composite_grade
+    }));
+
+    return jsonResponse({ sessions: parsed, total: sessions.results.length }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Vision Coach sessions error:', e);
+    return jsonResponse({ error: 'Failed to load sessions' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * POST /api/vision-coach/sessions - Save a new session
+ */
+async function handleSaveVisionCoachSession(request, env, corsHeaders) {
+  try {
+    const user = await getAuthenticatedUser(request, env);
+    if (!user) {
+      return jsonResponse({ error: 'Authentication required' }, 401, corsHeaders);
+    }
+
+    // Check session limit for free tier
+    if (user.subscription_tier === 'free' || !user.subscription_tier) {
+      const count = await env.DB.prepare(
+        'SELECT COUNT(*) as count FROM vision_coach_sessions WHERE user_id = ?'
+      ).bind(user.id).first();
+      if (count.count >= 10) {
+        return jsonResponse({ error: 'Free tier limited to 10 saved sessions. Upgrade to Pro for unlimited.' }, 403, corsHeaders);
+      }
+    }
+
+    const body = await request.json();
+    const sessionId = body.id || crypto.randomUUID();
+
+    await env.DB.prepare(`
+      INSERT INTO vision_coach_sessions (
+        id, user_id, date, duration, attractor, avg_presence, avg_stability, peak_presence,
+        avg_pitch, avg_voice_energy, composite_score, composite_grade, presence_history, snapshots
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      sessionId,
+      user.id,
+      body.date || new Date().toISOString(),
+      body.duration || 0,
+      body.attractor || 'Lorenz',
+      body.avgPresence || 0,
+      body.avgStability || 0,
+      body.peakPresence || 0,
+      body.avgPitch || 0,
+      body.avgVoiceEnergy || 0,
+      body.compositeScore || 0,
+      body.compositeGrade || 'C',
+      JSON.stringify(body.presenceHistory || []),
+      JSON.stringify(body.snapshots || [])
+    ).run();
+
+    return jsonResponse({ success: true, id: sessionId }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Vision Coach save session error:', e);
+    return jsonResponse({ error: 'Failed to save session' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * GET /api/vision-coach/challenges - Get user's completed challenges
+ */
+async function handleGetVisionCoachChallenges(request, env, corsHeaders) {
+  try {
+    const user = await getAuthenticatedUser(request, env);
+    if (!user) {
+      return jsonResponse({ error: 'Authentication required' }, 401, corsHeaders);
+    }
+
+    const challenges = await env.DB.prepare(`
+      SELECT challenge_id, completed_at, badge, xp
+      FROM vision_coach_challenges
+      WHERE user_id = ?
+    `).bind(user.id).all();
+
+    // Convert to object format matching frontend
+    const challengeMap = {};
+    challenges.results.forEach(c => {
+      challengeMap[c.challenge_id] = {
+        completedAt: c.completed_at,
+        badge: c.badge,
+        xp: c.xp
+      };
+    });
+
+    return jsonResponse({ challenges: challengeMap }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Vision Coach challenges error:', e);
+    return jsonResponse({ error: 'Failed to load challenges' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * POST /api/vision-coach/challenges - Save completed challenges
+ */
+async function handleSaveVisionCoachChallenges(request, env, corsHeaders) {
+  try {
+    const user = await getAuthenticatedUser(request, env);
+    if (!user) {
+      return jsonResponse({ error: 'Authentication required' }, 401, corsHeaders);
+    }
+
+    const body = await request.json();
+    const { challenges } = body;
+
+    if (!challenges || typeof challenges !== 'object') {
+      return jsonResponse({ error: 'Invalid challenges data' }, 400, corsHeaders);
+    }
+
+    // Upsert each challenge
+    for (const [challengeId, data] of Object.entries(challenges)) {
+      await env.DB.prepare(`
+        INSERT INTO vision_coach_challenges (user_id, challenge_id, completed_at, badge, xp)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(user_id, challenge_id) DO UPDATE SET
+          completed_at = excluded.completed_at,
+          badge = excluded.badge,
+          xp = excluded.xp
+      `).bind(
+        user.id,
+        challengeId,
+        data.completedAt || new Date().toISOString(),
+        data.badge || 'bronze',
+        data.xp || 0
+      ).run();
+    }
+
+    return jsonResponse({ success: true }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Vision Coach save challenges error:', e);
+    return jsonResponse({ error: 'Failed to save challenges' }, 500, corsHeaders);
+  }
+}
+
+/**
+ * GET /api/vision-coach/stats - Get user's aggregate stats
+ */
+async function handleGetVisionCoachStats(request, env, corsHeaders) {
+  try {
+    const user = await getAuthenticatedUser(request, env);
+    if (!user) {
+      return jsonResponse({ error: 'Authentication required' }, 401, corsHeaders);
+    }
+
+    const stats = await env.DB.prepare(`
+      SELECT
+        COUNT(*) as total_sessions,
+        SUM(duration) as total_duration,
+        AVG(avg_presence) as avg_presence,
+        MAX(peak_presence) as best_presence,
+        AVG(composite_score) as avg_grade,
+        MAX(date) as last_session
+      FROM vision_coach_sessions
+      WHERE user_id = ?
+    `).bind(user.id).first();
+
+    const challengeStats = await env.DB.prepare(`
+      SELECT SUM(xp) as total_xp, COUNT(*) as completed_count
+      FROM vision_coach_challenges
+      WHERE user_id = ?
+    `).bind(user.id).first();
+
+    return jsonResponse({
+      sessions: {
+        total: stats.total_sessions || 0,
+        totalMinutes: Math.round((stats.total_duration || 0) / 60),
+        avgPresence: Math.round(stats.avg_presence || 0),
+        bestPresence: Math.round(stats.best_presence || 0),
+        avgGrade: Math.round(stats.avg_grade || 0),
+        lastSession: stats.last_session
+      },
+      challenges: {
+        completed: challengeStats.completed_count || 0,
+        totalXP: challengeStats.total_xp || 0
+      }
+    }, 200, corsHeaders);
+  } catch (e) {
+    console.error('Vision Coach stats error:', e);
+    return jsonResponse({ error: 'Failed to load stats' }, 500, corsHeaders);
+  }
+}
+
 // === UNIFIED SCORES HANDLER ===
 /**
  * Fetch all sports scores in one aggregated call
@@ -3085,7 +7289,7 @@ async function handleUnifiedScores(env, corsHeaders) {
     mlb: [],
     nfl: [],
     nba: [],
-    ncaab: [],
+    college_baseball: [],
     ncaaf: [],
     errors: [],
     fetchedAt: getChicagoTimestamp(),
@@ -3162,10 +7366,10 @@ async function handleUnifiedScores(env, corsHeaders) {
       .then(r => r.json())
       .then(data => {
         if (data?.events) {
-          results.ncaab = data.events.map(e => normalizeESPNEvent(e, 'ncaab'));
+          results.college_baseball = data.events.map(e => normalizeESPNEvent(e, 'college_baseball'));
         }
       })
-      .catch(e => results.errors.push({ league: 'ncaab', error: e.message })),
+      .catch(e => results.errors.push({ league: 'college_baseball', error: e.message })),
 
     // College Football from ESPN
     fetchWithRetry(`${ESPN_BASE}/football/college-football/scoreboard`)
@@ -3181,7 +7385,7 @@ async function handleUnifiedScores(env, corsHeaders) {
   await Promise.allSettled(fetchPromises);
 
   // Summary stats
-  const allGames = [...results.mlb, ...results.nfl, ...results.nba, ...results.ncaab, ...results.ncaaf];
+  const allGames = [...results.mlb, ...results.nfl, ...results.nba, ...results.college_baseball, ...results.ncaaf];
   results.summary = {
     total: allGames.length,
     live: allGames.filter(g => g.isLive).length,
@@ -3190,7 +7394,7 @@ async function handleUnifiedScores(env, corsHeaders) {
       mlb: results.mlb.length,
       nfl: results.nfl.length,
       nba: results.nba.length,
-      ncaab: results.ncaab.length,
+      college_baseball: results.college_baseball.length,
       ncaaf: results.ncaaf.length
     }
   };

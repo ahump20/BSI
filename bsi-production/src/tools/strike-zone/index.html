@@ -8,6 +8,20 @@
     <link rel="icon" href="/favicon.ico">
     <style>
         :root {
+            --bsi-burnt-orange: #BF5700;
+            --bsi-ember: #FF6B35;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-gold: #C9A227;
+            --font-display: 'Oswald', sans-serif;
+            --font-body: 'Cormorant Garamond', Georgia, serif;
+        }
+        /* BSI Brand: Dark mode only */
+                .theme-toggle{position:fixed;top:1rem;right:1rem;background:rgba(26,26,26,0.8);border:1px solid rgba(250,248,245,0.2);border-radius:8px;padding:10px;cursor:pointer;color:#FAF8F5;z-index:1000;display:flex;align-items:center;justify-content:center}
+        .theme-toggle:hover{border-color:#BF5700;background:rgba(191,87,0,0.2)}
+        .theme-toggle svg{width:20px;height:20px}
+                :root {
             --burnt-orange: #BF5700;
             --texas-soil: #8B4513;
             --ember: #FF6B35;
@@ -102,6 +116,49 @@
             select, input { width: 100%; min-width: unset; }
             .btn { width: 100%; }
             header { padding: 20px 0; }
+            .autocomplete-wrapper { width: 100%; }
+        }
+        .autocomplete-wrapper { flex: 1; min-width: 220px; }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--charcoal);
+            border: 1px solid #555;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .autocomplete-dropdown.show { display: block; }
+        .autocomplete-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            transition: background 0.15s;
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover { background: rgba(191, 87, 0, 0.2); }
+        .autocomplete-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #333;
+        }
+        .autocomplete-item-info { flex: 1; }
+        .autocomplete-item-name { font-weight: 600; color: var(--cream); }
+        .autocomplete-item-meta { font-size: 0.8rem; color: #888; }
+        .autocomplete-loading {
+            padding: 16px;
+            text-align: center;
+            color: #888;
         }
         .zone-panel {
             background: var(--charcoal);
@@ -237,9 +294,117 @@
         }
         .tooltip-title { font-weight: 700; margin-bottom: 6px; }
         .tooltip-line { color: #aaa; margin: 2px 0; }
+        /* Sequence Mode */
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--charcoal);
+            border: 1px solid #444;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-toggle:hover { border-color: var(--burnt-orange); }
+        .mode-toggle.active {
+            background: rgba(191, 87, 0, 0.2);
+            border-color: var(--burnt-orange);
+        }
+        .mode-toggle .toggle-icon {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #666;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .mode-toggle.active .toggle-icon {
+            background: var(--burnt-orange);
+            border-color: var(--burnt-orange);
+            color: white;
+        }
+        .sequence-timeline {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--midnight);
+            border-radius: 8px;
+            display: none;
+        }
+        .sequence-timeline.show { display: block; }
+        .sequence-timeline-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--burnt-orange);
+        }
+        .sequence-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .sequence-pitch {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            border: 2px solid transparent;
+        }
+        .sequence-pitch:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 12px rgba(255,255,255,0.3);
+        }
+        .sequence-pitch.strike { border-color: rgba(255,255,255,0.5); }
+        .sequence-pitch.ball { border-color: rgba(255,255,255,0.2); }
+        .sequence-pitch.highlighted {
+            transform: scale(1.3);
+            box-shadow: 0 0 16px rgba(191, 87, 0, 0.6);
+        }
+        .sequence-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .at-bat-select {
+            padding: 8px 12px;
+            background: var(--charcoal);
+            border: 1px solid #555;
+            border-radius: 6px;
+            color: var(--cream);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .at-bat-select:focus { outline: none; border-color: var(--burnt-orange); }
+        .at-bat-info {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .at-bat-count {
+            background: var(--burnt-orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
     </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
+    <button class="theme-toggle" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
     <div class="container">
         <a href="/tools" class="back-link">&larr; Back to Tools</a>
 
@@ -249,7 +414,11 @@
         </header>
 
         <div class="controls">
-            <input type="text" id="pitcherInput" placeholder="Pitcher name...">
+            <div class="autocomplete-wrapper" style="position:relative;">
+                <input type="text" id="pitcherInput" placeholder="Search pitcher name..." autocomplete="off">
+                <input type="hidden" id="pitcherId">
+                <div id="autocompleteResults" class="autocomplete-dropdown"></div>
+            </div>
             <select id="pitchTypeSelect">
                 <option value="">All Pitch Types</option>
                 <option value="FF">Four-Seam Fastball</option>
@@ -266,6 +435,10 @@
                 <option value="R">vs Right-Handed</option>
             </select>
             <button class="btn" id="loadBtn">Load Data</button>
+            <div class="mode-toggle" id="sequenceToggle">
+                <div class="toggle-icon">1</div>
+                <span>Sequence</span>
+            </div>
         </div>
 
         <div class="main-grid">
@@ -278,6 +451,16 @@
                     <canvas id="strikeZoneCanvas" width="400" height="450"></canvas>
                 </div>
                 <div class="legend" id="legend"></div>
+                <div class="sequence-timeline" id="sequenceTimeline">
+                    <div class="sequence-controls">
+                        <div class="sequence-timeline-title">Pitch Sequence</div>
+                        <select id="atBatSelect" class="at-bat-select">
+                            <option value="">All At-Bats</option>
+                        </select>
+                        <span class="at-bat-info" id="atBatInfo"></span>
+                    </div>
+                    <div class="sequence-list" id="sequenceList"></div>
+                </div>
             </div>
 
             <div class="stats-panel">
@@ -331,6 +514,115 @@
         };
 
         let currentData = null;
+        let selectedPlayerId = null;
+        let searchTimeout = null;
+        let sequenceMode = false;
+        let highlightedPitch = null;
+        let selectedAtBat = '';
+        let allAtBats = [];
+
+        // Player Autocomplete
+        const pitcherInput = document.getElementById('pitcherInput');
+        const playerIdInput = document.getElementById('pitcherId');
+        const autocompleteDropdown = document.getElementById('autocompleteResults');
+
+        pitcherInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            clearTimeout(searchTimeout);
+
+            if (query.length < 2) {
+                autocompleteDropdown.classList.remove('show');
+                return;
+            }
+
+            searchTimeout = setTimeout(function() {
+                searchPlayers(query);
+            }, 300);
+        });
+
+        pitcherInput.addEventListener('focus', function() {
+            if (this.value.length >= 2 && autocompleteDropdown.children.length > 0) {
+                autocompleteDropdown.classList.add('show');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.autocomplete-wrapper')) {
+                autocompleteDropdown.classList.remove('show');
+            }
+        });
+
+        function searchPlayers(query) {
+            autocompleteDropdown.innerHTML = '';
+            var loadingDiv = document.createElement('div');
+            loadingDiv.className = 'autocomplete-loading';
+            loadingDiv.textContent = 'Searching...';
+            autocompleteDropdown.appendChild(loadingDiv);
+            autocompleteDropdown.classList.add('show');
+
+            fetch('/api/players/search?q=' + encodeURIComponent(query) + '&sport=mlb&limit=8')
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    autocompleteDropdown.innerHTML = '';
+                    if (data.players && data.players.length > 0) {
+                        // Filter for pitchers
+                        var pitchers = data.players.filter(function(p) {
+                            return p.position === 'P' || p.position === 'SP' || p.position === 'RP' || p.position === 'CL';
+                        });
+                        var playersToShow = pitchers.length > 0 ? pitchers : data.players;
+
+                        playersToShow.forEach(function(player) {
+                            var item = document.createElement('div');
+                            item.className = 'autocomplete-item';
+                            item.dataset.id = player.id;
+                            item.dataset.name = player.name;
+
+                            var img = document.createElement('img');
+                            img.src = player.headshotUrl || '/images/player-placeholder.png';
+                            img.alt = player.name;
+                            img.onerror = function() { this.src = '/images/player-placeholder.png'; };
+
+                            var info = document.createElement('div');
+                            info.className = 'autocomplete-item-info';
+
+                            var nameDiv = document.createElement('div');
+                            nameDiv.className = 'autocomplete-item-name';
+                            nameDiv.textContent = player.name;
+
+                            var metaDiv = document.createElement('div');
+                            metaDiv.className = 'autocomplete-item-meta';
+                            metaDiv.textContent = player.position + ' | ' + player.team + (player.number ? ' #' + player.number : '');
+
+                            info.appendChild(nameDiv);
+                            info.appendChild(metaDiv);
+                            item.appendChild(img);
+                            item.appendChild(info);
+
+                            item.addEventListener('click', function() {
+                                pitcherInput.value = player.name;
+                                playerIdInput.value = player.id;
+                                selectedPlayerId = player.id;
+                                autocompleteDropdown.classList.remove('show');
+                                loadData();
+                            });
+
+                            autocompleteDropdown.appendChild(item);
+                        });
+                    } else {
+                        var noResults = document.createElement('div');
+                        noResults.className = 'autocomplete-loading';
+                        noResults.textContent = 'No players found';
+                        autocompleteDropdown.appendChild(noResults);
+                    }
+                })
+                .catch(function(err) {
+                    autocompleteDropdown.innerHTML = '';
+                    var errorDiv = document.createElement('div');
+                    errorDiv.className = 'autocomplete-loading';
+                    errorDiv.textContent = 'Search error';
+                    autocompleteDropdown.appendChild(errorDiv);
+                });
+        }
 
         // Scale helpers: convert pitch coords (feet) to canvas coords
         const zoneLeft = -0.708;
@@ -409,20 +701,51 @@
         }
 
         function drawPitches(pitches) {
-            pitches.forEach(function(pitch) {
+            // In sequence mode, draw connecting lines first (so pitches render on top)
+            if (sequenceMode && pitches.length > 1) {
+                ctx.strokeStyle = 'rgba(191, 87, 0, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                for (let i = 0; i < pitches.length; i++) {
+                    const cx = pxToCanvas(pitches[i].px);
+                    const cy = pzToCanvas(pitches[i].pz);
+                    if (i === 0) {
+                        ctx.moveTo(cx, cy);
+                    } else {
+                        ctx.lineTo(cx, cy);
+                    }
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw pitches
+            pitches.forEach(function(pitch, index) {
                 const cx = pxToCanvas(pitch.px);
                 const cy = pzToCanvas(pitch.pz);
                 const color = pitchColors[pitch.type] || '#888';
+                const isHighlighted = highlightedPitch === index;
+                const radius = sequenceMode ? 12 : 6;
 
                 ctx.beginPath();
-                ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+                ctx.arc(cx, cy, isHighlighted ? radius + 4 : radius, 0, Math.PI * 2);
                 ctx.fillStyle = color;
-                ctx.globalAlpha = 0.7;
+                ctx.globalAlpha = isHighlighted ? 1 : 0.7;
                 ctx.fill();
                 ctx.globalAlpha = 1;
-                ctx.strokeStyle = pitch.isStrike ? '#fff' : '#555';
-                ctx.lineWidth = 1;
+                ctx.strokeStyle = isHighlighted ? '#fff' : (pitch.isStrike ? '#fff' : '#555');
+                ctx.lineWidth = isHighlighted ? 3 : 1;
                 ctx.stroke();
+
+                // Draw sequence number in sequence mode
+                if (sequenceMode) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 10px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText((index + 1).toString(), cx, cy);
+                }
             });
         }
 
@@ -491,11 +814,20 @@
             const pitcher = document.getElementById('pitcherInput').value;
             const pitchType = document.getElementById('pitchTypeSelect').value;
             const hand = document.getElementById('handSelect').value;
+            const playerId = selectedPlayerId || playerIdInput.value;
 
             let url = '/api/tools/strike-zone?';
-            if (pitcher) url += 'pitcher=' + encodeURIComponent(pitcher) + '&';
+            if (playerId) {
+                url += 'player=' + encodeURIComponent(playerId) + '&';
+                url += 'real=true&'; // Use real data when we have a player ID
+            } else if (pitcher) {
+                url += 'pitcher=' + encodeURIComponent(pitcher) + '&';
+            }
             if (pitchType) url += 'type=' + encodeURIComponent(pitchType) + '&';
             if (hand) url += 'hand=' + encodeURIComponent(hand);
+
+            // Update pitcher label
+            document.getElementById('pitcherLabel').textContent = pitcher || 'Sample Pitcher';
 
             try {
                 const response = await fetch(url);
@@ -575,9 +907,147 @@
 
         document.getElementById('loadBtn').addEventListener('click', loadData);
 
+        // Sequence Mode Toggle
+        const sequenceToggle = document.getElementById('sequenceToggle');
+        const sequenceTimeline = document.getElementById('sequenceTimeline');
+        const sequenceList = document.getElementById('sequenceList');
+        const atBatSelect = document.getElementById('atBatSelect');
+        const atBatInfo = document.getElementById('atBatInfo');
+
+        // Get filtered pitches based on at-bat selection
+        function getFilteredPitches() {
+            if (!currentData || !currentData.pitches) return [];
+            if (!selectedAtBat) return currentData.pitches;
+            return currentData.pitches.filter(function(p) {
+                return p.atBatIndex == selectedAtBat;
+            });
+        }
+
+        // Populate at-bat dropdown
+        function populateAtBatSelect(pitches) {
+            atBatSelect.innerHTML = '<option value="">All At-Bats</option>';
+
+            // Get unique at-bat indices
+            const atBats = [];
+            const seen = {};
+            pitches.forEach(function(p) {
+                if (p.atBatIndex && !seen[p.atBatIndex]) {
+                    seen[p.atBatIndex] = true;
+                    atBats.push({
+                        index: p.atBatIndex,
+                        inning: p.inning || '?',
+                        pitchCount: pitches.filter(function(x) { return x.atBatIndex == p.atBatIndex; }).length
+                    });
+                }
+            });
+
+            allAtBats = atBats.sort(function(a, b) { return a.index - b.index; });
+
+            allAtBats.forEach(function(ab, i) {
+                const option = document.createElement('option');
+                option.value = ab.index;
+                option.textContent = 'At-Bat #' + (i + 1) + ' (Inn ' + ab.inning + ', ' + ab.pitchCount + ' pitches)';
+                atBatSelect.appendChild(option);
+            });
+
+            // Update info text
+            atBatInfo.textContent = allAtBats.length > 0 ? allAtBats.length + ' at-bats' : '';
+        }
+
+        // At-bat filter change handler
+        atBatSelect.addEventListener('change', function() {
+            selectedAtBat = this.value;
+            const filtered = getFilteredPitches();
+            drawStrikeZone();
+            drawPitches(filtered);
+            buildSequenceTimeline(filtered);
+        });
+
+        sequenceToggle.addEventListener('click', function() {
+            sequenceMode = !sequenceMode;
+            this.classList.toggle('active', sequenceMode);
+            sequenceTimeline.classList.toggle('show', sequenceMode);
+
+            if (currentData) {
+                const filtered = getFilteredPitches();
+                drawStrikeZone();
+                drawPitches(filtered);
+                if (sequenceMode) {
+                    populateAtBatSelect(currentData.pitches);
+                    buildSequenceTimeline(filtered);
+                }
+            }
+        });
+
+        function buildSequenceTimeline(pitches) {
+            sequenceList.textContent = '';
+
+            pitches.forEach(function(pitch, index) {
+                const item = document.createElement('div');
+                item.className = 'sequence-pitch' + (pitch.isStrike ? ' strike' : ' ball');
+                item.style.background = pitchColors[pitch.type] || '#888';
+                item.textContent = pitch.pitchNumber || (index + 1).toString();
+
+                // Enhanced tooltip for real data
+                let tipText = pitch.typeName + ' - ' + pitch.velocity + ' mph';
+                if (pitch.spinRate) tipText += ' - ' + pitch.spinRate + ' rpm';
+                tipText += ' - ' + (pitch.result || '').replace(/_/g, ' ');
+                item.title = tipText;
+                item.dataset.index = index;
+
+                item.addEventListener('mouseenter', function() {
+                    highlightedPitch = index;
+                    document.querySelectorAll('.sequence-pitch').forEach(function(el) {
+                        el.classList.remove('highlighted');
+                    });
+                    this.classList.add('highlighted');
+                    const filtered = getFilteredPitches();
+                    drawStrikeZone();
+                    drawPitches(filtered);
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    highlightedPitch = null;
+                    this.classList.remove('highlighted');
+                    const filtered = getFilteredPitches();
+                    drawStrikeZone();
+                    drawPitches(filtered);
+                });
+
+                sequenceList.appendChild(item);
+            });
+        }
+
+        // Rebuild timeline after data loads if sequence mode is on
+        const originalUpdateStats = updateStats;
+        updateStats = function(data) {
+            originalUpdateStats(data);
+            // Reset at-bat filter when new data loads
+            selectedAtBat = '';
+            atBatSelect.value = '';
+            if (sequenceMode) {
+                populateAtBatSelect(data.pitches);
+                buildSequenceTimeline(data.pitches);
+            }
+        };
+
         // Initial load
         drawStrikeZone();
         loadData();
     </script>
+<script>
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+      var savedTheme = localStorage.getItem('bsi-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeToggle.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('bsi-theme', next);
+      });
+    }
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(console.error);}</script>
 </body>
 </html>

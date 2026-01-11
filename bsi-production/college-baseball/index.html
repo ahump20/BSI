@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="College baseball coverage from Blaze Sports Intel. The D1 coverage ESPN should have built. Live scores, rankings, and analytics for every program.">
+  <meta name="description" content="College baseball coverage from Blaze Sports Intel. The coverage this sport deserves. Live scores, rankings, and analytics for every D1 program.">
   <title>College Baseball | Blaze Sports Intel</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -20,11 +20,21 @@
       --bsi-warm-white: #FAFAFA;
       --bsi-ember: #FF6B35;
       --bsi-gold: #C9A227;
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-body: 'Source Serif 4', Georgia, serif;
-      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
-      --font-mono: 'IBM Plex Mono', monospace;
+      --font-display: 'Oswald', sans-serif;
+      --font-body: 'Cormorant Garamond', Georgia, serif;
+
+      /* Theme variables - Dark mode default */
+      --bg-primary: var(--bsi-midnight);
+      --bg-secondary: var(--bsi-charcoal);
+      --bg-tertiary: rgba(255, 255, 255, 0.05);
+      --text-primary: var(--bsi-cream);
+      --text-secondary: rgba(250, 248, 245, 0.7);
+      --text-muted: rgba(250, 248, 245, 0.5);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(191, 87, 0, 0.2);
     }
+
+    /* BSI Brand: Dark mode only - cinematic grit aesthetic */
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -32,13 +42,15 @@
       font-family: var(--font-body);
       font-size: 1rem;
       line-height: 1.6;
-      color: var(--bsi-warm-white);
-      background: var(--bsi-midnight);
+      color: var(--text-primary);
+      background: var(--bg-primary);
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     img { max-width: 100%; height: auto; display: block; }
     a { color: inherit; text-decoration: none; }
 
+    /* Header */
     .header {
       position: fixed;
       top: 0;
@@ -48,7 +60,7 @@
       padding: 1rem 2rem;
       background: rgba(13, 13, 13, 0.95);
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+      border-bottom: 1px solid var(--border-accent);
     }
     .header-inner {
       max-width: 1400px;
@@ -66,20 +78,76 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
     .nav { display: flex; gap: 2rem; align-items: center; }
     .nav a {
-      font-family: var(--font-ui);
+      font-family: var(--font-display);
       font-size: 0.875rem;
       font-weight: 500;
-      color: rgba(250, 248, 245, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
       transition: color 0.2s;
     }
     .nav a:hover { color: var(--bsi-burnt-orange); }
     .nav a.active { color: var(--bsi-burnt-orange); }
 
+    /* Theme Toggle */
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .theme-toggle:hover {
+      border-color: var(--bsi-burnt-orange);
+      transform: scale(1.05);
+    }
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-secondary);
+      fill: none;
+      transition: stroke 0.2s;
+    }
+    .theme-toggle:hover svg { stroke: var(--bsi-burnt-orange); }
+    /* Theme toggle hidden - BSI is dark mode only */
+    .theme-toggle { display: none; }
+
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all 0.3s;
+    }
+    .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+    .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Page Header */
     .page-header {
-      padding: 8rem 2rem 4rem;
-      background: linear-gradient(180deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+      padding: 7rem 2rem 2rem;
+      background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
       position: relative;
       overflow: hidden;
     }
@@ -90,7 +158,7 @@
       right: -200px;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(191, 87, 0, 0.2) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(191, 87, 0, 0.15) 0%, transparent 70%);
       transform: translateY(-50%);
       pointer-events: none;
     }
@@ -102,23 +170,32 @@
     }
     .page-header h1 {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin-bottom: 1rem;
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
     }
     .page-header h1 span {
       display: block;
       color: var(--bsi-burnt-orange);
+      font-size: 0.6em;
+      font-weight: 500;
+      margin-top: 0.25rem;
     }
-    .page-header p {
-      color: rgba(250, 248, 245, 0.7);
+    .page-header-tagline {
+      font-family: var(--font-body);
       font-size: 1.125rem;
+      color: var(--text-secondary);
       max-width: 600px;
+      font-style: italic;
     }
 
+    /* Sub Navigation */
     .sub-nav {
       padding: 1rem 2rem;
-      background: var(--bsi-charcoal);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 60px;
       z-index: 50;
@@ -131,150 +208,380 @@
       overflow-x: auto;
     }
     .sub-nav a {
-      font-family: var(--font-ui);
+      font-family: var(--font-display);
       font-size: 0.875rem;
       font-weight: 500;
-      color: rgba(250, 248, 245, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
       white-space: nowrap;
       padding: 0.5rem 0;
       border-bottom: 2px solid transparent;
       transition: all 0.2s;
     }
-    .sub-nav a:hover { color: var(--bsi-cream); }
+    .sub-nav a:hover { color: var(--text-primary); }
     .sub-nav a.active {
       color: var(--bsi-burnt-orange);
       border-color: var(--bsi-burnt-orange);
     }
 
-    .content {
-      padding: 4rem 2rem;
-      background: var(--bsi-midnight);
+    /* Live Game Ticker */
+    .live-ticker {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.75rem 0;
+      overflow: hidden;
     }
-    .content-inner {
-      max-width: 1200px;
+    .live-ticker-inner {
+      max-width: 1400px;
       margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .live-ticker-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .live-ticker-label {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .live-ticker-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: livePulse 2s infinite;
+    }
+    .live-ticker-games {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      scroll-behavior: smooth;
+    }
+    .live-ticker-games::-webkit-scrollbar { height: 4px; }
+    .live-ticker-games::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 2px; }
+    .live-ticker-games::-webkit-scrollbar-thumb { background: var(--bsi-burnt-orange); border-radius: 2px; }
+    .ticker-game {
+      flex-shrink: 0;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      min-width: 200px;
+      transition: all 0.2s;
+    }
+    .ticker-game:hover { border-color: var(--bsi-burnt-orange); transform: translateY(-2px); }
+    .ticker-game.live { border-color: #22c55e; animation: livePulse 2s infinite; }
+    .ticker-game-status {
+      font-family: var(--font-display);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .ticker-game-status.live { color: #22c55e; }
+    .ticker-game-status.final { color: var(--text-muted); }
+    .ticker-game-status.scheduled { color: var(--bsi-burnt-orange); }
+    .ticker-team {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      padding: 0.25rem 0;
+    }
+    .ticker-team-name { display: flex; align-items: center; gap: 0.5rem; }
+    .ticker-team-rank { font-size: 0.625rem; color: var(--bsi-gold); }
+    .ticker-team-score { font-weight: 700; }
+    .ticker-team.winner .ticker-team-score { color: var(--bsi-burnt-orange); }
+    .ticker-empty { color: var(--text-muted); font-family: var(--font-body); font-style: italic; padding: 0.5rem 0; }
+
+    @keyframes livePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+      50% { box-shadow: 0 0 12px 4px rgba(34, 197, 94, 0.2); }
     }
 
+    /* Content */
+    .content { padding: 2rem; background: var(--bg-primary); min-height: 60vh; }
+    .content-inner { max-width: 1200px; margin: 0 auto; }
+
+    /* Section Title */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
     .section-title {
       font-family: var(--font-display);
-      font-size: 1.75rem;
-      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .freshness-container { display: flex; align-items: center; gap: 0.75rem; }
+    .freshness-label {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
+    /* Quick Stats Bar */
+    .quick-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+    .quick-stat { text-align: center; padding: 0.75rem; }
+    .quick-stat-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--bsi-burnt-orange);
+    }
+    .quick-stat-label {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    /* Featured Team Card */
     .featured-team {
-      background: linear-gradient(135deg, rgba(191, 87, 0, 0.2), var(--bsi-charcoal));
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.15), var(--bg-secondary));
       border: 1px solid var(--bsi-burnt-orange);
       border-radius: 16px;
       padding: 2rem;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .featured-team::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(191, 87, 0, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .featured-team-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
     }
     .featured-team h3 {
       font-family: var(--font-display);
-      font-size: 1.5rem;
+      font-size: 1.75rem;
+      font-weight: 700;
       color: var(--bsi-burnt-orange);
-      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .featured-team-badge {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--bsi-burnt-orange);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
     }
     .featured-team p {
-      color: rgba(250, 248, 245, 0.8);
+      color: var(--text-secondary);
       margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+      font-size: 1.1rem;
     }
     .featured-team .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 1rem;
+      position: relative;
+      z-index: 1;
     }
     .featured-team .stat {
       text-align: center;
       padding: 1rem;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.2);
       border-radius: 8px;
+      transition: transform 0.2s;
     }
+    .featured-team .stat:hover { transform: translateY(-2px); }
     .featured-team .stat-value {
-      font-family: var(--font-mono);
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--bsi-cream);
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
     }
     .featured-team .stat-label {
-      font-size: 0.75rem;
-      color: rgba(250, 248, 245, 0.6);
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
+    .featured-team-next {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      position: relative;
+      z-index: 1;
+    }
+    .featured-team-next-label {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .featured-team-next-game { font-family: var(--font-display); font-size: 1rem; font-weight: 500; }
+    .featured-team-next-game .opponent { color: var(--bsi-burnt-orange); }
+    .featured-team.live { animation: livePulse 2s infinite; }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #22c55e;
+      margin-left: 1rem;
+    }
+    .live-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
+    /* Quick Links */
     .quick-links {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1rem;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
     .quick-link {
-      background: var(--bsi-charcoal);
-      border: 1px solid rgba(191, 87, 0, 0.2);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
       border-radius: 12px;
       padding: 1.5rem;
       transition: all 0.3s;
     }
-    .quick-link:hover {
-      border-color: var(--bsi-burnt-orange);
-      transform: translateY(-2px);
-    }
+    .quick-link:hover { border-color: var(--bsi-burnt-orange); transform: translateY(-2px); }
     .quick-link h4 {
-      font-family: var(--font-ui);
+      font-family: var(--font-display);
       font-size: 1rem;
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
       margin-bottom: 0.25rem;
     }
-    .quick-link p {
-      color: rgba(250, 248, 245, 0.6);
-      font-size: 0.875rem;
-    }
+    .quick-link p { color: var(--text-muted); font-size: 0.9rem; }
 
-    .conference-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-    }
+    /* Conference Grid */
+    .conference-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
     .conference-card {
-      background: var(--bsi-charcoal);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 1.25rem;
       text-align: center;
       transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
     }
-    .conference-card:hover {
-      border-color: var(--bsi-burnt-orange);
-      transform: translateY(-2px);
-    }
+    .conference-card:hover { border-color: var(--bsi-burnt-orange); transform: translateY(-2px); }
     .conference-card h4 {
-      font-family: var(--font-ui);
-      font-size: 0.9rem;
+      font-family: var(--font-display);
+      font-size: 1rem;
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.25rem;
     }
+    .conference-card .team-count {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .conference-card .top-team {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      color: var(--bsi-gold);
+      margin-top: 0.5rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s;
+    }
+    .conference-card:hover .top-team { opacity: 1; transform: translateY(0); }
 
+    /* Footer */
     .footer {
       padding: 3rem 2rem;
-      background: var(--bsi-charcoal);
+      background: var(--bg-secondary);
       text-align: center;
-      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      border-top: 1px solid var(--border-accent);
     }
-    .footer p {
-      color: rgba(250, 248, 245, 0.5);
-      font-size: 0.875rem;
-    }
-    .footer .tagline {
-      font-family: var(--font-display);
-      font-style: italic;
-      color: var(--bsi-burnt-orange);
-      margin-top: 0.5rem;
-    }
+    .footer p { color: var(--text-muted); font-size: 0.875rem; }
+    .footer .tagline { font-family: var(--font-body); font-style: italic; color: var(--bsi-burnt-orange); margin-top: 0.5rem; }
 
+    /* Mobile Styles */
     @media (max-width: 768px) {
-      .nav { display: none; }
-      .page-header { padding: 6rem 1rem 2rem; }
-      .content { padding: 2rem 1rem; }
-      .sub-nav { top: 52px; }
+      .mobile-menu-btn { display: flex; }
+      .nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        flex-direction: column;
+        padding: 1rem 2rem;
+        gap: 1rem;
+        border-bottom: 1px solid var(--border-accent);
+      }
+      .nav.open { display: flex; }
+      .page-header { padding: 5rem 1rem 1.5rem; }
+      .content { padding: 1rem; }
+      .sub-nav { top: 52px; padding: 0.75rem 1rem; }
+      .live-ticker-inner { padding: 0 1rem; }
+      .quick-stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .featured-team { padding: 1.5rem; }
+      .featured-team .stats { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -282,24 +589,44 @@
   <header class="header">
     <div class="header-inner">
       <a href="/" class="logo">Blaze Sports Intel</a>
-      <nav class="nav">
-        <a href="/college-baseball" class="active">College Baseball</a>
-        <a href="/mlb">MLB</a>
-        <a href="/nfl">NFL</a>
-        <a href="/tools">Tools</a>
-        <a href="/login">Sign In</a>
-      </nav>
+      <div class="header-right">
+        <button class="theme-toggle" aria-label="Toggle theme" id="themeToggle">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="mobile-menu-btn" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="nav">
+          <a href="/college-baseball" class="active">College Baseball</a>
+          <a href="/mlb">MLB</a>
+          <a href="/nfl">NFL</a>
+          <a href="/tools">Tools</a>
+          <a href="/login">Sign In</a>
+        </nav>
+      </div>
     </div>
   </header>
 
   <main>
     <section class="page-header">
       <div class="page-header-inner">
-        <h1>
-          College Baseball
-          <span>The Coverage ESPN Should Have Built</span>
-        </h1>
-        <p>Live scores, rankings, and analytics for every D1 program. Real coverage for the sport that deserves better.</p>
+        <h1>College Baseball<span>The Coverage This Sport Deserves</span></h1>
+        <p class="page-header-tagline">Live scores, rankings, and analytics for every D1 program. Full attention. Finally.</p>
       </div>
     </section>
 
@@ -316,37 +643,84 @@
       </div>
     </nav>
 
+    <section class="live-ticker" id="liveTicker">
+      <div class="live-ticker-inner">
+        <div class="live-ticker-header">
+          <div class="live-ticker-dot" id="tickerDot" style="display: none;"></div>
+          <span class="live-ticker-label" id="tickerLabel">Today's Games</span>
+        </div>
+        <div class="live-ticker-games" id="tickerGames">
+          <span class="ticker-empty">Loading games...</span>
+        </div>
+      </div>
+    </section>
+
     <section class="content">
       <div class="content-inner">
-
-        <div class="featured-team">
-          <h3>Texas Longhorns</h3>
-          <p>Your featured team. In-depth analytics, roster breakdowns, and game-by-game projections.</p>
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-value">--</div>
-              <div class="stat-label">Wins</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">--</div>
-              <div class="stat-label">Losses</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">--</div>
-              <div class="stat-label">RPI</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">--</div>
-              <div class="stat-label">Rank</div>
-            </div>
+        <div class="section-header">
+          <h2 class="section-title">College Baseball Hub</h2>
+          <div class="freshness-container">
+            <span class="freshness-label">Data:</span>
+            <div id="freshness-badge"></div>
           </div>
         </div>
 
-        <h2 class="section-title">Quick Access</h2>
+        <div class="quick-stats-bar">
+          <div class="quick-stat">
+            <div class="quick-stat-value" id="statGamesToday">--</div>
+            <div class="quick-stat-label">Games Today</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-value" id="statRankedMatchups">--</div>
+            <div class="quick-stat-label">Ranked Matchups</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-value" id="statTop25">--</div>
+            <div class="quick-stat-label">Top 25 In Action</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-value" id="statLiveGames">--</div>
+            <div class="quick-stat-label">Live Now</div>
+          </div>
+        </div>
+
+        <div class="featured-team" id="featuredTeam">
+          <div class="featured-team-header">
+            <div>
+              <h3>Texas Longhorns<span class="live-badge" id="texasLiveBadge" style="display: none;">Live</span></h3>
+            </div>
+            <span class="featured-team-badge">Your Team</span>
+          </div>
+          <p>In-depth analytics, roster breakdowns, and game-by-game projections for the Horns.</p>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value" id="texasWins">--</div>
+              <div class="stat-label">Wins</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="texasLosses">--</div>
+              <div class="stat-label">Losses</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="texasRPI">--</div>
+              <div class="stat-label">RPI</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="texasRank">--</div>
+              <div class="stat-label">Rank</div>
+            </div>
+          </div>
+          <div class="featured-team-next" id="texasNextGame" style="display: none;">
+            <div class="featured-team-next-label">Next Game</div>
+            <div class="featured-team-next-game" id="texasNextGameInfo">Loading...</div>
+          </div>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 2rem;">Quick Access</h2>
         <div class="quick-links">
           <a href="/college-baseball/scores" class="quick-link">
             <h4>Live Scores</h4>
-            <p>Today's games</p>
+            <p>Today's games and results</p>
           </a>
           <a href="/college-baseball/rankings" class="quick-link">
             <h4>Rankings</h4>
@@ -354,9 +728,9 @@
           </a>
           <a href="/college-baseball/transfer-portal" class="quick-link">
             <h4>Transfer Portal</h4>
-            <p>Portal tracker &amp; intel</p>
+            <p>Portal tracker and intel</p>
           </a>
-          <a href="/nil-valuation" class="quick-link">
+          <a href="/tools/nil-valuation" class="quick-link">
             <h4>NIL Valuation</h4>
             <p>Player value estimates</p>
           </a>
@@ -364,21 +738,323 @@
 
         <h2 class="section-title">Conferences</h2>
         <div class="conference-grid">
-          <a href="/college-baseball/conferences/sec" class="conference-card"><h4>SEC</h4></a>
-          <a href="/college-baseball/conferences/acc" class="conference-card"><h4>ACC</h4></a>
-          <a href="/college-baseball/conferences/big-12" class="conference-card"><h4>Big 12</h4></a>
-          <a href="/college-baseball/conferences/big-ten" class="conference-card"><h4>Big Ten</h4></a>
-          <a href="/college-baseball/conferences/pac-12" class="conference-card"><h4>Pac-12</h4></a>
-          <a href="/college-baseball/conferences" class="conference-card"><h4>All Conferences</h4></a>
+          <a href="/college-baseball/conferences/sec" class="conference-card">
+            <h4>SEC</h4>
+            <div class="team-count">14 Teams</div>
+            <div class="top-team" id="secTopTeam">Loading...</div>
+          </a>
+          <a href="/college-baseball/conferences/acc" class="conference-card">
+            <h4>ACC</h4>
+            <div class="team-count">17 Teams</div>
+            <div class="top-team" id="accTopTeam">Loading...</div>
+          </a>
+          <a href="/college-baseball/conferences/big-12" class="conference-card">
+            <h4>Big 12</h4>
+            <div class="team-count">16 Teams</div>
+            <div class="top-team" id="big12TopTeam">Loading...</div>
+          </a>
+          <a href="/college-baseball/conferences/big-ten" class="conference-card">
+            <h4>Big Ten</h4>
+            <div class="team-count">18 Teams</div>
+            <div class="top-team" id="bigTenTopTeam">Loading...</div>
+          </a>
+          <a href="/college-baseball/conferences/pac-12" class="conference-card">
+            <h4>Pac-12</h4>
+            <div class="team-count">4 Teams</div>
+            <div class="top-team" id="pac12TopTeam">Loading...</div>
+          </a>
+          <a href="/college-baseball/conferences" class="conference-card">
+            <h4>All Conferences</h4>
+            <div class="team-count">View All</div>
+            <div class="top-team">Full conference list</div>
+          </a>
         </div>
-
       </div>
     </section>
   </main>
 
   <footer class="footer">
     <p>&copy; 2025 Blaze Sports Intel. Boerne, Texas.</p>
-    <p class="tagline">Born to blaze the path less beaten.</p>
+    <p class="tagline">Born to Blaze the Path Less Beaten.</p>
   </footer>
+
+  <script src="/src/js/freshness-indicator.js"></script>
+  <script>
+    (function() {
+      'use strict';
+      var freshnessController = null;
+      var lastSyncTime = null;
+      var isLiveData = false;
+      var refreshInterval = null;
+      var todaysGames = [];
+
+      function initThemeToggle() {
+        // BSI Brand: Force dark mode - cinematic grit aesthetic
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('bsi-theme', 'dark');
+      }
+
+      function initMobileMenu() {
+        var menuBtn = document.querySelector('.mobile-menu-btn');
+        var nav = document.querySelector('.nav');
+        if (menuBtn && nav) {
+          menuBtn.addEventListener('click', function() {
+            menuBtn.classList.toggle('active');
+            nav.classList.toggle('open');
+          });
+        }
+      }
+
+      function isBaseballSeason() {
+        var month = new Date().getMonth() + 1;
+        return month >= 2 && month <= 6;
+      }
+
+      function formatChicagoTime(dateStr) {
+        if (!dateStr) return '';
+        try {
+          var d = new Date(dateStr);
+          return d.toLocaleString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit', hour12: true });
+        } catch (e) { return ''; }
+      }
+
+      async function loadTodaysGames() {
+        try {
+          var today = new Date().toISOString().split('T')[0];
+          var response = await fetch('/api/ncaa/baseball/scores?date=' + today);
+          var data = await response.json();
+          todaysGames = data.events || data.games || [];
+          lastSyncTime = new Date().toISOString();
+          isLiveData = todaysGames.some(function(g) { return g.status && g.status.type && g.status.type.state === 'in'; });
+          renderTicker();
+          updateQuickStats();
+          updateFreshnessIndicator();
+        } catch (error) {
+          console.error('Failed to load games:', error);
+          renderTickerEmpty();
+        }
+      }
+
+      function renderTicker() {
+        var container = document.getElementById('tickerGames');
+        var dot = document.getElementById('tickerDot');
+        var label = document.getElementById('tickerLabel');
+        while (container.firstChild) { container.removeChild(container.firstChild); }
+        if (todaysGames.length === 0) { renderTickerEmpty(); return; }
+        todaysGames.sort(function(a, b) {
+          var aState = a.status?.type?.state || '';
+          var bState = b.status?.type?.state || '';
+          var order = { 'in': 0, 'pre': 1, 'post': 2 };
+          return (order[aState] || 3) - (order[bState] || 3);
+        });
+        var hasLive = todaysGames.some(function(g) { return g.status?.type?.state === 'in'; });
+        dot.style.display = hasLive ? 'block' : 'none';
+        label.textContent = hasLive ? 'Live Games' : "Today's Games";
+        todaysGames.forEach(function(game) { container.appendChild(createTickerGame(game)); });
+      }
+
+      function createTickerGame(game) {
+        var card = document.createElement('a');
+        card.href = '/college-baseball/scores';
+        card.className = 'ticker-game';
+        var isLive = game.status?.type?.state === 'in';
+        var isFinal = game.status?.type?.completed || game.status?.type?.state === 'post';
+        if (isLive) card.classList.add('live');
+        var status = document.createElement('div');
+        status.className = 'ticker-game-status';
+        if (isLive) { status.classList.add('live'); status.textContent = game.status?.type?.detail || 'LIVE'; }
+        else if (isFinal) { status.classList.add('final'); status.textContent = 'FINAL'; }
+        else { status.classList.add('scheduled'); status.textContent = formatChicagoTime(game.date) || 'TBD'; }
+        card.appendChild(status);
+        var away = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'away'; }) || {};
+        var home = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'home'; }) || {};
+        var awayScore = parseInt(away.score) || 0;
+        var homeScore = parseInt(home.score) || 0;
+        var awayWon = isFinal && awayScore > homeScore;
+        var homeWon = isFinal && homeScore > awayScore;
+        var awayRow = document.createElement('div');
+        awayRow.className = 'ticker-team' + (awayWon ? ' winner' : '');
+        var awayName = document.createElement('span');
+        awayName.className = 'ticker-team-name';
+        if (away.curatedRank?.current && away.curatedRank.current <= 25) {
+          var awayRank = document.createElement('span');
+          awayRank.className = 'ticker-team-rank';
+          awayRank.textContent = '#' + away.curatedRank.current + ' ';
+          awayName.appendChild(awayRank);
+        }
+        awayName.appendChild(document.createTextNode(away.team?.abbreviation || away.team?.shortDisplayName || 'TBD'));
+        awayRow.appendChild(awayName);
+        var awayScoreEl = document.createElement('span');
+        awayScoreEl.className = 'ticker-team-score';
+        awayScoreEl.textContent = isFinal || isLive ? awayScore : '-';
+        awayRow.appendChild(awayScoreEl);
+        card.appendChild(awayRow);
+        var homeRow = document.createElement('div');
+        homeRow.className = 'ticker-team' + (homeWon ? ' winner' : '');
+        var homeName = document.createElement('span');
+        homeName.className = 'ticker-team-name';
+        if (home.curatedRank?.current && home.curatedRank.current <= 25) {
+          var homeRank = document.createElement('span');
+          homeRank.className = 'ticker-team-rank';
+          homeRank.textContent = '#' + home.curatedRank.current + ' ';
+          homeName.appendChild(homeRank);
+        }
+        homeName.appendChild(document.createTextNode(home.team?.abbreviation || home.team?.shortDisplayName || 'TBD'));
+        homeRow.appendChild(homeName);
+        var homeScoreEl = document.createElement('span');
+        homeScoreEl.className = 'ticker-team-score';
+        homeScoreEl.textContent = isFinal || isLive ? homeScore : '-';
+        homeRow.appendChild(homeScoreEl);
+        card.appendChild(homeRow);
+        return card;
+      }
+
+      function renderTickerEmpty() {
+        var container = document.getElementById('tickerGames');
+        while (container.firstChild) { container.removeChild(container.firstChild); }
+        var empty = document.createElement('span');
+        empty.className = 'ticker-empty';
+        empty.textContent = 'No games scheduled today';
+        container.appendChild(empty);
+        document.getElementById('tickerDot').style.display = 'none';
+        document.getElementById('tickerLabel').textContent = "Today's Games";
+      }
+
+      function updateQuickStats() {
+        var gamesToday = todaysGames.length;
+        var liveGames = todaysGames.filter(function(g) { return g.status?.type?.state === 'in'; }).length;
+        var rankedMatchups = 0;
+        var top25InAction = new Set();
+        todaysGames.forEach(function(game) {
+          var away = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'away'; }) || {};
+          var home = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'home'; }) || {};
+          var awayRanked = away.curatedRank?.current && away.curatedRank.current <= 25;
+          var homeRanked = home.curatedRank?.current && home.curatedRank.current <= 25;
+          if (awayRanked && homeRanked) rankedMatchups++;
+          if (awayRanked) top25InAction.add(away.team?.id || away.team?.displayName);
+          if (homeRanked) top25InAction.add(home.team?.id || home.team?.displayName);
+        });
+        document.getElementById('statGamesToday').textContent = gamesToday;
+        document.getElementById('statRankedMatchups').textContent = rankedMatchups;
+        document.getElementById('statTop25').textContent = top25InAction.size;
+        document.getElementById('statLiveGames').textContent = liveGames;
+      }
+
+      async function loadRankingsData() {
+        try {
+          var response = await fetch('/api/ncaa/baseball/rankings');
+          var data = await response.json();
+          if (!lastSyncTime) lastSyncTime = data.lastSync || data.timestamp || new Date().toISOString();
+          updateTexasStats(data);
+          updateConferenceTopTeams(data);
+          updateFreshnessIndicator();
+        } catch (error) { console.error('Failed to load rankings:', error); }
+      }
+
+      function updateTexasStats(data) {
+        var texas = null;
+        var rankings = data.rankings || data.teams || [];
+        for (var i = 0; i < rankings.length; i++) {
+          var team = rankings[i];
+          var name = (team.name || team.team?.displayName || '').toLowerCase();
+          if (name.includes('texas') && !name.includes('texas a&m') && !name.includes('texas tech') && !name.includes('texas state') && !name.includes('texas-arlington') && !name.includes('texas-san antonio')) {
+            texas = team;
+            texas.rankPosition = i + 1;
+            break;
+          }
+        }
+        if (texas) {
+          var record = texas.record || '';
+          var parts = record.split('-');
+          document.getElementById('texasWins').textContent = texas.wins || parts[0] || '--';
+          document.getElementById('texasLosses').textContent = texas.losses || parts[1] || '--';
+          document.getElementById('texasRPI').textContent = texas.rpi || '--';
+          document.getElementById('texasRank').textContent = texas.rank ? '#' + texas.rank : (texas.rankPosition ? '#' + texas.rankPosition : '--');
+        }
+        checkTexasLive();
+      }
+
+      function checkTexasLive() {
+        var texasGame = todaysGames.find(function(game) {
+          var away = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'away'; }) || {};
+          var home = game.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'home'; }) || {};
+          var awayName = (away.team?.displayName || '').toLowerCase();
+          var homeName = (home.team?.displayName || '').toLowerCase();
+          return (awayName.includes('texas') && !awayName.includes('a&m') && !awayName.includes('tech')) || (homeName.includes('texas') && !homeName.includes('a&m') && !homeName.includes('tech'));
+        });
+        var featuredTeam = document.getElementById('featuredTeam');
+        var liveBadge = document.getElementById('texasLiveBadge');
+        var nextGameSection = document.getElementById('texasNextGame');
+        var nextGameInfo = document.getElementById('texasNextGameInfo');
+        if (texasGame) {
+          var isLive = texasGame.status?.type?.state === 'in';
+          if (isLive) { featuredTeam.classList.add('live'); liveBadge.style.display = 'inline-flex'; }
+          else { featuredTeam.classList.remove('live'); liveBadge.style.display = 'none'; }
+          nextGameSection.style.display = 'block';
+          var away = texasGame.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'away'; }) || {};
+          var home = texasGame.competitions?.[0]?.competitors?.find(function(c) { return c.homeAway === 'home'; }) || {};
+          var isTexasHome = (home.team?.displayName || '').toLowerCase().includes('texas');
+          var opponent = isTexasHome ? away : home;
+          var vsText = isTexasHome ? 'vs' : '@';
+          var statusText = isLive ? texasGame.status?.type?.detail : formatChicagoTime(texasGame.date) + ' CT';
+          while (nextGameInfo.firstChild) { nextGameInfo.removeChild(nextGameInfo.firstChild); }
+          nextGameInfo.appendChild(document.createTextNode(vsText + ' '));
+          var opponentSpan = document.createElement('span');
+          opponentSpan.className = 'opponent';
+          opponentSpan.textContent = opponent.team?.shortDisplayName || opponent.team?.displayName || 'TBD';
+          nextGameInfo.appendChild(opponentSpan);
+          nextGameInfo.appendChild(document.createTextNode(' - ' + statusText));
+        } else {
+          featuredTeam.classList.remove('live');
+          liveBadge.style.display = 'none';
+          nextGameSection.style.display = 'none';
+        }
+      }
+
+      function updateConferenceTopTeams(data) {
+        var rankings = data.rankings || data.teams || [];
+        var conferenceMap = { 'sec': 'secTopTeam', 'acc': 'accTopTeam', 'big 12': 'big12TopTeam', 'big ten': 'bigTenTopTeam', 'pac-12': 'pac12TopTeam' };
+        var topTeams = {};
+        rankings.forEach(function(team, index) {
+          var conf = (team.conference || '').toLowerCase();
+          if (!topTeams[conf]) topTeams[conf] = { name: team.name || team.team?.displayName || 'Unknown', rank: index + 1 };
+        });
+        Object.keys(conferenceMap).forEach(function(confKey) {
+          var elId = conferenceMap[confKey];
+          var el = document.getElementById(elId);
+          if (el && topTeams[confKey]) el.textContent = '#' + topTeams[confKey].rank + ' ' + topTeams[confKey].name;
+          else if (el) el.textContent = 'See rankings';
+        });
+      }
+
+      function updateFreshnessIndicator() {
+        if (!window.BSIFreshness) return;
+        var container = document.getElementById('freshness-badge');
+        if (!container) return;
+        if (freshnessController) freshnessController.update({ lastSync: lastSyncTime, isLive: isLiveData });
+        else freshnessController = BSIFreshness.render({ container: container, lastSync: lastSyncTime, source: isLiveData ? 'highlightly' : 'd1baseball', sport: 'baseball', isLive: isLiveData, showTooltip: true, size: 'default', autoUpdate: true });
+      }
+
+      async function loadAllData() { await Promise.all([loadTodaysGames(), loadRankingsData()]); }
+
+      function init() {
+        initThemeToggle();
+        initMobileMenu();
+        loadAllData();
+        var refreshRate = isBaseballSeason() ? 60000 : 1800000;
+        refreshInterval = setInterval(function() { loadTodaysGames(); }, refreshRate);
+        setInterval(function() { if (isLiveData) loadTodaysGames(); }, 30000);
+      }
+
+      window.addEventListener('beforeunload', function() {
+        if (refreshInterval) clearInterval(refreshInterval);
+        if (freshnessController) freshnessController.destroy();
+      });
+
+      init();
+    })();
+  </script>
+  <script src="/src/js/analytics.js"></script>
+  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(console.error);}</script>
 </body>
 </html>

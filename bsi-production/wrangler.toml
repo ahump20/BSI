@@ -37,6 +37,11 @@ id = "b03e0651b4a34078a3e031bc5bc14ad7"
 binding = "ANALYTICS_KV"
 id = "78cfab88ebc24bb1a96a3081be48e17c"
 
+# KV namespace for sport data caching (CFB, CBB scores/standings/rankings)
+[[kv_namespaces]]
+binding = "SPORT_CACHE"
+id = "6a4cb04ee0e34da9b37d9f8c3162d539"
+
 # Analytics Engine for time-series metrics
 [[analytics_engine_datasets]]
 binding = "ANALYTICS"
@@ -55,12 +60,20 @@ ENVIRONMENT = "staging"
 # Observability
 [observability]
 enabled = true
-head_sampling_rate = 1
+head_sampling_rate = 0.1
 
 # Development settings
 [dev]
 port = 8788
 local_protocol = "http"
+
+# Cron triggers for data freshness
+[triggers]
+crons = [
+  "*/15 * * * *",   # Scores - every 15 minutes (season-aware)
+  "0 */6 * * *",    # Standings - every 6 hours
+  "0 14 * * *"      # Rankings - daily at 8am CT (14:00 UTC)
+]
 
 # Secrets (set via wrangler secret put):
 # - SPORTSDATAIO_API_KEY
@@ -70,3 +83,4 @@ local_protocol = "http"
 # - STRIPE_SECRET_KEY
 # - STRIPE_WEBHOOK_SECRET
 # - SESSION_SECRET
+# - HIGHLIGHTLY_API_KEY
