@@ -432,7 +432,7 @@ async function handleExplanation(
     LIMIT 1
   `;
 
-  const result = await env.DB.prepare(query).bind(predictionId).first();
+  const result = await env.BSI_HISTORICAL_DB.prepare(query).bind(predictionId).first();
 
   if (!result) {
     return {
@@ -663,7 +663,7 @@ async function fetchTeamState(
     LIMIT 1
   `;
 
-  const result = await env.DB.prepare(query)
+  const result = await env.BSI_HISTORICAL_DB.prepare(query)
     .bind(teamId, sport)
     .first();
 

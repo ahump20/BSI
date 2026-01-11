@@ -700,14 +700,14 @@ export interface TeamDiamondScores {
  */
 export interface CloudflareEnv {
   // D1 Database
-  DB: D1Database;
+  BSI_HISTORICAL_DB: D1Database;
 
   // KV Namespaces
-  PREDICTION_CACHE: KVNamespace;
-  SPORTS_CACHE: KVNamespace;
+  BSI_PREDICTION_CACHE: KVNamespace;
+  BSI_SPORTS_CACHE: KVNamespace;
 
   // R2 Buckets
-  MODEL_STORAGE: R2Bucket;
+  BSI_MODEL_STORAGE: R2Bucket;
 
   // Environment variables
   ENVIRONMENT: string;

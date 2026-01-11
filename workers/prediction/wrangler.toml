@@ -18,17 +18,17 @@ SIMULATION_COUNT = "10000"
 
 # D1 Database binding
 [[d1_databases]]
-binding = "DB"
+binding = "BSI_HISTORICAL_DB"
 database_name = "bsi-historical-db"
 database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 
 # KV Namespace bindings
 [[kv_namespaces]]
-binding = "PREDICTION_CACHE"
+binding = "BSI_PREDICTION_CACHE"
 id = "eebf04d329c0419e92eec884f39a636d"
 
 [[kv_namespaces]]
-binding = "SPORTS_CACHE"
+binding = "BSI_SPORTS_CACHE"
 id = "c912d983175e4a1480225cfd57ed3434"
 
 # R2 Bucket for model storage (future use)
