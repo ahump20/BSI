@@ -111,9 +111,6 @@ echo "  ✓ origin/college-baseball/transfer-portal.html"
 $WRANGLER r2 object put $BUCKET_NAME/origin/college-baseball/news.html --file college-baseball/news.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/news.html"
 
-$WRANGLER r2 object put $BUCKET_NAME/origin/college-baseball/team-detail.html --file college-baseball/team-detail.html --content-type "text/html; charset=utf-8" --remote
-echo "  ✓ origin/college-baseball/team-detail.html"
-
 # College Football pages
 echo ""
 echo "College Football pages..."
