@@ -17,178 +17,178 @@ echo ""
 cd "$(dirname "$0")"
 
 # Step 1: Upload HTML files to R2
-echo "Uploading HTML files to R2 bucket (blazesports-assets)..."
+echo "Uploading HTML files to R2 bucket (bsi-web-assets)..."
 echo ""
 
 # Root pages
-$WRANGLER r2 object put blazesports-assets/origin/index.html --file index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/index.html --file index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools.html --file tools.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools.html --file tools.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/login.html --file login.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/login.html --file login.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/login.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/signup.html --file signup.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/signup.html --file signup.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/signup.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/about.html --file about.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/about.html --file about.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/about.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/scores.html --file scores.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/scores.html --file scores.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/scores.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/analytics.html --file analytics.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/analytics.html --file analytics.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/analytics.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/pricing.html --file pricing.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/pricing.html --file pricing.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/pricing.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/dashboard.html --file dashboard.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/dashboard.html --file dashboard.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/dashboard.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/404.html --file 404.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/404.html --file 404.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/404.html"
 
 # League landing pages
-$WRANGLER r2 object put blazesports-assets/origin/mlb/index.html --file mlb/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/mlb/index.html --file mlb/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/mlb/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/nfl/index.html --file nfl/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nfl/index.html --file nfl/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nfl/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/nba/index.html --file nba/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nba/index.html --file nba/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nba/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/nba/scores.html --file nba/scores.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nba/scores.html --file nba/scores.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nba/scores.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/nba/standings.html --file nba/standings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nba/standings.html --file nba/standings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nba/standings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/nba/schedule.html --file nba/schedule.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nba/schedule.html --file nba/schedule.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nba/schedule.html"
 
 # NFL subpages
-$WRANGLER r2 object put blazesports-assets/origin/nfl/scores.html --file nfl/scores.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nfl/scores.html --file nfl/scores.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nfl/scores.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/nfl/standings.html --file nfl/standings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nfl/standings.html --file nfl/standings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nfl/standings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/nfl/schedule.html --file nfl/schedule.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/nfl/schedule.html --file nfl/schedule.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/nfl/schedule.html"
 
 # College Baseball pages
 echo ""
 echo "College Baseball pages..."
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/index.html --file college-baseball/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/index.html --file college-baseball/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/scores.html --file college-baseball/scores.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/scores.html --file college-baseball/scores.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/scores.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/standings.html --file college-baseball/standings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/standings.html --file college-baseball/standings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/standings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/rankings.html --file college-baseball/rankings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/rankings.html --file college-baseball/rankings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/rankings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/teams.html --file college-baseball/teams.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/teams.html --file college-baseball/teams.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/teams.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/players.html --file college-baseball/players.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/players.html --file college-baseball/players.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/players.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/transfer-portal.html --file college-baseball/transfer-portal.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/transfer-portal.html --file college-baseball/transfer-portal.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/transfer-portal.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/news.html --file college-baseball/news.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/news.html --file college-baseball/news.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/news.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-baseball/team-detail.html --file college-baseball/team-detail.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-baseball/team-detail.html --file college-baseball/team-detail.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-baseball/team-detail.html"
 
 # College Football pages
 echo ""
 echo "College Football pages..."
-$WRANGLER r2 object put blazesports-assets/origin/college-football/index.html --file college-football/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-football/index.html --file college-football/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-football/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-football/scores.html --file college-football/scores.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-football/scores.html --file college-football/scores.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-football/scores.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-football/rankings.html --file college-football/rankings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-football/rankings.html --file college-football/rankings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-football/rankings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-football/standings.html --file college-football/standings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-football/standings.html --file college-football/standings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-football/standings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/college-football/teams.html --file college-football/teams.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/college-football/teams.html --file college-football/teams.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/college-football/teams.html"
 
 # MLB subpages
 echo ""
 echo "MLB pages..."
-$WRANGLER r2 object put blazesports-assets/origin/mlb/scores.html --file mlb/scores.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/mlb/scores.html --file mlb/scores.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/mlb/scores.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/mlb/standings.html --file mlb/standings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/mlb/standings.html --file mlb/standings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/mlb/standings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/mlb/schedule.html --file mlb/schedule.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/mlb/schedule.html --file mlb/schedule.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/mlb/schedule.html"
 
 # NCAAB pages
 echo ""
 echo "NCAAB pages..."
-$WRANGLER r2 object put blazesports-assets/origin/ncaab/index.html --file ncaab/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/ncaab/index.html --file ncaab/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/ncaab/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/ncaab/scores.html --file ncaab/scores.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/ncaab/scores.html --file ncaab/scores.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/ncaab/scores.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/ncaab/standings.html --file ncaab/standings.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/ncaab/standings.html --file ncaab/standings.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/ncaab/standings.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/ncaab/players.html --file ncaab/players.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/ncaab/players.html --file ncaab/players.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/ncaab/players.html"
 
 # Pro Tools
 echo ""
 echo "Pro Tools..."
-$WRANGLER r2 object put blazesports-assets/origin/tools/3d-showcase/index.html --file src/tools/3d-showcase/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/3d-showcase/index.html --file src/tools/3d-showcase/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/3d-showcase/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/draft-value/index.html --file src/tools/draft-value/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/draft-value/index.html --file src/tools/draft-value/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/draft-value/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/nil-valuation/index.html --file src/tools/nil-valuation/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/nil-valuation/index.html --file src/tools/nil-valuation/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/nil-valuation/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/pitch-arsenal/index.html --file src/tools/pitch-arsenal/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/pitch-arsenal/index.html --file src/tools/pitch-arsenal/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/pitch-arsenal/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/player-comparison/index.html --file src/tools/player-comparison/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/player-comparison/index.html --file src/tools/player-comparison/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/player-comparison/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/prospect-tracker/index.html --file src/tools/prospect-tracker/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/prospect-tracker/index.html --file src/tools/prospect-tracker/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/prospect-tracker/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/recruiting-tracker/index.html --file src/tools/recruiting-tracker/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/recruiting-tracker/index.html --file src/tools/recruiting-tracker/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/recruiting-tracker/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/schedule-strength/index.html --file src/tools/schedule-strength/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/schedule-strength/index.html --file src/tools/schedule-strength/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/schedule-strength/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/spray-chart/index.html --file src/tools/spray-chart/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/spray-chart/index.html --file src/tools/spray-chart/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/spray-chart/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/strike-zone/index.html --file src/tools/strike-zone/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/strike-zone/index.html --file src/tools/strike-zone/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/strike-zone/index.html"
 
-$WRANGLER r2 object put blazesports-assets/origin/tools/vision-coach/index.html --file src/tools/vision-coach/index.html --content-type "text/html; charset=utf-8" --remote
+$WRANGLER r2 object put bsi-web-assets/origin/tools/vision-coach/index.html --file src/tools/vision-coach/index.html --content-type "text/html; charset=utf-8" --remote
 echo "  ✓ origin/tools/vision-coach/index.html"
 
 echo ""
