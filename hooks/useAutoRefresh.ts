@@ -138,7 +138,7 @@ export function useAutoRefresh<T>(
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [enabled, interval, refresh, lastUpdated]);
+  }, [enabled, interval, refresh]);
 
   return {
     data,

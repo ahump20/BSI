@@ -63,7 +63,9 @@ export async function withEdgeCache(
     }
     
     if (age < ttl + swr) {
-      Promise.resolve().then(async () => {
+      context.request.signal.addEventListener('abort', () => {});
+      
+      const revalidatePromise = (async () => {
         try {
           const freshData = await fetchFn();
           const freshResponse = createEdgeResponse(freshData, {
@@ -75,10 +77,13 @@ export async function withEdgeCache(
         } catch (error) {
           console.error('Background revalidation failed:', error);
         }
-      });
+      })();
+      
+      context.request.signal.addEventListener('abort', () => {});
       
       const response = new Response(cachedResponse.body, cachedResponse);
       response.headers.set('X-Cache-Status', 'STALE');
+      response.headers.set('X-Revalidating', 'true');
       return response;
     }
   }

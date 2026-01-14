@@ -22,7 +22,9 @@ export function DataFreshness({
   isLoading = false,
   className = '',
 }: DataFreshnessProps): JSX.Element | null {
-  if (!lastUpdated) return null;
+  if (!lastUpdated || !(lastUpdated instanceof Date) || isNaN(lastUpdated.getTime())) {
+    return null;
+  }
 
   const timeAgo = formatDistanceToNow(lastUpdated);
   const statusColor = isStale ? 'text-yellow-500' : 'text-green-500';

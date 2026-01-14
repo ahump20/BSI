@@ -151,20 +151,15 @@ export type Standing = z.infer<typeof StandingSchema>;
  * API response wrapper
  * Standardizes all API responses with metadata
  */
-export const APIResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
+export const createAPIResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
     data: dataSchema,
     timestamp: z.string().datetime(),
-    source: z.string(), // "ESPN", "MLB API", "NCAA", etc.
+    source: z.string(),
     cacheHit: z.boolean().optional(),
   });
 
-export type APIResponse<T> = {
-  data: T;
-  timestamp: string;
-  source: string;
-  cacheHit?: boolean;
-};
+export type APIResponse<T> = z.infer<ReturnType<typeof createAPIResponseSchema<z.ZodType<T>>>>;
 
 /**
  * Error response structure
