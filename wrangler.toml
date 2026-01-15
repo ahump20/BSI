@@ -52,6 +52,12 @@ binding = "NIL_DB"
 database_name = "bsi-historical-db"
 database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 
+# D1 database for game data (transfer portal, rosters, player headshots)
+[[d1_databases]]
+binding = "GAME_DB"
+database_name = "bsi-game-db"
+database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
+
 # Core database with predictions (created by setup script)
 # Run scripts/setup-cloudflare-infrastructure.sh to create
 # [[d1_databases]]

@@ -558,6 +558,92 @@
     .trend-stat-change.up { color: var(--success); }
     .trend-stat-change.down { color: var(--error); }
 
+    /* Sankey Diagram */
+    .sankey-container {
+      width: 100%;
+      height: 600px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .sankey-node rect {
+      fill-opacity: 0.9;
+      stroke-width: 0;
+    }
+    .sankey-node text {
+      font-size: 11px;
+      font-weight: 500;
+      fill: var(--text-primary);
+    }
+    .sankey-link {
+      fill: none;
+      stroke-opacity: 0.4;
+    }
+    .sankey-link:hover {
+      stroke-opacity: 0.7;
+    }
+    .sankey-legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .sankey-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .sankey-legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+    .sankey-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .sankey-stat {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .sankey-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--ember);
+    }
+    .sankey-stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .sankey-tooltip {
+      position: absolute;
+      background: var(--charcoal);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      pointer-events: none;
+      font-size: 13px;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .sankey-tooltip-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .sankey-tooltip-value {
+      color: var(--ember);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
     /* Loading */
     .loading-state { text-align: center; padding: 60px 24px; }
     .spinner {
@@ -647,6 +733,7 @@
       <!-- Tab Navigation -->
       <div class="tab-nav">
         <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="flows">Conference Flows</button>
         <button class="tab-btn" data-tab="compare">Compare Players</button>
         <button class="tab-btn" data-tab="trends">Historical Trends</button>
       </div>
@@ -670,6 +757,21 @@
             <h2 class="card-title"><span class="card-title-icon">&#128337;</span> Recent Activity</h2>
             <div class="activity-list" id="activityList"></div>
           </div>
+        </div>
+      </div>
+
+      <!-- Conference Flows Tab -->
+      <div class="tab-content" id="tab-flows">
+        <div class="card full-width">
+          <h2 class="card-title"><span class="card-title-icon">&#8644;</span> Conference-to-Conference Flow</h2>
+          <div class="sankey-stats" id="sankeyStats"></div>
+          <div class="sankey-container" id="sankeyContainer">
+            <div class="loading-state" id="sankeyLoading">
+              <div class="spinner"></div>
+              <p>Loading conference flows...</p>
+            </div>
+          </div>
+          <div class="sankey-legend" id="sankeyLegend"></div>
         </div>
       </div>
 
@@ -724,6 +826,10 @@
     </div>
   </main>
 
+  <!-- D3.js for Sankey diagram -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
   <!-- Export libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKnTngueai3jCGpqSW/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -771,7 +877,7 @@
         for (var i = 0; i < years.length; i++) {
           var year = years[i];
           try {
-            var response = await fetch('/api/transfer-portal/history?year=' + year);
+            var response = await fetch('/api/college-baseball/transfer-portal/history?year=' + year);
             if (response.ok) {
               var data = await response.json();
               if (data.success) {
@@ -1325,9 +1431,261 @@
       loadingState.appendChild(createElement('p', 'error-text', message));
     }
 
+    // Sankey Diagram Functions
+    var sankeyDataLoaded = false;
+    var sankeyData = null;
+
+    // Conference color palette
+    var conferenceColors = {
+      'SEC': '#BF5700',      // Burnt Orange
+      'Big 12': '#FF6B35',   // Ember
+      'Big Ten': '#C9A227',  // Gold
+      'ACC': '#22C55E',      // Success green
+      'Pac-12': '#1976D2',   // Info blue
+      'Mountain West': '#9333EA', // Purple
+      'Sun Belt': '#F59E0B', // Warning amber
+      'Conference USA': '#06B6D4', // Cyan
+      'MAC': '#EF4444',      // Error red
+      'AAC': '#EC4899',      // Pink
+      'Big East': '#3B82F6', // Blue
+      'Missouri Valley': '#84CC16', // Lime
+      'CUSA': '#06B6D4',
+      'WAC': '#14B8A6',      // Teal
+      'A-10': '#6366F1',     // Indigo
+      'Southland': '#F97316', // Orange
+      'SWAC': '#A855F7',     // Violet
+      'MEAC': '#78716C',     // Stone
+      'Big South': '#FB923C',
+      'Horizon': '#2DD4BF',
+      'Summit': '#4ADE80',
+      'NEC': '#818CF8',
+      'Ivy League': '#059669',
+      'Patriot': '#DC2626',
+      'Colonial': '#7C3AED',
+      'OVC': '#EA580C'
+    };
+
+    function getConferenceColor(conf) {
+      return conferenceColors[conf] || '#6B7280'; // Default gray
+    }
+
+    async function loadSankeyData() {
+      if (sankeyDataLoaded) return sankeyData;
+
+      try {
+        var response = await fetch('/api/college-baseball/transfer-portal/conference-flows');
+        if (!response.ok) throw new Error('Failed to fetch conference flows');
+        sankeyData = await response.json();
+        sankeyDataLoaded = true;
+        return sankeyData;
+      } catch (error) {
+        console.error('Error loading Sankey data:', error);
+        return null;
+      }
+    }
+
+    function renderSankeyStats(data) {
+      var statsContainer = document.getElementById('sankeyStats');
+      statsContainer.textContent = '';
+
+      if (!data || !data.stats) return;
+
+      var stats = [
+        { label: 'Total Flows', value: data.stats.totalFlows },
+        { label: 'Conferences', value: data.stats.uniqueConferences },
+        { label: 'Unique Routes', value: data.stats.uniqueEdges },
+        { label: 'Top Flow', value: data.links && data.links[0] ? data.links[0].sourceConf + ' → ' + data.links[0].targetConf : 'N/A' }
+      ];
+
+      stats.forEach(function(stat) {
+        var card = createElement('div', 'sankey-stat');
+        card.appendChild(createElement('div', 'sankey-stat-value', stat.value.toString()));
+        card.appendChild(createElement('div', 'sankey-stat-label', stat.label));
+        statsContainer.appendChild(card);
+      });
+    }
+
+    function renderSankeyLegend(nodes) {
+      var legendContainer = document.getElementById('sankeyLegend');
+      legendContainer.textContent = '';
+
+      if (!nodes || nodes.length === 0) return;
+
+      // Show top conferences
+      var topNodes = nodes.slice(0, 12);
+      topNodes.forEach(function(node) {
+        var item = createElement('div', 'sankey-legend-item');
+        var colorBox = createElement('div', 'sankey-legend-color');
+        colorBox.style.background = getConferenceColor(node.name);
+        item.appendChild(colorBox);
+        item.appendChild(document.createTextNode(node.name));
+        legendContainer.appendChild(item);
+      });
+    }
+
+    function renderSankey(data) {
+      var container = document.getElementById('sankeyContainer');
+      var loading = document.getElementById('sankeyLoading');
+
+      if (!data || !data.nodes || !data.links || data.nodes.length === 0) {
+        loading.innerHTML = '<p class="error-text">No conference flow data available</p>';
+        return;
+      }
+
+      loading.style.display = 'none';
+
+      // Clear previous SVG
+      d3.select('#sankeyContainer svg').remove();
+
+      var width = container.clientWidth || 900;
+      var height = 550;
+      var margin = { top: 20, right: 140, bottom: 20, left: 140 };
+
+      var svg = d3.select('#sankeyContainer')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+      // Split conferences into source (left) and target (right) nodes to avoid cycles
+      // e.g., "ACC" becomes "ACC (from)" and "ACC (to)" as separate nodes
+      var sourceNodes = [];
+      var targetNodes = [];
+      var sourceSet = new Set();
+      var targetSet = new Set();
+
+      data.links.forEach(function(l) {
+        if (l.sourceConf && l.targetConf && l.sourceConf !== l.targetConf) {
+          sourceSet.add(l.sourceConf);
+          targetSet.add(l.targetConf);
+        }
+      });
+
+      sourceSet.forEach(function(conf) {
+        sourceNodes.push({ name: conf + ' →', displayName: conf, side: 'source' });
+      });
+      targetSet.forEach(function(conf) {
+        targetNodes.push({ name: '→ ' + conf, displayName: conf, side: 'target' });
+      });
+
+      var nodes = sourceNodes.concat(targetNodes);
+
+      // Map links to connect source nodes to target nodes
+      var links = data.links.map(function(l) {
+        return {
+          source: l.sourceConf + ' →',
+          target: '→ ' + l.targetConf,
+          value: l.value,
+          sourceConf: l.sourceConf,
+          targetConf: l.targetConf
+        };
+      }).filter(function(l) {
+        return l.sourceConf && l.targetConf && l.sourceConf !== l.targetConf;
+      });
+
+      // Create Sankey generator
+      var sankeyGen = d3.sankey()
+        .nodeId(function(d) { return d.name; })
+        .nodeWidth(20)
+        .nodePadding(12)
+        .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]]);
+
+      var graph = sankeyGen({
+        nodes: nodes.map(function(d) { return Object.assign({}, d); }),
+        links: links.map(function(d) { return Object.assign({}, d); })
+      });
+
+      // Draw links
+      svg.append('g')
+        .attr('class', 'sankey-links')
+        .selectAll('path')
+        .data(graph.links)
+        .join('path')
+        .attr('class', 'sankey-link')
+        .attr('d', d3.sankeyLinkHorizontal())
+        .attr('stroke', function(d) { return getConferenceColor(d.sourceConf || d.source.name); })
+        .attr('stroke-width', function(d) { return Math.max(2, d.width); })
+        .style('mix-blend-mode', 'lighten')
+        .on('mouseover', function(event, d) {
+          showSankeyTooltip(event, d.sourceConf + ' → ' + d.targetConf, d.value + ' transfers');
+          d3.select(this).attr('stroke-opacity', 0.7);
+        })
+        .on('mouseout', function() {
+          hideSankeyTooltip();
+          d3.select(this).attr('stroke-opacity', 0.4);
+        });
+
+      // Draw nodes
+      var node = svg.append('g')
+        .attr('class', 'sankey-nodes')
+        .selectAll('g')
+        .data(graph.nodes)
+        .join('g')
+        .attr('class', 'sankey-node');
+
+      node.append('rect')
+        .attr('x', function(d) { return d.x0; })
+        .attr('y', function(d) { return d.y0; })
+        .attr('height', function(d) { return Math.max(4, d.y1 - d.y0); })
+        .attr('width', function(d) { return d.x1 - d.x0; })
+        .attr('fill', function(d) { return getConferenceColor(d.displayName || d.name); })
+        .on('mouseover', function(event, d) {
+          var incoming = d.targetLinks.reduce(function(sum, l) { return sum + l.value; }, 0);
+          var outgoing = d.sourceLinks.reduce(function(sum, l) { return sum + l.value; }, 0);
+          var label = d.displayName || d.name;
+          var info = d.side === 'source' ? (outgoing + ' leaving') : (incoming + ' arriving');
+          showSankeyTooltip(event, label, info);
+        })
+        .on('mouseout', hideSankeyTooltip);
+
+      // Add labels
+      node.append('text')
+        .attr('x', function(d) { return d.x0 < width / 2 ? d.x0 - 6 : d.x1 + 6; })
+        .attr('y', function(d) { return (d.y1 + d.y0) / 2; })
+        .attr('dy', '0.35em')
+        .attr('text-anchor', function(d) { return d.x0 < width / 2 ? 'end' : 'start'; })
+        .text(function(d) { return d.displayName || d.name; })
+        .style('font-size', '11px')
+        .style('fill', '#FFFFFF');
+    }
+
+    var tooltip = null;
+
+    function showSankeyTooltip(event, title, value) {
+      if (!tooltip) {
+        tooltip = createElement('div', 'sankey-tooltip');
+        document.body.appendChild(tooltip);
+      }
+      tooltip.innerHTML = '<div class="sankey-tooltip-title">' + title + '</div><div class="sankey-tooltip-value">' + value + '</div>';
+      tooltip.style.display = 'block';
+      tooltip.style.left = (event.pageX + 10) + 'px';
+      tooltip.style.top = (event.pageY - 10) + 'px';
+    }
+
+    function hideSankeyTooltip() {
+      if (tooltip) {
+        tooltip.style.display = 'none';
+      }
+    }
+
+    async function initSankey() {
+      var data = await loadSankeyData();
+      if (data) {
+        renderSankeyStats(data);
+        renderSankey(data);
+        renderSankeyLegend(data.nodes);
+      }
+    }
+
+    // Load Sankey when tab is clicked
+    document.querySelector('.tab-btn[data-tab="flows"]').addEventListener('click', function() {
+      if (!sankeyDataLoaded) {
+        initSankey();
+      }
+    });
+
     async function init() {
       try {
-        var response = await fetch('https://blaze-sports-api.wshobson.workers.dev/api/transfer-portal');
+        var response = await fetch('/api/college-baseball/transfer-portal');
         if (!response.ok) throw new Error('Failed to fetch');
         var data = await response.json();
         allPlayers = data.players || [];

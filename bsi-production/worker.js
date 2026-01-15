@@ -653,6 +653,35 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       return getConferenceFlow(url.searchParams, env, corsHeaders);
     }
 
+    // College Baseball Transfer Portal API
+    if (path === '/api/college-baseball/transfer-portal/impact-leaders') {
+      return getBaseballTransferImpactLeaders(url.searchParams, env, corsHeaders);
+    }
+    if (path.startsWith('/api/college-baseball/transfer-portal/player/')) {
+      const playerId = path.replace('/api/college-baseball/transfer-portal/player/', '');
+      return getBaseballTransferPlayerDetail(playerId, env, corsHeaders);
+    }
+    if (path === '/api/college-baseball/transfer-portal/conference-summary') {
+      return getBaseballTransferConferenceSummary(url.searchParams, env, corsHeaders);
+    }
+    if (path === '/api/college-baseball/transfer-portal/conference-flows') {
+      return getBaseballTransferConferenceFlows(url.searchParams, env, corsHeaders);
+    }
+    if (path === '/api/college-baseball/transfer-portal' || path === '/api/college-baseball/transfer-portal/') {
+      return getBaseballTransferPortal(url.searchParams, env, corsHeaders);
+    }
+    // Transfer Portal Sync (manual trigger)
+    if (path === '/api/college-baseball/transfer-portal/sync' && request.method === 'POST') {
+      return syncTransferPortal(env, corsHeaders);
+    }
+    if (path === '/api/college-baseball/transfer-portal/sync-status') {
+      return getTransferSyncStatus(env, corsHeaders);
+    }
+    // Recalculate impact scores using the new algorithm
+    if (path === '/api/college-baseball/transfer-portal/recalculate-scores' && request.method === 'POST') {
+      return recalculateBaseballImpactScores(env, corsHeaders);
+    }
+
     // === COLLEGE BASEBALL ROUTES ===
     if (path === '/college-baseball' || path === '/college-baseball/') {
       return serveAsset(env, 'origin/college-baseball/index.html', 'text/html', corsHeaders);
@@ -774,6 +803,19 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     // 404 for other paths (or forward to existing app)
     return new Response('Not found', { status: 404 });
   },
+
+  // Scheduled handler for cron-triggered syncs
+  async scheduled(event, env, ctx) {
+    console.log(`[bsi-home] Scheduled event: ${event.cron} at ${new Date().toISOString()}`);
+
+    try {
+      // Run transfer portal sync on every cron trigger
+      const result = await runScheduledTransferSync(env);
+      console.log('[bsi-home] Scheduled sync complete:', JSON.stringify(result));
+    } catch (error) {
+      console.error('[bsi-home] Scheduled sync failed:', error.message);
+    }
+  }
 };
 
 // === API HANDLER FUNCTIONS ===
@@ -1676,6 +1718,235 @@ function getMonthAbbrev() {
 
 function getChicagoTimestamp() {
   return new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' });
+}
+
+/**
+ * Calculate Impact Score for Transfer Portal Players (College Baseball)
+ * Weighting: 40% Production, 25% Program Fit, 20% Experience, 15% Conference
+ *
+ * @param {Object} player - Player data from transfer_portal table
+ * @returns {number} Impact score 0-100
+ */
+function calculateBaseballImpactScore(player) {
+  let score = 0;
+
+  // === 40% PRODUCTION (max 40 points) ===
+  let productionScore = 0;
+  const isPitcher = ['LHP', 'RHP', 'P'].includes(player.position);
+
+  if (isPitcher) {
+    // Pitcher scoring: ERA (lower better), K rate, innings
+    if (player.stats_era && player.stats_era > 0) {
+      // ERA: 2.00 or less = 15pts, 3.00 = 10pts, 4.00 = 5pts, 5.00+ = 0
+      const eraScore = Math.max(0, Math.min(15, (5 - player.stats_era) * 5));
+      productionScore += eraScore;
+    }
+    if (player.stats_strikeouts && player.stats_innings) {
+      // K/9: calculate strikeouts per 9 innings
+      const k9 = (player.stats_strikeouts / player.stats_innings) * 9;
+      // 10+ K/9 = 15pts, 8 K/9 = 10pts, 6 K/9 = 5pts
+      const kScore = Math.min(15, Math.max(0, (k9 - 4) * 2.5));
+      productionScore += kScore;
+    }
+    if (player.stats_wins) {
+      // Wins bonus: 1pt per win, max 10
+      productionScore += Math.min(10, player.stats_wins);
+    }
+    if (player.stats_saves && player.stats_saves >= 5) {
+      // Closer bonus
+      productionScore += Math.min(5, player.stats_saves);
+    }
+  } else {
+    // Position player scoring: AVG, HR, RBI, SB
+    if (player.stats_avg) {
+      // AVG: .350+ = 15pts, .300 = 10pts, .250 = 5pts, below .200 = 0
+      const avgScore = Math.max(0, Math.min(15, (player.stats_avg - 0.200) * 100));
+      productionScore += avgScore;
+    }
+    if (player.stats_hr) {
+      // HR: 20+ = 15pts, 15 = 12pts, 10 = 8pts, 5 = 4pts
+      const hrScore = Math.min(15, player.stats_hr * 0.75);
+      productionScore += hrScore;
+    }
+    if (player.stats_rbi) {
+      // RBI: 60+ = 10pts, 40 = 7pts, 20 = 4pts
+      const rbiScore = Math.min(10, player.stats_rbi / 6);
+      productionScore += rbiScore;
+    }
+    if (player.stats_sb) {
+      // Stolen bases: 30+ = 5pts, 20 = 4pts, 10 = 2pts
+      const sbScore = Math.min(5, player.stats_sb / 6);
+      productionScore += sbScore;
+    }
+  }
+  // Cap production at 40
+  score += Math.min(40, productionScore);
+
+  // Position scarcity modifier (+3 to +0 based on position)
+  const scarcityBonus = {
+    'C': 3,      // Catchers hardest to find
+    '1B': 1,     // Corner infielders mid-tier
+    '3B': 2,
+    'SS': 2,     // Premium up-the-middle
+    '2B': 1,
+    'OF': 0,     // Outfielders most common
+    'LHP': 2,    // Left-handed pitchers scarce
+    'RHP': 0,    // Right-handed more common
+    'P': 1,
+    'UTIL': 0,
+    'INF': 1
+  };
+  score += scarcityBonus[player.position] || 0;
+
+  // === 25% PROGRAM FIT (max 25 points) ===
+  // Based on destination conference strength and move type
+  let programScore = 0;
+  const powerConferences = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
+  const midMajors = ['AAC', 'Mountain West', 'WCC', 'A-10', 'Colonial'];
+
+  if (player.to_conference) {
+    if (powerConferences.includes(player.to_conference)) {
+      programScore += 15; // Moving to Power 5
+    } else if (midMajors.includes(player.to_conference)) {
+      programScore += 10; // Moving to strong mid-major
+    } else {
+      programScore += 5;  // Other conferences
+    }
+  }
+
+  // Bonus for "step up" moves
+  if (player.from_conference && player.to_conference) {
+    const fromPower = powerConferences.includes(player.from_conference);
+    const toPower = powerConferences.includes(player.to_conference);
+    const fromMid = midMajors.includes(player.from_conference);
+
+    if (!fromPower && toPower) {
+      programScore += 10; // Small school to Power 5 = high upside
+    } else if (fromMid && toPower) {
+      programScore += 5;  // Mid-major to Power 5
+    }
+  }
+
+  // Elite destination program bonus (perennial Top 25)
+  const elitePrograms = [
+    'Tennessee', 'Texas', 'LSU', 'Florida', 'Arkansas', 'Vanderbilt', 'Ole Miss',
+    'Virginia', 'Wake Forest', 'Stanford', 'Oregon State', 'Miami', 'Florida State',
+    'Texas A&M', 'Oklahoma State', 'Georgia', 'East Carolina', 'TCU', 'North Carolina'
+  ];
+  if (elitePrograms.includes(player.to_school)) {
+    programScore += 5; // Elite destination = higher visibility, better development
+  }
+  score += Math.min(25, programScore);
+
+  // === 20% EXPERIENCE (max 20 points) ===
+  // Years remaining = more valuable
+  let experienceScore = 0;
+  const yearMap = {
+    'Fr': 20,   // 4 years remaining
+    'Fr.': 20,
+    'Freshman': 20,
+    'So': 17,   // 3 years remaining
+    'So.': 17,
+    'Sophomore': 17,
+    'Jr': 14,   // 2 years remaining
+    'Jr.': 14,
+    'Junior': 14,
+    'Sr': 10,   // 1 year remaining
+    'Sr.': 10,
+    'Senior': 10,
+    'Gr': 8,    // Graduate - limited eligibility
+    'Gr.': 8,
+    'Graduate': 8,
+    'RS Fr': 18,
+    'RS So': 15,
+    'RS Jr': 12,
+    'RS Sr': 8
+  };
+  experienceScore = yearMap[player.year] || 12; // Default to Jr value if unknown
+  score += experienceScore;
+
+  // === 15% CONFERENCE STRENGTH (max 15 points) ===
+  // Origin conference prestige modifier
+  let confScore = 0;
+  const conferenceStrength = {
+    'SEC': 15, 'ACC': 14, 'Big 12': 13, 'Big Ten': 12, 'Pac-12': 11,
+    'AAC': 8, 'Mountain West': 7, 'WCC': 7, 'A-10': 6, 'Colonial': 6,
+    'Big East': 5, 'MAC': 5, 'Summit': 4, 'MAAC': 4, 'Big West': 5,
+    'Southland': 4, 'Sun Belt': 5, 'C-USA': 5, 'OVC': 3, 'SWAC': 3
+  };
+
+  if (player.from_conference) {
+    confScore = conferenceStrength[player.from_conference] || 5;
+  }
+  score += confScore;
+
+  // Normalize to 0-100 and round
+  return Math.round(Math.max(0, Math.min(100, score)));
+}
+
+/**
+ * Calculate Impact Score for Football Transfer Portal Players
+ * Same 40/25/20/15 weighting adapted for football positions
+ */
+function calculateFootballImpactScore(player) {
+  let score = 0;
+
+  // === 40% PRODUCTION (max 40 points) ===
+  let productionScore = 0;
+  const offensePositions = ['QB', 'RB', 'WR', 'TE', 'OL', 'OT', 'OG', 'C'];
+  const defensePositions = ['DL', 'DE', 'DT', 'LB', 'CB', 'S', 'DB', 'EDGE'];
+
+  if (offensePositions.some(p => player.position?.includes(p))) {
+    // Offensive stats
+    if (player.stats_passing_yards) {
+      productionScore += Math.min(15, player.stats_passing_yards / 200);
+    }
+    if (player.stats_rushing_yards) {
+      productionScore += Math.min(15, player.stats_rushing_yards / 80);
+    }
+    if (player.stats_receiving_yards) {
+      productionScore += Math.min(10, player.stats_receiving_yards / 100);
+    }
+  } else if (defensePositions.some(p => player.position?.includes(p))) {
+    // Defensive stats
+    if (player.stats_tackles) {
+      productionScore += Math.min(15, player.stats_tackles / 5);
+    }
+    if (player.stats_sacks) {
+      productionScore += Math.min(15, player.stats_sacks * 2);
+    }
+    if (player.stats_interceptions) {
+      productionScore += Math.min(10, player.stats_interceptions * 3);
+    }
+  }
+  score += Math.min(40, productionScore);
+
+  // === 25% PROGRAM FIT & STARS (max 25 points) ===
+  let programScore = 0;
+  if (player.stars) {
+    programScore += player.stars * 4; // 5-star = 20pts, 4-star = 16pts, etc.
+  }
+  const powerConferences = ['SEC', 'Big Ten', 'Big 12', 'ACC'];
+  if (player.to_conference && powerConferences.includes(player.to_conference)) {
+    programScore += 5;
+  }
+  score += Math.min(25, programScore);
+
+  // === 20% EXPERIENCE ===
+  const yearMap = {
+    'Fr': 20, 'Fr.': 20, 'So': 17, 'So.': 17,
+    'Jr': 14, 'Jr.': 14, 'Sr': 10, 'Sr.': 10, 'Gr': 8
+  };
+  score += yearMap[player.year] || 12;
+
+  // === 15% CONFERENCE ===
+  const conferenceStrength = {
+    'SEC': 15, 'Big Ten': 14, 'Big 12': 13, 'ACC': 12,
+    'Pac-12': 11, 'Group of 5': 6
+  };
+  score += conferenceStrength[player.from_conference] || 5;
+
+  return Math.round(Math.max(0, Math.min(100, score)));
 }
 
 // === TOOLS API HANDLERS ===
@@ -4057,6 +4328,727 @@ async function getFootballTransferConferenceSummary(searchParams, env, corsHeade
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
     });
+  }
+}
+
+// =============================================================================
+// COLLEGE BASEBALL TRANSFER PORTAL
+// =============================================================================
+
+// Baseball Transfer Portal - Main listing
+async function getBaseballTransferPortal(searchParams, env, corsHeaders) {
+  const status = searchParams.get('status');
+  const position = searchParams.get('position');
+  const conference = searchParams.get('conference');
+  const limit = parseInt(searchParams.get('limit')) || 100;
+
+  try {
+    let sql = `
+      SELECT * FROM transfer_portal
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (status && status !== 'all') {
+      sql += ' AND status = ?';
+      params.push(status);
+    }
+
+    if (position && position !== 'all') {
+      sql += ' AND position = ?';
+      params.push(position);
+    }
+
+    if (conference && conference !== 'all') {
+      sql += ' AND (from_conference = ? OR to_conference = ?)';
+      params.push(conference, conference);
+    }
+
+    sql += ' ORDER BY impact_score DESC, entry_date DESC LIMIT ?';
+    params.push(limit);
+
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+    const players = results.map(row => ({
+      id: row.id,
+      name: row.player_name,
+      firstName: row.first_name,
+      lastName: row.last_name,
+      year: row.year,
+      position: row.position,
+      fromSchool: row.from_school,
+      fromConf: row.from_conference,
+      destination: row.to_school,
+      destConf: row.to_conference,
+      status: row.status,
+      date: row.entry_date,
+      commitDate: row.commit_date,
+      stars: row.stars,
+      impactScore: row.impact_score,
+      headshotUrl: row.headshot_url,
+      stats: {
+        era: row.stats_era,
+        wins: row.stats_wins,
+        losses: row.stats_losses,
+        saves: row.stats_saves,
+        strikeouts: row.stats_strikeouts,
+        innings: row.stats_innings,
+        avg: row.stats_avg,
+        hr: row.stats_hr,
+        rbi: row.stats_rbi
+      },
+      grades: {
+        power: row.power_grade,
+        speed: row.speed_grade,
+        arm: row.arm_grade,
+        field: row.field_grade,
+        hit: row.hit_grade,
+        contact: row.contact_grade,
+        pitchCommand: row.pitch_command,
+        pitchVelocity: row.pitch_velocity,
+        pitchStuff: row.pitch_stuff
+      },
+      notes: row.notes
+    }));
+
+    // Get summary stats
+    const summaryQuery = await env.DB.prepare(`
+      SELECT
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'in_portal' THEN 1 ELSE 0 END) as inPortal,
+        SUM(CASE WHEN status = 'committed' THEN 1 ELSE 0 END) as committed,
+        SUM(CASE WHEN status = 'withdrawn' THEN 1 ELSE 0 END) as withdrawn
+      FROM transfer_portal
+    `).first();
+
+    // Get position breakdown
+    const positionBreakdown = await env.DB.prepare(`
+      SELECT position, COUNT(*) as count
+      FROM transfer_portal
+      GROUP BY position
+      ORDER BY count DESC
+    `).all();
+
+    return new Response(JSON.stringify({
+      players,
+      total: summaryQuery?.total || 0,
+      summary: {
+        total: summaryQuery?.total || 0,
+        inPortal: summaryQuery?.inPortal || 0,
+        committed: summaryQuery?.committed || 0,
+        withdrawn: summaryQuery?.withdrawn || 0
+      },
+      positionBreakdown: positionBreakdown.results,
+      filters: {
+        status: status || 'all',
+        position: position || 'all',
+        conference: conference || 'all'
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA College Baseball Transfer Portal - D1 Database'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        'X-Data-Source': 'BSI-D1-BaseballTransfer',
+        'X-Fetched-At': getChicagoTimestamp(),
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching baseball transfer portal:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch transfer portal' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Baseball Transfer Impact Leaders
+async function getBaseballTransferImpactLeaders(searchParams, env, corsHeaders) {
+  const limit = parseInt(searchParams.get('limit')) || 25;
+  const position = searchParams.get('position');
+
+  try {
+    let sql = `
+      SELECT * FROM transfer_portal
+      WHERE impact_score IS NOT NULL
+    `;
+    const params = [];
+
+    if (position && position !== 'all') {
+      sql += ' AND position = ?';
+      params.push(position);
+    }
+
+    sql += ' ORDER BY impact_score DESC LIMIT ?';
+    params.push(limit);
+
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
+
+    return new Response(JSON.stringify({
+      leaders: results.map((row, idx) => ({
+        rank: idx + 1,
+        id: row.id,
+        name: row.player_name,
+        position: row.position,
+        year: row.year,
+        fromSchool: row.from_school,
+        toSchool: row.to_school,
+        status: row.status,
+        stars: row.stars,
+        impactScore: row.impact_score,
+        headshotUrl: row.headshot_url,
+        stats: {
+          era: row.stats_era,
+          wins: row.stats_wins,
+          avg: row.stats_avg,
+          hr: row.stats_hr,
+          rbi: row.stats_rbi
+        },
+        grades: {
+          power: row.power_grade,
+          arm: row.arm_grade,
+          hit: row.hit_grade
+        }
+      })),
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA College Baseball'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching baseball impact leaders:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch impact leaders' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Baseball Transfer Player Detail
+async function getBaseballTransferPlayerDetail(playerId, env, corsHeaders) {
+  try {
+    const player = await env.DB.prepare(`
+      SELECT * FROM transfer_portal WHERE id = ?
+    `).bind(playerId).first();
+
+    if (!player) {
+      return new Response(JSON.stringify({ error: 'Player not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    // Get headshot from player_headshots table if not in transfer_portal
+    let headshotUrl = player.headshot_url;
+    if (!headshotUrl) {
+      const headshot = await env.DB.prepare(`
+        SELECT photo_url FROM player_headshots
+        WHERE player_name = ? AND school_name = ?
+      `).bind(player.player_name, player.from_school).first();
+      headshotUrl = headshot?.photo_url || null;
+    }
+
+    return new Response(JSON.stringify({
+      player: {
+        id: player.id,
+        name: player.player_name,
+        firstName: player.first_name,
+        lastName: player.last_name,
+        position: player.position,
+        year: player.year,
+        height: player.height,
+        weight: player.weight,
+        hometown: player.hometown,
+        homeState: player.home_state,
+        fromSchool: player.from_school,
+        fromConf: player.from_conference,
+        destination: player.to_school,
+        destConf: player.to_conference,
+        status: player.status,
+        entryDate: player.entry_date,
+        commitDate: player.commit_date,
+        stars: player.stars,
+        impactScore: player.impact_score,
+        headshotUrl: headshotUrl,
+        stats: {
+          era: player.stats_era,
+          wins: player.stats_wins,
+          losses: player.stats_losses,
+          saves: player.stats_saves,
+          strikeouts: player.stats_strikeouts,
+          innings: player.stats_innings,
+          avg: player.stats_avg,
+          hr: player.stats_hr,
+          rbi: player.stats_rbi
+        },
+        grades: {
+          power: player.power_grade,
+          speed: player.speed_grade,
+          arm: player.arm_grade,
+          field: player.field_grade,
+          hit: player.hit_grade,
+          contact: player.contact_grade,
+          pitchCommand: player.pitch_command,
+          pitchVelocity: player.pitch_velocity,
+          pitchStuff: player.pitch_stuff,
+          perfectGame: player.perfect_game_grade
+        },
+        projections: {
+          yearsRemaining: player.years_remaining,
+          fromTeamRank: player.from_team_rank,
+          toTeamRank: player.to_team_rank,
+          highSchoolRank: player.high_school_rank,
+          mlbDraftEligible: player.is_mlb_draft_eligible === 1,
+          projectedRound: player.projected_round,
+          nilValuation: player.nil_valuation
+        },
+        notes: player.notes
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA College Baseball'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching player detail:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch player' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Baseball Transfer Conference Summary
+async function getBaseballTransferConferenceSummary(searchParams, env, corsHeaders) {
+  try {
+    const incoming = await env.DB.prepare(`
+      SELECT to_conference as conference, COUNT(*) as count
+      FROM transfer_portal
+      WHERE to_conference IS NOT NULL
+      GROUP BY to_conference
+      ORDER BY count DESC
+    `).all();
+
+    const outgoing = await env.DB.prepare(`
+      SELECT from_conference as conference, COUNT(*) as count
+      FROM transfer_portal
+      GROUP BY from_conference
+      ORDER BY count DESC
+    `).all();
+
+    // Top hitters gained (by avg)
+    const topHitters = await env.DB.prepare(`
+      SELECT to_conference as conference, COUNT(*) as count
+      FROM transfer_portal
+      WHERE to_conference IS NOT NULL AND stats_avg > 0.300
+      GROUP BY to_conference
+      ORDER BY count DESC
+    `).all();
+
+    // Top arms gained (by era < 3.00)
+    const topArms = await env.DB.prepare(`
+      SELECT to_conference as conference, COUNT(*) as count
+      FROM transfer_portal
+      WHERE to_conference IS NOT NULL AND stats_era IS NOT NULL AND stats_era < 3.00
+      GROUP BY to_conference
+      ORDER BY count DESC
+    `).all();
+
+    // Net flow by conference
+    const netFlow = await env.DB.prepare(`
+      SELECT
+        COALESCE(i.conference, o.conference) as conference,
+        COALESCE(i.incoming, 0) as incoming,
+        COALESCE(o.outgoing, 0) as outgoing,
+        COALESCE(i.incoming, 0) - COALESCE(o.outgoing, 0) as net
+      FROM (
+        SELECT to_conference as conference, COUNT(*) as incoming
+        FROM transfer_portal
+        WHERE to_conference IS NOT NULL
+        GROUP BY to_conference
+      ) i
+      FULL OUTER JOIN (
+        SELECT from_conference as conference, COUNT(*) as outgoing
+        FROM transfer_portal
+        GROUP BY from_conference
+      ) o ON i.conference = o.conference
+      ORDER BY net DESC
+    `).all();
+
+    return new Response(JSON.stringify({
+      incoming: incoming.results,
+      outgoing: outgoing.results,
+      topHittersLandings: topHitters.results,
+      topArmsLandings: topArms.results,
+      netFlow: netFlow.results,
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA College Baseball'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching baseball conference summary:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch conference summary' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Conference-to-Conference Flow Edges for Sankey Diagram
+async function getBaseballTransferConferenceFlows(searchParams, env, corsHeaders) {
+  const minFlow = parseInt(searchParams.get('min')) || 1;
+
+  try {
+    // Get conference-to-conference flow edges
+    const flows = await env.DB.prepare(`
+      SELECT
+        from_conference as source,
+        to_conference as target,
+        COUNT(*) as value
+      FROM transfer_portal
+      WHERE from_conference IS NOT NULL
+        AND to_conference IS NOT NULL
+      GROUP BY from_conference, to_conference
+      HAVING COUNT(*) >= ?
+      ORDER BY value DESC
+    `).bind(minFlow).all();
+
+    // Get unique conferences for nodes
+    const nodes = new Set();
+    flows.results.forEach(f => {
+      nodes.add(f.source);
+      nodes.add(f.target);
+    });
+
+    // Create node list with index
+    const nodeList = Array.from(nodes).map((name, index) => ({ id: index, name }));
+    const nodeIndex = {};
+    nodeList.forEach((n, i) => { nodeIndex[n.name] = i; });
+
+    // Create link list with node indices
+    const links = flows.results.map(f => ({
+      source: nodeIndex[f.source],
+      target: nodeIndex[f.target],
+      value: f.value,
+      sourceConf: f.source,
+      targetConf: f.target
+    }));
+
+    // Calculate summary stats
+    const totalFlows = links.reduce((sum, l) => sum + l.value, 0);
+    const topFlow = links.length > 0 ? links[0] : null;
+
+    return new Response(JSON.stringify({
+      nodes: nodeList,
+      links: links,
+      stats: {
+        totalFlows,
+        uniqueEdges: links.length,
+        uniqueConferences: nodeList.length,
+        topFlow: topFlow ? {
+          from: topFlow.sourceConf,
+          to: topFlow.targetConf,
+          count: topFlow.value
+        } : null
+      },
+      fetchedAt: getChicagoTimestamp(),
+      source: 'BSI NCAA College Baseball Transfer Portal'
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=600',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching conference flows:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch conference flows' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Transfer Portal Sync - Manual trigger endpoint
+async function syncTransferPortal(env, corsHeaders) {
+  const startTime = Date.now();
+
+  try {
+    // Get current transfer count before sync
+    const beforeCount = await env.DB.prepare('SELECT COUNT(*) as count FROM transfer_portal').first();
+
+    // Check last sync status
+    const lastSync = await env.DB.prepare(`
+      SELECT * FROM data_sync_log
+      WHERE entity_type = 'transfer_portal'
+      ORDER BY created_at DESC LIMIT 1
+    `).first();
+
+    // Currently no public API for Baseball America
+    // This infrastructure is ready for future integration
+    // For now, log the sync attempt and return status
+
+    const syncResult = {
+      success: true,
+      message: 'Transfer portal sync infrastructure ready',
+      currentCount: beforeCount?.count || 0,
+      lastSync: lastSync ? {
+        source: lastSync.source,
+        recordsUpdated: lastSync.records_updated,
+        status: lastSync.status,
+        timestamp: lastSync.last_sync
+      } : null,
+      nextSteps: [
+        'Manual data updates via SQL migration',
+        'Future: Baseball America API integration',
+        'Future: D1Baseball scraping integration'
+      ],
+      duration: Date.now() - startTime
+    };
+
+    // Log sync attempt
+    await env.DB.prepare(`
+      INSERT INTO data_sync_log (source, entity_type, records_updated, status, last_sync)
+      VALUES ('Manual Sync Check', 'transfer_portal', 0, 'success', datetime('now'))
+    `).run();
+
+    return new Response(JSON.stringify(syncResult), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+
+  } catch (error) {
+    console.error('Transfer portal sync error:', error);
+
+    // Log failed sync
+    try {
+      await env.DB.prepare(`
+        INSERT INTO data_sync_log (source, entity_type, records_updated, status, error_message, last_sync)
+        VALUES ('Manual Sync Check', 'transfer_portal', 0, 'error', ?, datetime('now'))
+      `).bind(error.message).run();
+    } catch (logError) {
+      console.error('Failed to log sync error:', logError);
+    }
+
+    return new Response(JSON.stringify({
+      success: false,
+      error: error.message,
+      duration: Date.now() - startTime
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Transfer Portal Sync Status
+async function getTransferSyncStatus(env, corsHeaders) {
+  try {
+    // Get current stats
+    const stats = await env.DB.prepare(`
+      SELECT
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'committed' THEN 1 ELSE 0 END) as committed,
+        SUM(CASE WHEN status = 'entered' THEN 1 ELSE 0 END) as entered,
+        SUM(CASE WHEN status = 'withdrawn' THEN 1 ELSE 0 END) as withdrawn,
+        MAX(updated_at) as last_update
+      FROM transfer_portal
+    `).first();
+
+    // Get recent sync logs
+    const recentSyncs = await env.DB.prepare(`
+      SELECT source, entity_type, records_updated, status, error_message, last_sync, created_at
+      FROM data_sync_log
+      WHERE entity_type = 'transfer_portal'
+      ORDER BY created_at DESC
+      LIMIT 10
+    `).all();
+
+    // Get headshot coverage
+    const headshotCoverage = await env.DB.prepare(`
+      SELECT COUNT(*) as count
+      FROM transfer_portal
+      WHERE headshot_url IS NOT NULL
+    `).first();
+
+    return new Response(JSON.stringify({
+      currentStats: {
+        total: stats?.total || 0,
+        byStatus: {
+          committed: stats?.committed || 0,
+          entered: stats?.entered || 0,
+          withdrawn: stats?.withdrawn || 0
+        },
+        withHeadshots: headshotCoverage?.count || 0,
+        lastUpdate: stats?.last_update
+      },
+      recentSyncs: recentSyncs.results.map(s => ({
+        source: s.source,
+        recordsUpdated: s.records_updated,
+        status: s.status,
+        error: s.error_message,
+        timestamp: s.last_sync
+      })),
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+
+  } catch (error) {
+    console.error('Error fetching sync status:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch sync status' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Recalculate Impact Scores for all baseball transfer portal entries
+async function recalculateBaseballImpactScores(env, corsHeaders) {
+  const startTime = Date.now();
+  console.log('[transfer-portal] Recalculating impact scores...');
+
+  try {
+    // Get all transfer portal entries
+    const { results: players } = await env.DB.prepare(`
+      SELECT id, player_name, position, year,
+             from_school, from_conference, to_school, to_conference,
+             stats_avg, stats_hr, stats_rbi, stats_sb,
+             stats_era, stats_strikeouts, stats_innings, stats_wins, stats_saves,
+             impact_score as old_score
+      FROM transfer_portal
+    `).all();
+
+    let updated = 0;
+    let unchanged = 0;
+    const changes = [];
+
+    // Batch update in groups of 50
+    for (const player of players) {
+      const newScore = calculateBaseballImpactScore(player);
+
+      // Only update if score changed
+      if (newScore !== player.old_score) {
+        await env.DB.prepare(
+          `UPDATE transfer_portal SET impact_score = ?, updated_at = datetime('now') WHERE id = ?`
+        ).bind(newScore, player.id).run();
+
+        changes.push({
+          id: player.id,
+          name: player.player_name,
+          position: player.position,
+          oldScore: player.old_score,
+          newScore: newScore,
+          delta: newScore - (player.old_score || 0)
+        });
+        updated++;
+      } else {
+        unchanged++;
+      }
+    }
+
+    // Sort changes by delta to show biggest movers
+    changes.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+    // Log the recalculation
+    await env.DB.prepare(`
+      INSERT INTO data_sync_log (source, entity_type, records_updated, status, last_sync)
+      VALUES ('Impact Score Recalculation', 'transfer_portal', ?, 'success', datetime('now'))
+    `).bind(updated).run();
+
+    return new Response(JSON.stringify({
+      success: true,
+      stats: {
+        total: players.length,
+        updated: updated,
+        unchanged: unchanged,
+        duration: Date.now() - startTime
+      },
+      topMovers: changes.slice(0, 20), // Top 20 biggest changes
+      algorithm: {
+        production: '40% (now includes SB for position players)',
+        programFit: '25% (includes elite program bonus)',
+        experience: '20%',
+        conference: '15%',
+        modifiers: 'Position scarcity: C +3, SS/3B/LHP +2, 2B/1B/INF/P +1'
+      },
+      fetchedAt: getChicagoTimestamp()
+    }), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+
+  } catch (error) {
+    console.error('[transfer-portal] Error recalculating scores:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: error.message || 'Failed to recalculate impact scores'
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
+// Scheduled transfer portal sync (called by cron)
+async function runScheduledTransferSync(env) {
+  const startTime = Date.now();
+  console.log('[transfer-portal] Starting scheduled sync...');
+
+  try {
+    // Get current count
+    const currentCount = await env.DB.prepare('SELECT COUNT(*) as count FROM transfer_portal').first();
+
+    // Log the scheduled check
+    await env.DB.prepare(`
+      INSERT INTO data_sync_log (source, entity_type, records_updated, status, last_sync)
+      VALUES ('Scheduled Cron', 'transfer_portal', 0, 'success', datetime('now'))
+    `).run();
+
+    const result = {
+      success: true,
+      source: 'Scheduled Cron',
+      currentRecords: currentCount?.count || 0,
+      recordsAdded: 0,
+      recordsUpdated: 0,
+      duration: Date.now() - startTime,
+      timestamp: new Date().toISOString(),
+      note: 'Infrastructure ready - awaiting API integration'
+    };
+
+    console.log('[transfer-portal] Scheduled sync complete:', JSON.stringify(result));
+    return result;
+
+  } catch (error) {
+    console.error('[transfer-portal] Scheduled sync error:', error);
+
+    try {
+      await env.DB.prepare(`
+        INSERT INTO data_sync_log (source, entity_type, records_updated, status, error_message, last_sync)
+        VALUES ('Scheduled Cron', 'transfer_portal', 0, 'error', ?, datetime('now'))
+      `).bind(error.message).run();
+    } catch (logError) {
+      console.error('[transfer-portal] Failed to log error:', logError);
+    }
+
+    return {
+      success: false,
+      error: error.message,
+      duration: Date.now() - startTime
+    };
   }
 }
 

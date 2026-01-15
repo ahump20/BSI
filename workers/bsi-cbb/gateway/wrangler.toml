@@ -1,0 +1,39 @@
+name = "bsi-cbb-gateway"
+main = "index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+account_id = "a12cb329d84130460eed99b816e4d0d3"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[vars]
+ENVIRONMENT = "production"
+
+# D1 Database (college baseball tables)
+[[d1_databases]]
+binding = "BSI_DB"
+database_name = "bsi-game-db"
+database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
+
+# KV namespace for API caching and rate limiting
+[[kv_namespaces]]
+binding = "BSI_CACHE"
+id = "a53c3726fc3044be82e79d2d1e371d26"
+
+# Routes for college baseball API
+[[routes]]
+pattern = "api.blazesportsintel.com/cbb/*"
+zone_name = "blazesportsintel.com"
+
+# Development configuration
+[dev]
+port = 8793
+local_protocol = "http"
+
+# Staging environment
+[env.staging]
+name = "bsi-cbb-gateway-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"

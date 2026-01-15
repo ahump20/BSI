@@ -42,13 +42,19 @@ export default function SignupPage() {
         }),
       });
 
-      const data = (await response.json()) as { error?: string };
+      const data = (await response.json()) as { error?: string; token?: string; redirectTo?: string };
 
       if (!response.ok) {
         throw new Error(data.error || 'Signup failed');
       }
 
-      window.location.href = '/pricing';
+      // Store token in localStorage for client-side auth checks
+      if (data.token) {
+        localStorage.setItem('bsi_token', data.token);
+      }
+
+      // Redirect to portal (user is now logged in) or API-specified destination
+      window.location.href = data.redirectTo || '/portal';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');
     } finally {
