@@ -6,5 +6,6 @@
  */
 
 export { HeroEmbers } from './HeroEmbers';
+export { BackyardFieldViewer } from './BackyardFieldViewer';
 export { ThreeCanvas } from './ThreeCanvas';
 export { usePerformanceTier, type PerformanceTier } from './usePerformanceTier';
