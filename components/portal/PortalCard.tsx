@@ -2,32 +2,13 @@
 
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { StatusBadge, type PortalStatus } from './StatusBadge';
+import { StatusBadge } from './StatusBadge';
 import { StarRating, EliteBadge } from './StarRating';
 import { PositionIconContainer, type Sport } from './PositionIcon';
+import type { PortalEntry } from '@/lib/portal/types';
 
-export interface PortalEntry {
-  id: string;
-  player_name: string;
-  school_from: string;
-  school_to: string | null;
-  position: string;
-  conference: string;
-  class_year: string;
-  status: PortalStatus;
-  portal_date: string;
-  engagement_score?: number;
-  stars?: number;
-  stats?: {
-    avg?: number;
-    hr?: number;
-    rbi?: number;
-    era?: number;
-    wins?: number;
-    losses?: number;
-    strikeouts?: number;
-  };
-}
+// Re-export PortalEntry for backwards compatibility
+export type { PortalEntry } from '@/lib/portal/types';
 
 export interface PortalCardProps {
   entry: PortalEntry;

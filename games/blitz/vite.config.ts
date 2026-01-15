@@ -33,8 +33,9 @@ export default defineConfig({
     },
   },
 
+  base: '/games/blitz/',
   build: {
-    outDir: 'dist',
+    outDir: 'dist/games/blitz',
     sourcemap: true,
     minify: 'esbuild',
     target: 'es2020',

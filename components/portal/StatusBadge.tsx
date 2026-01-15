@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 
-export type PortalStatus = 'in_portal' | 'committed' | 'withdrawn';
+export type PortalStatus = 'in_portal' | 'committed' | 'withdrawn' | 'signed';
 
 export interface StatusBadgeProps {
   status: PortalStatus | string;
@@ -13,10 +13,10 @@ export interface StatusBadgeProps {
 
 const statusVariants = {
   in_portal: {
-    bg: 'bg-burnt-orange/20',
-    text: 'text-burnt-orange',
-    border: 'border-burnt-orange/30',
-    glow: 'shadow-[0_0_12px_rgba(191,87,0,0.25)]',
+    bg: 'bg-warning/20',
+    text: 'text-warning',
+    border: 'border-warning/30',
+    glow: 'shadow-[0_0_12px_rgba(245,158,11,0.25)]',
     label: 'In Portal',
   },
   committed: {
@@ -26,9 +26,16 @@ const statusVariants = {
     glow: 'shadow-[0_0_12px_rgba(34,197,94,0.25)]',
     label: 'Committed',
   },
+  signed: {
+    bg: 'bg-burnt-orange/20',
+    text: 'text-burnt-orange',
+    border: 'border-burnt-orange/30',
+    glow: 'shadow-[0_0_12px_rgba(191,87,0,0.25)]',
+    label: 'Signed',
+  },
   withdrawn: {
     bg: 'bg-charcoal-500/30',
-    text: 'text-dust',
+    text: 'text-text-muted',
     border: 'border-white/10',
     glow: '',
     label: 'Withdrawn',

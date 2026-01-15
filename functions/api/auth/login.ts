@@ -5,6 +5,8 @@
  * Endpoint: POST /api/auth/login
  */
 
+import { logAuthEvent, generateRequestId, getClientIP } from '../_auth-events';
+
 interface Env {
   DB: D1Database;
   KV: KVNamespace;
@@ -23,12 +25,31 @@ const corsHeaders = {
   'Content-Type': 'application/json',
 };
 
-async function hashPassword(password: string): Promise<string> {
+async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
   const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  const combined = Uint8Array.from(atob(storedHash), (c) => c.charCodeAt(0));
+  const salt = combined.slice(0, 16);
+  const storedHashBytes = combined.slice(16);
+
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const hash = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial,
+    256
+  );
+  const hashArray = new Uint8Array(hash);
+
+  if (hashArray.length !== storedHashBytes.length) return false;
+  for (let i = 0; i < hashArray.length; i++) {
+    if (hashArray[i] !== storedHashBytes[i]) return false;
+  }
+  return true;
 }
 
 async function generateJWT(payload: Record<string, unknown>, secret: string): Promise<string> {
@@ -135,15 +156,27 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     if (!user) {
+      // Log failed login attempt (user not found)
+      await logAuthEvent(
+        { email: email.toLowerCase(), eventType: 'login_failed', metadata: { reason: 'user_not_found' } },
+        env,
+        request
+      );
       return new Response(JSON.stringify({ error: 'Invalid email or password' }), {
         status: 401,
         headers: corsHeaders,
       });
     }
 
-    // Verify password
-    const passwordHash = await hashPassword(password);
-    if (passwordHash !== user.password_hash) {
+    // Verify password using PBKDF2
+    const validPassword = await verifyPassword(password, user.password_hash);
+    if (!validPassword) {
+      // Log failed login attempt (wrong password)
+      await logAuthEvent(
+        { userId: user.id, email: user.email, eventType: 'login_failed', metadata: { reason: 'invalid_password' } },
+        env,
+        request
+      );
       return new Response(JSON.stringify({ error: 'Invalid email or password' }), {
         status: 401,
         headers: corsHeaders,
@@ -181,9 +214,17 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       console.log('KV session storage skipped:', kvError);
     }
 
+    // Log successful login
+    const requestId = await logAuthEvent(
+      { userId: user.id, email: user.email, eventType: 'login_success', metadata: { tier: user.tier } },
+      env,
+      request
+    );
+
     return new Response(
       JSON.stringify({
         success: true,
+        requestId,
         user: {
           id: user.id,
           email: user.email,

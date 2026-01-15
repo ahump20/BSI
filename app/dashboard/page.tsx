@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { SportTabs, SportTabsCompact, type Sport } from '@/components/sports/SportTabs';
+import { useAuth } from '@/lib/hooks';
 
 // Lazy-load chart components to split recharts from main bundle
 const StandingsBarChart = dynamic(
@@ -153,6 +154,12 @@ function getDashboardSources(sport: Sport, lastUpdated: string): DataSource[] {
 // ============================================================================
 
 export default function DashboardPage() {
+  // Authentication - redirects to login if not authenticated
+  const { user, isLoading: authLoading, isAuthenticated } = useAuth({
+    required: true,
+    redirectReason: 'Please sign in to access your dashboard',
+  });
+
   const [activeSport, setActiveSport] = useState<Sport>('mlb');
   const [stats, setStats] = useState<DashboardStats>({
     liveGames: 0,
@@ -165,6 +172,23 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
+
+  // Show loading state while checking auth
+  if (authLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-midnight">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+          <p className="text-text-tertiary text-sm">Loading...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // If not authenticated after loading, useAuth will redirect (but just in case)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Format timestamp
   const _displayTimestamp = (isoString?: string): string => {

@@ -37,3 +37,12 @@ local_protocol = "http"
 name = "bsi-cbb-gateway-staging"
 [env.staging.vars]
 ENVIRONMENT = "staging"
+
+# Durable Objects for WebSocket live game rooms
+[[durable_objects.bindings]]
+name = "LIVE_GAME_ROOMS"
+class_name = "LiveGameRoom"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["LiveGameRoom"]

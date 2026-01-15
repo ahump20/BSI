@@ -1,0 +1,42 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "globals": {
+    "DEBUG": "readonly",
+    "DEBUG_FLAG1": "readonly",
+    "DEBUG_FLAG2": "readonly",
+    "DEBUG_FLAG3": "readonly",
+    "NO_INLINE": "readonly",
+    "hB": "readonly",
+    "hC": "readonly",
+    "hD": "readonly",
+    "h3": "readonly",
+    "h4": "readonly",
+    "b1": "readonly",
+    "b2": "readonly",
+    "b3": "readonly",
+    "b4": "readonly",
+    "b5": "readonly",
+    "b6": "readonly"
+  },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-console": ["warn", { "allow": ["warn", "error", "time", "timeEnd"] }]
+  },
+  "ignorePatterns": ["dist/", "node_modules/", "*.d.ts"]
+}

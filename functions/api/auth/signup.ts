@@ -6,6 +6,7 @@
  */
 
 import { sendEmail, welcomeEmail } from '../_email';
+import { logAuthEvent, generateRequestId } from '../_auth-events';
 
 interface Env {
   DB: D1Database;
@@ -29,13 +30,27 @@ const corsHeaders = {
   'Content-Type': 'application/json',
 };
 
-// Hash password using Web Crypto API
+// Hash password using PBKDF2 (100k iterations with random salt)
 async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const hash = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial,
+    256
+  );
+  const hashArray = new Uint8Array(hash);
+  const combined = new Uint8Array(salt.length + hashArray.length);
+  combined.set(salt);
+  combined.set(hashArray, salt.length);
+  return btoa(String.fromCharCode(...combined));
 }
 
 // Generate JWT token
@@ -160,6 +175,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       .first();
 
     if (existingUser) {
+      // Log failed signup (email already exists)
+      await logAuthEvent(
+        { email: email.toLowerCase(), eventType: 'signup_failed', metadata: { reason: 'email_exists' } },
+        env,
+        request
+      );
       return new Response(JSON.stringify({ error: 'Email already registered' }), {
         status: 409,
         headers: corsHeaders,
@@ -238,24 +259,43 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       console.log('KV notification storage skipped:', kvError);
     }
 
-    // Send welcome email (non-blocking)
-    const emailTemplate = welcomeEmail(name || '', email.toLowerCase());
-    sendEmail(
-      {
-        to: email.toLowerCase(),
-        subject: emailTemplate.subject,
-        html: emailTemplate.html,
-        text: emailTemplate.text,
-        userId,
-        emailType: 'welcome',
-      },
-      env
-    ).catch((err) => console.log('Welcome email failed:', err));
+    // Log successful signup
+    const requestId = await logAuthEvent(
+      { userId, email: email.toLowerCase(), eventType: 'signup_success', metadata: { tier, name: name || null } },
+      env,
+      request
+    );
 
-    // Return success with token
+    // Send welcome email and track result (non-blocking for account creation)
+    const emailTemplate = welcomeEmail(name || '', email.toLowerCase());
+    let emailStatus: 'sent' | 'failed' | 'disabled' = 'disabled';
+
+    try {
+      const emailResult = await sendEmail(
+        {
+          to: email.toLowerCase(),
+          subject: emailTemplate.subject,
+          html: emailTemplate.html,
+          text: emailTemplate.text,
+          userId,
+          emailType: 'welcome',
+        },
+        env
+      );
+      emailStatus = emailResult.success ? 'sent' : 'failed';
+      if (!emailResult.success) {
+        console.log('Welcome email failed:', emailResult.error);
+      }
+    } catch (err) {
+      emailStatus = 'failed';
+      console.log('Welcome email error:', err);
+    }
+
+    // Return success with token and email status
     return new Response(
       JSON.stringify({
         success: true,
+        requestId,
         message: 'Account created successfully',
         user: {
           id: userId,
@@ -265,6 +305,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         },
         token,
         redirectTo: tier === 'free' ? '/dashboard' : '/checkout?tier=' + tier,
+        emailStatus, // 'sent', 'failed', or 'disabled' - visible for debugging
       }),
       {
         status: 201,

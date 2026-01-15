@@ -175,7 +175,7 @@ export const HighlightlyMatchTeamSchema = z.object({
   id: z.coerce.string(),
   displayName: z.string().optional(),
   name: z.string(),
-  logo: z.string().optional(),
+  logo: z.string().nullish(),  // Can be string, null, or undefined
   abbreviation: z.string().optional(),
 });
 export type HighlightlyMatchTeam = z.infer<typeof HighlightlyMatchTeamSchema>;
@@ -440,4 +440,7 @@ export interface CbbEnv {
   
   // Feature flags
   ENABLE_OFFSEASON_SYNC?: string;
+  
+  // Durable Objects
+  LIVE_GAME_ROOMS?: DurableObjectNamespace;
 }

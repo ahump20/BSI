@@ -11,17 +11,16 @@ export interface NavItem {
 
 /**
  * Main navigation items used in Navbar across all pages
- * Order: Home → Sports (College Baseball, MLB, NFL, NBA) → Dashboard → About → Pricing
+ * Order: Home → Transfer Portal (flagship) → Sports → Dashboard → About → Pricing
  */
 export const mainNavItems: NavItem[] = [
   { label: 'Home', href: '/' },
+  { label: 'Transfer Portal', href: '/transfer-portal', badge: 'LIVE' },
   { label: 'College Baseball', href: '/college-baseball' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
   { label: 'NBA', href: '/nba' },
-  { label: 'Vision AI', href: '/vision-AI-Intelligence', badge: 'AI' },
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'About', href: '/about' },
   { label: 'Pricing', href: '/pricing' },
 ];
 

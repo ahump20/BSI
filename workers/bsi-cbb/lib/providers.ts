@@ -383,7 +383,7 @@ export class HighlightlyBaseballProvider extends HighlightlyBase {
     const params = new URLSearchParams();
     if (options?.date) params.append("date", options.date);
     if (options?.league) params.append("league", options.league);
-    if (options?.teamId) params.append("team", options.teamId);
+    if (options?.teamId) params.append("teamId", options.teamId);
 
     const queryStr = params.toString();
     const endpoint = "/matches" + (queryStr ? "?" + queryStr : "");
@@ -462,7 +462,7 @@ export class HighlightlyBaseballProvider extends HighlightlyBase {
     search?: string;
   }): Promise<HighlightlyPlayer[]> {
     const params = new URLSearchParams();
-    if (options?.teamId) params.append("team", options.teamId);
+    if (options?.teamId) params.append("teamId", options.teamId);
     if (options?.league) params.append("league", options.league);
     if (options?.search) params.append("search", options.search);
 
@@ -478,6 +478,12 @@ export class HighlightlyBaseballProvider extends HighlightlyBase {
     return this.makeRequest("/players/" + playerId, HighlightlyPlayerSchema, cacheKey, 86400);
   }
 
+  async getTeamPlayers(teamId: string): Promise<HighlightlyPlayer[]> {
+    const cacheKey = "hl:baseball:team-players:" + teamId;
+    const PlayersArraySchema = z.array(HighlightlyPlayerSchema);
+    return this.makeRequest("/teams/" + teamId + "/players", PlayersArraySchema, cacheKey, 43200);
+  }
+
   async getPlayerStats(playerId: string, season?: number): Promise<HighlightlyPlayerStats> {
     const params = season ? "?season=" + season : "";
     const endpoint = "/players/" + playerId + "/statistics" + params;
@@ -491,12 +497,12 @@ export class HighlightlyBaseballProvider extends HighlightlyBase {
 
   async getHeadToHead(team1Id: string, team2Id: string): Promise<unknown> {
     const cacheKey = "hl:baseball:h2h:" + team1Id + ":" + team2Id;
-    return this.makeRequestRaw("/head-2-head?team1=" + team1Id + "&team2=" + team2Id, cacheKey, 3600);
+    return this.makeRequestRaw("/head-2-head?teamIdOne=" + team1Id + "&teamIdTwo=" + team2Id, cacheKey, 3600);
   }
 
   async getLastFiveGames(teamId: string): Promise<unknown> {
     const cacheKey = "hl:baseball:last5:" + teamId;
-    return this.makeRequestRaw("/last-five-games?team=" + teamId, cacheKey, 1800);
+    return this.makeRequestRaw("/last-five-games?teamId=" + teamId, cacheKey, 1800);
   }
 }
 
@@ -545,11 +551,11 @@ export class HighlightlyFootballProvider extends HighlightlyBase {
     const params = new URLSearchParams();
     if (options?.date) params.append("date", options.date);
     if (options?.league) params.append("league", options.league);
-    if (options?.teamId) params.append("team", options.teamId);
+    if (options?.teamId) params.append("teamId", options.teamId);
 
     const queryStr = params.toString();
     const endpoint = "/matches" + (queryStr ? "?" + queryStr : "");
-    const cacheKey = "hl:baseball:matches:" + (queryStr || "all");
+    const cacheKey = "hl:football:matches:" + (queryStr || "all");
 
     // API returns { data: [...], pagination, plan } - extract data array
     const response = await this.makeRequestRaw<{ data: unknown[] }>(endpoint, cacheKey, 300);
@@ -624,7 +630,7 @@ export class HighlightlyFootballProvider extends HighlightlyBase {
     search?: string;
   }): Promise<HighlightlyPlayer[]> {
     const params = new URLSearchParams();
-    if (options?.teamId) params.append("team", options.teamId);
+    if (options?.teamId) params.append("teamId", options.teamId);
     if (options?.league) params.append("league", options.league);
     if (options?.search) params.append("search", options.search);
 
@@ -640,6 +646,12 @@ export class HighlightlyFootballProvider extends HighlightlyBase {
     return this.makeRequest("/players/" + playerId, HighlightlyPlayerSchema, cacheKey, 86400);
   }
 
+  async getTeamPlayers(teamId: string): Promise<HighlightlyPlayer[]> {
+    const cacheKey = "hl:football:team-players:" + teamId;
+    const PlayersArraySchema = z.array(HighlightlyPlayerSchema);
+    return this.makeRequest("/teams/" + teamId + "/players", PlayersArraySchema, cacheKey, 43200);
+  }
+
   async getPlayerStats(playerId: string, season?: number): Promise<HighlightlyPlayerStats> {
     const params = season ? "?season=" + season : "";
     const endpoint = "/players/" + playerId + "/statistics" + params;
@@ -653,12 +665,12 @@ export class HighlightlyFootballProvider extends HighlightlyBase {
 
   async getHeadToHead(team1Id: string, team2Id: string): Promise<unknown> {
     const cacheKey = "hl:football:h2h:" + team1Id + ":" + team2Id;
-    return this.makeRequestRaw("/head-2-head?team1=" + team1Id + "&team2=" + team2Id, cacheKey, 3600);
+    return this.makeRequestRaw("/head-2-head?teamIdOne=" + team1Id + "&teamIdTwo=" + team2Id, cacheKey, 3600);
   }
 
   async getLastFiveGames(teamId: string): Promise<unknown> {
     const cacheKey = "hl:football:last5:" + teamId;
-    return this.makeRequestRaw("/last-five-games?team=" + teamId, cacheKey, 1800);
+    return this.makeRequestRaw("/last-five-games?teamId=" + teamId, cacheKey, 1800);
   }
 }
 

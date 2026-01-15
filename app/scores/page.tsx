@@ -49,7 +49,7 @@ export default function ScoresHubPage() {
     {
       id: 'nfl',
       name: 'NFL',
-      href: '/nfl',
+      href: '/nfl/scores',
       icon: '🏈',
       description: 'NFL scores, standings, and game analysis',
       liveCount: 0,
@@ -60,7 +60,7 @@ export default function ScoresHubPage() {
     {
       id: 'nba',
       name: 'NBA',
-      href: '/nba',
+      href: '/nba/scores',
       icon: '🏀',
       description: 'NBA scores and standings',
       liveCount: 0,
@@ -260,16 +260,22 @@ export default function ScoresHubPage() {
                     MLB Scores
                   </Link>
                   <Link
+                    href="/nfl/scores"
+                    className="px-4 py-2 bg-burnt-orange/20 hover:bg-burnt-orange/30 text-burnt-orange rounded-lg text-sm font-medium transition-colors"
+                  >
+                    NFL Scores
+                  </Link>
+                  <Link
+                    href="/nba/scores"
+                    className="px-4 py-2 bg-burnt-orange/20 hover:bg-burnt-orange/30 text-burnt-orange rounded-lg text-sm font-medium transition-colors"
+                  >
+                    NBA Scores
+                  </Link>
+                  <Link
                     href="/college-baseball/standings"
                     className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
                   >
                     College Baseball Standings
-                  </Link>
-                  <Link
-                    href="/mlb/standings"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
-                  >
-                    MLB Standings
                   </Link>
                   <Link
                     href="/nil-valuation"

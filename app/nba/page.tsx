@@ -60,8 +60,8 @@ export default function NBAPage() {
                 <Link href="/nba/standings" className="btn-primary px-6 py-3">
                   View Standings
                 </Link>
-                <Link href="/scores" className="btn-secondary px-6 py-3">
-                  All Scores
+                <Link href="/nba/scores" className="btn-secondary px-6 py-3">
+                  NBA Scores
                 </Link>
               </div>
             </ScrollReveal>
@@ -95,7 +95,7 @@ export default function NBAPage() {
               </ScrollReveal>
 
               <ScrollReveal direction="up" delay={150}>
-                <Link href="/scores" className="block">
+                <Link href="/nba/scores" className="block">
                   <Card variant="hover" padding="lg" className="h-full">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="text-3xl">🏀</span>

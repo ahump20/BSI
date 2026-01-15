@@ -9,19 +9,25 @@
  * - College Football Data: NCAA Football
  * - TheOddsAPI: Betting odds
  *
- * @version 2.5.0
- * @updated 2025-01-11
+ * Module Structure (src/workers/api/):
+ * - constants.js       : API URLs, Stripe prices, CORS headers
+ * - index.js           : Barrel export for all modules
+ * - handlers/sports.js : MLB, NFL, NBA, CFB, Odds handlers
+ * - utils/helpers.js   : Date, fetch, and response utilities
+ *
+ * Migration: Functions are being extracted to modules for better
+ * maintainability. Import from './src/workers/api/index.js' when ready.
+ *
+ * @version 2.4.0
+ * @updated 2025-01-08
  */
 
-// Import constants from modules
-import {
-  SPORTSDATAIO_BASE,
-  COLLEGEFOOTBALL_BASE,
-  SPORTSRADAR_BASE,
-  THEODDS_BASE,
-  STRIPE_API_BASE,
-  STRIPE_PRICES,
-} from './src/workers/api/constants.js';
+// API base URLs
+const SPORTSDATAIO_BASE = 'https://api.sportsdata.io/v3';
+const COLLEGEFOOTBALL_BASE = 'https://api.collegefootballdata.com';
+const SPORTSRADAR_BASE = 'https://api.sportradar.com';
+const THEODDS_BASE = 'https://api.the-odds-api.com/v4';
+const STRIPE_API_BASE = 'https://api.stripe.com/v1';
 
 // ESPN API (free fallback - no API key required)
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports';
@@ -56,143 +62,30 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelay = 100
   throw lastError;
 }
 
-// Demo data generation counts
-const STRIKE_ZONE_DEMO_PITCH_COUNT = 150;
-const SPRAY_CHART_DEMO_BALL_COUNT = 200;
-
-// Strike zone dimensions (feet from plate center, per MLB rulebook)
-const STRIKE_ZONE = {
-  LEFT: -0.708,   // plate width / 2
-  RIGHT: 0.708,
-  TOP: 3.5,       // typical knee-to-letters height
-  BOTTOM: 1.5
+// Stripe Price IDs
+const STRIPE_PRICES = {
+  pro: 'price_1SX9voLvpRBk20R2pW0AjUIv',         // $29/mo
+  enterprise: 'price_1SX9w7LvpRBk20R2DJkKAH3y'   // $199/mo
 };
-
-/**
- * Handle diagnostics endpoint - validates data flow chain
- * GET /api/diagnostics/data-flow
- */
-async function handleDiagnostics(request, env, corsHeaders, isCanary) {
-  const startTime = Date.now();
-  const diagnostics = {
-    timestamp: new Date().toISOString(),
-    timezone: 'America/Chicago',
-    canary: isCanary,
-    worker: {
-      status: 'ok',
-      version: '2.5.0',
-      responseTime: null
-    },
-    kv: {
-      status: 'unknown',
-      latency: null
-    },
-    d1: {
-      status: 'unknown',
-      latency: null
-    },
-    r2: {
-      status: 'unknown',
-      latency: null
-    },
-    api: {
-      highlightly: { status: 'planned', note: 'Integration pending' },
-      sportsDataIO: { status: 'unknown', latency: null },
-      espn: { status: 'unknown', latency: null }
-    }
-  };
-
-  // Test KV (BSI_SESSIONS)
-  try {
-    const kvStart = Date.now();
-    await env.BSI_SESSIONS.get('__health_check__');
-    diagnostics.kv.status = 'ok';
-    diagnostics.kv.latency = Date.now() - kvStart;
-  } catch (e) {
-    diagnostics.kv.status = 'error';
-    diagnostics.kv.error = e.message;
-  }
-
-  // Test D1 (BSI_GAME_DB)
-  try {
-    const d1Start = Date.now();
-    await env.BSI_GAME_DB.prepare('SELECT 1').first();
-    diagnostics.d1.status = 'ok';
-    diagnostics.d1.latency = Date.now() - d1Start;
-  } catch (e) {
-    diagnostics.d1.status = 'error';
-    diagnostics.d1.error = e.message;
-  }
-
-  // Test R2 (BSI_ASSETS)
-  try {
-    const r2Start = Date.now();
-    const r2Test = await env.BSI_ASSETS.head('origin/index.html');
-    diagnostics.r2.status = r2Test ? 'ok' : 'missing';
-    diagnostics.r2.latency = Date.now() - r2Start;
-  } catch (e) {
-    diagnostics.r2.status = 'error';
-    diagnostics.r2.error = e.message;
-  }
-
-  // Test SportsDataIO API (quick health check)
-  try {
-    const apiStart = Date.now();
-    const apiKey = env.SPORTSDATAIO_API_KEY;
-    if (apiKey) {
-      const testUrl = 'https://api.sportsdata.io/v3/mlb/scores/json/AreAnyGamesInProgress';
-      const resp = await fetch(testUrl, {
-        headers: { 'Ocp-Apim-Subscription-Key': apiKey }
-      });
-      diagnostics.api.sportsDataIO.status = resp.ok ? 'ok' : 'quota_exceeded';
-      diagnostics.api.sportsDataIO.latency = Date.now() - apiStart;
-    } else {
-      diagnostics.api.sportsDataIO.status = 'no_key';
-    }
-  } catch (e) {
-    diagnostics.api.sportsDataIO.status = 'error';
-    diagnostics.api.sportsDataIO.error = e.message;
-  }
-
-  // Test ESPN (free fallback)
-  try {
-    const espnStart = Date.now();
-    const espnResp = await fetch('https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard');
-    diagnostics.api.espn.status = espnResp.ok ? 'ok' : 'unavailable';
-    diagnostics.api.espn.latency = Date.now() - espnStart;
-  } catch (e) {
-    diagnostics.api.espn.status = 'error';
-    diagnostics.api.espn.error = e.message;
-  }
-
-  // Calculate overall status
-  const allOk = diagnostics.kv.status === 'ok'
-    && diagnostics.d1.status === 'ok'
-    && diagnostics.r2.status === 'ok'
-    && (diagnostics.api.sportsDataIO.status === 'ok' || diagnostics.api.espn.status === 'ok');
-
-  diagnostics.overall = allOk ? 'healthy' : 'degraded';
-  diagnostics.worker.responseTime = Date.now() - startTime;
-
-  return new Response(JSON.stringify(diagnostics, null, 2), {
-    headers: {
-      ...corsHeaders,
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache, no-store, must-revalidate'
-    }
-  });
-}
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // CORS headers for API
+    // CORS headers for API - restrict to known origins for security
+    const allowedOrigins = [
+      'https://blazesportsintel.com',
+      'https://www.blazesportsintel.com',
+      'http://localhost:8787', // Local dev
+    ];
+    const requestOrigin = request.headers.get('Origin');
+    const corsOrigin = allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0];
+
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, stripe-signature, X-BSI-Canary',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, stripe-signature',
       'Access-Control-Allow-Credentials': 'true',
     };
 
@@ -201,17 +94,19 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // === CANARY FLAG DETECTION ===
-    const isCanary = request.headers.get('X-BSI-Canary') === 'true'
-      || url.searchParams.get('canary') === 'true';
-
-    // === DIAGNOSTICS ENDPOINT ===
-    if (path === '/api/diagnostics/data-flow') {
-      return handleDiagnostics(request, env, corsHeaders, isCanary);
+    // Forward /games/blitz/ to the Blitz game worker via Service Binding
+    if (path.startsWith('/games/blitz')) {
+      return env.BLITZ_GAME.fetch(request);
     }
 
     // === AUTH ROUTES ===
-    if ((path === '/api/auth/register' || path === '/api/auth/signup') && request.method === 'POST') {
+
+    // === HEALTH CHECK ===
+    if (path === '/api/health') {
+      return handleHealthCheck(env, corsHeaders);
+    }
+
+    if (path === '/api/auth/register' && request.method === 'POST') {
       return handleRegister(request, env, corsHeaders);
     }
     if (path === '/api/auth/login' && request.method === 'POST') {
@@ -222,6 +117,12 @@ export default {
     }
     if (path === '/api/auth/me') {
       return handleGetUser(request, env, corsHeaders);
+    }
+    if (path === '/api/auth/google') {
+      return handleGoogleAuth(request, env, corsHeaders);
+    }
+    if (path === '/api/auth/google/callback') {
+      return handleGoogleCallback(request, env, corsHeaders);
     }
 
     // === STRIPE ROUTES ===
@@ -279,7 +180,7 @@ export default {
 
     // Serve PWA manifest
     if (path === '/manifest.json') {
-      const manifest = await env.BSI_ASSETS.get('origin/manifest.json');
+      const manifest = await env.ASSETS.get('origin/manifest.json');
 
       if (!manifest) {
         return new Response('Manifest not found', { status: 404 });
@@ -296,7 +197,7 @@ export default {
 
     // Serve sitemap
     if (path === '/sitemap.xml') {
-      const sitemap = await env.BSI_ASSETS.get('origin/sitemap.xml');
+      const sitemap = await env.ASSETS.get('origin/sitemap.xml');
       if (!sitemap) {
         return new Response('Sitemap not found', { status: 404 });
       }
@@ -325,7 +226,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
 
     // Serve service worker
     if (path === '/sw.js') {
-      const sw = await env.BSI_ASSETS.get('origin/sw.js');
+      const sw = await env.ASSETS.get('origin/sw.js');
 
       if (!sw) {
         return new Response('Service worker not found', { status: 404 });
@@ -344,7 +245,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     // Serve images from R2
     if (path.startsWith('/images/')) {
       const key = `origin${path}`;
-      const object = await env.BSI_ASSETS.get(key);
+      const object = await env.ASSETS.get(key);
 
       if (!object) {
         return new Response('Image not found', { status: 404 });
@@ -372,7 +273,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
 
     // Serve home page for root and index.html
     if (path === '/' || path === '/index.html') {
-      const html = await env.BSI_ASSETS.get('origin/index.html');
+      const html = await env.ASSETS.get('origin/index.html');
 
       if (!html) {
         return new Response('Page not found', { status: 404 });
@@ -389,7 +290,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
 
     // Serve analytics page
     if (path === '/analytics' || path === '/analytics.html') {
-      const html = await env.BSI_ASSETS.get('origin/analytics.html');
+      const html = await env.ASSETS.get('origin/analytics.html');
 
       if (!html) {
         return new Response('Analytics page not found', { status: 404 });
@@ -559,13 +460,13 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
     if (path === '/api/health') {
       // Check tool assets exist
       const toolsHealth = {
-        tab: !!(await env.BSI_ASSETS.get('origin/tools/team-archetype-builder/index.html')),
-        optimizer: !!(await env.BSI_ASSETS.get('origin/tools/composition-optimizer/index.html')),
-        winProbability: !!(await env.BSI_ASSETS.get('origin/tools/win-probability.html')),
-        playerComparison: !!(await env.BSI_ASSETS.get('origin/tools/player-comparison.html')),
-        draftValue: !!(await env.BSI_ASSETS.get('origin/tools/draft-value.html')),
-        scheduleStrength: !!(await env.BSI_ASSETS.get('origin/tools/schedule-strength.html')),
-        sitemap: !!(await env.BSI_ASSETS.get('origin/sitemap.xml')),
+        tab: !!(await env.ASSETS.get('origin/tools/team-archetype-builder/index.html')),
+        optimizer: !!(await env.ASSETS.get('origin/tools/composition-optimizer/index.html')),
+        winProbability: !!(await env.ASSETS.get('origin/tools/win-probability.html')),
+        playerComparison: !!(await env.ASSETS.get('origin/tools/player-comparison.html')),
+        draftValue: !!(await env.ASSETS.get('origin/tools/draft-value.html')),
+        scheduleStrength: !!(await env.ASSETS.get('origin/tools/schedule-strength.html')),
+        sitemap: !!(await env.ASSETS.get('origin/sitemap.xml')),
       };
 
       return new Response(JSON.stringify({
@@ -694,7 +595,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
         // Try as directory index
         assetPath = `origin/college-baseball/${subPath}/index.html`;
       }
-      const asset = await env.BSI_ASSETS.get(assetPath);
+      const asset = await env.ASSETS.get(assetPath);
       if (asset) {
         const contentType = assetPath.endsWith('.js') ? 'application/javascript' :
                            assetPath.endsWith('.css') ? 'text/css' : 'text/html';
@@ -716,7 +617,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
         // Try as directory index
         assetPath = `origin/college-football/${subPath}/index.html`;
       }
-      const asset = await env.BSI_ASSETS.get(assetPath);
+      const asset = await env.ASSETS.get(assetPath);
       if (asset) {
         const contentType = assetPath.endsWith('.js') ? 'application/javascript' :
                            assetPath.endsWith('.css') ? 'text/css' : 'text/html';
@@ -736,7 +637,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       if (!subPath.endsWith('.html') && !subPath.includes('.')) {
         assetPath = `origin/transfer-portal/${subPath}/index.html`;
       }
-      const asset = await env.BSI_ASSETS.get(assetPath);
+      const asset = await env.ASSETS.get(assetPath);
       if (asset) {
         const contentType = assetPath.endsWith('.js') ? 'application/javascript' :
                            assetPath.endsWith('.css') ? 'text/css' : 'text/html';
@@ -756,7 +657,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       if (!subPath.endsWith('.html') && !subPath.includes('.')) {
         assetPath = `origin/mlb/${subPath}/index.html`;
       }
-      const asset = await env.BSI_ASSETS.get(assetPath);
+      const asset = await env.ASSETS.get(assetPath);
       if (asset) {
         return new Response(asset.body, {
           headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -774,7 +675,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       if (!subPath.endsWith('.html') && !subPath.includes('.')) {
         assetPath = `origin/nfl/${subPath}/index.html`;
       }
-      const asset = await env.BSI_ASSETS.get(assetPath);
+      const asset = await env.ASSETS.get(assetPath);
       if (asset) {
         return new Response(asset.body, {
           headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -792,7 +693,7 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
       if (!subPath.endsWith('.html') && !subPath.includes('.')) {
         assetPath = `origin/nba/${subPath}/index.html`;
       }
-      const asset = await env.BSI_ASSETS.get(assetPath);
+      const asset = await env.ASSETS.get(assetPath);
       if (asset) {
         return new Response(asset.body, {
           headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -820,6 +721,40 @@ Sitemap: https://blazesportsintel.com/sitemap.xml`;
 
 // === API HANDLER FUNCTIONS ===
 
+async function handleHealthCheck(env, corsHeaders) {
+  const checks = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    service: 'bsi-home',
+    checks: {}
+  };
+
+  // Check D1 database
+  try {
+    await env.DB.prepare('SELECT 1').first();
+    checks.checks.database = { status: 'up' };
+  } catch (e) {
+    checks.checks.database = { status: 'down', error: e.message };
+    checks.status = 'degraded';
+  }
+
+  // Check KV store
+  try {
+    await env.SESSIONS.get('_health_check');
+    checks.checks.sessions_kv = { status: 'up' };
+  } catch (e) {
+    checks.checks.sessions_kv = { status: 'down', error: e.message };
+    checks.status = 'degraded';
+  }
+
+  const statusCode = checks.status === 'healthy' ? 200 : 503;
+  return new Response(JSON.stringify(checks, null, 2), {
+    status: statusCode,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+  });
+}
+
+
 async function handleMLBRequest(path, url, env, corsHeaders) {
   const endpoint = path.replace('/api/mlb/', '');
   const apiKey = env.SPORTSDATAIO_API_KEY;
@@ -835,6 +770,7 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
       if (response.status === 403 || !response.ok) {
+        console.log(`SportsDataIO MLB returned ${response.status}, falling back to ESPN`);
         return fetchESPNMLBScores(corsHeaders);
       }
 
@@ -844,6 +780,7 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
       if (!Array.isArray(rawData)) {
         // Check for quota error and fallback
         if ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403) {
+          console.log('SportsDataIO MLB quota exceeded, falling back to ESPN');
           return fetchESPNMLBScores(corsHeaders);
         }
         return new Response(JSON.stringify({
@@ -888,6 +825,7 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
       });
     } catch (error) {
       // On any error, try ESPN fallback
+      console.log(`SportsDataIO MLB error: ${error.message}, falling back to ESPN`);
       return fetchESPNMLBScores(corsHeaders);
     }
   }
@@ -991,6 +929,7 @@ async function handleMLBRequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
       });
     } catch (error) {
+      console.log(`ESPN MLB leaders error: ${error.message}`);
       return new Response(JSON.stringify({
         error: error.message,
         batting: { avg: [], hr: [], rbi: [] },
@@ -1031,6 +970,7 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
       if (response.status === 403 || !response.ok) {
+        console.log(`SportsDataIO NFL returned ${response.status}, falling back to ESPN`);
         return fetchESPNNFLScores(corsHeaders);
       }
 
@@ -1038,6 +978,7 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
 
       // Check for quota error in response body
       if (!Array.isArray(rawData) && ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403)) {
+        console.log('SportsDataIO NFL quota exceeded, falling back to ESPN');
         return fetchESPNNFLScores(corsHeaders);
       }
 
@@ -1046,6 +987,7 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
       });
     } catch (error) {
       // On any error, try ESPN fallback
+      console.log(`SportsDataIO NFL error: ${error.message}, falling back to ESPN`);
       return fetchESPNNFLScores(corsHeaders);
     }
   }
@@ -1148,6 +1090,7 @@ async function handleNFLRequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
       });
     } catch (error) {
+      console.log(`ESPN NFL leaders error: ${error.message}`);
       return new Response(JSON.stringify({
         error: error.message,
         passingYards: [],
@@ -1192,6 +1135,7 @@ async function handleNBARequest(path, url, env, corsHeaders) {
 
       // Fallback to ESPN on 403 (quota exceeded) or other errors
       if (response.status === 403 || !response.ok) {
+        console.log(`SportsDataIO NBA returned ${response.status}, falling back to ESPN`);
         return fetchESPNNBAScores(corsHeaders);
       }
 
@@ -1201,6 +1145,7 @@ async function handleNBARequest(path, url, env, corsHeaders) {
       if (!Array.isArray(rawData)) {
         // Check for quota error and fallback
         if ((rawData.Message || rawData.message || '')?.includes('quota') || rawData.statusCode === 403) {
+          console.log('SportsDataIO NBA quota exceeded, falling back to ESPN');
           return fetchESPNNBAScores(corsHeaders);
         }
         return new Response(JSON.stringify({
@@ -1233,6 +1178,7 @@ async function handleNBARequest(path, url, env, corsHeaders) {
       });
     } catch (error) {
       // On any error, try ESPN fallback
+      console.log(`SportsDataIO NBA error: ${error.message}, falling back to ESPN`);
       return fetchESPNNBAScores(corsHeaders);
     }
   }
@@ -1335,6 +1281,7 @@ async function handleNBARequest(path, url, env, corsHeaders) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300', ...corsHeaders }
       });
     } catch (error) {
+      console.log(`ESPN NBA leaders error: ${error.message}`);
       return new Response(JSON.stringify({
         error: error.message,
         points: [],
@@ -1956,7 +1903,7 @@ async function handleStrikeZone(env, corsHeaders, playerId = null, pitchType = n
   try {
     // Cache key based on parameters
     const cacheKey = `strike_zone_${playerId || 'default'}_${pitchType || 'all'}_${hand || 'all'}`;
-    const cached = await env.BSI_SESSIONS.get(cacheKey, { type: 'json' });
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
     if (cached && cached.expiresAt > Date.now()) {
       return new Response(JSON.stringify(cached.data), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2022,7 +1969,7 @@ async function handleStrikeZone(env, corsHeaders, playerId = null, pitchType = n
     };
 
     // Filter by pitch type if specified
-    const pitchCount = STRIKE_ZONE_DEMO_PITCH_COUNT;
+    const pitchCount = 150;
     let pitches = pitchType ? generatePitches(pitchCount, pitchType.toUpperCase()) : generatePitches(pitchCount);
 
     // Calculate zone breakdown
@@ -2052,17 +1999,17 @@ async function handleStrikeZone(env, corsHeaders, playerId = null, pitchType = n
       },
       zoneBreakdown: zoneBreakdown,
       strikezone: {
-        left: STRIKE_ZONE.LEFT,
-        right: STRIKE_ZONE.RIGHT,
-        top: STRIKE_ZONE.TOP,
-        bottom: STRIKE_ZONE.BOTTOM
+        left: -0.708, // feet from center of plate
+        right: 0.708,
+        top: 3.5,     // typical top
+        bottom: 1.5   // typical bottom
       },
       source: 'BSI Synthetic Data (connect to Statcast for real data)',
       fetchedAt: getChicagoTimestamp()
     };
 
     // Cache for 1 hour
-    await env.BSI_SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2080,7 +2027,7 @@ async function handleStrikeZone(env, corsHeaders, playerId = null, pitchType = n
 async function handleSprayChart(env, corsHeaders, playerId = null, hitType = null, season = '2024') {
   try {
     const cacheKey = `spray_chart_${playerId || 'default'}_${hitType || 'all'}_${season}`;
-    const cached = await env.BSI_SESSIONS.get(cacheKey, { type: 'json' });
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
     if (cached && cached.expiresAt > Date.now()) {
       return new Response(JSON.stringify(cached.data), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2176,7 +2123,7 @@ async function handleSprayChart(env, corsHeaders, playerId = null, hitType = nul
       return balls;
     };
 
-    const ballCount = SPRAY_CHART_DEMO_BALL_COUNT;
+    const ballCount = 200;
     const validHitTypes = ['single', 'double', 'triple', 'home_run', 'groundout', 'flyout', 'lineout'];
     const normalizedType = hitType && validHitTypes.includes(hitType.toLowerCase()) ? hitType.toLowerCase() : null;
     let battedBalls = normalizedType ? generateBattedBalls(ballCount, normalizedType) : generateBattedBalls(ballCount);
@@ -2224,7 +2171,7 @@ async function handleSprayChart(env, corsHeaders, playerId = null, hitType = nul
     };
 
     // Cache for 1 hour
-    await env.BSI_SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2343,7 +2290,7 @@ async function handleNCAABaseballRankings(env, corsHeaders) {
   try {
     // Check cache first
     const cacheKey = 'ncaa_baseball_rankings';
-    const cached = await env.BSI_SESSIONS.get(cacheKey, { type: 'json' });
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
     if (cached && cached.expiresAt > Date.now()) {
       return new Response(JSON.stringify(cached.data), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2385,7 +2332,7 @@ async function handleNCAABaseballRankings(env, corsHeaders) {
     };
 
     // Cache for 1 hour
-    await env.BSI_SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2439,7 +2386,7 @@ async function handleNCAABaseballScores(env, corsHeaders) {
   try {
     // Check cache first
     const cacheKey = 'ncaa_baseball_scores';
-    const cached = await env.BSI_SESSIONS.get(cacheKey, { type: 'json' });
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
     if (cached && cached.expiresAt > Date.now()) {
       return new Response(JSON.stringify(cached.data), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=120', ...corsHeaders }
@@ -2499,7 +2446,7 @@ async function handleNCAABaseballScores(env, corsHeaders) {
     };
 
     // Cache for 2 minutes during games
-    await env.BSI_SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 120000 }));
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 120000 }));
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=120', ...corsHeaders }
@@ -2523,7 +2470,7 @@ async function handleNCAABaseballStandings(env, corsHeaders, conference = null) 
   try {
     // Check cache
     const cacheKey = `ncaa_baseball_standings_${conference || 'all'}`;
-    const cached = await env.BSI_SESSIONS.get(cacheKey, { type: 'json' });
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
     if (cached && cached.expiresAt > Date.now()) {
       return new Response(JSON.stringify(cached.data), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=1800', ...corsHeaders }
@@ -2553,7 +2500,7 @@ async function handleNCAABaseballStandings(env, corsHeaders, conference = null) 
     };
 
     // Cache for 30 minutes
-    await env.BSI_SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 1800000 }));
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 1800000 }));
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=1800', ...corsHeaders }
@@ -2582,7 +2529,7 @@ async function handleNCAABaseballSchedule(env, corsHeaders, team = null) {
   try {
     // Check cache
     const cacheKey = `ncaa_baseball_schedule_${team || 'featured'}`;
-    const cached = await env.BSI_SESSIONS.get(cacheKey, { type: 'json' });
+    const cached = await env.SESSIONS.get(cacheKey, { type: 'json' });
     if (cached && cached.expiresAt > Date.now()) {
       return new Response(JSON.stringify(cached.data), {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2631,7 +2578,7 @@ async function handleNCAABaseballSchedule(env, corsHeaders, team = null) {
     };
 
     // Cache for 1 hour
-    await env.BSI_SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
+    await env.SESSIONS.put(cacheKey, JSON.stringify({ data: result, expiresAt: Date.now() + 3600000 }));
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600', ...corsHeaders }
@@ -2684,51 +2631,19 @@ function getFeaturedNCAABaseballGames() {
 
 async function handleRegister(request, env, corsHeaders) {
   try {
-    // Parse request body - support both JSON and form-urlencoded
-    const contentType = request.headers.get('content-type') || '';
-    let email, password, firstName, lastName, tier;
-    const isFormSubmit = contentType.includes('application/x-www-form-urlencoded');
-
-    if (isFormSubmit) {
-      const formData = await request.formData();
-      email = formData.get('email');
-      password = formData.get('password');
-      firstName = formData.get('firstName');
-      lastName = formData.get('lastName');
-      tier = formData.get('tier');
-    } else {
-      const body = await request.json();
-      email = body.email;
-      password = body.password;
-      firstName = body.firstName;
-      lastName = body.lastName;
-      tier = body.tier;
-    }
+    const { email, password } = await request.json();
 
     if (!email || !password) {
-      if (isFormSubmit) {
-        return Response.redirect('https://blazesportsintel.com/signup?error=missing_fields', 302);
-      }
       return jsonResponse({ error: 'Email and password required' }, 400, corsHeaders);
     }
 
     if (password.length < 8) {
-      if (isFormSubmit) {
-        return Response.redirect('https://blazesportsintel.com/signup?error=password_short', 302);
-      }
       return jsonResponse({ error: 'Password must be at least 8 characters' }, 400, corsHeaders);
     }
 
-    // Combine name fields, default tier to free
-    const name = [firstName, lastName].filter(Boolean).join(' ') || null;
-    const subscriptionTier = tier || 'free';
-
     // Check if user exists
-    const existing = await env.BSI_GAME_DB.prepare('SELECT id FROM users WHERE email = ?').bind(email.toLowerCase()).first();
+    const existing = await env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(email.toLowerCase()).first();
     if (existing) {
-      if (isFormSubmit) {
-        return Response.redirect('https://blazesportsintel.com/signup?error=email_exists', 302);
-      }
       return jsonResponse({ error: 'Email already registered' }, 409, corsHeaders);
     }
 
@@ -2736,28 +2651,17 @@ async function handleRegister(request, env, corsHeaders) {
     const passwordHash = await hashPassword(password);
     const userId = crypto.randomUUID();
 
-    // Create user with name and tier (username uses email for legacy schema compatibility)
-    await env.BSI_GAME_DB.prepare(
-      'INSERT INTO users (id, username, email, password_hash, name, subscription_tier) VALUES (?, ?, ?, ?, ?, ?)'
-    ).bind(userId, email.toLowerCase(), email.toLowerCase(), passwordHash, name, subscriptionTier).run();
+    // Create user (username defaults to email)
+    const now = new Date().toISOString();
+    await env.DB.prepare(
+      'INSERT INTO users (id, username, email, password_hash, created_at, last_played) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(userId, email.toLowerCase(), email.toLowerCase(), passwordHash, now, now).run();
 
     // Create session
     const sessionToken = await createSession(env, userId);
 
-    // Form submits redirect to dashboard, API calls return JSON
-    if (isFormSubmit) {
-      return new Response(null, {
-        status: 302,
-        headers: {
-          'Location': 'https://blazesportsintel.com/dashboard',
-          'Set-Cookie': `bsi_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`,
-          ...corsHeaders
-        }
-      });
-    }
-
     return jsonResponse(
-      { success: true, user: { id: userId, email: email.toLowerCase(), name, subscriptionTier } },
+      { success: true, user: { id: userId, email: email.toLowerCase() } },
       201,
       corsHeaders,
       sessionToken
@@ -2770,63 +2674,29 @@ async function handleRegister(request, env, corsHeaders) {
 
 async function handleLogin(request, env, corsHeaders) {
   try {
-    // Parse request body - support both JSON and form-urlencoded
-    const contentType = request.headers.get('content-type') || '';
-    let email, password;
-    const isFormSubmit = contentType.includes('application/x-www-form-urlencoded');
-
-    if (isFormSubmit) {
-      const formData = await request.formData();
-      email = formData.get('email');
-      password = formData.get('password');
-    } else {
-      const body = await request.json();
-      email = body.email;
-      password = body.password;
-    }
+    const { email, password } = await request.json();
 
     if (!email || !password) {
-      if (isFormSubmit) {
-        return Response.redirect('https://blazesportsintel.com/login?error=missing_fields', 302);
-      }
       return jsonResponse({ error: 'Email and password required' }, 400, corsHeaders);
     }
 
     // Find user
-    const user = await env.BSI_GAME_DB.prepare(
+    const user = await env.DB.prepare(
       'SELECT id, email, password_hash, subscription_status, subscription_tier FROM users WHERE email = ?'
     ).bind(email.toLowerCase()).first();
 
     if (!user) {
-      if (isFormSubmit) {
-        return Response.redirect('https://blazesportsintel.com/login?error=invalid_credentials', 302);
-      }
       return jsonResponse({ error: 'Invalid credentials' }, 401, corsHeaders);
     }
 
     // Verify password
     const valid = await verifyPassword(password, user.password_hash);
     if (!valid) {
-      if (isFormSubmit) {
-        return Response.redirect('https://blazesportsintel.com/login?error=invalid_credentials', 302);
-      }
       return jsonResponse({ error: 'Invalid credentials' }, 401, corsHeaders);
     }
 
     // Create session
     const sessionToken = await createSession(env, user.id);
-
-    // Form submits redirect to dashboard, API calls return JSON
-    if (isFormSubmit) {
-      return new Response(null, {
-        status: 302,
-        headers: {
-          'Location': 'https://blazesportsintel.com/dashboard',
-          'Set-Cookie': `bsi_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`,
-          ...corsHeaders
-        }
-      });
-    }
 
     return jsonResponse(
       {
@@ -2852,14 +2722,14 @@ async function handleLogout(request, env, corsHeaders) {
   try {
     const sessionToken = getSessionToken(request);
     if (sessionToken) {
-      await env.BSI_SESSIONS.delete(sessionToken);
+      await env.SESSIONS.delete(sessionToken);
     }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Set-Cookie': 'bsi_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0',
+        'Set-Cookie': 'bsi_token=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0',
         ...corsHeaders
       }
     });
@@ -2875,8 +2745,8 @@ async function handleGetUser(request, env, corsHeaders) {
       return jsonResponse({ error: 'Not authenticated' }, 401, corsHeaders);
     }
 
-    const user = await env.BSI_GAME_DB.prepare(
-      'SELECT id, email, subscription_status, subscription_tier, subscription_end_date FROM users WHERE id = ?'
+    const user = await env.DB.prepare(
+      'SELECT id, email, subscription_status, subscription_tier FROM users WHERE id = ?'
     ).bind(session.userId).first();
 
     if (!user) {
@@ -2887,13 +2757,152 @@ async function handleGetUser(request, env, corsHeaders) {
       user: {
         id: user.id,
         email: user.email,
-        subscriptionStatus: user.subscription_status,
-        subscriptionTier: user.subscription_tier,
-        subscriptionEndDate: user.subscription_end_date
+        subscriptionStatus: user.subscription_status || 'inactive',
+        subscriptionTier: user.subscription_tier || 'free'
       }
     }, 200, corsHeaders);
   } catch (error) {
     return jsonResponse({ error: 'Failed to get user' }, 500, corsHeaders);
+  }
+}
+
+// === GOOGLE OAUTH HANDLERS ===
+
+async function handleGoogleAuth(request, env, corsHeaders) {
+  // Check if Google OAuth is configured
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    const origin = new URL(request.url).origin;
+    return Response.redirect(`${origin}/signup?error=google_not_configured`, 302);
+  }
+
+  const origin = new URL(request.url).origin;
+  const redirectUri = `${origin}/api/auth/google/callback`;
+
+  // Generate state for CSRF protection
+  const state = crypto.randomUUID();
+  await env.SESSIONS.put(`oauth_state:${state}`, 'pending', { expirationTtl: 600 });
+
+  // Build Google OAuth URL
+  const params = new URLSearchParams({
+    client_id: env.GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'openid email profile',
+    state: state,
+    access_type: 'offline',
+    prompt: 'consent',
+  });
+
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  return Response.redirect(googleAuthUrl, 302);
+}
+
+async function handleGoogleCallback(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const origin = url.origin;
+  const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
+  const error = url.searchParams.get('error');
+
+  // Handle OAuth errors
+  if (error) {
+    return Response.redirect(`${origin}/login?error=${encodeURIComponent(error)}`, 302);
+  }
+
+  if (!code || !state) {
+    return Response.redirect(`${origin}/login?error=missing_params`, 302);
+  }
+
+  // Verify state
+  const storedState = await env.SESSIONS.get(`oauth_state:${state}`);
+  if (!storedState) {
+    return Response.redirect(`${origin}/login?error=invalid_state`, 302);
+  }
+  await env.SESSIONS.delete(`oauth_state:${state}`);
+
+  try {
+    // Exchange code for tokens
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: `${origin}/api/auth/google/callback`,
+        grant_type: 'authorization_code',
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      console.error('Google token exchange failed:', await tokenResponse.text());
+      return Response.redirect(`${origin}/login?error=token_exchange_failed`, 302);
+    }
+
+    const tokens = await tokenResponse.json();
+
+    // Get user info from Google
+    const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
+    });
+
+    if (!userInfoResponse.ok) {
+      return Response.redirect(`${origin}/login?error=userinfo_failed`, 302);
+    }
+
+    const googleUser = await userInfoResponse.json();
+    const now = new Date().toISOString();
+
+    // Check if user exists by email or google_id
+    let user = await env.DB.prepare(
+      'SELECT id, email, name, subscription_tier FROM users WHERE email = ? OR google_id = ?'
+    ).bind(googleUser.email.toLowerCase(), googleUser.id).first();
+
+    if (!user) {
+      // Create new user
+      const userId = crypto.randomUUID();
+      await env.DB.prepare(
+        `INSERT INTO users (id, username, email, name, google_id, subscription_status, subscription_tier, created_at, last_played)
+         VALUES (?, ?, ?, ?, ?, 'active', 'free', ?, ?)`
+      ).bind(
+        userId,
+        googleUser.email.toLowerCase(),
+        googleUser.email.toLowerCase(),
+        googleUser.name || googleUser.email.split('@')[0],
+        googleUser.id,
+        now,
+        now
+      ).run();
+
+      user = {
+        id: userId,
+        email: googleUser.email.toLowerCase(),
+        name: googleUser.name,
+        subscription_tier: 'free',
+      };
+
+      console.log(`🎉 NEW GOOGLE SIGNUP: ${googleUser.email} (${googleUser.name}) at ${now}`);
+    } else {
+      // Update existing user with Google ID if not set
+      await env.DB.prepare(
+        'UPDATE users SET google_id = ?, last_played = ? WHERE id = ?'
+      ).bind(googleUser.id, now, user.id).run();
+    }
+
+    // Create session
+    const sessionToken = await createSession(env, user.id);
+
+    // Redirect to dashboard with session cookie
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: `${origin}/dashboard?login=google`,
+        'Set-Cookie': `bsi_token=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`,
+      },
+    });
+  } catch (error) {
+    console.error('Google OAuth callback error:', error);
+    return Response.redirect(`${origin}/login?error=oauth_failed`, 302);
   }
 }
 
@@ -2912,7 +2921,7 @@ async function handleCreateCheckoutSession(request, env, corsHeaders) {
     }
 
     // Get user for email
-    const user = await env.BSI_GAME_DB.prepare('SELECT email, stripe_customer_id FROM users WHERE id = ?')
+    const user = await env.DB.prepare('SELECT email, stripe_customer_id FROM users WHERE id = ?')
       .bind(session.userId).first();
 
     // Create or retrieve Stripe customer
@@ -2930,7 +2939,7 @@ async function handleCreateCheckoutSession(request, env, corsHeaders) {
       customerId = customer.id;
 
       // Save customer ID
-      await env.BSI_GAME_DB.prepare('UPDATE users SET stripe_customer_id = ? WHERE id = ?')
+      await env.DB.prepare('UPDATE users SET stripe_customer_id = ? WHERE id = ?')
         .bind(customerId, session.userId).run();
     }
 
@@ -2981,6 +2990,21 @@ async function handleStripeWebhook(request, env, corsHeaders) {
     }
 
     const event = JSON.parse(body);
+    console.log('Stripe webhook event:', event.type);
+
+    // Idempotency check - prevent replay attacks
+    const existingEvent = await env.DB.prepare(
+      'SELECT event_id FROM webhook_events WHERE event_id = ?'
+    ).bind(event.id).first();
+    if (existingEvent) {
+      console.log('Duplicate webhook event ignored:', event.id);
+      return jsonResponse({ received: true, duplicate: true }, 200, corsHeaders);
+    }
+    // Record event before processing
+    await env.DB.prepare(
+      'INSERT INTO webhook_events (event_id, event_type) VALUES (?, ?)'
+    ).bind(event.id, event.type).run();
+
 
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -2998,7 +3022,7 @@ async function handleStripeWebhook(request, env, corsHeaders) {
           const subscription = await subResponse.json();
 
           // Update user
-          await env.BSI_GAME_DB.prepare(`
+          await env.DB.prepare(`
             UPDATE users SET
               stripe_customer_id = ?,
               subscription_status = 'active',
@@ -3016,7 +3040,7 @@ async function handleStripeWebhook(request, env, corsHeaders) {
           ).run();
 
           // Insert subscription record
-          await env.BSI_GAME_DB.prepare(`
+          await env.DB.prepare(`
             INSERT INTO subscriptions (id, user_id, stripe_subscription_id, stripe_customer_id, stripe_price_id, tier, status, current_period_start, current_period_end)
             VALUES (?, ?, ?, ?, ?, ?, 'active', datetime(?, 'unixepoch'), datetime(?, 'unixepoch'))
           `).bind(
@@ -3029,6 +3053,8 @@ async function handleStripeWebhook(request, env, corsHeaders) {
             subscription.current_period_start,
             subscription.current_period_end
           ).run();
+
+          console.log(`Subscription activated for user ${userId}: ${tier}`);
         }
         break;
       }
@@ -3038,12 +3064,12 @@ async function handleStripeWebhook(request, env, corsHeaders) {
         const customerId = subscription.customer;
 
         // Find user by customer ID
-        const user = await env.BSI_GAME_DB.prepare('SELECT id FROM users WHERE stripe_customer_id = ?')
+        const user = await env.DB.prepare('SELECT id FROM users WHERE stripe_customer_id = ?')
           .bind(customerId).first();
 
         if (user) {
           const status = subscription.cancel_at_period_end ? 'canceling' : subscription.status;
-          await env.BSI_GAME_DB.prepare(`
+          await env.DB.prepare(`
             UPDATE users SET
               subscription_status = ?,
               subscription_end_date = datetime(?, 'unixepoch'),
@@ -3052,7 +3078,7 @@ async function handleStripeWebhook(request, env, corsHeaders) {
           `).bind(status, subscription.current_period_end, user.id).run();
 
           // Update subscription record
-          await env.BSI_GAME_DB.prepare(`
+          await env.DB.prepare(`
             UPDATE subscriptions SET
               status = ?,
               current_period_end = datetime(?, 'unixepoch'),
@@ -3068,11 +3094,11 @@ async function handleStripeWebhook(request, env, corsHeaders) {
         const subscription = event.data.object;
         const customerId = subscription.customer;
 
-        const user = await env.BSI_GAME_DB.prepare('SELECT id FROM users WHERE stripe_customer_id = ?')
+        const user = await env.DB.prepare('SELECT id FROM users WHERE stripe_customer_id = ?')
           .bind(customerId).first();
 
         if (user) {
-          await env.BSI_GAME_DB.prepare(`
+          await env.DB.prepare(`
             UPDATE users SET
               subscription_status = 'canceled',
               subscription_tier = 'free',
@@ -3081,7 +3107,7 @@ async function handleStripeWebhook(request, env, corsHeaders) {
             WHERE id = ?
           `).bind(user.id).run();
 
-          await env.BSI_GAME_DB.prepare(`
+          await env.DB.prepare(`
             UPDATE subscriptions SET status = 'canceled', updated_at = datetime('now')
             WHERE stripe_subscription_id = ?
           `).bind(subscription.id).run();
@@ -3093,11 +3119,11 @@ async function handleStripeWebhook(request, env, corsHeaders) {
         const invoice = event.data.object;
         const customerId = invoice.customer;
 
-        const user = await env.BSI_GAME_DB.prepare('SELECT id FROM users WHERE stripe_customer_id = ?')
+        const user = await env.DB.prepare('SELECT id FROM users WHERE stripe_customer_id = ?')
           .bind(customerId).first();
 
         if (user) {
-          await env.BSI_GAME_DB.prepare(`
+          await env.DB.prepare(`
             UPDATE users SET subscription_status = 'past_due', updated_at = datetime('now') WHERE id = ?
           `).bind(user.id).run();
         }
@@ -3119,7 +3145,7 @@ async function handleCustomerPortal(request, env, corsHeaders) {
       return jsonResponse({ error: 'Not authenticated' }, 401, corsHeaders);
     }
 
-    const user = await env.BSI_GAME_DB.prepare('SELECT stripe_customer_id FROM users WHERE id = ?')
+    const user = await env.DB.prepare('SELECT stripe_customer_id FROM users WHERE id = ?')
       .bind(session.userId).first();
 
     if (!user?.stripe_customer_id) {
@@ -3177,17 +3203,19 @@ async function verifyPassword(password, storedHash) {
   const hashArray = new Uint8Array(hash);
 
   if (hashArray.length !== storedHashBytes.length) return false;
+  // Constant-time comparison to prevent timing attacks
+  let isValid = true;
   for (let i = 0; i < hashArray.length; i++) {
-    if (hashArray[i] !== storedHashBytes[i]) return false;
+    if (hashArray[i] !== storedHashBytes[i]) isValid = false;
   }
-  return true;
+  return isValid;
 }
 
 async function createSession(env, userId) {
   const token = crypto.randomUUID() + crypto.randomUUID();
   const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
 
-  await env.BSI_SESSIONS.put(token, JSON.stringify({ userId, expiresAt }), {
+  await env.SESSIONS.put(token, JSON.stringify({ userId, expiresAt }), {
     expirationTtl: 7 * 24 * 60 * 60 // 7 days in seconds
   });
 
@@ -3196,7 +3224,7 @@ async function createSession(env, userId) {
 
 function getSessionToken(request) {
   const cookie = request.headers.get('Cookie') || '';
-  const match = cookie.match(/bsi_session=([^;]+)/);
+  const match = cookie.match(/bsi_token=([^;]+)/);
   return match ? match[1] : null;
 }
 
@@ -3204,12 +3232,12 @@ async function getSession(request, env) {
   const token = getSessionToken(request);
   if (!token) return null;
 
-  const sessionData = await env.BSI_SESSIONS.get(token);
+  const sessionData = await env.SESSIONS.get(token);
   if (!sessionData) return null;
 
   const session = JSON.parse(sessionData);
   if (session.expiresAt < Date.now()) {
-    await env.BSI_SESSIONS.delete(token);
+    await env.SESSIONS.delete(token);
     return null;
   }
 
@@ -3245,7 +3273,7 @@ async function verifyStripeSignature(payload, signature, secret) {
 // === ASSET SERVING ===
 
 async function serveAsset(env, key, contentType, corsHeaders) {
-  const asset = await env.BSI_ASSETS.get(key);
+  const asset = await env.ASSETS.get(key);
   if (!asset) {
     return new Response('Page not found', { status: 404 });
   }
@@ -3260,7 +3288,7 @@ async function serveAsset(env, key, contentType, corsHeaders) {
 
 // Serve tool HTML with subscription check and soft paywall
 async function serveToolAsset(env, key, contentType, corsHeaders, request) {
-  const asset = await env.BSI_ASSETS.get(key);
+  const asset = await env.ASSETS.get(key);
   if (!asset) {
     return new Response('Tool not found', { status: 404 });
   }
@@ -3272,7 +3300,7 @@ async function serveToolAsset(env, key, contentType, corsHeaders, request) {
 
   if (session) {
     isLoggedIn = true;
-    const user = await env.BSI_GAME_DB.prepare(
+    const user = await env.DB.prepare(
       'SELECT subscription_tier FROM users WHERE id = ?'
     ).bind(session.userId).first();
     subscriptionTier = user?.subscription_tier || 'free';
@@ -3477,7 +3505,7 @@ BSI.showPaywall = function(loggedIn) {
 // Serve tool static assets (JS, CSS, etc.)
 async function serveToolStaticAsset(env, path, corsHeaders) {
   const key = `origin${path}`;
-  const asset = await env.BSI_ASSETS.get(key);
+  const asset = await env.ASSETS.get(key);
 
   if (!asset) {
     return new Response('Asset not found', { status: 404 });
@@ -3532,9 +3560,9 @@ async function handleAnalyticsEvent(request, env, corsHeaders) {
     };
 
     // Store in KV for batch processing (if KV is bound)
-    if (env.BSI_ANALYTICS_KV) {
+    if (env.ANALYTICS_KV) {
       const key = `event:${Date.now()}:${crypto.randomUUID()}`;
-      await env.BSI_ANALYTICS_KV.put(key, JSON.stringify(enrichedEvent), {
+      await env.ANALYTICS_KV.put(key, JSON.stringify(enrichedEvent), {
         expirationTtl: 86400 * 7 // 7 days
       });
     }
@@ -3580,9 +3608,9 @@ async function handleToolLaunchAnalytics(request, env, corsHeaders) {
     };
 
     // Store in KV for analysis
-    if (env.BSI_ANALYTICS_KV) {
+    if (env.ANALYTICS_KV) {
       var key = 'tool:' + Date.now() + ':' + crypto.randomUUID();
-      await env.BSI_ANALYTICS_KV.put(key, JSON.stringify(toolEvent), {
+      await env.ANALYTICS_KV.put(key, JSON.stringify(toolEvent), {
         expirationTtl: 86400 * 30 // 30 days for tool analytics
       });
     }
@@ -3616,7 +3644,7 @@ async function handleLeadCapture(request, env, corsHeaders) {
 
     // Store lead in D1
     const leadId = crypto.randomUUID();
-    await env.BSI_GAME_DB.prepare(`
+    await env.DB.prepare(`
       INSERT INTO leads (id, email, source, tool, created_at)
       VALUES (?, ?, ?, ?, datetime('now'))
       ON CONFLICT(email) DO UPDATE SET
@@ -3871,7 +3899,7 @@ async function getFootballTeamsFromD1(searchParams, env, corsHeaders) {
     sql += ` ORDER BY conference, name LIMIT ? OFFSET ?`;
     params.push(limit, offset);
 
-    const { results } = await env.BSI_GAME_DB.prepare(sql).bind(...params).all();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
 
     // Get total count
     let countSql = `SELECT COUNT(*) as count FROM football_teams WHERE 1=1`;
@@ -3884,10 +3912,10 @@ async function getFootballTeamsFromD1(searchParams, env, corsHeaders) {
       countSql += ` AND UPPER(state) = UPPER(?)`;
       countParams.push(state);
     }
-    const countResult = await env.BSI_GAME_DB.prepare(countSql).bind(...countParams).first();
+    const countResult = await env.DB.prepare(countSql).bind(...countParams).first();
 
     // Get conference summary
-    const confSummary = await env.BSI_GAME_DB.prepare(`
+    const confSummary = await env.DB.prepare(`
       SELECT conference, COUNT(*) as count
       FROM football_teams
       GROUP BY conference
@@ -3963,7 +3991,7 @@ async function getFootballTeamsFromD1(searchParams, env, corsHeaders) {
 // Get single FBS team by slug
 async function getFootballTeamFromD1(slug, env, corsHeaders) {
   try {
-    const team = await env.BSI_GAME_DB.prepare(`
+    const team = await env.DB.prepare(`
       SELECT * FROM football_teams WHERE slug = ?
     `).bind(slug).first();
 
@@ -3975,7 +4003,7 @@ async function getFootballTeamFromD1(slug, env, corsHeaders) {
     }
 
     // Get recent transfers for this team
-    const transfers = await env.BSI_GAME_DB.prepare(`
+    const transfers = await env.DB.prepare(`
       SELECT * FROM football_transfer_portal
       WHERE LOWER(from_school) LIKE LOWER(?) OR LOWER(to_school) LIKE LOWER(?)
       ORDER BY entry_date DESC
@@ -4078,7 +4106,7 @@ async function getFootballTransferPortal(searchParams, env, corsHeaders) {
     sql += ' ORDER BY impact_score DESC, entry_date DESC LIMIT ?';
     params.push(limit);
 
-    const { results } = await env.BSI_GAME_DB.prepare(sql).bind(...params).all();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
 
     const players = results.map(row => ({
       id: row.id,
@@ -4108,7 +4136,7 @@ async function getFootballTransferPortal(searchParams, env, corsHeaders) {
     }));
 
     // Get summary stats
-    const summaryQuery = await env.BSI_GAME_DB.prepare(`
+    const summaryQuery = await env.DB.prepare(`
       SELECT
         COUNT(*) as total,
         SUM(CASE WHEN status = 'in_portal' THEN 1 ELSE 0 END) as inPortal,
@@ -4119,7 +4147,7 @@ async function getFootballTransferPortal(searchParams, env, corsHeaders) {
     `).first();
 
     // Get position breakdown
-    const positionBreakdown = await env.BSI_GAME_DB.prepare(`
+    const positionBreakdown = await env.DB.prepare(`
       SELECT position, COUNT(*) as count
       FROM football_transfer_portal
       GROUP BY position
@@ -4183,7 +4211,7 @@ async function getFootballTransferImpactLeaders(searchParams, env, corsHeaders) 
     sql += ' ORDER BY impact_score DESC LIMIT ?';
     params.push(limit);
 
-    const { results } = await env.BSI_GAME_DB.prepare(sql).bind(...params).all();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
 
     return new Response(JSON.stringify({
       leaders: results.map((row, idx) => ({
@@ -4227,7 +4255,7 @@ async function getFootballTransferImpactLeaders(searchParams, env, corsHeaders) 
 // Football Transfer Player Detail
 async function getFootballTransferPlayerDetail(playerId, env, corsHeaders) {
   try {
-    const player = await env.BSI_GAME_DB.prepare(`
+    const player = await env.DB.prepare(`
       SELECT * FROM football_transfer_portal WHERE id = ?
     `).bind(playerId).first();
 
@@ -4286,7 +4314,7 @@ async function getFootballTransferPlayerDetail(playerId, env, corsHeaders) {
 // Football Transfer Conference Summary
 async function getFootballTransferConferenceSummary(searchParams, env, corsHeaders) {
   try {
-    const incoming = await env.BSI_GAME_DB.prepare(`
+    const incoming = await env.DB.prepare(`
       SELECT to_conference as conference, COUNT(*) as count
       FROM football_transfer_portal
       WHERE to_conference IS NOT NULL
@@ -4294,14 +4322,14 @@ async function getFootballTransferConferenceSummary(searchParams, env, corsHeade
       ORDER BY count DESC
     `).all();
 
-    const outgoing = await env.BSI_GAME_DB.prepare(`
+    const outgoing = await env.DB.prepare(`
       SELECT from_conference as conference, COUNT(*) as count
       FROM football_transfer_portal
       GROUP BY from_conference
       ORDER BY count DESC
     `).all();
 
-    const fiveStars = await env.BSI_GAME_DB.prepare(`
+    const fiveStars = await env.DB.prepare(`
       SELECT to_conference as conference, COUNT(*) as count
       FROM football_transfer_portal
       WHERE to_conference IS NOT NULL AND stars = 5
@@ -5078,7 +5106,7 @@ async function getFootballSchedule(searchParams, env, corsHeaders) {
     sql += ' ORDER BY game_date ASC, game_time ASC LIMIT ?';
     params.push(limit);
 
-    const { results } = await env.BSI_GAME_DB.prepare(sql).bind(...params).all();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
 
     return new Response(JSON.stringify({
       games: results.map(g => ({
@@ -5130,7 +5158,7 @@ async function getFootballSchedule(searchParams, env, corsHeaders) {
 // Football Team Schedule
 async function getFootballTeamSchedule(teamSlug, searchParams, env, corsHeaders) {
   try {
-    const team = await env.BSI_GAME_DB.prepare(`
+    const team = await env.DB.prepare(`
       SELECT * FROM football_teams WHERE slug = ?
     `).bind(teamSlug).first();
 
@@ -5141,7 +5169,7 @@ async function getFootballTeamSchedule(teamSlug, searchParams, env, corsHeaders)
       });
     }
 
-    const games = await env.BSI_GAME_DB.prepare(`
+    const games = await env.DB.prepare(`
       SELECT * FROM football_games
       WHERE (home_team_id = ? OR away_team_id = ?) AND season = 2025
       ORDER BY game_date ASC
@@ -5188,7 +5216,7 @@ async function getFootballTeamSchedule(teamSlug, searchParams, env, corsHeaders)
 // Football Game Detail
 async function getFootballGameDetail(gameId, env, corsHeaders) {
   try {
-    const game = await env.BSI_GAME_DB.prepare(`
+    const game = await env.DB.prepare(`
       SELECT * FROM football_games WHERE id = ?
     `).bind(gameId).first();
 
@@ -5262,7 +5290,7 @@ async function getFootballStandings(searchParams, env, corsHeaders) {
 
     sql += ' ORDER BY conference, (wins - losses) DESC, wins DESC';
 
-    const { results } = await env.BSI_GAME_DB.prepare(sql).bind(...params).all();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
 
     // Group by conference
     const standings = {};
@@ -5319,7 +5347,7 @@ async function getFootballRankings(searchParams, env, corsHeaders) {
       sql = `SELECT * FROM football_teams WHERE ap_rank IS NOT NULL OR cfp_rank IS NOT NULL ORDER BY COALESCE(cfp_rank, ap_rank) ASC LIMIT 25`;
     }
 
-    const { results } = await env.BSI_GAME_DB.prepare(sql).all();
+    const { results } = await env.DB.prepare(sql).all();
 
     return new Response(JSON.stringify({
       poll,
@@ -5356,7 +5384,7 @@ function jsonResponse(data, status, corsHeaders, sessionToken = null) {
   };
 
   if (sessionToken) {
-    headers['Set-Cookie'] = `bsi_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`;
+    headers['Set-Cookie'] = `bsi_token=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`;
   }
 
   return new Response(JSON.stringify(data), { status, headers });
@@ -5393,9 +5421,9 @@ async function handlePhotoUpload(request, env, corsHeaders) {
     const ext = file.name?.split('.').pop() || 'jpg';
     const r2Key = 'photos/players/' + safeName + '-' + timestamp + '.' + ext;
     const arrayBuffer = await file.arrayBuffer();
-    await env.BSI_ASSETS.put(r2Key, arrayBuffer, { httpMetadata: { contentType: file.type || 'image/jpeg' } });
+    await env.ASSETS.put(r2Key, arrayBuffer, { httpMetadata: { contentType: file.type || 'image/jpeg' } });
     const r2Url = 'https://blazesportsintel.com/' + r2Key;
-    await env.BSI_GAME_DB.prepare('INSERT INTO player_photos (player_id, player_name, school_name, r2_key, r2_url, photo_type, file_size, uploaded_by, approved) VALUES (?, ?, ?, ?, ?, \'headshot\', ?, \'admin\', 1)').bind(playerId || null, playerName, schoolName || null, r2Key, r2Url, arrayBuffer.byteLength).run();
+    await env.DB.prepare('INSERT INTO player_photos (player_id, player_name, school_name, r2_key, r2_url, photo_type, file_size, uploaded_by, approved) VALUES (?, ?, ?, ?, ?, \'headshot\', ?, \'admin\', 1)').bind(playerId || null, playerName, schoolName || null, r2Key, r2Url, arrayBuffer.byteLength).run();
     return new Response(JSON.stringify({ success: true, r2_key: r2Key, r2_url: r2Url, player_name: playerName }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     console.error('Photo upload error:', error);
@@ -5425,9 +5453,9 @@ async function handleBulkPhotoImport(request, env, corsHeaders) {
         const safeName = player_name.toLowerCase().replace(/[^a-z0-9]/g, '-');
         const ext = contentType.includes('png') ? 'png' : 'jpg';
         const r2Key = 'photos/players/' + safeName + '-' + timestamp + '.' + ext;
-        await env.BSI_ASSETS.put(r2Key, arrayBuffer, { httpMetadata: { contentType } });
+        await env.ASSETS.put(r2Key, arrayBuffer, { httpMetadata: { contentType } });
         const r2Url = 'https://blazesportsintel.com/' + r2Key;
-        await env.BSI_GAME_DB.prepare('INSERT INTO player_photos (player_id, player_name, school_name, r2_key, r2_url, photo_type, file_size, uploaded_by, approved) VALUES (?, ?, ?, ?, ?, \'headshot\', ?, \'bulk-import\', 1)').bind(player_id || null, player_name, school_name || null, r2Key, r2Url, arrayBuffer.byteLength).run();
+        await env.DB.prepare('INSERT INTO player_photos (player_id, player_name, school_name, r2_key, r2_url, photo_type, file_size, uploaded_by, approved) VALUES (?, ?, ?, ?, ?, \'headshot\', ?, \'bulk-import\', 1)').bind(player_id || null, player_name, school_name || null, r2Key, r2Url, arrayBuffer.byteLength).run();
         results.push({ player_name, status: 'success', r2_key: r2Key });
       } catch (err) { results.push({ player_name: photo.player_name, status: 'error', error: err.message }); }
     }
@@ -5448,7 +5476,7 @@ async function handleListPhotos(url, env, corsHeaders) {
     if (school) { sql += ' AND LOWER(school_name) LIKE ?'; params.push('%' + school.toLowerCase() + '%'); }
     sql += ' ORDER BY uploaded_at DESC LIMIT ?';
     params.push(limit);
-    const { results } = await env.BSI_GAME_DB.prepare(sql).bind(...params).all();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
     return new Response(JSON.stringify({ photos: results, count: results.length, fetchedAt: getChicagoTimestamp() }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Failed to list photos' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5457,10 +5485,10 @@ async function handleListPhotos(url, env, corsHeaders) {
 
 async function handleDeletePhoto(photoId, env, corsHeaders) {
   try {
-    const photo = await env.BSI_GAME_DB.prepare('SELECT * FROM player_photos WHERE id = ?').bind(photoId).first();
+    const photo = await env.DB.prepare('SELECT * FROM player_photos WHERE id = ?').bind(photoId).first();
     if (!photo) { return new Response(JSON.stringify({ error: 'Photo not found' }), { status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
-    if (photo.r2_key) { await env.BSI_ASSETS.delete(photo.r2_key); }
-    await env.BSI_GAME_DB.prepare('DELETE FROM player_photos WHERE id = ?').bind(photoId).run();
+    if (photo.r2_key) { await env.ASSETS.delete(photo.r2_key); }
+    await env.DB.prepare('DELETE FROM player_photos WHERE id = ?').bind(photoId).run();
     return new Response(JSON.stringify({ success: true, deleted: photoId }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Failed to delete photo' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5470,7 +5498,7 @@ async function handleDeletePhoto(photoId, env, corsHeaders) {
 async function handleListRosters(url, env, corsHeaders) {
   try {
     const season = url.searchParams.get('season') || '2025';
-    const { results } = await env.BSI_GAME_DB.prepare('SELECT * FROM roster_sources WHERE season = ? ORDER BY school_name').bind(season).all();
+    const { results } = await env.DB.prepare('SELECT * FROM roster_sources WHERE season = ? ORDER BY school_name').bind(season).all();
     return new Response(JSON.stringify({ rosters: results, count: results.length, season }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Failed to list rosters' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5482,7 +5510,7 @@ async function handleAddRoster(request, env, corsHeaders) {
     const body = await request.json();
     const { school_name, source_type, source_url, season } = body;
     if (!school_name || !source_type) { return new Response(JSON.stringify({ error: 'school_name and source_type required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
-    await env.BSI_GAME_DB.prepare("INSERT OR REPLACE INTO roster_sources (school_name, source_type, source_url, season, last_scraped, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))").bind(school_name, source_type, source_url || null, season || '2025').run();
+    await env.DB.prepare("INSERT OR REPLACE INTO roster_sources (school_name, source_type, source_url, season, last_scraped, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))").bind(school_name, source_type, source_url || null, season || '2025').run();
     return new Response(JSON.stringify({ success: true, school_name }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Failed to add roster' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5499,7 +5527,7 @@ async function handleListRosterPlayers(url, env, corsHeaders) {
     if (school) { sql += ' AND LOWER(school_name) LIKE ?'; params.push('%' + school.toLowerCase() + '%'); }
     sql += ' ORDER BY school_name, player_name LIMIT ?';
     params.push(limit);
-    const { results } = await env.BSI_GAME_DB.prepare(sql).bind(...params).all();
+    const { results } = await env.DB.prepare(sql).bind(...params).all();
     return new Response(JSON.stringify({ players: results, count: results.length, season }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Failed to list roster players' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5511,7 +5539,7 @@ async function handleAddRosterPlayer(request, env, corsHeaders) {
     const body = await request.json();
     const { school_name, player_name, jersey_number, position, class_year, hometown, high_school, source_type, season } = body;
     if (!school_name || !player_name) { return new Response(JSON.stringify({ error: 'school_name and player_name required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
-    await env.BSI_GAME_DB.prepare("INSERT OR REPLACE INTO roster_players (school_name, player_name, jersey_number, position, class_year, hometown, high_school, source_type, season, scraped_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))").bind(school_name, player_name, jersey_number || null, position || null, class_year || null, hometown || null, high_school || null, source_type || 'manual', season || '2025').run();
+    await env.DB.prepare("INSERT OR REPLACE INTO roster_players (school_name, player_name, jersey_number, position, class_year, hometown, high_school, source_type, season, scraped_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))").bind(school_name, player_name, jersey_number || null, position || null, class_year || null, hometown || null, high_school || null, source_type || 'manual', season || '2025').run();
     return new Response(JSON.stringify({ success: true, player_name, school_name }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Failed to add roster player' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5522,10 +5550,10 @@ async function handleVerifyPortalAgainstRoster(request, env, corsHeaders) {
   try {
     const body = await request.json();
     const seasonYear = body.season || '2025';
-    const { results: portalEntries } = await env.BSI_GAME_DB.prepare("SELECT id, player_name, from_school, to_school, position FROM transfer_portal WHERE status = 'committed' AND to_school IS NOT NULL").all();
+    const { results: portalEntries } = await env.DB.prepare("SELECT id, player_name, from_school, to_school, position FROM transfer_portal WHERE status = 'committed' AND to_school IS NOT NULL").all();
     const verifications = [];
     for (const entry of portalEntries) {
-      const { results: rosterMatches } = await env.BSI_GAME_DB.prepare('SELECT id, player_name, school_name, position FROM roster_players WHERE season = ? AND LOWER(school_name) LIKE ? AND (LOWER(player_name) LIKE ? OR LOWER(player_name) LIKE ?)').bind(seasonYear, '%' + entry.to_school.toLowerCase() + '%', '%' + entry.player_name.split(' ')[0].toLowerCase() + '%', '%' + entry.player_name.toLowerCase() + '%').all();
+      const { results: rosterMatches } = await env.DB.prepare('SELECT id, player_name, school_name, position FROM roster_players WHERE season = ? AND LOWER(school_name) LIKE ? AND (LOWER(player_name) LIKE ? OR LOWER(player_name) LIKE ?)').bind(seasonYear, '%' + entry.to_school.toLowerCase() + '%', '%' + entry.player_name.split(' ')[0].toLowerCase() + '%', '%' + entry.player_name.toLowerCase() + '%').all();
       if (rosterMatches.length > 0) { verifications.push({ portal_id: entry.id, player_name: entry.player_name, to_school: entry.to_school, verified: true, roster_match: rosterMatches[0] }); }
     }
     return new Response(JSON.stringify({ verified_count: verifications.length, total_committed: portalEntries.length, verifications }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5541,7 +5569,7 @@ async function handleNotificationSubscribe(request, env, corsHeaders) {
     const freq = frequency || 'instant';
     if (!email) { return new Response(JSON.stringify({ error: 'email required' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }); }
     const unsubscribeToken = crypto.randomUUID();
-    await env.BSI_GAME_DB.prepare("INSERT OR REPLACE INTO notification_subscribers (email, frequency, notification_type, filters_position, status, unsubscribe_token, filters_conference) VALUES (?, ?, 'transfer-portal', ?, 'active', ?, ?)").bind(email, freq, filters_position || null, unsubscribeToken, filters_conference || null).run();
+    await env.DB.prepare("INSERT OR REPLACE INTO notification_subscribers (email, frequency, notification_type, filters_position, status, unsubscribe_token, filters_conference) VALUES (?, ?, 'transfer-portal', ?, 'active', ?, ?)").bind(email, freq, filters_position || null, unsubscribeToken, filters_conference || null).run();
     return new Response(JSON.stringify({ success: true, email, unsubscribe_url: 'https://blazesportsintel.com/api/transfer-portal/unsubscribe?token=' + unsubscribeToken }), { status: 201, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error) {
     return new Response(JSON.stringify({ error: 'Subscription failed' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
@@ -5552,7 +5580,7 @@ async function handleNotificationUnsubscribe(url, env, corsHeaders) {
   try {
     const token = url.searchParams.get('token');
     if (!token) { return new Response('Missing token', { status: 400 }); }
-    const result = await env.BSI_GAME_DB.prepare("UPDATE notification_subscribers SET status = 'unsubscribed' WHERE unsubscribe_token = ?").bind(token).run();
+    const result = await env.DB.prepare("UPDATE notification_subscribers SET status = 'unsubscribed' WHERE unsubscribe_token = ?").bind(token).run();
     if (result.meta.changes === 0) { return new Response('Invalid or expired token', { status: 404 }); }
     return new Response('<!DOCTYPE html><html><head><title>Unsubscribed</title></head><body style="font-family: sans-serif; text-align: center; padding: 50px;"><h1>Unsubscribed Successfully</h1><p>You will no longer receive transfer portal notifications.</p><p><a href="/transfer-portal">Return to Transfer Portal</a></p></body></html>', { headers: { 'Content-Type': 'text/html', ...corsHeaders } });
   } catch (error) {
@@ -5563,7 +5591,7 @@ async function handleNotificationUnsubscribe(url, env, corsHeaders) {
 async function getConferenceFlow(searchParams, env, corsHeaders) {
   try {
     const year = searchParams.get('year') || '2025';
-    const { results: entries } = await env.BSI_GAME_DB.prepare("SELECT from_conference, to_conference, from_school, to_school, status FROM transfer_portal WHERE substr(entry_date, 1, 4) = ?").bind(year).all();
+    const { results: entries } = await env.DB.prepare("SELECT from_conference, to_conference, from_school, to_school, status FROM transfer_portal WHERE substr(entry_date, 1, 4) = ?").bind(year).all();
     const conferenceStats = {};
     entries.forEach(function(entry) {
       if (entry.from_conference) {
@@ -5672,14 +5700,14 @@ async function processTransferNotifications(env, corsHeaders) {
   var results = { processed: 0, sent: 0, errors: [] };
 
   try {
-    var subscribersResult = await env.BSI_GAME_DB.prepare("SELECT * FROM notification_subscribers WHERE status = 'active' AND frequency = 'instant'").all();
+    var subscribersResult = await env.DB.prepare("SELECT * FROM notification_subscribers WHERE status = 'active' AND frequency = 'instant'").all();
     var subscribers = subscribersResult.results;
 
     if (!subscribers || subscribers.length === 0) {
       return new Response(JSON.stringify({ message: 'No active instant subscribers', processed: 0, sent: 0, errors: [] }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
     }
 
-    var transfersResult = await env.BSI_GAME_DB.prepare("SELECT * FROM transfer_portal WHERE datetime(created_at) > datetime('now', '-24 hours') ORDER BY created_at DESC").all();
+    var transfersResult = await env.DB.prepare("SELECT * FROM transfer_portal WHERE datetime(created_at) > datetime('now', '-24 hours') ORDER BY created_at DESC").all();
     var recentTransfers = transfersResult.results;
 
     if (!recentTransfers || recentTransfers.length === 0) {
@@ -5722,7 +5750,7 @@ async function processTransferNotifications(env, corsHeaders) {
 
       if (emailResult.success) {
         results.sent++;
-        await env.BSI_GAME_DB.prepare("UPDATE notification_subscribers SET last_notified_at = datetime('now'), notification_count = notification_count + 1, updated_at = datetime('now') WHERE id = ?").bind(subscriber.id).run();
+        await env.DB.prepare("UPDATE notification_subscribers SET last_notified_at = datetime('now'), notification_count = notification_count + 1, updated_at = datetime('now') WHERE id = ?").bind(subscriber.id).run();
       } else {
         results.errors.push({ email: subscriber.email, error: emailResult.error });
       }
@@ -5741,14 +5769,14 @@ async function processDigestNotifications(env, frequency, corsHeaders) {
   var periodHours = frequency === 'daily' ? 24 : 168;
 
   try {
-    var subscribersResult = await env.BSI_GAME_DB.prepare("SELECT * FROM notification_subscribers WHERE status = 'active' AND frequency = ?").bind(frequency).all();
+    var subscribersResult = await env.DB.prepare("SELECT * FROM notification_subscribers WHERE status = 'active' AND frequency = ?").bind(frequency).all();
     var subscribers = subscribersResult.results;
 
     if (!subscribers || subscribers.length === 0) {
       return new Response(JSON.stringify({ message: 'No active ' + frequency + ' subscribers', processed: 0, sent: 0, errors: [] }), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
     }
 
-    var transfersResult = await env.BSI_GAME_DB.prepare("SELECT * FROM transfer_portal WHERE datetime(created_at) > datetime('now', '-" + periodHours + " hours') ORDER BY created_at DESC").all();
+    var transfersResult = await env.DB.prepare("SELECT * FROM transfer_portal WHERE datetime(created_at) > datetime('now', '-" + periodHours + " hours') ORDER BY created_at DESC").all();
     var recentTransfers = transfersResult.results;
 
     if (!recentTransfers || recentTransfers.length === 0) {
@@ -5785,7 +5813,7 @@ async function processDigestNotifications(env, frequency, corsHeaders) {
 
       if (emailResult.success) {
         results.sent++;
-        await env.BSI_GAME_DB.prepare("UPDATE notification_subscribers SET last_notified_at = datetime('now'), notification_count = notification_count + 1, updated_at = datetime('now') WHERE id = ?").bind(subscriber.id).run();
+        await env.DB.prepare("UPDATE notification_subscribers SET last_notified_at = datetime('now'), notification_count = notification_count + 1, updated_at = datetime('now') WHERE id = ?").bind(subscriber.id).run();
       } else {
         results.errors.push({ email: subscriber.email, error: emailResult.error });
       }

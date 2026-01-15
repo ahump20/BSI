@@ -71,3 +71,13 @@ export {
   type DateStyle,
   type Theme,
 } from './useUserSettings';
+
+// Authentication hooks
+export {
+  useAuth,
+  withAuth,
+  type AuthUser,
+  type AuthSubscription,
+  type AuthState,
+  type UseAuthOptions,
+} from './useAuth';

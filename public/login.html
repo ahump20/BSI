@@ -362,6 +362,18 @@
       if (token) {
         window.location.href = '/dashboard';
       }
+
+      // Show reason message if redirected
+      const urlParams = new URLSearchParams(window.location.search);
+      const reason = urlParams.get('reason');
+      if (reason) {
+        const errorEl = document.getElementById('error-message');
+        errorEl.textContent = decodeURIComponent(reason);
+        errorEl.style.display = 'block';
+        errorEl.style.borderColor = 'var(--bsi-burnt-orange)';
+        errorEl.style.background = 'rgba(191, 87, 0, 0.1)';
+        errorEl.style.color = 'var(--bsi-burnt-orange)';
+      }
     })();
 
     // Handle login form

@@ -30,13 +30,18 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
 
-      const data = (await response.json()) as { error?: string };
+      const data = (await response.json()) as { error?: string; token?: string; redirectTo?: string };
 
       if (!response.ok) {
         throw new Error(data.error || 'Login failed');
       }
 
-      window.location.href = '/dashboard';
+      // Store token in localStorage for client-side auth checks
+      if (data.token) {
+        localStorage.setItem('bsi_token', data.token);
+      }
+
+      window.location.href = data.redirectTo || '/dashboard';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

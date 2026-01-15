@@ -65,8 +65,8 @@ export default function NFLPage() {
                 <Link href="/nfl/news" className="btn-secondary px-6 py-3">
                   Latest News
                 </Link>
-                <Link href="/scores" className="btn-secondary px-6 py-3">
-                  All Scores
+                <Link href="/nfl/scores" className="btn-secondary px-6 py-3">
+                  NFL Scores
                 </Link>
               </div>
             </ScrollReveal>
@@ -117,7 +117,7 @@ export default function NFLPage() {
               </ScrollReveal>
 
               <ScrollReveal direction="up" delay={200}>
-                <Link href="/scores" className="block">
+                <Link href="/nfl/scores" className="block">
                   <Card variant="hover" padding="lg" className="h-full">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="text-3xl">🏈</span>
