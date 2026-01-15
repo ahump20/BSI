@@ -422,6 +422,7 @@
       <div class="content-inner">
         <div class="freshness-header">
           <h2 style="font-family: var(--font-display); font-size: 1.25rem; margin: 0;">Rankings</h2>
+          <div id="truthBadge" style="display: inline-block;"></div>
           <span class="source-badge" id="sourceBadge">
             <span class="status-dot"></span>
             <span id="sourceLabel">Loading</span>
@@ -431,6 +432,7 @@
             <span id="freshnessBadge"></span>
           </div>
         </div>
+        <div id="truthBannerContainer"></div>
 
         <div class="poll-selector">
           <button class="poll-btn active" data-poll="cfp">CFP Rankings</button>
@@ -456,6 +458,7 @@
   </footer>
 
   <script src="/src/js/freshness-indicator.js"></script>
+  <script src="/src/js/truth-state.js"></script>
   <script>
     (function() {
       'use strict';
@@ -464,6 +467,7 @@
       var rankingsData = null;
       var freshnessController = null;
       var lastSyncTime = null;
+      var truthController = null;
 
       function showLoading(container) {
         container.replaceChildren();
@@ -604,10 +608,9 @@
         var badge = document.getElementById('sourceBadge');
         var label = document.getElementById('sourceLabel');
         if (!badge || !label) return;
-        
-        var dot = badge.querySelector('.status-dot');
+
         badge.className = 'source-badge';
-        
+
         var sourceMap = {
           'highlightly': { name: 'Highlightly', class: 'highlightly' },
           'Highlightly Pro': { name: 'Highlightly', class: 'highlightly' },
@@ -617,10 +620,55 @@
           'bsi-database': { name: 'Cached', class: 'database' },
           'error': { name: 'Error', class: 'error' }
         };
-        
+
         var mapped = sourceMap[source] || { name: source || 'Unknown', class: '' };
         label.textContent = mapped.name;
         if (mapped.class) badge.classList.add(mapped.class);
+      }
+
+      // Update truth state indicator
+      function updateTruthState(validation) {
+        if (!window.BSITruthState) return;
+
+        var badgeContainer = document.getElementById('truthBadge');
+        var bannerContainer = document.getElementById('truthBannerContainer');
+
+        // Clear existing banner
+        if (bannerContainer) {
+          while (bannerContainer.firstChild) {
+            bannerContainer.removeChild(bannerContainer.firstChild);
+          }
+        }
+
+        if (!validation) {
+          // No validation data - show unavailable
+          if (badgeContainer) {
+            BSITruthState.render({
+              container: badgeContainer,
+              status: 'unavailable',
+              reason: 'Validation status unknown'
+            });
+          }
+          return;
+        }
+
+        var status = validation.status || 'unavailable';
+        var options = {
+          status: status,
+          recordCount: validation.recordCount,
+          expectedMin: validation.expectedMin,
+          reason: validation.reason
+        };
+
+        // Render badge
+        if (badgeContainer) {
+          truthController = BSITruthState.render(Object.assign({ container: badgeContainer }, options));
+        }
+
+        // Render banner for invalid/unavailable states
+        if (bannerContainer && (status === 'invalid' || status === 'unavailable')) {
+          BSITruthState.renderBanner(Object.assign({ container: bannerContainer }, options));
+        }
       }
 
       async function loadRankings() {
@@ -633,9 +681,31 @@
 
           rankingsData = data;
           lastSyncTime = data.lastUpdated || data.lastSync || new Date().toISOString();
-          
+
           // Update source badge
           updateSourceBadge(data.source || 'espn', data.status || 'ok');
+
+          // Update truth state from validation info if present
+          if (data.validation) {
+            updateTruthState(data.validation);
+          } else {
+            // Infer status from data presence
+            var rankings = data.data || data.rankings || [];
+            var teamCount = 0;
+            for (var k = 0; k < rankings.length; k++) {
+              var r = rankings[k];
+              var teams = r.ranks || r.teams || [];
+              teamCount += teams.length;
+            }
+            updateTruthState({
+              status: teamCount >= 25 ? 'valid' : teamCount > 0 ? 'unavailable' : 'invalid',
+              recordCount: teamCount,
+              expectedMin: 25,
+              reason: teamCount >= 25 ? 'Valid: ' + teamCount + ' teams'
+                    : teamCount > 0 ? 'Partial data: ' + teamCount + ' teams (expected 25)'
+                    : 'No ranking data received'
+            });
+          }
 
           var rankings = data.data || data.rankings || [];
           var pollRankings = null;
@@ -729,14 +799,20 @@
             lastSyncTime = null;
             updateFreshnessIndicator();
 
+            // Show INVALID truth state - this is a data failure, not an empty result
+            updateTruthState({
+              status: 'invalid',
+              recordCount: 0,
+              expectedMin: 25,
+              reason: 'API request failed: ' + (espnError.message || 'Unknown error')
+            });
+
             container.replaceChildren();
+            // Error banner is shown by updateTruthState, just show minimal content
             var empty = document.createElement('div');
             empty.className = 'empty-state';
-            var h3 = document.createElement('h3');
-            h3.textContent = 'Unable to Load Rankings';
-            empty.appendChild(h3);
             var p = document.createElement('p');
-            p.textContent = 'Please try again later.';
+            p.textContent = 'Unable to load rankings data. See error details above.';
             empty.appendChild(p);
             container.appendChild(empty);
           }

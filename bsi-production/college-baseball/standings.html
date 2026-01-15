@@ -833,6 +833,7 @@
             </div>
           </div>
           <div class="controls-right">
+            <div id="truthBadge" style="display: inline-block;"></div>
             <span class="source-badge" id="sourceBadge">
               <span class="status-dot"></span>
               <span id="sourceLabel">Loading</span>
@@ -844,6 +845,7 @@
           </div>
         </div>
 
+        <div id="truthBannerContainer"></div>
         <div id="standings-container">
           <div class="loading">
             <div class="loading-spinner"></div>
@@ -860,6 +862,7 @@
   </footer>
 
   <script src="/src/js/freshness-indicator.js"></script>
+  <script src="/src/js/truth-state.js"></script>
   <script>
     (function() {
       'use strict';
@@ -869,6 +872,7 @@
       var conferenceSelect = document.getElementById('conference-select');
       var updateIndicator = document.getElementById('updateIndicator');
       var freshnessController = null;
+      var truthController = null;
       var lastSyncTime = null;
       var refreshInterval = null;
 
@@ -1339,10 +1343,9 @@
         var badge = document.getElementById('sourceBadge');
         var label = document.getElementById('sourceLabel');
         if (!badge || !label) return;
-        
-        var dot = badge.querySelector('.status-dot');
+
         badge.className = 'source-badge';
-        
+
         var sourceMap = {
           'highlightly': { name: 'Highlightly', class: 'highlightly' },
           'Highlightly Pro': { name: 'Highlightly', class: 'highlightly' },
@@ -1355,10 +1358,51 @@
           'error': { name: 'Error', class: 'error' },
           'unavailable': { name: 'Offline', class: 'error' }
         };
-        
+
         var mapped = sourceMap[source] || { name: source || 'Unknown', class: '' };
         label.textContent = mapped.name;
         if (mapped.class) badge.classList.add(mapped.class);
+      }
+
+      // Update truth state indicator
+      function updateTruthState(validation) {
+        if (!window.BSITruthState) return;
+
+        var badgeContainer = document.getElementById('truthBadge');
+        var bannerContainer = document.getElementById('truthBannerContainer');
+
+        if (bannerContainer) {
+          while (bannerContainer.firstChild) {
+            bannerContainer.removeChild(bannerContainer.firstChild);
+          }
+        }
+
+        if (!validation) {
+          if (badgeContainer) {
+            BSITruthState.render({
+              container: badgeContainer,
+              status: 'unavailable',
+              reason: 'Validation status unknown'
+            });
+          }
+          return;
+        }
+
+        var status = validation.status || 'unavailable';
+        var options = {
+          status: status,
+          recordCount: validation.recordCount,
+          expectedMin: validation.expectedMin,
+          reason: validation.reason
+        };
+
+        if (badgeContainer) {
+          truthController = BSITruthState.render(Object.assign({ container: badgeContainer }, options));
+        }
+
+        if (bannerContainer && (status === 'invalid' || status === 'unavailable')) {
+          BSITruthState.renderBanner(Object.assign({ container: bannerContainer }, options));
+        }
       }
 
       // Fetch standings data
@@ -1387,6 +1431,28 @@
           // Update last sync time and source badge
           lastSyncTime = data.lastUpdated || data.fetchedAt || data.timestamp || new Date().toISOString();
           updateSourceBadge(data.source || 'd1baseball', data.status || 'ok');
+
+          // Update truth state from validation info
+          if (data.validation) {
+            updateTruthState(data.validation);
+          } else {
+            // Count total teams across conferences
+            var teamCount = 0;
+            if (data.conferences) {
+              for (var c = 0; c < data.conferences.length; c++) {
+                var conf = data.conferences[c];
+                if (conf.teams) teamCount += conf.teams.length;
+              }
+            }
+            updateTruthState({
+              status: teamCount >= 200 ? 'valid' : teamCount > 0 ? 'unavailable' : 'invalid',
+              recordCount: teamCount,
+              expectedMin: 200,
+              reason: teamCount >= 200 ? 'Valid: ' + teamCount + ' teams'
+                    : teamCount > 0 ? 'Partial data: ' + teamCount + ' teams (expected 200+)'
+                    : 'No standings data received'
+            });
+          }
 
           if (!data.conferences || data.conferences.length === 0) {
             showEmpty();
@@ -1428,6 +1494,15 @@
         } catch (error) {
           console.error('Error fetching standings:', error);
           updateSourceBadge('error', 'error');
+
+          // Show INVALID truth state - data fetch failed
+          updateTruthState({
+            status: 'invalid',
+            recordCount: 0,
+            expectedMin: 200,
+            reason: 'API request failed: ' + (error.message || 'Unknown error')
+          });
+
           showError('Unable to load standings. Please check your connection and try again.', function() {
             fetchStandings(conference);
           });

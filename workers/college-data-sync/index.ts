@@ -5,18 +5,38 @@
  * - College Baseball: D1Baseball.com Top 25 + Conference Standings via ESPN API
  * - College Football: AP Top 25, CFP Rankings, Coaches Poll + Conference Standings via ESPN API
  *
+ * SEMANTIC VALIDATION (v3.0):
+ * - Empty/null datasets are INVALID, never success
+ * - Minimum density thresholds enforced (CFB rankings: 25, standings: 100)
+ * - Schema validation ensures required fields exist
+ * - KV/D1 writes blocked for invalid data
+ * - Read-path re-validates before serving
+ *
  * Monitoring Features:
  * - Health check with staleness detection (healthy/stale/critical)
  * - Sync failure tracking with consecutive failure counts
  * - Analytics Engine integration for sync event logging
  * - Alerts endpoint for proactive monitoring
+ * - Semantic health dashboard showing data density vs thresholds
  *
  * Cron: Every 6 hours
  *
  * @author BSI Team
  * @created 2025-01-08
- * @updated 2025-01-08 - Added conference standings synchronization
+ * @updated 2025-01-15 - Added semantic validation layer (v3.0)
  */
+
+import {
+  validateDataset,
+  guardKVWrite,
+  SemanticValidationError,
+  validateOnRead,
+  SEMANTIC_RULES,
+  isInSeason,
+  type ValidationResult,
+  type DatasetStatus,
+  type ValidatedDataset,
+} from '../../lib/semantic-validation';
 
 // =============================================================================
 // TYPE DEFINITIONS
@@ -174,6 +194,10 @@ interface SyncResult {
   error?: string;
   stack?: string;
   duration_ms?: number;
+  /** Semantic validation result - null/empty data is INVALID, not success */
+  validation?: ValidationResult;
+  /** True if data was written to storage, false if blocked by validation */
+  dataWritten?: boolean;
 }
 
 interface SyncMetadata {
@@ -589,11 +613,11 @@ async function getSyncStatus(env: Env, syncType: SyncType): Promise<{
 async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
   const startTime = Date.now();
   const dataType = 'college-baseball-rankings';
-  console.log('[' + dataType + '] Starting sync...');
+  console.log('[' + dataType + '] Starting sync with semantic validation...');
 
   try {
     const response = await fetch(ESPN_COLLEGE_BASEBALL_RANKINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/2.1', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
     });
 
     if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
@@ -601,13 +625,22 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
     const data = await response.json() as ESPNRankingsResponse;
     const rankings = data.rankings?.[0];
 
+    // SEMANTIC VALIDATION: Empty rankings is INVALID, not success
     if (!rankings?.ranks?.length) {
-      console.log('[' + dataType + '] No rankings data found');
       const duration = Date.now() - startTime;
-      const metadata: SyncMetadata = { timestamp: new Date().toISOString(), success: true, recordCount: 0, source: 'none', duration_ms: duration };
-      await recordSyncSuccess(env, 'baseball-rankings', metadata);
-      logSyncSuccess(env, dataType, 0, duration, 'none');
-      return { success: true, inserted: 0, source: 'none', duration_ms: duration };
+      const validation = validateDataset('cbb-rankings-d1', []);
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      logSyncFailure(env, dataType, validation.reason, duration);
+      await recordSyncFailure(env, 'baseball-rankings', validation.reason);
+      return {
+        success: false,
+        inserted: 0,
+        source: 'none',
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
     }
 
     const source = rankings.name || 'D1Baseball.com Top 25';
@@ -615,13 +648,34 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
     const season = getCurrentSeason('baseball');
     const week = getCollegeBaseballWeek();
 
-    await env.BSI_DB.prepare('DELETE FROM college_baseball_rankings WHERE season = ? AND week = ? AND source = ?').bind(season, week, source).run();
-
     const records: RankingRecord[] = rankings.ranks.map(rank => ({
       team_id: getTeamId(rank.team), team_name: getTeamName(rank.team), team_logo: getTeamLogo(rank.team),
       rank: rank.current, previous_rank: getPreviousRank(rank), record: getRecord(rank),
       source, week, season, updated_at: now
     }));
+
+    // SEMANTIC VALIDATION: Check density before writing
+    const validation = validateDataset('cbb-rankings-d1', records);
+
+    if (validation.status !== 'valid') {
+      const duration = Date.now() - startTime;
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      logSyncFailure(env, dataType, validation.reason, duration);
+      await recordSyncFailure(env, 'baseball-rankings', validation.reason);
+      // DO NOT WRITE TO D1 - data is invalid
+      return {
+        success: false,
+        inserted: 0,
+        source,
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
+    }
+
+    // VALIDATION PASSED - safe to write
+    await env.BSI_DB.prepare('DELETE FROM college_baseball_rankings WHERE season = ? AND week = ? AND source = ?').bind(season, week, source).run();
 
     const stmt = env.BSI_DB.prepare('INSERT INTO college_baseball_rankings (team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     const batch = records.map(r => stmt.bind(r.team_id, r.team_name, r.team_logo, r.rank, r.previous_rank, r.record, r.source, r.week, r.season, r.updated_at));
@@ -632,8 +686,15 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
     await recordSyncSuccess(env, 'baseball-rankings', metadata);
     logSyncSuccess(env, dataType, records.length, duration, source);
 
-    console.log('[' + dataType + '] Inserted ' + records.length + ' rankings in ' + duration + 'ms');
-    return { success: true, inserted: records.length, source, duration_ms: duration };
+    console.log('[' + dataType + '] VALIDATION PASSED: Inserted ' + records.length + ' rankings in ' + duration + 'ms');
+    return {
+      success: true,
+      inserted: records.length,
+      source,
+      duration_ms: duration,
+      validation,
+      dataWritten: true,
+    };
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -643,31 +704,47 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
     const consecutiveFailures = await recordSyncFailure(env, 'baseball-rankings', errorMessage, errorStack);
     console.error('[' + dataType + '] Consecutive failures: ' + consecutiveFailures);
     logSyncFailure(env, dataType, errorMessage, duration);
-    return { success: false, inserted: 0, error: errorMessage, stack: errorStack, duration_ms: duration };
+    return {
+      success: false,
+      inserted: 0,
+      error: errorMessage,
+      stack: errorStack,
+      duration_ms: duration,
+      dataWritten: false,
+    };
   }
 }
 
 async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
   const startTime = Date.now();
   const dataType = 'college-football-rankings';
-  console.log('[' + dataType + '] Starting sync...');
+  console.log('[' + dataType + '] Starting sync with semantic validation...');
 
   try {
     const response = await fetch(ESPN_COLLEGE_FOOTBALL_RANKINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/2.1', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
     });
 
     if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
 
     const data = await response.json() as ESPNRankingsResponse;
 
+    // SEMANTIC VALIDATION: Empty rankings array is INVALID, not success
     if (!data.rankings?.length) {
-      console.log('[' + dataType + '] No rankings data found');
       const duration = Date.now() - startTime;
-      const metadata: SyncMetadata = { timestamp: new Date().toISOString(), success: true, recordCount: 0, sources: [], duration_ms: duration };
-      await recordSyncSuccess(env, 'football-rankings', metadata);
-      logSyncSuccess(env, dataType, 0, duration, 'none');
-      return { success: true, inserted: 0, sources: [], duration_ms: duration };
+      const validation = validateDataset('cfb-rankings-ap', []);
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      logSyncFailure(env, dataType, validation.reason, duration);
+      await recordSyncFailure(env, 'football-rankings', validation.reason);
+      return {
+        success: false,
+        inserted: 0,
+        sources: [],
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
     }
 
     const now = new Date().toISOString();
@@ -681,8 +758,6 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
       const source = ranking.name || ranking.shortName || 'Unknown';
       sources.push(source);
 
-      await env.BSI_DB.prepare('DELETE FROM college_football_rankings WHERE season = ? AND week = ? AND source = ?').bind(season, week, source).run();
-
       const records = ranking.ranks.map(rank => ({
         team_id: getTeamId(rank.team), team_name: getTeamName(rank.team), team_logo: getTeamLogo(rank.team),
         rank: rank.current, previous_rank: getPreviousRank(rank), record: getRecord(rank),
@@ -691,11 +766,33 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
       allRecords.push(...records);
     }
 
-    if (allRecords.length === 0) {
+    // SEMANTIC VALIDATION: Check density before writing
+    // CFB rankings should have at least 25 teams per source
+    const validation = validateDataset('cfb-rankings-ap', allRecords);
+
+    if (validation.status !== 'valid') {
       const duration = Date.now() - startTime;
-      const metadata: SyncMetadata = { timestamp: now, success: true, recordCount: 0, sources: [], duration_ms: duration };
-      await recordSyncSuccess(env, 'football-rankings', metadata);
-      return { success: true, inserted: 0, sources: [], duration_ms: duration };
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      console.error('[' + dataType + '] Records: ' + allRecords.length + ', Expected: ' + validation.expectedMin);
+      logSyncFailure(env, dataType, validation.reason, duration);
+      await recordSyncFailure(env, 'football-rankings', validation.reason);
+      // DO NOT WRITE TO D1 - data is invalid
+      // DO NOT overwrite prior good data
+      return {
+        success: false,
+        inserted: 0,
+        sources,
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
+    }
+
+    // VALIDATION PASSED - safe to write to D1
+    // Delete old data for this week/season/source combo
+    for (const source of sources) {
+      await env.BSI_DB.prepare('DELETE FROM college_football_rankings WHERE season = ? AND week = ? AND source = ?').bind(season, week, source).run();
     }
 
     const stmt = env.BSI_DB.prepare('INSERT INTO college_football_rankings (team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
@@ -707,8 +804,15 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
     await recordSyncSuccess(env, 'football-rankings', metadata);
     logSyncSuccess(env, dataType, allRecords.length, duration, sources.join(','));
 
-    console.log('[' + dataType + '] Inserted ' + allRecords.length + ' rankings in ' + duration + 'ms');
-    return { success: true, inserted: allRecords.length, sources, duration_ms: duration };
+    console.log('[' + dataType + '] VALIDATION PASSED: Inserted ' + allRecords.length + ' rankings in ' + duration + 'ms');
+    return {
+      success: true,
+      inserted: allRecords.length,
+      sources,
+      duration_ms: duration,
+      validation,
+      dataWritten: true,
+    };
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -718,7 +822,14 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
     const consecutiveFailures = await recordSyncFailure(env, 'football-rankings', errorMessage, errorStack);
     console.error('[' + dataType + '] Consecutive failures: ' + consecutiveFailures);
     logSyncFailure(env, dataType, errorMessage, duration);
-    return { success: false, inserted: 0, error: errorMessage, stack: errorStack, duration_ms: duration };
+    return {
+      success: false,
+      inserted: 0,
+      error: errorMessage,
+      stack: errorStack,
+      duration_ms: duration,
+      dataWritten: false,
+    };
   }
 }
 
@@ -729,24 +840,25 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
 async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
   const startTime = Date.now();
   const dataType = 'college-baseball-standings';
-  console.log('[' + dataType + '] Starting sync...');
+  console.log('[' + dataType + '] Starting sync with semantic validation...');
 
   try {
     const response = await fetch(ESPN_COLLEGE_BASEBALL_STANDINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/2.1', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
     });
 
     if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
 
     const data = await response.json() as ESPNStandingsResponse;
 
+    // SEMANTIC VALIDATION: Empty conferences array is INVALID, not success
     if (!data.children?.length) {
-      console.log('[' + dataType + '] No standings data found');
       const duration = Date.now() - startTime;
-      const metadata: SyncMetadata = { timestamp: new Date().toISOString(), success: true, recordCount: 0, conferences: [], duration_ms: duration };
-      await recordSyncSuccess(env, 'baseball-standings', metadata);
-      logSyncSuccess(env, dataType, 0, duration, 'none');
-      return { success: true, inserted: 0, conferences: [], duration_ms: duration };
+      const validation = validateDataset('cbb-standings', []);
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      // DO NOT record as success - this is a failure
+      logSyncFailure(env, dataType, validation.reason, duration);
+      return { success: false, inserted: 0, conferences: [], duration_ms: duration, validation, dataWritten: false, error: validation.reason };
     }
 
     const now = new Date().toISOString();
@@ -796,11 +908,20 @@ async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
       }
     }
 
-    if (allRecords.length === 0) {
+    // SEMANTIC VALIDATION: Validate before writing to D1
+    // CBB standings requires at least 200 teams (D1 has ~300)
+    const validation = validateDataset('cbb-standings', allRecords as unknown[]);
+
+    if (validation.status !== 'valid') {
       const duration = Date.now() - startTime;
-      return { success: true, inserted: 0, conferences: [], duration_ms: duration };
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      console.error('[' + dataType + '] Actual: ' + allRecords.length + ' records, Expected: ' + validation.expectedMin + '+');
+      // DO NOT WRITE TO D1 - data is invalid, would corrupt existing good data
+      logSyncFailure(env, dataType, validation.reason, duration);
+      return { success: false, inserted: 0, conferences: [], duration_ms: duration, validation, dataWritten: false, error: validation.reason };
     }
 
+    // Data passed semantic validation - safe to write
     await env.BSI_DB.prepare('DELETE FROM college_baseball_standings WHERE season = ?').bind(season).run();
 
     const stmt = env.BSI_DB.prepare('INSERT INTO college_baseball_standings (team_id, team_name, team_logo, conference, division, overall_wins, overall_losses, conference_wins, conference_losses, win_pct, conference_win_pct, streak, last_10, home_record, away_record, runs_scored, runs_allowed, run_differential, rpi, games_back, conference_rank, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
@@ -812,8 +933,9 @@ async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
     await recordSyncSuccess(env, 'baseball-standings', metadata);
     logSyncSuccess(env, dataType, allRecords.length, duration, conferences.join(','));
 
-    console.log('[' + dataType + '] Inserted ' + allRecords.length + ' standings from ' + conferences.length + ' conferences in ' + duration + 'ms');
-    return { success: true, inserted: allRecords.length, conferences, duration_ms: duration };
+    console.log('[' + dataType + '] VALIDATION PASSED: ' + allRecords.length + ' standings from ' + conferences.length + ' conferences');
+    console.log('[' + dataType + '] Inserted in ' + duration + 'ms');
+    return { success: true, inserted: allRecords.length, conferences, duration_ms: duration, validation, dataWritten: true };
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -830,24 +952,33 @@ async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
 async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
   const startTime = Date.now();
   const dataType = 'college-football-standings';
-  console.log('[' + dataType + '] Starting sync...');
+  console.log('[' + dataType + '] Starting sync with semantic validation...');
 
   try {
     const response = await fetch(ESPN_COLLEGE_FOOTBALL_STANDINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/2.1', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
     });
 
     if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
 
     const data = await response.json() as ESPNStandingsResponse;
 
+    // SEMANTIC VALIDATION: Empty conferences array is INVALID, not success
     if (!data.children?.length) {
-      console.log('[' + dataType + '] No standings data found');
       const duration = Date.now() - startTime;
-      const metadata: SyncMetadata = { timestamp: new Date().toISOString(), success: true, recordCount: 0, conferences: [], duration_ms: duration };
-      await recordSyncSuccess(env, 'football-standings', metadata);
-      logSyncSuccess(env, dataType, 0, duration, 'none');
-      return { success: true, inserted: 0, conferences: [], duration_ms: duration };
+      const validation = validateDataset('cfb-standings', []);
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      logSyncFailure(env, dataType, validation.reason, duration);
+      await recordSyncFailure(env, 'football-standings', validation.reason);
+      return {
+        success: false,
+        inserted: 0,
+        conferences: [],
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
     }
 
     const now = new Date().toISOString();
@@ -896,11 +1027,29 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
       }
     }
 
-    if (allRecords.length === 0) {
+    // SEMANTIC VALIDATION: CFB standings need 100+ teams (FBS has 133)
+    const validation = validateDataset('cfb-standings', allRecords);
+
+    if (validation.status !== 'valid') {
       const duration = Date.now() - startTime;
-      return { success: true, inserted: 0, conferences: [], duration_ms: duration };
+      console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
+      console.error('[' + dataType + '] Teams: ' + allRecords.length + ', Expected min: ' + validation.expectedMin);
+      logSyncFailure(env, dataType, validation.reason, duration);
+      await recordSyncFailure(env, 'football-standings', validation.reason);
+      // DO NOT WRITE TO D1 - data is invalid
+      // DO NOT overwrite prior good data
+      return {
+        success: false,
+        inserted: 0,
+        conferences,
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
     }
 
+    // VALIDATION PASSED - safe to write to D1
     await env.BSI_DB.prepare('DELETE FROM college_football_standings WHERE season = ?').bind(season).run();
 
     const stmt = env.BSI_DB.prepare('INSERT INTO college_football_standings (team_id, team_name, team_logo, conference, division, overall_wins, overall_losses, conference_wins, conference_losses, win_pct, conference_win_pct, streak, home_record, away_record, points_for, points_against, point_differential, games_back, conference_rank, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
@@ -912,8 +1061,15 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
     await recordSyncSuccess(env, 'football-standings', metadata);
     logSyncSuccess(env, dataType, allRecords.length, duration, conferences.join(','));
 
-    console.log('[' + dataType + '] Inserted ' + allRecords.length + ' standings from ' + conferences.length + ' conferences in ' + duration + 'ms');
-    return { success: true, inserted: allRecords.length, conferences, duration_ms: duration };
+    console.log('[' + dataType + '] VALIDATION PASSED: Inserted ' + allRecords.length + ' standings from ' + conferences.length + ' conferences in ' + duration + 'ms');
+    return {
+      success: true,
+      inserted: allRecords.length,
+      conferences,
+      duration_ms: duration,
+      validation,
+      dataWritten: true,
+    };
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -923,7 +1079,14 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
     const consecutiveFailures = await recordSyncFailure(env, 'football-standings', errorMessage, errorStack);
     console.error('[' + dataType + '] Consecutive failures: ' + consecutiveFailures);
     logSyncFailure(env, dataType, errorMessage, duration);
-    return { success: false, inserted: 0, error: errorMessage, stack: errorStack, duration_ms: duration };
+    return {
+      success: false,
+      inserted: 0,
+      error: errorMessage,
+      stack: errorStack,
+      duration_ms: duration,
+      dataWritten: false,
+    };
   }
 }
 
@@ -1111,6 +1274,149 @@ async function handleAlerts(env: Env): Promise<Response> {
   return jsonResponse(response);
 }
 
+// =============================================================================
+// SEMANTIC HEALTH ENDPOINT
+// Shows the TRUTH about data density vs thresholds
+// Green = REAL data meeting density requirements
+// Red = INVALID data or below threshold
+// =============================================================================
+
+interface SemanticHealthDataset {
+  datasetId: string;
+  description: string;
+  status: DatasetStatus;
+  actualCount: number;
+  expectedMin: number;
+  percentOfExpected: number;
+  inSeason: boolean;
+  lastValidated: string | null;
+  failureReason: string | null;
+}
+
+interface SemanticHealthResponse {
+  timestamp: string;
+  service: string;
+  version: string;
+  truthScore: number; // 0-100, based on datasets meeting thresholds
+  overallStatus: 'truth' | 'partial' | 'invalid';
+  datasets: {
+    cfb: SemanticHealthDataset[];
+    cbb: SemanticHealthDataset[];
+  };
+  message: string;
+}
+
+async function handleSemanticHealth(env: Env): Promise<Response> {
+  const now = new Date().toISOString();
+
+  // Query actual counts from D1
+  const [cfbRankingsCount, cfbStandingsCount, cbbRankingsCount, cbbStandingsCount] = await Promise.all([
+    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_rankings WHERE season = ?').bind(getCurrentSeason('football')).first<{ count: number }>(),
+    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_standings WHERE season = ?').bind(getCurrentSeason('football')).first<{ count: number }>().catch(() => ({ count: 0 })),
+    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_rankings WHERE season = ?').bind(getCurrentSeason('baseball')).first<{ count: number }>(),
+    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_standings WHERE season = ?').bind(getCurrentSeason('baseball')).first<{ count: number }>().catch(() => ({ count: 0 })),
+  ]);
+
+  // Get semantic rules
+  const cfbRankingsRule = SEMANTIC_RULES['cfb-rankings-ap'];
+  const cfbStandingsRule = SEMANTIC_RULES['cfb-standings'];
+  const cbbRankingsRule = SEMANTIC_RULES['cbb-rankings-d1'];
+  const cbbStandingsRule = SEMANTIC_RULES['cbb-standings'];
+
+  // Build dataset health info
+  const cfbRankingsActual = cfbRankingsCount?.count || 0;
+  const cfbStandingsActual = cfbStandingsCount?.count || 0;
+  const cbbRankingsActual = cbbRankingsCount?.count || 0;
+  const cbbStandingsActual = cbbStandingsCount?.count || 0;
+
+  const cfbDatasets: SemanticHealthDataset[] = [
+    {
+      datasetId: 'cfb-rankings-ap',
+      description: cfbRankingsRule.description,
+      status: cfbRankingsActual >= cfbRankingsRule.minRecordCount ? 'valid' : (cfbRankingsActual === 0 ? 'invalid' : 'invalid'),
+      actualCount: cfbRankingsActual,
+      expectedMin: cfbRankingsRule.minRecordCount,
+      percentOfExpected: Math.round((cfbRankingsActual / cfbRankingsRule.minRecordCount) * 100),
+      inSeason: isInSeason(cfbRankingsRule),
+      lastValidated: now,
+      failureReason: cfbRankingsActual >= cfbRankingsRule.minRecordCount ? null : `Need ${cfbRankingsRule.minRecordCount} teams, have ${cfbRankingsActual}`,
+    },
+    {
+      datasetId: 'cfb-standings',
+      description: cfbStandingsRule.description,
+      status: cfbStandingsActual >= cfbStandingsRule.minRecordCount ? 'valid' : (cfbStandingsActual === 0 ? 'invalid' : 'invalid'),
+      actualCount: cfbStandingsActual,
+      expectedMin: cfbStandingsRule.minRecordCount,
+      percentOfExpected: Math.round((cfbStandingsActual / cfbStandingsRule.minRecordCount) * 100),
+      inSeason: isInSeason(cfbStandingsRule),
+      lastValidated: now,
+      failureReason: cfbStandingsActual >= cfbStandingsRule.minRecordCount ? null : `Need ${cfbStandingsRule.minRecordCount} teams, have ${cfbStandingsActual}`,
+    },
+  ];
+
+  const cbbDatasets: SemanticHealthDataset[] = [
+    {
+      datasetId: 'cbb-rankings-d1',
+      description: cbbRankingsRule.description,
+      status: cbbRankingsActual >= cbbRankingsRule.minRecordCount ? 'valid' : (cbbRankingsActual === 0 ? 'invalid' : 'invalid'),
+      actualCount: cbbRankingsActual,
+      expectedMin: cbbRankingsRule.minRecordCount,
+      percentOfExpected: Math.round((cbbRankingsActual / cbbRankingsRule.minRecordCount) * 100),
+      inSeason: isInSeason(cbbRankingsRule),
+      lastValidated: now,
+      failureReason: cbbRankingsActual >= cbbRankingsRule.minRecordCount ? null : `Need ${cbbRankingsRule.minRecordCount} teams, have ${cbbRankingsActual}`,
+    },
+    {
+      datasetId: 'cbb-standings',
+      description: cbbStandingsRule.description,
+      status: cbbStandingsActual >= cbbStandingsRule.minRecordCount ? 'valid' : (cbbStandingsActual === 0 ? 'invalid' : 'invalid'),
+      actualCount: cbbStandingsActual,
+      expectedMin: cbbStandingsRule.minRecordCount,
+      percentOfExpected: Math.round((cbbStandingsActual / cbbStandingsRule.minRecordCount) * 100),
+      inSeason: isInSeason(cbbStandingsRule),
+      lastValidated: now,
+      failureReason: cbbStandingsActual >= cbbStandingsRule.minRecordCount ? null : `Need ${cbbStandingsRule.minRecordCount} teams, have ${cbbStandingsActual}`,
+    },
+  ];
+
+  // Calculate truth score (only count in-season datasets)
+  const allDatasets = [...cfbDatasets, ...cbbDatasets].filter(d => d.inSeason);
+  const validCount = allDatasets.filter(d => d.status === 'valid').length;
+  const totalInSeason = allDatasets.length;
+  const truthScore = totalInSeason > 0 ? Math.round((validCount / totalInSeason) * 100) : 0;
+
+  let overallStatus: 'truth' | 'partial' | 'invalid';
+  let message: string;
+
+  if (truthScore === 100) {
+    overallStatus = 'truth';
+    message = 'All in-season datasets meet semantic density thresholds. Data is REAL.';
+  } else if (truthScore > 0) {
+    overallStatus = 'partial';
+    message = `${validCount}/${totalInSeason} in-season datasets meet thresholds. Some data is invalid or missing.`;
+  } else {
+    overallStatus = 'invalid';
+    message = 'No in-season datasets meet semantic thresholds. All data is INVALID.';
+  }
+
+  const response: SemanticHealthResponse = {
+    timestamp: now,
+    service: SERVICE_NAME,
+    version: SERVICE_VERSION,
+    truthScore,
+    overallStatus,
+    datasets: {
+      cfb: cfbDatasets,
+      cbb: cbbDatasets,
+    },
+    message,
+  };
+
+  // Return 503 if invalid, 200 if truth/partial
+  const httpStatus = overallStatus === 'invalid' ? 503 : 200;
+  return jsonResponse(response, httpStatus);
+}
+
 async function handleSyncAll(env: Env): Promise<Response> {
   const startTime = Date.now();
 
@@ -1124,6 +1430,12 @@ async function handleSyncAll(env: Env): Promise<Response> {
   const response = {
     success: brResult.success && frResult.success && bsResult.success && fsResult.success,
     total_duration_ms: Date.now() - startTime,
+    semanticValidation: {
+      cfbRankingsValid: frResult.validation?.status === 'valid',
+      cfbStandingsValid: fsResult.validation?.status === 'valid',
+      cbbRankingsValid: brResult.validation?.status === 'valid',
+      cbbStandingsValid: bsResult.validation?.status === 'valid',
+    },
     results: {
       collegeBaseball: { rankings: brResult, standings: bsResult },
       collegeFootball: { rankings: frResult, standings: fsResult },
@@ -1218,6 +1530,11 @@ export default {
       if (path === '/status' && method === 'GET') return handleStatus(env);
       if (path === '/alerts' && method === 'GET') return handleAlerts(env);
 
+      // SEMANTIC HEALTH - The truth about data density
+      // Returns 503 if ALL in-season datasets are invalid
+      if (path === '/semantic-health' && method === 'GET') return handleSemanticHealth(env);
+      if (path === '/truth' && method === 'GET') return handleSemanticHealth(env); // Alias
+
       // Rankings sync endpoints
       if (path === '/sync/college-baseball' && method === 'POST') {
         const result = await syncCollegeBaseballRankings(env);
@@ -1253,12 +1570,14 @@ export default {
       if (path === '/' && method === 'GET') {
         return jsonResponse({
           service: SERVICE_NAME, version: SERVICE_VERSION,
-          description: 'College sports rankings and standings data pipeline with comprehensive monitoring',
+          description: 'College sports rankings and standings data pipeline with semantic validation',
           endpoints: {
             'GET /health': 'Service health check with staleness detection',
             'GET /status': 'Detailed sync status for rankings and standings',
             'GET /alerts': 'Active alerts and system health score',
-            'POST /sync/all': 'Sync all rankings and standings',
+            'GET /semantic-health': 'TRUTH: Data density vs semantic thresholds (returns 503 if all invalid)',
+            'GET /truth': 'Alias for /semantic-health',
+            'POST /sync/all': 'Sync all rankings and standings (with semantic validation)',
             'POST /sync/college-baseball': 'Sync college baseball rankings',
             'POST /sync/college-football': 'Sync college football rankings',
             'POST /sync/standings/baseball': 'Sync college baseball standings',
@@ -1267,6 +1586,16 @@ export default {
             'GET /rankings/football': 'Get current football rankings',
             'GET /standings/baseball?conference=SEC': 'Get baseball standings (optional conference filter)',
             'GET /standings/football?conference=SEC': 'Get football standings (optional conference filter)',
+          },
+          semanticValidation: {
+            description: 'v3.0: Empty/null data is INVALID, not success. Minimum density thresholds enforced.',
+            thresholds: {
+              'cfb-rankings': '25 teams minimum',
+              'cfb-standings': '100 teams minimum (FBS)',
+              'cbb-rankings': '25 teams minimum',
+              'cbb-standings': '200 teams minimum (D1)',
+            },
+            behavior: 'Invalid data blocks KV/D1 writes. Prior good data preserved. Failures logged.',
           },
           monitoring: {
             staleness_thresholds: { healthy: '< ' + STALENESS_THRESHOLD_STALE + ' hours', stale: STALENESS_THRESHOLD_STALE + '-' + STALENESS_THRESHOLD_CRITICAL + ' hours', critical: '> ' + STALENESS_THRESHOLD_CRITICAL + ' hours' },
