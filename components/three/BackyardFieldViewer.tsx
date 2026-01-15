@@ -112,7 +112,9 @@ export function BackyardFieldViewer({
         onCamerasReady?.(camerasRef.current);
 
         const desiredCamera =
-          camerasRef.current.get(initialCameraSelection ?? '') ||
+          (initialCameraSelection && camerasRef.current.has(initialCameraSelection)
+            ? initialCameraSelection
+            : null) ||
           cameraPresets.find((preset) => camerasRef.current.has(preset.id))?.id ||
           null;
 
@@ -171,7 +173,6 @@ export function BackyardFieldViewer({
     backgroundColor,
     cameraPresets,
     glbUrl,
-    initialCameraName,
     initialCameraSelection,
     onAnchorsReady,
     onCamerasReady,
