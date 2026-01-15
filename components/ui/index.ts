@@ -46,3 +46,22 @@ export { QuoteBlock } from './QuoteBlock';
 
 // Live ticker (re-exported from dedicated module)
 export { LiveTicker } from '../live-ticker/LiveTicker';
+
+// TailAdmin-inspired components
+export { StatsCard } from './StatsCard';
+export type { StatsCardProps } from './StatsCard';
+
+export { DataTable } from './DataTable';
+export type { DataTableProps, ColumnDef } from './DataTable';
+
+export { ChartCard } from './ChartCard';
+export type { ChartCardProps } from './ChartCard';
+
+export { ProgressBar } from './ProgressBar';
+export type { ProgressBarProps } from './ProgressBar';
+
+export { Dropdown } from './Dropdown';
+export type { DropdownProps, DropdownItem } from './Dropdown';
+
+export { Tabs } from './Tabs';
+export type { TabsProps, Tab } from './Tabs';

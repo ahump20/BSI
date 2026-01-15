@@ -199,6 +199,9 @@ export default function NFLPage() {
               <p className="text-text-tertiary text-xs mt-2">
                 Data sourced from ESPN and official NFL sources • Updated in real-time during games
               </p>
+              <p className="text-text-tertiary text-xs mt-2">
+                ✨ Now featuring: Play-by-Play Analytics (EPA/WPA), AI Predictions, and Live Odds
+              </p>
             </div>
           </Container>
         </Section>
