@@ -46,9 +46,7 @@ export function BackyardFieldViewer({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const initialCameraSelection = initialCameraName ?? cameraPresets[0]?.id ?? null;
-  const [activeCameraName, setActiveCameraName] = useState<string | null>(
-    initialCameraSelection
-  );
+  const [activeCameraName, setActiveCameraName] = useState<string | null>(initialCameraSelection);
 
   const setCameraByName = useCallback(
     (name: string) => {
@@ -112,7 +110,7 @@ export function BackyardFieldViewer({
         onCamerasReady?.(camerasRef.current);
 
         const desiredCamera =
-          camerasRef.current.get(initialCameraSelection ?? '') ||
+          (camerasRef.current.has(initialCameraSelection ?? '') ? initialCameraSelection : null) ||
           cameraPresets.find((preset) => camerasRef.current.has(preset.id))?.id ||
           null;
 
@@ -123,8 +121,8 @@ export function BackyardFieldViewer({
         setLoading(false);
       },
       undefined,
-      (loadError) => {
-        setError(loadError.message || 'Failed to load GLB.');
+      (loadError: unknown) => {
+        setError(loadError instanceof Error ? loadError.message : 'Failed to load GLB.');
         setLoading(false);
       }
     );
@@ -202,9 +200,7 @@ export function BackyardFieldViewer({
               </button>
             ))}
           </div>
-          <div className="text-[11px] text-white/60">
-            Active: {activeCameraName ?? 'Fallback'}
-          </div>
+          <div className="text-[11px] text-white/60">Active: {activeCameraName ?? 'Fallback'}</div>
         </div>
       )}
       {(loading || error) && (
