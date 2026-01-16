@@ -1609,7 +1609,6 @@ export default {
               'GET /v2/games?date=YYYY-MM-DD': 'Get games by date',
               'GET /v2/games?team=xxx': 'Get games by team',
               'GET /v2/teams': 'Get teams from D1 database',
-              'GET /v2/source-health': 'Get API source health status',
             },
             enabledSources: {
               ncaa: true,
