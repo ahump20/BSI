@@ -659,7 +659,6 @@ export class CollegeBaseballAggregator {
                   winPct: team.winPct,
                   conferenceWinPct: team.conferenceWinPct,
                   streak: team.streak,
-                  homeRecord: team.homeRecord,
                   conferenceRank: i + 1,
                   dataSource: 'ncaa-api',
                   fetchedAt: now,
