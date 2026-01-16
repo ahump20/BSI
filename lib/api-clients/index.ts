@@ -6,7 +6,7 @@
  * Priority Matrix:
  * 1. NCAA API (henrygd/ncaa-api) - Free D1 real-time scores/stats
  * 2. Highlightly API (RapidAPI) - Production D1 with SLA
- * 3. ESPN API (Unofficial) - MVP/backup only (risk of breaking)
+ * 4. ESPN API (Unofficial) - MVP/backup only (risk of breaking)
  *
  * @author BSI Team
  * @created 2025-01-16
