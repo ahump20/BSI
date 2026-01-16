@@ -33,9 +33,11 @@ import {
   validateOnRead,
   SEMANTIC_RULES,
   isInSeason,
+  storeSnapshot,
   type ValidationResult,
   type DatasetStatus,
   type ValidatedDataset,
+  type R2Bucket,
 } from '../../lib/semantic-validation';
 
 import {
@@ -49,6 +51,7 @@ import {
 interface Env {
   BSI_DB: D1Database;
   BSI_CACHE: KVNamespace;
+  BSI_R2?: R2Bucket;
   ANALYTICS?: AnalyticsEngineDataset;
   ENVIRONMENT?: string;
   // Multi-source API configuration
@@ -57,11 +60,7 @@ interface Env {
 }
 
 interface AnalyticsEngineDataset {
-  writeDataPoint(data: {
-    blobs?: string[];
-    doubles?: number[];
-    indexes?: string[];
-  }): void;
+  writeDataPoint(data: { blobs?: string[]; doubles?: number[]; indexes?: string[] }): void;
 }
 
 interface ESPNLogo {
@@ -292,10 +291,14 @@ interface AlertsResponse {
 // CONSTANTS
 // =============================================================================
 
-const ESPN_COLLEGE_BASEBALL_RANKINGS = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings';
-const ESPN_COLLEGE_FOOTBALL_RANKINGS = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings';
-const ESPN_COLLEGE_BASEBALL_STANDINGS = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/standings';
-const ESPN_COLLEGE_FOOTBALL_STANDINGS = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/standings';
+const ESPN_COLLEGE_BASEBALL_RANKINGS =
+  'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings';
+const ESPN_COLLEGE_FOOTBALL_RANKINGS =
+  'https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings';
+const ESPN_COLLEGE_BASEBALL_STANDINGS =
+  'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/standings';
+const ESPN_COLLEGE_FOOTBALL_STANDINGS =
+  'https://site.api.espn.com/apis/site/v2/sports/football/college-football/standings';
 
 // KV Keys for sync tracking
 const KV_KEYS = {
@@ -340,11 +343,34 @@ const CONSECUTIVE_FAILURE_THRESHOLD = 2;
 
 // Major conferences for filtering
 const MAJOR_CONFERENCES = [
-  'SEC', 'ACC', 'Big Ten', 'Big 12', 'Pac-12', 'Big East', 'American Athletic',
-  'Mountain West', 'Conference USA', 'Sun Belt', 'Mid-American', 'Atlantic 10',
-  'Colonial Athletic', 'Missouri Valley', 'West Coast', 'Atlantic Sun', 'Big West',
-  'Ivy League', 'Patriot League', 'Southern', 'Southland', 'SWAC', 'MEAC',
-  'Ohio Valley', 'Horizon League', 'Summit League', 'WAC', 'ASUN',
+  'SEC',
+  'ACC',
+  'Big Ten',
+  'Big 12',
+  'Pac-12',
+  'Big East',
+  'American Athletic',
+  'Mountain West',
+  'Conference USA',
+  'Sun Belt',
+  'Mid-American',
+  'Atlantic 10',
+  'Colonial Athletic',
+  'Missouri Valley',
+  'West Coast',
+  'Atlantic Sun',
+  'Big West',
+  'Ivy League',
+  'Patriot League',
+  'Southern',
+  'Southland',
+  'SWAC',
+  'MEAC',
+  'Ohio Valley',
+  'Horizon League',
+  'Summit League',
+  'WAC',
+  'ASUN',
 ];
 
 // =============================================================================
@@ -425,7 +451,7 @@ function getRecord(rank: ESPNRank): string {
 
 function getStatValue(stats: ESPNStat[] | undefined, statName: string): number {
   if (!stats) return 0;
-  const stat = stats.find(s => s.name === statName || s.abbreviation === statName);
+  const stat = stats.find((s) => s.name === statName || s.abbreviation === statName);
   if (stat && typeof stat.value === 'number') return stat.value;
   if (stat && stat.displayValue) {
     const parsed = parseFloat(stat.displayValue);
@@ -436,27 +462,43 @@ function getStatValue(stats: ESPNStat[] | undefined, statName: string): number {
 
 function getStatDisplayValue(stats: ESPNStat[] | undefined, statName: string): string | null {
   if (!stats) return null;
-  const stat = stats.find(s => s.name === statName || s.abbreviation === statName);
+  const stat = stats.find((s) => s.name === statName || s.abbreviation === statName);
   return stat?.displayValue || null;
 }
 
 function normalizeConferenceName(rawName: string | undefined): string {
   if (!rawName) return 'Unknown';
   const mappings: Record<string, string> = {
-    'southeastern': 'SEC', 'sec': 'SEC', 'atlantic coast': 'ACC', 'acc': 'ACC',
-    'big ten': 'Big Ten', 'big 10': 'Big Ten', 'big twelve': 'Big 12', 'big 12': 'Big 12',
-    'pac-12': 'Pac-12', 'pac 12': 'Pac-12', 'big east': 'Big East',
-    'american athletic': 'American Athletic', 'aac': 'American Athletic',
-    'mountain west': 'Mountain West', 'mwc': 'Mountain West',
-    'conference usa': 'Conference USA', 'c-usa': 'Conference USA',
-    'sun belt': 'Sun Belt', 'mid-american': 'Mid-American', 'mac': 'Mid-American',
+    southeastern: 'SEC',
+    sec: 'SEC',
+    'atlantic coast': 'ACC',
+    acc: 'ACC',
+    'big ten': 'Big Ten',
+    'big 10': 'Big Ten',
+    'big twelve': 'Big 12',
+    'big 12': 'Big 12',
+    'pac-12': 'Pac-12',
+    'pac 12': 'Pac-12',
+    'big east': 'Big East',
+    'american athletic': 'American Athletic',
+    aac: 'American Athletic',
+    'mountain west': 'Mountain West',
+    mwc: 'Mountain West',
+    'conference usa': 'Conference USA',
+    'c-usa': 'Conference USA',
+    'sun belt': 'Sun Belt',
+    'mid-american': 'Mid-American',
+    mac: 'Mid-American',
   };
   const lower = rawName.toLowerCase().trim();
   if (mappings[lower]) return mappings[lower];
   for (const [key, value] of Object.entries(mappings)) {
     if (lower.includes(key)) return value;
   }
-  return rawName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  return rawName
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 }
 
 function calculateStalenessHours(timestamp: string | null): number {
@@ -485,7 +527,13 @@ function formatTimeSinceSync(stalenessHours: number): string {
 // ANALYTICS ENGINE HELPERS
 // =============================================================================
 
-function logSyncSuccess(env: Env, dataType: string, recordCount: number, durationMs: number, source: string): void {
+function logSyncSuccess(
+  env: Env,
+  dataType: string,
+  recordCount: number,
+  durationMs: number,
+  source: string
+): void {
   if (!env.ANALYTICS) return;
   try {
     env.ANALYTICS.writeDataPoint({
@@ -498,7 +546,12 @@ function logSyncSuccess(env: Env, dataType: string, recordCount: number, duratio
   }
 }
 
-function logSyncFailure(env: Env, dataType: string, errorMessage: string, durationMs: number): void {
+function logSyncFailure(
+  env: Env,
+  dataType: string,
+  errorMessage: string,
+  durationMs: number
+): void {
   if (!env.ANALYTICS) return;
   try {
     env.ANALYTICS.writeDataPoint({
@@ -516,7 +569,12 @@ function logStaleData(env: Env, dataType: string, stalenessHours: number): void 
   try {
     env.ANALYTICS.writeDataPoint({
       indexes: [dataType],
-      blobs: ['sync_stale', dataType, stalenessHours >= STALENESS_THRESHOLD_CRITICAL ? 'critical' : 'stale', SERVICE_VERSION],
+      blobs: [
+        'sync_stale',
+        dataType,
+        stalenessHours >= STALENESS_THRESHOLD_CRITICAL ? 'critical' : 'stale',
+        SERVICE_VERSION,
+      ],
       doubles: [stalenessHours, STALENESS_THRESHOLD_STALE, STALENESS_THRESHOLD_CRITICAL, 0],
     });
   } catch (error) {
@@ -528,10 +586,22 @@ function logStaleData(env: Env, dataType: string, stalenessHours: number): void 
 // SYNC TRACKING FUNCTIONS
 // =============================================================================
 
-type SyncType = 'baseball-rankings' | 'football-rankings' | 'baseball-standings' | 'football-standings';
+type SyncType =
+  | 'baseball-rankings'
+  | 'football-rankings'
+  | 'baseball-standings'
+  | 'football-standings';
 
-function getKVKeys(syncType: SyncType): { success: string; error: string; failures: string; metadata: string } {
-  const keyMap: Record<SyncType, { success: string; error: string; failures: string; metadata: string }> = {
+function getKVKeys(syncType: SyncType): {
+  success: string;
+  error: string;
+  failures: string;
+  metadata: string;
+} {
+  const keyMap: Record<
+    SyncType,
+    { success: string; error: string; failures: string; metadata: string }
+  > = {
     'baseball-rankings': {
       success: KV_KEYS.BASEBALL_RANKINGS_LAST_SUCCESS,
       error: KV_KEYS.BASEBALL_RANKINGS_LAST_ERROR,
@@ -560,7 +630,11 @@ function getKVKeys(syncType: SyncType): { success: string; error: string; failur
   return keyMap[syncType];
 }
 
-async function recordSyncSuccess(env: Env, syncType: SyncType, metadata: SyncMetadata): Promise<void> {
+async function recordSyncSuccess(
+  env: Env,
+  syncType: SyncType,
+  metadata: SyncMetadata
+): Promise<void> {
   const keys = getKVKeys(syncType);
   await Promise.all([
     env.BSI_CACHE.put(keys.success, metadata.timestamp),
@@ -574,26 +648,58 @@ async function recordSyncSuccess(env: Env, syncType: SyncType, metadata: SyncMet
   } else if (syncType === 'football-rankings') {
     await env.BSI_CACHE.put(KV_KEYS.FOOTBALL_LAST_SUCCESS, metadata.timestamp);
   }
+
+  // Log to D1 ingestion_log for audit trail
+  try {
+    await env.BSI_DB.prepare(
+      'INSERT INTO ingestion_log (dataset_id, status, record_count, source, timestamp) VALUES (?, ?, ?, ?, ?)'
+    )
+      .bind(syncType, 'success', metadata.recordCount, metadata.source, metadata.timestamp)
+      .run();
+  } catch {
+    // Ingestion log failure shouldn't block sync success
+  }
 }
 
-async function recordSyncFailure(env: Env, syncType: SyncType, errorMessage: string, stack?: string): Promise<number> {
+async function recordSyncFailure(
+  env: Env,
+  syncType: SyncType,
+  errorMessage: string,
+  stack?: string
+): Promise<number> {
   const keys = getKVKeys(syncType);
   const currentFailures = await env.BSI_CACHE.get(keys.failures);
   const newFailureCount = (parseInt(currentFailures || '0', 10) || 0) + 1;
+  const now = new Date().toISOString();
   const errorData = {
     message: errorMessage,
     stack: stack?.substring(0, 1000),
-    timestamp: new Date().toISOString(),
+    timestamp: now,
     consecutiveFailures: newFailureCount,
   };
   await Promise.all([
     env.BSI_CACHE.put(keys.failures, String(newFailureCount)),
     env.BSI_CACHE.put(keys.error, JSON.stringify(errorData)),
   ]);
+
+  // Log to D1 ingestion_log for audit trail
+  try {
+    await env.BSI_DB.prepare(
+      'INSERT INTO ingestion_log (dataset_id, status, reason, source, timestamp) VALUES (?, ?, ?, ?, ?)'
+    )
+      .bind(syncType, 'failed', errorMessage.substring(0, 500), 'highlightly', now)
+      .run();
+  } catch {
+    // Ingestion log failure shouldn't block failure recording
+  }
+
   return newFailureCount;
 }
 
-async function getSyncStatus(env: Env, syncType: SyncType): Promise<{
+async function getSyncStatus(
+  env: Env,
+  syncType: SyncType
+): Promise<{
   lastSuccess: string | null;
   lastError: string | null;
   consecutiveFailures: number;
@@ -608,9 +714,18 @@ async function getSyncStatus(env: Env, syncType: SyncType): Promise<{
   ]);
   let lastMetadata: SyncMetadata | null = null;
   if (metadataStr) {
-    try { lastMetadata = JSON.parse(metadataStr); } catch { /* ignore */ }
+    try {
+      lastMetadata = JSON.parse(metadataStr);
+    } catch {
+      /* ignore */
+    }
   }
-  return { lastSuccess, lastError, consecutiveFailures: parseInt(failures || '0', 10) || 0, lastMetadata };
+  return {
+    lastSuccess,
+    lastError,
+    consecutiveFailures: parseInt(failures || '0', 10) || 0,
+    lastMetadata,
+  };
 }
 
 // =============================================================================
@@ -624,12 +739,13 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
 
   try {
     const response = await fetch(ESPN_COLLEGE_BASEBALL_RANKINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', Accept: 'application/json' },
     });
 
-    if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
+    if (!response.ok)
+      throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
 
-    const data = await response.json() as ESPNRankingsResponse;
+    const data = (await response.json()) as ESPNRankingsResponse;
     const rankings = data.rankings?.[0];
 
     // SEMANTIC VALIDATION: Empty rankings is INVALID, not success
@@ -655,10 +771,17 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
     const season = getCurrentSeason('baseball');
     const week = getCollegeBaseballWeek();
 
-    const records: RankingRecord[] = rankings.ranks.map(rank => ({
-      team_id: getTeamId(rank.team), team_name: getTeamName(rank.team), team_logo: getTeamLogo(rank.team),
-      rank: rank.current, previous_rank: getPreviousRank(rank), record: getRecord(rank),
-      source, week, season, updated_at: now
+    const records: RankingRecord[] = rankings.ranks.map((rank) => ({
+      team_id: getTeamId(rank.team),
+      team_name: getTeamName(rank.team),
+      team_logo: getTeamLogo(rank.team),
+      rank: rank.current,
+      previous_rank: getPreviousRank(rank),
+      record: getRecord(rank),
+      source,
+      week,
+      season,
+      updated_at: now,
     }));
 
     // SEMANTIC VALIDATION: Check density before writing
@@ -682,18 +805,56 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
     }
 
     // VALIDATION PASSED - safe to write
-    await env.BSI_DB.prepare('DELETE FROM college_baseball_rankings WHERE season = ? AND week = ? AND source = ?').bind(season, week, source).run();
+    await env.BSI_DB.prepare(
+      'DELETE FROM college_baseball_rankings WHERE season = ? AND week = ? AND source = ?'
+    )
+      .bind(season, week, source)
+      .run();
 
-    const stmt = env.BSI_DB.prepare('INSERT INTO college_baseball_rankings (team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    const batch = records.map(r => stmt.bind(r.team_id, r.team_name, r.team_logo, r.rank, r.previous_rank, r.record, r.source, r.week, r.season, r.updated_at));
+    const stmt = env.BSI_DB.prepare(
+      'INSERT INTO college_baseball_rankings (team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    const batch = records.map((r) =>
+      stmt.bind(
+        r.team_id,
+        r.team_name,
+        r.team_logo,
+        r.rank,
+        r.previous_rank,
+        r.record,
+        r.source,
+        r.week,
+        r.season,
+        r.updated_at
+      )
+    );
     await env.BSI_DB.batch(batch);
 
+    // Store R2 snapshot for fallback recovery
+    if (env.BSI_R2) {
+      await storeSnapshot(env.BSI_R2, 'cbb-rankings-d1', records, validation);
+    }
+
     const duration = Date.now() - startTime;
-    const metadata: SyncMetadata = { timestamp: now, success: true, recordCount: records.length, source, duration_ms: duration };
+    const metadata: SyncMetadata = {
+      timestamp: now,
+      success: true,
+      recordCount: records.length,
+      source,
+      duration_ms: duration,
+    };
     await recordSyncSuccess(env, 'baseball-rankings', metadata);
     logSyncSuccess(env, dataType, records.length, duration, source);
 
-    console.log('[' + dataType + '] VALIDATION PASSED: Inserted ' + records.length + ' rankings in ' + duration + 'ms');
+    console.log(
+      '[' +
+        dataType +
+        '] VALIDATION PASSED: Inserted ' +
+        records.length +
+        ' rankings in ' +
+        duration +
+        'ms'
+    );
     return {
       success: true,
       inserted: records.length,
@@ -702,13 +863,17 @@ async function syncCollegeBaseballRankings(env: Env): Promise<SyncResult> {
       validation,
       dataWritten: true,
     };
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const errorStack = error instanceof Error ? error.stack : undefined;
     const duration = Date.now() - startTime;
     console.error('[' + dataType + '] Sync failed:', errorMessage);
-    const consecutiveFailures = await recordSyncFailure(env, 'baseball-rankings', errorMessage, errorStack);
+    const consecutiveFailures = await recordSyncFailure(
+      env,
+      'baseball-rankings',
+      errorMessage,
+      errorStack
+    );
     console.error('[' + dataType + '] Consecutive failures: ' + consecutiveFailures);
     logSyncFailure(env, dataType, errorMessage, duration);
     return {
@@ -729,12 +894,13 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
 
   try {
     const response = await fetch(ESPN_COLLEGE_FOOTBALL_RANKINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', Accept: 'application/json' },
     });
 
-    if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
+    if (!response.ok)
+      throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
 
-    const data = await response.json() as ESPNRankingsResponse;
+    const data = (await response.json()) as ESPNRankingsResponse;
 
     // SEMANTIC VALIDATION: Empty rankings array is INVALID, not success
     if (!data.rankings?.length) {
@@ -765,10 +931,17 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
       const source = ranking.name || ranking.shortName || 'Unknown';
       sources.push(source);
 
-      const records = ranking.ranks.map(rank => ({
-        team_id: getTeamId(rank.team), team_name: getTeamName(rank.team), team_logo: getTeamLogo(rank.team),
-        rank: rank.current, previous_rank: getPreviousRank(rank), record: getRecord(rank),
-        source, week, season, updated_at: now
+      const records = ranking.ranks.map((rank) => ({
+        team_id: getTeamId(rank.team),
+        team_name: getTeamName(rank.team),
+        team_logo: getTeamLogo(rank.team),
+        rank: rank.current,
+        previous_rank: getPreviousRank(rank),
+        record: getRecord(rank),
+        source,
+        week,
+        season,
+        updated_at: now,
       }));
       allRecords.push(...records);
     }
@@ -780,7 +953,9 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
     if (validation.status !== 'valid') {
       const duration = Date.now() - startTime;
       console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
-      console.error('[' + dataType + '] Records: ' + allRecords.length + ', Expected: ' + validation.expectedMin);
+      console.error(
+        '[' + dataType + '] Records: ' + allRecords.length + ', Expected: ' + validation.expectedMin
+      );
       logSyncFailure(env, dataType, validation.reason, duration);
       await recordSyncFailure(env, 'football-rankings', validation.reason);
       // DO NOT WRITE TO D1 - data is invalid
@@ -799,19 +974,57 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
     // VALIDATION PASSED - safe to write to D1
     // Delete old data for this week/season/source combo
     for (const source of sources) {
-      await env.BSI_DB.prepare('DELETE FROM college_football_rankings WHERE season = ? AND week = ? AND source = ?').bind(season, week, source).run();
+      await env.BSI_DB.prepare(
+        'DELETE FROM college_football_rankings WHERE season = ? AND week = ? AND source = ?'
+      )
+        .bind(season, week, source)
+        .run();
     }
 
-    const stmt = env.BSI_DB.prepare('INSERT INTO college_football_rankings (team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    const batch = allRecords.map(r => stmt.bind(r.team_id, r.team_name, r.team_logo, r.rank, r.previous_rank, r.record, r.source, r.week, r.season, r.updated_at));
+    const stmt = env.BSI_DB.prepare(
+      'INSERT INTO college_football_rankings (team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    const batch = allRecords.map((r) =>
+      stmt.bind(
+        r.team_id,
+        r.team_name,
+        r.team_logo,
+        r.rank,
+        r.previous_rank,
+        r.record,
+        r.source,
+        r.week,
+        r.season,
+        r.updated_at
+      )
+    );
     await env.BSI_DB.batch(batch);
 
+    // Store R2 snapshot for fallback recovery
+    if (env.BSI_R2) {
+      await storeSnapshot(env.BSI_R2, 'cfb-rankings-ap', allRecords, validation);
+    }
+
     const duration = Date.now() - startTime;
-    const metadata: SyncMetadata = { timestamp: now, success: true, recordCount: allRecords.length, sources, duration_ms: duration };
+    const metadata: SyncMetadata = {
+      timestamp: now,
+      success: true,
+      recordCount: allRecords.length,
+      sources,
+      duration_ms: duration,
+    };
     await recordSyncSuccess(env, 'football-rankings', metadata);
     logSyncSuccess(env, dataType, allRecords.length, duration, sources.join(','));
 
-    console.log('[' + dataType + '] VALIDATION PASSED: Inserted ' + allRecords.length + ' rankings in ' + duration + 'ms');
+    console.log(
+      '[' +
+        dataType +
+        '] VALIDATION PASSED: Inserted ' +
+        allRecords.length +
+        ' rankings in ' +
+        duration +
+        'ms'
+    );
     return {
       success: true,
       inserted: allRecords.length,
@@ -820,13 +1033,17 @@ async function syncCollegeFootballRankings(env: Env): Promise<SyncResult> {
       validation,
       dataWritten: true,
     };
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const errorStack = error instanceof Error ? error.stack : undefined;
     const duration = Date.now() - startTime;
     console.error('[' + dataType + '] Sync failed:', errorMessage);
-    const consecutiveFailures = await recordSyncFailure(env, 'football-rankings', errorMessage, errorStack);
+    const consecutiveFailures = await recordSyncFailure(
+      env,
+      'football-rankings',
+      errorMessage,
+      errorStack
+    );
     console.error('[' + dataType + '] Consecutive failures: ' + consecutiveFailures);
     logSyncFailure(env, dataType, errorMessage, duration);
     return {
@@ -851,12 +1068,13 @@ async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
 
   try {
     const response = await fetch(ESPN_COLLEGE_BASEBALL_STANDINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', Accept: 'application/json' },
     });
 
-    if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
+    if (!response.ok)
+      throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
 
-    const data = await response.json() as ESPNStandingsResponse;
+    const data = (await response.json()) as ESPNStandingsResponse;
 
     // SEMANTIC VALIDATION: Empty conferences array is INVALID, not success
     if (!data.children?.length) {
@@ -865,7 +1083,15 @@ async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
       console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
       // DO NOT record as success - this is a failure
       logSyncFailure(env, dataType, validation.reason, duration);
-      return { success: false, inserted: 0, conferences: [], duration_ms: duration, validation, dataWritten: false, error: validation.reason };
+      return {
+        success: false,
+        inserted: 0,
+        conferences: [],
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
     }
 
     const now = new Date().toISOString();
@@ -885,31 +1111,57 @@ async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
         if (!team) continue;
 
         const teamId = team.abbreviation?.toLowerCase() || team.id || 'unknown';
-        const teamName = team.displayName || (team.location && team.name ? team.location + ' ' + team.name : 'Unknown');
+        const teamName =
+          team.displayName ||
+          (team.location && team.name ? team.location + ' ' + team.name : 'Unknown');
         const teamLogo = team.logos?.[0]?.href || null;
 
         const overallWins = getStatValue(stats, 'wins') || getStatValue(stats, 'overall') || 0;
         const overallLosses = getStatValue(stats, 'losses') || 0;
-        const confWins = getStatValue(stats, 'conferenceWins') || getStatValue(stats, 'confWins') || 0;
-        const confLosses = getStatValue(stats, 'conferenceLosses') || getStatValue(stats, 'confLosses') || 0;
-        const winPct = getStatValue(stats, 'winPercent') || getStatValue(stats, 'pct') || (overallWins + overallLosses > 0 ? overallWins / (overallWins + overallLosses) : null);
+        const confWins =
+          getStatValue(stats, 'conferenceWins') || getStatValue(stats, 'confWins') || 0;
+        const confLosses =
+          getStatValue(stats, 'conferenceLosses') || getStatValue(stats, 'confLosses') || 0;
+        const winPct =
+          getStatValue(stats, 'winPercent') ||
+          getStatValue(stats, 'pct') ||
+          (overallWins + overallLosses > 0 ? overallWins / (overallWins + overallLosses) : null);
         const confWinPct = confWins + confLosses > 0 ? confWins / (confWins + confLosses) : null;
         const streak = getStatDisplayValue(stats, 'streak') || getStatDisplayValue(stats, 'strk');
         const gamesBack = getStatValue(stats, 'gamesBehind') || getStatValue(stats, 'GB') || 0;
         const runsScored = getStatValue(stats, 'pointsFor') || getStatValue(stats, 'runsFor') || 0;
-        const runsAllowed = getStatValue(stats, 'pointsAgainst') || getStatValue(stats, 'runsAgainst') || 0;
+        const runsAllowed =
+          getStatValue(stats, 'pointsAgainst') || getStatValue(stats, 'runsAgainst') || 0;
 
         const record: StandingsRecord = {
-          team_id: teamId, team_name: teamName, team_logo: teamLogo, conference: conferenceName, division: null,
-          overall_wins: overallWins, overall_losses: overallLosses, conference_wins: confWins, conference_losses: confLosses,
-          win_pct: winPct, conference_win_pct: confWinPct, streak: streak,
+          team_id: teamId,
+          team_name: teamName,
+          team_logo: teamLogo,
+          conference: conferenceName,
+          division: null,
+          overall_wins: overallWins,
+          overall_losses: overallLosses,
+          conference_wins: confWins,
+          conference_losses: confLosses,
+          win_pct: winPct,
+          conference_win_pct: confWinPct,
+          streak: streak,
           last_10: getStatDisplayValue(stats, 'last10'),
-          home_record: getStatDisplayValue(stats, 'homeRecord') || getStatDisplayValue(stats, 'home'),
-          away_record: getStatDisplayValue(stats, 'awayRecord') || getStatDisplayValue(stats, 'away'),
-          runs_scored: runsScored, runs_allowed: runsAllowed, run_differential: runsScored - runsAllowed,
-          points_for: 0, points_against: 0, point_differential: 0,
-          rpi: getStatValue(stats, 'rpi') || null, games_back: gamesBack, conference_rank: i + 1,
-          season: season, updated_at: now
+          home_record:
+            getStatDisplayValue(stats, 'homeRecord') || getStatDisplayValue(stats, 'home'),
+          away_record:
+            getStatDisplayValue(stats, 'awayRecord') || getStatDisplayValue(stats, 'away'),
+          runs_scored: runsScored,
+          runs_allowed: runsAllowed,
+          run_differential: runsScored - runsAllowed,
+          points_for: 0,
+          points_against: 0,
+          point_differential: 0,
+          rpi: getStatValue(stats, 'rpi') || null,
+          games_back: gamesBack,
+          conference_rank: i + 1,
+          season: season,
+          updated_at: now,
         };
         allRecords.push(record);
       }
@@ -922,37 +1174,119 @@ async function syncCollegeBaseballStandings(env: Env): Promise<SyncResult> {
     if (validation.status !== 'valid') {
       const duration = Date.now() - startTime;
       console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
-      console.error('[' + dataType + '] Actual: ' + allRecords.length + ' records, Expected: ' + validation.expectedMin + '+');
+      console.error(
+        '[' +
+          dataType +
+          '] Actual: ' +
+          allRecords.length +
+          ' records, Expected: ' +
+          validation.expectedMin +
+          '+'
+      );
       // DO NOT WRITE TO D1 - data is invalid, would corrupt existing good data
       logSyncFailure(env, dataType, validation.reason, duration);
-      return { success: false, inserted: 0, conferences: [], duration_ms: duration, validation, dataWritten: false, error: validation.reason };
+      return {
+        success: false,
+        inserted: 0,
+        conferences: [],
+        duration_ms: duration,
+        validation,
+        dataWritten: false,
+        error: validation.reason,
+      };
     }
 
     // Data passed semantic validation - safe to write
-    await env.BSI_DB.prepare('DELETE FROM college_baseball_standings WHERE season = ?').bind(season).run();
+    await env.BSI_DB.prepare('DELETE FROM college_baseball_standings WHERE season = ?')
+      .bind(season)
+      .run();
 
-    const stmt = env.BSI_DB.prepare('INSERT INTO college_baseball_standings (team_id, team_name, team_logo, conference, division, overall_wins, overall_losses, conference_wins, conference_losses, win_pct, conference_win_pct, streak, last_10, home_record, away_record, runs_scored, runs_allowed, run_differential, rpi, games_back, conference_rank, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    const batch = allRecords.map(r => stmt.bind(r.team_id, r.team_name, r.team_logo, r.conference, r.division, r.overall_wins, r.overall_losses, r.conference_wins, r.conference_losses, r.win_pct, r.conference_win_pct, r.streak, r.last_10, r.home_record, r.away_record, r.runs_scored, r.runs_allowed, r.run_differential, r.rpi, r.games_back, r.conference_rank, r.season, r.updated_at));
+    const stmt = env.BSI_DB.prepare(
+      'INSERT INTO college_baseball_standings (team_id, team_name, team_logo, conference, division, overall_wins, overall_losses, conference_wins, conference_losses, win_pct, conference_win_pct, streak, last_10, home_record, away_record, runs_scored, runs_allowed, run_differential, rpi, games_back, conference_rank, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    const batch = allRecords.map((r) =>
+      stmt.bind(
+        r.team_id,
+        r.team_name,
+        r.team_logo,
+        r.conference,
+        r.division,
+        r.overall_wins,
+        r.overall_losses,
+        r.conference_wins,
+        r.conference_losses,
+        r.win_pct,
+        r.conference_win_pct,
+        r.streak,
+        r.last_10,
+        r.home_record,
+        r.away_record,
+        r.runs_scored,
+        r.runs_allowed,
+        r.run_differential,
+        r.rpi,
+        r.games_back,
+        r.conference_rank,
+        r.season,
+        r.updated_at
+      )
+    );
     await env.BSI_DB.batch(batch);
 
+    // Store R2 snapshot for fallback recovery
+    if (env.BSI_R2) {
+      await storeSnapshot(env.BSI_R2, 'cbb-standings', allRecords as unknown[], validation);
+    }
+
     const duration = Date.now() - startTime;
-    const metadata: SyncMetadata = { timestamp: now, success: true, recordCount: allRecords.length, conferences, duration_ms: duration };
+    const metadata: SyncMetadata = {
+      timestamp: now,
+      success: true,
+      recordCount: allRecords.length,
+      conferences,
+      duration_ms: duration,
+    };
     await recordSyncSuccess(env, 'baseball-standings', metadata);
     logSyncSuccess(env, dataType, allRecords.length, duration, conferences.join(','));
 
-    console.log('[' + dataType + '] VALIDATION PASSED: ' + allRecords.length + ' standings from ' + conferences.length + ' conferences');
+    console.log(
+      '[' +
+        dataType +
+        '] VALIDATION PASSED: ' +
+        allRecords.length +
+        ' standings from ' +
+        conferences.length +
+        ' conferences'
+    );
     console.log('[' + dataType + '] Inserted in ' + duration + 'ms');
-    return { success: true, inserted: allRecords.length, conferences, duration_ms: duration, validation, dataWritten: true };
-
+    return {
+      success: true,
+      inserted: allRecords.length,
+      conferences,
+      duration_ms: duration,
+      validation,
+      dataWritten: true,
+    };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const errorStack = error instanceof Error ? error.stack : undefined;
     const duration = Date.now() - startTime;
     console.error('[' + dataType + '] Sync failed:', errorMessage);
-    const consecutiveFailures = await recordSyncFailure(env, 'baseball-standings', errorMessage, errorStack);
+    const consecutiveFailures = await recordSyncFailure(
+      env,
+      'baseball-standings',
+      errorMessage,
+      errorStack
+    );
     console.error('[' + dataType + '] Consecutive failures: ' + consecutiveFailures);
     logSyncFailure(env, dataType, errorMessage, duration);
-    return { success: false, inserted: 0, error: errorMessage, stack: errorStack, duration_ms: duration };
+    return {
+      success: false,
+      inserted: 0,
+      error: errorMessage,
+      stack: errorStack,
+      duration_ms: duration,
+    };
   }
 }
 
@@ -963,12 +1297,13 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
 
   try {
     const response = await fetch(ESPN_COLLEGE_FOOTBALL_STANDINGS, {
-      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', 'Accept': 'application/json' },
+      headers: { 'User-Agent': 'BSI-College-Data-Sync/3.0', Accept: 'application/json' },
     });
 
-    if (!response.ok) throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
+    if (!response.ok)
+      throw new Error('ESPN API returned ' + response.status + ': ' + response.statusText);
 
-    const data = await response.json() as ESPNStandingsResponse;
+    const data = (await response.json()) as ESPNStandingsResponse;
 
     // SEMANTIC VALIDATION: Empty conferences array is INVALID, not success
     if (!data.children?.length) {
@@ -1005,30 +1340,57 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
         if (!team) continue;
 
         const teamId = team.abbreviation?.toLowerCase() || team.id || 'unknown';
-        const teamName = team.displayName || (team.location && team.name ? team.location + ' ' + team.name : 'Unknown');
+        const teamName =
+          team.displayName ||
+          (team.location && team.name ? team.location + ' ' + team.name : 'Unknown');
         const teamLogo = team.logos?.[0]?.href || null;
 
         const overallWins = getStatValue(stats, 'wins') || getStatValue(stats, 'overall') || 0;
         const overallLosses = getStatValue(stats, 'losses') || 0;
-        const confWins = getStatValue(stats, 'conferenceWins') || getStatValue(stats, 'confWins') || 0;
-        const confLosses = getStatValue(stats, 'conferenceLosses') || getStatValue(stats, 'confLosses') || 0;
-        const winPct = getStatValue(stats, 'winPercent') || getStatValue(stats, 'pct') || (overallWins + overallLosses > 0 ? overallWins / (overallWins + overallLosses) : null);
+        const confWins =
+          getStatValue(stats, 'conferenceWins') || getStatValue(stats, 'confWins') || 0;
+        const confLosses =
+          getStatValue(stats, 'conferenceLosses') || getStatValue(stats, 'confLosses') || 0;
+        const winPct =
+          getStatValue(stats, 'winPercent') ||
+          getStatValue(stats, 'pct') ||
+          (overallWins + overallLosses > 0 ? overallWins / (overallWins + overallLosses) : null);
         const confWinPct = confWins + confLosses > 0 ? confWins / (confWins + confLosses) : null;
         const streak = getStatDisplayValue(stats, 'streak') || getStatDisplayValue(stats, 'strk');
         const gamesBack = getStatValue(stats, 'gamesBehind') || getStatValue(stats, 'GB') || 0;
         const pointsFor = getStatValue(stats, 'pointsFor') || getStatValue(stats, 'PF') || 0;
-        const pointsAgainst = getStatValue(stats, 'pointsAgainst') || getStatValue(stats, 'PA') || 0;
+        const pointsAgainst =
+          getStatValue(stats, 'pointsAgainst') || getStatValue(stats, 'PA') || 0;
 
         const record: StandingsRecord = {
-          team_id: teamId, team_name: teamName, team_logo: teamLogo, conference: conferenceName, division: null,
-          overall_wins: overallWins, overall_losses: overallLosses, conference_wins: confWins, conference_losses: confLosses,
-          win_pct: winPct, conference_win_pct: confWinPct, streak: streak, last_10: null,
-          home_record: getStatDisplayValue(stats, 'homeRecord') || getStatDisplayValue(stats, 'home'),
-          away_record: getStatDisplayValue(stats, 'awayRecord') || getStatDisplayValue(stats, 'away'),
-          runs_scored: 0, runs_allowed: 0, run_differential: 0,
-          points_for: pointsFor, points_against: pointsAgainst, point_differential: pointsFor - pointsAgainst,
-          rpi: null, games_back: gamesBack, conference_rank: i + 1,
-          season: season, updated_at: now
+          team_id: teamId,
+          team_name: teamName,
+          team_logo: teamLogo,
+          conference: conferenceName,
+          division: null,
+          overall_wins: overallWins,
+          overall_losses: overallLosses,
+          conference_wins: confWins,
+          conference_losses: confLosses,
+          win_pct: winPct,
+          conference_win_pct: confWinPct,
+          streak: streak,
+          last_10: null,
+          home_record:
+            getStatDisplayValue(stats, 'homeRecord') || getStatDisplayValue(stats, 'home'),
+          away_record:
+            getStatDisplayValue(stats, 'awayRecord') || getStatDisplayValue(stats, 'away'),
+          runs_scored: 0,
+          runs_allowed: 0,
+          run_differential: 0,
+          points_for: pointsFor,
+          points_against: pointsAgainst,
+          point_differential: pointsFor - pointsAgainst,
+          rpi: null,
+          games_back: gamesBack,
+          conference_rank: i + 1,
+          season: season,
+          updated_at: now,
         };
         allRecords.push(record);
       }
@@ -1040,7 +1402,14 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
     if (validation.status !== 'valid') {
       const duration = Date.now() - startTime;
       console.error('[' + dataType + '] VALIDATION FAILED: ' + validation.reason);
-      console.error('[' + dataType + '] Teams: ' + allRecords.length + ', Expected min: ' + validation.expectedMin);
+      console.error(
+        '[' +
+          dataType +
+          '] Teams: ' +
+          allRecords.length +
+          ', Expected min: ' +
+          validation.expectedMin
+      );
       logSyncFailure(env, dataType, validation.reason, duration);
       await recordSyncFailure(env, 'football-standings', validation.reason);
       // DO NOT WRITE TO D1 - data is invalid
@@ -1057,18 +1426,67 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
     }
 
     // VALIDATION PASSED - safe to write to D1
-    await env.BSI_DB.prepare('DELETE FROM college_football_standings WHERE season = ?').bind(season).run();
+    await env.BSI_DB.prepare('DELETE FROM college_football_standings WHERE season = ?')
+      .bind(season)
+      .run();
 
-    const stmt = env.BSI_DB.prepare('INSERT INTO college_football_standings (team_id, team_name, team_logo, conference, division, overall_wins, overall_losses, conference_wins, conference_losses, win_pct, conference_win_pct, streak, home_record, away_record, points_for, points_against, point_differential, games_back, conference_rank, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    const batch = allRecords.map(r => stmt.bind(r.team_id, r.team_name, r.team_logo, r.conference, r.division, r.overall_wins, r.overall_losses, r.conference_wins, r.conference_losses, r.win_pct, r.conference_win_pct, r.streak, r.home_record, r.away_record, r.points_for, r.points_against, r.point_differential, r.games_back, r.conference_rank, r.season, r.updated_at));
+    const stmt = env.BSI_DB.prepare(
+      'INSERT INTO college_football_standings (team_id, team_name, team_logo, conference, division, overall_wins, overall_losses, conference_wins, conference_losses, win_pct, conference_win_pct, streak, home_record, away_record, points_for, points_against, point_differential, games_back, conference_rank, season, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    const batch = allRecords.map((r) =>
+      stmt.bind(
+        r.team_id,
+        r.team_name,
+        r.team_logo,
+        r.conference,
+        r.division,
+        r.overall_wins,
+        r.overall_losses,
+        r.conference_wins,
+        r.conference_losses,
+        r.win_pct,
+        r.conference_win_pct,
+        r.streak,
+        r.home_record,
+        r.away_record,
+        r.points_for,
+        r.points_against,
+        r.point_differential,
+        r.games_back,
+        r.conference_rank,
+        r.season,
+        r.updated_at
+      )
+    );
     await env.BSI_DB.batch(batch);
 
+    // Store R2 snapshot for fallback recovery
+    if (env.BSI_R2) {
+      await storeSnapshot(env.BSI_R2, 'cfb-standings', allRecords, validation);
+    }
+
     const duration = Date.now() - startTime;
-    const metadata: SyncMetadata = { timestamp: now, success: true, recordCount: allRecords.length, conferences, duration_ms: duration };
+    const metadata: SyncMetadata = {
+      timestamp: now,
+      success: true,
+      recordCount: allRecords.length,
+      conferences,
+      duration_ms: duration,
+    };
     await recordSyncSuccess(env, 'football-standings', metadata);
     logSyncSuccess(env, dataType, allRecords.length, duration, conferences.join(','));
 
-    console.log('[' + dataType + '] VALIDATION PASSED: Inserted ' + allRecords.length + ' standings from ' + conferences.length + ' conferences in ' + duration + 'ms');
+    console.log(
+      '[' +
+        dataType +
+        '] VALIDATION PASSED: Inserted ' +
+        allRecords.length +
+        ' standings from ' +
+        conferences.length +
+        ' conferences in ' +
+        duration +
+        'ms'
+    );
     return {
       success: true,
       inserted: allRecords.length,
@@ -1077,13 +1495,17 @@ async function syncCollegeFootballStandings(env: Env): Promise<SyncResult> {
       validation,
       dataWritten: true,
     };
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const errorStack = error instanceof Error ? error.stack : undefined;
     const duration = Date.now() - startTime;
     console.error('[' + dataType + '] Sync failed:', errorMessage);
-    const consecutiveFailures = await recordSyncFailure(env, 'football-standings', errorMessage, errorStack);
+    const consecutiveFailures = await recordSyncFailure(
+      env,
+      'football-standings',
+      errorMessage,
+      errorStack
+    );
     console.error('[' + dataType + '] Consecutive failures: ' + consecutiveFailures);
     logSyncFailure(env, dataType, errorMessage, duration);
     return {
@@ -1119,23 +1541,34 @@ async function handleHealth(env: Env): Promise<Response> {
 
   const parseError = (e: string | null): string | null => {
     if (!e) return null;
-    try { return JSON.parse(e).message || null; } catch { return e; }
+    try {
+      return JSON.parse(e).message || null;
+    } catch {
+      return e;
+    }
   };
 
   const response: HealthResponse = {
-    status: overallStatus, service: SERVICE_NAME, version: SERVICE_VERSION,
-    timestamp: new Date().toISOString(), timezone: 'America/Chicago',
+    status: overallStatus,
+    service: SERVICE_NAME,
+    version: SERVICE_VERSION,
+    timestamp: new Date().toISOString(),
+    timezone: 'America/Chicago',
     staleness_hours: isFinite(overallStaleness) ? overallStaleness : -1,
     last_sync: baseballRankingsStatus.lastSuccess || footballRankingsStatus.lastSuccess,
     details: {
       college_baseball: {
-        status: baseballHealth, staleness_hours: isFinite(baseballStaleness) ? baseballStaleness : -1,
-        last_sync: baseballRankingsStatus.lastSuccess, consecutive_failures: baseballRankingsStatus.consecutiveFailures,
+        status: baseballHealth,
+        staleness_hours: isFinite(baseballStaleness) ? baseballStaleness : -1,
+        last_sync: baseballRankingsStatus.lastSuccess,
+        consecutive_failures: baseballRankingsStatus.consecutiveFailures,
         last_error: parseError(baseballRankingsStatus.lastError),
       },
       college_football: {
-        status: footballHealth, staleness_hours: isFinite(footballStaleness) ? footballStaleness : -1,
-        last_sync: footballRankingsStatus.lastSuccess, consecutive_failures: footballRankingsStatus.consecutiveFailures,
+        status: footballHealth,
+        staleness_hours: isFinite(footballStaleness) ? footballStaleness : -1,
+        last_sync: footballRankingsStatus.lastSuccess,
+        consecutive_failures: footballRankingsStatus.consecutiveFailures,
         last_error: parseError(footballRankingsStatus.lastError),
       },
     },
@@ -1146,16 +1579,25 @@ async function handleHealth(env: Env): Promise<Response> {
 }
 
 async function handleStatus(env: Env): Promise<Response> {
-  const [brStatus, frStatus, bsStatus, fsStatus, brCount, frCount, bsCount, fsCount] = await Promise.all([
-    getSyncStatus(env, 'baseball-rankings'),
-    getSyncStatus(env, 'football-rankings'),
-    getSyncStatus(env, 'baseball-standings'),
-    getSyncStatus(env, 'football-standings'),
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_rankings').first<{ count: number }>(),
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_rankings').first<{ count: number }>(),
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_standings').first<{ count: number }>().catch(() => ({ count: 0 })),
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_standings').first<{ count: number }>().catch(() => ({ count: 0 })),
-  ]);
+  const [brStatus, frStatus, bsStatus, fsStatus, brCount, frCount, bsCount, fsCount] =
+    await Promise.all([
+      getSyncStatus(env, 'baseball-rankings'),
+      getSyncStatus(env, 'football-rankings'),
+      getSyncStatus(env, 'baseball-standings'),
+      getSyncStatus(env, 'football-standings'),
+      env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_rankings').first<{
+        count: number;
+      }>(),
+      env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_rankings').first<{
+        count: number;
+      }>(),
+      env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_standings')
+        .first<{ count: number }>()
+        .catch(() => ({ count: 0 })),
+      env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_standings')
+        .first<{ count: number }>()
+        .catch(() => ({ count: 0 })),
+    ]);
 
   const brStaleness = calculateStalenessHours(brStatus.lastSuccess);
   const frStaleness = calculateStalenessHours(frStatus.lastSuccess);
@@ -1164,36 +1606,58 @@ async function handleStatus(env: Env): Promise<Response> {
 
   const parseError = (e: string | null): string | null => {
     if (!e) return null;
-    try { return JSON.parse(e).message || null; } catch { return e; }
+    try {
+      return JSON.parse(e).message || null;
+    } catch {
+      return e;
+    }
   };
 
   const response: StatusResponse = {
-    service: SERVICE_NAME, version: SERVICE_VERSION, timestamp: new Date().toISOString(),
+    service: SERVICE_NAME,
+    version: SERVICE_VERSION,
+    timestamp: new Date().toISOString(),
     collegeBaseball: {
       rankings: {
-        lastSync: brStatus.lastSuccess, recordCount: brCount?.count || 0, timeSinceSync: formatTimeSinceSync(brStaleness),
-        stalenessHours: isFinite(brStaleness) ? brStaleness : -1, healthStatus: getHealthStatus(brStaleness),
-        consecutiveFailures: brStatus.consecutiveFailures, lastError: parseError(brStatus.lastError),
+        lastSync: brStatus.lastSuccess,
+        recordCount: brCount?.count || 0,
+        timeSinceSync: formatTimeSinceSync(brStaleness),
+        stalenessHours: isFinite(brStaleness) ? brStaleness : -1,
+        healthStatus: getHealthStatus(brStaleness),
+        consecutiveFailures: brStatus.consecutiveFailures,
+        lastError: parseError(brStatus.lastError),
         lastSyncSuccess: brStatus.lastMetadata?.success ?? true,
       },
       standings: {
-        lastSync: bsStatus.lastSuccess, recordCount: bsCount?.count || 0, timeSinceSync: formatTimeSinceSync(bsStaleness),
-        stalenessHours: isFinite(bsStaleness) ? bsStaleness : -1, healthStatus: getHealthStatus(bsStaleness),
-        consecutiveFailures: bsStatus.consecutiveFailures, lastError: parseError(bsStatus.lastError),
+        lastSync: bsStatus.lastSuccess,
+        recordCount: bsCount?.count || 0,
+        timeSinceSync: formatTimeSinceSync(bsStaleness),
+        stalenessHours: isFinite(bsStaleness) ? bsStaleness : -1,
+        healthStatus: getHealthStatus(bsStaleness),
+        consecutiveFailures: bsStatus.consecutiveFailures,
+        lastError: parseError(bsStatus.lastError),
         lastSyncSuccess: bsStatus.lastMetadata?.success ?? true,
       },
     },
     collegeFootball: {
       rankings: {
-        lastSync: frStatus.lastSuccess, recordCount: frCount?.count || 0, timeSinceSync: formatTimeSinceSync(frStaleness),
-        stalenessHours: isFinite(frStaleness) ? frStaleness : -1, healthStatus: getHealthStatus(frStaleness),
-        consecutiveFailures: frStatus.consecutiveFailures, lastError: parseError(frStatus.lastError),
+        lastSync: frStatus.lastSuccess,
+        recordCount: frCount?.count || 0,
+        timeSinceSync: formatTimeSinceSync(frStaleness),
+        stalenessHours: isFinite(frStaleness) ? frStaleness : -1,
+        healthStatus: getHealthStatus(frStaleness),
+        consecutiveFailures: frStatus.consecutiveFailures,
+        lastError: parseError(frStatus.lastError),
         lastSyncSuccess: frStatus.lastMetadata?.success ?? true,
       },
       standings: {
-        lastSync: fsStatus.lastSuccess, recordCount: fsCount?.count || 0, timeSinceSync: formatTimeSinceSync(fsStaleness),
-        stalenessHours: isFinite(fsStaleness) ? fsStaleness : -1, healthStatus: getHealthStatus(fsStaleness),
-        consecutiveFailures: fsStatus.consecutiveFailures, lastError: parseError(fsStatus.lastError),
+        lastSync: fsStatus.lastSuccess,
+        recordCount: fsCount?.count || 0,
+        timeSinceSync: formatTimeSinceSync(fsStaleness),
+        stalenessHours: isFinite(fsStaleness) ? fsStaleness : -1,
+        healthStatus: getHealthStatus(fsStaleness),
+        consecutiveFailures: fsStatus.consecutiveFailures,
+        lastError: parseError(fsStatus.lastError),
         lastSyncSuccess: fsStatus.lastMetadata?.success ?? true,
       },
     },
@@ -1219,9 +1683,21 @@ async function handleAlerts(env: Env): Promise<Response> {
   if (brStaleness >= STALENESS_THRESHOLD_STALE) {
     staleDataTypes.push('college-baseball');
     alerts.push({
-      type: 'stale_data', severity: brStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critical' : 'warning',
-      dataType: 'college-baseball', message: 'College baseball rankings data is ' + (brStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critically ' : '') + 'stale',
-      details: { staleness_hours: brStaleness, threshold_hours: brStaleness >= STALENESS_THRESHOLD_CRITICAL ? STALENESS_THRESHOLD_CRITICAL : STALENESS_THRESHOLD_STALE, last_sync: brStatus.lastSuccess },
+      type: 'stale_data',
+      severity: brStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critical' : 'warning',
+      dataType: 'college-baseball',
+      message:
+        'College baseball rankings data is ' +
+        (brStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critically ' : '') +
+        'stale',
+      details: {
+        staleness_hours: brStaleness,
+        threshold_hours:
+          brStaleness >= STALENESS_THRESHOLD_CRITICAL
+            ? STALENESS_THRESHOLD_CRITICAL
+            : STALENESS_THRESHOLD_STALE,
+        last_sync: brStatus.lastSuccess,
+      },
       timestamp: now,
     });
   }
@@ -1229,11 +1705,24 @@ async function handleAlerts(env: Env): Promise<Response> {
   if (brStatus.consecutiveFailures > CONSECUTIVE_FAILURE_THRESHOLD) {
     failingDataTypes.push('college-baseball');
     let errorMsg: string | null = null;
-    if (brStatus.lastError) { try { errorMsg = JSON.parse(brStatus.lastError).message; } catch { errorMsg = brStatus.lastError; } }
+    if (brStatus.lastError) {
+      try {
+        errorMsg = JSON.parse(brStatus.lastError).message;
+      } catch {
+        errorMsg = brStatus.lastError;
+      }
+    }
     alerts.push({
-      type: 'consecutive_failures', severity: brStatus.consecutiveFailures > 5 ? 'critical' : 'warning',
-      dataType: 'college-baseball', message: 'College baseball sync has failed ' + brStatus.consecutiveFailures + ' consecutive times',
-      details: { consecutive_failures: brStatus.consecutiveFailures, threshold: CONSECUTIVE_FAILURE_THRESHOLD, last_error: errorMsg },
+      type: 'consecutive_failures',
+      severity: brStatus.consecutiveFailures > 5 ? 'critical' : 'warning',
+      dataType: 'college-baseball',
+      message:
+        'College baseball sync has failed ' + brStatus.consecutiveFailures + ' consecutive times',
+      details: {
+        consecutive_failures: brStatus.consecutiveFailures,
+        threshold: CONSECUTIVE_FAILURE_THRESHOLD,
+        last_error: errorMsg,
+      },
       timestamp: now,
     });
   }
@@ -1241,9 +1730,21 @@ async function handleAlerts(env: Env): Promise<Response> {
   if (frStaleness >= STALENESS_THRESHOLD_STALE) {
     staleDataTypes.push('college-football');
     alerts.push({
-      type: 'stale_data', severity: frStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critical' : 'warning',
-      dataType: 'college-football', message: 'College football rankings data is ' + (frStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critically ' : '') + 'stale',
-      details: { staleness_hours: frStaleness, threshold_hours: frStaleness >= STALENESS_THRESHOLD_CRITICAL ? STALENESS_THRESHOLD_CRITICAL : STALENESS_THRESHOLD_STALE, last_sync: frStatus.lastSuccess },
+      type: 'stale_data',
+      severity: frStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critical' : 'warning',
+      dataType: 'college-football',
+      message:
+        'College football rankings data is ' +
+        (frStaleness >= STALENESS_THRESHOLD_CRITICAL ? 'critically ' : '') +
+        'stale',
+      details: {
+        staleness_hours: frStaleness,
+        threshold_hours:
+          frStaleness >= STALENESS_THRESHOLD_CRITICAL
+            ? STALENESS_THRESHOLD_CRITICAL
+            : STALENESS_THRESHOLD_STALE,
+        last_sync: frStatus.lastSuccess,
+      },
       timestamp: now,
     });
   }
@@ -1251,11 +1752,24 @@ async function handleAlerts(env: Env): Promise<Response> {
   if (frStatus.consecutiveFailures > CONSECUTIVE_FAILURE_THRESHOLD) {
     failingDataTypes.push('college-football');
     let errorMsg: string | null = null;
-    if (frStatus.lastError) { try { errorMsg = JSON.parse(frStatus.lastError).message; } catch { errorMsg = frStatus.lastError; } }
+    if (frStatus.lastError) {
+      try {
+        errorMsg = JSON.parse(frStatus.lastError).message;
+      } catch {
+        errorMsg = frStatus.lastError;
+      }
+    }
     alerts.push({
-      type: 'consecutive_failures', severity: frStatus.consecutiveFailures > 5 ? 'critical' : 'warning',
-      dataType: 'college-football', message: 'College football sync has failed ' + frStatus.consecutiveFailures + ' consecutive times',
-      details: { consecutive_failures: frStatus.consecutiveFailures, threshold: CONSECUTIVE_FAILURE_THRESHOLD, last_error: errorMsg },
+      type: 'consecutive_failures',
+      severity: frStatus.consecutiveFailures > 5 ? 'critical' : 'warning',
+      dataType: 'college-football',
+      message:
+        'College football sync has failed ' + frStatus.consecutiveFailures + ' consecutive times',
+      details: {
+        consecutive_failures: frStatus.consecutiveFailures,
+        threshold: CONSECUTIVE_FAILURE_THRESHOLD,
+        last_error: errorMsg,
+      },
       timestamp: now,
     });
   }
@@ -1265,8 +1779,12 @@ async function handleAlerts(env: Env): Promise<Response> {
   else if (brStaleness >= STALENESS_THRESHOLD_STALE) healthScore -= 15;
   if (frStaleness >= STALENESS_THRESHOLD_CRITICAL) healthScore -= 25;
   else if (frStaleness >= STALENESS_THRESHOLD_STALE) healthScore -= 15;
-  if (brStatus.consecutiveFailures > CONSECUTIVE_FAILURE_THRESHOLD) healthScore -= 10 + Math.min(20, (brStatus.consecutiveFailures - CONSECUTIVE_FAILURE_THRESHOLD) * 5);
-  if (frStatus.consecutiveFailures > CONSECUTIVE_FAILURE_THRESHOLD) healthScore -= 10 + Math.min(20, (frStatus.consecutiveFailures - CONSECUTIVE_FAILURE_THRESHOLD) * 5);
+  if (brStatus.consecutiveFailures > CONSECUTIVE_FAILURE_THRESHOLD)
+    healthScore -=
+      10 + Math.min(20, (brStatus.consecutiveFailures - CONSECUTIVE_FAILURE_THRESHOLD) * 5);
+  if (frStatus.consecutiveFailures > CONSECUTIVE_FAILURE_THRESHOLD)
+    healthScore -=
+      10 + Math.min(20, (frStatus.consecutiveFailures - CONSECUTIVE_FAILURE_THRESHOLD) * 5);
   healthScore = Math.max(0, healthScore);
 
   let overallStatus: HealthStatus = 'healthy';
@@ -1274,7 +1792,10 @@ async function handleAlerts(env: Env): Promise<Response> {
   else if (healthScore < 80) overallStatus = 'stale';
 
   const response: AlertsResponse = {
-    timestamp: now, healthScore, overallStatus, alerts,
+    timestamp: now,
+    healthScore,
+    overallStatus,
+    alerts,
     summary: { staleDataTypes, failingDataTypes, totalAlerts: alerts.length },
   };
 
@@ -1317,12 +1838,27 @@ async function handleSemanticHealth(env: Env): Promise<Response> {
   const now = new Date().toISOString();
 
   // Query actual counts from D1
-  const [cfbRankingsCount, cfbStandingsCount, cbbRankingsCount, cbbStandingsCount] = await Promise.all([
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_rankings WHERE season = ?').bind(getCurrentSeason('football')).first<{ count: number }>(),
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_standings WHERE season = ?').bind(getCurrentSeason('football')).first<{ count: number }>().catch(() => ({ count: 0 })),
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_rankings WHERE season = ?').bind(getCurrentSeason('baseball')).first<{ count: number }>(),
-    env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_standings WHERE season = ?').bind(getCurrentSeason('baseball')).first<{ count: number }>().catch(() => ({ count: 0 })),
-  ]);
+  const [cfbRankingsCount, cfbStandingsCount, cbbRankingsCount, cbbStandingsCount] =
+    await Promise.all([
+      env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_football_rankings WHERE season = ?')
+        .bind(getCurrentSeason('football'))
+        .first<{ count: number }>(),
+      env.BSI_DB.prepare(
+        'SELECT COUNT(*) as count FROM college_football_standings WHERE season = ?'
+      )
+        .bind(getCurrentSeason('football'))
+        .first<{ count: number }>()
+        .catch(() => ({ count: 0 })),
+      env.BSI_DB.prepare('SELECT COUNT(*) as count FROM college_baseball_rankings WHERE season = ?')
+        .bind(getCurrentSeason('baseball'))
+        .first<{ count: number }>(),
+      env.BSI_DB.prepare(
+        'SELECT COUNT(*) as count FROM college_baseball_standings WHERE season = ?'
+      )
+        .bind(getCurrentSeason('baseball'))
+        .first<{ count: number }>()
+        .catch(() => ({ count: 0 })),
+    ]);
 
   // Get semantic rules
   const cfbRankingsRule = SEMANTIC_RULES['cfb-rankings-ap'];
@@ -1340,24 +1876,40 @@ async function handleSemanticHealth(env: Env): Promise<Response> {
     {
       datasetId: 'cfb-rankings-ap',
       description: cfbRankingsRule.description,
-      status: cfbRankingsActual >= cfbRankingsRule.minRecordCount ? 'valid' : (cfbRankingsActual === 0 ? 'invalid' : 'invalid'),
+      status:
+        cfbRankingsActual >= cfbRankingsRule.minRecordCount
+          ? 'valid'
+          : cfbRankingsActual === 0
+            ? 'invalid'
+            : 'invalid',
       actualCount: cfbRankingsActual,
       expectedMin: cfbRankingsRule.minRecordCount,
       percentOfExpected: Math.round((cfbRankingsActual / cfbRankingsRule.minRecordCount) * 100),
       inSeason: isInSeason(cfbRankingsRule),
       lastValidated: now,
-      failureReason: cfbRankingsActual >= cfbRankingsRule.minRecordCount ? null : `Need ${cfbRankingsRule.minRecordCount} teams, have ${cfbRankingsActual}`,
+      failureReason:
+        cfbRankingsActual >= cfbRankingsRule.minRecordCount
+          ? null
+          : `Need ${cfbRankingsRule.minRecordCount} teams, have ${cfbRankingsActual}`,
     },
     {
       datasetId: 'cfb-standings',
       description: cfbStandingsRule.description,
-      status: cfbStandingsActual >= cfbStandingsRule.minRecordCount ? 'valid' : (cfbStandingsActual === 0 ? 'invalid' : 'invalid'),
+      status:
+        cfbStandingsActual >= cfbStandingsRule.minRecordCount
+          ? 'valid'
+          : cfbStandingsActual === 0
+            ? 'invalid'
+            : 'invalid',
       actualCount: cfbStandingsActual,
       expectedMin: cfbStandingsRule.minRecordCount,
       percentOfExpected: Math.round((cfbStandingsActual / cfbStandingsRule.minRecordCount) * 100),
       inSeason: isInSeason(cfbStandingsRule),
       lastValidated: now,
-      failureReason: cfbStandingsActual >= cfbStandingsRule.minRecordCount ? null : `Need ${cfbStandingsRule.minRecordCount} teams, have ${cfbStandingsActual}`,
+      failureReason:
+        cfbStandingsActual >= cfbStandingsRule.minRecordCount
+          ? null
+          : `Need ${cfbStandingsRule.minRecordCount} teams, have ${cfbStandingsActual}`,
     },
   ];
 
@@ -1365,30 +1917,46 @@ async function handleSemanticHealth(env: Env): Promise<Response> {
     {
       datasetId: 'cbb-rankings-d1',
       description: cbbRankingsRule.description,
-      status: cbbRankingsActual >= cbbRankingsRule.minRecordCount ? 'valid' : (cbbRankingsActual === 0 ? 'invalid' : 'invalid'),
+      status:
+        cbbRankingsActual >= cbbRankingsRule.minRecordCount
+          ? 'valid'
+          : cbbRankingsActual === 0
+            ? 'invalid'
+            : 'invalid',
       actualCount: cbbRankingsActual,
       expectedMin: cbbRankingsRule.minRecordCount,
       percentOfExpected: Math.round((cbbRankingsActual / cbbRankingsRule.minRecordCount) * 100),
       inSeason: isInSeason(cbbRankingsRule),
       lastValidated: now,
-      failureReason: cbbRankingsActual >= cbbRankingsRule.minRecordCount ? null : `Need ${cbbRankingsRule.minRecordCount} teams, have ${cbbRankingsActual}`,
+      failureReason:
+        cbbRankingsActual >= cbbRankingsRule.minRecordCount
+          ? null
+          : `Need ${cbbRankingsRule.minRecordCount} teams, have ${cbbRankingsActual}`,
     },
     {
       datasetId: 'cbb-standings',
       description: cbbStandingsRule.description,
-      status: cbbStandingsActual >= cbbStandingsRule.minRecordCount ? 'valid' : (cbbStandingsActual === 0 ? 'invalid' : 'invalid'),
+      status:
+        cbbStandingsActual >= cbbStandingsRule.minRecordCount
+          ? 'valid'
+          : cbbStandingsActual === 0
+            ? 'invalid'
+            : 'invalid',
       actualCount: cbbStandingsActual,
       expectedMin: cbbStandingsRule.minRecordCount,
       percentOfExpected: Math.round((cbbStandingsActual / cbbStandingsRule.minRecordCount) * 100),
       inSeason: isInSeason(cbbStandingsRule),
       lastValidated: now,
-      failureReason: cbbStandingsActual >= cbbStandingsRule.minRecordCount ? null : `Need ${cbbStandingsRule.minRecordCount} teams, have ${cbbStandingsActual}`,
+      failureReason:
+        cbbStandingsActual >= cbbStandingsRule.minRecordCount
+          ? null
+          : `Need ${cbbStandingsRule.minRecordCount} teams, have ${cbbStandingsActual}`,
     },
   ];
 
   // Calculate truth score (only count in-season datasets)
-  const allDatasets = [...cfbDatasets, ...cbbDatasets].filter(d => d.inSeason);
-  const validCount = allDatasets.filter(d => d.status === 'valid').length;
+  const allDatasets = [...cfbDatasets, ...cbbDatasets].filter((d) => d.inSeason);
+  const validCount = allDatasets.filter((d) => d.status === 'valid').length;
   const totalInSeason = allDatasets.length;
   const truthScore = totalInSeason > 0 ? Math.round((validCount / totalInSeason) * 100) : 0;
 
@@ -1454,14 +2022,32 @@ async function handleSyncAll(env: Env): Promise<Response> {
 
 async function handleGetBaseballRankings(env: Env): Promise<Response> {
   const season = getCurrentSeason('baseball');
-  const result = await env.BSI_DB.prepare('SELECT team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at FROM college_baseball_rankings WHERE season = ? ORDER BY week DESC, rank ASC LIMIT 100').bind(season).all();
-  return jsonResponse({ success: true, season, count: result.results?.length || 0, rankings: result.results || [] });
+  const result = await env.BSI_DB.prepare(
+    'SELECT team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at FROM college_baseball_rankings WHERE season = ? ORDER BY week DESC, rank ASC LIMIT 100'
+  )
+    .bind(season)
+    .all();
+  return jsonResponse({
+    success: true,
+    season,
+    count: result.results?.length || 0,
+    rankings: result.results || [],
+  });
 }
 
 async function handleGetFootballRankings(env: Env): Promise<Response> {
   const season = getCurrentSeason('football');
-  const result = await env.BSI_DB.prepare('SELECT team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at FROM college_football_rankings WHERE season = ? ORDER BY week DESC, source ASC, rank ASC LIMIT 200').bind(season).all();
-  return jsonResponse({ success: true, season, count: result.results?.length || 0, rankings: result.results || [] });
+  const result = await env.BSI_DB.prepare(
+    'SELECT team_id, team_name, team_logo, rank, previous_rank, record, source, week, season, updated_at FROM college_football_rankings WHERE season = ? ORDER BY week DESC, source ASC, rank ASC LIMIT 200'
+  )
+    .bind(season)
+    .all();
+  return jsonResponse({
+    success: true,
+    season,
+    count: result.results?.length || 0,
+    rankings: result.results || [],
+  });
 }
 
 async function handleGetBaseballStandings(env: Env, url: URL): Promise<Response> {
@@ -1470,20 +2056,42 @@ async function handleGetBaseballStandings(env: Env, url: URL): Promise<Response>
 
   let query = 'SELECT * FROM college_baseball_standings WHERE season = ?';
   const params: (string | number)[] = [season];
-  if (conference) { query += ' AND conference = ?'; params.push(conference); query += ' ORDER BY conference_rank ASC'; }
-  else { query += ' ORDER BY conference ASC, conference_rank ASC'; }
+  if (conference) {
+    query += ' AND conference = ?';
+    params.push(conference);
+    query += ' ORDER BY conference_rank ASC';
+  } else {
+    query += ' ORDER BY conference ASC, conference_rank ASC';
+  }
   query += ' LIMIT 500';
 
   try {
-    const result = await env.BSI_DB.prepare(query).bind(...params).all();
-    const confResult = await env.BSI_DB.prepare('SELECT DISTINCT conference FROM college_baseball_standings WHERE season = ? ORDER BY conference').bind(season).all();
+    const result = await env.BSI_DB.prepare(query)
+      .bind(...params)
+      .all();
+    const confResult = await env.BSI_DB.prepare(
+      'SELECT DISTINCT conference FROM college_baseball_standings WHERE season = ? ORDER BY conference'
+    )
+      .bind(season)
+      .all();
     return jsonResponse({
-      success: true, season, filter: conference || 'all', count: result.results?.length || 0,
-      availableConferences: confResult.results?.map((r: Record<string, unknown>) => r.conference) || [],
+      success: true,
+      season,
+      filter: conference || 'all',
+      count: result.results?.length || 0,
+      availableConferences:
+        confResult.results?.map((r: Record<string, unknown>) => r.conference) || [],
       standings: result.results || [],
     });
   } catch (error) {
-    return jsonResponse({ success: false, error: 'Standings table not found. Run migration 0002_college_standings.sql first.', season }, 500);
+    return jsonResponse(
+      {
+        success: false,
+        error: 'Standings table not found. Run migration 0002_college_standings.sql first.',
+        season,
+      },
+      500
+    );
   }
 }
 
@@ -1493,20 +2101,42 @@ async function handleGetFootballStandings(env: Env, url: URL): Promise<Response>
 
   let query = 'SELECT * FROM college_football_standings WHERE season = ?';
   const params: (string | number)[] = [season];
-  if (conference) { query += ' AND conference = ?'; params.push(conference); query += ' ORDER BY conference_rank ASC'; }
-  else { query += ' ORDER BY conference ASC, conference_rank ASC'; }
+  if (conference) {
+    query += ' AND conference = ?';
+    params.push(conference);
+    query += ' ORDER BY conference_rank ASC';
+  } else {
+    query += ' ORDER BY conference ASC, conference_rank ASC';
+  }
   query += ' LIMIT 500';
 
   try {
-    const result = await env.BSI_DB.prepare(query).bind(...params).all();
-    const confResult = await env.BSI_DB.prepare('SELECT DISTINCT conference FROM college_football_standings WHERE season = ? ORDER BY conference').bind(season).all();
+    const result = await env.BSI_DB.prepare(query)
+      .bind(...params)
+      .all();
+    const confResult = await env.BSI_DB.prepare(
+      'SELECT DISTINCT conference FROM college_football_standings WHERE season = ? ORDER BY conference'
+    )
+      .bind(season)
+      .all();
     return jsonResponse({
-      success: true, season, filter: conference || 'all', count: result.results?.length || 0,
-      availableConferences: confResult.results?.map((r: Record<string, unknown>) => r.conference) || [],
+      success: true,
+      season,
+      filter: conference || 'all',
+      count: result.results?.length || 0,
+      availableConferences:
+        confResult.results?.map((r: Record<string, unknown>) => r.conference) || [],
       standings: result.results || [],
     });
   } catch (error) {
-    return jsonResponse({ success: false, error: 'Standings table not found. Run migration 0002_college_standings.sql first.', season }, 500);
+    return jsonResponse(
+      {
+        success: false,
+        error: 'Standings table not found. Run migration 0002_college_standings.sql first.',
+        season,
+      },
+      500
+    );
   }
 }
 
@@ -1570,8 +2200,10 @@ export default {
       if (path === '/rankings/football' && method === 'GET') return handleGetFootballRankings(env);
 
       // Standings get endpoints
-      if (path === '/standings/baseball' && method === 'GET') return handleGetBaseballStandings(env, url);
-      if (path === '/standings/football' && method === 'GET') return handleGetFootballStandings(env, url);
+      if (path === '/standings/baseball' && method === 'GET')
+        return handleGetBaseballStandings(env, url);
+      if (path === '/standings/football' && method === 'GET')
+        return handleGetFootballStandings(env, url);
 
       // =========================================================================
       // V2 ENDPOINTS - Multi-source college baseball API integration
@@ -1617,14 +2249,17 @@ export default {
       // Root endpoint - API documentation
       if (path === '/' && method === 'GET') {
         return jsonResponse({
-          service: SERVICE_NAME, version: SERVICE_VERSION,
-          description: 'College sports data pipeline with multi-source API integration and semantic validation',
+          service: SERVICE_NAME,
+          version: SERVICE_VERSION,
+          description:
+            'College sports data pipeline with multi-source API integration and semantic validation',
           endpoints: {
             // Health & Monitoring
             'GET /health': 'Service health check with staleness detection',
             'GET /status': 'Detailed sync status for rankings and standings',
             'GET /alerts': 'Active alerts and system health score',
-            'GET /semantic-health': 'TRUTH: Data density vs semantic thresholds (returns 503 if all invalid)',
+            'GET /semantic-health':
+              'TRUTH: Data density vs semantic thresholds (returns 503 if all invalid)',
             'GET /truth': 'Alias for /semantic-health',
             // Legacy ESPN-only sync
             'POST /sync/all': 'Sync all rankings and standings (ESPN, with semantic validation)',
@@ -1635,8 +2270,10 @@ export default {
             // Data retrieval
             'GET /rankings/baseball': 'Get current baseball rankings',
             'GET /rankings/football': 'Get current football rankings',
-            'GET /standings/baseball?conference=SEC': 'Get baseball standings (optional conference filter)',
-            'GET /standings/football?conference=SEC': 'Get football standings (optional conference filter)',
+            'GET /standings/baseball?conference=SEC':
+              'Get baseball standings (optional conference filter)',
+            'GET /standings/football?conference=SEC':
+              'Get football standings (optional conference filter)',
           },
           multiSourceIntegration: {
             description: 'v3.1: Multi-source API integration with automatic failover',
@@ -1662,17 +2299,23 @@ export default {
             },
           },
           semanticValidation: {
-            description: 'v3.0: Empty/null data is INVALID, not success. Minimum density thresholds enforced.',
+            description:
+              'v3.0: Empty/null data is INVALID, not success. Minimum density thresholds enforced.',
             thresholds: {
               'cfb-rankings': '25 teams minimum',
               'cfb-standings': '100 teams minimum (FBS)',
               'cbb-rankings': '25 teams minimum',
               'cbb-standings': '200 teams minimum (D1)',
             },
-            behavior: 'Invalid data blocks KV/D1 writes. Prior good data preserved. Failures logged.',
+            behavior:
+              'Invalid data blocks KV/D1 writes. Prior good data preserved. Failures logged.',
           },
           monitoring: {
-            staleness_thresholds: { healthy: '< ' + STALENESS_THRESHOLD_STALE + ' hours', stale: STALENESS_THRESHOLD_STALE + '-' + STALENESS_THRESHOLD_CRITICAL + ' hours', critical: '> ' + STALENESS_THRESHOLD_CRITICAL + ' hours' },
+            staleness_thresholds: {
+              healthy: '< ' + STALENESS_THRESHOLD_STALE + ' hours',
+              stale: STALENESS_THRESHOLD_STALE + '-' + STALENESS_THRESHOLD_CRITICAL + ' hours',
+              critical: '> ' + STALENESS_THRESHOLD_CRITICAL + ' hours',
+            },
             failure_threshold: CONSECUTIVE_FAILURE_THRESHOLD + ' consecutive failures',
             analytics_engine: env.ANALYTICS ? 'enabled' : 'disabled',
           },
@@ -1691,15 +2334,22 @@ export default {
       }
 
       return jsonResponse({ error: 'Not Found', path }, 404);
-
     } catch (error) {
       console.error('[' + SERVICE_NAME + '] Request handler error:', error);
-      return jsonResponse({ error: 'Internal Server Error', message: error instanceof Error ? error.message : 'Unknown error' }, 500);
+      return jsonResponse(
+        {
+          error: 'Internal Server Error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+        },
+        500
+      );
     }
   },
 
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
-    console.log('[' + SERVICE_NAME + '] Cron triggered: ' + event.cron + ' at ' + new Date().toISOString());
+    console.log(
+      '[' + SERVICE_NAME + '] Cron triggered: ' + event.cron + ' at ' + new Date().toISOString()
+    );
 
     const results: Record<string, SyncResult> = {};
 
@@ -1710,15 +2360,35 @@ export default {
       syncCollegeFootballStandings(env),
     ]);
 
-    results.collegeBaseballRankings = brResult.status === 'fulfilled' ? brResult.value : { success: false, inserted: 0, error: String(brResult.reason) };
-    results.collegeFootballRankings = frResult.status === 'fulfilled' ? frResult.value : { success: false, inserted: 0, error: String(frResult.reason) };
-    results.collegeBaseballStandings = bsResult.status === 'fulfilled' ? bsResult.value : { success: false, inserted: 0, error: String(bsResult.reason) };
-    results.collegeFootballStandings = fsResult.status === 'fulfilled' ? fsResult.value : { success: false, inserted: 0, error: String(fsResult.reason) };
+    results.collegeBaseballRankings =
+      brResult.status === 'fulfilled'
+        ? brResult.value
+        : { success: false, inserted: 0, error: String(brResult.reason) };
+    results.collegeFootballRankings =
+      frResult.status === 'fulfilled'
+        ? frResult.value
+        : { success: false, inserted: 0, error: String(frResult.reason) };
+    results.collegeBaseballStandings =
+      bsResult.status === 'fulfilled'
+        ? bsResult.value
+        : { success: false, inserted: 0, error: String(bsResult.reason) };
+    results.collegeFootballStandings =
+      fsResult.status === 'fulfilled'
+        ? fsResult.value
+        : { success: false, inserted: 0, error: String(fsResult.reason) };
 
-    const successCount = Object.values(results).filter(r => r.success).length;
+    const successCount = Object.values(results).filter((r) => r.success).length;
     const totalCount = Object.keys(results).length;
 
-    console.log('[' + SERVICE_NAME + '] Scheduled sync complete: ' + successCount + '/' + totalCount + ' succeeded');
+    console.log(
+      '[' +
+        SERVICE_NAME +
+        '] Scheduled sync complete: ' +
+        successCount +
+        '/' +
+        totalCount +
+        ' succeeded'
+    );
     console.log('[' + SERVICE_NAME + '] Results:', JSON.stringify(results, null, 2));
   },
 };

@@ -39,6 +39,11 @@ id = "a53c3726fc3044be82e79d2d1e371d26"
 binding = "ANALYTICS"
 dataset = "bsi_college_sync_analytics"
 
+# R2 bucket for snapshot fallback storage
+[[r2_buckets]]
+binding = "BSI_R2"
+bucket_name = "blazesports-archives"
+
 # Cron trigger - every 6 hours
 [triggers]
 crons = ["0 */6 * * *"]
