@@ -27,6 +27,13 @@ binding = "BSI_GAME_DB"
 database_name = "bsi-game-db"
 database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
 
+# D1 database for content management
+# TODO: Replace with actual ID after running: npx wrangler d1 create bsi-content-db
+[[d1_databases]]
+binding = "BSI_CONTENT_DB"
+database_name = "bsi-content-db"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
 # KV namespace for sessions
 [[kv_namespaces]]
 binding = "BSI_SESSIONS"
@@ -36,6 +43,12 @@ id = "b03e0651b4a34078a3e031bc5bc14ad7"
 [[kv_namespaces]]
 binding = "BSI_ANALYTICS_KV"
 id = "78cfab88ebc24bb1a96a3081be48e17c"
+
+# KV namespace for caching (content, API responses)
+# TODO: Replace with actual ID after running: npx wrangler kv namespace create BSI_CACHE
+[[kv_namespaces]]
+binding = "BSI_CACHE"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
 
 # Analytics Engine for time-series metrics
 [[analytics_engine_datasets]]
