@@ -1,5 +1,6 @@
 # bsi-college-data-sync
 # Automated data pipeline for college sports rankings with comprehensive monitoring
+# Multi-source API integration: NCAA API, ESPN, Highlightly
 # Cron: Every 6 hours
 
 name = "bsi-college-data-sync"
@@ -16,6 +17,11 @@ head_sampling_rate = 1
 # Environment variables
 [vars]
 ENVIRONMENT = "production"
+# NCAA API public instance URL (can be overridden for self-hosted)
+NCAA_API_URL = "https://ncaa-api.henrygd.me"
+
+# Secrets (set via wrangler secret put):
+# - HIGHLIGHTLY_API_KEY: RapidAPI key for Highlightly (optional, enables premium source)
 
 # D1 Database binding
 [[d1_databases]]
