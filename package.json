@@ -42,7 +42,7 @@
     "prebuild": "npm run images:optimize || true"
   },
   "dependencies": {
-    "@amplitude/analytics-browser": "^2.31.3",
+    "@amplitude/analytics-browser": "^2.33.4",
     "@amplitude/plugin-session-replay-browser": "^1.23.6",
     "@aws-sdk/client-s3": "^3.714.0",
     "@react-three/drei": "^10.0.0",
