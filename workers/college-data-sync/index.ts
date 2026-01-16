@@ -38,6 +38,10 @@ import {
   type ValidatedDataset,
 } from '../../lib/semantic-validation';
 
+import {
+  collegeBaseballHandlers,
+} from './handlers/college-baseball';
+
 // =============================================================================
 // TYPE DEFINITIONS
 // =============================================================================
@@ -1568,6 +1572,47 @@ export default {
       // Standings get endpoints
       if (path === '/standings/baseball' && method === 'GET') return handleGetBaseballStandings(env, url);
       if (path === '/standings/football' && method === 'GET') return handleGetFootballStandings(env, url);
+
+      // =========================================================================
+      // V2 ENDPOINTS - Multi-source college baseball API integration
+      // =========================================================================
+
+      // V2 Sync endpoints - multi-source aggregator
+      if (path === '/v2/sync/games' && method === 'POST') {
+        return collegeBaseballHandlers.handleSyncGames(env);
+      }
+      if (path === '/v2/sync/standings' && method === 'POST') {
+        return collegeBaseballHandlers.handleSyncStandingsMultiSource(env);
+      }
+      if (path === '/v2/sync/rankings' && method === 'POST') {
+        return collegeBaseballHandlers.handleSyncRankingsMultiSource(env);
+      }
+
+      // V2 Data retrieval endpoints
+      if (path === '/v2/games/live' && method === 'GET') {
+        return collegeBaseballHandlers.handleGetLiveGames(env);
+      }
+      if (path === '/v2/games/today' && method === 'GET') {
+        return collegeBaseballHandlers.handleGetTodayGames(env);
+      }
+      if (path === '/v2/games' && method === 'GET') {
+        // Support both date and team filters
+        if (url.searchParams.has('date')) {
+          return collegeBaseballHandlers.handleGetGamesByDate(env, url);
+        } else if (url.searchParams.has('team')) {
+          return collegeBaseballHandlers.handleGetGamesByTeam(env, url);
+        }
+        // Default to today if no params
+        return collegeBaseballHandlers.handleGetTodayGames(env);
+      }
+      if (path === '/v2/teams' && method === 'GET') {
+        return collegeBaseballHandlers.handleGetTeams(env, url);
+      }
+
+      // V2 Health endpoint
+      if (path === '/v2/source-health' && method === 'GET') {
+        return collegeBaseballHandlers.handleSourceHealth(env);
+      }
 
       // Root endpoint - API documentation
       if (path === '/' && method === 'GET') {
