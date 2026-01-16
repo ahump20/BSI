@@ -47,6 +47,9 @@ interface Env {
   BSI_CACHE: KVNamespace;
   ANALYTICS?: AnalyticsEngineDataset;
   ENVIRONMENT?: string;
+  // Multi-source API configuration
+  HIGHLIGHTLY_API_KEY?: string;
+  NCAA_API_URL?: string;
 }
 
 interface AnalyticsEngineDataset {
@@ -321,7 +324,7 @@ const KV_KEYS = {
   FOOTBALL_LAST_METADATA: 'sync:college-football:last-metadata',
 } as const;
 
-const SERVICE_VERSION = '2.1.0';
+const SERVICE_VERSION = '3.1.0';
 const SERVICE_NAME = 'bsi-college-data-sync';
 
 // Staleness thresholds in hours
@@ -1570,22 +1573,49 @@ export default {
       if (path === '/' && method === 'GET') {
         return jsonResponse({
           service: SERVICE_NAME, version: SERVICE_VERSION,
-          description: 'College sports rankings and standings data pipeline with semantic validation',
+          description: 'College sports data pipeline with multi-source API integration and semantic validation',
           endpoints: {
+            // Health & Monitoring
             'GET /health': 'Service health check with staleness detection',
             'GET /status': 'Detailed sync status for rankings and standings',
             'GET /alerts': 'Active alerts and system health score',
             'GET /semantic-health': 'TRUTH: Data density vs semantic thresholds (returns 503 if all invalid)',
             'GET /truth': 'Alias for /semantic-health',
-            'POST /sync/all': 'Sync all rankings and standings (with semantic validation)',
-            'POST /sync/college-baseball': 'Sync college baseball rankings',
-            'POST /sync/college-football': 'Sync college football rankings',
-            'POST /sync/standings/baseball': 'Sync college baseball standings',
-            'POST /sync/standings/football': 'Sync college football standings',
+            // Legacy ESPN-only sync
+            'POST /sync/all': 'Sync all rankings and standings (ESPN, with semantic validation)',
+            'POST /sync/college-baseball': 'Sync college baseball rankings (ESPN)',
+            'POST /sync/college-football': 'Sync college football rankings (ESPN)',
+            'POST /sync/standings/baseball': 'Sync college baseball standings (ESPN)',
+            'POST /sync/standings/football': 'Sync college football standings (ESPN)',
+            // Data retrieval
             'GET /rankings/baseball': 'Get current baseball rankings',
             'GET /rankings/football': 'Get current football rankings',
             'GET /standings/baseball?conference=SEC': 'Get baseball standings (optional conference filter)',
             'GET /standings/football?conference=SEC': 'Get football standings (optional conference filter)',
+          },
+          multiSourceIntegration: {
+            description: 'v3.1: Multi-source API integration with automatic failover',
+            priority: {
+              1: 'NCAA API (henrygd/ncaa-api) - Free, primary source',
+              2: 'ESPN API - Free, backup (unofficial)',
+              3: 'Highlightly API - Paid, premium features (requires HIGHLIGHTLY_API_KEY)',
+            },
+            newEndpoints: {
+              'POST /v2/sync/games': 'Sync live games from multi-source aggregator',
+              'POST /v2/sync/rankings': 'Sync rankings from multi-source aggregator',
+              'POST /v2/sync/standings': 'Sync standings from multi-source aggregator',
+              'GET /v2/games/live': 'Get live games with automatic source fallback',
+              'GET /v2/games/today': 'Get today\'s games from D1 database',
+              'GET /v2/games?date=YYYY-MM-DD': 'Get games by date',
+              'GET /v2/games?team=xxx': 'Get games by team',
+              'GET /v2/teams': 'Get teams from D1 database',
+              'GET /v2/source-health': 'Get API source health status',
+            },
+            enabledSources: {
+              ncaa: true,
+              espn: true,
+              highlightly: !!env.HIGHLIGHTLY_API_KEY,
+            },
           },
           semanticValidation: {
             description: 'v3.0: Empty/null data is INVALID, not success. Minimum density thresholds enforced.',
@@ -1603,10 +1633,13 @@ export default {
             analytics_engine: env.ANALYTICS ? 'enabled' : 'disabled',
           },
           sources: {
-            baseballRankings: 'ESPN API (D1Baseball.com Top 25)',
-            footballRankings: 'ESPN API (AP Top 25, CFP, Coaches Poll)',
-            baseballStandings: 'ESPN API (Conference Standings)',
-            footballStandings: 'ESPN API (Conference Standings)',
+            primary: 'NCAA API (henrygd/ncaa-api) - Free D1 real-time scores/stats',
+            secondary: 'ESPN API (unofficial) - Backup source',
+            premium: 'Highlightly API (RapidAPI) - Production D1 with SLA',
+            legacy: {
+              baseballRankings: 'ESPN API (D1Baseball.com Top 25)',
+              footballRankings: 'ESPN API (AP Top 25, CFP, Coaches Poll)',
+            },
           },
           majorConferences: MAJOR_CONFERENCES.slice(0, 10),
           cron: 'Every 6 hours',
